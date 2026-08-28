@@ -15,11 +15,20 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalendarLocaleScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CalClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalClockTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CalendarLocaleScope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,7 +42,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="license.txt">
+    <None Include="..\license.txt">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

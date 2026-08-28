@@ -78,9 +78,12 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CalendarLocaleScope.cpp" />
     <ClCompile Include="CalClock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalClockTypes.h" />
+    <ClInclude Include="CalendarLocaleScope.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -90,7 +93,7 @@
     <Image Include="CalClock.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="license.txt" />
+    <None Include="..\license.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

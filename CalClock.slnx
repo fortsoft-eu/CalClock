@@ -2,5 +2,5 @@
   <Configurations>
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CalClock.vcxproj" Id="569ec152-362b-4cdb-8225-369bd391f076" />
+  <Project Path="CalClock\CalClock.vcxproj" Id="569ec152-362b-4cdb-8225-369bd391f076" />
 </Solution>

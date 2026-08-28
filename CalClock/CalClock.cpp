@@ -4,6 +4,8 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
+#include "CalendarLocaleScope.h"
+#include "CalClockTypes.h"
 #include <windowsx.h>
 #include <algorithm>
 #include <atomic>
@@ -41,679 +43,440 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-enum WidgetType {
-    WIDGET_ANALOG,
-    WIDGET_DIGITAL,
-    WIDGET_CALENDAR,
-    WIDGET_PANEL,
-    WIDGET_FULLSCREEN,
-    WIDGET_TYPE_COUNT
-};
-enum DigitalBorderStyle {
-    DIGITAL_BORDER_NONE,
-    DIGITAL_BORDER_TOOL_WINDOW,
-    DIGITAL_BORDER_SINGLE,
-    DIGITAL_BORDER_3D,
-    DIGITAL_BORDER_STYLE_COUNT
-};
-enum FontAntialiasing {
-    FONT_ANTIALIAS_GDI,
-    FONT_ANTIALIAS_CLEARTYPE,
-    FONT_ANTIALIAS_COUNT
+
+const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
+    {
+        L"Hodiny a kalendáře",
+        L"Nastavení",
+        L"Přidat",
+        L"Odebrat",
+        L"Duplikovat",
+        L"Obecné",
+        L"Vzhled",
+        L"Budík",
+        L"Název:",
+        L"Typ:",
+        L"Zobrazeno",
+        L"Vždy navrchu",
+        L"Sekundy",
+        L"Čas UTC",
+        L"Časové pásmo:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Velikost:",
+        L"Neprůhlednost:",
+        L"Velikost písma:",
+        L"Úvodní nula",
+        L"Průhledné pozadí",
+        L"Barva textu...",
+        L"Barva pozadí...",
+        L"Čísla týdnů",
+        L"Neděle jako první den",
+        L"Budík aktivní",
+        L"Čas budíku:",
+        L"Spustit soubor nebo příkaz",
+        L"Zvuk přehrávat stále dokola",
+        L"Vybrat...",
+        L"Jazyk:",
+        L"Zakázat motivy",
+        L"Uložit",
+        L"Použít",
+        L"Zrušit",
+        L"Zobrazit vše",
+        L"Skrýt vše",
+        L"Zastavit budík",
+        L"Nápověda",
+        L"O programu",
+        L"Konec",
+        L"Ručičkové hodiny",
+        L"Digitální hodiny",
+        L"Kalendář",
+        L"Kalendář s hodinami",
+        L"Zadejte offset ve formátu [-]HH:mm:ss.ff.",
+        L"Zadejte platný čas 0:00 až 23:59.",
+        L"Opravdu odebrat označené widgety?",
+        L"Musí zůstat alespoň jeden widget.",
+        L"Zavřít"
+    },
+    {
+        L"Clocks and calendars",
+        L"Settings",
+        L"Add",
+        L"Remove",
+        L"Duplicate",
+        L"General",
+        L"Appearance",
+        L"Alarm",
+        L"Name:",
+        L"Type:",
+        L"Visible",
+        L"Always on top",
+        L"Seconds",
+        L"UTC time",
+        L"Time zone:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Size:",
+        L"Opacity:",
+        L"Font size:",
+        L"Leading zero",
+        L"Transparent background",
+        L"Text color...",
+        L"Background color...",
+        L"Week numbers",
+        L"Sunday first",
+        L"Alarm enabled",
+        L"Alarm time:",
+        L"Run a file or command",
+        L"Loop audio continuously",
+        L"Browse...",
+        L"Language:",
+        L"Disable themes",
+        L"Save",
+        L"Apply",
+        L"Cancel",
+        L"Show all",
+        L"Hide all",
+        L"Stop alarm",
+        L"Help",
+        L"About",
+        L"Exit",
+        L"Analog clock",
+        L"Digital clock",
+        L"Calendar",
+        L"Calendar with clock",
+        L"Enter the offset as [-]HH:mm:ss.ff.",
+        L"Enter a valid time from 0:00 to 23:59.",
+        L"Remove the selected widgets?",
+        L"At least one widget must remain.",
+        L"Close"
+    },
+    {
+        L"Uhren und Kalender",
+        L"Einstellungen",
+        L"Hinzufügen",
+        L"Entfernen",
+        L"Duplizieren",
+        L"Allgemein",
+        L"Darstellung",
+        L"Wecker",
+        L"Name:",
+        L"Typ:",
+        L"Sichtbar",
+        L"Immer im Vordergrund",
+        L"Sekunden",
+        L"UTC-Zeit",
+        L"Zeitzone:",
+        L"Versatz [-]HH:mm:ss.ff:",
+        L"Größe:",
+        L"Deckkraft:",
+        L"Schriftgröße:",
+        L"Führende Null",
+        L"Transparenter Hintergrund",
+        L"Textfarbe...",
+        L"Hintergrundfarbe...",
+        L"Wochennummern",
+        L"Sonntag zuerst",
+        L"Wecker aktiv",
+        L"Weckzeit:",
+        L"Datei oder Befehl starten",
+        L"Audio endlos wiederholen",
+        L"Durchsuchen...",
+        L"Sprache:",
+        L"Designs deaktivieren",
+        L"Speichern",
+        L"Übernehmen",
+        L"Abbrechen",
+        L"Alle anzeigen",
+        L"Alle ausblenden",
+        L"Wecker stoppen",
+        L"Hilfe",
+        L"Info",
+        L"Beenden",
+        L"Analoguhr",
+        L"Digitaluhr",
+        L"Kalender",
+        L"Kalender mit Uhr",
+        L"Versatz als [-]HH:mm:ss.ff eingeben.",
+        L"Gültige Zeit von 0:00 bis 23:59 eingeben.",
+        L"Ausgewähltes Element entfernen?",
+        L"Mindestens ein Element muss bleiben.",
+        L"Schließen"
+    },
+    {
+        L"Horloges et calendriers",
+        L"Paramètres",
+        L"Ajouter",
+        L"Supprimer",
+        L"Dupliquer",
+        L"Général",
+        L"Apparence",
+        L"Alarme",
+        L"Nom :",
+        L"Type :",
+        L"Visible",
+        L"Toujours visible",
+        L"Secondes",
+        L"Heure UTC",
+        L"Fuseau horaire :",
+        L"Décalage [-]HH:mm:ss.ff :",
+        L"Taille :",
+        L"Opacité :",
+        L"Taille de police :",
+        L"Zéro initial",
+        L"Fond transparent",
+        L"Couleur du texte...",
+        L"Couleur du fond...",
+        L"Numéros de semaine",
+        L"Dimanche en premier",
+        L"Alarme active",
+        L"Heure de l’alarme :",
+        L"Lancer un fichier ou une commande",
+        L"Lire le son en boucle",
+        L"Parcourir...",
+        L"Langue :",
+        L"Désactiver les thèmes",
+        L"Enregistrer",
+        L"Appliquer",
+        L"Annuler",
+        L"Tout afficher",
+        L"Tout masquer",
+        L"Arrêter l’alarme",
+        L"Aide",
+        L"À propos",
+        L"Quitter",
+        L"Horloge analogique",
+        L"Horloge numérique",
+        L"Calendrier",
+        L"Calendrier avec horloge",
+        L"Entrez le décalage au format [-]HH:mm:ss.ff.",
+        L"Entrez une heure de 0:00 à 23:59.",
+        L"Supprimer le panneau sélectionné ?",
+        L"Au moins un panneau doit rester.",
+        L"Fermer"
+    },
+    {
+        L"Relojes y calendarios",
+        L"Configuración",
+        L"Añadir",
+        L"Quitar",
+        L"Duplicar",
+        L"General",
+        L"Apariencia",
+        L"Alarma",
+        L"Nombre:",
+        L"Tipo:",
+        L"Visible",
+        L"Siempre visible",
+        L"Segundos",
+        L"Hora UTC",
+        L"Zona horaria:",
+        L"Desfase [-]HH:mm:ss.ff:",
+        L"Tamaño:",
+        L"Opacidad:",
+        L"Tamaño de fuente:",
+        L"Cero inicial",
+        L"Fondo transparente",
+        L"Color de texto...",
+        L"Color de fondo...",
+        L"Números de semana",
+        L"Domingo primero",
+        L"Alarma activa",
+        L"Hora de alarma:",
+        L"Ejecutar archivo o comando",
+        L"Repetir audio continuamente",
+        L"Examinar...",
+        L"Idioma:",
+        L"Desactivar temas",
+        L"Guardar",
+        L"Aplicar",
+        L"Cancelar",
+        L"Mostrar todo",
+        L"Ocultar todo",
+        L"Detener alarma",
+        L"Ayuda",
+        L"Acerca de",
+        L"Salir",
+        L"Reloj analógico",
+        L"Reloj digital",
+        L"Calendario",
+        L"Calendario con reloj",
+        L"Introduzca el desfase como [-]HH:mm:ss.ff.",
+        L"Introduzca una hora de 0:00 a 23:59.",
+        L"¿Quitar el panel seleccionado?",
+        L"Debe quedar al menos un panel.",
+        L"Cerrar"
+    },
+    {
+        L"Orologi e calendari",
+        L"Impostazioni",
+        L"Aggiungi",
+        L"Rimuovi",
+        L"Duplica",
+        L"Generali",
+        L"Aspetto",
+        L"Sveglia",
+        L"Nome:",
+        L"Tipo:",
+        L"Visibile",
+        L"Sempre in primo piano",
+        L"Secondi",
+        L"Ora UTC",
+        L"Fuso orario:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Dimensione:",
+        L"Opacità:",
+        L"Dimensione carattere:",
+        L"Zero iniziale",
+        L"Sfondo trasparente",
+        L"Colore testo...",
+        L"Colore sfondo...",
+        L"Numeri settimana",
+        L"Domenica per prima",
+        L"Sveglia attiva",
+        L"Ora sveglia:",
+        L"Esegui file o comando",
+        L"Ripeti audio continuamente",
+        L"Sfoglia...",
+        L"Lingua:",
+        L"Disattiva temi",
+        L"Salva",
+        L"Applica",
+        L"Annulla",
+        L"Mostra tutto",
+        L"Nascondi tutto",
+        L"Ferma sveglia",
+        L"Guida",
+        L"Informazioni",
+        L"Esci",
+        L"Orologio analogico",
+        L"Orologio digitale",
+        L"Calendario",
+        L"Calendario con orologio",
+        L"Inserire l’offset come [-]HH:mm:ss.ff.",
+        L"Inserire un’ora da 0:00 a 23:59.",
+        L"Rimuovere il pannello selezionato?",
+        L"Deve restare almeno un pannello.",
+        L"Chiudi"
+    },
+    {
+        L"Zegary i kalendarze",
+        L"Ustawienia",
+        L"Dodaj",
+        L"Usuń",
+        L"Duplikuj",
+        L"Ogólne",
+        L"Wygląd",
+        L"Alarm",
+        L"Nazwa:",
+        L"Typ:",
+        L"Widoczny",
+        L"Zawsze na wierzchu",
+        L"Sekundy",
+        L"Czas UTC",
+        L"Strefa czasowa:",
+        L"Przesunięcie [-]HH:mm:ss.ff:",
+        L"Rozmiar:",
+        L"Krycie:",
+        L"Rozmiar czcionki:",
+        L"Zero wiodące",
+        L"Przezroczyste tło",
+        L"Kolor tekstu...",
+        L"Kolor tła...",
+        L"Numery tygodni",
+        L"Niedziela pierwsza",
+        L"Alarm aktywny",
+        L"Czas alarmu:",
+        L"Uruchom plik lub polecenie",
+        L"Powtarzaj dźwięk",
+        L"Wybierz...",
+        L"Język:",
+        L"Wyłącz motywy",
+        L"Zapisz",
+        L"Zastosuj",
+        L"Anuluj",
+        L"Pokaż wszystkie",
+        L"Ukryj wszystkie",
+        L"Zatrzymaj alarm",
+        L"Pomoc",
+        L"O programie",
+        L"Zakończ",
+        L"Zegar analogowy",
+        L"Zegar cyfrowy",
+        L"Kalendarz",
+        L"Kalendarz z zegarem",
+        L"Wprowadź przesunięcie jako [-]HH:mm:ss.ff.",
+        L"Wprowadź czas od 0:00 do 23:59.",
+        L"Usunąć wybrany panel?",
+        L"Musi pozostać co najmniej jeden panel.",
+        L"Zamknij"
+    },
+    {
+        L"Hodiny a kalendáre",
+        L"Nastavenia",
+        L"Pridať",
+        L"Odobrať",
+        L"Duplikovať",
+        L"Všeobecné",
+        L"Vzhľad",
+        L"Budík",
+        L"Názov:",
+        L"Typ:",
+        L"Zobrazené",
+        L"Vždy navrchu",
+        L"Sekundy",
+        L"Čas UTC",
+        L"Časové pásmo:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Veľkosť:",
+        L"Nepriehľadnosť:",
+        L"Veľkosť písma:",
+        L"Úvodná nula",
+        L"Priehľadné pozadie",
+        L"Farba textu...",
+        L"Farba pozadia...",
+        L"Čísla týždňov",
+        L"Nedeľa ako prvý deň",
+        L"Budík aktívny",
+        L"Čas budíka:",
+        L"Spustiť súbor alebo príkaz",
+        L"Zvuk prehrávať dookola",
+        L"Vybrať...",
+        L"Jazyk:",
+        L"Zakázať motívy",
+        L"Uložiť",
+        L"Použiť",
+        L"Zrušiť",
+        L"Zobraziť všetko",
+        L"Skryť všetko",
+        L"Zastaviť budík",
+        L"Pomoc",
+        L"O programe",
+        L"Koniec",
+        L"Ručičkové hodiny",
+        L"Digitálne hodiny",
+        L"Kalendár",
+        L"Kalendár s hodinami",
+        L"Zadajte offset vo formáte [-]HH:mm:ss.ff.",
+        L"Zadajte čas 0:00 až 23:59.",
+        L"Odobrať vybraný panel?",
+        L"Musí zostať aspoň jeden panel.",
+        L"Zavrieť"
+    }
 };
 
-const int DIGITAL_BORDER_WIDTH_MAX = 10;
-enum AppLanguage {
-    LANG_CZ,
-    LANG_EN,
-    LANG_DE,
-    LANG_FR,
-    LANG_ES,
-    LANG_IT,
-    LANG_PL,
-    LANG_SK,
-    LANG_COUNT
-};
-enum NtpPreset {
-    NTP_PRESET_AUTO,
-    NTP_PRESET_CESNET,
-    NTP_PRESET_PTB,
-    NTP_PRESET_GLOBAL,
-    NTP_PRESET_CUSTOM,
-    NTP_PRESET_COUNT
-};
-enum DateCopyFormat {
-    DATE_YYMMDD,
-    DATE_YYYYMMDD,
-    DATE_YY_MM_DD,
-    DATE_ISO,
-    DATE_LOCAL_SHORT,
-    DATE_DD_MM_YYYY,
-    DATE_DAY_SHORT_MONTH,
-    DATE_DAY_MONTH,
-    DATE_WEEKDAY,
-    DATE_LOCAL_LONG,
-    DATE_RFC,
-    DATE_SLASH,
-    DATE_FORMAT_COUNT
-};
-enum TextId {
-    TXT_APP,
-    TXT_SETTINGS,
-    TXT_ADD,
-    TXT_REMOVE,
-    TXT_DUPLICATE,
-    TXT_GENERAL,
-    TXT_APPEARANCE,
-    TXT_ALARM,
-    TXT_NAME,
-    TXT_TYPE,
-    TXT_VISIBLE,
-    TXT_TOPMOST,
-    TXT_SECONDS,
-    TXT_UTC,
-    TXT_TIMEZONE,
-    TXT_OFFSET,
-    TXT_SIZE,
-    TXT_OPACITY,
-    TXT_FONT_SIZE,
-    TXT_LEADING_ZERO,
-    TXT_TRANSPARENT_BG,
-    TXT_TEXT_COLOR,
-    TXT_BACKGROUND_COLOR,
-    TXT_WEEK_NUMBERS,
-    TXT_SUNDAY_FIRST,
-    TXT_ALARM_ACTIVE,
-    TXT_ALARM_TIME,
-    TXT_RUN_FILE,
-    TXT_LOOP_AUDIO,
-    TXT_BROWSE,
-    TXT_LANGUAGE,
-    TXT_VISUAL_STYLES,
-    TXT_SAVE,
-    TXT_APPLY,
-    TXT_CANCEL,
-    TXT_SHOW_ALL,
-    TXT_HIDE_ALL,
-    TXT_STOP_ALARM,
-    TXT_HELP,
-    TXT_ABOUT,
-    TXT_EXIT,
-    TXT_ANALOG,
-    TXT_DIGITAL,
-    TXT_CALENDAR,
-    TXT_PANEL,
-    TXT_INVALID_OFFSET,
-    TXT_INVALID_TIME,
-    TXT_DELETE_CONFIRM,
-    TXT_AT_LEAST_ONE,
-    TXT_CLOSE,
-    TXT_COUNT
-};
+static std::wstring GetSystemMessageFontFace() {
+    NONCLIENTMETRICSW metrics = {};
+    metrics.cbSize = sizeof(metrics);
+    if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0) && metrics.lfMessageFont.lfFaceName[0] != L'\0') {
+        return metrics.lfMessageFont.lfFaceName;
+    }
+    HFONT fallbackFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
+    LOGFONTW fallback = {};
+    if (fallbackFont != nullptr && GetObjectW(fallbackFont, sizeof(fallback), &fallback) == sizeof(fallback) && fallback.lfFaceName[0] != L'\0') {
+        return fallback.lfFaceName;
+    }
+    return std::wstring();
+}
 
-const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = { {L"Hodiny a kalendáře",
-                                               L"Nastavení",
-                                               L"Přidat",
-                                               L"Odebrat",
-                                               L"Duplikovat",
-                                               L"Obecné",
-                                               L"Vzhled",
-                                               L"Budík",
-                                               L"Název:",
-                                               L"Typ:",
-                                               L"Zobrazeno",
-                                               L"Vždy navrchu",
-                                               L"Sekundy",
-                                               L"Čas UTC",
-                                               L"Časové pásmo:",
-                                               L"Offset [-]HH:mm:ss.ff:",
-                                               L"Velikost:",
-                                               L"Neprůhlednost:",
-                                               L"Velikost písma:",
-                                               L"Úvodní nula",
-                                               L"Průhledné pozadí",
-                                               L"Barva textu...",
-                                               L"Barva pozadí...",
-                                               L"Čísla týdnů",
-                                               L"Neděle jako první den",
-                                               L"Budík aktivní",
-                                               L"Čas budíku:",
-                                               L"Spustit soubor nebo příkaz",
-                                               L"Zvuk přehrávat stále dokola",
-                                               L"Vybrat...",
-                                               L"Jazyk:",
-                                               L"Zakázat motivy",
-                                               L"Uložit",
-                                               L"Použít",
-                                               L"Zrušit",
-                                               L"Zobrazit vše",
-                                               L"Skrýt vše",
-                                               L"Zastavit budík",
-                                               L"Nápověda",
-                                               L"O programu",
-                                               L"Konec",
-                                               L"Ručičkové hodiny",
-                                               L"Digitální hodiny",
-                                               L"Kalendář",
-                                               L"Kalendář s hodinami",
-                                               L"Zadejte offset ve formátu [-]HH:mm:ss.ff.",
-                                               L"Zadejte platný čas 0:00 až 23:59.",
-                                               L"Opravdu odebrat označené widgety?",
-                                               L"Musí zůstat alespoň jeden widget.",
-                                               L"Zavřít"},
-                                              {L"Clocks and calendars",
-                                               L"Settings",
-                                               L"Add",
-                                               L"Remove",
-                                               L"Duplicate",
-                                               L"General",
-                                               L"Appearance",
-                                               L"Alarm",
-                                               L"Name:",
-                                               L"Type:",
-                                               L"Visible",
-                                               L"Always on top",
-                                               L"Seconds",
-                                               L"UTC time",
-                                               L"Time zone:",
-                                               L"Offset [-]HH:mm:ss.ff:",
-                                               L"Size:",
-                                               L"Opacity:",
-                                               L"Font size:",
-                                               L"Leading zero",
-                                               L"Transparent background",
-                                               L"Text color...",
-                                               L"Background color...",
-                                               L"Week numbers",
-                                               L"Sunday first",
-                                               L"Alarm enabled",
-                                               L"Alarm time:",
-                                               L"Run a file or command",
-                                               L"Loop audio continuously",
-                                               L"Browse...",
-                                               L"Language:",
-                                               L"Disable themes",
-                                               L"Save",
-                                               L"Apply",
-                                               L"Cancel",
-                                               L"Show all",
-                                               L"Hide all",
-                                               L"Stop alarm",
-                                               L"Help",
-                                               L"About",
-                                               L"Exit",
-                                               L"Analog clock",
-                                               L"Digital clock",
-                                               L"Calendar",
-                                               L"Calendar with clock",
-                                               L"Enter the offset as [-]HH:mm:ss.ff.",
-                                               L"Enter a valid time from 0:00 to 23:59.",
-                                               L"Remove the selected widgets?",
-                                               L"At least one widget must remain.",
-                                               L"Close"},
-                                              {L"Uhren und Kalender",
-                                               L"Einstellungen",
-                                               L"Hinzufügen",
-                                               L"Entfernen",
-                                               L"Duplizieren",
-                                               L"Allgemein",
-                                               L"Darstellung",
-                                               L"Wecker",
-                                               L"Name:",
-                                               L"Typ:",
-                                               L"Sichtbar",
-                                               L"Immer im Vordergrund",
-                                               L"Sekunden",
-                                               L"UTC-Zeit",
-                                               L"Zeitzone:",
-                                               L"Versatz [-]HH:mm:ss.ff:",
-                                               L"Größe:",
-                                               L"Deckkraft:",
-                                               L"Schriftgröße:",
-                                               L"Führende Null",
-                                               L"Transparenter Hintergrund",
-                                               L"Textfarbe...",
-                                               L"Hintergrundfarbe...",
-                                               L"Wochennummern",
-                                               L"Sonntag zuerst",
-                                               L"Wecker aktiv",
-                                               L"Weckzeit:",
-                                               L"Datei oder Befehl starten",
-                                               L"Audio endlos wiederholen",
-                                               L"Durchsuchen...",
-                                               L"Sprache:",
-                                               L"Designs deaktivieren",
-                                               L"Speichern",
-                                               L"Übernehmen",
-                                               L"Abbrechen",
-                                               L"Alle anzeigen",
-                                               L"Alle ausblenden",
-                                               L"Wecker stoppen",
-                                               L"Hilfe",
-                                               L"Info",
-                                               L"Beenden",
-                                               L"Analoguhr",
-                                               L"Digitaluhr",
-                                               L"Kalender",
-                                               L"Kalender mit Uhr",
-                                               L"Versatz als [-]HH:mm:ss.ff eingeben.",
-                                               L"Gültige Zeit von 0:00 bis 23:59 eingeben.",
-                                               L"Ausgewähltes Element entfernen?",
-                                               L"Mindestens ein Element muss bleiben.",
-                                               L"Schließen"},
-                                              {L"Horloges et calendriers",
-                                               L"Paramètres",
-                                               L"Ajouter",
-                                               L"Supprimer",
-                                               L"Dupliquer",
-                                               L"Général",
-                                               L"Apparence",
-                                               L"Alarme",
-                                               L"Nom :",
-                                               L"Type :",
-                                               L"Visible",
-                                               L"Toujours visible",
-                                               L"Secondes",
-                                               L"Heure UTC",
-                                               L"Fuseau horaire :",
-                                               L"Décalage [-]HH:mm:ss.ff :",
-                                               L"Taille :",
-                                               L"Opacité :",
-                                               L"Taille de police :",
-                                               L"Zéro initial",
-                                               L"Fond transparent",
-                                               L"Couleur du texte...",
-                                               L"Couleur du fond...",
-                                               L"Numéros de semaine",
-                                               L"Dimanche en premier",
-                                               L"Alarme active",
-                                               L"Heure de l’alarme :",
-                                               L"Lancer un fichier ou une commande",
-                                               L"Lire le son en boucle",
-                                               L"Parcourir...",
-                                               L"Langue :",
-                                               L"Désactiver les thèmes",
-                                               L"Enregistrer",
-                                               L"Appliquer",
-                                               L"Annuler",
-                                               L"Tout afficher",
-                                               L"Tout masquer",
-                                               L"Arrêter l’alarme",
-                                               L"Aide",
-                                               L"À propos",
-                                               L"Quitter",
-                                               L"Horloge analogique",
-                                               L"Horloge numérique",
-                                               L"Calendrier",
-                                               L"Calendrier avec horloge",
-                                               L"Entrez le décalage au format [-]HH:mm:ss.ff.",
-                                               L"Entrez une heure de 0:00 à 23:59.",
-                                               L"Supprimer le panneau sélectionné ?",
-                                               L"Au moins un panneau doit rester.",
-                                               L"Fermer"},
-                                              {L"Relojes y calendarios",
-                                               L"Configuración",
-                                               L"Añadir",
-                                               L"Quitar",
-                                               L"Duplicar",
-                                               L"General",
-                                               L"Apariencia",
-                                               L"Alarma",
-                                               L"Nombre:",
-                                               L"Tipo:",
-                                               L"Visible",
-                                               L"Siempre visible",
-                                               L"Segundos",
-                                               L"Hora UTC",
-                                               L"Zona horaria:",
-                                               L"Desfase [-]HH:mm:ss.ff:",
-                                               L"Tamaño:",
-                                               L"Opacidad:",
-                                               L"Tamaño de fuente:",
-                                               L"Cero inicial",
-                                               L"Fondo transparente",
-                                               L"Color de texto...",
-                                               L"Color de fondo...",
-                                               L"Números de semana",
-                                               L"Domingo primero",
-                                               L"Alarma activa",
-                                               L"Hora de alarma:",
-                                               L"Ejecutar archivo o comando",
-                                               L"Repetir audio continuamente",
-                                               L"Examinar...",
-                                               L"Idioma:",
-                                               L"Desactivar temas",
-                                               L"Guardar",
-                                               L"Aplicar",
-                                               L"Cancelar",
-                                               L"Mostrar todo",
-                                               L"Ocultar todo",
-                                               L"Detener alarma",
-                                               L"Ayuda",
-                                               L"Acerca de",
-                                               L"Salir",
-                                               L"Reloj analógico",
-                                               L"Reloj digital",
-                                               L"Calendario",
-                                               L"Calendario con reloj",
-                                               L"Introduzca el desfase como [-]HH:mm:ss.ff.",
-                                               L"Introduzca una hora de 0:00 a 23:59.",
-                                               L"¿Quitar el panel seleccionado?",
-                                               L"Debe quedar al menos un panel.",
-                                               L"Cerrar"},
-                                              {L"Orologi e calendari",
-                                               L"Impostazioni",
-                                               L"Aggiungi",
-                                               L"Rimuovi",
-                                               L"Duplica",
-                                               L"Generali",
-                                               L"Aspetto",
-                                               L"Sveglia",
-                                               L"Nome:",
-                                               L"Tipo:",
-                                               L"Visibile",
-                                               L"Sempre in primo piano",
-                                               L"Secondi",
-                                               L"Ora UTC",
-                                               L"Fuso orario:",
-                                               L"Offset [-]HH:mm:ss.ff:",
-                                               L"Dimensione:",
-                                               L"Opacità:",
-                                               L"Dimensione carattere:",
-                                               L"Zero iniziale",
-                                               L"Sfondo trasparente",
-                                               L"Colore testo...",
-                                               L"Colore sfondo...",
-                                               L"Numeri settimana",
-                                               L"Domenica per prima",
-                                               L"Sveglia attiva",
-                                               L"Ora sveglia:",
-                                               L"Esegui file o comando",
-                                               L"Ripeti audio continuamente",
-                                               L"Sfoglia...",
-                                               L"Lingua:",
-                                               L"Disattiva temi",
-                                               L"Salva",
-                                               L"Applica",
-                                               L"Annulla",
-                                               L"Mostra tutto",
-                                               L"Nascondi tutto",
-                                               L"Ferma sveglia",
-                                               L"Guida",
-                                               L"Informazioni",
-                                               L"Esci",
-                                               L"Orologio analogico",
-                                               L"Orologio digitale",
-                                               L"Calendario",
-                                               L"Calendario con orologio",
-                                               L"Inserire l’offset come [-]HH:mm:ss.ff.",
-                                               L"Inserire un’ora da 0:00 a 23:59.",
-                                               L"Rimuovere il pannello selezionato?",
-                                               L"Deve restare almeno un pannello.",
-                                               L"Chiudi"},
-                                              {L"Zegary i kalendarze",
-                                               L"Ustawienia",
-                                               L"Dodaj",
-                                               L"Usuń",
-                                               L"Duplikuj",
-                                               L"Ogólne",
-                                               L"Wygląd",
-                                               L"Alarm",
-                                               L"Nazwa:",
-                                               L"Typ:",
-                                               L"Widoczny",
-                                               L"Zawsze na wierzchu",
-                                               L"Sekundy",
-                                               L"Czas UTC",
-                                               L"Strefa czasowa:",
-                                               L"Przesunięcie [-]HH:mm:ss.ff:",
-                                               L"Rozmiar:",
-                                               L"Krycie:",
-                                               L"Rozmiar czcionki:",
-                                               L"Zero wiodące",
-                                               L"Przezroczyste tło",
-                                               L"Kolor tekstu...",
-                                               L"Kolor tła...",
-                                               L"Numery tygodni",
-                                               L"Niedziela pierwsza",
-                                               L"Alarm aktywny",
-                                               L"Czas alarmu:",
-                                               L"Uruchom plik lub polecenie",
-                                               L"Powtarzaj dźwięk",
-                                               L"Wybierz...",
-                                               L"Język:",
-                                               L"Wyłącz motywy",
-                                               L"Zapisz",
-                                               L"Zastosuj",
-                                               L"Anuluj",
-                                               L"Pokaż wszystkie",
-                                               L"Ukryj wszystkie",
-                                               L"Zatrzymaj alarm",
-                                               L"Pomoc",
-                                               L"O programie",
-                                               L"Zakończ",
-                                               L"Zegar analogowy",
-                                               L"Zegar cyfrowy",
-                                               L"Kalendarz",
-                                               L"Kalendarz z zegarem",
-                                               L"Wprowadź przesunięcie jako [-]HH:mm:ss.ff.",
-                                               L"Wprowadź czas od 0:00 do 23:59.",
-                                               L"Usunąć wybrany panel?",
-                                               L"Musi pozostać co najmniej jeden panel.",
-                                               L"Zamknij"},
-                                              {L"Hodiny a kalendáre",
-                                               L"Nastavenia",
-                                               L"Pridať",
-                                               L"Odobrať",
-                                               L"Duplikovať",
-                                               L"Všeobecné",
-                                               L"Vzhľad",
-                                               L"Budík",
-                                               L"Názov:",
-                                               L"Typ:",
-                                               L"Zobrazené",
-                                               L"Vždy navrchu",
-                                               L"Sekundy",
-                                               L"Čas UTC",
-                                               L"Časové pásmo:",
-                                               L"Offset [-]HH:mm:ss.ff:",
-                                               L"Veľkosť:",
-                                               L"Nepriehľadnosť:",
-                                               L"Veľkosť písma:",
-                                               L"Úvodná nula",
-                                               L"Priehľadné pozadie",
-                                               L"Farba textu...",
-                                               L"Farba pozadia...",
-                                               L"Čísla týždňov",
-                                               L"Nedeľa ako prvý deň",
-                                               L"Budík aktívny",
-                                               L"Čas budíka:",
-                                               L"Spustiť súbor alebo príkaz",
-                                               L"Zvuk prehrávať dookola",
-                                               L"Vybrať...",
-                                               L"Jazyk:",
-                                               L"Zakázať motívy",
-                                               L"Uložiť",
-                                               L"Použiť",
-                                               L"Zrušiť",
-                                               L"Zobraziť všetko",
-                                               L"Skryť všetko",
-                                               L"Zastaviť budík",
-                                               L"Pomoc",
-                                               L"O programe",
-                                               L"Koniec",
-                                               L"Ručičkové hodiny",
-                                               L"Digitálne hodiny",
-                                               L"Kalendár",
-                                               L"Kalendár s hodinami",
-                                               L"Zadajte offset vo formáte [-]HH:mm:ss.ff.",
-                                               L"Zadajte čas 0:00 až 23:59.",
-                                               L"Odobrať vybraný panel?",
-                                               L"Musí zostať aspoň jeden panel.",
-                                               L"Zavrieť"} };
-
-struct FontSelection {
-    std::wstring face = L"Segoe UI";
-    int dialogSize = 90;
-    int weight = FW_NORMAL;
-    bool italic = false;
-    bool underline = false;
-    bool strikeOut = false;
-    BYTE charSet = DEFAULT_CHARSET;
-};
-
-struct WidgetConfig {
-    int id = 0;
-    WidgetType type = WIDGET_ANALOG;
-    std::wstring name;
-    bool visible = false;
-    bool topMost = false;
-    bool showSeconds = false;
-    bool showUtc = false;
-    bool showUtcText = false;
-    AppLanguage language = LANG_CZ;
-    std::wstring timeZoneKey;
-    std::wstring monitorDevices;
-    bool blackoutOtherMonitors = true;
-    LONGLONG offsetMilliseconds = 0;
-    int x = 0;
-    int y = 0;
-    int previewX = CW_USEDEFAULT;
-    int previewY = CW_USEDEFAULT;
-    int size = 0;
-    int opacity = 0;
-    int fontSize = 0;
-    int fontDialogSize = 90;
-    int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
-    bool leadingZero = false;
-    bool transparentBackground = false;
-    bool disableThemes = false;
-    std::wstring fontFace = L"Segoe UI";
-    int fontWeight = FW_NORMAL;
-    bool fontItalic = false;
-    bool fontUnderline = false;
-    bool fontStrikeOut = false;
-    BYTE fontCharSet = DEFAULT_CHARSET;
-    FontSelection panelTopFont;
-    FontSelection panelTimeFont;
-    FontSelection panelBottomFont;
-    int padding = 8;
-    int borderStyle = DIGITAL_BORDER_SINGLE;
-    int borderWidth = 1;
-    COLORREF textColor = 0;
-    COLORREF backgroundColor = 0;
-    COLORREF alarmTextColor = RGB(220, 0, 0);
-    COLORREF alarmBackgroundColor = RGB(255, 255, 128);
-    bool weekNumbers = false;
-    bool sundayFirst = false;
-    int dateCopyFormat = DATE_YYMMDD;
-    bool alarmEnabled = false;
-    int alarmHour = 0;
-    int alarmMinute = 0;
-    bool runCommand = false;
-    bool loopAudio = false;
-    std::wstring command;
-    bool callRemoteScript = false;
-    std::wstring remoteScriptUrl;
-};
-
-struct SettingsSnapshot {
-    AppLanguage language = LANG_EN;
-    bool themesDisabled = false;
-    int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
-    std::wstring fontFace;
-    int fontDialogSize = 90;
-    int fontWeight = FW_NORMAL;
-    bool fontItalic = false;
-    bool useNtpTime = true;
-    int ntpPreset = NTP_PRESET_AUTO;
-    std::wstring ntpServers;
-    int settingsX = CW_USEDEFAULT;
-    int settingsY = CW_USEDEFAULT;
-    int helpX = CW_USEDEFAULT;
-    int helpY = CW_USEDEFAULT;
-    int aboutX = CW_USEDEFAULT;
-    int aboutY = CW_USEDEFAULT;
-    std::vector<WidgetConfig> widgets;
-};
-
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
-    ULONG generation = 0;
-};
-
-struct NtpThreadParameters {
-    std::wstring serverList;
-    ULONG generation = 0;
-};
-
-struct NtpSample {
-    LONGLONG offset100Nanoseconds = 0;
-    LONGLONG delay100Nanoseconds = 0;
-    std::wstring server;
-};
-
-struct AudioThreadParameters {
-    std::wstring path;
-    bool loop = false;
-    HANDLE stopEvent = nullptr;
-    HWND notifyWindow = nullptr;
-    UINT notifyMessage = 0;
-    int widgetId = -1;
-    ULONG generation = 0;
-};
-
-struct LocalCommandThreadParameters {
-    std::wstring command;
-};
-
-struct RemoteScriptThreadParameters {
-    std::wstring url;
-};
-
-struct Widget {
-    WidgetConfig config;
-    HWND window = nullptr;
-    HWND analogChild = nullptr;
-    WNDPROC analogProc = nullptr;
-    HWND calendarChild = nullptr;
-    WNDPROC calendarProc = nullptr;
-    HFONT calendarFont = nullptr;
-    std::vector<HWND> fullscreenWindows;
-    bool fullscreenPreview = false;
-    bool dragging = false;
-    POINT dragOffset = {};
-    bool rendered = false;
-    bool alarmActive = false;
-    bool flashPhase = false;
-    int lastAlarmDate = -1;
-    int lastAlarmMinute = -1;
-    int lastRenderKey = -1;
-    int lastPanelDateKey = -1;
-    COLORREF analogBackground = CLR_INVALID;
-    HANDLE audioStopEvent = nullptr;
-    ULONG audioGeneration = 0;
-    ULONGLONG alarmStoppedTick = 0;
-    bool identifyActive = false;
-    bool identifyPhase = false;
-    bool identifyRestoreHidden = false;
-    bool identifyRestoreNotTopmost = false;
-    ULONGLONG identifyEndTick = 0;
-    HWND copyTooltip = nullptr;
-    std::wstring copyTooltipText;
-    ULONGLONG copyTooltipEndTick = 0;
-    ULONGLONG lastAnalogClickTick = 0;
-    POINT lastAnalogClickPoint = {};
-};
-
-struct DisplayMonitor {
-    HMONITOR handle = nullptr;
-    RECT rect = {};
-    std::wstring device;
-    bool primary = false;
-};
 
 HINSTANCE hInstance = nullptr;
 HMODULE hTimeDate = nullptr;
@@ -726,7 +489,6 @@ NOTIFYICONDATAW trayIcon = {};
 HFONT hUiFont = nullptr;
 HFONT hAboutFont = nullptr;
 UINT taskbarCreatedMessage = 0;
-thread_local LCID activeCalendarLocale = 0;
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data, int characters, LPDWORD value);
@@ -885,6 +647,11 @@ const int ID_NTP_PRESET = 3063;
 const int ID_INFO_CLOSE = 3050;
 const int ID_INFO_TEXT = 3051;
 
+const DWORD PROFILE_104[14] = { 104, 5002, 5003, 51, 51, 27, 2, 0, 37, 2, 0, 50, 1, 13 };
+const DWORD PROFILE_130[14] = { 130, 5000, 5001, 63, 63, 35, 2, 0, 46, 2, 0, 64, 1, 18 };
+const DWORD PROFILE_166[14] = { 166, 5008, 5009, 81, 81, 43, 2, 0, 60, 2, 0, 80, 1, 20 };
+const DWORD PROFILE_198[14] = { 198, 5004, 5005, 97, 97, 53, 3, 0, 71, 3, 0, 95, 1, 24 };
+
 HWND hWidgetList = nullptr;
 HWND hAddType = nullptr;
 HWND hTabs = nullptr;
@@ -1005,165 +772,658 @@ static HFONT CreateCalendarUiFont(const WidgetConfig& config);
 static const wchar_t* T(TextId id) {
     return TEXT[appLanguage][id];
 }
+
 static const wchar_t* TypeName(WidgetType type) {
-    static const wchar_t* fullscreenNames[LANG_COUNT] = { L"Hodiny na monitoru", L"Monitor clock",       L"Monitoruhr",         L"Horloge sur moniteur",
-                                                         L"Reloj de monitor",   L"Orologio su monitor", L"Zegar na monitorze", L"Hodiny na monitore" };
+    static const wchar_t* fullscreenNames[LANG_COUNT] = {
+        L"Hodiny na monitoru",
+        L"Monitor clock",
+        L"Monitoruhr",
+        L"Horloge sur moniteur",
+        L"Reloj de monitor",
+        L"Orologio su monitor",
+        L"Zegar na monitorze",
+        L"Hodiny na monitore"
+    };
     if (type == WIDGET_FULLSCREEN) {
         return fullscreenNames[appLanguage];
     }
     return T(static_cast<TextId>(TXT_ANALOG + static_cast<int>(type)));
 }
-const wchar_t* LANGUAGE_NAMES[LANG_COUNT] = { L"Čeština", L"English", L"Deutsch", L"Français", L"Español", L"Italiano", L"Polski", L"Slovenčina" };
-const wchar_t* LANGUAGE_LOCALES[LANG_COUNT] = { L"cs-CZ", L"en-GB", L"de-DE", L"fr-FR", L"es-ES", L"it-IT", L"pl-PL", L"sk-SK" };
-const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT] = { L"Jazyk widgetu:",     L"Widget language:",   L"Widget-Sprache:", L"Langue du widget :",
-                                                     L"Idioma del widget:", L"Lingua del widget:", L"Język widżetu:",  L"Jazyk widgetu:" };
-const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT] = { L"&Jazyk aplikace:",     L"Application &language:", L"&Anwendungssprache:", L"&Langue de l’application :",
-                                                           L"&Idioma de la aplicación:", L"&Lingua applicazione:", L"Język &aplikacji:",   L"&Jazyk aplikácie:" };
-const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT] = { L"&Písmo aplikace:",       L"Application &font:",   L"Anwendungs&schrift:", L"&Police de l’application :",
-                                                       L"&Fuente de la aplicación:", L"&Carattere applicazione:", L"&Czcionka aplikacji:", L"&Písmo aplikácie:" };
-const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT] = { L"Výchozí systémové", L"System default", L"Systemstandard", L"Valeur système",
-                                                          L"Predeterminada del sistema", L"Predefinito di sistema", L"Domyślna systemowa", L"Predvolené systémové" };
-const wchar_t* DATE_COPY_LABELS[LANG_COUNT] = { L"&Formát kopírovaného data", L"Copied &date format",   L"Format des kopierten &Datums", L"Format de date &copié",
-                                               L"Formato de fecha &copiada", L"Formato data &copiata", L"Format &kopiowanej daty",      L"Formát &kopírovaného dátumu" };
-const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT] = { L"Formát &kopírovaného data:", L"Copied &date format:",   L"Format des kopierten &Datums:", L"Format de date &copié :",
-                                                 L"Formato de fecha &copiada:", L"Formato data &copiata:", L"Format &kopiowanej daty:",      L"Formát &kopírovaného dátumu:" };
-const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT] = { L"Krátké datum", L"Short date", L"Kurzes Datum", L"Date courte", L"Fecha corta", L"Data breve", L"Data krótka", L"Krátky dátum" };
-const wchar_t* LOCAL_LONG_LABELS[LANG_COUNT] = { L"Dlouhé datum", L"Long date", L"Langes Datum", L"Date longue", L"Fecha larga", L"Data estesa", L"Data długa", L"Dlhý dátum" };
-const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT] = { L"&Zarovnat widgety do mřížky",    L"&Arrange widgets in a grid",     L"Widgets im &Raster anordnen",
-                                                    L"&Aligner les widgets en grille", L"&Alinear widgets en cuadrícula", L"&Disponi i widget in griglia",
-                                                    L"&Ułóż widżety w siatce",         L"&Zarovnať widgety do mriežky" };
-const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT] = { L"&Zobrazit", L"&Show", L"&Anzeigen", L"&Afficher", L"&Mostrar", L"&Mostra", L"&Pokaż", L"&Zobraziť" };
-const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT] = { L"&Skrýt", L"&Hide", L"A&usblenden", L"&Masquer", L"&Ocultar", L"&Nascondi", L"&Ukryj", L"&Skryť" };
-const wchar_t* UTC_TEXT_LABELS[LANG_COUNT] = { L"Zobrazit text &UTC", L"Show &UTC text",    L"&UTC-Text anzeigen", L"Afficher le texte &UTC",
-                                              L"Mostrar texto &UTC", L"Mostra testo &UTC", L"Pokaż tekst &UTC",   L"Zobraziť text &UTC" };
-const wchar_t* MONITOR_LABELS[LANG_COUNT] = { L"&Monitory:", L"&Monitors:", L"&Monitore:", L"&Moniteurs :", L"&Monitores:", L"&Monitor:", L"&Monitory:", L"&Monitory:" };
-const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT] = { L"Zatemnit &ostatní monitory",      L"Black out &other monitors",  L"&Andere Monitore abdunkeln",
-                                                      L"Assombrir les &autres moniteurs", L"Oscurecer &otros monitores", L"Oscura gli &altri monitor",
-                                                      L"Wygasz &pozostałe monitory",      L"Stmaviť &ostatné monitory" };
-const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT] = { L"Vybrat &písmo...",  L"Choose &font...",      L"&Schriftart wählen...", L"Choisir la &police...",
-                                                 L"Elegir &fuente...", L"Scegli &carattere...", L"Wybierz &czcionkę...",  L"Vybrať &písmo..." };
-const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT] = { L"Písmo &kalendáře...", L"&Calendar font...", L"&Kalenderschrift...", L"Police du &calendrier...",
-                                                   L"Fuente del &calendario...", L"Carattere del &calendario...", L"Czcionka &kalendarza...", L"Písmo &kalendára..." };
-const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT] = { L"Písmo &horního řádku...", L"&Top row font...", L"Schrift der &oberen Zeile...", L"Police de la ligne &supérieure...",
-                                                    L"Fuente de la línea &superior...", L"Carattere riga &superiore...", L"Czcionka &górnego wiersza...", L"Písmo &horného riadka..." };
-const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT] = { L"Písmo č&asu...", L"&Time font...", L"&Zeitschrift...", L"Police de l’&heure...", L"Fuente de la &hora...",
-                                                     L"Carattere dell’&ora...", L"Czcionka &czasu...", L"Písmo č&asu..." };
-const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT] = { L"Písmo &spodního řádku...", L"&Bottom row font...", L"Schrift der &unteren Zeile...", L"Police de la ligne &inférieure...",
-                                                       L"Fuente de la línea &inferior...", L"Carattere riga &inferiore...", L"Czcionka &dolnego wiersza...", L"Písmo &spodného riadka..." };
-const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT] = { L"Vý&chozí", L"&Default", L"&Standard", L"Par &défaut", L"&Predeterminada", L"&Predefinito", L"&Domyślna", L"&Predvolené" };
-const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT] = { L"Barva &textu budíku...",        L"Alarm &text color...",     L"&Wecker-Textfarbe...",    L"Couleur du &texte d’alarme...",
-                                                      L"Color del &texto de alarma...", L"Colore &testo sveglia...", L"Kolor &tekstu alarmu...", L"Farba &textu budíka..." };
-const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT] = { L"Barva &pozadí budíku...", L"Alarm &background...", L"Wecker-&Hintergrund...", L"&Fond de l’alarme...",
-                                                            L"&Fondo de alarma...",     L"&Sfondo sveglia...",   L"&Tło alarmu...",         L"Farba &pozadia budíka..." };
-const wchar_t* PADDING_LABELS[LANG_COUNT] = { L"&Odsazení:", L"&Padding:", L"&Innenabstand:", L"&Marge interne :", L"&Relleno:", L"&Margine:", L"&Odstęp:", L"&Odsadenie:" };
-const wchar_t* BORDER_LABELS[LANG_COUNT] = { L"&Styl rámečku:",    L"&Border style:", L"&Rahmenstil:", L"Style de &bordure :",
-                                            L"Estilo de &borde:", L"Stile &bordo:",  L"Styl &ramki:", L"Štýl &rámčeka:" };
-const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = { L"Šíř&ka rám.:", L"Border &width:", L"Rahmen&breite:", L"É&paisseur :",
-                                                  L"&Ancho:",      L"&Spessore:",     L"&Szerokość:",    L"Šír&ka rám.:" };
-const wchar_t* TIME_TAB_LABELS[LANG_COUNT] = { L"Čas", L"Time", L"Zeit", L"Heure", L"Hora", L"Ora", L"Czas", L"Čas" };
-const wchar_t* TIME_SOURCE_LABELS[LANG_COUNT] = { L"&Zdroj času:",     L"Time &source:", L"Zeit&quelle:",   L"&Source de l’heure :",
-                                                 L"&Origen de hora:", L"&Origine ora:", L"Źródło &czasu:", L"&Zdroj času:" };
-const wchar_t* SYSTEM_TIME_LABELS[LANG_COUNT] = { L"Systémový čas Windows",    L"Windows system time",    L"Windows-Systemzeit",     L"Heure système Windows",
-                                                 L"Hora del sistema Windows", L"Ora di sistema Windows", L"Czas systemowy Windows", L"Systémový čas Windows" };
-const wchar_t* NTP_TIME_LABELS[LANG_COUNT] = { L"Čas ze serverů NTP",     L"Time from NTP servers", L"Zeit von NTP-Servern", L"Heure des serveurs NTP",
-                                              L"Hora de servidores NTP", L"Ora dai server NTP",    L"Czas z serwerów NTP",  L"Čas zo serverov NTP" };
-const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT] = { L"&Servery NTP (oddělené středníkem):",           L"&NTP servers (semicolon-separated):",
-                                                 L"&NTP-Server (durch Semikolon getrennt):",       L"Serveurs &NTP (séparés par des points-virgules) :",
-                                                 L"Servidores &NTP (separados por punto y coma):", L"Server &NTP (separati da punto e virgola):",
-                                                 L"Serwery &NTP (oddzielone średnikami):",         L"Servery &NTP (oddelené bodkočiarkou):" };
-const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT] = { L"Výchozí &sada:",       L"Default &set:",     L"Standard&gruppe:", L"&Jeu par défaut :", L"Conjunto &predeterminado:",
-                                                      L"Gruppo &predefinito:", L"&Zestaw domyślny:", L"Predvolená &sada:" };
+
+const wchar_t* LANGUAGE_NAMES[LANG_COUNT] = {
+    L"Čeština",
+    L"English",
+    L"Deutsch",
+    L"Français",
+    L"Español",
+    L"Italiano",
+    L"Polski",
+    L"Slovenčina"
+};
+
+const wchar_t* LANGUAGE_LOCALES[LANG_COUNT] = {
+    L"cs-CZ",
+    L"en-GB",
+    L"de-DE",
+    L"fr-FR",
+    L"es-ES",
+    L"it-IT",
+    L"pl-PL",
+    L"sk-SK"
+};
+
+const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT] = {
+    L"Jazyk widgetu:",
+    L"Widget language:",
+    L"Widget-Sprache:",
+    L"Langue du widget :",
+    L"Idioma del widget:",
+    L"Lingua del widget:",
+    L"Język widżetu:",
+    L"Jazyk widgetu:"
+};
+
+const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT] = {
+    L"&Jazyk aplikace:",
+    L"Application &language:",
+    L"&Anwendungssprache:",
+    L"&Langue de l’application :",
+    L"&Idioma de la aplicación:",
+    L"&Lingua applicazione:",
+    L"Język &aplikacji:",
+    L"&Jazyk aplikácie:"
+};
+
+const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT] = {
+    L"&Písmo aplikace:",
+    L"Application &font:",
+    L"Anwendungs&schrift:",
+    L"&Police de l’application :",
+    L"&Fuente de la aplicación:",
+    L"&Carattere applicazione:",
+    L"&Czcionka aplikacji:",
+    L"&Písmo aplikácie:"
+};
+
+const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT] = {
+    L"Výchozí systémové",
+    L"System default",
+    L"Systemstandard",
+    L"Valeur système",
+    L"Predeterminada del sistema",
+    L"Predefinito di sistema",
+    L"Domyślna systemowa",
+    L"Predvolené systémové"
+};
+
+const wchar_t* DATE_COPY_LABELS[LANG_COUNT] = {
+    L"&Formát kopírovaného data",
+    L"Copied &date format",
+    L"Format des kopierten &Datums",
+    L"Format de date &copié",
+    L"Formato de fecha &copiada",
+    L"Formato data &copiata",
+    L"Format &kopiowanej daty",
+    L"Formát &kopírovaného dátumu"
+};
+
+const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT] = {
+    L"Formát &kopírovaného data:",
+    L"Copied &date format:",
+    L"Format des kopierten &Datums:",
+    L"Format de date &copié :",
+    L"Formato de fecha &copiada:",
+    L"Formato data &copiata:",
+    L"Format &kopiowanej daty:",
+    L"Formát &kopírovaného dátumu:"
+};
+
+const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT] = {
+    L"Krátké datum",
+    L"Short date",
+    L"Kurzes Datum",
+    L"Date courte",
+    L"Fecha corta",
+    L"Data breve",
+    L"Data krótka",
+    L"Krátky dátum"
+};
+
+const wchar_t* LOCAL_LONG_LABELS[LANG_COUNT] = {
+    L"Dlouhé datum",
+    L"Long date",
+    L"Langes Datum",
+    L"Date longue",
+    L"Fecha larga",
+    L"Data estesa",
+    L"Data długa",
+    L"Dlhý dátum"
+};
+
+const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT] = {
+    L"&Zarovnat widgety do mřížky",
+    L"&Arrange widgets in a grid",
+    L"Widgets im &Raster anordnen",
+    L"&Aligner les widgets en grille",
+    L"&Alinear widgets en cuadrícula",
+    L"&Disponi i widget in griglia",
+    L"&Ułóż widżety w siatce",
+    L"&Zarovnať widgety do mriežky"
+};
+
+const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT] = {
+    L"&Zobrazit",
+    L"&Show",
+    L"&Anzeigen",
+    L"&Afficher",
+    L"&Mostrar",
+    L"&Mostra",
+    L"&Pokaż",
+    L"&Zobraziť"
+};
+
+const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT] = {
+    L"&Skrýt",
+    L"&Hide",
+    L"A&usblenden",
+    L"&Masquer",
+    L"&Ocultar",
+    L"&Nascondi",
+    L"&Ukryj",
+    L"&Skryť"
+};
+
+const wchar_t* UTC_TEXT_LABELS[LANG_COUNT] = {
+    L"Zobrazit text &UTC",
+    L"Show &UTC text",
+    L"&UTC-Text anzeigen",
+    L"Afficher le texte &UTC",
+    L"Mostrar texto &UTC",
+    L"Mostra testo &UTC",
+    L"Pokaż tekst &UTC",
+    L"Zobraziť text &UTC"
+};
+
+const wchar_t* MONITOR_LABELS[LANG_COUNT] = {
+    L"&Monitory:",
+    L"&Monitors:",
+    L"&Monitore:",
+    L"&Moniteurs :",
+    L"&Monitores:",
+    L"&Monitor:",
+    L"&Monitory:",
+    L"&Monitory:"
+};
+
+const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT] = {
+    L"Zatemnit &ostatní monitory",
+    L"Black out &other monitors",
+    L"&Andere Monitore abdunkeln",
+    L"Assombrir les &autres moniteurs",
+    L"Oscurecer &otros monitores",
+    L"Oscura gli &altri monitor",
+    L"Wygasz &pozostałe monitory",
+    L"Stmaviť &ostatné monitory"
+};
+
+const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT] = {
+    L"Vybrat &písmo...",
+    L"Choose &font...",
+    L"&Schriftart wählen...",
+    L"Choisir la &police...",
+    L"Elegir &fuente...",
+    L"Scegli &carattere...",
+    L"Wybierz &czcionkę...",
+    L"Vybrať &písmo..."
+};
+
+const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT] = {
+    L"Písmo &kalendáře...",
+    L"&Calendar font...",
+    L"&Kalenderschrift...",
+    L"Police du &calendrier...",
+    L"Fuente del &calendario...",
+    L"Carattere del &calendario...",
+    L"Czcionka &kalendarza...",
+    L"Písmo &kalendára..."
+};
+
+const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT] = {
+    L"Písmo &horního řádku...",
+    L"&Top row font...",
+    L"Schrift der &oberen Zeile...",
+    L"Police de la ligne &supérieure...",
+    L"Fuente de la línea &superior...",
+    L"Carattere riga &superiore...",
+    L"Czcionka &górnego wiersza...",
+    L"Písmo &horného riadka..."
+};
+
+const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT] = {
+    L"Písmo č&asu...",
+    L"&Time font...",
+    L"&Zeitschrift...",
+    L"Police de l’&heure...",
+    L"Fuente de la &hora...",
+    L"Carattere dell’&ora...",
+    L"Czcionka &czasu...",
+    L"Písmo č&asu..."
+};
+
+const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT] = {
+    L"Písmo &spodního řádku...",
+    L"&Bottom row font...",
+    L"Schrift der &unteren Zeile...",
+    L"Police de la ligne &inférieure...",
+    L"Fuente de la línea &inferior...",
+    L"Carattere riga &inferiore...",
+    L"Czcionka &dolnego wiersza...",
+    L"Písmo &spodného riadka..."
+};
+
+const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT] = {
+    L"Vý&chozí",
+    L"&Default",
+    L"&Standard",
+    L"Par &défaut",
+    L"&Predeterminada",
+    L"&Predefinito",
+    L"&Domyślna",
+    L"&Predvolené"
+};
+
+const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT] = {
+    L"Barva &textu budíku...",
+    L"Alarm &text color...",
+    L"&Wecker-Textfarbe...",
+    L"Couleur du &texte d’alarme...",
+    L"Color del &texto de alarma...",
+    L"Colore &testo sveglia...",
+    L"Kolor &tekstu alarmu...",
+    L"Farba &textu budíka..."
+};
+
+const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT] = {
+    L"Barva &pozadí budíku...",
+    L"Alarm &background...",
+    L"Wecker-&Hintergrund...",
+    L"&Fond de l’alarme...",
+    L"&Fondo de alarma...",
+    L"&Sfondo sveglia...",
+    L"&Tło alarmu...",
+    L"Farba &pozadia budíka..."
+};
+
+const wchar_t* PADDING_LABELS[LANG_COUNT] = {
+    L"&Odsazení:",
+    L"&Padding:",
+    L"&Innenabstand:",
+    L"&Marge interne :",
+    L"&Relleno:",
+    L"&Margine:",
+    L"&Odstęp:",
+    L"&Odsadenie:"
+};
+
+const wchar_t* BORDER_LABELS[LANG_COUNT] = {
+    L"&Styl rámečku:",
+    L"&Border style:",
+    L"&Rahmenstil:",
+    L"Style de &bordure :",
+    L"Estilo de &borde:",
+    L"Stile &bordo:",
+    L"Styl &ramki:",
+    L"Štýl &rámčeka:"
+};
+
+const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = {
+    L"Šíř&ka rám.:",
+    L"Border &width:",
+    L"Rahmen&breite:",
+    L"É&paisseur :",
+    L"&Ancho:",
+    L"&Spessore:",
+    L"&Szerokość:",
+    L"Šír&ka rám.:"
+};
+
+const wchar_t* TIME_TAB_LABELS[LANG_COUNT] = {
+    L"Čas",
+    L"Time",
+    L"Zeit",
+    L"Heure",
+    L"Hora",
+    L"Ora",
+    L"Czas",
+    L"Čas"
+};
+
+const wchar_t* TIME_SOURCE_LABELS[LANG_COUNT] = {
+    L"&Zdroj času:",
+    L"Time &source:",
+    L"Zeit&quelle:",
+    L"&Source de l’heure :",
+    L"&Origen de hora:",
+    L"&Origine ora:",
+    L"Źródło &czasu:",
+    L"&Zdroj času:"
+};
+
+const wchar_t* SYSTEM_TIME_LABELS[LANG_COUNT] = {
+    L"Systémový čas Windows",
+    L"Windows system time",
+    L"Windows-Systemzeit",
+    L"Heure système Windows",
+    L"Hora del sistema Windows",
+    L"Ora di sistema Windows",
+    L"Czas systemowy Windows",
+    L"Systémový čas Windows"
+};
+
+const wchar_t* NTP_TIME_LABELS[LANG_COUNT] = {
+    L"Čas ze serverů NTP",
+    L"Time from NTP servers",
+    L"Zeit von NTP-Servern",
+    L"Heure des serveurs NTP",
+    L"Hora de servidores NTP",
+    L"Ora dai server NTP",
+    L"Czas z serwerów NTP",
+    L"Čas zo serverov NTP"
+};
+
+const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT] = {
+    L"&Servery NTP (oddělené středníkem):",
+    L"&NTP servers (semicolon-separated):",
+    L"&NTP-Server (durch Semikolon getrennt):",
+    L"Serveurs &NTP (séparés par des points-virgules) :",
+    L"Servidores &NTP (separados por punto y coma):",
+    L"Server &NTP (separati da punto e virgola):",
+    L"Serwery &NTP (oddzielone średnikami):",
+    L"Servery &NTP (oddelené bodkočiarkou):"
+};
+
+const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT] = {
+    L"Výchozí &sada:",
+    L"Default &set:",
+    L"Standard&gruppe:",
+    L"&Jeu par défaut :",
+    L"Conjunto &predeterminado:",
+    L"Gruppo &predefinito:",
+    L"&Zestaw domyślny:",
+    L"Predvolená &sada:"
+};
+
 const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
-    {L"Automaticky podle oblasti", L"Česko a Slovensko – CESNET/NIC.CZ", L"PTB – Německo a Evropa", L"Celý svět – Ubuntu / NTP Pool", L"Vlastní"},
-    {L"Automatic by region", L"Czechia and Slovakia – CESNET/NIC.CZ", L"PTB – Germany and Europe", L"Worldwide – Ubuntu / NTP Pool", L"Custom"},
-    {L"Automatisch nach Region", L"Tschechien und Slowakei – CESNET/NIC.CZ", L"PTB – Deutschland und Europa", L"Weltweit – Ubuntu / NTP Pool", L"Benutzerdefiniert"},
-    {L"Automatique selon la région", L"Tchéquie et Slovaquie – CESNET/NIC.CZ", L"PTB – Allemagne et Europe", L"Monde entier – Ubuntu / NTP Pool", L"Personnalisé"},
-    {L"Automático según la región", L"Chequia y Eslovaquia – CESNET/NIC.CZ", L"PTB – Alemania y Europa", L"Todo el mundo – Ubuntu / NTP Pool", L"Personalizado"},
-    {L"Automatico in base all’area", L"Cechia e Slovacchia – CESNET/NIC.CZ", L"PTB – Germania ed Europa", L"Tutto il mondo – Ubuntu / NTP Pool", L"Personalizzato"},
-    {L"Automatycznie według regionu", L"Czechy i Słowacja – CESNET/NIC.CZ", L"PTB – Niemcy i Europa", L"Cały świat – Ubuntu / NTP Pool", L"Własny"},
-    {L"Automaticky podľa oblasti", L"Česko a Slovensko – CESNET/NIC.CZ", L"PTB – Nemecko a Európa", L"Celý svet – Ubuntu / NTP Pool", L"Vlastné"} };
-const wchar_t* NTP_SYNC_LABELS[LANG_COUNT] = { L"&Synchronizovat nyní", L"&Synchronize now", L"Jetzt &synchronisieren", L"&Synchroniser maintenant",
-                                              L"&Sincronizar ahora",   L"&Sincronizza ora", L"&Synchronizuj teraz",    L"&Synchronizovať teraz" };
-const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT] = { L"Používá se systémový čas; Windows se nemění.",
-                                                L"System time is used; Windows is not changed.",
-                                                L"Die Systemzeit wird verwendet; Windows wird nicht geändert.",
-                                                L"L’heure système est utilisée ; Windows n’est pas modifié.",
-                                                L"Se usa la hora del sistema; Windows no se modifica.",
-                                                L"Viene usata l’ora di sistema; Windows non viene modificato.",
-                                                L"Używany jest czas systemowy; system Windows nie jest zmieniany.",
-                                                L"Používa sa systémový čas; Windows sa nemení." };
-const wchar_t* NTP_STATUS_WAITING[LANG_COUNT] = { L"Čeká se na synchronizaci NTP…",      L"Waiting for NTP synchronization…", L"NTP-Synchronisierung wird erwartet…",
-                                                 L"Synchronisation NTP en attente…",    L"Esperando la sincronización NTP…", L"In attesa della sincronizzazione NTP…",
-                                                 L"Oczekiwanie na synchronizację NTP…", L"Čaká sa na synchronizáciu NTP…" };
-const wchar_t* NTP_STATUS_FAILED[LANG_COUNT] = { L"Servery NTP nejsou dostupné; dočasně se používá systémový čas.",
-                                                L"NTP servers are unavailable; system time is used temporarily.",
-                                                L"NTP-Server sind nicht erreichbar; vorübergehend wird die Systemzeit "
-                                                L"verwendet.",
-                                                L"Les serveurs NTP sont indisponibles ; l’heure système est utilisée "
-                                                L"temporairement.",
-                                                L"Los servidores NTP no están disponibles; se usa temporalmente la hora "
-                                                L"del sistema.",
-                                                L"I server NTP non sono disponibili; viene usata temporaneamente l’ora di "
-                                                L"sistema.",
-                                                L"Serwery NTP są niedostępne; tymczasowo używany jest czas systemowy.",
-                                                L"Servery NTP nie sú dostupné; dočasne sa používa systémový čas." };
-const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT] = { L"Servery NTP nejsou dostupné; používá se poslední korekce v paměti:",
-                                                  L"NTP servers are unavailable; the last in-memory correction is used:",
-                                                  L"NTP-Server sind nicht erreichbar; die letzte Korrektur im Speicher wird "
-                                                  L"verwendet:",
-                                                  L"Les serveurs NTP sont indisponibles ; la dernière correction en mémoire "
-                                                  L"est utilisée :",
-                                                  L"Los servidores NTP no están disponibles; se usa la última corrección "
-                                                  L"guardada en memoria:",
-                                                  L"I server NTP non sono disponibili; viene usata l’ultima correzione in "
-                                                  L"memoria:",
-                                                  L"Serwery NTP są niedostępne; używana jest ostatnia korekta przechowywana "
-                                                  L"w pamięci:",
-                                                  L"Servery NTP nie sú dostupné; používa sa posledná korekcia v pamäti:" };
+    {
+        L"Automaticky podle oblasti",
+        L"Česko a Slovensko – CESNET/NIC.CZ",
+        L"PTB – Německo a Evropa",
+        L"Celý svět – Ubuntu / NTP Pool",
+        L"Vlastní"},
+    {
+        L"Automatic by region",
+        L"Czechia and Slovakia – CESNET/NIC.CZ",
+        L"PTB – Germany and Europe",
+        L"Worldwide – Ubuntu / NTP Pool",
+        L"Custom"
+    },
+    {
+        L"Automatisch nach Region",
+        L"Tschechien und Slowakei – CESNET/NIC.CZ",
+        L"PTB – Deutschland und Europa",
+        L"Weltweit – Ubuntu / NTP Pool",
+        L"Benutzerdefiniert"
+    },
+    {
+        L"Automatique selon la région",
+        L"Tchéquie et Slovaquie – CESNET/NIC.CZ",
+        L"PTB – Allemagne et Europe",
+        L"Monde entier – Ubuntu / NTP Pool",
+        L"Personnalisé"
+    },
+    {
+        L"Automático según la región",
+        L"Chequia y Eslovaquia – CESNET/NIC.CZ",
+        L"PTB – Alemania y Europa",
+        L"Todo el mundo – Ubuntu / NTP Pool",
+        L"Personalizado"
+    },
+    {
+        L"Automatico in base all’area",
+        L"Cechia e Slovacchia – CESNET/NIC.CZ",
+        L"PTB – Germania ed Europa",
+        L"Tutto il mondo – Ubuntu / NTP Pool",
+        L"Personalizzato"
+    },
+    {
+        L"Automatycznie według regionu",
+        L"Czechy i Słowacja – CESNET/NIC.CZ",
+        L"PTB – Niemcy i Europa",
+        L"Cały świat – Ubuntu / NTP Pool",
+        L"Własny"
+    },
+    {
+        L"Automaticky podľa oblasti",
+        L"Česko a Slovensko – CESNET/NIC.CZ",
+        L"PTB – Nemecko a Európa",
+        L"Celý svet – Ubuntu / NTP Pool",
+        L"Vlastné"
+    }
+};
+
+const wchar_t* NTP_SYNC_LABELS[LANG_COUNT] = {
+    L"&Synchronizovat nyní",
+    L"&Synchronize now",
+    L"Jetzt &synchronisieren",
+    L"&Synchroniser maintenant",
+    L"&Sincronizar ahora",
+    L"&Sincronizza ora",
+    L"&Synchronizuj teraz",
+    L"&Synchronizovať teraz"
+};
+
+const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT] = {
+    L"Používá se systémový čas; Windows se nemění.",
+    L"System time is used; Windows is not changed.",
+    L"Die Systemzeit wird verwendet; Windows wird nicht geändert.",
+    L"L’heure système est utilisée ; Windows n’est pas modifié.",
+    L"Se usa la hora del sistema; Windows no se modifica.",
+    L"Viene usata l’ora di sistema; Windows non viene modificato.",
+    L"Używany jest czas systemowy; system Windows nie jest zmieniany.",
+    L"Používa sa systémový čas; Windows sa nemení."
+};
+
+const wchar_t* NTP_STATUS_WAITING[LANG_COUNT] = {
+    L"Čeká se na synchronizaci NTP…",
+    L"Waiting for NTP synchronization…",
+    L"NTP-Synchronisierung wird erwartet…",
+    L"Synchronisation NTP en attente…",
+    L"Esperando la sincronización NTP…",
+    L"In attesa della sincronizzazione NTP…",
+    L"Oczekiwanie na synchronizację NTP…",
+    L"Čaká sa na synchronizáciu NTP…"
+};
+
+const wchar_t* NTP_STATUS_FAILED[LANG_COUNT] = {
+    L"Servery NTP nejsou dostupné; dočasně se používá systémový čas.",
+    L"NTP servers are unavailable; system time is used temporarily.",
+    L"NTP-Server sind nicht erreichbar; vorübergehend wird die Systemzeit verwendet.",
+    L"Les serveurs NTP sont indisponibles ; l’heure système est utilisée temporairement.",
+    L"Los servidores NTP no están disponibles; se usa temporalmente la hora del sistema.",
+    L"I server NTP non sono disponibili; viene usata temporaneamente l’ora di sistema.",
+    L"Serwery NTP są niedostępne; tymczasowo używany jest czas systemowy.",
+    L"Servery NTP nie sú dostupné; dočasne sa používa systémový čas."
+};
+
+const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT] = {
+    L"Servery NTP nejsou dostupné; používá se poslední korekce v paměti:",
+    L"NTP servers are unavailable; the last in-memory correction is used:",
+    L"NTP-Server sind nicht erreichbar; die letzte Korrektur im Speicher wird verwendet:",
+    L"Les serveurs NTP sont indisponibles ; la dernière correction en mémoire est utilisée :",
+    L"Los servidores NTP no están disponibles; se usa la última corrección guardada en memoria:",
+    L"I server NTP non sono disponibili; viene usata l’ultima correzione in memoria:",
+    L"Serwery NTP są niedostępne; używana jest ostatnia korekta przechowywana w pamięci:",
+    L"Servery NTP nie sú dostupné; používa sa posledná korekcia v pamäti:"
+};
+
 const wchar_t* NTP_STATUS_SYNCHRONIZED[LANG_COUNT] = {
-    L"Synchronizováno se serverem", L"Synchronized with",  L"Synchronisiert mit",         L"Synchronisé avec", L"Sincronizado con",
-    L"Sincronizzato con",           L"Zsynchronizowano z", L"Synchronizované so serverom" };
-const wchar_t* ANTIALIASING_LABELS[LANG_COUNT] = { L"&Vyhlazování písma:", L"Font &antialiasing:", L"Schrift&glättung:", L"&Lissage des polices :",
-                                                  L"&Suavizado de fuente:", L"&Antialiasing carattere:", L"&Wygładzanie czcionki:", L"&Vyhladzovanie písma:" };
-const wchar_t* ANTIALIASING_NAMES[FONT_ANTIALIAS_COUNT] = { L"GDI", L"ClearType" };
-const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT] = { L"&Výchozí vzhled",         L"&Default appearance",  L"&Standarddarstellung", L"Apparence par &défaut",
-                                                        L"Aspecto &predeterminado", L"Aspetto &predefinito", L"Wygląd &domyślny",     L"&Predvolený vzhľad" };
-const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT] = { L"V&yzkoušet", L"&Test", L"&Testen", L"&Tester", L"&Probar", L"&Prova", L"&Testuj", L"V&yskúšať" };
-const wchar_t* STOP_TEST_LABELS[LANG_COUNT] = { L"&Zastavit test",  L"S&top test",   L"Test &stoppen",   L"&Arrêter le test",
-                                               L"&Detener prueba", L"&Ferma prova", L"&Zatrzymaj test", L"&Zastaviť test" };
-const wchar_t* REMOTE_SCRIPT_LABELS[LANG_COUNT] = { L"Zavolat &vzdálený skript",   L"Call a &remote script", L"&Remote-Skript aufrufen", L"Appeler un script &distant",
-                                                   L"Llamar a un script &remoto", L"Chiama script &remoto", L"Wywołaj skrypt &zdalny",  L"Zavolať &vzdialený skript" };
-const wchar_t* REMOTE_SCRIPT_URL_LABELS[LANG_COUNT] = { L"Adresa URL:", L"URL:", L"URL:", L"URL :", L"URL:", L"URL:", L"Adres URL:", L"Adresa URL:" };
-const wchar_t* INVALID_REMOTE_SCRIPT_URL[LANG_COUNT] = { L"Zadejte platnou adresu vzdáleného skriptu HTTP nebo HTTPS.",
-                                                        L"Enter a valid HTTP or HTTPS remote script URL.",
-                                                        L"Geben Sie eine gültige HTTP- oder HTTPS-Adresse des Remote-Skripts ein.",
-                                                        L"Entrez une adresse HTTP ou HTTPS valide pour le script distant.",
-                                                        L"Introduzca una dirección HTTP o HTTPS válida para el script remoto.",
-                                                        L"Immettere un indirizzo HTTP o HTTPS valido per lo script remoto.",
-                                                        L"Wprowadź prawidłowy adres HTTP lub HTTPS zdalnego skryptu.",
-                                                        L"Zadajte platnú adresu HTTP alebo HTTPS vzdialeného skriptu." };
-const wchar_t* IMPORT_SETTINGS_LABELS[LANG_COUNT] = { L"Importovat &XML...", L"Import &XML...",  L"&XML importieren...", L"Importer &XML...",
-                                                     L"Importar &XML...",   L"Importa &XML...", L"Importuj &XML...",    L"Importovať &XML..." };
-const wchar_t* EXPORT_SETTINGS_LABELS[LANG_COUNT] = { L"Exportovat X&ML...", L"Export X&ML...",  L"XML &exportieren...", L"Exporter X&ML...",
-                                                     L"Exportar X&ML...",   L"Esporta X&ML...", L"Eksportuj X&ML...",   L"Exportovať X&ML..." };
-const wchar_t* INVALID_SETTINGS_FILE[LANG_COUNT] = { L"Soubor neobsahuje platné nastavení CalClock.",
-                                                    L"The file does not contain valid CalClock settings.",
-                                                    L"Die Datei enthält keine gültigen CalClock-Einstellungen.",
-                                                    L"Le fichier ne contient pas de paramètres CalClock valides.",
-                                                    L"El archivo no contiene una configuración válida de CalClock.",
-                                                    L"Il file non contiene impostazioni CalClock valide.",
-                                                    L"Plik nie zawiera prawidłowych ustawień CalClock.",
-                                                    L"Súbor neobsahuje platné nastavenia CalClock." };
+    L"Synchronizováno se serverem",
+    L"Synchronized with",
+    L"Synchronisiert mit",
+    L"Synchronisé avec",
+    L"Sincronizado con",
+    L"Sincronizzato con",
+    L"Zsynchronizowano z",
+    L"Synchronizované so serverom"
+};
+
+const wchar_t* ANTIALIASING_LABELS[LANG_COUNT] = {
+    L"&Vyhlazování písma:",
+    L"Font &antialiasing:",
+    L"Schrift&glättung:",
+    L"&Lissage des polices :",
+    L"&Suavizado de fuente:",
+    L"&Antialiasing carattere:",
+    L"&Wygładzanie czcionki:",
+    L"&Vyhladzovanie písma:"
+};
+
+const wchar_t* ANTIALIASING_NAMES[FONT_ANTIALIAS_COUNT] = {
+    L"GDI",
+    L"ClearType"
+};
+
+const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT] = {
+    L"&Výchozí vzhled",
+    L"&Default appearance",
+    L"&Standarddarstellung",
+    L"Apparence par &défaut",
+    L"Aspecto &predeterminado",
+    L"Aspetto &predefinito",
+    L"Wygląd &domyślny",
+    L"&Predvolený vzhľad"
+};
+
+const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT] = {
+    L"V&yzkoušet",
+    L"&Test",
+    L"&Testen",
+    L"&Tester",
+    L"&Probar",
+    L"&Prova",
+    L"&Testuj",
+    L"V&yskúšať"
+};
+
+const wchar_t* STOP_TEST_LABELS[LANG_COUNT] = {
+    L"&Zastavit test",
+    L"S&top test",
+    L"Test &stoppen",
+    L"&Arrêter le test",
+    L"&Detener prueba",
+    L"&Ferma prova",
+    L"&Zatrzymaj test",
+    L"&Zastaviť test"
+};
+
+const wchar_t* REMOTE_SCRIPT_LABELS[LANG_COUNT] = {
+    L"Zavolat &vzdálený skript",
+    L"Call a &remote script",
+    L"&Remote-Skript aufrufen",
+    L"Appeler un script &distant",
+    L"Llamar a un script &remoto",
+    L"Chiama script &remoto",
+    L"Wywołaj skrypt &zdalny",
+    L"Zavolať &vzdialený skript"
+};
+
+const wchar_t* REMOTE_SCRIPT_URL_LABELS[LANG_COUNT] = {
+    L"Adresa URL:",
+    L"URL:",
+    L"URL:",
+    L"URL :",
+    L"URL:",
+    L"URL:",
+    L"Adres URL:",
+    L"Adresa URL:"
+};
+
+const wchar_t* INVALID_REMOTE_SCRIPT_URL[LANG_COUNT] = {
+    L"Zadejte platnou adresu vzdáleného skriptu HTTP nebo HTTPS.",
+    L"Enter a valid HTTP or HTTPS remote script URL.",
+    L"Geben Sie eine gültige HTTP- oder HTTPS-Adresse des Remote-Skripts ein.",
+    L"Entrez une adresse HTTP ou HTTPS valide pour le script distant.",
+    L"Introduzca una dirección HTTP o HTTPS válida para el script remoto.",
+    L"Immettere un indirizzo HTTP o HTTPS valido per lo script remoto.",
+    L"Wprowadź prawidłowy adres HTTP lub HTTPS zdalnego skryptu.",
+    L"Zadajte platnú adresu HTTP alebo HTTPS vzdialeného skriptu."
+};
+
+const wchar_t* IMPORT_SETTINGS_LABELS[LANG_COUNT] = {
+    L"Importovat &XML...",
+    L"Import &XML...",
+    L"&XML importieren...",
+    L"Importer &XML...",
+    L"Importar &XML...",
+    L"Importa &XML...",
+    L"Importuj &XML...",
+    L"Importovať &XML..."
+};
+
+const wchar_t* EXPORT_SETTINGS_LABELS[LANG_COUNT] = {
+    L"Exportovat X&ML...",
+    L"Export X&ML...",
+    L"XML &exportieren...",
+    L"Exporter X&ML...",
+    L"Exportar X&ML...",
+    L"Esporta X&ML...",
+    L"Eksportuj X&ML...",
+    L"Exportovať X&ML..."
+};
+
+const wchar_t* INVALID_SETTINGS_FILE[LANG_COUNT] = {
+    L"Soubor neobsahuje platné nastavení CalClock.",
+    L"The file does not contain valid CalClock settings.",
+    L"Die Datei enthält keine gültigen CalClock-Einstellungen.",
+    L"Le fichier ne contient pas de paramètres CalClock valides.",
+    L"El archivo no contiene una configuración válida de CalClock.",
+    L"Il file non contiene impostazioni CalClock valide.",
+    L"Plik nie zawiera prawidłowych ustawień CalClock.",
+    L"Súbor neobsahuje platné nastavenia CalClock."
+};
+
 const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT] = {
-    L"Nastavení se nepodařilo exportovat.",   L"Settings could not be exported.",       L"Die Einstellungen konnten nicht exportiert werden.",
-    L"Impossible d’exporter les paramètres.", L"No se pudo exportar la configuración.", L"Impossibile esportare le impostazioni.",
-    L"Nie udało się wyeksportować ustawień.", L"Nastavenia sa nepodarilo exportovať." };
+    L"Nastavení se nepodařilo exportovat.",
+    L"Settings could not be exported.",
+    L"Die Einstellungen konnten nicht exportiert werden.",
+    L"Impossible d’exporter les paramètres.",
+    L"No se pudo exportar la configuración.",
+    L"Impossibile esportare le impostazioni.",
+    L"Nie udało się wyeksportować ustawień.",
+    L"Nastavenia sa nepodarilo exportovať."
+};
+
 const wchar_t* SETTINGS_IMPORT_FAILED[LANG_COUNT] = {
-    L"Nastavení se nepodařilo importovat.",   L"Settings could not be imported.",       L"Die Einstellungen konnten nicht importiert werden.",
-    L"Impossible d’importer les paramètres.", L"No se pudo importar la configuración.", L"Impossibile importare le impostazioni.",
-    L"Nie udało się zaimportować ustawień.",  L"Nastavenia sa nepodarilo importovať." };
-const wchar_t* XML_STORAGE_LABELS[LANG_COUNT] = { L"Ukládat do &XML", L"Save to &XML",  L"In &XML speichern", L"Enregistrer en &XML",
-                                                 L"Guardar en &XML", L"Salva in &XML", L"Zapisuj do &XML",   L"Ukladať do &XML" };
+    L"Nastavení se nepodařilo importovat.",
+    L"Settings could not be imported.",
+    L"Die Einstellungen konnten nicht importiert werden.",
+    L"Impossible d’importer les paramètres.",
+    L"No se pudo importar la configuración.",
+    L"Impossibile importare le impostazioni.",
+    L"Nie udało się zaimportować ustawień.",
+    L"Nastavenia sa nepodarilo importovať."
+};
+
+const wchar_t* XML_STORAGE_LABELS[LANG_COUNT] = {
+    L"Ukládat do &XML",
+    L"Save to &XML",
+    L"In &XML speichern",
+    L"Enregistrer en &XML",
+    L"Guardar en &XML",
+    L"Salva in &XML",
+    L"Zapisuj do &XML",
+    L"Ukladať do &XML"
+};
 
 static int AutomaticNtpPreset() {
     wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {};
@@ -1174,9 +1434,53 @@ static int AutomaticNtpPreset() {
     if (_wcsicmp(country, L"CZ") == 0 || _wcsicmp(country, L"SK") == 0) {
         return NTP_PRESET_CESNET;
     }
-    const wchar_t* europeanCountries[] = { L"AL", L"AD", L"AT", L"BY", L"BE", L"BA", L"BG", L"HR", L"CY", L"DK", L"EE", L"FI", L"FR", L"DE", L"GR",
-                                          L"HU", L"IS", L"IE", L"IT", L"XK", L"LV", L"LI", L"LT", L"LU", L"MT", L"MD", L"MC", L"ME", L"NL", L"MK",
-                                          L"NO", L"PL", L"PT", L"RO", L"RU", L"SM", L"RS", L"SI", L"ES", L"SE", L"CH", L"TR", L"UA", L"GB", L"VA" };
+    const wchar_t* europeanCountries[] = {
+        L"AL",
+        L"AD",
+        L"AT",
+        L"BY",
+        L"BE",
+        L"BA",
+        L"BG",
+        L"HR",
+        L"CY",
+        L"DK",
+        L"EE",
+        L"FI",
+        L"FR",
+        L"DE",
+        L"GR",
+        L"HU",
+        L"IS",
+        L"IE",
+        L"IT",
+        L"XK",
+        L"LV",
+        L"LI",
+        L"LT",
+        L"LU",
+        L"MT",
+        L"MD",
+        L"MC",
+        L"ME",
+        L"NL",
+        L"MK",
+        L"NO",
+        L"PL",
+        L"PT",
+        L"RO",
+        L"RU",
+        L"SM",
+        L"RS",
+        L"SI",
+        L"ES",
+        L"SE",
+        L"CH",
+        L"TR",
+        L"UA",
+        L"GB",
+        L"VA"
+    };
     for (const wchar_t* europeanCountry : europeanCountries) {
         if (_wcsicmp(country, europeanCountry) == 0) {
             return NTP_PRESET_PTB;
@@ -1194,12 +1498,10 @@ static std::wstring NtpServersForPreset(int preset) {
         return L"tik.cesnet.cz; tak.cesnet.cz; ntp.nic.cz";
     }
     if (selected == NTP_PRESET_PTB) {
-        return L"ptbtime1.ptb.de; ptbtime2.ptb.de; ptbtime3.ptb.de; "
-            L"ptbtime4.ptb.de";
+        return L"ptbtime1.ptb.de; ptbtime2.ptb.de; ptbtime3.ptb.de; ptbtime4.ptb.de";
     }
     if (selected == NTP_PRESET_GLOBAL) {
-        return L"1.ntp.ubuntu.com; 2.ntp.ubuntu.com; 3.ntp.ubuntu.com; 4.ntp.ubuntu.com; "
-            L"0.pool.ntp.org; 1.pool.ntp.org; 2.pool.ntp.org; 3.pool.ntp.org";
+        return L"1.ntp.ubuntu.com; 2.ntp.ubuntu.com; 3.ntp.ubuntu.com; 4.ntp.ubuntu.com; 0.pool.ntp.org; 1.pool.ntp.org; 2.pool.ntp.org; 3.pool.ntp.org";
     }
     return std::wstring();
 }
@@ -1229,7 +1531,6 @@ static std::wstring UniqueMnemonic(const wchar_t* text, std::vector<wchar_t>* us
         }
         plainText += text[index];
     }
-
     size_t mnemonicPosition = std::wstring::npos;
     if (preferredPosition < plainText.size()) {
         wchar_t key = MnemonicKey(plainText[preferredPosition]);
@@ -1246,7 +1547,6 @@ static std::wstring UniqueMnemonic(const wchar_t* text, std::vector<wchar_t>* us
             }
         }
     }
-
     std::wstring result;
     for (size_t index = 0; index < plainText.size(); index++) {
         if (index == mnemonicPosition) {
@@ -1318,31 +1618,6 @@ static int WINAPI CalendarGetCalendarDateFormat(CALID calendar, DWORD flags, con
     }
     return originalGetCalendarDateFormat == nullptr ? 0 : originalGetCalendarDateFormat(calendar, flags, calendarDate, format, data, characters);
 }
-
-class CalendarLocaleScope {
-public:
-    explicit CalendarLocaleScope(AppLanguage language) {
-        previousOverride = activeCalendarLocale;
-        previousLocale = GetThreadLocale();
-        previousUiLanguage = GetThreadUILanguage();
-        activeCalendarLocale = LocaleNameToLCID(LANGUAGE_LOCALES[language], 0);
-        if (activeCalendarLocale != 0) {
-            SetThreadLocale(activeCalendarLocale);
-            SetThreadUILanguage(LANGIDFROMLCID(activeCalendarLocale));
-        }
-    }
-
-    ~CalendarLocaleScope() {
-        SetThreadUILanguage(previousUiLanguage);
-        SetThreadLocale(previousLocale);
-        activeCalendarLocale = previousOverride;
-    }
-
-private:
-    LCID previousOverride;
-    LCID previousLocale;
-    LANGID previousUiLanguage;
-};
 
 static bool PatchCommonControlsImport(const char* functionName, ULONG_PTR replacement, ULONG_PTR* original) {
     HMODULE commonControls = GetModuleHandleW(L"comctl32.dll");
@@ -1497,7 +1772,7 @@ static void SetDefaultWidgetAppearance(WidgetConfig* config, WidgetType type) {
     config->leadingZero = true;
     config->transparentBackground = false;
     config->disableThemes = false;
-    config->fontFace = type == WIDGET_DIGITAL ? L"Arial" : (type == WIDGET_FULLSCREEN ? L"Arial Narrow" : L"Segoe UI");
+    config->fontFace = type == WIDGET_DIGITAL ? L"Arial" : (type == WIDGET_FULLSCREEN ? L"Arial Narrow" : GetSystemMessageFontFace());
     config->fontWeight = FW_NORMAL;
     config->fontItalic = false;
     config->fontUnderline = false;
@@ -1513,9 +1788,11 @@ static void SetDefaultWidgetAppearance(WidgetConfig* config, WidgetType type) {
     config->weekNumbers = false;
     config->sundayFirst = false;
     config->dateCopyFormat = DATE_YYMMDD;
-    config->panelTopFont = FontSelection();
-    config->panelTimeFont = FontSelection();
-    config->panelBottomFont = FontSelection();
+    FontSelection panelFont;
+    panelFont.face = GetSystemMessageFontFace();
+    config->panelTopFont = panelFont;
+    config->panelTimeFont = panelFont;
+    config->panelBottomFont = panelFont;
 }
 
 static WidgetConfig DefaultConfig(WidgetType type, int index) {
@@ -2441,8 +2718,9 @@ static void LoadTimeZones() {
         timeZones.push_back(zone);
         index++;
     }
-    std::sort(timeZones.begin(), timeZones.end(),
-              [](const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMIC_TIME_ZONE_INFORMATION& right) { return _wcsicmp(left.StandardName, right.StandardName) < 0; });
+    std::sort(timeZones.begin(), timeZones.end(), [](const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMIC_TIME_ZONE_INFORMATION& right) {
+        return _wcsicmp(left.StandardName, right.StandardName) < 0;
+    });
 }
 
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
@@ -2520,7 +2798,7 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     }
     ReadString(key, L"FontFace", &config->fontFace);
     if (config->fontFace.empty()) {
-        config->fontFace = L"Segoe UI";
+        config->fontFace = GetSystemMessageFontFace();
     }
     if (ReadDword(key, L"FontWeight", &value)) {
         config->fontWeight = std::clamp(static_cast<int>(value), 0, 1000);
@@ -3425,8 +3703,7 @@ static std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIM
 static std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex) {
     static const wchar_t* patternNames[DATE_FORMAT_COUNT] = { L"yyMMdd", L"yyyyMMdd", L"yy-MM-dd", L"yyyy-MM-dd", nullptr, L"dd.MM.yyyy", L"d MMM yyyy", L"d MMMM yyyy", L"dddd d MMMM yyyy", nullptr, L"ddd, dd MMM yyyy", L"yyyy/MM/dd" };
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
-    const wchar_t* name =
-        selected == DATE_LOCAL_SHORT ? LOCAL_SHORT_LABELS[config.language] : (selected == DATE_LOCAL_LONG ? LOCAL_LONG_LABELS[config.language] : patternNames[selected]);
+    const wchar_t* name = selected == DATE_LOCAL_SHORT ? LOCAL_SHORT_LABELS[config.language] : (selected == DATE_LOCAL_LONG ? LOCAL_LONG_LABELS[config.language] : patternNames[selected]);
     return std::wstring(name) + L"  —  " + FormatWidgetDate(config, date, selected);
 }
 
@@ -3438,8 +3715,7 @@ static void ShowCopiedDateTooltip(Widget* widget, const std::wstring& text) {
         DestroyWindow(widget->copyTooltip);
     }
     widget->copyTooltipText = text;
-    widget->copyTooltip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                                          CW_USEDEFAULT, widget->window, nullptr, hInstance, nullptr);
+    widget->copyTooltip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, widget->window, nullptr, hInstance, nullptr);
     if (widget->copyTooltip == nullptr) {
         return;
     }
@@ -3504,15 +3780,13 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless) {
     bool disabledThemes = themesDisabled || config.disableThemes;
     for (size_t index = 0; index < cache.size(); index++) {
         const CalendarSizeEntry& entry = cache[index];
-        if (entry.language == config.language && entry.weekNumbers == config.weekNumbers && entry.borderless == borderless && entry.themesDisabled == disabledThemes &&
-            entry.fontAntialiasing == config.fontAntialiasing && entry.fontWeight == config.fontWeight && entry.fontItalic == config.fontItalic &&
-            entry.fontCharSet == config.fontCharSet && entry.fontFace == config.fontFace) {
+        if (entry.language == config.language && entry.weekNumbers == config.weekNumbers && entry.borderless == borderless && entry.themesDisabled == disabledThemes && entry.fontAntialiasing == config.fontAntialiasing && entry.fontWeight == config.fontWeight && entry.fontItalic == config.fontItalic && entry.fontCharSet == config.fontCharSet && entry.fontFace == config.fontFace) {
             return entry.size;
         }
     }
     SIZE size = { config.weekNumbers ? 250 : 227, 160 };
     DWORD style = WS_POPUP | (config.weekNumbers ? MCS_WEEKNUMBERS : 0);
-    CalendarLocaleScope localeScope(config.language);
+    CalendarLocaleScope localeScope(LANGUAGE_LOCALES[config.language]);
     HWND calendar = CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, 0, 0, 0, 0, nullptr, nullptr, hInstance, nullptr);
     if (calendar != nullptr) {
         SetWindowTheme(calendar, disabledThemes ? L"" : nullptr, disabledThemes ? L"" : nullptr);
@@ -3533,8 +3807,7 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless) {
             DeleteObject(font);
         }
     }
-    cache.push_back({ config.language, config.weekNumbers, borderless, disabledThemes, config.fontAntialiasing, config.fontWeight, config.fontItalic, config.fontCharSet,
-                      config.fontFace, size });
+    cache.push_back({ config.language, config.weekNumbers, borderless, disabledThemes, config.fontAntialiasing, config.fontWeight, config.fontItalic, config.fontCharSet, config.fontFace, size });
     return size;
 }
 
@@ -3882,8 +4155,7 @@ static void ApplyCalendarFont(Widget* widget) {
     widget->calendarFont = replacement;
     RECT minimum = {};
     if (MonthCal_GetMinReqRect(widget->calendarChild, &minimum)) {
-        SetWindowPos(widget->calendarChild, nullptr, 0, 0, minimum.right - minimum.left, minimum.bottom - minimum.top,
-                     SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(widget->calendarChild, nullptr, 0, 0, minimum.right - minimum.left, minimum.bottom - minimum.top, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
     }
     RedrawWindow(widget->calendarChild, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_UPDATENOW);
 }
@@ -3905,11 +4177,6 @@ static bool SetForegroundWindowEx(HWND window) {
     }
     return result;
 }
-
-const DWORD PROFILE_104[14] = { 104, 5002, 5003, 51, 51, 27, 2, 0, 37, 2, 0, 50, 1, 13 };
-const DWORD PROFILE_130[14] = { 130, 5000, 5001, 63, 63, 35, 2, 0, 46, 2, 0, 64, 1, 18 };
-const DWORD PROFILE_166[14] = { 166, 5008, 5009, 81, 81, 43, 2, 0, 60, 2, 0, 80, 1, 20 };
-const DWORD PROFILE_198[14] = { 198, 5004, 5005, 97, 97, 53, 3, 0, 71, 3, 0, 95, 1, 24 };
 
 static BYTE* FindModulePattern(BYTE* begin, size_t length, const BYTE* pattern, size_t patternLength) {
     if (begin == nullptr || pattern == nullptr || patternLength == 0 || length < patternLength) {
@@ -3943,7 +4210,7 @@ static bool ResolveAnalogClockInternals() {
         memcmp(profile + sizeof(PROFILE_198) + sizeof(PROFILE_166), PROFILE_130, sizeof(PROFILE_130)) != 0) {
         return false;
     }
-    const BYTE registerPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x2C, 0x56, 0x33, 0xC0, 0xC7, 0x45, 0xE4, 0x04, 0x00, 0x00, 0x00,                                    0x68, 0x00, 0x7F, 0x00, 0x00, 0x50, 0x8B, 0xF1, 0x89, 0x45, 0xE0, 0x89, 0x45, 0xEC, 0x89, 0x45, 0xF8 };
+    const BYTE registerPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x2C, 0x56, 0x33, 0xC0, 0xC7, 0x45, 0xE4, 0x04, 0x00, 0x00, 0x00, 0x68, 0x00, 0x7F, 0x00, 0x00, 0x50, 0x8B, 0xF1, 0x89, 0x45, 0xE0, 0x89, 0x45, 0xEC, 0x89, 0x45, 0xF8 };
     BYTE* registerAddress = nullptr;
     BYTE* search = module;
     size_t remaining = imageSize;
@@ -4241,8 +4508,7 @@ static HFONT CreateDrawingFont(int points, int weight, int fontAntialiasing, con
     if (screen != nullptr) {
         ReleaseDC(nullptr, screen);
     }
-    return CreateFontW(-MulDiv(points, dpi, 72), 0, 0, 0, weight, italic, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                       FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, fontFace);
+    return CreateFontW(-MulDiv(points, dpi, 72), 0, 0, 0, weight, italic, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, fontFace);
 }
 
 static HFONT CreatePanelFont(const FontSelection& selection, int fontAntialiasing) {
@@ -4252,8 +4518,7 @@ static HFONT CreatePanelFont(const FontSelection& selection, int fontAntialiasin
         ReleaseDC(nullptr, screen);
     }
     int height = -MulDiv(std::clamp(selection.dialogSize, 10, 9990), dpi, 720);
-    return CreateFontW(height, 0, 0, 0, selection.weight, selection.italic, selection.underline, selection.strikeOut, selection.charSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                       FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, selection.face.c_str());
+    return CreateFontW(height, 0, 0, 0, selection.weight, selection.italic, selection.underline, selection.strikeOut, selection.charSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, selection.face.c_str());
 }
 
 static HFONT CreateWidgetDrawingFont(const WidgetConfig& config) {
@@ -4262,16 +4527,14 @@ static HFONT CreateWidgetDrawingFont(const WidgetConfig& config) {
     if (screen != nullptr) {
         ReleaseDC(nullptr, screen);
     }
-    return CreateFontW(-MulDiv(config.fontSize, dpi, 72), 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet,
-                       OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+    return CreateFontW(-MulDiv(config.fontSize, dpi, 72), 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
 }
 
 static HFONT CreateFullscreenDrawingFont(const WidgetConfig& config, const RECT& client, HDC dc, const wchar_t* text) {
     int width = client.right - client.left;
     int height = client.bottom - client.top;
     int pixelHeight = std::max(24, height * std::clamp(config.fontSize, 5, 85) / 100);
-    HFONT font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS,
-                             CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+    HFONT font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
     if (font == nullptr || dc == nullptr || text == nullptr || text[0] == L'\0') {
         return font;
     }
@@ -4282,14 +4545,12 @@ static HFONT CreateFullscreenDrawingFont(const WidgetConfig& config, const RECT&
     if (measured && textSize.cx > width && textSize.cx > 0) {
         int fittedHeight = std::max(1, MulDiv(pixelHeight, width, textSize.cx));
         DeleteObject(font);
-        font = CreateFontW(-fittedHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS,
-                           CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+        font = CreateFontW(-fittedHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
     }
     return font;
 }
 
-static void DrawCenteredText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color, UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-                             COLORREF backgroundColor = CLR_INVALID) {
+static void DrawCenteredText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color, UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE, COLORREF backgroundColor = CLR_INVALID) {
     HGDIOBJ oldFont = SelectObject(dc, font);
     SetTextColor(dc, color);
     if (backgroundColor == CLR_INVALID) {
@@ -4324,8 +4585,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     DWRITE_FONT_WEIGHT weight = static_cast<DWRITE_FONT_WEIGHT>(std::clamp(config.fontWeight, 1, 999));
     DWRITE_FONT_STYLE style = config.fontItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
     IDWriteTextFormat* format = nullptr;
-    result = dwriteFactory->CreateTextFormat(config.fontFace.empty() ? L"Arial" : config.fontFace.c_str(), nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize,
-                                             LANGUAGE_LOCALES[config.language], &format);
+    const wchar_t* fontFace = config.fontFace.empty() ? L"Arial" : config.fontFace.c_str();
+    result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize, LANGUAGE_LOCALES[config.language], &format);
     if (FAILED(result) || format == nullptr) {
         target->Release();
         return false;
@@ -4348,8 +4609,7 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         format->Release();
         layout = nullptr;
         format = nullptr;
-        result = dwriteFactory->CreateTextFormat(config.fontFace.empty() ? L"Arial" : config.fontFace.c_str(), nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize,
-                                                 LANGUAGE_LOCALES[config.language], &format);
+        result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize, LANGUAGE_LOCALES[config.language], &format);
         if (SUCCEEDED(result) && format != nullptr) {
             format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
             format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -4853,7 +5113,7 @@ static bool LooksLikeAudio(const std::wstring& path) {
     }
     std::wstring extension = path.substr(dot);
     std::transform(extension.begin(), extension.end(), extension.begin(), towlower);
-    return extension == L".wav" || extension == L".mp3" || extension == L".wma" || extension == L".mid" || extension == L".midi" || extension == L".aac" || extension == L".m4a";
+    return extension == L".wav" || extension == L".mp3" || extension == L".wma" || extension == L".mid" || extension == L".midi" || extension == L".aac" || extension == L".m4a" || extension == L".flac";
 }
 
 static bool IsRemoteScriptUrlValid(const std::wstring& url) {
@@ -5017,8 +5277,7 @@ static void StartWidgetAlarm(Widget* widget) {
     widget->flashPhase = true;
     if (widget->config.runCommand && !widget->config.command.empty()) {
         if (LooksLikeAudio(widget->config.command)) {
-            StartAudioPlaybackAsync(widget->config.command, widget->config.loopAudio, hController, WM_AUDIO_FINISHED, widget->config.id, widget->audioGeneration,
-                                    &widget->audioStopEvent);
+            StartAudioPlaybackAsync(widget->config.command, widget->config.loopAudio, hController, WM_AUDIO_FINISHED, widget->config.id, widget->audioGeneration, &widget->audioStopEvent);
         } else {
             StartLocalCommandAsync(widget->config.command);
         }
@@ -5140,8 +5399,7 @@ static bool ReplaceAnalogChild(Widget* widget) {
         childX = clockPosition.x;
         childY = clockPosition.y;
     }
-    HWND replacement = CreateWindowExW(0, L"ClockWndMain", L"", WS_CHILD | 0x10, childX, childY, widget->config.size, widget->config.size, widget->window,
-                                       reinterpret_cast<HMENU>(113), reinterpret_cast<HINSTANCE>(hTimeDate), nullptr);
+    HWND replacement = CreateWindowExW(0, L"ClockWndMain", L"", WS_CHILD | 0x10, childX, childY, widget->config.size, widget->config.size, widget->window, reinterpret_cast<HMENU>(113), reinterpret_cast<HINSTANCE>(hTimeDate), nullptr);
     if (replacement == nullptr) {
         return false;
     }
@@ -5187,7 +5445,7 @@ static void CreateCalendarChild(Widget* widget) {
         childY = calendarRect.top;
     }
     DWORD style = WS_CHILD | (widget->config.weekNumbers ? MCS_WEEKNUMBERS : 0);
-    CalendarLocaleScope localeScope(widget->config.language);
+    CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
     widget->calendarChild = CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, 0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(114), hInstance, nullptr);
     if (widget->calendarChild != nullptr) {
         ApplyWidgetTheme(widget->calendarChild, widget->config);
@@ -5391,7 +5649,9 @@ static void RefreshFullscreenPresentation() {
     }
     if (blackoutRequested) {
         for (size_t monitorIndex = 0; monitorIndex < displayMonitors.size(); monitorIndex++) {
-            bool occupied = std::any_of(occupiedDevices.begin(), occupiedDevices.end(), [&](const std::wstring& device) { return _wcsicmp(device.c_str(), displayMonitors[monitorIndex].device.c_str()) == 0; });
+            bool occupied = std::any_of(occupiedDevices.begin(), occupiedDevices.end(), [&](const std::wstring& device) {
+                return _wcsicmp(device.c_str(), displayMonitors[monitorIndex].device.c_str()) == 0;
+            });
             if (occupied) {
                 continue;
             }
@@ -5529,7 +5789,9 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
             break;
         }
         RECT work = monitorInformation.rcWork;
-        std::sort(groups[groupIndex].items.begin(), groups[groupIndex].items.end(), [](Widget* left, Widget* right) { return left->config.id < right->config.id; });
+        std::sort(groups[groupIndex].items.begin(), groups[groupIndex].items.end(), [](Widget* left, Widget* right) {
+            return left->config.id < right->config.id;
+        });
         std::vector<RECT> placedOnMonitor;
         for (size_t itemIndex = 0; itemIndex < groups[groupIndex].items.size(); itemIndex++) {
             Widget* current = groups[groupIndex].items[itemIndex];
@@ -5563,8 +5825,7 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
                         bool overlaps = false;
                         for (size_t placedIndex = 0; placedIndex < placedOnMonitor.size(); placedIndex++) {
                             const RECT& placed = placedOnMonitor[placedIndex];
-                            bool separated = candidate.right + gap <= placed.left || candidate.left >= placed.right + gap || candidate.bottom + gap <= placed.top ||
-                                candidate.top >= placed.bottom + gap;
+                            bool separated = candidate.right + gap <= placed.left || candidate.left >= placed.right + gap || candidate.bottom + gap <= placed.top || candidate.top >= placed.bottom + gap;
                             if (!separated) {
                                 overlaps = true;
                                 break;
@@ -5720,8 +5981,7 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
 static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     HMENU menu = CreatePopupMenu();
     std::vector<wchar_t> menuMnemonics;
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible ? HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language],
-                      &menuMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible ? HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST, WT(widget, TXT_TOPMOST), &menuMnemonics);
     }
@@ -5747,8 +6007,7 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         }
         for (int index = 0; index < DATE_FORMAT_COUNT; index++) {
             std::wstring label = DateFormatCaption(widget->config, selectedDate, index);
-            AppendMenuCommand(dateMenu, MF_STRING | (widget->config.dateCopyFormat == index ? MF_CHECKED : 0), ID_MENU_DATE_FORMAT_BASE + index, label.c_str(),
-                              &dateMenuMnemonics);
+            AppendMenuCommand(dateMenu, MF_STRING | (widget->config.dateCopyFormat == index ? MF_CHECKED : 0), ID_MENU_DATE_FORMAT_BASE + index, label.c_str(), &dateMenuMnemonics);
         }
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         AppendMenuCommand(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(dateMenu), DATE_COPY_LABELS[widget->config.language], &menuMnemonics);
@@ -5836,9 +6095,7 @@ static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wPara
     if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
         DWORD clickTick = static_cast<DWORD>(GetMessageTime());
         POINT clickPoint = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-        bool consecutiveClick = lastClickedEdit == window && clickTick - lastEditClickTick <= GetDoubleClickTime() &&
-            abs(clickPoint.x - lastEditClickPoint.x) <= GetSystemMetrics(SM_CXDOUBLECLK) &&
-            abs(clickPoint.y - lastEditClickPoint.y) <= GetSystemMetrics(SM_CYDOUBLECLK);
+        bool consecutiveClick = lastClickedEdit == window && clickTick - lastEditClickTick <= GetDoubleClickTime() && abs(clickPoint.x - lastEditClickPoint.x) <= GetSystemMetrics(SM_CXDOUBLECLK) && abs(clickPoint.y - lastEditClickPoint.y) <= GetSystemMetrics(SM_CYDOUBLECLK);
         editClickCount = consecutiveClick ? editClickCount + 1 : 1;
         lastClickedEdit = window;
         lastEditClickTick = clickTick;
@@ -5884,6 +6141,7 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
 static void SetCheck(HWND control, bool checked) {
     SendMessageW(control, BM_SETCHECK, checked ? BST_CHECKED : BST_UNCHECKED, 0);
 }
+
 static bool GetCheck(HWND control) {
     return SendMessageW(control, BM_GETCHECK, 0, 0) == BST_CHECKED;
 }
@@ -6280,65 +6538,36 @@ static void UpdateSettingControlAvailability() {
     bool globalThemesDisabled = hDisableThemesCheck == nullptr ? themesDisabled : GetCheck(hDisableThemesCheck);
     bool widgetThemesDisabled = hWidgetDisableThemesCheck == nullptr ? settingsDraft[selectedDraftIndex].disableThemes : GetCheck(hWidgetDisableThemesCheck);
     bool calendarFontEnabled = globalThemesDisabled || widgetThemesDisabled;
+    bool supportsAlarm = type != WIDGET_CALENDAR;
     if (hAppearancePage != nullptr) {
         SendMessageW(hAppearancePage, WM_SETREDRAW, FALSE, 0);
     }
-    EnableWindow(hSecondsCheck, type != WIDGET_CALENDAR);
-    EnableWindow(hUtcTextCheck, digital && GetCheck(hUtcCheck));
-    ShowWindow(hMonitorLabel, fullscreen ? SW_SHOW : SW_HIDE);
-    ShowWindow(hMonitorList, fullscreen ? SW_SHOW : SW_HIDE);
-    ShowWindow(hBlackoutMonitorsCheck, fullscreen ? SW_SHOW : SW_HIDE);
     if (fullscreen) {
         SetCheck(hTopmostCheck, true);
     }
-    EnableWindow(hTopmostCheck, !fullscreen);
     SendMessageW(hFontSizeTrackBar, TBM_SETRANGE, TRUE, fullscreen ? MAKELPARAM(5, 85) : MAKELPARAM(10, 140));
     int currentFontSize = static_cast<int>(SendMessageW(hFontSizeTrackBar, TBM_GETPOS, 0, 0));
     SendMessageW(hFontSizeTrackBar, TBM_SETPOS, TRUE, std::clamp(currentFontSize, fullscreen ? 5 : 10, fullscreen ? 85 : 140));
     UpdateAppearanceSliderLabels();
-    ShowWindow(hSizeLabel, hasSize ? SW_SHOW : SW_HIDE);
-    ShowWindow(hSizeCombo, hasSize ? SW_SHOW : SW_HIDE);
     int opacityTop = hasSize ? 38 : 4;
     SetWindowPos(hOpacityLabel, nullptr, 8, opacityTop + 7, 102, 22, SWP_NOZORDER | SWP_NOACTIVATE);
     SetWindowPos(hOpacityTrackBar, nullptr, 114, opacityTop, 212, 32, SWP_NOZORDER | SWP_NOACTIVATE);
     SetWindowPos(hOpacityValue, nullptr, 328, opacityTop + 7, 48, 22, SWP_NOZORDER | SWP_NOACTIVATE);
-    for (HWND control : {hFontSizeLabel, hFontSizeTrackBar, hFontSizeValue, hFontDescription, hLeadingZeroCheck, hTransparentBackgroundCheck, hTextColorButton,
-                         hAlarmTextColorButton, hAlarmBackgroundColorButton, hPaddingLabel, hPaddingTrackBar, hPaddingValue, hBorderLabel, hBorderTrackBar, hBorderWidthLabel,
-                         hBorderWidthTrackBar, hBorderWidthValue}) {
-        if (control != nullptr) {
-            ShowWindow(control, digital ? SW_SHOW : SW_HIDE);
-        }
-    }
     if (hasTextFont) {
         int fontX = panel ? 194 : 8;
         int fontY = digital ? 70 : (panel ? 106 : 76);
         SetWindowPos(hFontButton, nullptr, fontX, fontY, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
-        ShowWindow(hFontButton, SW_SHOW);
-    } else {
-        ShowWindow(hFontButton, SW_HIDE);
     }
-    EnableWindow(hFontButton, digital || calendarFontEnabled);
     if (panel) {
         SetWindowPos(hPanelTopFontButton, nullptr, 8, 76, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
         SetWindowPos(hPanelTimeFontButton, nullptr, 194, 76, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
         SetWindowPos(hPanelBottomFontButton, nullptr, 8, 106, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
     }
-    for (HWND control : { hPanelTopFontButton, hPanelTimeFontButton, hPanelBottomFontButton }) {
-        ShowWindow(control, panel ? SW_SHOW : SW_HIDE);
-    }
     int defaultAppearanceX = 194;
     int defaultAppearanceY = digital ? 70 : (panel ? 240 : (calendar ? 76 : 110));
     SetWindowPos(hDefaultAppearanceButton, nullptr, defaultAppearanceX, defaultAppearanceY, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
-    ShowWindow(hDefaultAppearanceButton, SW_SHOW);
-    if (fullscreen) {
-        for (HWND control : {hTransparentBackgroundCheck, hBorderLabel, hBorderTrackBar, hBorderWidthLabel, hBorderWidthTrackBar, hBorderWidthValue}) {
-            ShowWindow(control, SW_HIDE);
-        }
-    }
-    bool showBackground = digital;
-    ShowWindow(hBackgroundColorButton, showBackground ? SW_SHOW : SW_HIDE);
-    if (showBackground) {
-        SetWindowPos(hBackgroundColorButton, nullptr, 194, digital ? 100 : 76, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
+    if (digital) {
+        SetWindowPos(hBackgroundColorButton, nullptr, 194, 100, 178, 27, SWP_NOZORDER | SWP_NOACTIVATE);
     }
     if (calendar) {
         int calendarTop = panel ? 140 : 110;
@@ -6347,31 +6576,76 @@ static void UpdateSettingControlAvailability() {
         SetWindowPos(hDateFormatLabel, nullptr, 8, calendarTop + 34, 179, 22, SWP_NOZORDER | SWP_NOACTIVATE);
         SetWindowPos(hDateFormatCombo, nullptr, 191, calendarTop + 30, 181, 240, SWP_NOZORDER | SWP_NOACTIVATE);
     }
-    for (HWND control : {hWeekNumbersCheck, hSundayFirstCheck, hDateFormatLabel, hDateFormatCombo}) {
-        if (control != nullptr) {
-            ShowWindow(control, calendar ? SW_SHOW : SW_HIDE);
-        }
-    }
     if (hWidgetDisableThemesCheck != nullptr && hWidgetAntialiasLabel != nullptr && hWidgetAntialiasCombo != nullptr) {
         int optionsTop = digital ? 258 : (panel ? 208 : (calendar ? 178 : 76));
         SetWindowPos(hWidgetAntialiasLabel, nullptr, 8, optionsTop + 4, 138, 22, SWP_NOZORDER | SWP_NOACTIVATE);
         SetWindowPos(hWidgetAntialiasCombo, nullptr, 148, optionsTop, 86, 100, SWP_NOZORDER | SWP_NOACTIVATE);
         SetWindowPos(hWidgetDisableThemesCheck, nullptr, 242, optionsTop, 130, 24, SWP_NOZORDER | SWP_NOACTIVATE);
     }
-    EnableWindow(hOpacityTrackBar, !fullscreen);
-    EnableWindow(hTransparentBackgroundCheck, !fullscreen);
-    EnableWindow(hPaddingTrackBar, digital);
-    EnableWindow(hBorderTrackBar, !fullscreen);
-    EnableWindow(hBorderWidthTrackBar, !fullscreen);
-    EnableWindow(hAlarmEnabledCheck, type != WIDGET_CALENDAR);
-    EnableWindow(hAlarmTimeEdit, type != WIDGET_CALENDAR);
-    EnableWindow(hRunCommandCheck, type != WIDGET_CALENDAR);
-    EnableWindow(hCommandEdit, type != WIDGET_CALENDAR);
-    EnableWindow(hBrowseButton, type != WIDGET_CALENDAR);
-    EnableWindow(hLoopAudioCheck, type != WIDGET_CALENDAR);
-    EnableWindow(hTestCommandButton, type != WIDGET_CALENDAR);
-    EnableWindow(hRemoteScriptCheck, type != WIDGET_CALENDAR);
-    EnableWindow(hRemoteScriptEdit, type != WIDGET_CALENDAR && GetCheck(hRemoteScriptCheck));
+    struct ControlState {
+        HWND control;
+        int showCommand;
+        int enabled;
+    };
+    const int unchanged = -1;
+    ControlState controlStates[] = {
+        { hMonitorLabel, fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hMonitorList, fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hBlackoutMonitorsCheck, fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hSizeLabel, hasSize ? SW_SHOW : SW_HIDE, unchanged },
+        { hSizeCombo, hasSize ? SW_SHOW : SW_HIDE, unchanged },
+        { hFontSizeLabel, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hFontSizeTrackBar, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hFontSizeValue, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hFontDescription, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hLeadingZeroCheck, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hTransparentBackgroundCheck, digital && !fullscreen ? SW_SHOW : SW_HIDE, !fullscreen },
+        { hTextColorButton, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hAlarmTextColorButton, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hAlarmBackgroundColorButton, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hPaddingLabel, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hPaddingTrackBar, digital ? SW_SHOW : SW_HIDE, digital },
+        { hPaddingValue, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hBorderLabel, digital && !fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hBorderTrackBar, digital && !fullscreen ? SW_SHOW : SW_HIDE, !fullscreen },
+        { hBorderWidthLabel, digital && !fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hBorderWidthTrackBar, digital && !fullscreen ? SW_SHOW : SW_HIDE, !fullscreen },
+        { hBorderWidthValue, digital && !fullscreen ? SW_SHOW : SW_HIDE, unchanged },
+        { hFontButton, hasTextFont ? SW_SHOW : SW_HIDE, digital || calendarFontEnabled },
+        { hPanelTopFontButton, panel ? SW_SHOW : SW_HIDE, unchanged },
+        { hPanelTimeFontButton, panel ? SW_SHOW : SW_HIDE, unchanged },
+        { hPanelBottomFontButton, panel ? SW_SHOW : SW_HIDE, unchanged },
+        { hDefaultAppearanceButton, SW_SHOW, unchanged },
+        { hBackgroundColorButton, digital ? SW_SHOW : SW_HIDE, unchanged },
+        { hWeekNumbersCheck, calendar ? SW_SHOW : SW_HIDE, unchanged },
+        { hSundayFirstCheck, calendar ? SW_SHOW : SW_HIDE, unchanged },
+        { hDateFormatLabel, calendar ? SW_SHOW : SW_HIDE, unchanged },
+        { hDateFormatCombo, calendar ? SW_SHOW : SW_HIDE, unchanged },
+        { hSecondsCheck, unchanged, type != WIDGET_CALENDAR },
+        { hUtcTextCheck, unchanged, digital && GetCheck(hUtcCheck) },
+        { hTopmostCheck, unchanged, !fullscreen },
+        { hOpacityTrackBar, unchanged, !fullscreen },
+        { hAlarmEnabledCheck, unchanged, supportsAlarm },
+        { hAlarmTimeEdit, unchanged, supportsAlarm },
+        { hRunCommandCheck, unchanged, supportsAlarm },
+        { hCommandEdit, unchanged, supportsAlarm },
+        { hBrowseButton, unchanged, supportsAlarm },
+        { hLoopAudioCheck, unchanged, supportsAlarm },
+        { hTestCommandButton, unchanged, supportsAlarm },
+        { hRemoteScriptCheck, unchanged, supportsAlarm },
+        { hRemoteScriptEdit, unchanged, supportsAlarm && GetCheck(hRemoteScriptCheck) }
+    };
+    for (const ControlState& state : controlStates) {
+        if (state.control == nullptr) {
+            continue;
+        }
+        if (state.showCommand != unchanged) {
+            ShowWindow(state.control, state.showCommand);
+        }
+        if (state.enabled != unchanged) {
+            EnableWindow(state.control, state.enabled != 0);
+        }
+    }
     if (hAppearancePage != nullptr) {
         SendMessageW(hAppearancePage, WM_SETREDRAW, TRUE, 0);
         RedrawWindow(hAppearancePage, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
@@ -6562,27 +6836,20 @@ static void CopyWidgetAppearance(WidgetConfig* target, const WidgetConfig& sourc
 }
 
 static bool FontSelectionsEqual(const FontSelection& left, const FontSelection& right) {
-    return left.face == right.face && left.dialogSize == right.dialogSize && left.weight == right.weight && left.italic == right.italic && left.underline == right.underline &&
-        left.strikeOut == right.strikeOut && left.charSet == right.charSet;
+    return left.face == right.face && left.dialogSize == right.dialogSize && left.weight == right.weight && left.italic == right.italic && left.underline == right.underline && left.strikeOut == right.strikeOut && left.charSet == right.charSet;
 }
 
 static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConfig& right) {
-    return left.id == right.id && left.type == right.type && left.name == right.name && left.visible == right.visible && left.topMost == right.topMost &&
-        left.showSeconds == right.showSeconds && left.showUtc == right.showUtc && left.showUtcText == right.showUtcText && left.language == right.language &&
-        left.timeZoneKey == right.timeZoneKey && left.monitorDevices == right.monitorDevices && left.blackoutOtherMonitors == right.blackoutOtherMonitors &&
-        left.offsetMilliseconds == right.offsetMilliseconds && left.x == right.x && left.y == right.y && left.previewX == right.previewX && left.previewY == right.previewY &&
-        left.size == right.size && left.opacity == right.opacity &&
-        left.fontSize == right.fontSize && left.fontDialogSize == right.fontDialogSize && left.fontAntialiasing == right.fontAntialiasing && left.leadingZero == right.leadingZero &&
-        left.transparentBackground == right.transparentBackground &&
-        left.disableThemes == right.disableThemes && left.fontFace == right.fontFace && left.fontWeight == right.fontWeight && left.fontItalic == right.fontItalic &&
-        left.fontUnderline == right.fontUnderline && left.fontStrikeOut == right.fontStrikeOut && left.fontCharSet == right.fontCharSet &&
-        FontSelectionsEqual(left.panelTopFont, right.panelTopFont) && FontSelectionsEqual(left.panelTimeFont, right.panelTimeFont) &&
-        FontSelectionsEqual(left.panelBottomFont, right.panelBottomFont) && left.padding == right.padding &&
-        left.borderStyle == right.borderStyle && left.borderWidth == right.borderWidth && left.textColor == right.textColor && left.backgroundColor == right.backgroundColor &&
-        left.alarmTextColor == right.alarmTextColor && left.alarmBackgroundColor == right.alarmBackgroundColor && left.weekNumbers == right.weekNumbers &&
-        left.sundayFirst == right.sundayFirst && left.dateCopyFormat == right.dateCopyFormat && left.alarmEnabled == right.alarmEnabled && left.alarmHour == right.alarmHour &&
-        left.alarmMinute == right.alarmMinute && left.runCommand == right.runCommand && left.loopAudio == right.loopAudio && left.command == right.command &&
-        left.callRemoteScript == right.callRemoteScript && left.remoteScriptUrl == right.remoteScriptUrl;
+    return left.id == right.id && left.type == right.type && left.name == right.name && left.visible == right.visible && left.topMost == right.topMost && left.showSeconds == right.showSeconds && left.showUtc == right.showUtc
+        && left.showUtcText == right.showUtcText && left.language == right.language && left.timeZoneKey == right.timeZoneKey && left.monitorDevices == right.monitorDevices && left.blackoutOtherMonitors == right.blackoutOtherMonitors
+        && left.offsetMilliseconds == right.offsetMilliseconds && left.x == right.x && left.y == right.y && left.previewX == right.previewX && left.previewY == right.previewY && left.size == right.size && left.opacity == right.opacity
+        && left.fontSize == right.fontSize && left.fontDialogSize == right.fontDialogSize && left.fontAntialiasing == right.fontAntialiasing && left.leadingZero == right.leadingZero && left.transparentBackground == right.transparentBackground
+        && left.disableThemes == right.disableThemes && left.fontFace == right.fontFace && left.fontWeight == right.fontWeight && left.fontItalic == right.fontItalic && left.fontUnderline == right.fontUnderline
+        && left.fontStrikeOut == right.fontStrikeOut && left.fontCharSet == right.fontCharSet && FontSelectionsEqual(left.panelTopFont, right.panelTopFont) && FontSelectionsEqual(left.panelTimeFont, right.panelTimeFont)
+        && FontSelectionsEqual(left.panelBottomFont, right.panelBottomFont) && left.padding == right.padding && left.borderStyle == right.borderStyle && left.borderWidth == right.borderWidth && left.textColor == right.textColor
+        && left.backgroundColor == right.backgroundColor && left.alarmTextColor == right.alarmTextColor && left.alarmBackgroundColor == right.alarmBackgroundColor && left.weekNumbers == right.weekNumbers
+        && left.sundayFirst == right.sundayFirst && left.dateCopyFormat == right.dateCopyFormat && left.alarmEnabled == right.alarmEnabled && left.alarmHour == right.alarmHour && left.alarmMinute == right.alarmMinute
+        && left.runCommand == right.runCommand && left.loopAudio == right.loopAudio && left.command == right.command && left.callRemoteScript == right.callRemoteScript && left.remoteScriptUrl == right.remoteScriptUrl;
 }
 
 static bool WidgetConfigurationsDifferOnlyInSeconds(const WidgetConfig& left, const WidgetConfig& right) {
@@ -6709,19 +6976,11 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
     bool calendarWidget = widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL;
     bool themeChanged = widget->config.disableThemes != appearance.disableThemes;
     bool fontAntialiasingChanged = widget->config.fontAntialiasing != appearance.fontAntialiasing;
-    bool fontSelectionChanged = widget->config.fontFace != appearance.fontFace || widget->config.fontWeight != appearance.fontWeight ||
-        widget->config.fontItalic != appearance.fontItalic || widget->config.fontCharSet != appearance.fontCharSet;
-    bool panelFontChanged = !FontSelectionsEqual(widget->config.panelTopFont, appearance.panelTopFont) ||
-        !FontSelectionsEqual(widget->config.panelTimeFont, appearance.panelTimeFont) || !FontSelectionsEqual(widget->config.panelBottomFont, appearance.panelBottomFont);
+    bool fontSelectionChanged = widget->config.fontFace != appearance.fontFace || widget->config.fontWeight != appearance.fontWeight || widget->config.fontItalic != appearance.fontItalic || widget->config.fontCharSet != appearance.fontCharSet;
+    bool panelFontChanged = !FontSelectionsEqual(widget->config.panelTopFont, appearance.panelTopFont) || !FontSelectionsEqual(widget->config.panelTimeFont, appearance.panelTimeFont) || !FontSelectionsEqual(widget->config.panelBottomFont, appearance.panelBottomFont);
     bool digitalFrameChanged = digital && widget->config.borderStyle != appearance.borderStyle;
-    bool digitalDimensionsChanged = digital && (digitalFrameChanged || widget->config.borderWidth != appearance.borderWidth || widget->config.padding != appearance.padding ||
-                                                widget->config.leadingZero != appearance.leadingZero || widget->config.fontSize != appearance.fontSize ||
-                                                widget->config.fontFace != appearance.fontFace || widget->config.fontWeight != appearance.fontWeight ||
-                                                widget->config.fontItalic != appearance.fontItalic || widget->config.fontUnderline != appearance.fontUnderline ||
-                                                widget->config.fontStrikeOut != appearance.fontStrikeOut || widget->config.fontCharSet != appearance.fontCharSet);
-    bool requiresRecreation = widget->config.transparentBackground != appearance.transparentBackground ||
-        (!digital && (structuralChange || widget->config.size != appearance.size || widget->config.weekNumbers != appearance.weekNumbers ||
-            widget->config.sundayFirst != appearance.sundayFirst)) || (calendarWidget && (fontSelectionChanged || themeChanged));
+    bool digitalDimensionsChanged = digital && (digitalFrameChanged || widget->config.borderWidth != appearance.borderWidth || widget->config.padding != appearance.padding || widget->config.leadingZero != appearance.leadingZero || widget->config.fontSize != appearance.fontSize || widget->config.fontFace != appearance.fontFace || widget->config.fontWeight != appearance.fontWeight || widget->config.fontItalic != appearance.fontItalic || widget->config.fontUnderline != appearance.fontUnderline || widget->config.fontStrikeOut != appearance.fontStrikeOut || widget->config.fontCharSet != appearance.fontCharSet);
+    bool requiresRecreation = widget->config.transparentBackground != appearance.transparentBackground || (!digital && (structuralChange || widget->config.size != appearance.size || widget->config.weekNumbers != appearance.weekNumbers || widget->config.sundayFirst != appearance.sundayFirst)) || (calendarWidget && (fontSelectionChanged || themeChanged));
     if (requiresRecreation) {
         RecreateWidgetForAppearance(widget, appearance);
         return;
@@ -7040,8 +7299,7 @@ static void UpdateFontDescription(const WidgetConfig& config) {
     SetWindowTextW(hFontDescription, description.c_str());
 }
 
-static bool ChooseFontAttributes(HWND owner, std::wstring* face, int* sizeTenths, int* weight, bool* italic, BYTE* charSet, bool* underline = nullptr,
-                                 bool* strikeOut = nullptr) {
+static bool ChooseFontAttributes(HWND owner, std::wstring* face, int* sizeTenths, int* weight, bool* italic, BYTE* charSet, bool* underline = nullptr, bool* strikeOut = nullptr) {
     if (face == nullptr || sizeTenths == nullptr || weight == nullptr || italic == nullptr || charSet == nullptr) {
         return false;
     }
@@ -7331,8 +7589,7 @@ static void CreateSettingsControls() {
     hFontButton = AddControl(0, L"BUTTON", FONT_BUTTON_LABELS[appLanguage], WS_TABSTOP, 8, 70, 178, 27, hAppearancePage, ID_FONT, &appearanceControls);
     hPanelTopFontButton = AddControl(0, L"BUTTON", PANEL_TOP_FONT_LABELS[appLanguage], WS_TABSTOP, 8, 76, 178, 27, hAppearancePage, ID_PANEL_TOP_FONT, &appearanceControls);
     hPanelTimeFontButton = AddControl(0, L"BUTTON", PANEL_TIME_FONT_LABELS[appLanguage], WS_TABSTOP, 194, 76, 178, 27, hAppearancePage, ID_PANEL_TIME_FONT, &appearanceControls);
-    hPanelBottomFontButton = AddControl(0, L"BUTTON", PANEL_BOTTOM_FONT_LABELS[appLanguage], WS_TABSTOP, 8, 106, 178, 27, hAppearancePage, ID_PANEL_BOTTOM_FONT,
-                                        &appearanceControls);
+    hPanelBottomFontButton = AddControl(0, L"BUTTON", PANEL_BOTTOM_FONT_LABELS[appLanguage], WS_TABSTOP, 8, 106, 178, 27, hAppearancePage, ID_PANEL_BOTTOM_FONT, &appearanceControls);
     hDefaultAppearanceButton = AddControl(0, L"BUTTON", DEFAULT_APPEARANCE_LABELS[appLanguage], WS_TABSTOP, 194, 70, 178, 27, hAppearancePage, ID_DEFAULT_APPEARANCE, &appearanceControls);
     hTextColorButton = AddControl(0, L"BUTTON", Mnemonic(TXT_TEXT_COLOR).c_str(), WS_TABSTOP, 8, 100, 178, 27, hAppearancePage, ID_TEXT_COLOR, &appearanceControls);
     hBackgroundColorButton = AddControl(0, L"BUTTON", Mnemonic(TXT_BACKGROUND_COLOR).c_str(), WS_TABSTOP, 194, 100, 178, 27, hAppearancePage, ID_BACKGROUND_COLOR, &appearanceControls);
@@ -7363,15 +7620,13 @@ static void CreateSettingsControls() {
     SendMessageW(hBorderTrackBar, TBM_SETTICFREQ, 1, 0);
     SendMessageW(hBorderTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hBorderTrackBar, TBM_SETPAGESIZE, 0, 1);
-    hWidgetAntialiasLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", ANTIALIASING_LABELS[appLanguage], WS_CHILD | WS_VISIBLE, 8, 262, 138, 22, hAppearancePage,
-                                             nullptr, hInstance, nullptr);
+    hWidgetAntialiasLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", ANTIALIASING_LABELS[appLanguage], WS_CHILD | WS_VISIBLE, 8, 262, 138, 22, hAppearancePage, nullptr, hInstance, nullptr);
     appearanceControls.push_back(hWidgetAntialiasLabel);
     hWidgetAntialiasCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST, 148, 258, 86, 100, hAppearancePage, ID_WIDGET_ANTIALIAS, &appearanceControls);
     for (int antialiasing = 0; antialiasing < FONT_ANTIALIAS_COUNT; antialiasing++) {
         SendMessageW(hWidgetAntialiasCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(ANTIALIASING_NAMES[antialiasing]));
     }
-    hWidgetDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX, 242, 258, 130, 24, hAppearancePage,
-                                            ID_WIDGET_DISABLE_THEMES, &appearanceControls);
+    hWidgetDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX, 242, 258, 130, 24, hAppearancePage, ID_WIDGET_DISABLE_THEMES, &appearanceControls);
     hLeadingZeroCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_LEADING_ZERO).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX, 8, 286, 130, 24, hAppearancePage, ID_LEADING_ZERO, &appearanceControls);
     hTransparentBackgroundCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_TRANSPARENT_BG).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX, 145, 286, 220, 24, hAppearancePage, ID_TRANSPARENT_BG, &appearanceControls);
     hWeekNumbersCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_WEEK_NUMBERS).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX, 8, 76, 150, 24, hAppearancePage, ID_WEEK_NUMBERS, &appearanceControls);
@@ -7397,8 +7652,7 @@ static void CreateSettingsControls() {
     y += 34;
     hRemoteScriptCheck = AddControl(0, L"BUTTON", REMOTE_SCRIPT_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX, left, y, 300, 24, hAlarmPage, ID_REMOTE_SCRIPT, &alarmControls);
     y += 30;
-    HWND remoteUrlLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", REMOTE_SCRIPT_URL_LABELS[appLanguage], WS_CHILD | WS_VISIBLE | SS_LEFTNOWORDWRAP, left, y + 3, 92, 22,
-                                          hAlarmPage, nullptr, hInstance, nullptr);
+    HWND remoteUrlLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", REMOTE_SCRIPT_URL_LABELS[appLanguage], WS_CHILD | WS_VISIBLE | SS_LEFTNOWORDWRAP, left, y + 3, 92, 22, hAlarmPage, nullptr, hInstance, nullptr);
     alarmControls.push_back(remoteUrlLabel);
     hRemoteScriptEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL, left + 96, y, 274, 24, hAlarmPage, ID_REMOTE_SCRIPT_URL, &alarmControls);
     HWND timeSourceLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", TIME_SOURCE_LABELS[appLanguage], WS_CHILD | WS_VISIBLE, 8, 16, 122, 22, hTimePage, nullptr, hInstance, nullptr);
@@ -7634,549 +7888,224 @@ static void ShowSettingsWindow(int widgetId) {
     SetForegroundWindowEx(hSettings);
 }
 
-const wchar_t* HELP_TEXT[LANG_COUNT] = { L"OVLÁDÁNÍ\r\nLevým tlačítkem a tažením přesunete hodiny nebo panel. "
-                                        L"Samostatný kalendář se přesouvá za volnou plochu; kliknutím na den "
-                                        L"měníte vybrané datum a šipkami, "
-                                        L"záhlavím nebo odkazem Dnes kalendář procházíte. Pravým tlačítkem na "
-                                        L"widgetu nebo na ikoně v oznamovací oblasti otevřete nabídku. Levé "
-                                        L"kliknutí na ikonu zobrazí nebo skryje "
-                                        L"všechny widgety.\r\n\r\nWIDGETY A NASTAVENÍ\r\nV Nastavení lze přidat, "
-                                        L"odebrat a duplikovat libovolný počet ručičkových hodin, digitálních "
-                                        L"hodin, kalendářů a panelů s "
-                                        L"kalendářem a hodinami. Každý widget má vlastní viditelnost, režim vždy "
-                                        L"navrchu, jazyk, časové pásmo a offset. Offset zadávejte jako "
-                                        L"[-]HH:mm:ss.ff. Ručičkové hodiny a "
-                                        L"hodiny v panelu mají čtyři velikosti. U digitálních hodin lze nastavit "
-                                        L"sekundy, úvodní nulu, písmo, barvy, neprůhlednost a průhledné pozadí. "
-                                        L"Kalendář podporuje čísla týdnů, "
-                                        L"neděli jako první den a používá zvolený jazyk "
-                                        L"widgetu.\r\n\r\nBUDÍK\r\nBudík lze nastavit pro hodiny a panel. Zvukový "
-                                        L"soubor aplikace přehrává sama jednou nebo stále dokola "
-                                        L"podle volby. Ostatní soubor nebo příkaz předá systému Windows. Kliknutím "
-                                        L"na budící ciferník či displej, příkazem Zastavit budík nebo klávesou Esc "
-                                        L"zastavíte blikání i zvuk "
-                                        L"přehrávaný aplikací.\r\n\r\nZKRATKY A UKLÁDÁNÍ\r\nDvojklik na hodiny "
-                                        L"přepne sekundy, F1 otevře nápovědu, B otevře Nastavení a Esc skryje "
-                                        L"widget, pokud právě nezastavuje "
-                                        L"budík. Polohy widgetů se ukládají po přesunutí, polohy formulářů při "
-                                        L"zavření a nastavení do zvoleného úložiště. Další spuštění programu "
-                                        L"aktivuje již běžící instanci a "
-                                        L"zachová widgety u nejbližšího dostupného okraje pracovní plochy.",
-                                        L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a "
-                                        L"standalone calendar by its free area; click a day to change the "
-                                        L"selection and use the arrows, header or "
-                                        L"Today link to navigate. Right-click a widget or notification icon for "
-                                        L"its menu. Left-click the notification icon to show or hide all "
-                                        L"widgets.\r\n\r\nWIDGETS AND "
-                                        L"SETTINGS\r\nSettings can add, remove and duplicate any number of analog "
-                                        L"clocks, digital clocks, calendars and calendar-and-clock panels. Each "
-                                        L"widget has its own visibility, "
-                                        L"always-on-top state, language, time zone and offset. Enter offsets as "
-                                        L"[-]HH:mm:ss.ff. Analog clocks and panel clocks have four sizes. Digital "
-                                        L"clocks support seconds, a "
-                                        L"leading zero, font, colours, opacity and a transparent background. "
-                                        L"Calendars support week numbers and Sunday as the first day and use the "
-                                        L"widget "
-                                        L"language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
-                                        L"application plays an audio file itself, once or continuously according "
-                                        L"to the loop option. Other files or "
-                                        L"commands are passed to Windows. Click the alarming clock face or "
-                                        L"display, choose Stop alarm, or press Esc to stop both the alarm "
-                                        L"indication and audio played by the "
-                                        L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock to "
-                                        L"toggle seconds, press F1 for Help, B for Settings, and Esc to hide a "
-                                        L"widget when no alarm is being "
-                                        L"stopped. Widget positions are saved after dragging, dialog positions "
-                                        L"when closed, and all settings in the registry. Starting the program "
-                                        L"again activates the running "
-                                        L"instance and keeps widgets at the nearest available point in the work "
-                                        L"area.",
-                                        L"BEDIENUNG\r\nZiehen Sie eine Uhr oder ein Panel mit der linken "
-                                        L"Maustaste. Einen einzelnen Kalender ziehen Sie an seiner freien Fläche; "
-                                        L"ein Klick auf einen Tag ändert die "
-                                        L"Auswahl. Rechtsklick auf Widget oder Infobereichsymbol öffnet das Menü. "
-                                        L"Linksklick auf das Symbol zeigt oder verbirgt alle "
-                                        L"Widgets.\r\n\r\nWIDGETS UND EINSTELLUNGEN\r\nSie "
-                                        L"können beliebig viele Analoguhren, Digitaluhren, Kalender und "
-                                        L"Kalender-Uhr-Panels hinzufügen, entfernen oder duplizieren. Jedes Widget "
-                                        L"besitzt eigene Sichtbarkeit, "
-                                        L"Vordergrundlage, Sprache, Zeitzone und einen Versatz im Format "
-                                        L"[-]HH:mm:ss.ff. Analoguhren haben vier Größen. Digitaluhren bieten "
-                                        L"Sekunden, führende Null, Schrift, Farben, "
-                                        L"Deckkraft und transparenten Hintergrund. Kalender bieten Wochennummern, "
-                                        L"Sonntag als ersten Tag und verwenden die "
-                                        L"Widget-Sprache.\r\n\r\nWECKER\r\nEine Audiodatei wird "
-                                        L"intern einmal oder in Schleife abgespielt; andere Dateien oder Befehle "
-                                        L"werden an Windows übergeben. Ein Klick auf das alarmierende Zifferblatt "
-                                        L"bzw. Display, Wecker stoppen "
-                                        L"oder Esc beendet Anzeige und intern abgespielten Ton.\r\n\r\nTASTEN UND "
-                                        L"SPEICHERN\r\nDoppelklick schaltet Sekunden um, F1 öffnet Hilfe, B die "
-                                        L"Einstellungen. Positionen und "
-                                        L"sämtliche Einstellungen werden in der Registrierung gespeichert. Ein "
-                                        L"erneuter Programmstart aktiviert die laufende Instanz.",
-                                        L"COMMANDES\r\nFaites glisser une horloge ou un panneau avec le bouton "
-                                        L"gauche. Déplacez un calendrier autonome par sa zone libre ; cliquez sur "
-                                        L"un jour pour changer la "
-                                        L"sélection. Un clic droit sur un widget ou l’icône de notification ouvre "
-                                        L"le menu. Un clic gauche sur l’icône affiche ou masque tous les "
-                                        L"widgets.\r\n\r\nWIDGETS ET "
-                                        L"PARAMÈTRES\r\nVous pouvez ajouter, supprimer et dupliquer autant "
-                                        L"d’horloges analogiques, numériques, calendriers et panneaux combinés que "
-                                        L"nécessaire. Chaque widget possède "
-                                        L"sa visibilité, son maintien au premier plan, sa langue, son fuseau et "
-                                        L"son décalage au format [-]HH:mm:ss.ff. Les horloges analogiques ont "
-                                        L"quatre tailles. Les horloges "
-                                        L"numériques proposent secondes, zéro initial, police, couleurs, opacité "
-                                        L"et fond transparent. Le calendrier propose numéros de semaine, dimanche "
-                                        L"en premier et la langue du "
-                                        L"widget.\r\n\r\nALARME\r\nL’application lit elle-même un fichier audio "
-                                        L"une fois ou en boucle ; les autres fichiers ou commandes sont confiés à "
-                                        L"Windows. Cliquez sur le cadran "
-                                        L"ou l’affichage en alarme, choisissez Arrêter l’alarme ou appuyez sur "
-                                        L"Échap pour arrêter l’indication et le son interne.\r\n\r\nRACCOURCIS ET "
-                                        L"ENREGISTREMENT\r\nUn "
-                                        L"double-clic bascule les secondes, F1 ouvre l’aide et B les paramètres. "
-                                        L"Les positions et tous les réglages sont enregistrés dans le registre. Un "
-                                        L"nouveau lancement active "
-                                        L"l’instance existante.",
-                                        L"CONTROLES\r\nArrastre un reloj o panel con el botón izquierdo. El "
-                                        L"calendario independiente se arrastra por su zona libre; haga clic en un "
-                                        L"día para cambiar la selección. El "
-                                        L"botón derecho sobre un widget o el icono de notificación abre el menú. "
-                                        L"El botón izquierdo sobre el icono muestra u oculta todos los "
-                                        L"widgets.\r\n\r\nWIDGETS Y "
-                                        L"CONFIGURACIÓN\r\nPuede añadir, quitar y duplicar cualquier número de "
-                                        L"relojes analógicos, digitales, calendarios y paneles combinados. Cada "
-                                        L"widget tiene visibilidad, primer "
-                                        L"plano, idioma, zona horaria y desfase propios; use [-]HH:mm:ss.ff. Los "
-                                        L"relojes analógicos tienen cuatro tamaños. Los digitales permiten "
-                                        L"segundos, cero inicial, fuente, "
-                                        L"colores, opacidad y fondo transparente. El calendario permite números de "
-                                        L"semana, domingo primero y usa el idioma del widget.\r\n\r\nALARMA\r\nLa "
-                                        L"aplicación reproduce "
-                                        L"internamente un archivo de audio una vez o en bucle; los demás archivos "
-                                        L"o comandos se entregan a Windows. Haga clic en la esfera o pantalla con "
-                                        L"alarma, elija Detener alarma "
-                                        L"o pulse Esc para detener la indicación y el audio interno.\r\n\r\nATAJOS "
-                                        L"Y GUARDADO\r\nEl doble clic cambia los segundos, F1 abre la ayuda y B la "
-                                        L"configuración. Las "
-                                        L"posiciones y todos los ajustes se guardan en el registro. Otra ejecución "
-                                        L"activa la instancia existente.",
-                                        L"COMANDI\r\nTrascinare un orologio o pannello con il pulsante sinistro. "
-                                        L"Il calendario autonomo si trascina dall’area libera; fare clic su un "
-                                        L"giorno per cambiare la "
-                                        L"selezione. Il pulsante destro su widget o icona di notifica apre il "
-                                        L"menu. Il clic sinistro sull’icona mostra o nasconde tutti i "
-                                        L"widget.\r\n\r\nWIDGET E IMPOSTAZIONI\r\nÈ "
-                                        L"possibile aggiungere, rimuovere e duplicare un numero qualsiasi di "
-                                        L"orologi analogici, digitali, calendari e pannelli combinati. Ogni widget "
-                                        L"ha visibilità, primo piano, "
-                                        L"lingua, fuso orario e offset propri; usare [-]HH:mm:ss.ff. Gli orologi "
-                                        L"analogici hanno quattro dimensioni. Quelli digitali offrono secondi, "
-                                        L"zero iniziale, carattere, "
-                                        L"colori, opacità e sfondo trasparente. Il calendario offre numeri di "
-                                        L"settimana, domenica per prima e usa la lingua del "
-                                        L"widget.\r\n\r\nSVEGLIA\r\nL’applicazione riproduce "
-                                        L"internamente un file audio una volta o in ciclo; gli altri file o "
-                                        L"comandi vengono affidati a Windows. Fare clic sul quadrante o display in "
-                                        L"allarme, scegliere Ferma sveglia "
-                                        L"o premere Esc per fermare indicazione e audio "
-                                        L"interno.\r\n\r\nSCORCIATOIE E SALVATAGGIO\r\nIl doppio clic commuta i "
-                                        L"secondi, F1 apre la guida e B le impostazioni. Posizioni "
-                                        L"e impostazioni vengono salvate nel registro. Un nuovo avvio attiva "
-                                        L"l’istanza esistente.",
-                                        L"STEROWANIE\r\nPrzeciągnij zegar lub panel lewym przyciskiem. Samodzielny "
-                                        L"kalendarz przeciąga się za wolne miejsce; kliknięcie dnia zmienia wybór. "
-                                        L"Prawy przycisk na widżecie "
-                                        L"lub ikonie obszaru powiadomień otwiera menu. Lewy przycisk na ikonie "
-                                        L"pokazuje albo ukrywa wszystkie widżety.\r\n\r\nWIDŻETY I "
-                                        L"USTAWIENIA\r\nMożna dodać, usunąć i powielić "
-                                        L"dowolną liczbę zegarów analogowych, cyfrowych, kalendarzy i paneli "
-                                        L"łączonych. Każdy widżet ma własną widoczność, tryb na wierzchu, język, "
-                                        L"strefę czasową i przesunięcie w "
-                                        L"formacie [-]HH:mm:ss.ff. Zegary analogowe mają cztery rozmiary. Cyfrowe "
-                                        L"oferują sekundy, zero wiodące, czcionkę, kolory, krycie i przezroczyste "
-                                        L"tło. Kalendarz oferuje "
-                                        L"numery tygodni, niedzielę jako pierwszy dzień i język "
-                                        L"widżetu.\r\n\r\nALARM\r\nAplikacja sama odtwarza plik audio raz lub w "
-                                        L"pętli; inne pliki i polecenia przekazuje "
-                                        L"systemowi Windows. Kliknięcie alarmującej tarczy lub wyświetlacza, "
-                                        L"polecenie Zatrzymaj alarm albo Esc zatrzymuje wskazanie i dźwięk "
-                                        L"wewnętrzny.\r\n\r\nSKRÓTY I "
-                                        L"ZAPIS\r\nDwuklik przełącza sekundy, F1 otwiera pomoc, a B ustawienia. "
-                                        L"Pozycje i wszystkie ustawienia są zapisywane w rejestrze. Ponowne "
-                                        L"uruchomienie aktywuje istniejącą "
-                                        L"instancję.",
-                                        L"OVLÁDANIE\r\nĽavým tlačidlom a ťahaním presuniete hodiny alebo panel. "
-                                        L"Samostatný kalendár sa presúva za voľnú plochu; kliknutím na deň zmeníte "
-                                        L"výber. Pravé tlačidlo na "
-                                        L"widgete alebo ikone v oznamovacej oblasti otvorí ponuku. Ľavé kliknutie "
-                                        L"na ikonu zobrazí alebo skryje všetky widgety.\r\n\r\nWIDGETY A "
-                                        L"NASTAVENIA\r\nMožno pridať, odobrať a "
-                                        L"duplikovať ľubovoľný počet ručičkových hodín, digitálnych hodín, "
-                                        L"kalendárov a kombinovaných panelov. Každý widget má vlastnú viditeľnosť, "
-                                        L"režim vždy navrchu, jazyk, časové "
-                                        L"pásmo a offset vo formáte [-]HH:mm:ss.ff. Ručičkové hodiny majú štyri "
-                                        L"veľkosti. Digitálne hodiny ponúkajú sekundy, úvodnú nulu, písmo, farby, "
-                                        L"priehľadnosť a priehľadné "
-                                        L"pozadie. Kalendár ponúka čísla týždňov, nedeľu ako prvý deň a používa "
-                                        L"jazyk widgetu.\r\n\r\nBUDÍK\r\nAplikácia prehrá zvukový súbor sama raz "
-                                        L"alebo dookola; ostatné súbory a "
-                                        L"príkazy odovzdá systému Windows. Kliknutie na budík, príkaz Zastaviť "
-                                        L"budík alebo Esc zastaví signalizáciu aj interný zvuk.\r\n\r\nSKRATKY A "
-                                        L"UKLADANIE\r\nDvojklik prepne "
-                                        L"sekundy, F1 otvorí pomoc a B nastavenia. Polohy a všetky nastavenia sa "
-                                        L"ukladajú do registra. Ďalšie spustenie aktivuje existujúcu inštanciu." };
+const wchar_t* HELP_TEXT[LANG_COUNT] = {
+    L"OVLÁDÁNÍ\r\nLevým tlačítkem a tažením přesunete hodiny nebo panel. Samostatný kalendář se přesouvá za volnou plochu; kliknutím na den měníte vybrané datum a šipkami, "
+    L"záhlavím nebo odkazem Dnes kalendář procházíte. Pravým tlačítkem na widgetu nebo na ikoně v oznamovací oblasti otevřete nabídku. Levé kliknutí na ikonu zobrazí nebo skryje "
+    L"všechny widgety.\r\n\r\nWIDGETY A NASTAVENÍ\r\nV Nastavení lze přidat, odebrat a duplikovat libovolný počet ručičkových hodin, digitálních hodin, kalendářů a panelů s "
+    L"kalendářem a hodinami. Každý widget má vlastní viditelnost, režim vždy navrchu, jazyk, časové pásmo a offset. Offset zadávejte jako [-]HH:mm:ss.ff. Ručičkové hodiny a "
+    L"hodiny v panelu mají čtyři velikosti. U digitálních hodin lze nastavit sekundy, úvodní nulu, písmo, barvy, neprůhlednost a průhledné pozadí. Kalendář podporuje čísla týdnů, "
+    L"neděli jako první den a používá zvolený jazyk widgetu.\r\n\r\nBUDÍK\r\nBudík lze nastavit pro hodiny a panel. Zvukový soubor aplikace přehrává sama jednou nebo stále dokola "
+    L"podle volby. Ostatní soubor nebo příkaz předá systému Windows. Kliknutím na budící ciferník či displej, příkazem Zastavit budík nebo klávesou Esc zastavíte blikání i zvuk "
+    L"přehrávaný aplikací.\r\n\r\nZKRATKY A UKLÁDÁNÍ\r\nDvojklik na hodiny přepne sekundy, F1 otevře nápovědu, B otevře Nastavení a Esc skryje widget, pokud právě nezastavuje "
+    L"budík. Polohy widgetů se ukládají po přesunutí, polohy formulářů při zavření a nastavení do zvoleného úložiště. Další spuštění programu aktivuje již běžící instanci a "
+    L"zachová widgety u nejbližšího dostupného okraje pracovní plochy.",
+    L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by its free area; click a day to change the selection and use the arrows, header or "
+    L"Today link to navigate. Right-click a widget or notification icon for its menu. Left-click the notification icon to show or hide all widgets.\r\n\r\nWIDGETS AND "
+    L"SETTINGS\r\nSettings can add, remove and duplicate any number of analog clocks, digital clocks, calendars and calendar-and-clock panels. Each widget has its own visibility, "
+    L"always-on-top state, language, time zone and offset. Enter offsets as [-]HH:mm:ss.ff. Analog clocks and panel clocks have four sizes. Digital clocks support seconds, a "
+    L"leading zero, font, colours, opacity and a transparent background. Calendars support week numbers and Sunday as the first day and use the widget "
+    L"language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The application plays an audio file itself, once or continuously according to the loop option. Other files or "
+    L"commands are passed to Windows. Click the alarming clock face or display, choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
+    L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock to toggle seconds, press F1 for Help, B for Settings, and Esc to hide a widget when no alarm is being "
+    L"stopped. Widget positions are saved after dragging, dialog positions when closed, and all settings in the registry. Starting the program again activates the running "
+    L"instance and keeps widgets at the nearest available point in the work area.",
+    L"BEDIENUNG\r\nZiehen Sie eine Uhr oder ein Panel mit der linken Maustaste. Einen einzelnen Kalender ziehen Sie an seiner freien Fläche; ein Klick auf einen Tag ändert die "
+    L"Auswahl. Rechtsklick auf Widget oder Infobereichsymbol öffnet das Menü. Linksklick auf das Symbol zeigt oder verbirgt alle Widgets.\r\n\r\nWIDGETS UND EINSTELLUNGEN\r\nSie "
+    L"können beliebig viele Analoguhren, Digitaluhren, Kalender und Kalender-Uhr-Panels hinzufügen, entfernen oder duplizieren. Jedes Widget besitzt eigene Sichtbarkeit, "
+    L"Vordergrundlage, Sprache, Zeitzone und einen Versatz im Format [-]HH:mm:ss.ff. Analoguhren haben vier Größen. Digitaluhren bieten Sekunden, führende Null, Schrift, Farben, "
+    L"Deckkraft und transparenten Hintergrund. Kalender bieten Wochennummern, Sonntag als ersten Tag und verwenden die Widget-Sprache.\r\n\r\nWECKER\r\nEine Audiodatei wird "
+    L"intern einmal oder in Schleife abgespielt; andere Dateien oder Befehle werden an Windows übergeben. Ein Klick auf das alarmierende Zifferblatt bzw. Display, Wecker stoppen "
+    L"oder Esc beendet Anzeige und intern abgespielten Ton.\r\n\r\nTASTEN UND SPEICHERN\r\nDoppelklick schaltet Sekunden um, F1 öffnet Hilfe, B die Einstellungen. Positionen und "
+    L"sämtliche Einstellungen werden in der Registrierung gespeichert. Ein erneuter Programmstart aktiviert die laufende Instanz.",
+    L"COMMANDES\r\nFaites glisser une horloge ou un panneau avec le bouton gauche. Déplacez un calendrier autonome par sa zone libre ; cliquez sur un jour pour changer la "
+    L"sélection. Un clic droit sur un widget ou l’icône de notification ouvre le menu. Un clic gauche sur l’icône affiche ou masque tous les widgets.\r\n\r\nWIDGETS ET "
+    L"PARAMÈTRES\r\nVous pouvez ajouter, supprimer et dupliquer autant d’horloges analogiques, numériques, calendriers et panneaux combinés que nécessaire. Chaque widget possède "
+    L"sa visibilité, son maintien au premier plan, sa langue, son fuseau et son décalage au format [-]HH:mm:ss.ff. Les horloges analogiques ont quatre tailles. Les horloges "
+    L"numériques proposent secondes, zéro initial, police, couleurs, opacité et fond transparent. Le calendrier propose numéros de semaine, dimanche en premier et la langue du "
+    L"widget.\r\n\r\nALARME\r\nL’application lit elle-même un fichier audio une fois ou en boucle ; les autres fichiers ou commandes sont confiés à Windows. Cliquez sur le cadran "
+    L"ou l’affichage en alarme, choisissez Arrêter l’alarme ou appuyez sur Échap pour arrêter l’indication et le son interne.\r\n\r\nRACCOURCIS ET ENREGISTREMENT\r\nUn "
+    L"double-clic bascule les secondes, F1 ouvre l’aide et B les paramètres. Les positions et tous les réglages sont enregistrés dans le registre. Un nouveau lancement active "
+    L"l’instance existante.",
+    L"CONTROLES\r\nArrastre un reloj o panel con el botón izquierdo. El calendario independiente se arrastra por su zona libre; haga clic en un día para cambiar la selección. El "
+    L"botón derecho sobre un widget o el icono de notificación abre el menú. El botón izquierdo sobre el icono muestra u oculta todos los widgets.\r\n\r\nWIDGETS Y "
+    L"CONFIGURACIÓN\r\nPuede añadir, quitar y duplicar cualquier número de relojes analógicos, digitales, calendarios y paneles combinados. Cada widget tiene visibilidad, primer "
+    L"plano, idioma, zona horaria y desfase propios; use [-]HH:mm:ss.ff. Los relojes analógicos tienen cuatro tamaños. Los digitales permiten segundos, cero inicial, fuente, "
+    L"colores, opacidad y fondo transparente. El calendario permite números de semana, domingo primero y usa el idioma del widget.\r\n\r\nALARMA\r\nLa aplicación reproduce "
+    L"internamente un archivo de audio una vez o en bucle; los demás archivos o comandos se entregan a Windows. Haga clic en la esfera o pantalla con alarma, elija Detener alarma "
+    L"o pulse Esc para detener la indicación y el audio interno.\r\n\r\nATAJOS Y GUARDADO\r\nEl doble clic cambia los segundos, F1 abre la ayuda y B la configuración. Las "
+    L"posiciones y todos los ajustes se guardan en el registro. Otra ejecución activa la instancia existente.",
+    L"COMANDI\r\nTrascinare un orologio o pannello con il pulsante sinistro. Il calendario autonomo si trascina dall’area libera; fare clic su un giorno per cambiare la "
+    L"selezione. Il pulsante destro su widget o icona di notifica apre il menu. Il clic sinistro sull’icona mostra o nasconde tutti i widget.\r\n\r\nWIDGET E IMPOSTAZIONI\r\nÈ "
+    L"possibile aggiungere, rimuovere e duplicare un numero qualsiasi di orologi analogici, digitali, calendari e pannelli combinati. Ogni widget ha visibilità, primo piano, "
+    L"lingua, fuso orario e offset propri; usare [-]HH:mm:ss.ff. Gli orologi analogici hanno quattro dimensioni. Quelli digitali offrono secondi, zero iniziale, carattere, "
+    L"colori, opacità e sfondo trasparente. Il calendario offre numeri di settimana, domenica per prima e usa la lingua del widget.\r\n\r\nSVEGLIA\r\nL’applicazione riproduce "
+    L"internamente un file audio una volta o in ciclo; gli altri file o comandi vengono affidati a Windows. Fare clic sul quadrante o display in allarme, scegliere Ferma sveglia "
+    L"o premere Esc per fermare indicazione e audio interno.\r\n\r\nSCORCIATOIE E SALVATAGGIO\r\nIl doppio clic commuta i secondi, F1 apre la guida e B le impostazioni. Posizioni "
+    L"e impostazioni vengono salvate nel registro. Un nuovo avvio attiva l’istanza esistente.",
+    L"STEROWANIE\r\nPrzeciągnij zegar lub panel lewym przyciskiem. Samodzielny kalendarz przeciąga się za wolne miejsce; kliknięcie dnia zmienia wybór. Prawy przycisk na widżecie "
+    L"lub ikonie obszaru powiadomień otwiera menu. Lewy przycisk na ikonie pokazuje albo ukrywa wszystkie widżety.\r\n\r\nWIDŻETY I USTAWIENIA\r\nMożna dodać, usunąć i powielić "
+    L"dowolną liczbę zegarów analogowych, cyfrowych, kalendarzy i paneli łączonych. Każdy widżet ma własną widoczność, tryb na wierzchu, język, strefę czasową i przesunięcie w "
+    L"formacie [-]HH:mm:ss.ff. Zegary analogowe mają cztery rozmiary. Cyfrowe oferują sekundy, zero wiodące, czcionkę, kolory, krycie i przezroczyste tło. Kalendarz oferuje "
+    L"numery tygodni, niedzielę jako pierwszy dzień i język widżetu.\r\n\r\nALARM\r\nAplikacja sama odtwarza plik audio raz lub w pętli; inne pliki i polecenia przekazuje "
+    L"systemowi Windows. Kliknięcie alarmującej tarczy lub wyświetlacza, polecenie Zatrzymaj alarm albo Esc zatrzymuje wskazanie i dźwięk wewnętrzny.\r\n\r\nSKRÓTY I ZAPIS\r\n"
+    L"Dwuklik przełącza sekundy, F1 otwiera pomoc, a B ustawienia. Pozycje i wszystkie ustawienia są zapisywane w rejestrze. Ponowne uruchomienie aktywuje istniejącą instancję.",
+    L"OVLÁDANIE\r\nĽavým tlačidlom a ťahaním presuniete hodiny alebo panel. Samostatný kalendár sa presúva za voľnú plochu; kliknutím na deň zmeníte výber. Pravé tlačidlo na "
+    L"widgete alebo ikone v oznamovacej oblasti otvorí ponuku. Ľavé kliknutie na ikonu zobrazí alebo skryje všetky widgety.\r\n\r\nWIDGETY A NASTAVENIA\r\nMožno pridať, odobrať a "
+    L"duplikovať ľubovoľný počet ručičkových hodín, digitálnych hodín, kalendárov a kombinovaných panelov. Každý widget má vlastnú viditeľnosť, režim vždy navrchu, jazyk, časové "
+    L"pásmo a offset vo formáte [-]HH:mm:ss.ff. Ručičkové hodiny majú štyri veľkosti. Digitálne hodiny ponúkajú sekundy, úvodnú nulu, písmo, farby, priehľadnosť a priehľadné "
+    L"pozadie. Kalendár ponúka čísla týždňov, nedeľu ako prvý deň a používa jazyk widgetu.\r\n\r\nBUDÍK\r\nAplikácia prehrá zvukový súbor sama raz alebo dookola; ostatné súbory a "
+    L"príkazy odovzdá systému Windows. Kliknutie na budík, príkaz Zastaviť budík alebo Esc zastaví signalizáciu aj interný zvuk.\r\n\r\nSKRATKY A UKLADANIE\r\nDvojklik prepne "
+    L"sekundy, F1 otvorí pomoc a B nastavenia. Polohy a všetky nastavenia sa ukladajú do registra. Ďalšie spustenie aktivuje existujúcu inštanciu."
+};
 
-const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = { L"\r\n\r\nZADÁVÁNÍ ČASU A AKCE BUDÍKU\r\nČas budíku přijímá běžný tvar "
-                                                  L"HH:mm s dvojtečkou, tečkou, mezerou či jiným oddělovačem; oddělovač lze "
-                                                  L"také vynechat. Jedna nebo dvě číslice znamenají hodiny, tři nebo čtyři "
-                                                  L"číslice hodiny a minuty, například 7, 12, 730, 0730 nebo 7:30. Po "
-                                                  L"opuštění pole se čas sjednotí na HH:mm. Offset se zadává zprava od sekund: "
-                                                  L"2 znamená 00:00:02.00, 230 i 0230 znamená 00:02:30.00 a 12345 znamená "
-                                                  L"01:23:45.00. Při odděleném zápisu jsou dvě skupiny minuty a sekundy, tři "
-                                                  L"skupiny hodiny, minuty a sekundy a čtvrtá skupina setiny; lze použít "
-                                                  L"znaménko. Tlačítko Vyzkoušet rozbliká aktuální ciferník či rám panelu a "
-                                                  L"zároveň asynchronně vyzkouší "
-                                                  L"soubor, příkaz, zvuk a HTTP/HTTPS adresu vzdáleného skriptu. Zastavení "
-                                                  L"testu nebo budíku ukončí i interně přehrávaný zvuk.",
-                                                  L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, "
-                                                  L"period, space or another separator; the separator may also be omitted. One "
-                                                  L"or two digits mean hours, while three or four digits mean hours and minutes, "
-                                                  L"for example 7, 12, 730, 0730 or 7:30. The value is normalized to HH:mm after "
-                                                  L"leaving the field. Offset entry starts from seconds on the right: 2 means "
-                                                  L"00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means 01:23:45.00. "
-                                                  L"With separators, two groups mean minutes and seconds, three mean hours, "
-                                                  L"minutes and seconds, and a fourth group contains hundredths; a sign is "
-                                                  L"accepted. Test flashes the selected clock face or panel frame and "
-                                                  L"asynchronously tests the file, "
-                                                  L"command, audio and HTTP/HTTPS remote-script URL. Stopping the test or "
-                                                  L"alarm also stops audio played internally.",
-                                                  L"\r\n\r\nZEITEINGABE UND WECKERAKTIONEN\r\nDie Weckzeit akzeptiert HH:mm mit "
-                                                  L"Doppelpunkt, Punkt, Leerzeichen oder einem anderen Trennzeichen; das "
-                                                  L"Trennzeichen kann entfallen. Eine oder zwei Ziffern bedeuten Stunden, drei "
-                                                  L"oder vier Ziffern Stunden und Minuten, z. B. 7, 12, 730, 0730 oder 7:30. "
-                                                  L"Beim Verlassen des Feldes wird HH:mm verwendet. Der Versatz wird von rechts "
-                                                  L"ab den Sekunden eingegeben: 2 bedeutet 00:00:02.00, 230 und 0230 bedeuten "
-                                                  L"00:02:30.00 und 12345 bedeutet 01:23:45.00. Mit Trennzeichen stehen zwei "
-                                                  L"Gruppen für Minuten und Sekunden, drei für Stunden, Minuten und Sekunden "
-                                                  L"und eine vierte für Hundertstel; ein Vorzeichen ist zulässig. Testen lässt "
-                                                  L"Zifferblatt oder Panelrahmen "
-                                                  L"blinken und prüft Datei, Befehl, "
-                                                  L"Audio sowie eine HTTP/HTTPS-Adresse eines Remote-Skripts asynchron. Das "
-                                                  L"Stoppen beendet auch intern abgespieltes Audio.",
-                                                  L"\r\n\r\nSAISIE DE L’HEURE ET ACTIONS D’ALARME\r\nL’heure accepte HH:mm avec "
-                                                  L"deux-points, point, espace ou un autre séparateur, qui peut aussi être omis. "
-                                                  L"Un ou deux chiffres indiquent les heures, trois ou quatre les heures et les "
-                                                  L"minutes, par exemple 7, 12, 730, 0730 ou 7:30. La valeur devient HH:mm à la "
-                                                  L"sortie du champ. Le décalage se saisit de droite à partir des secondes : 2 "
-                                                  L"signifie 00:00:02.00, 230 et 0230 signifient 00:02:30.00, et 12345 signifie "
-                                                  L"01:23:45.00. Avec séparateurs, deux groupes représentent minutes et "
-                                                  L"secondes, trois représentent heures, minutes et secondes, et un quatrième "
-                                                  L"les centièmes ; un signe est accepté. Tester fait "
-                                                  L"clignoter le cadran ou le cadre du panneau et teste de façon asynchrone "
-                                                  L"fichier, commande, audio et "
-                                                  L"URL HTTP/HTTPS du script distant. L’arrêt coupe aussi le son lu par "
-                                                  L"l’application.",
-                                                  L"\r\n\r\nENTRADA DE HORA Y ACCIONES DE ALARMA\r\nLa hora admite HH:mm con "
-                                                  L"dos puntos, punto, espacio u otro separador, que también puede omitirse. Uno "
-                                                  L"o dos dígitos indican horas; tres o cuatro, horas y minutos, por ejemplo 7, "
-                                                  L"12, 730, 0730 o 7:30. Al salir del campo se normaliza a HH:mm. El desfase se "
-                                                  L"introduce desde la derecha empezando por los segundos: 2 es 00:00:02.00, "
-                                                  L"230 y 0230 son 00:02:30.00, y 12345 es 01:23:45.00. Con separadores, dos "
-                                                  L"grupos son minutos y segundos, tres son horas, minutos y segundos, y un "
-                                                  L"cuarto contiene centésimas; se admite signo. Probar hace parpadear "
-                                                  L"la esfera o el marco del panel y prueba de forma asíncrona archivo, "
-                                                  L"comando, audio y URL HTTP/HTTPS "
-                                                  L"del script remoto. Detener también para el audio interno.",
-                                                  L"\r\n\r\nIMMISSIONE DELL’ORA E AZIONI SVEGLIA\r\nL’ora accetta HH:mm con "
-                                                  L"due punti, punto, spazio o un altro separatore, che può anche essere omesso. "
-                                                  L"Una o due cifre indicano le ore; tre o quattro indicano ore e minuti, per "
-                                                  L"esempio 7, 12, 730, 0730 o 7:30. Uscendo dal campo il valore diventa HH:mm. "
-                                                  L"L’offset si inserisce da destra partendo dai secondi: 2 significa "
-                                                  L"00:00:02.00, 230 e 0230 significano 00:02:30.00 e 12345 significa "
-                                                  L"01:23:45.00. Con separatori, due gruppi sono minuti e secondi, tre sono ore, "
-                                                  L"minuti e secondi e un quarto contiene i centesimi; è ammesso il segno. Prova "
-                                                  L"fa lampeggiare il "
-                                                  L"quadrante o il bordo del pannello e verifica in modo asincrono file, "
-                                                  L"comando, audio e URL HTTP/HTTPS "
-                                                  L"dello script remoto. L’arresto interrompe anche l’audio interno.",
-                                                  L"\r\n\r\nWPROWADZANIE CZASU I AKCJE ALARMU\r\nCzas alarmu przyjmuje HH:mm z "
-                                                  L"dwukropkiem, kropką, spacją lub innym separatorem; separator można pominąć. "
-                                                  L"Jedna lub dwie cyfry oznaczają godziny, trzy lub cztery godziny i minuty, "
-                                                  L"np. 7, 12, 730, 0730 albo 7:30. Po opuszczeniu pola wartość przyjmuje postać "
-                                                  L"HH:mm. Przesunięcie wpisuje się od prawej, zaczynając od sekund: 2 oznacza "
-                                                  L"00:00:02.00, 230 i 0230 oznaczają 00:02:30.00, a 12345 oznacza "
-                                                  L"01:23:45.00. Przy separatorach dwie grupy oznaczają minuty i sekundy, trzy "
-                                                  L"godziny, minuty i sekundy, a czwarta setne części; znak jest dozwolony. Test "
-                                                  L"miga tarczą lub ramką panelu i asynchronicznie sprawdza plik, polecenie, "
-                                                  L"dźwięk oraz adres "
-                                                  L"HTTP/HTTPS "
-                                                  L"zdalnego skryptu. Zatrzymanie wyłącza też dźwięk wewnętrzny.",
-                                                  L"\r\n\r\nZADÁVANIE ČASU A AKCIE BUDÍKA\r\nČas budíka prijíma HH:mm s "
-                                                  L"dvojbodkou, bodkou, medzerou alebo iným oddeľovačom; oddeľovač možno aj "
-                                                  L"vynechať. Jedna alebo dve číslice znamenajú hodiny, tri alebo štyri hodiny "
-                                                  L"a minúty, napríklad 7, 12, 730, 0730 alebo 7:30. Po opustení poľa sa "
-                                                  L"hodnota upraví na HH:mm. Offset sa zadáva sprava od sekúnd: 2 znamená "
-                                                  L"00:00:02.00, 230 aj 0230 znamená 00:02:30.00 a 12345 znamená 01:23:45.00. "
-                                                  L"Pri oddelenom zápise sú dve skupiny minúty a sekundy, tri skupiny hodiny, "
-                                                  L"minúty a sekundy a štvrtá skupina stotiny; možno použiť znamienko. Vyskúšať "
-                                                  L"rozbliká ciferník alebo "
-                                                  L"rám panela a asynchrónne otestuje súbor, príkaz, zvuk aj HTTP/HTTPS "
-                                                  L"adresu vzdialeného skriptu. "
-                                                  L"Zastavenie ukončí aj interne prehrávaný zvuk." };
+const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nZADÁVÁNÍ ČASU A AKCE BUDÍKU\r\nČas budíku přijímá běžný tvar HH:mm s dvojtečkou, tečkou, mezerou či jiným oddělovačem; oddělovač lze také vynechat. Jedna nebo dvě "
+    L"číslice znamenají hodiny, tři nebo čtyři číslice hodiny a minuty, například 7, 12, 730, 0730 nebo 7:30. Po opuštění pole se čas sjednotí na HH:mm. Offset se zadává zprava "
+    L"od sekund: 2 znamená 00:00:02.00, 230 i 0230 znamená 00:02:30.00 a 12345 znamená 01:23:45.00. Při odděleném zápisu jsou dvě skupiny minuty a sekundy, tři skupiny hodiny, "
+    L"minuty a sekundy a čtvrtá skupina setiny; lze použít znaménko. Tlačítko Vyzkoušet rozbliká aktuální ciferník či rám panelu a zároveň asynchronně vyzkouší soubor, příkaz, "
+    L"zvuk a HTTP/HTTPS adresu vzdáleného skriptu. Zastavení testu nebo budíku ukončí i interně přehrávaný zvuk.",
+    L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, space or another separator; the separator may also be omitted. One or two digits mean "
+    L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or 7:30. The value is normalized to HH:mm after leaving the field. Offset entry "
+    L"starts from seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means 01:23:45.00. With separators, two groups mean minutes and seconds, "
+    L"three mean hours, minutes and seconds, and a fourth group contains hundredths; a sign is accepted. Test flashes the selected clock face or panel frame and asynchronously "
+    L"tests the file, command, audio and HTTP/HTTPS remote-script URL. Stopping the test or alarm also stops audio played internally.",
+    L"\r\n\r\nZEITEINGABE UND WECKERAKTIONEN\r\nDie Weckzeit akzeptiert HH:mm mit Doppelpunkt, Punkt, Leerzeichen oder einem anderen Trennzeichen; das Trennzeichen kann "
+    L"entfallen. Eine oder zwei Ziffern bedeuten Stunden, drei oder vier Ziffern Stunden und Minuten, z. B. 7, 12, 730, 0730 oder 7:30. Beim Verlassen des Feldes wird HH:mm "
+    L"verwendet. Der Versatz wird von rechts ab den Sekunden eingegeben: 2 bedeutet 00:00:02.00, 230 und 0230 bedeuten 00:02:30.00 und 12345 bedeutet 01:23:45.00. Mit "
+    L"Trennzeichen stehen zwei Gruppen für Minuten und Sekunden, drei für Stunden, Minuten und Sekunden und eine vierte für Hundertstel; ein Vorzeichen ist zulässig. Testen lässt "
+    L"Zifferblatt oder Panelrahmen blinken und prüft Datei, Befehl, Audio sowie eine HTTP/HTTPS-Adresse eines Remote-Skripts asynchron. Das Stoppen beendet auch intern "
+    L"abgespieltes Audio.",
+    L"\r\n\r\nSAISIE DE L’HEURE ET ACTIONS D’ALARME\r\nL’heure accepte HH:mm avec deux-points, point, espace ou un autre séparateur, qui peut aussi être omis. Un ou deux chiffres "
+    L"indiquent les heures, trois ou quatre les heures et les minutes, par exemple 7, 12, 730, 0730 ou 7:30. La valeur devient HH:mm à la sortie du champ. Le décalage se saisit "
+    L"de droite à partir des secondes : 2 signifie 00:00:02.00, 230 et 0230 signifient 00:02:30.00, et 12345 signifie 01:23:45.00. Avec séparateurs, deux groupes représentent "
+    L"minutes et secondes, trois représentent heures, minutes et secondes, et un quatrième les centièmes ; un signe est accepté. Tester fait clignoter le cadran ou le cadre du "
+    L"panneau et teste de façon asynchrone fichier, commande, audio et URL HTTP/HTTPS du script distant. L’arrêt coupe aussi le son lu par l’application.",
+    L"\r\n\r\nENTRADA DE HORA Y ACCIONES DE ALARMA\r\nLa hora admite HH:mm con dos puntos, punto, espacio u otro separador, que también puede omitirse. Uno o dos dígitos indican "
+    L"horas; tres o cuatro, horas y minutos, por ejemplo 7, 12, 730, 0730 o 7:30. Al salir del campo se normaliza a HH:mm. El desfase se introduce desde la derecha empezando por "
+    L"los segundos: 2 es 00:00:02.00, 230 y 0230 son 00:02:30.00, y 12345 es 01:23:45.00. Con separadores, dos grupos son minutos y segundos, tres son horas, minutos y segundos, "
+    L"y un cuarto contiene centésimas; se admite signo. Probar hace parpadear la esfera o el marco del panel y prueba de forma asíncrona archivo, comando, audio y URL HTTP/HTTPS "
+    L"del script remoto. Detener también para el audio interno.",
+    L"\r\n\r\nIMMISSIONE DELL’ORA E AZIONI SVEGLIA\r\nL’ora accetta HH:mm con due punti, punto, spazio o un altro separatore, che può anche essere omesso. Una o due cifre "
+    L"indicano le ore; tre o quattro indicano ore e minuti, per esempio 7, 12, 730, 0730 o 7:30. Uscendo dal campo il valore diventa HH:mm. L’offset si inserisce da destra "
+    L"partendo dai secondi: 2 significa 00:00:02.00, 230 e 0230 significano 00:02:30.00 e 12345 significa 01:23:45.00. Con separatori, due gruppi sono minuti e secondi, tre sono "
+    L"ore, minuti e secondi e un quarto contiene i centesimi; è ammesso il segno. Prova fa lampeggiare il quadrante o il bordo del pannello e verifica in modo asincrono file, "
+    L"comando, audio e URL HTTP/HTTPS dello script remoto. L’arresto interrompe anche l’audio interno.",
+    L"\r\n\r\nWPROWADZANIE CZASU I AKCJE ALARMU\r\nCzas alarmu przyjmuje HH:mm z dwukropkiem, kropką, spacją lub innym separatorem; separator można pominąć. Jedna lub dwie cyfry "
+    L"oznaczają godziny, trzy lub cztery godziny i minuty, np. 7, 12, 730, 0730 albo 7:30. Po opuszczeniu pola wartość przyjmuje postać HH:mm. Przesunięcie wpisuje się od prawej, "
+    L"zaczynając od sekund: 2 oznacza 00:00:02.00, 230 i 0230 oznaczają 00:02:30.00, a 12345 oznacza 01:23:45.00. Przy separatorach dwie grupy oznaczają minuty i sekundy, trzy "
+    L"godziny, minuty i sekundy, a czwarta setne części; znak jest dozwolony. Test miga tarczą lub ramką panelu i asynchronicznie sprawdza plik, polecenie, dźwięk oraz adres "
+    L"HTTP/HTTPS zdalnego skryptu. Zatrzymanie wyłącza też dźwięk wewnętrzny.",
+    L"\r\n\r\nZADÁVANIE ČASU A AKCIE BUDÍKA\r\nČas budíka prijíma HH:mm s dvojbodkou, bodkou, medzerou alebo iným oddeľovačom; oddeľovač možno aj vynechať. Jedna alebo dve "
+    L"číslice znamenajú hodiny, tri alebo štyri hodiny a minúty, napríklad 7, 12, 730, 0730 alebo 7:30. Po opustení poľa sa hodnota upraví na HH:mm. Offset sa zadáva sprava od "
+    L"sekúnd: 2 znamená 00:00:02.00, 230 aj 0230 znamená 00:02:30.00 a 12345 znamená 01:23:45.00. Pri oddelenom zápise sú dve skupiny minúty a sekundy, tri skupiny hodiny, minúty "
+    L"a sekundy a štvrtá skupina stotiny; možno použiť znamienko. Vyskúšať rozbliká ciferník alebo rám panela a asynchrónne otestuje súbor, príkaz, zvuk aj HTTP/HTTPS adresu "
+    L"vzdialeného skriptu. Zastavenie ukončí aj interne prehrávaný zvuk."
+};
 
-const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = { L"\r\n\r\nVÝBĚR A KOPÍROVÁNÍ DATA\r\nV seznamu widgetů označíte více "
-                                                      L"položek pomocí Ctrl nebo Shift; pravá část je potom neaktivní a Odebrat "
-                                                      L"pracuje se všemi označenými "
-                                                      L"položkami. Dvojklik na položku krátce zvýrazní odpovídající widget na "
-                                                      L"ploše. Kliknutí na den v kalendáři datum vybere a zároveň zkopíruje do "
-                                                      L"schránky. Formát se volí "
-                                                      L"samostatně pro každý kalendář v Nastavení nebo v jeho kontextové "
-                                                      L"nabídce; slovní formáty používají jazyk widgetu.",
-                                                      L"\r\n\r\nSELECTION AND DATE COPYING\r\nUse Ctrl or Shift to select "
-                                                      L"several widgets; the right-hand editor is then disabled and Remove "
-                                                      L"affects every selected item. "
-                                                      L"Double-click an item to identify its widget briefly on the desktop. "
-                                                      L"Clicking a calendar day selects it and copies it to the clipboard. Each "
-                                                      L"calendar has its own format in "
-                                                      L"Settings and its context menu; textual formats use the widget language.",
-                                                      L"\r\n\r\nAUSWAHL UND DATUMSKOPIE\r\nMit Strg oder Umschalt wählen Sie "
-                                                      L"mehrere Widgets; der rechte Editor wird deaktiviert und Entfernen gilt "
-                                                      L"für alle ausgewählten Einträge. "
-                                                      L"Doppelklick hebt das Widget kurz hervor. Ein Klick auf einen Kalendertag "
-                                                      L"kopiert ihn in die Zwischenablage. Format und Sprache werden je Widget "
-                                                      L"verwendet.",
-                                                      L"\r\n\r\nSÉLECTION ET COPIE DE DATE\r\nCtrl ou Maj permet de sélectionner "
-                                                      L"plusieurs widgets ; l’éditeur droit est alors désactivé et Supprimer "
-                                                      L"agit sur toute la sélection. "
-                                                      L"Un double-clic identifie brièvement le widget. Cliquer sur un jour le "
-                                                      L"copie dans le presse-papiers selon le format et la langue du widget.",
-                                                      L"\r\n\r\nSELECCIÓN Y COPIA DE FECHA\r\nUse Ctrl o Mayús para seleccionar "
-                                                      L"varios widgets; el editor derecho se desactiva y Quitar afecta a toda la "
-                                                      L"selección. Un doble clic "
-                                                      L"identifica brevemente el widget. Al pulsar un día se copia al "
-                                                      L"portapapeles con el formato y el idioma del widget.",
-                                                      L"\r\n\r\nSELEZIONE E COPIA DELLA DATA\r\nCtrl o Maiusc seleziona più "
-                                                      L"widget; l’editor destro viene disattivato e Rimuovi agisce su tutti gli "
-                                                      L"elementi selezionati. Un doppio "
-                                                      L"clic identifica brevemente il widget. Il clic su un giorno lo copia "
-                                                      L"negli appunti con formato e lingua del widget.",
-                                                      L"\r\n\r\nZAZNACZANIE I KOPIOWANIE DATY\r\nCtrl lub Shift zaznacza wiele "
-                                                      L"widżetów; prawy edytor jest wtedy nieaktywny, a Usuń obejmuje wszystkie "
-                                                      L"zaznaczone pozycje. Dwuklik "
-                                                      L"krótko wskazuje widżet. Kliknięcie dnia kopiuje go do schowka w formacie "
-                                                      L"i języku widżetu.",
-                                                      L"\r\n\r\nVÝBER A KOPÍROVANIE DÁTUMU\r\nPomocou Ctrl alebo Shift označíte "
-                                                      L"viac widgetov; pravá časť sa deaktivuje a Odobrať platí pre všetky "
-                                                      L"označené položky. Dvojklik krátko "
-                                                      L"zvýrazní widget. Kliknutie na deň ho skopíruje do schránky vo formáte a "
-                                                      L"jazyku widgetu." };
+const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nVÝBĚR A KOPÍROVÁNÍ DATA\r\nV seznamu widgetů označíte více položek pomocí Ctrl nebo Shift; pravá část je potom neaktivní a Odebrat pracuje se všemi označenými "
+    L"položkami. Dvojklik na položku krátce zvýrazní odpovídající widget na ploše. Kliknutí na den v kalendáři datum vybere a zároveň zkopíruje do schránky. Formát se volí "
+    L"samostatně pro každý kalendář v Nastavení nebo v jeho kontextové nabídce; slovní formáty používají jazyk widgetu.",
+    L"\r\n\r\nSELECTION AND DATE COPYING\r\nUse Ctrl or Shift to select several widgets; the right-hand editor is then disabled and Remove affects every selected item. "
+    L"Double-click an item to identify its widget briefly on the desktop. Clicking a calendar day selects it and copies it to the clipboard. Each calendar has its own format in "
+    L"Settings and its context menu; textual formats use the widget language.",
+    L"\r\n\r\nAUSWAHL UND DATUMSKOPIE\r\nMit Strg oder Umschalt wählen Sie mehrere Widgets; der rechte Editor wird deaktiviert und Entfernen gilt für alle ausgewählten Einträge. "
+    L"Doppelklick hebt das Widget kurz hervor. Ein Klick auf einen Kalendertag kopiert ihn in die Zwischenablage. Format und Sprache werden je Widget verwendet.",
+    L"\r\n\r\nSÉLECTION ET COPIE DE DATE\r\nCtrl ou Maj permet de sélectionner plusieurs widgets ; l’éditeur droit est alors désactivé et Supprimer agit sur toute la sélection. "
+    L"Un double-clic identifie brièvement le widget. Cliquer sur un jour le copie dans le presse-papiers selon le format et la langue du widget.",
+    L"\r\n\r\nSELECCIÓN Y COPIA DE FECHA\r\nUse Ctrl o Mayús para seleccionar varios widgets; el editor derecho se desactiva y Quitar afecta a toda la selección. Un doble clic "
+    L"identifica brevemente el widget. Al pulsar un día se copia al portapapeles con el formato y el idioma del widget.",
+    L"\r\n\r\nSELEZIONE E COPIA DELLA DATA\r\nCtrl o Maiusc seleziona più widget; l’editor destro viene disattivato e Rimuovi agisce su tutti gli elementi selezionati. Un doppio "
+    L"clic identifica brevemente il widget. Il clic su un giorno lo copia negli appunti con formato e lingua del widget.",
+    L"\r\n\r\nZAZNACZANIE I KOPIOWANIE DATY\r\nCtrl lub Shift zaznacza wiele widżetów; prawy edytor jest wtedy nieaktywny, a Usuń obejmuje wszystkie zaznaczone pozycje. Dwuklik "
+    L"krótko wskazuje widżet. Kliknięcie dnia kopiuje go do schowka w formacie i języku widżetu.",
+    L"\r\n\r\nVÝBER A KOPÍROVANIE DÁTUMU\r\nPomocou Ctrl alebo Shift označíte viac widgetov; pravá časť sa deaktivuje a Odobrať platí pre všetky označené položky. Dvojklik krátko "
+    L"zvýrazní widget. Kliknutie na deň ho skopíruje do schránky vo formáte a jazyku widgetu."
+};
 
-const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = { L"\r\n\r\nROZLOŽENÍ WIDGETŮ\r\nPříkaz Zarovnat widgety do mřížky zachová "
-                                                   L"přibližné ruční rozmístění, posune středy widgetů na nejbližší body "
-                                                   L"mřížky a odstraní překrytí. V "
-                                                   L"nabídce widgetu se upraví jeho monitor, z ikony všechny monitory "
-                                                   L"samostatně. Opakování rozložení nemění. Dvojklik v Nastavení označí "
-                                                   L"widget rychlým světlemodrým blikáním; "
-                                                   L"budík bliká pomaleji červeně. Vypnutí Vždy navrchu pošle widget dozadu.",
-                                                   L"\r\n\r\nWIDGET LAYOUT\r\nArrange widgets in a grid preserves the "
-                                                   L"approximate manual layout, snaps widget centres to the nearest grid "
-                                                   L"points and removes overlaps. A widget "
-                                                   L"menu affects its monitor; the notification icon applies it to every "
-                                                   L"monitor separately. Repeating the command keeps the layout stable. A "
-                                                   L"Settings double-click identifies a "
-                                                   L"widget with a fast light-blue flash; an alarm flashes more slowly in "
-                                                   L"red. Turning off Always on top sends the widget to the back.",
-                                                   L"\r\n\r\nWIDGET-ANORDNUNG\r\nWidgets im Raster anordnen behält die "
-                                                   L"ungefähre manuelle Anordnung bei, richtet die Mittelpunkte am nächsten "
-                                                   L"Rasterpunkt aus und beseitigt "
-                                                   L"Überlappungen. Das Widget-Menü wirkt auf seinen Monitor, das Symbol auf "
-                                                   L"alle Monitore einzeln. Wiederholen ändert die Anordnung nicht. Die "
-                                                   L"Kennzeichnung blinkt schnell "
-                                                   L"hellblau, der Alarm langsamer rot. Das Abschalten von Immer im "
-                                                   L"Vordergrund schickt das Widget nach hinten.",
-                                                   L"\r\n\r\nDISPOSITION\r\nAligner les widgets en grille conserve leur "
-                                                   L"disposition manuelle approximative, aligne leurs centres sur la grille "
-                                                   L"la plus proche et supprime les "
-                                                   L"chevauchements. Le menu du widget agit sur son écran, l’icône sur chaque "
-                                                   L"écran séparément. La commande répétée reste stable. L’identification "
-                                                   L"clignote rapidement en bleu "
-                                                   L"clair, l’alarme plus lentement en rouge. Désactiver Toujours visible "
-                                                   L"envoie le widget à l’arrière-plan.",
-                                                   L"\r\n\r\nDISTRIBUCIÓN\r\nAlinear widgets en cuadrícula conserva la "
-                                                   L"distribución manual aproximada, ajusta sus centros a la cuadrícula más "
-                                                   L"cercana y elimina superposiciones. "
-                                                   L"El menú del widget actúa en su monitor; el icono, en cada monitor por "
-                                                   L"separado. Repetir no cambia la distribución. La identificación parpadea "
-                                                   L"rápido en azul claro y la "
-                                                   L"alarma más despacio en rojo. Desactivar Siempre visible envía el widget "
-                                                   L"al fondo.",
-                                                   L"\r\n\r\nDISPOSIZIONE\r\nDisponi i widget in griglia conserva la "
-                                                   L"disposizione manuale approssimativa, allinea i centri alla griglia più "
-                                                   L"vicina ed elimina le sovrapposizioni. "
-                                                   L"Il menu del widget agisce sul suo monitor, l’icona su ogni monitor "
-                                                   L"separatamente. Ripetere il comando non cambia la disposizione. "
-                                                   L"L’identificazione lampeggia rapidamente in "
-                                                   L"azzurro, la sveglia più lentamente in rosso. Disattivando Sempre in "
-                                                   L"primo piano il widget viene mandato dietro.",
-                                                   L"\r\n\r\nUKŁAD WIDŻETÓW\r\nUłóż widżety w siatce zachowuje przybliżony "
-                                                   L"układ ręczny, przyciąga środki widżetów do najbliższych punktów siatki i "
-                                                   L"usuwa nakładanie. Menu "
-                                                   L"widżetu działa na jego monitorze, a ikona na każdym monitorze osobno. "
-                                                   L"Powtórzenie nie zmienia układu. Identyfikacja miga szybko "
-                                                   L"jasnoniebiesko, alarm wolniej na czerwono. "
-                                                   L"Wyłączenie Zawsze na wierzchu wysyła widżet do tyłu.",
-                                                   L"\r\n\r\nROZLOŽENIE WIDGETOV\r\nZarovnať widgety do mriežky zachová "
-                                                   L"približné ručné rozmiestnenie, pritiahne stredy widgetov k najbližším "
-                                                   L"bodom mriežky a odstráni "
-                                                   L"prekrývanie. Ponuka widgetu upraví jeho monitor, ikona každý monitor "
-                                                   L"samostatne. Opakovanie rozloženie nemení. Identifikácia bliká rýchlo "
-                                                   L"svetlomodro, budík pomalšie "
-                                                   L"načerveno. Vypnutie Vždy navrchu pošle widget dozadu." };
+const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nROZLOŽENÍ WIDGETŮ\r\nPříkaz Zarovnat widgety do mřížky zachová přibližné ruční rozmístění, posune středy widgetů na nejbližší body mřížky a odstraní překrytí. V "
+    L"nabídce widgetu se upraví jeho monitor, z ikony všechny monitory samostatně. Opakování rozložení nemění. Dvojklik v Nastavení označí widget rychlým světlemodrým blikáním; "
+    L"budík bliká pomaleji červeně. Vypnutí Vždy navrchu pošle widget dozadu.",
+    L"\r\n\r\nWIDGET LAYOUT\r\nArrange widgets in a grid preserves the approximate manual layout, snaps widget centres to the nearest grid points and removes overlaps. A widget "
+    L"menu affects its monitor; the notification icon applies it to every monitor separately. Repeating the command keeps the layout stable. A Settings double-click identifies a "
+    L"widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back.",
+    L"\r\n\r\nWIDGET-ANORDNUNG\r\nWidgets im Raster anordnen behält die ungefähre manuelle Anordnung bei, richtet die Mittelpunkte am nächsten Rasterpunkt aus und beseitigt "
+    L"Überlappungen. Das Widget-Menü wirkt auf seinen Monitor, das Symbol auf alle Monitore einzeln. Wiederholen ändert die Anordnung nicht. Die Kennzeichnung blinkt schnell "
+    L"hellblau, der Alarm langsamer rot. Das Abschalten von Immer im Vordergrund schickt das Widget nach hinten.",
+    L"\r\n\r\nDISPOSITION\r\nAligner les widgets en grille conserve leur disposition manuelle approximative, aligne leurs centres sur la grille la plus proche et supprime les "
+    L"chevauchements. Le menu du widget agit sur son écran, l’icône sur chaque écran séparément. La commande répétée reste stable. L’identification clignote rapidement en bleu "
+    L"clair, l’alarme plus lentement en rouge. Désactiver Toujours visible envoie le widget à l’arrière-plan.",
+    L"\r\n\r\nDISTRIBUCIÓN\r\nAlinear widgets en cuadrícula conserva la distribución manual aproximada, ajusta sus centros a la cuadrícula más cercana y elimina superposiciones. "
+    L"El menú del widget actúa en su monitor; el icono, en cada monitor por separado. Repetir no cambia la distribución. La identificación parpadea rápido en azul claro y la "
+    L"alarma más despacio en rojo. Desactivar Siempre visible envía el widget al fondo.",
+    L"\r\n\r\nDISPOSIZIONE\r\nDisponi i widget in griglia conserva la disposizione manuale approssimativa, allinea i centri alla griglia più vicina ed elimina le sovrapposizioni. "
+    L"Il menu del widget agisce sul suo monitor, l’icona su ogni monitor separatamente. Ripetere il comando non cambia la disposizione. L’identificazione lampeggia rapidamente in "
+    L"azzurro, la sveglia più lentamente in rosso. Disattivando Sempre in primo piano il widget viene mandato dietro.",
+    L"\r\n\r\nUKŁAD WIDŻETÓW\r\nUłóż widżety w siatce zachowuje przybliżony układ ręczny, przyciąga środki widżetów do najbliższych punktów siatki i usuwa nakładanie. Menu "
+    L"widżetu działa na jego monitorze, a ikona na każdym monitorze osobno. Powtórzenie nie zmienia układu. Identyfikacja miga szybko jasnoniebiesko, alarm wolniej na czerwono. "
+    L"Wyłączenie Zawsze na wierzchu wysyła widżet do tyłu.",
+    L"\r\n\r\nROZLOŽENIE WIDGETOV\r\nZarovnať widgety do mriežky zachová približné ručné rozmiestnenie, pritiahne stredy widgetov k najbližším bodom mriežky a odstráni "
+    L"prekrývanie. Ponuka widgetu upraví jeho monitor, ikona každý monitor samostatne. Opakovanie rozloženie nemení. Identifikácia bliká rýchlo svetlomodro, budík pomalšie "
+    L"načerveno. Vypnutie Vždy navrchu pošle widget dozadu."
+};
 
-const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = { L"\r\n\r\nVZHLED A ÚLOŽIŠTĚ\r\nVelikost písma, odsazení, styl a šířka "
-                                                    L"rámečku a neprůhlednost se nastavují posuvníky. Průhledné pozadí "
-                                                    L"digitálních hodin ponechá viditelné jen "
-                                                    L"číslice a rámeček. Nastavení lze exportovat do XML a importovat z XML "
-                                                    L"přímo do stavu "
-                                                    L"aplikace. Volba Ukládat do XML používá soubor "
-                                                    L"%AppData%\\FortSoft\\CalClock\\settings.xml; po jeho úspěšném zápisu se "
-                                                    L"celá větev nastavení aplikace odstraní z registru. Při "
-                                                    L"spuštění se XML použije, pokud tento soubor existuje.",
-                                                    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nFont size, padding, border style and "
-                                                    L"width, and opacity use sliders. A transparent digital-clock background "
-                                                    L"leaves only the digits and "
-                                                    L"border visible. Settings can be exported to XML and imported from XML "
-                                                    L"directly into the application "
-                                                    L"state. Save to XML uses %AppData%\\FortSoft\\CalClock\\settings.xml; "
-                                                    L"after a successful write, the complete application settings branch is "
-                                                    L"removed from the registry. XML is "
-                                                    L"used at startup whenever this file exists.",
-                                                    L"\r\n\r\nDARSTELLUNG UND SPEICHERUNG\r\nSchriftgröße, Innenabstand, "
-                                                    L"Rahmen und Deckkraft werden mit Schiebereglern eingestellt. "
-                                                    L"Einstellungen lassen sich als XML exportieren "
-                                                    L"und direkt in den Anwendungszustand importieren. XML wird unter "
-                                                    L"%AppData%\\FortSoft\\CalClock\\settings.xml gespeichert; nach "
-                                                    L"erfolgreichem Schreiben wird der "
-                                                    L"Anwendungszustand aus der Registrierung entfernt.",
-                                                    L"\r\n\r\nAPPARENCE ET STOCKAGE\r\nLa taille de police, la marge, la "
-                                                    L"bordure et l’opacité utilisent des curseurs. Les paramètres peuvent être "
-                                                    L"exportés en XML et importés "
-                                                    L"directement dans l’état de l’application. Le stockage XML utilise "
-                                                    L"%AppData%\\FortSoft\\CalClock\\settings.xml et retire ensuite l’état de "
-                                                    L"l’application du registre.",
-                                                    L"\r\n\r\nAPARIENCIA Y ALMACENAMIENTO\r\nEl tamaño de fuente, relleno, "
-                                                    L"borde y opacidad se ajustan con deslizadores. La configuración se "
-                                                    L"exporta a XML y se importa "
-                                                    L"directamente al estado de la aplicación. El almacenamiento XML usa "
-                                                    L"%AppData%\\FortSoft\\CalClock\\settings.xml y después elimina del "
-                                                    L"registro el estado de la aplicación.",
-                                                    L"\r\n\r\nASPETTO E ARCHIVIAZIONE\r\nDimensione carattere, margine, bordo "
-                                                    L"e opacità usano cursori. Le impostazioni possono essere esportate in XML "
-                                                    L"e importate direttamente "
-                                                    L"nello stato dell’applicazione. Il salvataggio XML usa "
-                                                    L"%AppData%\\FortSoft\\CalClock\\settings.xml e poi rimuove lo stato "
-                                                    L"dell’applicazione dal registro.",
-                                                    L"\r\n\r\nWYGLĄD I ZAPIS\r\nRozmiar czcionki, odstęp, ramka i krycie są "
-                                                    L"ustawiane suwakami. Ustawienia można eksportować do XML i importować "
-                                                    L"bezpośrednio do stanu aplikacji. "
-                                                    L"Zapis XML używa %AppData%\\FortSoft\\CalClock\\settings.xml, po czym "
-                                                    L"usuwa stan aplikacji z rejestru.",
-                                                    L"\r\n\r\nVZHĽAD A UKLADANIE\r\nVeľkosť písma, odsadenie, rámček a "
-                                                    L"nepriehľadnosť sa nastavujú posuvníkmi. Nastavenia možno exportovať do "
-                                                    L"XML a importovať priamo do stavu "
-                                                    L"aplikácie. XML sa ukladá do %AppData%\\FortSoft\\CalClock\\settings.xml; "
-                                                    L"po úspešnom zápise sa stav aplikácie odstráni z registra." };
+const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nVZHLED A ÚLOŽIŠTĚ\r\nVelikost písma, odsazení, styl a šířka rámečku a neprůhlednost se nastavují posuvníky. Průhledné pozadí digitálních hodin ponechá viditelné jen "
+    L"číslice a rámeček. Nastavení lze exportovat do XML a importovat z XML přímo do stavu aplikace. Volba Ukládat do XML používá soubor %AppData%\\FortSoft\\CalClock\\settings.xml;"
+    L" po jeho úspěšném zápisu se celá větev nastavení aplikace odstraní z registru. Při spuštění se XML použije, pokud tento soubor existuje.",
+    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nFont size, padding, border style and width, and opacity use sliders. A transparent digital-clock background leaves only the digits and "
+    L"border visible. Settings can be exported to XML and imported from XML directly into the application state. Save to XML uses %AppData%\\FortSoft\\CalClock\\settings.xml; "
+    L"after a successful write, the complete application settings branch is removed from the registry. XML is used at startup whenever this file exists.",
+    L"\r\n\r\nDARSTELLUNG UND SPEICHERUNG\r\nSchriftgröße, Innenabstand, Rahmen und Deckkraft werden mit Schiebereglern eingestellt. Einstellungen lassen sich als XML exportieren "
+    L"und direkt in den Anwendungszustand importieren. XML wird unter %AppData%\\FortSoft\\CalClock\\settings.xml gespeichert; nach erfolgreichem Schreiben wird der "
+    L"Anwendungszustand aus der Registrierung entfernt.",
+    L"\r\n\r\nAPPARENCE ET STOCKAGE\r\nLa taille de police, la marge, la bordure et l’opacité utilisent des curseurs. Les paramètres peuvent être exportés en XML et importés "
+    L"directement dans l’état de l’application. Le stockage XML utilise %AppData%\\FortSoft\\CalClock\\settings.xml et retire ensuite l’état de l’application du registre.",
+    L"\r\n\r\nAPARIENCIA Y ALMACENAMIENTO\r\nEl tamaño de fuente, relleno, borde y opacidad se ajustan con deslizadores. La configuración se exporta a XML y se importa "
+    L"directamente al estado de la aplicación. El almacenamiento XML usa %AppData%\\FortSoft\\CalClock\\settings.xml y después elimina del registro el estado de la aplicación.",
+    L"\r\n\r\nASPETTO E ARCHIVIAZIONE\r\nDimensione carattere, margine, bordo e opacità usano cursori. Le impostazioni possono essere esportate in XML e importate direttamente "
+    L"nello stato dell’applicazione. Il salvataggio XML usa %AppData%\\FortSoft\\CalClock\\settings.xml e poi rimuove lo stato dell’applicazione dal registro.",
+    L"\r\n\r\nWYGLĄD I ZAPIS\r\nRozmiar czcionki, odstęp, ramka i krycie są ustawiane suwakami. Ustawienia można eksportować do XML i importować bezpośrednio do stanu aplikacji. "
+    L"Zapis XML używa %AppData%\\FortSoft\\CalClock\\settings.xml, po czym usuwa stan aplikacji z rejestru.",
+    L"\r\n\r\nVZHĽAD A UKLADANIE\r\nVeľkosť písma, odsadenie, rámček a nepriehľadnosť sa nastavujú posuvníkmi. Nastavenia možno exportovať do XML a importovať priamo do stavu "
+    L"aplikácie. XML sa ukladá do %AppData%\\FortSoft\\CalClock\\settings.xml; po úspešnom zápise sa stav aplikácie odstráni z registra."
+};
 
-const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = { L"\r\n\r\nZDROJ ČASU\r\nNa kartě Čas lze pro celou aplikaci vybrat "
-                                                 L"systémový čas Windows nebo čas ze zadaných serverů NTP. NTP koriguje "
-                                                 L"pouze čas zobrazovaný v CalClock; "
-                                                 L"systémové hodiny Windows se nikdy nemění. Dokud nebyl získán platný "
-                                                 L"údaj, používá se systémový čas. Po pozdějším výpadku zůstane poslední "
-                                                 L"korekce jen v paměti procesu a "
-                                                 L"synchronizace se opakuje. NTP je výchozí. Automatická sada volí podle "
-                                                 L"systémové oblasti české a slovenské servery, PTB pro Evropu nebo "
-                                                 L"celosvětový fond. Více měření se "
-                                                 L"filtruje podle síťového zpoždění a odlehlých odpovědí.",
-                                                 L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the "
-                                                 L"configured NTP servers for the whole application. NTP corrects only the "
-                                                 L"time displayed by CalClock; "
-                                                 L"the Windows clock is never changed. System time is used until the first "
-                                                 L"valid reply. After a later outage, the last correction remains in "
-                                                 L"process memory and synchronization "
-                                                 L"is retried. NTP is the default. The automatic set chooses Czech and "
-                                                 L"Slovak servers, PTB for Europe, or the global pool according to the "
-                                                 L"system region. Multiple measurements "
-                                                 L"are filtered by network delay and outlying replies.",
-                                                 L"\r\n\r\nZEITQUELLE\r\nAuf der Registerkarte Zeit wird für die gesamte "
-                                                 L"Anwendung die Windows-Systemzeit oder die Zeit der eingestellten "
-                                                 L"NTP-Server gewählt. NTP korrigiert "
-                                                 L"nur die in CalClock angezeigte Zeit; die Windows-Uhr wird nie geändert. "
-                                                 L"Bis zur ersten gültigen Antwort wird die Systemzeit verwendet. Bei einem "
-                                                 L"späteren Ausfall bleibt die "
-                                                 L"letzte Korrektur nur im Prozessspeicher erhalten und die "
-                                                 L"Synchronisierung wird wiederholt. NTP ist voreingestellt. Die "
-                                                 L"automatische Gruppe wählt nach der Systemregion die "
-                                                 L"tschechisch-slowakischen Server, PTB für Europa oder den globalen Pool. "
-                                                 L"Mehrere Messungen werden nach Netzverzögerung und Ausreißern gefiltert.",
-                                                 L"\r\n\r\nSOURCE DE L’HEURE\r\nL’onglet Heure sélectionne l’heure système "
-                                                 L"Windows ou les serveurs NTP configurés pour toute l’application. NTP "
-                                                 L"corrige uniquement l’heure "
-                                                 L"affichée par CalClock ; l’horloge Windows n’est jamais modifiée. L’heure "
-                                                 L"système est utilisée jusqu’à la première réponse valide. Après une panne "
-                                                 L"ultérieure, la dernière "
-                                                 L"correction reste uniquement en mémoire du processus et la "
-                                                 L"synchronisation est retentée. NTP est la valeur par défaut. Le jeu "
-                                                 L"automatique choisit les serveurs tchèques et "
-                                                 L"slovaques, PTB pour l’Europe ou le pool mondial selon la région système. "
-                                                 L"Plusieurs mesures sont filtrées selon le délai réseau et les réponses "
-                                                 L"aberrantes.",
-                                                 L"\r\n\r\nORIGEN DE HORA\r\nLa pestaña Hora selecciona la hora del sistema "
-                                                 L"Windows o los servidores NTP configurados para toda la aplicación. NTP "
-                                                 L"solo corrige la hora "
-                                                 L"mostrada por CalClock; el reloj de Windows nunca se modifica. Se usa la "
-                                                 L"hora del sistema hasta la primera respuesta válida. Tras una "
-                                                 L"interrupción posterior, la última "
-                                                 L"corrección permanece solo en la memoria del proceso y se reintenta la "
-                                                 L"sincronización. NTP es el valor predeterminado. El conjunto automático "
-                                                 L"elige servidores checos y "
-                                                 L"eslovacos, PTB para Europa o el grupo mundial según la región del "
-                                                 L"sistema. Varias mediciones se filtran por retardo de red y respuestas "
-                                                 L"atípicas.",
-                                                 L"\r\n\r\nORIGINE DELL’ORA\r\nLa scheda Ora seleziona l’ora di sistema "
-                                                 L"Windows o i server NTP configurati per l’intera applicazione. NTP "
-                                                 L"corregge solo l’ora visualizzata da "
-                                                 L"CalClock; l’orologio di Windows non viene mai modificato. L’ora di "
-                                                 L"sistema viene usata fino alla prima risposta valida. Dopo una successiva "
-                                                 L"interruzione, l’ultima "
-                                                 L"correzione rimane solo nella memoria del processo e la sincronizzazione "
-                                                 L"viene ripetuta. NTP è l’impostazione predefinita. Il gruppo automatico "
-                                                 L"sceglie i server cechi e "
-                                                 L"slovacchi, PTB per l’Europa o il pool globale in base all’area di "
-                                                 L"sistema. Più misurazioni vengono filtrate in base al ritardo di rete e "
-                                                 L"alle risposte anomale.",
-                                                 L"\r\n\r\nŹRÓDŁO CZASU\r\nKarta Czas wybiera dla całej aplikacji czas "
-                                                 L"systemowy Windows albo skonfigurowane serwery NTP. NTP koryguje "
-                                                 L"wyłącznie czas wyświetlany przez "
-                                                 L"CalClock; zegar Windows nigdy nie jest zmieniany. Do pierwszej "
-                                                 L"prawidłowej odpowiedzi używany jest czas systemowy. Po późniejszej "
-                                                 L"awarii ostatnia korekta pozostaje "
-                                                 L"wyłącznie w pamięci procesu, a synchronizacja jest ponawiana. NTP jest "
-                                                 L"ustawieniem domyślnym. Zestaw automatyczny wybiera według regionu "
-                                                 L"systemu serwery czeskie i "
-                                                 L"słowackie, PTB dla Europy albo pulę globalną. Wiele pomiarów jest "
-                                                 L"filtrowanych według opóźnienia sieci i wartości odstających.",
-                                                 L"\r\n\r\nZDROJ ČASU\r\nNa karte Čas možno pre celú aplikáciu vybrať "
-                                                 L"systémový čas Windows alebo čas zo zadaných serverov NTP. NTP koriguje "
-                                                 L"iba čas zobrazený v CalClock; "
-                                                 L"systémové hodiny Windows sa nikdy nemenia. Do prvej platnej odpovede sa "
-                                                 L"používa systémový čas. Po neskoršom výpadku zostane posledná korekcia "
-                                                 L"iba v pamäti procesu a "
-                                                 L"synchronizácia sa zopakuje. NTP je predvolené. Automatická sada vyberie "
-                                                 L"podľa systémovej oblasti české a slovenské servery, PTB pre Európu alebo "
-                                                 L"celosvetový fond. Viaceré "
-                                                 L"merania sa filtrujú podľa sieťového oneskorenia a odľahlých odpovedí." };
+const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nZDROJ ČASU\r\nNa kartě Čas lze pro celou aplikaci vybrat systémový čas Windows nebo čas ze zadaných serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; "
+    L"systémové hodiny Windows se nikdy nemění. Dokud nebyl získán platný údaj, používá se systémový čas. Po pozdějším výpadku zůstane poslední korekce jen v paměti procesu a "
+    L"synchronizace se opakuje. NTP je výchozí. Automatická sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětový fond. Více měření se "
+    L"filtruje podle síťového zpoždění a odlehlých odpovědí.",
+    L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the configured NTP servers for the whole application. NTP corrects only the time displayed by CalClock; "
+    L"the Windows clock is never changed. System time is used until the first valid reply. After a later outage, the last correction remains in process memory and synchronization "
+    L"is retried. NTP is the default. The automatic set chooses Czech and Slovak servers, PTB for Europe, or the global pool according to the system region. Multiple measurements "
+    L"are filtered by network delay and outlying replies.",
+    L"\r\n\r\nZEITQUELLE\r\nAuf der Registerkarte Zeit wird für die gesamte Anwendung die Windows-Systemzeit oder die Zeit der eingestellten NTP-Server gewählt. NTP korrigiert "
+    L"nur die in CalClock angezeigte Zeit; die Windows-Uhr wird nie geändert. Bis zur ersten gültigen Antwort wird die Systemzeit verwendet. Bei einem späteren Ausfall bleibt die "
+    L"letzte Korrektur nur im Prozessspeicher erhalten und die Synchronisierung wird wiederholt. NTP ist voreingestellt. Die automatische Gruppe wählt nach der Systemregion die "
+    L"tschechisch-slowakischen Server, PTB für Europa oder den globalen Pool. Mehrere Messungen werden nach Netzverzögerung und Ausreißern gefiltert.",
+    L"\r\n\r\nSOURCE DE L’HEURE\r\nL’onglet Heure sélectionne l’heure système Windows ou les serveurs NTP configurés pour toute l’application. NTP corrige uniquement l’heure "
+    L"affichée par CalClock ; l’horloge Windows n’est jamais modifiée. L’heure système est utilisée jusqu’à la première réponse valide. Après une panne ultérieure, la dernière "
+    L"correction reste uniquement en mémoire du processus et la synchronisation est retentée. NTP est la valeur par défaut. Le jeu automatique choisit les serveurs tchèques et "
+    L"slovaques, PTB pour l’Europe ou le pool mondial selon la région système. Plusieurs mesures sont filtrées selon le délai réseau et les réponses aberrantes.",
+    L"\r\n\r\nORIGEN DE HORA\r\nLa pestaña Hora selecciona la hora del sistema Windows o los servidores NTP configurados para toda la aplicación. NTP solo corrige la hora "
+    L"mostrada por CalClock; el reloj de Windows nunca se modifica. Se usa la hora del sistema hasta la primera respuesta válida. Tras una interrupción posterior, la última "
+    L"corrección permanece solo en la memoria del proceso y se reintenta la sincronización. NTP es el valor predeterminado. El conjunto automático elige servidores checos y "
+    L"eslovacos, PTB para Europa o el grupo mundial según la región del sistema. Varias mediciones se filtran por retardo de red y respuestas atípicas.",
+    L"\r\n\r\nORIGINE DELL’ORA\r\nLa scheda Ora seleziona l’ora di sistema Windows o i server NTP configurati per l’intera applicazione. NTP corregge solo l’ora visualizzata da "
+    L"CalClock; l’orologio di Windows non viene mai modificato. L’ora di sistema viene usata fino alla prima risposta valida. Dopo una successiva interruzione, l’ultima "
+    L"correzione rimane solo nella memoria del processo e la sincronizzazione viene ripetuta. NTP è l’impostazione predefinita. Il gruppo automatico sceglie i server cechi e "
+    L"slovacchi, PTB per l’Europa o il pool globale in base all’area di sistema. Più misurazioni vengono filtrate in base al ritardo di rete e alle risposte anomale.",
+    L"\r\n\r\nŹRÓDŁO CZASU\r\nKarta Czas wybiera dla całej aplikacji czas systemowy Windows albo skonfigurowane serwery NTP. NTP koryguje wyłącznie czas wyświetlany przez "
+    L"CalClock; zegar Windows nigdy nie jest zmieniany. Do pierwszej prawidłowej odpowiedzi używany jest czas systemowy. Po późniejszej awarii ostatnia korekta pozostaje "
+    L"wyłącznie w pamięci procesu, a synchronizacja jest ponawiana. NTP jest ustawieniem domyślnym. Zestaw automatyczny wybiera według regionu systemu serwery czeskie i "
+    L"słowackie, PTB dla Europy albo pulę globalną. Wiele pomiarów jest filtrowanych według opóźnienia sieci i wartości odstających.",
+    L"\r\n\r\nZDROJ ČASU\r\nNa karte Čas možno pre celú aplikáciu vybrať systémový čas Windows alebo čas zo zadaných serverov NTP. NTP koriguje iba čas zobrazený v CalClock; "
+    L"systémové hodiny Windows sa nikdy nemenia. Do prvej platnej odpovede sa používa systémový čas. Po neskoršom výpadku zostane posledná korekcia iba v pamäti procesu a "
+    L"synchronizácia sa zopakuje. NTP je predvolené. Automatická sada vyberie podľa systémovej oblasti české a slovenské servery, PTB pre Európu alebo celosvetový fond. Viaceré "
+    L"merania sa filtrujú podľa sieťového oneskorenia a odľahlých odpovedí."
+};
 
 const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nHODINY NA MONITORU\r\nDigitální hodiny mohou vyplnit jeden či více monitorů. Volitelně zatemní ostatní monitory. Velikost písma se udává procentem výšky "
@@ -8194,33 +8123,19 @@ const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nZEGAR NA MONITORZE\r\nZegar cyfrowy może zająć jeden lub kilka monitorów i opcjonalnie wygasić pozostałe. Rozmiar czcionki jest procentem wysokości monitora, a "
     L"mały podgląd zachowuje jego proporcje. Podgląd można przeciągać, a jego położenie jest zapisywane. Esc natychmiast ukrywa zegar i usuwa wygaszenie.",
     L"\r\n\r\nHODINY NA MONITORE\r\nDigitálne hodiny môžu vyplniť jeden alebo viac monitorov a voliteľne stmaviť ostatné. Veľkosť písma je percentom výšky monitora a malý "
-    L"náhľad zachováva jeho pomer strán. Náhľad možno presúvať myšou a jeho poloha sa uloží. Esc hodiny ihneď skryje a stmavenie odstráni." };
+    L"náhľad zachováva jeho pomer strán. Náhľad možno presúvať myšou a jeho poloha sa uloží. Esc hodiny ihneď skryje a stmavenie odstráni."
+};
 
-const wchar_t* ABOUT_TEXT[LANG_COUNT] = { L"Hodiny a kalendáře\r\n\r\nNativní Win32 aplikace pro libovolný počet "
-                                         L"samostatně nastavených plovoucích hodin a kalendářů. Ručičkový ciferník "
-                                         L"používá systémový ClockWndMain.",
-                                         L"Clocks and calendars\r\n\r\nA native Win32 application for any number of "
-                                         L"independently configured floating clocks and calendars. The analog face "
-                                         L"uses the system "
-                                         L"ClockWndMain.",
-                                         L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für beliebig viele "
-                                         L"unabhängig konfigurierte schwebende Uhren und Kalender. Das Zifferblatt "
-                                         L"verwendet ClockWndMain.",
-                                         L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs "
-                                         L"horloges et calendriers flottants configurés séparément. Le cadran "
-                                         L"utilise ClockWndMain.",
-                                         L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes "
-                                         L"y calendarios flotantes configurados por separado. La esfera usa "
-                                         L"ClockWndMain.",
-                                         L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e "
-                                         L"calendari mobili configurati separatamente. Il quadrante usa "
-                                         L"ClockWndMain.",
-                                         L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele "
-                                         L"niezależnie skonfigurowanych zegarów i kalendarzy. Tarcza używa "
-                                         L"ClockWndMain.",
-                                         L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre ľubovoľný počet "
-                                         L"samostatne nastavených plávajúcich hodín a kalendárov. Ciferník používa "
-                                         L"ClockWndMain." };
+const wchar_t* ABOUT_TEXT[LANG_COUNT] = {
+    L"Hodiny a kalendáře\r\n\r\nNativní Win32 aplikace pro libovolný počet samostatně nastavených plovoucích hodin a kalendářů. Ručičkový ciferník používá systémový ClockWndMain.",
+    L"Clocks and calendars\r\n\r\nA native Win32 application for any number of independently configured floating clocks and calendars. The analog face uses the system ClockWndMain.",
+    L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für beliebig viele unabhängig konfigurierte schwebende Uhren und Kalender. Das Zifferblatt verwendet ClockWndMain.",
+    L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers flottants configurés séparément. Le cadran utilise ClockWndMain.",
+    L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios flotantes configurados por separado. La esfera usa ClockWndMain.",
+    L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili configurati separatamente. Il quadrante usa ClockWndMain.",
+    L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie skonfigurowanych zegarów i kalendarzy. Tarcza używa ClockWndMain.",
+    L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre ľubovoľný počet samostatne nastavených plávajúcich hodín a kalendárov. Ciferník používa ClockWndMain."
+};
 
 static std::wstring LoadLicenseText() {
     HRSRC resource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_LICENSE), RT_RCDATA);
@@ -8289,8 +8204,7 @@ static void ShowInformationWindow(bool help) {
     int* x = help ? &helpX : &aboutX;
     int* y = help ? &helpY : &aboutY;
     ClampFormPosition(x, y, 660, 500);
-    *target = CreateWindowExW(WS_EX_TOPMOST, CLASS_NAME, help ? T(TXT_HELP) : T(TXT_ABOUT), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, *x, *y, 660, 500, nullptr,
-                              nullptr, hInstance, nullptr);
+    *target = CreateWindowExW(WS_EX_TOPMOST, CLASS_NAME, help ? T(TXT_HELP) : T(TXT_ABOUT), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, *x, *y, 660, 500, nullptr, nullptr, hInstance, nullptr);
     std::wstring body = help ? std::wstring(HELP_TEXT[appLanguage]) + HELP_ALARM_APPENDIX[appLanguage] + HELP_SELECTION_APPENDIX[appLanguage] + HELP_LAYOUT_APPENDIX[appLanguage] + HELP_STORAGE_APPENDIX[appLanguage] + HELP_TIME_APPENDIX[appLanguage] + HELP_FULLSCREEN_APPENDIX[appLanguage] : BuildAboutText();
     DWORD textStyle = WS_TABSTOP | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
     HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", body.c_str(), textStyle, 18, 18, 610, 385, *target, ID_INFO_TEXT);
@@ -8371,8 +8285,7 @@ static void HandleSettingsCommand(int id, int notification) {
         }
         UpdateSettingControlAvailability();
     } else if (id == ID_UTC && notification == BN_CLICKED) {
-        bool digital = selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size()) &&
-            (settingsDraft[selectedDraftIndex].type == WIDGET_DIGITAL || settingsDraft[selectedDraftIndex].type == WIDGET_FULLSCREEN);
+        bool digital = selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size()) && (settingsDraft[selectedDraftIndex].type == WIDGET_DIGITAL || settingsDraft[selectedDraftIndex].type == WIDGET_FULLSCREEN);
         EnableWindow(hUtcTextCheck, digital && GetCheck(hUtcCheck));
     } else if (id == ID_ALARM_TIME && notification == EN_CHANGE && GetFocus() == hAlarmTimeEdit) {
         SetCheck(hAlarmEnabledCheck, true);
@@ -8600,9 +8513,7 @@ static bool IsPanelAnalogDoubleClick(Widget* widget, LPARAM lParam) {
     }
     ULONGLONG tick = GetTickCount64();
     POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-    bool doubleClick = widget->lastAnalogClickTick != 0 && tick - widget->lastAnalogClickTick <= GetDoubleClickTime() &&
-        std::abs(point.x - widget->lastAnalogClickPoint.x) <= GetSystemMetrics(SM_CXDOUBLECLK) / 2 &&
-        std::abs(point.y - widget->lastAnalogClickPoint.y) <= GetSystemMetrics(SM_CYDOUBLECLK) / 2;
+    bool doubleClick = widget->lastAnalogClickTick != 0 && tick - widget->lastAnalogClickTick <= GetDoubleClickTime() && std::abs(point.x - widget->lastAnalogClickPoint.x) <= GetSystemMetrics(SM_CXDOUBLECLK) / 2 && std::abs(point.y - widget->lastAnalogClickPoint.y) <= GetSystemMetrics(SM_CYDOUBLECLK) / 2;
     if (doubleClick) {
         widget->lastAnalogClickTick = 0;
     } else {
@@ -8653,7 +8564,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
             }
         }
         if (widget->calendarProc != nullptr) {
-            CalendarLocaleScope localeScope(widget->config.language);
+            CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
             LRESULT result = CallWindowProcW(widget->calendarProc, window, message, wParam, lParam);
             if ((message == WM_THEMECHANGED || message == WM_SETTINGCHANGE) && widget->calendarFont != nullptr) {
                 SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(widget->calendarFont), TRUE);
