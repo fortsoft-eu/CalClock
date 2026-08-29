@@ -78,12 +78,24 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AlarmActions.cpp" />
+    <ClCompile Include="AnalogClockHost.cpp" />
     <ClCompile Include="CalendarLocaleScope.cpp" />
     <ClCompile Include="CalClock.cpp" />
+    <ClCompile Include="DateFormats.cpp" />
+    <ClCompile Include="Localization.cpp" />
+    <ClCompile Include="NtpClient.cpp" />
+    <ClCompile Include="SettingsStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlarmActions.h" />
+    <ClInclude Include="AnalogClockHost.h" />
     <ClInclude Include="CalClockTypes.h" />
     <ClInclude Include="CalendarLocaleScope.h" />
+    <ClInclude Include="DateFormats.h" />
+    <ClInclude Include="Localization.h" />
+    <ClInclude Include="NtpClient.h" />
+    <ClInclude Include="SettingsStorage.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

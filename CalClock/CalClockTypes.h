@@ -4,6 +4,16 @@
 #include <string>
 #include <vector>
 
+const int WIDGET_OPACITY_MIN = 1;
+const int WIDGET_OPACITY_MAX = 100;
+const int DIGITAL_FONT_SIZE_MIN = 1;
+const int DIGITAL_FONT_SIZE_MAX = 400;
+const int FULLSCREEN_FONT_SIZE_MIN = 1;
+const int FULLSCREEN_FONT_SIZE_MAX = 100;
+const int DIGITAL_PADDING_MAX = 200;
+const int FULLSCREEN_PADDING_MAX = 400;
+const int DIGITAL_BORDER_WIDTH_MAX = 200;
+
 enum WidgetType {
     WIDGET_ANALOG,
     WIDGET_DIGITAL,
@@ -27,8 +37,6 @@ enum FontAntialiasing {
     FONT_ANTIALIAS_COUNT
 };
 
-const int DIGITAL_BORDER_WIDTH_MAX = 10;
-
 enum AppLanguage {
     LANG_CZ,
     LANG_EN,
@@ -51,18 +59,39 @@ enum NtpPreset {
 };
 
 enum DateCopyFormat {
-    DATE_YYMMDD,
-    DATE_YYYYMMDD,
-    DATE_YY_MM_DD,
-    DATE_ISO,
     DATE_LOCAL_SHORT,
-    DATE_DD_MM_YYYY,
+    DATE_LOCAL_LONG,
+    DATE_ISO,
+    DATE_ISO_BASIC,
+    DATE_ISO_SHORT_YEAR,
+    DATE_BASIC_SHORT_YEAR,
+    DATE_YEAR_MONTH_DAY_SLASH,
+    DATE_YEAR_MONTH_DAY_DOT,
+    DATE_DAY_MONTH_YEAR_DOT,
+    DATE_DAY_MONTH_YEAR_DOT_PADDED,
+    DATE_DAY_MONTH_YEAR_DOT_SHORT,
+    DATE_DAY_MONTH_YEAR_DOT_PADDED_SHORT,
+    DATE_DAY_MONTH_YEAR_SLASH,
+    DATE_DAY_MONTH_YEAR_SLASH_PADDED,
+    DATE_DAY_MONTH_YEAR_SLASH_PADDED_SHORT,
+    DATE_DAY_MONTH_YEAR_HYPHEN,
+    DATE_DAY_MONTH_YEAR_HYPHEN_PADDED,
+    DATE_MONTH_DAY_YEAR_SLASH,
+    DATE_MONTH_DAY_YEAR_SLASH_PADDED,
+    DATE_MONTH_DAY_YEAR_SLASH_PADDED_SHORT,
+    DATE_MONTH_DAY_YEAR_HYPHEN,
+    DATE_MONTH_DAY_YEAR_HYPHEN_PADDED,
     DATE_DAY_SHORT_MONTH,
     DATE_DAY_MONTH,
-    DATE_WEEKDAY,
-    DATE_LOCAL_LONG,
+    DATE_SHORT_MONTH_DAY,
+    DATE_MONTH_DAY,
+    DATE_WEEKDAY_SHORT_DAY_MONTH,
+    DATE_WEEKDAY_DAY_MONTH,
+    DATE_WEEKDAY_SHORT_MONTH_DAY,
+    DATE_WEEKDAY_MONTH_DAY,
     DATE_RFC,
-    DATE_SLASH,
+    DATE_WEEKDAY_SHORT_NUMERIC,
+    DATE_WEEKDAY_NUMERIC,
     DATE_FORMAT_COUNT
 };
 
@@ -168,13 +197,14 @@ struct WidgetConfig {
     int padding = 8;
     int borderStyle = DIGITAL_BORDER_SINGLE;
     int borderWidth = 1;
+    bool showFrame = true;
     COLORREF textColor = 0;
     COLORREF backgroundColor = 0;
     COLORREF alarmTextColor = RGB(220, 0, 0);
     COLORREF alarmBackgroundColor = RGB(255, 255, 128);
     bool weekNumbers = false;
     bool sundayFirst = false;
-    int dateCopyFormat = DATE_YYMMDD;
+    int dateCopyFormat = DATE_LOCAL_SHORT;
     bool alarmEnabled = false;
     int alarmHour = 0;
     int alarmMinute = 0;
@@ -198,47 +228,13 @@ struct SettingsSnapshot {
     std::wstring ntpServers;
     int settingsX = CW_USEDEFAULT;
     int settingsY = CW_USEDEFAULT;
+    int settingsTab = 0;
+    WidgetType lastAddedWidgetType = WIDGET_ANALOG;
     int helpX = CW_USEDEFAULT;
     int helpY = CW_USEDEFAULT;
     int aboutX = CW_USEDEFAULT;
     int aboutY = CW_USEDEFAULT;
     std::vector<WidgetConfig> widgets;
-};
-
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
-    ULONG generation = 0;
-};
-
-struct NtpThreadParameters {
-    std::wstring serverList;
-    ULONG generation = 0;
-};
-
-struct NtpSample {
-    LONGLONG offset100Nanoseconds = 0;
-    LONGLONG delay100Nanoseconds = 0;
-    std::wstring server;
-};
-
-struct AudioThreadParameters {
-    std::wstring path;
-    bool loop = false;
-    HANDLE stopEvent = nullptr;
-    HWND notifyWindow = nullptr;
-    UINT notifyMessage = 0;
-    int widgetId = -1;
-    ULONG generation = 0;
-};
-
-struct LocalCommandThreadParameters {
-    std::wstring command;
-};
-
-struct RemoteScriptThreadParameters {
-    std::wstring url;
 };
 
 struct Widget {

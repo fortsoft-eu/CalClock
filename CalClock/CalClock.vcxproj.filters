@@ -15,18 +15,54 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlarmActions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalogClockHost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CalendarLocaleScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CalClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DateFormats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Localization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NtpClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsStorage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlarmActions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalogClockHost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CalClockTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalendarLocaleScope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DateFormats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Localization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NtpClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
