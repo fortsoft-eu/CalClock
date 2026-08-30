@@ -39,7 +39,14 @@ bool LooksLikeAudio(const std::wstring& path) {
     }
     std::wstring extension = path.substr(dot);
     std::transform(extension.begin(), extension.end(), extension.begin(), towlower);
-    return extension == L".wav" || extension == L".mp3" || extension == L".wma" || extension == L".mid" || extension == L".midi" || extension == L".aac" || extension == L".m4a" || extension == L".flac";
+    return extension == L".wav"
+        || extension == L".mp3"
+        || extension == L".wma"
+        || extension == L".mid"
+        || extension == L".midi"
+        || extension == L".aac"
+        || extension == L".m4a"
+        || extension == L".flac";
 }
 
 bool IsRemoteScriptUrlValid(const std::wstring& url) {

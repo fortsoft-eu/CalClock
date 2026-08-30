@@ -19,39 +19,204 @@ struct DateFormatDefinition {
 };
 
 const DateFormatDefinition DATE_FORMAT_DEFINITIONS[DATE_FORMAT_COUNT] = {
-    { nullptr, nullptr, DATE_SHORTDATE, DATE_FORMAT_GROUP_LOCAL },
-    { nullptr, nullptr, DATE_LONGDATE, DATE_FORMAT_GROUP_LOCAL },
-    { L"yyyy-MM-dd", L"yyyy'-'MM'-'dd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"yyyyMMdd", L"yyyyMMdd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"yy-MM-dd", L"yy'-'MM'-'dd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"yyMMdd", L"yyMMdd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"yyyy/MM/dd", L"yyyy'/'MM'/'dd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"yyyy.MM.dd", L"yyyy'.'MM'.'dd", 0, DATE_FORMAT_GROUP_SORTABLE },
-    { L"d.M.yyyy", L"d'.'M'.'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"dd.MM.yyyy", L"dd'.'MM'.'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"d.M.yy", L"d'.'M'.'yy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"dd.MM.yy", L"dd'.'MM'.'yy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"d/M/yyyy", L"d'/'M'/'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"dd/MM/yyyy", L"dd'/'MM'/'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"dd/MM/yy", L"dd'/'MM'/'yy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"d-M-yyyy", L"d'-'M'-'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"dd-MM-yyyy", L"dd'-'MM'-'yyyy", 0, DATE_FORMAT_GROUP_DAY_FIRST },
-    { L"M/d/yyyy", L"M'/'d'/'yyyy", 0, DATE_FORMAT_GROUP_MONTH_FIRST },
-    { L"MM/dd/yyyy", L"MM'/'dd'/'yyyy", 0, DATE_FORMAT_GROUP_MONTH_FIRST },
-    { L"MM/dd/yy", L"MM'/'dd'/'yy", 0, DATE_FORMAT_GROUP_MONTH_FIRST },
-    { L"M-d-yyyy", L"M'-'d'-'yyyy", 0, DATE_FORMAT_GROUP_MONTH_FIRST },
-    { L"MM-dd-yyyy", L"MM'-'dd'-'yyyy", 0, DATE_FORMAT_GROUP_MONTH_FIRST },
-    { L"d MMM yyyy", L"d MMM yyyy", 0, DATE_FORMAT_GROUP_TEXT },
-    { L"d MMMM yyyy", L"d MMMM yyyy", 0, DATE_FORMAT_GROUP_TEXT },
-    { L"MMM d, yyyy", L"MMM d',' yyyy", 0, DATE_FORMAT_GROUP_TEXT },
-    { L"MMMM d, yyyy", L"MMMM d',' yyyy", 0, DATE_FORMAT_GROUP_TEXT },
-    { L"ddd, d MMM yyyy", L"ddd',' d MMM yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"dddd d MMMM yyyy", L"dddd d MMMM yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"ddd, MMM d, yyyy", L"ddd',' MMM d',' yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"dddd, MMMM d, yyyy", L"dddd',' MMMM d',' yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"ddd, dd MMM yyyy", L"ddd',' dd MMM yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"ddd d.M.yyyy", L"ddd d'.'M'.'yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY },
-    { L"dddd d.M.yyyy", L"dddd d'.'M'.'yyyy", 0, DATE_FORMAT_GROUP_WEEKDAY }
+    {
+        nullptr,
+        nullptr,
+        DATE_SHORTDATE,
+        DATE_FORMAT_GROUP_LOCAL
+    },
+    {
+        nullptr,
+        nullptr,
+        DATE_LONGDATE,
+        DATE_FORMAT_GROUP_LOCAL
+    },
+    {
+        L"yyyy-MM-dd",
+        L"yyyy'-'MM'-'dd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"yyyyMMdd",
+        L"yyyyMMdd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"yy-MM-dd",
+        L"yy'-'MM'-'dd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"yyMMdd",
+        L"yyMMdd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"yyyy/MM/dd",
+        L"yyyy'/'MM'/'dd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"yyyy.MM.dd",
+        L"yyyy'.'MM'.'dd",
+        0,
+        DATE_FORMAT_GROUP_SORTABLE
+    },
+    {
+        L"d.M.yyyy",
+        L"d'.'M'.'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"dd.MM.yyyy",
+        L"dd'.'MM'.'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"d.M.yy",
+        L"d'.'M'.'yy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"dd.MM.yy",
+        L"dd'.'MM'.'yy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"d/M/yyyy",
+        L"d'/'M'/'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"dd/MM/yyyy",
+        L"dd'/'MM'/'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"dd/MM/yy",
+        L"dd'/'MM'/'yy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"d-M-yyyy",
+        L"d'-'M'-'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"dd-MM-yyyy",
+        L"dd'-'MM'-'yyyy",
+        0,
+        DATE_FORMAT_GROUP_DAY_FIRST
+    },
+    {
+        L"M/d/yyyy",
+        L"M'/'d'/'yyyy",
+        0,
+        DATE_FORMAT_GROUP_MONTH_FIRST
+    },
+    {
+        L"MM/dd/yyyy",
+        L"MM'/'dd'/'yyyy",
+        0,
+        DATE_FORMAT_GROUP_MONTH_FIRST
+    },
+    {
+        L"MM/dd/yy",
+        L"MM'/'dd'/'yy",
+        0,
+        DATE_FORMAT_GROUP_MONTH_FIRST
+    },
+    {
+        L"M-d-yyyy",
+        L"M'-'d'-'yyyy",
+        0,
+        DATE_FORMAT_GROUP_MONTH_FIRST
+    },
+    {
+        L"MM-dd-yyyy",
+        L"MM'-'dd'-'yyyy",
+        0,
+        DATE_FORMAT_GROUP_MONTH_FIRST
+    },
+    {
+        L"d MMM yyyy",
+        L"d MMM yyyy",
+        0,
+        DATE_FORMAT_GROUP_TEXT
+    },
+    {
+        L"d MMMM yyyy",
+        L"d MMMM yyyy",
+        0,
+        DATE_FORMAT_GROUP_TEXT
+    },
+    {
+        L"MMM d, yyyy",
+        L"MMM d',' yyyy",
+        0,
+        DATE_FORMAT_GROUP_TEXT
+    },
+    {
+        L"MMMM d, yyyy",
+        L"MMMM d',' yyyy",
+        0,
+        DATE_FORMAT_GROUP_TEXT
+    },
+    {
+        L"ddd, d MMM yyyy",
+        L"ddd',' d MMM yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"dddd d MMMM yyyy",
+        L"dddd d MMMM yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"ddd, MMM d, yyyy",
+        L"ddd',' MMM d',' yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"dddd, MMMM d, yyyy",
+        L"dddd',' MMMM d',' yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"ddd, dd MMM yyyy",
+        L"ddd',' dd MMM yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"ddd d.M.yyyy",
+        L"ddd d'.'M'.'yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    },
+    {
+        L"dddd d.M.yyyy",
+        L"dddd d'.'M'.'yyyy",
+        0,
+        DATE_FORMAT_GROUP_WEEKDAY
+    }
 };
 static_assert(ARRAYSIZE(DATE_FORMAT_DEFINITIONS) == DATE_FORMAT_COUNT);
 

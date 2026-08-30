@@ -47,9 +47,11 @@ static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
 static void WriteDword(HKEY key, const wchar_t* name, DWORD value) {
     RegSetValueExW(key, name, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&value), sizeof(value));
 }
+
 static void WriteQword(HKEY key, const wchar_t* name, LONGLONG value) {
     RegSetValueExW(key, name, 0, REG_QWORD, reinterpret_cast<const BYTE*>(&value), sizeof(value));
 }
+
 static void WriteString(HKEY key, const wchar_t* name, const std::wstring& value) {
     RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
 }

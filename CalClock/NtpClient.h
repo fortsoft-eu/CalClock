@@ -14,5 +14,4 @@ struct NtpThreadResult {
 std::wstring NtpServersForPreset(int preset);
 bool HasNtpServers(const std::wstring& serverList);
 ULONGLONG CurrentFileTimeValue();
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage,
-    std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning);
+HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning);

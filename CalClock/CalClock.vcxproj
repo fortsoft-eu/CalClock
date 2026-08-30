@@ -68,6 +68,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -86,6 +87,7 @@
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="NtpClient.cpp" />
     <ClCompile Include="SettingsStorage.cpp" />
+    <ClCompile Include="TimeZoneSupport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlarmActions.h" />
@@ -96,6 +98,7 @@
     <ClInclude Include="Localization.h" />
     <ClInclude Include="NtpClient.h" />
     <ClInclude Include="SettingsStorage.h" />
+    <ClInclude Include="TimeZoneSupport.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
