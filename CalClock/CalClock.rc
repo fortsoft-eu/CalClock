@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+﻿// Microsoft Visual C++ generated resource script.
 //
 #pragma code_page(65001)
 
@@ -21,6 +21,13 @@ LANGUAGE LANG_CZECH, SUBLANG_DEFAULT
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_CLOCK               ICON                    "CalClock.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RCDATA
+//
+
 IDR_LICENSE             RCDATA                  "..\\license.txt"
 
 
@@ -37,6 +44,9 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
+    "#define APSTUDIO_READONLY_SYMBOLS\r\n"
+    "#include ""winres.h""\r\n"
+    "#undef APSTUDIO_READONLY_SYMBOLS\r\n"
     "\0"
 END
 
@@ -55,8 +65,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,0
- PRODUCTVERSION 1,1,0,0
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -73,12 +83,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FortSoft"
             VALUE "FileDescription", "CalClock"
-            VALUE "FileVersion", "1.1.0.0"
+            VALUE "FileVersion", "1.2.0.0"
             VALUE "InternalName", "CalClock.exe"
             VALUE "LegalCopyright", "Copyright © Petr Červinka — FortSoft 2026"
             VALUE "OriginalFilename", "CalClock.exe"
             VALUE "ProductName", "CalClock"
-            VALUE "ProductVersion", "1.1.0.0"
+            VALUE "ProductVersion", "1.2.0.0"
         END
     END
     BLOCK "VarFileInfo"
