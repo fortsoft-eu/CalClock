@@ -58,6 +58,17 @@ enum NtpPreset {
     NTP_PRESET_COUNT
 };
 
+enum TimeSignalMode {
+    TIME_SIGNAL_NONE,
+    TIME_SIGNAL_EVERY_MINUTE,
+    TIME_SIGNAL_EVERY_FIVE_MINUTES,
+    TIME_SIGNAL_EVERY_TEN_MINUTES,
+    TIME_SIGNAL_EVERY_QUARTER_HOUR,
+    TIME_SIGNAL_EVERY_HALF_HOUR,
+    TIME_SIGNAL_EVERY_HOUR,
+    TIME_SIGNAL_COUNT
+};
+
 enum DateCopyFormat {
     DATE_LOCAL_SHORT,
     DATE_LOCAL_LONG,
@@ -205,7 +216,9 @@ struct WidgetConfig {
     bool weekNumbers = false;
     bool sundayFirst = false;
     int dateCopyFormat = DATE_LOCAL_SHORT;
+    TimeSignalMode timeSignal = TIME_SIGNAL_NONE;
     bool alarmEnabled = false;
+    bool alarmTimeSignal = false;
     int alarmHour = 0;
     int alarmMinute = 0;
     bool runCommand = false;
@@ -256,6 +269,9 @@ struct Widget {
     int lastAlarmMinute = -1;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
+    RECT panelDateLinkRect = {};
+    bool panelDateHot = false;
+    HWND panelDateTooltip = nullptr;
     COLORREF analogBackground = CLR_INVALID;
     HANDLE audioStopEvent = nullptr;
     ULONG audioGeneration = 0;
@@ -273,7 +289,6 @@ struct Widget {
 };
 
 struct DisplayMonitor {
-    HMONITOR handle = nullptr;
     RECT rect = {};
     std::wstring device;
     bool primary = false;

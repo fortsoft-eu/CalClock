@@ -9,7 +9,10 @@
 #include <shellapi.h>
 #include <string>
 #include <winhttp.h>
+#include <wmp.h>
 
+#pragma comment(lib, "Ole32.lib")
+#pragma comment(lib, "OleAut32.lib")
 #pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "Winhttp.lib")
 #pragma comment(lib, "Winmm.lib")
@@ -64,8 +67,116 @@ bool IsRemoteScriptUrlValid(const std::wstring& url) {
     return (components.nScheme == INTERNET_SCHEME_HTTP || components.nScheme == INTERNET_SCHEME_HTTPS) && components.lpszHostName != nullptr && components.dwHostNameLength != 0;
 }
 
+static bool WaitForAudioStop(HANDLE stopEvent, DWORD milliseconds) {
+    DWORD result = MsgWaitForMultipleObjects(1, &stopEvent, FALSE, milliseconds, QS_ALLINPUT);
+    if (result == WAIT_OBJECT_0) {
+        return true;
+    }
+    if (result == WAIT_OBJECT_0 + 1) {
+        MSG message = {};
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+    }
+    return false;
+}
+
+static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) {
+    HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+    if (FAILED(initialized)) {
+        return false;
+    }
+    IWMPPlayer4* player = nullptr;
+    IWMPSettings* settings = nullptr;
+    IWMPControls* controls = nullptr;
+    HRESULT result = CoCreateInstance(__uuidof(WindowsMediaPlayer), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IWMPPlayer4), reinterpret_cast<void**>(&player));
+    if (SUCCEEDED(result)) {
+        result = player->get_settings(&settings);
+    }
+    if (SUCCEEDED(result)) {
+        result = settings->put_enableErrorDialogs(VARIANT_FALSE);
+    }
+    if (SUCCEEDED(result)) {
+        result = settings->put_autoStart(VARIANT_TRUE);
+    }
+    BSTR loopMode = SysAllocString(L"loop");
+    if (SUCCEEDED(result) && loopMode == nullptr) {
+        result = E_OUTOFMEMORY;
+    }
+    if (SUCCEEDED(result)) {
+        result = settings->setMode(loopMode, parameters.loop ? VARIANT_TRUE : VARIANT_FALSE);
+    }
+    BSTR path = SysAllocString(parameters.path.c_str());
+    if (SUCCEEDED(result) && path == nullptr) {
+        result = E_OUTOFMEMORY;
+    }
+    if (SUCCEEDED(result)) {
+        result = player->put_URL(path);
+    }
+    if (SUCCEEDED(result)) {
+        result = player->get_controls(&controls);
+    }
+    bool stopRequested = false;
+    bool playbackStarted = false;
+    bool playRequested = false;
+    ULONGLONG startupTick = GetTickCount64();
+    while (SUCCEEDED(result)) {
+        if (WaitForAudioStop(parameters.stopEvent, 50)) {
+            stopRequested = true;
+            break;
+        }
+        WMPPlayState state = wmppsUndefined;
+        result = player->get_playState(&state);
+        if (FAILED(result)) {
+            break;
+        }
+        if (state == wmppsPlaying || state == wmppsScanForward || state == wmppsScanReverse) {
+            playbackStarted = true;
+            continue;
+        }
+        if (playbackStarted && (state == wmppsMediaEnded || state == wmppsStopped || state == wmppsReady)) {
+            if (!parameters.loop) {
+                break;
+            }
+            result = controls->put_currentPosition(0.0);
+            if (SUCCEEDED(result)) {
+                result = controls->play();
+            }
+            continue;
+        }
+        if (!playbackStarted && !playRequested && (state == wmppsReady || state == wmppsStopped)) {
+            result = controls->play();
+            playRequested = SUCCEEDED(result);
+        }
+        if (!playbackStarted && GetTickCount64() - startupTick >= 8000) {
+            result = E_FAIL;
+        }
+    }
+    if (controls != nullptr) {
+        controls->stop();
+        controls->Release();
+    }
+    if (settings != nullptr) {
+        settings->Release();
+    }
+    if (player != nullptr) {
+        player->close();
+        player->Release();
+    }
+    SysFreeString(path);
+    SysFreeString(loopMode);
+    CoUninitialize();
+    return stopRequested || SUCCEEDED(result) && playbackStarted;
+}
+
 static DWORD WINAPI AudioThreadProc(void* parameter) {
     std::unique_ptr<AudioThreadParameters> parameters(static_cast<AudioThreadParameters*>(parameter));
+    if (PlayWithWindowsMediaPlayer(*parameters) || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
+        CloseHandle(parameters->stopEvent);
+        PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
+        return 0;
+    }
     std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_" + std::to_wstring(parameters->generation);
     std::wstring command = L"open \"" + parameters->path + L"\" alias " + alias;
     bool opened = mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
@@ -76,7 +187,7 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
                 if (!parameters->loop) {
                     wchar_t mode[32] = {};
                     command = L"status " + alias + L" mode";
-                    if (mciSendStringW(command.c_str(), mode, ARRAYSIZE(mode), nullptr) != 0 || (_wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0)) {
+                    if (mciSendStringW(command.c_str(), mode, ARRAYSIZE(mode), nullptr) != 0 || _wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0) {
                         break;
                     }
                 }

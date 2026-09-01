@@ -55,9 +55,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Manifest>
-      <EnableSegmentHeap>true</EnableSegmentHeap>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -74,9 +71,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Manifest>
-      <EnableSegmentHeap>true</EnableSegmentHeap>
-    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AlarmActions.cpp" />
@@ -87,7 +81,9 @@
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="NtpClient.cpp" />
     <ClCompile Include="SettingsStorage.cpp" />
+    <ClCompile Include="TimeSignal.cpp" />
     <ClCompile Include="TimeZoneSupport.cpp" />
+    <ClCompile Include="WidgetLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlarmActions.h" />
@@ -98,11 +94,16 @@
     <ClInclude Include="Localization.h" />
     <ClInclude Include="NtpClient.h" />
     <ClInclude Include="SettingsStorage.h" />
+    <ClInclude Include="TimeSignal.h" />
     <ClInclude Include="TimeZoneSupport.h" />
+    <ClInclude Include="WidgetLayout.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CalClock.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="CalClock.manifest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CalClock.ico" />

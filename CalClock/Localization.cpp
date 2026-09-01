@@ -639,6 +639,17 @@ const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT] = {
     L"Písmo &horného riadka..."
 };
 
+const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT] = {
+    L"Přejít na dnešek",
+    L"Go to Today",
+    L"Gehe zu Heute",
+    L"Aller à aujourd’hui",
+    L"Ir a hoy",
+    L"Vai a oggi",
+    L"Przejdź do dnia dzisiejszego",
+    L"Prejsť na dnešný deň"
+};
+
 const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT] = {
     L"Písmo č&asu...",
     L"&Time font...",
@@ -725,6 +736,114 @@ const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = {
     L"&Spessore:",
     L"&Szerokość:",
     L"Šír&ka rám.:"
+};
+
+const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT] = {
+    L"Znamení",
+    L"Signal",
+    L"Zeitzeichen",
+    L"Signal",
+    L"Señal",
+    L"Segnale",
+    L"Sygnał",
+    L"Znamenie"
+};
+
+const wchar_t* TIME_SIGNAL_FIELD_LABELS[LANG_COUNT] = {
+    L"Zvukové &časové znamení:",
+    L"&Audible time signal:",
+    L"Akustisches &Zeitzeichen:",
+    L"&Signal horaire sonore :",
+    L"Señal horaria &sonora:",
+    L"Segnale orario &acustico:",
+    L"&Dźwiękowy sygnał czasu:",
+    L"Zvukové č&asové znamenie:"
+};
+
+const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
+    {
+        L"Žádné",
+        L"Každou minutu",
+        L"Každých 5 minut",
+        L"Každých 10 minut",
+        L"Každou čtvrthodinu",
+        L"Každou půlhodinu",
+        L"Každou hodinu"
+    },
+    {
+        L"None",
+        L"Every minute",
+        L"Every 5 minutes",
+        L"Every 10 minutes",
+        L"Every quarter hour",
+        L"Every half hour",
+        L"Every hour"
+    },
+    {
+        L"Kein",
+        L"Jede Minute",
+        L"Alle 5 Minuten",
+        L"Alle 10 Minuten",
+        L"Jede Viertelstunde",
+        L"Jede halbe Stunde",
+        L"Jede Stunde"
+    },
+    {
+        L"Aucun",
+        L"Chaque minute",
+        L"Toutes les 5 minutes",
+        L"Toutes les 10 minutes",
+        L"Chaque quart d’heure",
+        L"Chaque demi-heure",
+        L"Chaque heure"
+    },
+    {
+        L"Ninguno",
+        L"Cada minuto",
+        L"Cada 5 minutos",
+        L"Cada 10 minutos",
+        L"Cada cuarto de hora",
+        L"Cada media hora",
+        L"Cada hora"
+    },
+    {
+        L"Nessuno",
+        L"Ogni minuto",
+        L"Ogni 5 minuti",
+        L"Ogni 10 minuti",
+        L"Ogni quarto d’ora",
+        L"Ogni mezz’ora",
+        L"Ogni ora"
+    },
+    {
+        L"Brak",
+        L"Co minutę",
+        L"Co 5 minut",
+        L"Co 10 minut",
+        L"Co kwadrans",
+        L"Co pół godziny",
+        L"Co godzinę"
+    },
+    {
+        L"Žiadne",
+        L"Každú minútu",
+        L"Každých 5 minút",
+        L"Každých 10 minút",
+        L"Každú štvrťhodinu",
+        L"Každú polhodinu",
+        L"Každú hodinu"
+    }
+};
+
+const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT] = {
+    L"Pět krátkých tónů zazní v posledních pěti sekundách a dlouhý tón přesně na zvolené časové hranici. Souběžná znamení více widgetů se přehrají pouze jednou.",
+    L"Five short pips sound during the final five seconds and a long pip exactly at the selected time boundary. Coincident signals from multiple widgets play only once.",
+    L"Fünf kurze Töne erklingen in den letzten fünf Sekunden und ein langer Ton genau an der gewählten Zeitgrenze. Gleichzeitige Signale mehrerer Widgets werden nur einmal wiedergegeben.",
+    L"Cinq bips courts retentissent pendant les cinq dernières secondes et un bip long exactement à la limite choisie. Les signaux simultanés de plusieurs widgets ne sont joués qu’une fois.",
+    L"Cinco pitidos cortos suenan durante los últimos cinco segundos y uno largo exactamente en el límite elegido. Las señales simultáneas de varios widgets se reproducen una sola vez.",
+    L"Cinque segnali brevi suonano negli ultimi cinque secondi e uno lungo esattamente al limite scelto. I segnali simultanei di più widget vengono riprodotti una sola volta.",
+    L"Pięć krótkich sygnałów rozlega się w ostatnich pięciu sekundach, a długi dokładnie na wybranej granicy czasu. Zbieżne sygnały wielu widżetów są odtwarzane tylko raz.",
+    L"Päť krátkych tónov zaznie v posledných piatich sekundách a dlhý tón presne na zvolenej časovej hranici. Súbežné znamenia viacerých widgetov sa prehrajú iba raz."
 };
 
 const wchar_t* TIME_TAB_LABELS[LANG_COUNT] = {
@@ -977,6 +1096,17 @@ const wchar_t* STOP_TEST_LABELS[LANG_COUNT] = {
     L"&Zastaviť test"
 };
 
+const wchar_t* ALARM_TIME_SIGNAL_LABELS[LANG_COUNT] = {
+    L"Pípat časové &znamení",
+    L"Sound the time si&gnal",
+    L"Akustisches &Zeitzeichen",
+    L"Émettre le signal &horaire",
+    L"Emitir la señal h&oraria",
+    L"Emetti il segnale &orario",
+    L"Odtwarzaj sygnał &czasu",
+    L"Pípať časové &znamenie"
+};
+
 const wchar_t* REMOTE_SCRIPT_LABELS[LANG_COUNT] = {
     L"Zavolat &vzdálený skript",
     L"Call a &remote script",
@@ -1052,17 +1182,6 @@ const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT] = {
     L"Impossibile esportare le impostazioni.",
     L"Nie udało się wyeksportować ustawień.",
     L"Nastavenia sa nepodarilo exportovať."
-};
-
-const wchar_t* SETTINGS_IMPORT_FAILED[LANG_COUNT] = {
-    L"Nastavení se nepodařilo importovat.",
-    L"Settings could not be imported.",
-    L"Die Einstellungen konnten nicht importiert werden.",
-    L"Impossible d’importer les paramètres.",
-    L"No se pudo importar la configuración.",
-    L"Impossibile importare le impostazioni.",
-    L"Nie udało się zaimportować ustawień.",
-    L"Nastavenia sa nepodarilo importovať."
 };
 
 const wchar_t* XML_STORAGE_LABELS[LANG_COUNT] = {
@@ -1158,116 +1277,145 @@ const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nZADÁVÁNÍ ČASU A AKCE BUDÍKU\r\nČas budíku přijímá běžný tvar HH:mm s dvojtečkou, tečkou, mezerou či jiným oddělovačem; oddělovač lze také vynechat. Jedna nebo dvě "
     L"číslice znamenají hodiny, tři nebo čtyři číslice hodiny a minuty, například 7, 12, 730, 0730 nebo 7:30. Po opuštění pole se čas sjednotí na HH:mm. Offset se zadává zprava "
     L"od sekund: 2 znamená 00:00:02.00, 230 i 0230 znamená 00:02:30.00 a 12345 znamená 01:23:45.00. Při odděleném zápisu jsou dvě skupiny minuty a sekundy, tři skupiny hodiny, "
-    L"minuty a sekundy a čtvrtá skupina setiny; lze použít znaménko. Tlačítko Vyzkoušet rozbliká aktuální ciferník či rám panelu a zároveň asynchronně vyzkouší soubor, příkaz, "
-    L"zvuk a HTTP/HTTPS adresu vzdáleného skriptu. Zastavení testu nebo budíku ukončí i interně přehrávaný zvuk.",
+    L"minuty a sekundy a čtvrtá skupina setiny; lze použít znaménko. Volba Pípat časové znamení spustí první krátký tón pět sekund před časem budíku a po aktivaci budíku opakuje "
+    L"sekvenci každou minutu až do zastavení. Je nezávislá na kartě Znamení; souběžné sekvence se však sloučí. Tlačítko Vyzkoušet rozbliká aktuální ciferník či rám panelu a "
+    L"asynchronně vyzkouší soubor, příkaz, zvuk, HTTP/HTTPS adresu vzdáleného skriptu a při zapnuté volbě i celé časové znamení. Zastavení testu ukončí jeho interní zvuk a náhled "
+    L"znamení; zastavení budíku ukončí interní zvuk a jeho další minutová znamení.",
     L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, space or another separator; the separator may also be omitted. One or two digits mean "
     L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or 7:30. The value is normalized to HH:mm after leaving the field. Offset entry "
     L"starts from seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means 01:23:45.00. With separators, two groups mean minutes and seconds, "
-    L"three mean hours, minutes and seconds, and a fourth group contains hundredths; a sign is accepted. Test flashes the selected clock face or panel frame and asynchronously "
-    L"tests the file, command, audio and HTTP/HTTPS remote-script URL. Stopping the test or alarm also stops audio played internally.",
+    L"three mean hours, minutes and seconds, and a fourth group contains hundredths; a sign is accepted. Sound the time signal starts its first short pip five seconds before the "
+    L"alarm and repeats the sequence every minute while the alarm remains active. It is independent of the Signal tab, although coincident sequences are merged. Test flashes the "
+    L"selected clock face or panel frame and asynchronously tests the file, command, audio, HTTP/HTTPS remote-script URL and, when selected, the complete time-signal sequence. "
+    L"Stopping the test stops its internal audio and signal preview; stopping the alarm stops internal audio and its subsequent minute signals.",
     L"\r\n\r\nZEITEINGABE UND WECKERAKTIONEN\r\nDie Weckzeit akzeptiert HH:mm mit Doppelpunkt, Punkt, Leerzeichen oder einem anderen Trennzeichen; das Trennzeichen kann "
     L"entfallen. Eine oder zwei Ziffern bedeuten Stunden, drei oder vier Ziffern Stunden und Minuten, z. B. 7, 12, 730, 0730 oder 7:30. Beim Verlassen des Feldes wird HH:mm "
     L"verwendet. Der Versatz wird von rechts ab den Sekunden eingegeben: 2 bedeutet 00:00:02.00, 230 und 0230 bedeuten 00:02:30.00 und 12345 bedeutet 01:23:45.00. Mit "
-    L"Trennzeichen stehen zwei Gruppen für Minuten und Sekunden, drei für Stunden, Minuten und Sekunden und eine vierte für Hundertstel; ein Vorzeichen ist zulässig. Testen lässt "
-    L"Zifferblatt oder Panelrahmen blinken und prüft Datei, Befehl, Audio sowie eine HTTP/HTTPS-Adresse eines Remote-Skripts asynchron. Das Stoppen beendet auch intern "
-    L"abgespieltes Audio.",
+    L"Trennzeichen stehen zwei Gruppen für Minuten und Sekunden, drei für Stunden, Minuten und Sekunden und eine vierte für Hundertstel; ein Vorzeichen ist zulässig. Akustisches "
+    L"Zeitzeichen startet den ersten kurzen Ton fünf Sekunden vor dem Wecker und wiederholt die Folge jede Minute, solange der Wecker aktiv ist. Diese Wahl ist von der "
+    L"Registerkarte Zeitzeichen unabhängig; "
+    L"gleichzeitige Folgen werden jedoch zusammengeführt. Testen lässt Zifferblatt oder Panelrahmen blinken und prüft Datei, Befehl, Audio, eine HTTP/HTTPS-Adresse eines "
+    L"Remote-Skripts sowie bei aktivierter Option die vollständige Zeitzeichenfolge asynchron. Das Stoppen des Tests beendet dessen internes Audio und die Signalvorschau; das "
+    L"Stoppen des Weckers beendet internes Audio und seine weiteren Minutensignale.",
     L"\r\n\r\nSAISIE DE L’HEURE ET ACTIONS D’ALARME\r\nL’heure accepte HH:mm avec deux-points, point, espace ou un autre séparateur, qui peut aussi être omis. Un ou deux chiffres "
     L"indiquent les heures, trois ou quatre les heures et les minutes, par exemple 7, 12, 730, 0730 ou 7:30. La valeur devient HH:mm à la sortie du champ. Le décalage se saisit "
     L"de droite à partir des secondes : 2 signifie 00:00:02.00, 230 et 0230 signifient 00:02:30.00, et 12345 signifie 01:23:45.00. Avec séparateurs, deux groupes représentent "
-    L"minutes et secondes, trois représentent heures, minutes et secondes, et un quatrième les centièmes ; un signe est accepté. Tester fait clignoter le cadran ou le cadre du "
-    L"panneau et teste de façon asynchrone fichier, commande, audio et URL HTTP/HTTPS du script distant. L’arrêt coupe aussi le son lu par l’application.",
+    L"minutes et secondes, trois représentent heures, minutes et secondes, et un quatrième les centièmes ; un signe est accepté. Émettre le signal horaire lance le premier bip "
+    L"court cinq secondes avant l’alarme et répète la séquence chaque minute tant qu’elle reste active. Ce choix est indépendant de l’onglet Signal, mais les séquences "
+    L"simultanées sont fusionnées. Tester fait clignoter le cadran ou le cadre du panneau et teste de façon asynchrone le fichier, la commande, l’audio, l’URL HTTP/HTTPS du "
+    L"script distant et, si l’option est activée, la séquence complète du signal horaire. Arrêter le test coupe son audio interne et son aperçu du signal ; arrêter l’alarme coupe "
+    L"l’audio interne et ses signaux minutés suivants.",
     L"\r\n\r\nENTRADA DE HORA Y ACCIONES DE ALARMA\r\nLa hora admite HH:mm con dos puntos, punto, espacio u otro separador, que también puede omitirse. Uno o dos dígitos indican "
     L"horas; tres o cuatro, horas y minutos, por ejemplo 7, 12, 730, 0730 o 7:30. Al salir del campo se normaliza a HH:mm. El desfase se introduce desde la derecha empezando por "
     L"los segundos: 2 es 00:00:02.00, 230 y 0230 son 00:02:30.00, y 12345 es 01:23:45.00. Con separadores, dos grupos son minutos y segundos, tres son horas, minutos y segundos, "
-    L"y un cuarto contiene centésimas; se admite signo. Probar hace parpadear la esfera o el marco del panel y prueba de forma asíncrona archivo, comando, audio y URL HTTP/HTTPS "
-    L"del script remoto. Detener también para el audio interno.",
+    L"y un cuarto contiene centésimas; se admite signo. Emitir la señal horaria inicia el primer pitido corto cinco segundos antes de la alarma y repite la secuencia cada minuto "
+    L"mientras siga activa. Es independiente de la pestaña Señal, aunque las secuencias coincidentes se combinan. Probar hace parpadear la esfera o el marco del panel y prueba "
+    L"de forma asíncrona el archivo, el comando, el audio, la URL HTTP/HTTPS del script remoto y, si está activada, la secuencia completa de la señal horaria. Detener la prueba "
+    L"también detiene su audio interno y la vista previa de la señal; detener la alarma detiene el audio interno y sus señales de minuto posteriores.",
     L"\r\n\r\nIMMISSIONE DELL’ORA E AZIONI SVEGLIA\r\nL’ora accetta HH:mm con due punti, punto, spazio o un altro separatore, che può anche essere omesso. Una o due cifre "
     L"indicano le ore; tre o quattro indicano ore e minuti, per esempio 7, 12, 730, 0730 o 7:30. Uscendo dal campo il valore diventa HH:mm. L’offset si inserisce da destra "
     L"partendo dai secondi: 2 significa 00:00:02.00, 230 e 0230 significano 00:02:30.00 e 12345 significa 01:23:45.00. Con separatori, due gruppi sono minuti e secondi, tre sono "
-    L"ore, minuti e secondi e un quarto contiene i centesimi; è ammesso il segno. Prova fa lampeggiare il quadrante o il bordo del pannello e verifica in modo asincrono file, "
-    L"comando, audio e URL HTTP/HTTPS dello script remoto. L’arresto interrompe anche l’audio interno.",
+    L"ore, minuti e secondi e un quarto contiene i centesimi; è ammesso il segno. Emetti il segnale orario avvia il primo segnale breve cinque secondi prima della sveglia e "
+    L"ripete la sequenza ogni minuto finché resta attiva. "
+    L"È indipendente dalla scheda Segnale, ma le sequenze coincidenti vengono unite. Prova fa lampeggiare il quadrante o il bordo del pannello e verifica in modo asincrono file, "
+    L"comando, audio, URL HTTP/HTTPS dello script remoto e, se selezionata, l’intera sequenza del segnale orario. L’arresto della prova interrompe il suo audio interno e l’anteprima "
+    L"del segnale; l’arresto della sveglia interrompe l’audio interno e i successivi segnali a ogni minuto.",
     L"\r\n\r\nWPROWADZANIE CZASU I AKCJE ALARMU\r\nCzas alarmu przyjmuje HH:mm z dwukropkiem, kropką, spacją lub innym separatorem; separator można pominąć. Jedna lub dwie cyfry "
     L"oznaczają godziny, trzy lub cztery godziny i minuty, np. 7, 12, 730, 0730 albo 7:30. Po opuszczeniu pola wartość przyjmuje postać HH:mm. Przesunięcie wpisuje się od prawej, "
     L"zaczynając od sekund: 2 oznacza 00:00:02.00, 230 i 0230 oznaczają 00:02:30.00, a 12345 oznacza 01:23:45.00. Przy separatorach dwie grupy oznaczają minuty i sekundy, trzy "
-    L"godziny, minuty i sekundy, a czwarta setne części; znak jest dozwolony. Test miga tarczą lub ramką panelu i asynchronicznie sprawdza plik, polecenie, dźwięk oraz adres "
-    L"HTTP/HTTPS zdalnego skryptu. Zatrzymanie wyłącza też dźwięk wewnętrzny.",
+    L"godziny, minuty i sekundy, a czwarta setne części; znak jest dozwolony. Odtwarzaj sygnał czasu uruchamia pierwszy krótki sygnał pięć sekund przed alarmem i powtarza "
+    L"sekwencję co minutę, dopóki alarm jest aktywny. "
+    L"Opcja jest niezależna od karty Sygnał, lecz zbieżne sekwencje są łączone. Test miga tarczą lub ramką panelu i asynchronicznie sprawdza plik, polecenie, dźwięk, adres "
+    L"HTTP/HTTPS zdalnego skryptu oraz, jeśli wybrano tę opcję, pełną sekwencję sygnału czasu. Zatrzymanie testu wyłącza jego dźwięk wewnętrzny i podgląd sygnału; "
+    L"zatrzymanie alarmu wyłącza dźwięk wewnętrzny i jego kolejne sygnały minutowe.",
     L"\r\n\r\nZADÁVANIE ČASU A AKCIE BUDÍKA\r\nČas budíka prijíma HH:mm s dvojbodkou, bodkou, medzerou alebo iným oddeľovačom; oddeľovač možno aj vynechať. Jedna alebo dve "
     L"číslice znamenajú hodiny, tri alebo štyri hodiny a minúty, napríklad 7, 12, 730, 0730 alebo 7:30. Po opustení poľa sa hodnota upraví na HH:mm. Offset sa zadáva sprava od "
     L"sekúnd: 2 znamená 00:00:02.00, 230 aj 0230 znamená 00:02:30.00 a 12345 znamená 01:23:45.00. Pri oddelenom zápise sú dve skupiny minúty a sekundy, tri skupiny hodiny, minúty "
-    L"a sekundy a štvrtá skupina stotiny; možno použiť znamienko. Vyskúšať rozbliká ciferník alebo rám panela a asynchrónne otestuje súbor, príkaz, zvuk aj HTTP/HTTPS adresu "
-    L"vzdialeného skriptu. Zastavenie ukončí aj interne prehrávaný zvuk."
+    L"a sekundy a štvrtá skupina stotiny; možno použiť znamienko. Voľba Pípať časové znamenie spustí prvý krátky tón päť sekúnd pred časom budíka a po aktivácii budíka "
+    L"opakuje sekvenciu každú minútu až do zastavenia. Je nezávislá od karty Znamenie; súbežné sekvencie sa však zlúčia. Vyskúšať rozbliká ciferník alebo rám panela a "
+    L"asynchrónne otestuje súbor, príkaz, zvuk, HTTP/HTTPS adresu "
+    L"vzdialeného skriptu a pri zapnutej voľbe aj celé časové znamenie. Zastavenie testu ukončí jeho interný zvuk a náhľad znamenia; zastavenie budíka ukončí interný "
+    L"zvuk a jeho ďalšie minútové znamenia."
 };
 
 const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
-    L"\r\n\r\nVÝBĚR, KLÁVESY A KOPÍROVÁNÍ DATA\r\nV seznamu widgetů označíte více položek pomocí Ctrl, Shift nebo Ctrl+A. Ovládací prvky na kartách Obecné, Vzhled a Budík se potom "
+    L"\r\n\r\nVÝBĚR, KLÁVESY A KOPÍROVÁNÍ DATA\r\nV seznamu widgetů označíte více položek pomocí Ctrl, Shift nebo Ctrl+A. Ovládací prvky na kartách Obecné, Vzhled, Budík a Znamení se potom "
     L"zneaktivní, karta Čas však zůstane dostupná, protože je globální. Nastavení si pamatuje poslední otevřenou kartu a Přidat poslední skutečně přidaný typ. Odebrat nebo Del "
-    L"odstraní všechny označené položky až po použití změn. Dvojklik položky krátce zvýrazní "
-    L"odpovídající widget. Volba Nastavení… v nabídce konkrétního widgetu jej v seznamu rovnou vybere. Ctrl+A i trojklik označí celý obsah textového pole. Kliknutí na den v "
+    L"odstraní všechny označené položky až po použití změn. Dvojklik položky zobrazí případně skrytý widget, nastaví Zobrazeno a krátce jej zvýrazní. Volba Nastavení… v nabídce "
+    L"konkrétního widgetu jej v seznamu rovnou vybere. Ctrl+A i trojklik označí celý obsah textového pole. Kliknutí na den v "
     L"kalendáři datum vybere a zkopíruje do schránky; všechny masky jsou dostupné v každém jazyce a slovní formáty používají jazyk widgetu. Výchozí Krátké datum se řídí jazykem widgetu.",
-    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nUse Ctrl, Shift or Ctrl+A to select several widgets. Controls on the General, Appearance and Alarm tabs are then disabled, while the global "
+    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nUse Ctrl, Shift or Ctrl+A to select several widgets. Controls on the General, Appearance, Alarm and Signal tabs are then disabled, while the global "
     L"Time tab remains available. Settings remembers the last open tab, and Add remembers the last type actually added. Remove or Del removes all selected items when the changes "
-    L"are applied. Double-click an item to identify its widget briefly. Settings… in a specific "
-    L"widget menu selects that widget in the list. Ctrl+A and a triple-click select all text in an edit field. Clicking a calendar day selects it and copies it to the clipboard; each "
+    L"are applied. Double-clicking an item makes a hidden widget visible, selects Visible and identifies the widget briefly. Settings… in a specific widget menu selects that widget "
+    L"in the list. Ctrl+A and a triple-click select all text in an edit field. Clicking a calendar day selects it and copies it to the clipboard; each "
     L"calendar has its own format in Settings and its menu. Every pattern is available in every language, while textual formats use the widget language. The default Short date "
     L"follows the widget language.",
-    L"\r\n\r\nAUSWAHL, TASTEN UND DATUMSKOPIE\r\nMit Strg, Umschalt oder Strg+A wählen Sie mehrere Widgets. Die Bedienelemente der Registerkarten Allgemein, Darstellung und Wecker "
+    L"\r\n\r\nAUSWAHL, TASTEN UND DATUMSKOPIE\r\nMit Strg, Umschalt oder Strg+A wählen Sie mehrere Widgets. Die Bedienelemente der Registerkarten Allgemein, Darstellung, Wecker und Zeitzeichen "
     L"werden dann deaktiviert; die globale Registerkarte Zeit bleibt verfügbar. Einstellungen merkt sich die zuletzt geöffnete Registerkarte, Hinzufügen den zuletzt wirklich hinzugefügten "
-    L"Typ. Entfernen oder Entf löscht beim Anwenden alle ausgewählten Einträge. Doppelklick kennzeichnet ein "
-    L"Widget kurz; Einstellungen… im Widget-Menü wählt es in der Liste aus. Strg+A und Dreifachklick markieren den gesamten Text eines Eingabefelds. Ein Klick auf einen "
+    L"Typ. Entfernen oder Entf löscht beim Anwenden alle ausgewählten Einträge. Ein Doppelklick macht ein verborgenes Widget sichtbar, aktiviert Sichtbar und kennzeichnet das Widget kurz; "
+    L"Einstellungen… im Widget-Menü wählt es in der Liste aus. Strg+A und Dreifachklick markieren den gesamten Text eines Eingabefelds. Ein Klick auf einen "
     L"Kalendertag wählt und kopiert ihn im je Widget eingestellten Format. Alle Muster sind in jeder Sprache verfügbar; Textformate verwenden die Widget-Sprache. Das voreingestellte "
     L"Kurze Datum folgt der Widget-Sprache.",
-    L"\r\n\r\nSÉLECTION, TOUCHES ET COPIE DE DATE\r\nCtrl, Maj ou Ctrl+A sélectionne plusieurs widgets. Les commandes des onglets Général, Apparence et Alarme sont alors désactivées, mais "
+    L"\r\n\r\nSÉLECTION, TOUCHES ET COPIE DE DATE\r\nCtrl, Maj ou Ctrl+A sélectionne plusieurs widgets. Les commandes des onglets Général, Apparence, Alarme et Signal sont alors désactivées, mais "
     L"l’onglet global Heure reste disponible. Paramètres mémorise le dernier onglet ouvert et Ajouter le dernier type réellement ajouté. Supprimer ou Suppr retire toute la sélection "
-    L"lors de l’application. Un double-clic identifie brièvement le widget ; Paramètres… dans "
-    L"son menu le sélectionne dans la liste. Ctrl+A et un triple-clic sélectionnent tout le texte d’un champ. Cliquer sur un jour le sélectionne et le copie selon le format propre "
+    L"lors de l’application. Un double-clic rend visible un widget masqué, coche Visible et l’identifie brièvement ; Paramètres… dans son menu le sélectionne dans la liste. "
+    L"Ctrl+A et un triple-clic sélectionnent tout le texte d’un champ. Cliquer sur un jour le sélectionne et le copie selon le format propre "
     L"au calendrier. Tous les modèles sont disponibles dans chaque langue ; les formats textuels utilisent la langue du widget. La Date courte par défaut suit la langue du widget.",
-    L"\r\n\r\nSELECCIÓN, TECLAS Y COPIA DE FECHA\r\nCtrl, Mayús o Ctrl+A selecciona varios widgets. Los controles de General, Apariencia y Alarma se desactivan, pero la pestaña global Hora "
+    L"\r\n\r\nSELECCIÓN, TECLAS Y COPIA DE FECHA\r\nCtrl, Mayús o Ctrl+A selecciona varios widgets. Los controles de General, Apariencia, Alarma y Señal se desactivan, pero la pestaña global Hora "
     L"sigue disponible. Configuración recuerda la última pestaña abierta y Añadir el último tipo realmente añadido. Quitar o Supr elimina todos los seleccionados al aplicar los "
-    L"cambios. Un doble clic identifica brevemente el widget; Configuración… en su menú lo selecciona "
-    L"en la lista. Ctrl+A y un triple clic seleccionan todo el texto de un campo. Pulsar un día lo selecciona y copia según el formato propio del calendario; los formatos de texto "
+    L"cambios. Un doble clic muestra un widget oculto, activa Visible y lo identifica brevemente; Configuración… en su menú lo selecciona en la lista. Ctrl+A y un triple clic "
+    L"seleccionan todo el texto de un campo. Pulsar un día lo selecciona y copia según el formato propio del calendario; los formatos de texto "
     L"usan el idioma del widget. Todos los patrones están disponibles en cualquier idioma y la Fecha corta predeterminada sigue el idioma del widget.",
-    L"\r\n\r\nSELEZIONE, TASTI E COPIA DELLA DATA\r\nCtrl, Maiusc o Ctrl+A seleziona più widget. I controlli delle schede Generale, Aspetto e Sveglia vengono disattivati, mentre la scheda Ora "
+    L"\r\n\r\nSELEZIONE, TASTI E COPIA DELLA DATA\r\nCtrl, Maiusc o Ctrl+A seleziona più widget. I controlli delle schede Generale, Aspetto, Sveglia e Segnale vengono disattivati, mentre la scheda Ora "
     L"globale resta disponibile. Impostazioni ricorda l’ultima scheda aperta e Aggiungi l’ultimo tipo realmente aggiunto. Rimuovi o Canc elimina tutti gli elementi selezionati "
-    L"quando si applicano le modifiche. Un doppio clic identifica il widget; Impostazioni… nel suo "
-    L"menu lo seleziona nell’elenco. Ctrl+A e un triplo clic selezionano tutto il testo di un campo. Il clic su un giorno lo seleziona e lo copia nel formato del calendario; i formati "
+    L"quando si applicano le modifiche. Un doppio clic rende visibile un widget nascosto, seleziona Visibile e lo identifica brevemente; Impostazioni… nel suo menu lo seleziona "
+    L"nell’elenco. Ctrl+A e un triplo clic selezionano tutto il testo di un campo. Il clic su un giorno lo seleziona e lo copia nel formato del calendario; i formati "
     L"testuali usano la lingua del widget. Tutti i modelli sono disponibili in ogni lingua e la Data breve predefinita segue la lingua del widget.",
-    L"\r\n\r\nZAZNACZANIE, KLAWISZE I KOPIOWANIE DATY\r\nCtrl, Shift lub Ctrl+A zaznacza wiele widżetów. Elementy kart Ogólne, Wygląd i Alarm są wtedy wyłączone, ale globalna karta Czas "
+    L"\r\n\r\nZAZNACZANIE, KLAWISZE I KOPIOWANIE DATY\r\nCtrl, Shift lub Ctrl+A zaznacza wiele widżetów. Elementy kart Ogólne, Wygląd, Alarm i Sygnał są wtedy wyłączone, ale globalna karta Czas "
     L"pozostaje dostępna. Ustawienia pamiętają ostatnio otwartą kartę, a Dodaj ostatnio rzeczywiście dodany typ. Usuń lub Del usuwa wszystkie zaznaczone pozycje po zastosowaniu "
-    L"zmian. Dwuklik krótko wskazuje widżet; Ustawienia… w jego menu wybierają go na liście. "
-    L"Ctrl+A i potrójne kliknięcie zaznaczają cały tekst pola. Kliknięcie dnia wybiera go i kopiuje w formacie danego kalendarza. Wszystkie wzorce są dostępne w każdym języku, "
+    L"zmian. Dwuklik pokazuje ukryty widżet, zaznacza Widoczny i krótko go wskazuje; Ustawienia… w jego menu wybierają go na liście. Ctrl+A i potrójne kliknięcie zaznaczają "
+    L"cały tekst pola. Kliknięcie dnia wybiera go i kopiuje w formacie danego kalendarza. Wszystkie wzorce są dostępne w każdym języku, "
     L"a formaty słowne używają języka widżetu. Domyślna Data krótka zależy od języka widżetu.",
-    L"\r\n\r\nVÝBER, KLÁVESY A KOPÍROVANIE DÁTUMU\r\nPomocou Ctrl, Shift alebo Ctrl+A označíte viac widgetov. Prvky kariet Všeobecné, Vzhľad a Budík sa deaktivujú, globálna karta Čas však "
+    L"\r\n\r\nVÝBER, KLÁVESY A KOPÍROVANIE DÁTUMU\r\nPomocou Ctrl, Shift alebo Ctrl+A označíte viac widgetov. Prvky kariet Všeobecné, Vzhľad, Budík a Znamenie sa deaktivujú, globálna karta Čas však "
     L"zostane dostupná. Nastavenie si pamätá poslednú otvorenú kartu a Pridať posledný skutočne pridaný typ. Odobrať alebo Del odstráni po použití zmien všetky označené položky. "
-    L"Dvojklik widget krátko zvýrazní; Nastavenia… v jeho ponuke ho vyberú v zozname. "
-    L"Ctrl+A aj trojklik označia celý text poľa. Kliknutie na deň ho vyberie a skopíruje vo formáte daného kalendára. Všetky masky sú dostupné v každom jazyku, slovné formáty "
+    L"Dvojklik zobrazí skrytý widget, začiarkne Zobrazené a krátko ho zvýrazní; Nastavenia… v jeho ponuke ho vyberú v zozname. Ctrl+A aj trojklik označia celý text poľa. "
+    L"Kliknutie na deň ho vyberie a skopíruje vo formáte daného kalendára. Všetky masky sú dostupné v každom jazyku, slovné formáty "
     L"používajú jazyk widgetu a predvolený Krátky dátum sa riadi jazykom widgetu."
 };
 
 const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nROZLOŽENÍ WIDGETŮ\r\nPříkaz Zarovnat widgety do mřížky zachová přibližné ruční rozmístění, posune středy widgetů na nejbližší body mřížky a odstraní překrytí. V "
     L"nabídce widgetu se upraví jeho monitor, z ikony všechny monitory samostatně. Opakování rozložení nemění. Dvojklik v Nastavení označí widget rychlým světlemodrým blikáním; "
-    L"budík bliká pomaleji červeně. Vypnutí Vždy navrchu pošle widget dozadu.",
+    L"budík bliká pomaleji červeně. Vypnutí Vždy navrchu pošle widget dozadu. V panelu s kalendářem a hodinami je horní datum odkaz na dnešek; kalendář proto neukazuje "
+    L"duplicitní řádek Dnes.",
     L"\r\n\r\nWIDGET LAYOUT\r\nArrange widgets in a grid preserves the approximate manual layout, snaps widget centres to the nearest grid points and removes overlaps. A widget "
     L"menu affects its monitor; the notification icon applies it to every monitor separately. Repeating the command keeps the layout stable. A Settings double-click identifies a "
-    L"widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back.",
+    L"widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back. In a calendar-and-clock panel, the upper "
+    L"date is a link to today, so the calendar omits its duplicate Today row.",
     L"\r\n\r\nWIDGET-ANORDNUNG\r\nWidgets im Raster anordnen behält die ungefähre manuelle Anordnung bei, richtet die Mittelpunkte am nächsten Rasterpunkt aus und beseitigt "
     L"Überlappungen. Das Widget-Menü wirkt auf seinen Monitor, das Symbol auf alle Monitore einzeln. Wiederholen ändert die Anordnung nicht. Die Kennzeichnung blinkt schnell "
-    L"hellblau, der Alarm langsamer rot. Das Abschalten von Immer im Vordergrund schickt das Widget nach hinten.",
+    L"hellblau, der Alarm langsamer rot. Das Abschalten von Immer im Vordergrund schickt das Widget nach hinten. Im Kalender-Uhr-Panel ist das obere Datum ein Link zum heutigen Tag; "
+    L"der Kalender lässt daher seine doppelte Heute-Zeile weg.",
     L"\r\n\r\nDISPOSITION\r\nAligner les widgets en grille conserve leur disposition manuelle approximative, aligne leurs centres sur la grille la plus proche et supprime les "
     L"chevauchements. Le menu du widget agit sur son écran, l’icône sur chaque écran séparément. La commande répétée reste stable. L’identification clignote rapidement en bleu "
-    L"clair, l’alarme plus lentement en rouge. Désactiver Toujours visible envoie le widget à l’arrière-plan.",
+    L"clair, l’alarme plus lentement en rouge. Désactiver Toujours visible envoie le widget à l’arrière-plan. Dans le panneau calendrier-horloge, la date supérieure est un lien vers "
+    L"aujourd’hui ; le calendrier omet donc sa ligne Aujourd’hui en double.",
     L"\r\n\r\nDISTRIBUCIÓN\r\nAlinear widgets en cuadrícula conserva la distribución manual aproximada, ajusta sus centros a la cuadrícula más cercana y elimina superposiciones. "
     L"El menú del widget actúa en su monitor; el icono, en cada monitor por separado. Repetir no cambia la distribución. La identificación parpadea rápido en azul claro y la "
-    L"alarma más despacio en rojo. Desactivar Siempre visible envía el widget al fondo.",
+    L"alarma más despacio en rojo. Desactivar Siempre visible envía el widget al fondo. En el panel de calendario y reloj, la fecha superior es un enlace a hoy; por ello el calendario "
+    L"omite su fila Hoy duplicada.",
     L"\r\n\r\nDISPOSIZIONE\r\nDisponi i widget in griglia conserva la disposizione manuale approssimativa, allinea i centri alla griglia più vicina ed elimina le sovrapposizioni. "
     L"Il menu del widget agisce sul suo monitor, l’icona su ogni monitor separatamente. Ripetere il comando non cambia la disposizione. L’identificazione lampeggia rapidamente in "
-    L"azzurro, la sveglia più lentamente in rosso. Disattivando Sempre in primo piano il widget viene mandato dietro.",
+    L"azzurro, la sveglia più lentamente in rosso. Disattivando Sempre in primo piano il widget viene mandato dietro. Nel pannello calendario-orologio, la data superiore è un collegamento "
+    L"a oggi; il calendario omette quindi la riga Oggi duplicata.",
     L"\r\n\r\nUKŁAD WIDŻETÓW\r\nUłóż widżety w siatce zachowuje przybliżony układ ręczny, przyciąga środki widżetów do najbliższych punktów siatki i usuwa nakładanie. Menu "
     L"widżetu działa na jego monitorze, a ikona na każdym monitorze osobno. Powtórzenie nie zmienia układu. Identyfikacja miga szybko jasnoniebiesko, alarm wolniej na czerwono. "
-    L"Wyłączenie Zawsze na wierzchu wysyła widżet do tyłu.",
+    L"Wyłączenie Zawsze na wierzchu wysyła widżet do tyłu. W panelu kalendarza z zegarem górna data jest odsyłaczem do dzisiejszego dnia, dlatego kalendarz pomija powielony "
+    L"wiersz Dzisiaj.",
     L"\r\n\r\nROZLOŽENIE WIDGETOV\r\nZarovnať widgety do mriežky zachová približné ručné rozmiestnenie, pritiahne stredy widgetov k najbližším bodom mriežky a odstráni "
     L"prekrývanie. Ponuka widgetu upraví jeho monitor, ikona každý monitor samostatne. Opakovanie rozloženie nemení. Identifikácia bliká rýchlo svetlomodro, budík pomalšie "
-    L"načerveno. Vypnutie Vždy navrchu pošle widget dozadu."
+    L"načerveno. Vypnutie Vždy navrchu pošle widget dozadu. V paneli s kalendárom a hodinami je horný dátum odkazom na dnešok; kalendár preto nezobrazuje duplicitný "
+    L"riadok Dnes."
 };
 
 const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
@@ -1315,6 +1463,95 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"štyri veľkosti ciferníka. Kalendár a panel môžu rámček skryť. Motívy a vyhladzovanie sa nastavujú pre aplikáciu aj widget; písmo natívneho kalendára možno vybrať iba pri "
     L"zakázaných motívoch. Export a import XML pôsobia priamo na stav. Automatické XML je %AppData%\\FortSoft\\CalClock\\settings.xml; zápis XML odstráni "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické XML."
+};
+
+const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nNASTAVENÍ A NABÍDKY\r\nUložit použije změny a zavře Nastavení, Použít je provede bez zavření a Zrušit zahodí dosud nepoužité změny včetně živého náhledu vzhledu. "
+    L"Enter aktivuje Uložit a Esc Zrušit. Na malé pracovní ploše dostane formulář potřebné posuvníky. Jazyk, písmo, vyhlazování, motivy a úložiště aplikace jsou globální; jazyk, "
+    L"vyhlazování a motivy widgetu platí jen pro něj. Změna jazyka se po použití promítne i do otevřeného formuláře.\r\n\r\nNabídka widgetu obsahuje příslušné volby "
+    L"viditelnosti, režimu navrchu, sekund, velikosti a kopírování data a dále zarovnání, Nastavení…, Nápovědu…, O programu… a Konec. Nabídka ikony uvádí widgety s pořadovými "
+    L"čísly a příkazy Zobrazit vše, Skrýt vše a zarovnání. Zobrazení či obnovení přenese widgety dopředu bez změny Vždy navrchu. Další spuštění aktivuje běžící instanci a v případě "
+    L"potřeby obnoví naposledy skryté widgety. Dostupné rozměry ciferníku a možnost sekundové ručičky vycházejí ze systémového ClockWndMain; nedostupné Sekundy jsou šedivé, "
+    L"ale uložená volba se zachová pro podporovanou velikost.",
+    L"\r\n\r\nSETTINGS AND MENUS\r\nSave applies changes and closes Settings, Apply performs them without closing, and Cancel discards changes not yet applied, including the live appearance preview. "
+    L"Enter activates Save and Esc activates Cancel. The dialog gains the required scroll bars on a small work area. Application language, font, smoothing, themes and storage are global; "
+    L"widget language, smoothing and themes affect that widget only. An applied language change also updates the open dialog.\r\n\r\nA widget menu contains the applicable visibility, always-on-top, "
+    L"seconds, size and date-copy choices, followed by arrangement, Settings…, Help…, About… and Exit. The notification-icon menu lists numbered widgets and provides Show all, Hide all "
+    L"and arrangement. Showing or restoring widgets brings them forward without changing Always on top. Starting CalClock again activates the running instance and restores the most recently "
+    L"hidden widgets when needed. Available face sizes and second-hand support come from the system ClockWndMain control; Seconds is disabled when unavailable, but its saved choice is retained "
+    L"for a supported size.",
+    L"\r\n\r\nEINSTELLUNGEN UND MENÜS\r\nSpeichern wendet Änderungen an und schließt die Einstellungen, Anwenden übernimmt sie ohne Schließen, und Abbrechen verwirft noch nicht angewandte Änderungen einschließlich "
+    L"der Live-Vorschau. Eingabe aktiviert Speichern, Esc Abbrechen. Auf einer kleinen Arbeitsfläche erscheinen die erforderlichen Bildlaufleisten. Sprache, Schrift, Glättung, Designs und Speicher "
+    L"der Anwendung gelten global; Widget-Sprache, Glättung und Designs nur für dieses Widget. Eine angewandte Sprachänderung aktualisiert auch den offenen Dialog.\r\n\r\nDas Widget-Menü enthält die "
+    L"zutreffenden Optionen für Sichtbarkeit, Vordergrund, Sekunden, Größe und Datumskopie sowie Anordnung, Einstellungen…, Hilfe…, Info… und Beenden. Das Infobereichsmenü listet nummerierte "
+    L"Widgets und bietet Alle anzeigen, Alle ausblenden und Anordnung. Anzeigen oder Wiederherstellen bringt Widgets nach vorn, ohne Immer im Vordergrund zu ändern. Ein erneuter Start aktiviert die "
+    L"laufende Instanz und stellt bei Bedarf die zuletzt verborgenen Widgets wieder her. Verfügbare Zifferblattgrößen und Sekundenzeiger hängen vom systemeigenen ClockWndMain ab; nicht verfügbare "
+    L"Sekunden sind deaktiviert, die gespeicherte Wahl bleibt jedoch für eine unterstützte Größe erhalten.",
+    L"\r\n\r\nPARAMÈTRES ET MENUS\r\nEnregistrer applique les changements et ferme Paramètres, Appliquer les effectue sans fermer, et Annuler abandonne ceux qui ne sont pas encore appliqués, y compris l’aperçu "
+    L"d’apparence. Entrée active Enregistrer et Échap Annuler. Des barres de défilement apparaissent si l’espace de travail est petit. Langue, police, lissage, thèmes et stockage de l’application sont "
+    L"globaux ; langue, lissage et thèmes du widget ne concernent que lui. Un changement de langue appliqué actualise aussi la fenêtre ouverte.\r\n\r\nLe menu d’un widget contient les choix applicables de "
+    L"visibilité, premier plan, secondes, taille et copie de date, puis disposition, Paramètres…, Aide…, À propos… et Quitter. Le menu de notification liste les widgets numérotés et propose Tout afficher, "
+    L"Tout masquer et la disposition. Afficher ou restaurer les widgets les ramène devant sans modifier Toujours visible. Un nouveau lancement active l’instance existante et restaure au besoin les derniers "
+    L"widgets masqués. Les tailles de cadran et la trotteuse disponibles viennent du contrôle système ClockWndMain ; Secondes est désactivé si indisponible, mais le choix est conservé pour une taille compatible.",
+    L"\r\n\r\nCONFIGURACIÓN Y MENÚS\r\nGuardar aplica los cambios y cierra Configuración, Aplicar los realiza sin cerrar y Cancelar descarta los aún no aplicados, incluida la vista previa de apariencia. Intro activa "
+    L"Guardar y Esc Cancelar. En un área de trabajo pequeña aparecen las barras de desplazamiento necesarias. Idioma, fuente, suavizado, temas y almacenamiento de la aplicación son globales; idioma, "
+    L"suavizado y temas del widget solo afectan a este. Un cambio de idioma aplicado también actualiza la ventana abierta.\r\n\r\nEl menú del widget contiene las opciones aplicables de visibilidad, primer plano, "
+    L"segundos, tamaño y copia de fecha, además de distribución, Configuración…, Ayuda…, Acerca de… y Salir. El menú del icono muestra widgets numerados y ofrece Mostrar todo, Ocultar todo y distribución. "
+    L"Mostrar o restaurar lleva los widgets al frente sin cambiar Siempre visible. Otra ejecución activa la instancia existente y restaura cuando haga falta los últimos widgets ocultos. Los tamaños de esfera "
+    L"y la disponibilidad del segundero proceden del ClockWndMain del sistema; Segundos aparece desactivado cuando no está disponible, pero la elección guardada se conserva para un tamaño compatible.",
+    L"\r\n\r\nIMPOSTAZIONI E MENU\r\nSalva applica le modifiche e chiude Impostazioni, Applica le esegue senza chiudere e Annulla scarta quelle non ancora applicate, compresa l’anteprima dell’aspetto. Invio attiva "
+    L"Salva ed Esc Annulla. In un’area di lavoro piccola compaiono le barre di scorrimento necessarie. Lingua, carattere, antialiasing, temi e archivio dell’applicazione sono globali; lingua, antialiasing "
+    L"e temi del widget valgono solo per esso. Una modifica della lingua applicata aggiorna anche la finestra aperta.\r\n\r\nIl menu del widget contiene le scelte pertinenti per visibilità, primo piano, secondi, "
+    L"dimensione e copia della data, oltre a disposizione, Impostazioni…, Guida…, Informazioni… ed Esci. Il menu dell’icona elenca i widget numerati e offre Mostra tutto, Nascondi tutto e disposizione. "
+    L"Mostrare o ripristinare porta i widget davanti senza cambiare Sempre in primo piano. Un nuovo avvio attiva l’istanza esistente e, se necessario, ripristina gli ultimi widget nascosti. Dimensioni del quadrante "
+    L"e lancetta dei secondi disponibili dipendono dal ClockWndMain di sistema; Secondi è disabilitato se non disponibile, ma la scelta viene conservata per una dimensione supportata.",
+    L"\r\n\r\nUSTAWIENIA I MENU\r\nZapisz stosuje zmiany i zamyka Ustawienia, Zastosuj wykonuje je bez zamykania, a Anuluj odrzuca jeszcze niezastosowane zmiany wraz z podglądem wyglądu. Enter uruchamia "
+    L"Zapisz, a Esc Anuluj. Na małym obszarze roboczym pojawiają się potrzebne paski przewijania. Język, czcionka, wygładzanie, motywy i magazyn aplikacji są globalne; język, wygładzanie "
+    L"i motywy widżetu dotyczą tylko jego. Zastosowana zmiana języka aktualizuje również otwarte okno.\r\n\r\nMenu widżetu zawiera odpowiednie opcje widoczności, położenia na wierzchu, sekund, rozmiaru "
+    L"i kopiowania daty oraz układanie, Ustawienia…, Pomoc…, O programie… i Zakończ. Menu ikony wyświetla numerowane widżety oraz Pokaż wszystkie, Ukryj wszystkie i układanie. Pokazanie lub "
+    L"przywrócenie przenosi widżety do przodu bez zmiany Zawsze na wierzchu. Ponowne uruchomienie aktywuje istniejącą instancję i w razie potrzeby przywraca ostatnio ukryte widżety. Dostępne "
+    L"rozmiary tarczy i sekundnik zależą od systemowego ClockWndMain; niedostępna opcja Sekundy jest wyłączona, lecz zapisany wybór pozostaje dla obsługiwanego rozmiaru.",
+    L"\r\n\r\nNASTAVENIA A PONUKY\r\nUložiť použije zmeny a zavrie Nastavenia, Použiť ich vykoná bez zatvorenia a Zrušiť zahodí doteraz nepoužité zmeny vrátane živého náhľadu vzhľadu. Enter aktivuje "
+    L"Uložiť a Esc Zrušiť. Na malej pracovnej ploche dostane formulár potrebné posuvníky. Jazyk, písmo, vyhladzovanie, motívy a úložisko aplikácie sú globálne; jazyk, vyhladzovanie a motívy "
+    L"widgetu platia iba preň. Použitá zmena jazyka aktualizuje aj otvorené okno.\r\n\r\nPonuka widgetu obsahuje príslušné voľby viditeľnosti, režimu navrchu, sekúnd, veľkosti a kopírovania dátumu "
+    L"a ďalej zarovnanie, Nastavenia…, Pomoc…, O programe… a Koniec. Ponuka ikony uvádza očíslované widgety a príkazy Zobraziť všetko, Skryť všetko a zarovnanie. Zobrazenie alebo obnovenie "
+    L"prenesie widgety dopredu bez zmeny Vždy navrchu. Ďalšie spustenie aktivuje bežiacu inštanciu a podľa potreby obnoví naposledy skryté widgety. Dostupné rozmery ciferníka a sekundová ručička "
+    L"vychádzajú zo systémového ClockWndMain; nedostupné Sekundy sú deaktivované, ale uložená voľba zostane pre podporovanú veľkosť."
+};
+
+const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
+    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENÍ\r\nNa kartě Znamení se pro každý widget samostatně volí žádné znamení nebo interval jedné, pěti, deseti, patnácti, třiceti či šedesáti minut. "
+    L"Časová hranice vychází z času daného widgetu včetně UTC, časového pásma, offsetu a případné korekce NTP. Pět krátkých tónů zazní v posledních pěti sekundách a dlouhý tón přesně "
+    L"na hranici. Pokud na stejný okamžik připadne znamení více widgetů, přehraje se jediná společná sekvence.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, thirty, or sixty minutes separately for each widget. "
+    L"The boundary follows that widget’s time, including UTC, time zone, offset, and any NTP correction. Five short pips sound during the final five seconds and a long pip exactly on the boundary. "
+    L"If several widgets signal at the same instant, "
+    L"only one shared sequence is played.",
+    L"\r\n\r\nAKUSTISCHES ZEITZEICHEN\r\nAuf der Registerkarte Zeitzeichen wird für jedes Widget einzeln kein Signal oder ein Intervall von einer, fünf, zehn, fünfzehn, "
+    L"dreißig oder sechzig Minuten gewählt. Die Grenze folgt der Zeit dieses Widgets einschließlich UTC, Zeitzone, Offset und einer möglichen NTP-Korrektur. "
+    L"In den letzten fünf Sekunden erklingen fünf kurze Töne und genau an der Grenze ein langer Ton. Fallen Signale "
+    L"mehrerer Widgets auf denselben Zeitpunkt, wird nur eine gemeinsame Folge wiedergegeben.",
+    L"\r\n\r\nSIGNAL HORAIRE SONORE\r\nL’onglet Signal choisit séparément pour chaque widget aucun signal ou un intervalle d’une, cinq, dix, quinze, trente ou soixante minutes. "
+    L"La limite suit l’heure du widget, y compris UTC, le fuseau horaire, le décalage et toute correction NTP. Cinq bips courts retentissent pendant les cinq dernières secondes et un bip long "
+    L"exactement à la limite. Si plusieurs widgets signalent au même instant, une seule "
+    L"séquence commune est jouée.",
+    L"\r\n\r\nSEÑAL HORARIA SONORA\r\nLa pestaña Señal permite elegir por separado para cada widget ninguna señal o un intervalo de uno, cinco, diez, quince, treinta o sesenta minutos. "
+    L"El límite sigue la hora del widget, incluidos UTC, zona horaria, offset y cualquier corrección NTP. Cinco pitidos cortos suenan durante los últimos cinco segundos y uno largo exactamente "
+    L"en el límite. Si varios widgets coinciden, se reproduce una única secuencia "
+    L"compartida.",
+    L"\r\n\r\nSEGNALE ORARIO ACUSTICO\r\nLa scheda Segnale consente di scegliere separatamente per ogni widget nessun segnale oppure un intervallo di uno, cinque, dieci, quindici, "
+    L"trenta o sessanta minuti. "
+    L"Il limite segue l’ora del widget, inclusi UTC, fuso orario, offset ed eventuale correzione NTP. Cinque segnali brevi suonano negli ultimi cinque secondi e uno lungo esattamente al limite. "
+    L"Se più widget coincidono, viene riprodotta una sola "
+    L"sequenza comune.",
+    L"\r\n\r\nDŹWIĘKOWY SYGNAŁ CZASU\r\nKarta Sygnał pozwala osobno dla każdego widżetu wybrać brak sygnału albo odstęp jednej, pięciu, dziesięciu, piętnastu, trzydziestu lub "
+    L"sześćdziesięciu minut. Granica wynika z czasu widżetu, w tym UTC, strefy czasowej, offsetu i korekty NTP. Pięć krótkich sygnałów rozlega się w ostatnich pięciu sekundach, "
+    L"a długi dokładnie na granicy. Gdy sygnały wielu widżetów przypadają jednocześnie, "
+    L"odtwarzana jest jedna wspólna sekwencja.",
+    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENIE\r\nNa karte Znamenie sa pre každý widget samostatne volí žiadne znamenie alebo interval jednej, piatich, desiatich, pätnástich, tridsiatich či "
+    L"šesťdesiatich minút. Časová hranica vychádza z času daného widgetu vrátane UTC, časového pásma, offsetu a prípadnej korekcie NTP. Päť krátkych tónov zaznie v posledných "
+    L"piatich sekundách a dlhý tón presne na hranici. Ak na rovnaký okamih pripadne "
+    L"znamenie viacerých widgetov, prehrá sa jediná spoločná sekvencia."
 };
 
 const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {

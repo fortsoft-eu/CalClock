@@ -50,7 +50,7 @@ static bool ReadRegistryString(HKEY key, const wchar_t* name, wchar_t* value, DW
     DWORD type = 0;
     DWORD bytes = characterCount * sizeof(wchar_t);
     LSTATUS status = RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(value), &bytes);
-    if (status != ERROR_SUCCESS || (type != REG_SZ && type != REG_EXPAND_SZ)) {
+    if (status != ERROR_SUCCESS || type != REG_SZ && type != REG_EXPAND_SZ) {
         value[0] = L'\0';
         return false;
     }

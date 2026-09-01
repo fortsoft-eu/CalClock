@@ -7,7 +7,12 @@
 
 static const int ANALOG_PROFILE_COUNT = 4;
 static const int ANALOG_PROFILE_LENGTH = 14;
-static const int ANALOG_PROFILE_SIZES[ANALOG_PROFILE_COUNT] = { 104, 130, 166, 198 };
+static const int ANALOG_PROFILE_SIZES[ANALOG_PROFILE_COUNT] = {
+    104,
+    130,
+    166,
+    198
+};
 
 typedef UINT(__fastcall* RegisterClockClassProc)(HINSTANCE);
 typedef ATOM(WINAPI* VistaRegisterClockClassProc)(HINSTANCE);
@@ -503,6 +508,27 @@ bool ConfigureAnalogClockControl(HWND control, int size, bool showSeconds) {
     }
     BYTE* state = reinterpret_cast<BYTE*>(stateValue);
     *reinterpret_cast<DWORD*>(state + 0x60) = 0;
+    return true;
+}
+
+bool SetAnalogClockSeconds(HWND control, int size, bool showSeconds) {
+    LONG_PTR stateValue = GetWindowLongPtrW(control, GWLP_USERDATA);
+    if (stateValue == 0) {
+        return false;
+    }
+    BYTE* state = reinterpret_cast<BYTE*>(stateValue);
+    if (analogClockImplementation == ANALOG_CLOCK_VISTA) {
+        *reinterpret_cast<DWORD*>(state + 0x68) = showSeconds && (size == 128 || size == 160) ? 0 : 8;
+        return true;
+    }
+    const DWORD* profile = ProfileForSize(size);
+    DWORD* instanceProfile = reinterpret_cast<DWORD*>(state + 0x64);
+    if (memcmp(instanceProfile, profile, 11 * sizeof(DWORD)) != 0) {
+        return false;
+    }
+    for (int index = 11; index < ANALOG_PROFILE_LENGTH; index++) {
+        instanceProfile[index] = showSeconds ? profile[index] : 0;
+    }
     return true;
 }
 

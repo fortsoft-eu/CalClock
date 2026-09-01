@@ -6,11 +6,12 @@ CalClock is a native Win32 application for displaying independently configured f
 
 - Any number of independently configured widgets
 - Per-widget language, time zone, time offset, visibility, and always-on-top state
-- Analog clocks based on the Windows `ClockWndMain` control
+- Analog clocks based on the Windows `ClockWndMain` control, with platform-detected sizes and second-hand support
 - Configurable digital clocks with fonts, colours, opacity, padding, borders, an optional leading zero, and an optional transparent background
 - Native Windows calendars with selectable dates, optional frames, week numbers, first-day settings, and 33 clipboard formats
 - Calendar-and-clock panels with four clock-face sizes, optional frames and UTC text, a leading-zero option, and separate fonts for each text row
 - Alarms with visual indication, internal audio playback, looping, local commands, and HTTP/HTTPS script calls
+- Per-widget audible time signals at 1, 5, 10, 15, 30, or 60-minute intervals, with coincident signals merged into one sequence
 - NTP synchronization without changing the Windows system clock
 - Multiple NTP presets for Czechia and Slovakia, PTB, Ubuntu/NTP Pool, or custom servers
 - Registry or XML settings storage, including XML import and export
@@ -24,7 +25,7 @@ CalClock is a native Win32 application for displaying independently configured f
 
 | Widget | Description |
 | --- | --- |
-| Analog clock | A floating Windows clock face with four sizes and optional seconds |
+| Analog clock | A floating Windows clock face with the sizes and optional second hand supplied by the current Windows version |
 | Digital clock | A configurable floating digital display with optional UTC text, leading zero, borders, and transparent background |
 | Calendar | A movable native month calendar with date selection, an optional frame, and clipboard formats |
 | Calendar and clock | A combined panel with a native calendar, an analog clock, configurable text rows, UTC display, and an optional frame |
@@ -40,14 +41,16 @@ Every widget retains its own position and settings between runs. While Settings 
 - Left-click the notification-area icon to hide the visible widgets. When all widgets are hidden, another click restores only the widgets hidden most recently.
 - Double-click a clock face to toggle the seconds display.
 - Press `F1` for Help, `B` for Settings, or `Esc` to hide a widget or stop an active alarm.
-- Double-click a widget in Settings to identify it briefly on the desktop.
+- Double-click a widget in Settings to make it visible if necessary, select `Visible`, and identify it briefly on the desktop.
 - Open Settings from a widget's context menu to select that widget immediately.
 - Use `Ctrl` or `Shift` for multiple selection in the widget list, `Ctrl+A` to select all, and `Del` to remove the selected widgets.
 - Use `Ctrl+A` or triple-click in a text field to select all its text.
 
-When several widgets are selected, their General, Appearance, and Alarm controls are disabled, while the global Time tab remains available. Settings remembers the last open tab and the last widget type added.
+When several widgets are selected, their General, Appearance, Alarm, and Signal controls are disabled, while the global Time tab remains available. Settings remembers the last open tab and the last widget type added. On a small work area, the Settings window provides horizontal or vertical scrolling as required.
 
 Calendar dates can be copied using 33 formats covering local, sortable, day-first, month-first, textual, and weekday forms. Every mask is available in every interface language. The default local short format follows the widget language, and textual month and weekday names also use that language. Format entries show the mask and a live example.
+
+In a calendar-and-clock panel, the upper date is a link to today and is underlined while the pointer is over it. The native calendar remains fully interactive but omits its redundant Today row in this combined layout.
 
 The alignment command snaps visible desktop widgets to a stable, non-overlapping grid while preserving their approximate manual layout. Monitor clocks are excluded.
 
@@ -57,6 +60,8 @@ Appearance changes are previewed immediately on the selected widget. `Cancel` re
 
 Digital widgets provide controls for font, font smoothing, colours, opacity, padding, border style and width, and transparent background where applicable. Calendars and combined panels can show or hide their frame. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
 
+Application language, UI font, font smoothing, visual styles, time source, and settings storage are global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Applying a new application language immediately rebuilds the open Settings window in that language.
+
 The default digital-clock border width is zero, and widgets that support a leading zero start with it disabled. Monitor clocks default to white text on a black background.
 
 ## Time and alarms
@@ -65,7 +70,19 @@ Each widget can use an arbitrary Windows time zone and a signed offset in the fo
 
 CalClock can use either the Windows system time or an application-local correction obtained from NTP servers. This selection is global for all widgets. Synchronization never changes the Windows clock. If an NTP connection is lost after a successful synchronization, the last known correction remains active in process memory. Changing servers also retains the current valid correction until a new response is obtained.
 
-Clock widgets support alarms. Audio files can be played internally once or continuously, while other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL.
+Clock widgets support alarms. Audio files can be played internally once or continuously, while other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL. Independently of these actions, an alarm may use the six-pip time signal: its first short pip sounds five seconds before the alarm time, and the sequence then repeats every minute until the alarm is stopped.
+
+The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
+
+The per-widget Signal tab can disable audible time signals or schedule them every 1, 5, 10, 15, 30, or 60 minutes according to that widget's displayed time. Five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured; if any of their schedules meet at the same instant, CalClock plays only one shared sequence.
+
+## Settings and menus
+
+`Save` applies changes and closes Settings, `Apply` applies them while keeping Settings open, and `Cancel` discards changes not yet applied, including live appearance previews. Enter activates `Save`; Esc activates `Cancel`.
+
+Each widget menu contains the commands applicable to that type—visibility, always-on-top state, seconds, analog size, or date-copy format—followed by grid arrangement, Settings, Help, About, and Exit. The notification-area menu lists every widget with its ordinal number and provides Show all, Hide all, grid arrangement, and application commands.
+
+Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. If the system `ClockWndMain` control does not support a second hand at the selected size, the Seconds command is disabled while the stored preference is retained for another supported size.
 
 ## Settings storage
 

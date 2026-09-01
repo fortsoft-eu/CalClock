@@ -33,7 +33,7 @@ static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
 static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     DWORD type = 0;
     DWORD size = 0;
-    if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS || (type != REG_SZ && type != REG_EXPAND_SZ) || size < sizeof(wchar_t)) {
+    if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS || type != REG_SZ && type != REG_EXPAND_SZ || size < sizeof(wchar_t)) {
         return false;
     }
     std::vector<wchar_t> buffer(size / sizeof(wchar_t) + 1, 0);
@@ -389,7 +389,13 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"dateCopyFormat", config.dateCopyFormat);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"timeSignal", config.timeSignal);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmEnabled", config.alarmEnabled);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"alarmTimeSignal", config.alarmTimeSignal);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmHour", config.alarmHour);
@@ -675,8 +681,14 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"dateCopyFormat", &number)) {
         config->dateCopyFormat = std::clamp(static_cast<int>(number), 0, DATE_FORMAT_COUNT - 1);
     }
+    if (ReadXmlNumberAttribute(reader, L"timeSignal", &number) && number >= 0 && number < TIME_SIGNAL_COUNT) {
+        config->timeSignal = static_cast<TimeSignalMode>(number);
+    }
     if (ReadXmlNumberAttribute(reader, L"alarmEnabled", &number)) {
         config->alarmEnabled = number != 0;
+    }
+    if (ReadXmlNumberAttribute(reader, L"alarmTimeSignal", &number)) {
+        config->alarmTimeSignal = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"alarmHour", &number)) {
         config->alarmHour = std::clamp(static_cast<int>(number), 0, 23);
@@ -783,7 +795,7 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
             if (ReadXmlNumberAttribute(reader, L"settingsY", &number) && number >= INT_MIN && number <= INT_MAX) {
                 loaded.settingsY = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < 4) {
+            if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < 5) {
                 loaded.settingsTab = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"lastAddedWidgetType", &number) && number >= 0 && number < WIDGET_TYPE_COUNT) {
@@ -1023,8 +1035,14 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"DateCopyFormat", &value) && value < DATE_FORMAT_COUNT) {
         config->dateCopyFormat = static_cast<int>(value);
     }
+    if (ReadDword(key, L"TimeSignal", &value) && value < TIME_SIGNAL_COUNT) {
+        config->timeSignal = static_cast<TimeSignalMode>(value);
+    }
     if (ReadDword(key, L"AlarmEnabled", &value)) {
         config->alarmEnabled = value != 0;
+    }
+    if (ReadDword(key, L"AlarmTimeSignal", &value)) {
+        config->alarmTimeSignal = value != 0;
     }
     if (ReadDword(key, L"AlarmHour", &value) && value < 24) {
         config->alarmHour = static_cast<int>(value);
@@ -1109,7 +1127,9 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"WeekNumbers", config.weekNumbers);
     WriteDword(key, L"SundayFirst", config.sundayFirst);
     WriteDword(key, L"DateCopyFormat", config.dateCopyFormat);
+    WriteDword(key, L"TimeSignal", config.timeSignal);
     WriteDword(key, L"AlarmEnabled", config.alarmEnabled);
+    WriteDword(key, L"AlarmTimeSignal", config.alarmTimeSignal);
     WriteDword(key, L"AlarmHour", config.alarmHour);
     WriteDword(key, L"AlarmMinute", config.alarmMinute);
     WriteDword(key, L"RunCommand", config.runCommand);
@@ -1207,7 +1227,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"SettingsY", &value)) {
         loaded.settingsY = static_cast<int>(value);
     }
-    if (ReadDword(root, L"SettingsTab", &value) && value < 4) {
+    if (ReadDword(root, L"SettingsTab", &value) && value < 5) {
         loaded.settingsTab = static_cast<int>(value);
     }
     if (ReadDword(root, L"LastAddedWidgetType", &value) && value < WIDGET_TYPE_COUNT) {
