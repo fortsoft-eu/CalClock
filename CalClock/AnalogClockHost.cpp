@@ -65,8 +65,7 @@ static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, 
             continue;
         }
         size_t size = section[index].Misc.VirtualSize;
-        if (size == 0 || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage ||
-            size > ntHeaders->OptionalHeader.SizeOfImage - section[index].VirtualAddress) {
+        if (size == 0 || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage || size > ntHeaders->OptionalHeader.SizeOfImage - section[index].VirtualAddress) {
             continue;
         }
         if (size > selectedSize) {
@@ -150,7 +149,13 @@ static void CacheAnalogProfiles(DWORD* profileTable) {
 }
 
 static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
-    const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
+    const BYTE prolog[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC
+    };
     if (codeBegin == nullptr || address == nullptr || address < codeBegin + sizeof(prolog)) {
         return nullptr;
     }
@@ -166,10 +171,50 @@ static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
 }
 
 static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* codeBegin, size_t codeSize, bool* usesStackArgument) {
-    const BYTE classNameBytes[] = { 0x43, 0, 0x6C, 0, 0x6F, 0, 0x63, 0, 0x6B, 0, 0x57, 0, 0x6E, 0, 0x64, 0, 0x4D, 0, 0x61, 0, 0x69, 0, 0x6E, 0, 0, 0 };
-    const BYTE cursorPattern[] = { 0x68, 0x00, 0x7F, 0x00, 0x00 };
-    const BYTE stackArgumentPattern[] = { 0x8B, 0x75, 0x08 };
-    const BYTE fastcallPattern[] = { 0x8B, 0xF1 };
+    const BYTE classNameBytes[] = {
+        0x43,
+        0,
+        0x6C,
+        0,
+        0x6F,
+        0,
+        0x63,
+        0,
+        0x6B,
+        0,
+        0x57,
+        0,
+        0x6E,
+        0,
+        0x64,
+        0,
+        0x4D,
+        0,
+        0x61,
+        0,
+        0x69,
+        0,
+        0x6E,
+        0,
+        0,
+        0
+    };
+    const BYTE cursorPattern[] = {
+        0x68,
+        0x00,
+        0x7F,
+        0x00,
+        0x00
+    };
+    const BYTE stackArgumentPattern[] = {
+        0x8B,
+        0x75,
+        0x08
+    };
+    const BYTE fastcallPattern[] = {
+        0x8B,
+        0xF1
+    };
     BYTE* result = nullptr;
     bool resultUsesStackArgument = false;
     BYTE* stringSearch = module;
@@ -216,13 +261,44 @@ static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* code
 }
 
 static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
-    const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
-    const BYTE stateArgumentPattern[] = { 0x8B, 0xF1 };
-    const BYTE readyPattern[] = { 0x39, 0x46, 0x34 };
-    const BYTE facePattern[] = { 0x39, 0x46, 0x10 };
-    const BYTE remoteDirectPattern[] = { 0x83, 0x7E, 0x60, 0x00 };
-    const BYTE remoteAddressPattern[] = { 0x8D, 0x5E, 0x60 };
-    const BYTE secondsPattern[] = { 0x83, 0x7E, 0x58, 0x00 };
+    const BYTE prolog[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC
+    };
+    const BYTE stateArgumentPattern[] = {
+        0x8B,
+        0xF1
+    };
+    const BYTE readyPattern[] = {
+        0x39,
+        0x46,
+        0x34
+    };
+    const BYTE facePattern[] = {
+        0x39,
+        0x46,
+        0x10
+    };
+    const BYTE remoteDirectPattern[] = {
+        0x83,
+        0x7E,
+        0x60,
+        0x00
+    };
+    const BYTE remoteAddressPattern[] = {
+        0x8D,
+        0x5E,
+        0x60
+    };
+    const BYTE secondsPattern[] = {
+        0x83,
+        0x7E,
+        0x58,
+        0x00
+    };
     BYTE* result = nullptr;
     BYTE* search = codeBegin;
     size_t remaining = codeSize;
@@ -238,12 +314,13 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
         }
         size_t argumentLength = functionLength < 32 ? functionLength : 32;
         size_t initialLength = functionLength < 96 ? functionLength : 96;
+        bool stateArgument = ContainsPattern(candidate, argumentLength, stateArgumentPattern, sizeof(stateArgumentPattern));
+        bool readyState = ContainsPattern(candidate, initialLength, readyPattern, sizeof(readyPattern));
+        bool faceState = ContainsPattern(candidate, initialLength, facePattern, sizeof(facePattern));
         bool remoteState = ContainsPattern(candidate, functionLength, remoteDirectPattern, sizeof(remoteDirectPattern))
             || ContainsPattern(candidate, functionLength, remoteAddressPattern, sizeof(remoteAddressPattern));
-        if (ContainsPattern(candidate, argumentLength, stateArgumentPattern, sizeof(stateArgumentPattern)) &&
-            ContainsPattern(candidate, initialLength, readyPattern, sizeof(readyPattern)) &&
-            ContainsPattern(candidate, initialLength, facePattern, sizeof(facePattern)) && remoteState &&
-            ContainsPattern(candidate, functionLength, secondsPattern, sizeof(secondsPattern))) {
+        bool secondsState = ContainsPattern(candidate, functionLength, secondsPattern, sizeof(secondsPattern));
+        if (stateArgument && readyState && faceState && remoteState && secondsState) {
             if (result != nullptr) {
                 return nullptr;
             }
@@ -256,7 +333,25 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
 }
 
 static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
-    const BYTE registerPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x28, 0x56, 0x8B, 0x75, 0x08, 0x57, 0x8D, 0x45, 0xD8, 0x50 };
+    const BYTE registerPattern[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC,
+        0x83,
+        0xEC,
+        0x28,
+        0x56,
+        0x8B,
+        0x75,
+        0x08,
+        0x57,
+        0x8D,
+        0x45,
+        0xD8,
+        0x50
+    };
     BYTE* registerAddress = nullptr;
     BYTE* search = module;
     size_t remaining = imageSize;
@@ -285,7 +380,25 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
 }
 
 static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) {
-    const BYTE renderPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x34, 0x56, 0x57, 0x8B, 0xF1, 0x33, 0xFF, 0x39, 0x7E, 0x34 };
+    const BYTE renderPattern[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC,
+        0x83,
+        0xEC,
+        0x34,
+        0x56,
+        0x57,
+        0x8B,
+        0xF1,
+        0x33,
+        0xFF,
+        0x39,
+        0x7E,
+        0x34
+    };
     BYTE* registerAddress = FindLegacyClockRegisterAddress(module, imageSize);
     BYTE* renderAddress = FindModulePattern(module, imageSize, renderPattern, sizeof(renderPattern));
     if (registerAddress == nullptr || renderAddress == nullptr) {
@@ -302,9 +415,59 @@ static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) 
 }
 
 static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
-    const BYTE renderPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x3C, 0x56, 0x57, 0x8B, 0xF1, 0x33, 0xFF, 0x39, 0x7E, 0x44 };
-    const BYTE loadPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x51, 0x56, 0x57, 0x8B, 0xF1, 0x33, 0xFF, 0x33, 0xC0, 0x39, 0x7E, 0x68 };
-    const BYTE releasePattern[] = { 0x8B, 0xFF, 0x56, 0x8B, 0xF1, 0x8B, 0x4E, 0x14, 0x57, 0x33, 0xFF, 0x3B, 0xCF };
+    const BYTE renderPattern[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC,
+        0x83,
+        0xEC,
+        0x3C,
+        0x56,
+        0x57,
+        0x8B,
+        0xF1,
+        0x33,
+        0xFF,
+        0x39,
+        0x7E,
+        0x44
+    };
+    const BYTE loadPattern[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC,
+        0x51,
+        0x56,
+        0x57,
+        0x8B,
+        0xF1,
+        0x33,
+        0xFF,
+        0x33,
+        0xC0,
+        0x39,
+        0x7E,
+        0x68
+    };
+    const BYTE releasePattern[] = {
+        0x8B,
+        0xFF,
+        0x56,
+        0x8B,
+        0xF1,
+        0x8B,
+        0x4E,
+        0x14,
+        0x57,
+        0x33,
+        0xFF,
+        0x3B,
+        0xCF
+    };
     BYTE* registerAddress = FindLegacyClockRegisterAddress(module, imageSize);
     BYTE* renderAddress = FindModulePattern(module, imageSize, renderPattern, sizeof(renderPattern));
     BYTE* loadAddress = FindModulePattern(module, imageSize, loadPattern, sizeof(loadPattern));
@@ -359,7 +522,29 @@ static bool ResolveAnalogClockInternals() {
     if (registerAddress != nullptr && usesStackArgument) {
         registerAddress = nullptr;
     }
-    const BYTE renderPattern[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x40, 0x53, 0x56, 0x8B, 0xF1, 0x33, 0xC0, 0x57, 0x89, 0x75, 0xDC, 0x39, 0x46, 0x34 };
+    const BYTE renderPattern[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC,
+        0x83,
+        0xEC,
+        0x40,
+        0x53,
+        0x56,
+        0x8B,
+        0xF1,
+        0x33,
+        0xC0,
+        0x57,
+        0x89,
+        0x75,
+        0xDC,
+        0x39,
+        0x46,
+        0x34
+    };
     BYTE* renderAddress = FindModulePattern(codeBegin, codeSize, renderPattern, sizeof(renderPattern));
     if (renderAddress != nullptr) {
         BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, codeSize - static_cast<size_t>(renderAddress + 1 - codeBegin), renderPattern, sizeof(renderPattern));
@@ -614,8 +799,18 @@ int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     if (!LoadAnalogClockClass()) {
         return 0;
     }
-    const int vistaSizes[] = { 103, 128, 129, 160 };
-    const int otherSizes[] = { 104, 130, 166, 198 };
+    const int vistaSizes[] = {
+        103,
+        128,
+        129,
+        160
+    };
+    const int otherSizes[] = {
+        104,
+        130,
+        166,
+        198
+    };
     const int* supportedSizes = analogClockImplementation == ANALOG_CLOCK_VISTA ? vistaSizes : otherSizes;
     int count = analogClockImplementation == ANALOG_CLOCK_VISTA ? ARRAYSIZE(vistaSizes) : ARRAYSIZE(otherSizes);
     if (sizes != nullptr && capacity > 0) {
