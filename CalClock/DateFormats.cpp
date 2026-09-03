@@ -218,6 +218,7 @@ const DateFormatDefinition DATE_FORMAT_DEFINITIONS[DATE_FORMAT_COUNT] = {
         DATE_FORMAT_GROUP_WEEKDAY
     }
 };
+
 static_assert(ARRAYSIZE(DATE_FORMAT_DEFINITIONS) == DATE_FORMAT_COUNT);
 
 std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex) {

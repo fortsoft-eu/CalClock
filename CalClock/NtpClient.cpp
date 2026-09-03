@@ -212,7 +212,16 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             BYTE mode = response[0] & 7;
             BYTE stratum = response[1];
             BYTE zeroTimestamp[8] = {};
-            if (received < static_cast<int>(sizeof(response)) || leap == 3 || version < 3 || version > 4 || mode != 4 || stratum == 0 || stratum >= 16 || memcmp(response + 24, request + 40, 8) != 0 || memcmp(response + 40, zeroTimestamp, sizeof(zeroTimestamp)) == 0) {
+            bool invalidResponse = received < static_cast<int>(sizeof(response))
+                || leap == 3
+                || version < 3
+                || version > 4
+                || mode != 4
+                || stratum == 0
+                || stratum >= 16
+                || memcmp(response + 24, request + 40, 8) != 0
+                || memcmp(response + 40, zeroTimestamp, sizeof(zeroTimestamp)) == 0;
+            if (invalidResponse) {
                 continue;
             }
             ULONGLONG t2 = ReadNtpTimestamp(response + 32, t4);

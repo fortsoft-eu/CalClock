@@ -36,8 +36,7 @@ static LONG AlignUpToGrid(LONG value, LONG origin) {
 
 static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, LONG gap) {
     for (const RECT& current : placed) {
-        if (candidate.right + gap > current.left && candidate.left < current.right + gap
-            && candidate.bottom + gap > current.top && candidate.top < current.bottom + gap) {
+        if (candidate.right + gap > current.left && candidate.left < current.right + gap && candidate.bottom + gap > current.top && candidate.top < current.bottom + gap) {
             return false;
         }
     }
@@ -116,8 +115,10 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
             continue;
         }
         RECT placement = {};
-        if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, WIDGET_GAP, &placement) && !FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0, &placement)) {
-            return false;
+        if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, WIDGET_GAP, &placement)) {
+            if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0, &placement)) {
+                return false;
+            }
         }
         result[index].rect = placement;
         placed.push_back(placement);
@@ -145,4 +146,47 @@ bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& wo
     }
     *items = std::move(arranged);
     return true;
+}
+
+POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position, int snapDistance) {
+    POINT result = position;
+    LONG width = Width(widgetRect);
+    LONG height = Height(widgetRect);
+    if (result.x >= work.left - snapDistance && result.x <= work.left + snapDistance) {
+        result.x = work.left;
+    } else if (result.x + width >= work.right - snapDistance && result.x + width <= work.right + snapDistance) {
+        result.x = work.right - width;
+    }
+    if (result.y >= work.top - snapDistance && result.y <= work.top + snapDistance) {
+        result.y = work.top;
+    } else if (result.y + height >= work.bottom - snapDistance && result.y + height <= work.bottom + snapDistance) {
+        result.y = work.bottom - height;
+    }
+    return result;
+}
+
+POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight, int snapDistance,
+    bool* horizontalAttachment, bool* verticalAttachment) {
+    bool left = widgetRect.left >= work.left - snapDistance && widgetRect.left <= work.left + snapDistance;
+    bool right = widgetRect.right >= work.right - snapDistance && widgetRect.right <= work.right + snapDistance;
+    bool top = widgetRect.top >= work.top - snapDistance && widgetRect.top <= work.top + snapDistance;
+    bool bottom = widgetRect.bottom >= work.bottom - snapDistance && widgetRect.bottom <= work.bottom + snapDistance;
+    if (horizontalAttachment != nullptr) {
+        *horizontalAttachment = left || right;
+    }
+    if (verticalAttachment != nullptr) {
+        *verticalAttachment = top || bottom;
+    }
+    POINT position = { widgetRect.left, widgetRect.top };
+    if (left) {
+        position.x = work.left;
+    } else if (right) {
+        position.x = work.right - newWidth;
+    }
+    if (top) {
+        position.y = work.top;
+    } else if (bottom) {
+        position.y = work.bottom - newHeight;
+    }
+    return position;
 }

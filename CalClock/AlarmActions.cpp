@@ -21,6 +21,7 @@ struct AudioThreadParameters {
     std::wstring path;
     bool loop = false;
     HANDLE stopEvent = nullptr;
+    HANDLE muteEvent = nullptr;
     HWND notifyWindow = nullptr;
     UINT notifyMessage = 0;
     int widgetId = -1;
@@ -82,6 +83,10 @@ static bool WaitForAudioStop(HANDLE stopEvent, DWORD milliseconds) {
     return false;
 }
 
+static bool IsAudioMuted(HANDLE muteEvent) {
+    return muteEvent != nullptr && WaitForSingleObject(muteEvent, 0) == WAIT_OBJECT_0;
+}
+
 static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) {
     HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     if (FAILED(initialized)) {
@@ -117,6 +122,17 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
     if (SUCCEEDED(result)) {
         result = player->get_controls(&controls);
     }
+    long audibleVolume = 100;
+    if (SUCCEEDED(result)) {
+        long configuredVolume = 100;
+        if (SUCCEEDED(settings->get_volume(&configuredVolume))) {
+            audibleVolume = std::clamp(configuredVolume, 0L, 100L);
+        }
+    }
+    bool muted = IsAudioMuted(parameters.muteEvent);
+    if (SUCCEEDED(result)) {
+        settings->put_volume(muted ? 0 : audibleVolume);
+    }
     bool stopRequested = false;
     bool playbackStarted = false;
     bool playRequested = false;
@@ -125,6 +141,11 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
         if (WaitForAudioStop(parameters.stopEvent, 50)) {
             stopRequested = true;
             break;
+        }
+        bool currentMuted = IsAudioMuted(parameters.muteEvent);
+        if (currentMuted != muted) {
+            settings->put_volume(currentMuted ? 0 : audibleVolume);
+            muted = currentMuted;
         }
         WMPPlayState state = wmppsUndefined;
         result = player->get_playState(&state);
@@ -158,6 +179,7 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
         controls->Release();
     }
     if (settings != nullptr) {
+        settings->put_volume(audibleVolume);
         settings->Release();
     }
     if (player != nullptr) {
@@ -174,6 +196,7 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     std::unique_ptr<AudioThreadParameters> parameters(static_cast<AudioThreadParameters*>(parameter));
     if (PlayWithWindowsMediaPlayer(*parameters) || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
         CloseHandle(parameters->stopEvent);
+        CloseHandle(parameters->muteEvent);
         PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
         return 0;
     }
@@ -181,9 +204,21 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     std::wstring command = L"open \"" + parameters->path + L"\" alias " + alias;
     bool opened = mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
     if (opened && WaitForSingleObject(parameters->stopEvent, 0) != WAIT_OBJECT_0) {
+        wchar_t volumeText[32] = {};
+        command = L"status " + alias + L" volume";
+        int audibleVolume = mciSendStringW(command.c_str(), volumeText, ARRAYSIZE(volumeText), nullptr) == 0 ? std::clamp(_wtoi(volumeText), 0, 1000) : 1000;
+        bool muted = IsAudioMuted(parameters->muteEvent);
+        command = L"setaudio " + alias + L" volume to " + std::to_wstring(muted ? 0 : audibleVolume);
+        mciSendStringW(command.c_str(), nullptr, 0, nullptr);
         command = L"play " + alias + (parameters->loop ? L" repeat" : L"");
         if (mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0) {
             while (WaitForSingleObject(parameters->stopEvent, 100) == WAIT_TIMEOUT) {
+                bool currentMuted = IsAudioMuted(parameters->muteEvent);
+                if (currentMuted != muted) {
+                    command = L"setaudio " + alias + L" volume to " + std::to_wstring(currentMuted ? 0 : audibleVolume);
+                    mciSendStringW(command.c_str(), nullptr, 0, nullptr);
+                    muted = currentMuted;
+                }
                 if (!parameters->loop) {
                     wchar_t mode[32] = {};
                     command = L"status " + alias + L" mode";
@@ -201,41 +236,71 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
         mciSendStringW(command.c_str(), nullptr, 0, nullptr);
     }
     CloseHandle(parameters->stopEvent);
+    CloseHandle(parameters->muteEvent);
     PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
     return 0;
 }
 
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent) {
-    if (stopEvent == nullptr) {
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation,
+    HANDLE* stopEvent, HANDLE* muteEvent) {
+    if (stopEvent == nullptr || muteEvent == nullptr) {
         return false;
     }
     HANDLE ownerEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
     if (ownerEvent == nullptr) {
         return false;
     }
+    HANDLE ownerMuteEvent = CreateEventW(nullptr, TRUE, muted, nullptr);
+    if (ownerMuteEvent == nullptr) {
+        CloseHandle(ownerEvent);
+        return false;
+    }
     HANDLE workerEvent = nullptr;
     if (!DuplicateHandle(GetCurrentProcess(), ownerEvent, GetCurrentProcess(), &workerEvent, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
         CloseHandle(ownerEvent);
+        CloseHandle(ownerMuteEvent);
+        return false;
+    }
+    HANDLE workerMuteEvent = nullptr;
+    if (!DuplicateHandle(GetCurrentProcess(), ownerMuteEvent, GetCurrentProcess(), &workerMuteEvent, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+        CloseHandle(workerEvent);
+        CloseHandle(ownerEvent);
+        CloseHandle(ownerMuteEvent);
         return false;
     }
     std::unique_ptr<AudioThreadParameters> parameters(new AudioThreadParameters());
     parameters->path = path;
     parameters->loop = loop;
     parameters->stopEvent = workerEvent;
+    parameters->muteEvent = workerMuteEvent;
     parameters->notifyWindow = notifyWindow;
     parameters->notifyMessage = notifyMessage;
     parameters->widgetId = widgetId;
     parameters->generation = generation;
     HANDLE thread = CreateThread(nullptr, 0, AudioThreadProc, parameters.get(), 0, nullptr);
     if (thread == nullptr) {
+        CloseHandle(workerMuteEvent);
         CloseHandle(workerEvent);
         CloseHandle(ownerEvent);
+        CloseHandle(ownerMuteEvent);
         return false;
     }
     parameters.release();
     CloseHandle(thread);
     *stopEvent = ownerEvent;
+    *muteEvent = ownerMuteEvent;
     return true;
+}
+
+void SetAudioPlaybackMuted(HANDLE muteEvent, bool muted) {
+    if (muteEvent == nullptr) {
+        return;
+    }
+    if (muted) {
+        SetEvent(muteEvent);
+    } else {
+        ResetEvent(muteEvent);
+    }
 }
 
 static DWORD WINAPI LocalCommandThreadProc(void* parameter) {

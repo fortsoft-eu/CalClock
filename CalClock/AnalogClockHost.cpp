@@ -231,8 +231,7 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
         if (candidate == nullptr) {
             break;
         }
-        BYTE* next = FindModulePattern(candidate + sizeof(prolog),
-            codeSize - static_cast<size_t>(candidate + sizeof(prolog) - codeBegin), prolog, sizeof(prolog));
+        BYTE* next = FindModulePattern(candidate + sizeof(prolog), codeSize - static_cast<size_t>(candidate + sizeof(prolog) - codeBegin), prolog, sizeof(prolog));
         size_t functionLength = next == nullptr ? codeSize - static_cast<size_t>(candidate - codeBegin) : static_cast<size_t>(next - candidate);
         if (functionLength > 2048) {
             functionLength = 2048;

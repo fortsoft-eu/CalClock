@@ -11,6 +11,10 @@
 
 using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW*);
 
+static HANDLE hTimeSignalThread = nullptr;
+static HANDLE hTimeSignalStopEvent = nullptr;
+static HANDLE hTimeSignalMuteEvent = nullptr;
+
 static const ULONGLONG FILE_TIME_TICKS_PER_MILLISECOND = 10000;
 static const ULONGLONG FILE_TIME_TICKS_PER_SECOND = 10000000;
 static const ULONGLONG FILE_TIME_TICKS_PER_MINUTE = 60 * FILE_TIME_TICKS_PER_SECOND;
@@ -28,17 +32,6 @@ static const DWORD GENERATOR_FADE_DURATION = 1;
 static const DWORD GENERATOR_SAMPLE_RATE = 22050;
 static const double GENERATOR_TONE_AMPLITUDE = 0.28;
 static const double PI = 3.14159265358979323846;
-
-static HANDLE hTimeSignalThread = nullptr;
-static HANDLE hTimeSignalStopEvent = nullptr;
-
-struct TimeSignalRequest {
-    ULONGLONG targetSystemFileTime = 0;
-    HANDLE stopEvent = nullptr;
-    HWND notifyWindow = nullptr;
-    UINT notifyMessage = 0;
-};
-
 static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = {
     0,
     1,
@@ -47,6 +40,14 @@ static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = {
     15,
     30,
     60
+};
+
+struct TimeSignalRequest {
+    ULONGLONG targetSystemFileTime = 0;
+    HANDLE stopEvent = nullptr;
+    HANDLE muteEvent = nullptr;
+    HWND notifyWindow = nullptr;
+    UINT notifyMessage = 0;
 };
 
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime,
@@ -66,12 +67,9 @@ bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFile
 }
 
 bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, int alarmHour, int alarmMinute,
-    bool alarmActive, ULONGLONG* targetSystemFileTime) {
+    ULONGLONG* targetSystemFileTime) {
     if (targetSystemFileTime == nullptr || alarmHour < 0 || alarmHour > 23 || alarmMinute < 0 || alarmMinute > 59) {
         return false;
-    }
-    if (alarmActive) {
-        return CalculateTimeSignalTarget(displayedFileTime, systemFileTime, TIME_SIGNAL_EVERY_MINUTE, targetSystemFileTime);
     }
     ULONGLONG timeOfDay = displayedFileTime % FILE_TIME_TICKS_PER_DAY;
     ULONGLONG alarmTime = static_cast<ULONGLONG>(alarmHour * 60 + alarmMinute) * FILE_TIME_TICKS_PER_MINUTE;
@@ -120,8 +118,7 @@ static bool IsWindowsVista() {
     }
     result = 0;
     HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
-    RtlGetVersionFunction getVersion = ntdll == nullptr ? nullptr
-        : reinterpret_cast<RtlGetVersionFunction>(GetProcAddress(ntdll, "RtlGetVersion"));
+    RtlGetVersionFunction getVersion = ntdll == nullptr ? nullptr : reinterpret_cast<RtlGetVersionFunction>(GetProcAddress(ntdll, "RtlGetVersion"));
     if (getVersion == nullptr) {
         return false;
     }
@@ -133,7 +130,7 @@ static bool IsWindowsVista() {
     return result != 0;
 }
 
-static bool PlayVistaFallbackTone(DWORD frequency, DWORD duration, HANDLE stopEvent) {
+static bool PlayVistaFallbackTone(DWORD frequency, DWORD duration) {
     size_t sampleCount = static_cast<size_t>(GENERATOR_SAMPLE_RATE) * duration / 1000;
     if (sampleCount == 0) {
         return true;
@@ -169,28 +166,26 @@ static bool PlayVistaFallbackTone(DWORD frequency, DWORD duration, HANDLE stopEv
     header.dwBufferLength = static_cast<DWORD>(samples.size() * sizeof(samples[0]));
     bool prepared = waveOutPrepareHeader(output, &header, sizeof(header)) == MMSYSERR_NOERROR;
     bool started = prepared && waveOutWrite(output, &header, sizeof(header)) == MMSYSERR_NOERROR;
-    bool stopped = false;
     if (started) {
         while ((header.dwFlags & WHDR_DONE) == 0) {
-            if (WaitForSingleObject(stopEvent, 10) == WAIT_OBJECT_0) {
-                waveOutReset(output);
-                stopped = true;
-                break;
-            }
+            Sleep(10);
         }
     }
     if (prepared) {
         waveOutUnprepareHeader(output, &header, sizeof(header));
     }
     waveOutClose(output);
-    return started && !stopped;
+    return started;
 }
 
-static bool PlayTimeSignalTone(bool longTone, HANDLE stopEvent) {
+static bool PlayTimeSignalTone(bool longTone, HANDLE stopEvent, HANDLE muteEvent) {
+    if (WaitForSingleObject(muteEvent, 0) == WAIT_OBJECT_0) {
+        return true;
+    }
     if (IsWindowsVista()) {
         DWORD frequency = GENERATOR_PIP_FREQUENCY;
         DWORD duration = longTone ? GENERATOR_LONG_PIP_DURATION : GENERATOR_SHORT_PIP_DURATION;
-        if (PlayVistaFallbackTone(frequency, duration, stopEvent)) {
+        if (PlayVistaFallbackTone(frequency, duration)) {
             return true;
         }
     }
@@ -210,21 +205,21 @@ static DWORD WINAPI TimeSignalThreadProc(void* parameter) {
         if (!WaitUntil(target, request->stopEvent)) {
             return 0;
         }
-        if (!PlayTimeSignalTone(false, request->stopEvent)) {
+        if (!PlayTimeSignalTone(false, request->stopEvent, request->muteEvent)) {
             return 0;
         }
     }
     if (!WaitUntil(request->targetSystemFileTime, request->stopEvent)) {
         return 0;
     }
-    if (!PlayTimeSignalTone(true, request->stopEvent)) {
+    if (!PlayTimeSignalTone(true, request->stopEvent, request->muteEvent)) {
         return 0;
     }
     PostMessageW(request->notifyWindow, request->notifyMessage, 0, 0);
     return 0;
 }
 
-bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, HWND notifyWindow, UINT notifyMessage) {
+bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, HWND notifyWindow, UINT notifyMessage) {
     if (hTimeSignalThread != nullptr || notifyWindow == nullptr || notifyMessage == 0) {
         return false;
     }
@@ -232,24 +227,44 @@ bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, HWND notifyWindow, 
     if (stopEvent == nullptr) {
         return false;
     }
+    HANDLE muteEvent = CreateEventW(nullptr, TRUE, muted, nullptr);
+    if (muteEvent == nullptr) {
+        CloseHandle(stopEvent);
+        return false;
+    }
     TimeSignalRequest* request = new (std::nothrow) TimeSignalRequest();
     if (request == nullptr) {
         CloseHandle(stopEvent);
+        CloseHandle(muteEvent);
         return false;
     }
     request->targetSystemFileTime = targetSystemFileTime;
     request->stopEvent = stopEvent;
+    request->muteEvent = muteEvent;
     request->notifyWindow = notifyWindow;
     request->notifyMessage = notifyMessage;
     HANDLE thread = CreateThread(nullptr, 0, TimeSignalThreadProc, request, 0, nullptr);
     if (thread == nullptr) {
         delete request;
         CloseHandle(stopEvent);
+        CloseHandle(muteEvent);
         return false;
     }
     hTimeSignalStopEvent = stopEvent;
+    hTimeSignalMuteEvent = muteEvent;
     hTimeSignalThread = thread;
     return true;
+}
+
+void SetTimeSignalMuted(bool muted) {
+    if (hTimeSignalMuteEvent == nullptr) {
+        return;
+    }
+    if (muted) {
+        SetEvent(hTimeSignalMuteEvent);
+    } else {
+        ResetEvent(hTimeSignalMuteEvent);
+    }
 }
 
 void FinishTimeSignalPlayback() {
@@ -259,8 +274,10 @@ void FinishTimeSignalPlayback() {
     WaitForSingleObject(hTimeSignalThread, INFINITE);
     CloseHandle(hTimeSignalThread);
     CloseHandle(hTimeSignalStopEvent);
+    CloseHandle(hTimeSignalMuteEvent);
     hTimeSignalThread = nullptr;
     hTimeSignalStopEvent = nullptr;
+    hTimeSignalMuteEvent = nullptr;
 }
 
 void StopTimeSignalPlayback() {
@@ -271,8 +288,10 @@ void StopTimeSignalPlayback() {
     WaitForSingleObject(hTimeSignalThread, INFINITE);
     CloseHandle(hTimeSignalThread);
     CloseHandle(hTimeSignalStopEvent);
+    CloseHandle(hTimeSignalMuteEvent);
     hTimeSignalThread = nullptr;
     hTimeSignalStopEvent = nullptr;
+    hTimeSignalMuteEvent = nullptr;
 }
 
 bool IsTimeSignalPlaybackRunning() {

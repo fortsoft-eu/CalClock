@@ -13,6 +13,8 @@ const int FULLSCREEN_FONT_SIZE_MAX = 100;
 const int DIGITAL_PADDING_MAX = 200;
 const int FULLSCREEN_PADDING_MAX = 400;
 const int DIGITAL_BORDER_WIDTH_MAX = 200;
+const unsigned int ALARM_DAYS_ALL = 0x7F;
+const int SETTINGS_TAB_COUNT = 6;
 
 enum WidgetType {
     WIDGET_ANALOG,
@@ -46,6 +48,15 @@ enum AppLanguage {
     LANG_IT,
     LANG_PL,
     LANG_SK,
+    LANG_EN_GB,
+    LANG_EN_AU,
+    LANG_PT,
+    LANG_NO,
+    LANG_SV,
+    LANG_FI,
+    LANG_DA,
+    LANG_IS,
+    LANG_TR,
     LANG_COUNT
 };
 
@@ -217,7 +228,9 @@ struct WidgetConfig {
     bool sundayFirst = false;
     int dateCopyFormat = DATE_LOCAL_SHORT;
     TimeSignalMode timeSignal = TIME_SIGNAL_NONE;
+    bool soundsMuted = false;
     bool alarmEnabled = false;
+    unsigned int alarmDays = ALARM_DAYS_ALL;
     bool alarmTimeSignal = false;
     int alarmHour = 0;
     int alarmMinute = 0;
@@ -231,6 +244,7 @@ struct WidgetConfig {
 struct SettingsSnapshot {
     AppLanguage language = LANG_EN;
     bool themesDisabled = false;
+    bool snapWidgetsToWorkArea = true;
     int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
     std::wstring fontFace;
     int fontDialogSize = 90;
@@ -267,6 +281,8 @@ struct Widget {
     bool flashPhase = false;
     int lastAlarmDate = -1;
     int lastAlarmMinute = -1;
+    int lastObservedAlarmDate = -1;
+    int lastObservedAlarmMinute = -1;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
     RECT panelDateLinkRect = {};
@@ -274,6 +290,7 @@ struct Widget {
     HWND panelDateTooltip = nullptr;
     COLORREF analogBackground = CLR_INVALID;
     HANDLE audioStopEvent = nullptr;
+    HANDLE audioMuteEvent = nullptr;
     ULONG audioGeneration = 0;
     ULONGLONG alarmStoppedTick = 0;
     bool identifyActive = false;

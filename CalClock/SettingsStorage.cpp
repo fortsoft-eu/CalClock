@@ -146,6 +146,9 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
         result = WriteXmlNumberAttribute(writer, L"disableThemes", snapshot.themesDisabled);
     }
     if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"snapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
+    }
+    if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"fontAntialiasing", snapshot.fontAntialiasing);
     }
     if (SUCCEEDED(result)) {
@@ -392,7 +395,13 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"timeSignal", config.timeSignal);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"soundsMuted", config.soundsMuted);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmEnabled", config.alarmEnabled);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"alarmDays", config.alarmDays);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmTimeSignal", config.alarmTimeSignal);
@@ -684,8 +693,14 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"timeSignal", &number) && number >= 0 && number < TIME_SIGNAL_COUNT) {
         config->timeSignal = static_cast<TimeSignalMode>(number);
     }
+    if (ReadXmlNumberAttribute(reader, L"soundsMuted", &number)) {
+        config->soundsMuted = number != 0;
+    }
     if (ReadXmlNumberAttribute(reader, L"alarmEnabled", &number)) {
         config->alarmEnabled = number != 0;
+    }
+    if (ReadXmlNumberAttribute(reader, L"alarmDays", &number)) {
+        config->alarmDays = static_cast<unsigned int>(number) & ALARM_DAYS_ALL;
     }
     if (ReadXmlNumberAttribute(reader, L"alarmTimeSignal", &number)) {
         config->alarmTimeSignal = number != 0;
@@ -762,6 +777,9 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
             if (ReadXmlNumberAttribute(reader, L"disableThemes", &number)) {
                 loaded.themesDisabled = number != 0;
             }
+            if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
+                loaded.snapWidgetsToWorkArea = number != 0;
+            }
             if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number) && number >= 0 && number < FONT_ANTIALIAS_COUNT) {
                 loaded.fontAntialiasing = static_cast<int>(number);
             }
@@ -795,7 +813,7 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
             if (ReadXmlNumberAttribute(reader, L"settingsY", &number) && number >= INT_MIN && number <= INT_MAX) {
                 loaded.settingsY = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < 5) {
+            if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < SETTINGS_TAB_COUNT) {
                 loaded.settingsTab = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"lastAddedWidgetType", &number) && number >= 0 && number < WIDGET_TYPE_COUNT) {
@@ -1038,8 +1056,14 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"TimeSignal", &value) && value < TIME_SIGNAL_COUNT) {
         config->timeSignal = static_cast<TimeSignalMode>(value);
     }
+    if (ReadDword(key, L"SoundsMuted", &value)) {
+        config->soundsMuted = value != 0;
+    }
     if (ReadDword(key, L"AlarmEnabled", &value)) {
         config->alarmEnabled = value != 0;
+    }
+    if (ReadDword(key, L"AlarmDays", &value)) {
+        config->alarmDays = value & ALARM_DAYS_ALL;
     }
     if (ReadDword(key, L"AlarmTimeSignal", &value)) {
         config->alarmTimeSignal = value != 0;
@@ -1128,7 +1152,9 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"SundayFirst", config.sundayFirst);
     WriteDword(key, L"DateCopyFormat", config.dateCopyFormat);
     WriteDword(key, L"TimeSignal", config.timeSignal);
+    WriteDword(key, L"SoundsMuted", config.soundsMuted);
     WriteDword(key, L"AlarmEnabled", config.alarmEnabled);
+    WriteDword(key, L"AlarmDays", config.alarmDays);
     WriteDword(key, L"AlarmTimeSignal", config.alarmTimeSignal);
     WriteDword(key, L"AlarmHour", config.alarmHour);
     WriteDword(key, L"AlarmMinute", config.alarmMinute);
@@ -1197,6 +1223,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     } else if (ReadDword(root, L"VisualStyles", &value)) {
         loaded.themesDisabled = value == 0;
     }
+    if (ReadDword(root, L"SnapWidgetsToWorkArea", &value)) {
+        loaded.snapWidgetsToWorkArea = value != 0;
+    }
     if (ReadDword(root, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
         loaded.fontAntialiasing = static_cast<int>(value);
     }
@@ -1227,7 +1256,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"SettingsY", &value)) {
         loaded.settingsY = static_cast<int>(value);
     }
-    if (ReadDword(root, L"SettingsTab", &value) && value < 5) {
+    if (ReadDword(root, L"SettingsTab", &value) && value < SETTINGS_TAB_COUNT) {
         loaded.settingsTab = static_cast<int>(value);
     }
     if (ReadDword(root, L"LastAddedWidgetType", &value) && value < WIDGET_TYPE_COUNT) {
@@ -1316,10 +1345,11 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     if (RegCreateKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, nullptr, 0, KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
         return false;
     }
-    WriteDword(root, L"SchemaVersion", 13);
+    WriteDword(root, L"SchemaVersion", 15);
     WriteDword(root, L"Language", snapshot.language);
     WriteDword(root, L"DisableThemes", snapshot.themesDisabled);
     WriteDword(root, L"VisualStyles", !snapshot.themesDisabled);
+    WriteDword(root, L"SnapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
     WriteDword(root, L"FontAntialiasing", snapshot.fontAntialiasing);
     WriteString(root, L"FontFace", snapshot.fontFace);
     WriteDword(root, L"FontDialogSize", snapshot.fontDialogSize);
