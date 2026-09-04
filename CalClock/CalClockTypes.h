@@ -219,7 +219,7 @@ struct WidgetConfig {
     int padding = 8;
     int borderStyle = DIGITAL_BORDER_SINGLE;
     int borderWidth = 1;
-    bool showFrame = true;
+    COLORREF borderColor = 0;
     COLORREF textColor = 0;
     COLORREF backgroundColor = 0;
     COLORREF alarmTextColor = RGB(220, 0, 0);
@@ -285,8 +285,12 @@ struct Widget {
     int lastObservedAlarmMinute = -1;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
-    RECT panelDateLinkRect = {};
+    HWND panelDateLink = nullptr;
+    HFONT panelDateFont = nullptr;
     bool panelDateHot = false;
+    HWND panelTimeZoneLink = nullptr;
+    HFONT panelTimeZoneFont = nullptr;
+    bool panelTimeZoneHot = false;
     HWND panelDateTooltip = nullptr;
     COLORREF analogBackground = CLR_INVALID;
     HANDLE audioStopEvent = nullptr;

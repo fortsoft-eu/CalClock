@@ -368,7 +368,7 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"borderWidth", config.borderWidth);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"showFrame", config.showFrame);
+            result = WriteXmlNumberAttribute(writer, L"borderColor", static_cast<DWORD>(config.borderColor));
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"textColor", static_cast<DWORD>(config.textColor));
@@ -490,7 +490,6 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         type = static_cast<int>(number);
     }
     *config = createDefaults(static_cast<WidgetType>(type), index, defaultLanguage, defaultFontAntialiasing);
-    config->showFrame = false;
     config->fontAntialiasing = std::clamp(defaultFontAntialiasing, 0, FONT_ANTIALIAS_COUNT - 1);
     std::wstring text;
     if (ReadXmlNumberAttribute(reader, L"id", &number) && number > 0 && number <= INT_MAX) {
@@ -666,8 +665,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"borderWidth", &number)) {
         config->borderWidth = std::clamp(static_cast<int>(number), 0, DIGITAL_BORDER_WIDTH_MAX);
     }
-    if (ReadXmlNumberAttribute(reader, L"showFrame", &number)) {
-        config->showFrame = number != 0;
+    if (ReadXmlNumberAttribute(reader, L"borderColor", &number)) {
+        config->borderColor = static_cast<COLORREF>(number & 0xFFFFFF);
     }
     if (ReadXmlNumberAttribute(reader, L"textColor", &number)) {
         config->textColor = static_cast<COLORREF>(number & 0xFFFFFF);
@@ -865,7 +864,6 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
 
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     DWORD value = 0;
-    config->showFrame = false;
     if (ReadDword(key, L"Id", &value)) {
         config->id = static_cast<int>(value);
     }
@@ -1029,8 +1027,8 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"BorderWidth", &value)) {
         config->borderWidth = std::clamp(static_cast<int>(value), 0, DIGITAL_BORDER_WIDTH_MAX);
     }
-    if (ReadDword(key, L"ShowFrame", &value)) {
-        config->showFrame = value != 0;
+    if (ReadDword(key, L"BorderColor", &value)) {
+        config->borderColor = static_cast<COLORREF>(value & 0xFFFFFF);
     }
     if (ReadDword(key, L"TextColor", &value)) {
         config->textColor = static_cast<COLORREF>(value);
@@ -1088,6 +1086,7 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
 }
 
 static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
+    RegDeleteValueW(key, L"ShowFrame");
     WriteDword(key, L"Id", config.id);
     WriteDword(key, L"Type", config.type);
     WriteString(key, L"Name", config.name);
@@ -1143,7 +1142,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"Padding", config.padding);
     WriteDword(key, L"BorderStyle", config.borderStyle);
     WriteDword(key, L"BorderWidth", config.borderWidth);
-    WriteDword(key, L"ShowFrame", config.showFrame);
+    WriteDword(key, L"BorderColor", config.borderColor);
     WriteDword(key, L"TextColor", config.textColor);
     WriteDword(key, L"BackgroundColor", config.backgroundColor);
     WriteDword(key, L"AlarmTextColor", config.alarmTextColor);

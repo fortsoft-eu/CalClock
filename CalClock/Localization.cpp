@@ -907,6 +907,46 @@ const wchar_t* LANGUAGE_NAMES[LANG_COUNT] = {
     L"Türkçe"
 };
 
+const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT] = {
+    L"Hodiny na monitoru",
+    L"Monitor clock",
+    L"Monitoruhr",
+    L"Horloge sur moniteur",
+    L"Reloj de monitor",
+    L"Orologio su monitor",
+    L"Zegar na monitorze",
+    L"Hodiny na monitore",
+    L"Monitor clock",
+    L"Monitor clock",
+    L"Relógio no monitor",
+    L"Skjermklokke",
+    L"Skärmklocka",
+    L"Näyttökello",
+    L"Skærmur",
+    L"Skjákukka",
+    L"Monitör saati"
+};
+
+const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT] = {
+    L"Zvuk a programy\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Všechny soubory\0*.*\0",
+    L"Audio and programs\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0All files\0*.*\0",
+    L"Audio und Programme\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Alle Dateien\0*.*\0",
+    L"Audio et programmes\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Tous les fichiers\0*.*\0",
+    L"Audio y programas\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Todos los archivos\0*.*\0",
+    L"Audio e programmi\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Tutti i file\0*.*\0",
+    L"Dźwięk i programy\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Wszystkie pliki\0*.*\0",
+    L"Zvuk a programy\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Všetky súbory\0*.*\0",
+    L"Audio and programs\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0All files\0*.*\0",
+    L"Audio and programs\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0All files\0*.*\0",
+    L"Áudio e programas\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Todos os ficheiros\0*.*\0",
+    L"Lyd og programmer\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Alle filer\0*.*\0",
+    L"Ljud och program\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Alla filer\0*.*\0",
+    L"Ääni ja ohjelmat\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Kaikki tiedostot\0*.*\0",
+    L"Lyd og programmer\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Alle filer\0*.*\0",
+    L"Hljóð og forrit\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Allar skrár\0*.*\0",
+    L"Ses ve programlar\0*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0Tüm dosyalar\0*.*\0"
+};
+
 const wchar_t* LANGUAGE_LOCALES[LANG_COUNT] = {
     L"cs-CZ",
     L"en-US",
@@ -1165,26 +1205,6 @@ const wchar_t* UTC_TEXT_LABELS[LANG_COUNT] = {
     L"Vis &UTC-tekst",
     L"Sýna &UTC-texta",
     L"&UTC metnini göster"
-};
-
-const wchar_t* SHOW_FRAME_LABELS[LANG_COUNT] = {
-    L"Zobrazit &rámeček",
-    L"Show &frame",
-    L"&Rahmen anzeigen",
-    L"Afficher la &bordure",
-    L"Mostrar &marco",
-    L"Mostra &cornice",
-    L"Pokaż &ramkę",
-    L"Zobraziť &rámček",
-    L"Show &frame",
-    L"Show &frame",
-    L"Mostrar &moldura",
-    L"Vis &ramme",
-    L"Visa &ram",
-    L"Näytä &kehys",
-    L"Vis &ramme",
-    L"Sýna &ramma",
-    L"&Çerçeveyi göster"
 };
 
 const wchar_t* MONITOR_LABELS[LANG_COUNT] = {
@@ -1447,8 +1467,28 @@ const wchar_t* BORDER_LABELS[LANG_COUNT] = {
     L"&Çerçeve stili:"
 };
 
+const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT] = {
+    L"Barva rámečku...",
+    L"Border color...",
+    L"Rahmenfarbe...",
+    L"Couleur de bordure...",
+    L"Color del borde...",
+    L"Colore bordo...",
+    L"Kolor ramki...",
+    L"Farba rámčeka...",
+    L"Border colour...",
+    L"Border colour...",
+    L"Cor da moldura...",
+    L"Rammefarge...",
+    L"Ramfärg...",
+    L"Reunuksen väri...",
+    L"Rammefarve...",
+    L"Litur ramma...",
+    L"Çerçeve rengi..."
+};
+
 const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = {
-    L"Šíř&ka rám.:",
+    L"Šíř&ka rámečku:",
     L"Border &width:",
     L"Rahmen&breite:",
     L"É&paisseur :",
@@ -2803,135 +2843,183 @@ const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nROZLOŽENÍ WIDGETŮ\r\nPříkaz Zarovnat do mřížky zachová přibližné ruční rozmístění, posune středy widgetů na nejbližší body mřížky a odstraní "
     L"překrytí. V nabídce widgetu se upraví jeho monitor, z ikony všechny monitory samostatně. Opakování rozložení nemění. Dvojklik v Nastavení označí widget "
     L"rychlým světlemodrým blikáním; budík bliká pomaleji červeně. Vypnutí Vždy navrchu pošle widget dozadu. V panelu s kalendářem a hodinami je horní datum "
-    L"odkaz na dnešek; kalendář proto neukazuje duplicitní řádek Dnes. Je-li přichytávání zapnuté, při tažení se widget do vzdálenosti pěti pixelů "
+    L"odkaz na dnešek; spodní odkaz otevře klasické nastavení data a času Windows. Oba odkazy lze ovládat myší i klávesnicí. Kalendář proto neukazuje "
+    L"duplicitní řádek Dnes. Je-li přichytávání zapnuté, při tažení se widget do vzdálenosti pěti pixelů "
     L"přichytí k hraně pracovní plochy. Při změně velikosti zůstane přichycený ke stejnému okraji nebo ke stejným dvěma okrajům.",
     L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps widget centres to the nearest grid points and removes overlaps. "
     L"A widget menu affects its monitor; the notification icon applies it to every monitor separately. Repeating the command keeps the layout stable. A Settings "
     L"double-click identifies a widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back. "
-    L"In a calendar-and-clock panel, the upper date is a link to today, so the calendar omits its duplicate Today row. When edge snapping is enabled, a "
+    L"In a calendar-and-clock panel, the upper link returns the calendar to today and the lower link opens the classic Windows Date and Time settings. Both links "
+    L"work with the mouse and keyboard, and the calendar omits its duplicate Today row. When edge snapping is enabled, a "
     L"dragged widget within five pixels snaps to a work-area edge. When resized, it remains attached to the same edge or pair of edges.",
     L"\r\n\r\nWIDGET-ANORDNUNG\r\nIm Raster anordnen behält die ungefähre manuelle Anordnung bei, richtet die Mittelpunkte am nächsten Rasterpunkt aus und beseitigt "
     L"Überlappungen. Das Widget-Menü wirkt auf seinen Monitor, das Symbol auf alle Monitore einzeln. Wiederholen ändert die Anordnung nicht. Die Kennzeichnung blinkt "
     L"schnell hellblau, der Alarm langsamer rot. Das Abschalten von Immer im Vordergrund schickt das Widget nach hinten. Im Kalender-Uhr-Panel ist das obere Datum ein "
-    L"Link zum heutigen Tag; der Kalender lässt daher seine doppelte Heute-Zeile weg. Wenn das Einrasten aktiviert ist, rastet ein Widget beim Ziehen innerhalb "
+    L"Link zum heutigen Tag, der untere Link öffnet die klassischen Windows-Einstellungen für Datum und Uhrzeit. Beide Links lassen sich mit Maus und Tastatur bedienen; "
+    L"der Kalender lässt daher seine doppelte Heute-Zeile weg. Wenn das Einrasten aktiviert ist, rastet ein Widget beim Ziehen innerhalb "
     L"von fünf Pixeln am Rand der Arbeitsfläche ein. Beim Ändern der Größe bleibt es am selben Rand oder an demselben Randpaar angeheftet.",
     L"\r\n\r\nDISPOSITION\r\nAligner sur une grille conserve leur disposition manuelle approximative, aligne leurs centres sur la grille la plus proche et supprime les "
     L"chevauchements. Le menu du widget agit sur son écran, l’icône sur chaque écran séparément. La commande répétée reste stable. L’identification clignote rapidement en "
     L"bleu clair, l’alarme plus lentement en rouge. Désactiver Toujours visible envoie le widget à l’arrière-plan. Dans le panneau calendrier-horloge, la date supérieure "
-    L"est un lien vers aujourd’hui ; le calendrier omet donc sa ligne Aujourd’hui en double. Lorsque l’accrochage est activé, le widget déplacé s’accroche au bord "
+    L"est un lien vers aujourd’hui et le lien inférieur ouvre les paramètres classiques Date et heure de Windows. Les deux liens fonctionnent à la souris et au clavier ; "
+    L"le calendrier omet donc sa ligne Aujourd’hui en double. Lorsque l’accrochage est activé, le widget déplacé s’accroche au bord "
     L"de la zone de travail à moins de cinq pixels. Lors du redimensionnement, il reste accroché au même bord ou à la même paire de bords.",
     L"\r\n\r\nDISTRIBUCIÓN\r\nAlinear en cuadrícula conserva la distribución manual aproximada, ajusta sus centros a la cuadrícula más cercana y elimina "
     L"superposiciones. El menú del widget actúa en su monitor; el icono, en cada monitor por separado. Repetir no cambia la distribución. La identificación parpadea "
     L"rápido en azul claro y la alarma más despacio en rojo. Desactivar Siempre visible envía el widget al fondo. En el panel de calendario y reloj, la fecha "
-    L"superior es un enlace a hoy; por ello el calendario omite su fila Hoy duplicada. Con el ajuste activado, el widget se acopla al borde del área de "
+    L"superior es un enlace a hoy y el enlace inferior abre la configuración clásica de Fecha y hora de Windows. Ambos enlaces funcionan con el ratón y el teclado; "
+    L"por ello el calendario omite su fila Hoy duplicada. Con el ajuste activado, el widget se acopla al borde del área de "
     L"trabajo al arrastrarlo a menos de cinco píxeles. Al cambiar de tamaño, permanece acoplado al mismo borde o al mismo par de bordes.",
     L"\r\n\r\nDISPOSIZIONE\r\nDisponi in griglia conserva la disposizione manuale approssimativa, allinea i centri alla griglia più vicina ed elimina le sovrapposizioni. "
     L"Il menu del widget agisce sul suo monitor, l’icona su ogni monitor separatamente. Ripetere il comando non cambia la disposizione. L’identificazione lampeggia rapidamente "
     L"in azzurro, la sveglia più lentamente in rosso. Disattivando Sempre in primo piano il widget viene mandato dietro. Nel pannello calendario-orologio, la data "
-    L"superiore è un collegamento a oggi; il calendario omette quindi la riga Oggi duplicata. Se l’aggancio è attivo, durante il trascinamento il widget si aggancia al "
+    L"superiore è un collegamento a oggi e quello inferiore apre le impostazioni classiche Data e ora di Windows. Entrambi funzionano con mouse e tastiera; il calendario "
+    L"omette quindi la riga Oggi duplicata. Se l’aggancio è attivo, durante il trascinamento il widget si aggancia al "
     L"bordo dell’area di lavoro entro cinque pixel. Quando viene ridimensionato, resta agganciato allo stesso bordo o alla stessa coppia di bordi.",
     L"\r\n\r\nUKŁAD WIDŻETÓW\r\nUłóż w siatce zachowuje przybliżony układ ręczny, przyciąga środki widżetów do najbliższych punktów siatki i usuwa "
     L"nakładanie. Menu widżetu działa na jego monitorze, a ikona na każdym monitorze osobno. Powtórzenie nie zmienia układu. Identyfikacja miga szybko "
     L"jasnoniebiesko, alarm wolniej na czerwono. Wyłączenie Zawsze na wierzchu wysyła widżet do tyłu. W panelu kalendarza z zegarem górna data jest odsyłaczem do "
-    L"dzisiejszego dnia, dlatego kalendarz pomija powielony wiersz Dzisiaj. Po włączeniu przyciągania widżet przeciągnięty na odległość najwyżej pięciu pikseli "
+    L"dzisiejszego dnia, a dolny odsyłacz otwiera klasyczne ustawienia daty i godziny systemu Windows. Oba działają za pomocą myszy i klawiatury; dlatego kalendarz "
+    L"pomija powielony wiersz Dzisiaj. Po włączeniu przyciągania widżet przeciągnięty na odległość najwyżej pięciu pikseli "
     L"przyciąga się do krawędzi obszaru roboczego. Po zmianie rozmiaru pozostaje przyciągnięty do tej samej krawędzi lub pary krawędzi.",
     L"\r\n\r\nROZLOŽENIE WIDGETOV\r\nZarovnať do mriežky zachová približné ručné rozmiestnenie, pritiahne stredy widgetov k najbližším bodom mriežky a "
     L"odstráni prekrývanie. Ponuka widgetu upraví jeho monitor, ikona každý monitor samostatne. Opakovanie rozloženie nemení. Identifikácia bliká rýchlo "
     L"svetlomodro, budík pomalšie načerveno. Vypnutie Vždy navrchu pošle widget dozadu. V paneli s kalendárom a hodinami je horný dátum odkazom na dnešok; "
-    L"kalendár preto nezobrazuje duplicitný riadok Dnes. Ak je prichytávanie zapnuté, pri ťahaní sa widget vo vzdialenosti najviac piatich pixelov "
+    L"spodný odkaz otvorí klasické nastavenie dátumu a času Windows. Oba odkazy možno ovládať myšou aj klávesnicou; kalendár preto nezobrazuje duplicitný riadok "
+    L"Dnes. Ak je prichytávanie zapnuté, pri ťahaní sa widget vo vzdialenosti najviac piatich pixelov "
     L"prichytí k okraju pracovnej plochy. Pri zmene veľkosti zostane prichytený k rovnakému okraju alebo k rovnakej dvojici okrajov.",
     L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps widget centres to the nearest grid points and removes overlaps. "
     L"A widget menu affects its monitor; the notification icon applies it to every monitor separately. Repeating the command keeps the layout stable. A Settings "
     L"double-click identifies a widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back. "
-    L"In a calendar-and-clock panel, the upper date is a link to today, so the calendar omits its duplicate Today row. When edge snapping is enabled, a "
+    L"In a calendar-and-clock panel, the upper link returns the calendar to today and the lower link opens the classic Windows Date and Time settings. Both links "
+    L"work with the mouse and keyboard, and the calendar omits its duplicate Today row. When edge snapping is enabled, a "
     L"dragged widget within five pixels snaps to a work-area edge. When resized, it remains attached to the same edge or pair of edges.",
     L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps widget centres to the nearest grid points and removes overlaps. "
     L"A widget menu affects its monitor; the notification icon applies it to every monitor separately. Repeating the command keeps the layout stable. A Settings "
     L"double-click identifies a widget with a fast light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the widget to the back. "
-    L"In a calendar-and-clock panel, the upper date is a link to today, so the calendar omits its duplicate Today row. When edge snapping is enabled, a "
+    L"In a calendar-and-clock panel, the upper link returns the calendar to today and the lower link opens the classic Windows Date and Time settings. Both links "
+    L"work with the mouse and keyboard, and the calendar omits its duplicate Today row. When edge snapping is enabled, a "
     L"dragged widget within five pixels snaps to a work-area edge. When resized, it remains attached to the same edge or pair of edges.",
     L"\r\n\r\nDISPOSIÇÃO\r\nQuando o ajuste está ativado, os widgets prendem-se às margens da área de trabalho a cinco píxeis e permanecem presos ao redimensionar. Dispor "
-    L"numa grelha move os outros widgets para posições próximas sem sobreposição, mantendo o widget de referência no lugar. Os relógios de monitor são ignorados.",
+    L"numa grelha move os outros widgets para posições próximas sem sobreposição, mantendo o widget de referência no lugar. Os relógios de monitor são ignorados. No painel "
+    L"com calendário e relógio, a ligação superior volta a hoje e a inferior abre as definições clássicas de Data e Hora do Windows; ambas funcionam com rato e teclado.",
     L"\r\n\r\nPLASSERING\r\nNår kantfesting er aktivert, festes widgeter til kanten av arbeidsområdet innen fem piksler og forblir festet ved størrelsesendring. Ordne i et "
-    L"rutenett flytter de andre widgetene til nærliggende plasser uten overlapping, mens referansewidgeten blir stående. Skjermklokker ignoreres.",
+    L"rutenett flytter de andre widgetene til nærliggende plasser uten overlapping, mens referansewidgeten blir stående. Skjermklokker ignoreres. I kalender- og klokke-panelet "
+    L"går den øvre lenken til i dag, og den nedre åpner de klassiske innstillingene for dato og klokkeslett i Windows; begge virker med mus og tastatur.",
     L"\r\n\r\nPLACERING\r\nNär kantfästning är aktiverad fäster widgetar vid arbetsytans kanter inom fem bildpunkter och förblir fästa när storleken ändras. Ordna i "
-    L"rutnät flyttar de andra widgetarna till närliggande platser utan överlappning medan referenswidgeten står kvar. Skärmklockor ignoreras.",
+    L"rutnät flyttar de andra widgetarna till närliggande platser utan överlappning medan referenswidgeten står kvar. Skärmklockor ignoreras. I kalender- och klockpanelen "
+    L"går den övre länken till i dag och den nedre öppnar Windows klassiska inställningar för datum och tid; båda fungerar med mus och tangentbord.",
     L"\r\n\r\nASETTELU\r\nKun reunakiinnitys on käytössä, pienoisohjelmat tarttuvat työalueen reunoihin viiden kuvapisteen etäisyydellä ja pysyvät kiinni koon muuttuessa. Järjestä "
-    L"ruudukkoon siirtää muut pienoisohjelmat läheisiin, päällekkäisyyksiä välttäviin paikkoihin ja pitää viiteohjelman paikallaan. Näyttökellot ohitetaan.",
+    L"ruudukkoon siirtää muut pienoisohjelmat läheisiin, päällekkäisyyksiä välttäviin paikkoihin ja pitää viiteohjelman paikallaan. Näyttökellot ohitetaan. Kalenteri- ja kellopaneelin "
+    L"ylälinkki palauttaa tämän päivän ja alalinkki avaa Windowsin perinteiset päivämäärä- ja aika-asetukset; molempia voi käyttää hiirellä ja näppäimistöllä.",
     L"\r\n\r\nPLACERING\r\nNår kantfastgørelse er slået til, fastgøres widgets til arbejdsområdets kanter inden for fem pixel og forbliver fastgjort ved størrelsesændring. "
-    L"Arranger i gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og lader referencewidgeten blive stående. Skærmure ignoreres.",
+    L"Arranger i gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og lader referencewidgeten blive stående. Skærmure ignoreres. I kalender- og urpanelet "
+    L"går det øverste link til i dag, og det nederste åbner Windows' klassiske indstillinger for dato og klokkeslæt; begge virker med mus og tastatur.",
     L"\r\n\r\nUPPRÖÐUN\r\nÞegar festing við brúnir er virk festast græjur við brúnir vinnusvæðisins innan fimm mynddíla og haldast fastar þegar stærð "
-    L"breytist. Raða á hnitanet færir aðrar græjur á nálæga staði án skörunar en heldur viðmiðunargræjunni kyrrri. Skjáklukkur eru hunsaðar.",
+    L"breytist. Raða á hnitanet færir aðrar græjur á nálæga staði án skörunar en heldur viðmiðunargræjunni kyrrri. Skjáklukkur eru hunsaðar. Í dagatals- og klukkuspjaldinu "
+    L"fer efri tengillinn á daginn í dag og sá neðri opnar hefðbundnar dagsetningar- og tímastillingar Windows; báðir virka með mús og lyklaborði.",
     L"\r\n\r\nDÜZEN\r\nKenar yapışması etkinleştirildiğinde araçlar çalışma alanının kenarlarına beş piksel içinde yapışır ve boyut değişirken yapışık kalır. "
-    L"Izgarada düzenle, başvuru aracını yerinde tutarak diğer araçları çakışmayan yakın konumlara taşır. Monitör saatleri hesaba katılmaz."
+    L"Izgarada düzenle, başvuru aracını yerinde tutarak diğer araçları çakışmayan yakın konumlara taşır. Monitör saatleri hesaba katılmaz. Takvim ve saat panelinde üst "
+    L"bağlantı bugüne döner, alt bağlantı Windows'un klasik Tarih ve Saat ayarlarını açar; ikisi de fare ve klavyeyle çalışır."
 };
 
 const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nVZHLED A ÚLOŽIŠTĚ\r\nZměny vzhledu se ukazují ihned v živém náhledu; Zrušit vrátí nepoužitý vzhled a Výchozí vzhled obnoví výchozí hodnoty daného typu. Digitální "
-    L"hodiny nabízejí písmo, vyhlazování, barvy, neprůhlednost, odsazení, styl a šířku rámečku a průhledné pozadí, které ponechá jen číslice a rámeček. Panel má samostatná písma "
-    L"horního řádku, času a spodního řádku, úvodní nulu a čtyři velikosti ciferníku. Kalendář i panel lze zobrazit s rámečkem nebo bez něj. Motivy a vyhlazování lze nastavit pro "
-    L"aplikaci i widget; písmo nativního kalendáře lze měnit jen při zakázaných motivech. Nastavení lze exportovat do XML a importovat přímo do stavu aplikace. Automatické XML je v "
+    L"hodiny nabízejí písmo, vyhlazování, barvy, neprůhlednost, odsazení, šířku rámečku a průhledné pozadí. Digitální hodiny, kalendář a panel mají stejné čtyři styly "
+    L"rámečku; u jednoduchého rámečku lze zvolit jeho barvu. Panel má samostatná písma horního řádku, času a spodního řádku, úvodní nulu a čtyři velikosti "
+    L"ciferníku. Motivy a vyhlazování lze nastavit pro aplikaci i widget; písmo nativního kalendáře lze měnit jen při zakázaných motivech. Dialogy písem zobrazují "
+    L"jen použitelné volby a skrývají náhled a efekty; velikost je dostupná "
+    L"pouze pro digitální texty a texty panelu. Nastavení lze exportovat do XML a importovat přímo do stavu aplikace. Automatické XML je v "
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Po úspěšném zápisu XML se odstraní větev HKCU\\SOFTWARE\\FortSoft\\CalClock; při ukládání do registru se automatické XML odstraní.",
     L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live preview; Cancel restores unapplied appearance and Default appearance restores the defaults for "
-    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border style and width, and a transparent background that leaves only digits and border. The panel "
-    L"has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Calendars and panels can show or hide their frame. Themes and font smoothing can "
-    L"be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Settings can be exported to XML and imported directly into application "
+    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border width and a transparent background. Digital clocks, calendars and panels share four border "
+    L"styles; the single-line border has a selectable colour. The panel has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Themes and font "
+    L"smoothing can be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Font dialogs show only applicable choices and hide "
+    L"the preview and effects; size is available only for digital and panel text. Settings can be exported to XML and imported directly into application "
     L"state. Automatic XML is %AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic XML.",
     L"\r\n\r\nDARSTELLUNG UND SPEICHERUNG\r\nDarstellungsänderungen erscheinen sofort in der Vorschau; Abbrechen stellt nicht angewandte Werte wieder her, Standarddarstellung die Vorgaben "
-    L"des Widget-Typs. Digitaluhren bieten Schrift, Glättung, Farben, Deckkraft, Innenabstand, Rahmenart und -breite sowie transparenten Hintergrund. Das Panel besitzt getrennte Schriften "
-    L"für obere Zeile, Zeit und untere Zeile, eine führende Null und vier Zifferblattgrößen. Kalender und Panel können ihren Rahmen ein- oder ausblenden. Designs und Schriftglättung gelten "
-    L"wahlweise für Anwendung oder Widget; die native Kalenderschrift ist nur bei deaktivierten Designs wählbar. XML-Export und -Import wirken direkt auf den Anwendungszustand. Automatisches "
+    L"des Widget-Typs. Digitaluhren bieten Schrift, Glättung, Farben, Deckkraft, Innenabstand, Rahmenbreite und transparenten Hintergrund. Digitaluhren, Kalender und Panel verwenden dieselben "
+    L"vier Rahmenarten; für den einfachen Rahmen ist die Farbe wählbar. Das Panel besitzt getrennte Schriften für obere Zeile, Zeit und untere Zeile, eine führende Null und vier "
+    L"Zifferblattgrößen. Designs und Schriftglättung gelten wahlweise für Anwendung oder Widget; die native Kalenderschrift ist nur bei deaktivierten Designs wählbar. "
+    L"Schriftdialoge zeigen nur anwendbare Optionen und blenden Vorschau und Effekte "
+    L"aus; die Größe ist nur für Digital- und Paneltext verfügbar. XML-Export und -Import wirken direkt auf den Anwendungszustand. Automatisches "
     L"XML liegt in %AppData%\\FortSoft\\CalClock\\settings.xml; XML-Speicherung entfernt HKCU\\SOFTWARE\\FortSoft\\CalClock, Registrierungsspeicherung entfernt das automatische XML.",
     L"\r\n\r\nAPPARENCE ET STOCKAGE\r\nLes changements d’apparence sont prévisualisés immédiatement ; Annuler restaure les valeurs non appliquées et Apparence par défaut celles du type "
-    L"de widget. Les horloges numériques proposent police, lissage, couleurs, opacité, marge, style et largeur de bordure, ainsi qu’un fond transparent. Le panneau possède des "
-    L"polices distinctes pour les lignes supérieure, horaire et inférieure, un zéro initial et quatre tailles de cadran. Calendrier et panneau peuvent masquer leur cadre. Thèmes et lissage "
-    L"se règlent pour l’application et le widget ; la police du calendrier natif n’est sélectionnable que si les thèmes sont désactivés. L’export et l’import XML agissent directement "
+    L"de widget. Les horloges numériques proposent police, lissage, couleurs, opacité, marge, largeur de bordure et fond transparent. Horloges numériques, calendriers et panneaux partagent "
+    L"quatre styles de bordure ; la couleur de la bordure simple est sélectionnable. Le panneau possède des polices distinctes pour les lignes supérieure, horaire et inférieure, un zéro "
+    L"initial et quatre tailles de cadran. Thèmes et lissage se règlent pour l’application et le widget ; la police du calendrier natif n’est sélectionnable que si les thèmes sont "
+    L"désactivés. Les boîtes de dialogue de police n’affichent que les "
+    L"choix applicables et masquent aperçu et effets ; la taille n’est disponible que pour les textes numériques et du panneau. L’export et l’import XML agissent directement "
     L"sur l’état. Le XML automatique est %AppData%\\FortSoft\\CalClock\\settings.xml ; son écriture retire HKCU\\SOFTWARE\\FortSoft\\CalClock, tandis que le registre retire ce XML.",
     L"\r\n\r\nAPARIENCIA Y ALMACENAMIENTO\r\nLos cambios de apariencia se previsualizan al instante; Cancelar restaura los no aplicados y Apariencia predeterminada los valores del "
-    L"tipo de widget. Los relojes digitales ofrecen fuente, suavizado, colores, opacidad, relleno, estilo y ancho de borde, además de fondo transparente. El panel tiene fuentes "
-    L"separadas para la línea superior, la hora y la inferior, cero inicial y cuatro tamaños de esfera. Calendario y panel pueden ocultar su marco. Temas y suavizado se configuran para "
-    L"la aplicación y para cada widget; la fuente del calendario nativo solo se elige con temas desactivados. La exportación e importación XML actúan directamente sobre el estado. El "
+    L"tipo de widget. Los relojes digitales ofrecen fuente, suavizado, colores, opacidad, relleno, ancho de borde y fondo transparente. Los relojes digitales, calendarios y paneles comparten "
+    L"cuatro estilos de borde; el color del borde simple es seleccionable. El panel tiene fuentes separadas para la línea superior, la hora y la inferior, cero inicial y cuatro tamaños de "
+    L"esfera. Temas y suavizado se configuran para la aplicación y para cada widget; la fuente del calendario nativo solo se elige con temas desactivados. Los diálogos de fuente "
+    L"muestran solo las opciones aplicables y ocultan la vista "
+    L"previa y los efectos; el tamaño solo está disponible para textos digitales y del panel. La exportación e importación XML actúan directamente sobre el estado. El "
     L"XML automático es %AppData%\\FortSoft\\CalClock\\settings.xml; al escribirlo se elimina HKCU\\SOFTWARE\\FortSoft\\CalClock y al usar el registro se elimina el XML automático.",
     L"\r\n\r\nASPETTO E ARCHIVIAZIONE\r\nLe modifiche all’aspetto sono mostrate subito nell’anteprima; Annulla ripristina quelle non applicate e Aspetto predefinito i valori del "
-    L"tipo di widget. Gli orologi digitali offrono carattere, antialiasing, colori, opacità, margine, stile e larghezza del bordo e sfondo trasparente. Il pannello ha caratteri "
-    L"separati per riga superiore, ora e riga inferiore, zero iniziale e quattro dimensioni del quadrante. Calendario e pannello possono nascondere il bordo. Temi e antialiasing si "
-    L"impostano per applicazione e widget; il carattere del calendario nativo è selezionabile solo con temi disattivati. Esportazione e importazione XML agiscono direttamente "
+    L"tipo di widget. Gli orologi digitali offrono carattere, antialiasing, colori, opacità, margine, larghezza del bordo e sfondo trasparente. Orologi digitali, calendari e pannelli condividono "
+    L"quattro stili di bordo; il colore del bordo semplice è selezionabile. Il pannello ha caratteri separati per riga superiore, ora e riga inferiore, zero iniziale e quattro "
+    L"dimensioni del quadrante. Temi e antialiasing si impostano per applicazione e widget; il carattere del calendario nativo è selezionabile solo con temi disattivati. Le finestre "
+    L"dei caratteri mostrano solo le opzioni applicabili e nascondono "
+    L"anteprima ed effetti; la dimensione è disponibile solo per testi digitali e del pannello. Esportazione e importazione XML agiscono direttamente "
     L"sullo stato. L’XML automatico è %AppData%\\FortSoft\\CalClock\\settings.xml; scriverlo rimuove HKCU\\SOFTWARE\\FortSoft\\CalClock, mentre il registro rimuove l’XML automatico.",
     L"\r\n\r\nWYGLĄD I ZAPIS\r\nZmiany wyglądu są od razu widoczne w podglądzie; Anuluj przywraca niezastosowane wartości, a Wygląd domyślny wartości danego typu "
-    L"widżetu. Zegary cyfrowe oferują czcionkę, wygładzanie, kolory, krycie, odstęp, styl i szerokość ramki oraz przezroczyste tło. Panel ma osobne czcionki "
-    L"górnego wiersza, czasu i dolnego wiersza, zero wiodące oraz cztery rozmiary tarczy. Kalendarz i panel mogą ukrywać ramkę. Motywy i wygładzanie ustawia się dla "
-    L"aplikacji i widżetu; czcionkę natywnego kalendarza można wybrać tylko przy wyłączonych motywach. Eksport i import XML działają bezpośrednio na stan. "
+    L"widżetu. Zegary cyfrowe oferują czcionkę, wygładzanie, kolory, krycie, odstęp, szerokość ramki i przezroczyste tło. Zegary cyfrowe, kalendarze i panele mają te same cztery style "
+    L"ramki; kolor prostej ramki można wybrać. Panel ma osobne czcionki górnego wiersza, czasu i dolnego wiersza, zero wiodące oraz cztery rozmiary tarczy. Motywy i "
+    L"wygładzanie ustawia się dla aplikacji i widżetu; czcionkę natywnego kalendarza można wybrać tylko przy wyłączonych motywach. Okna wyboru czcionki pokazują tylko "
+    L"używane opcje i ukrywają podgląd oraz efekty; rozmiar "
+    L"jest dostępny tylko dla tekstów cyfrowych i panelu. Eksport i import XML działają bezpośrednio na stan. "
     L"Automatyczny XML to %AppData%\\FortSoft\\CalClock\\settings.xml; zapis XML usuwa HKCU\\SOFTWARE\\FortSoft\\CalClock, a zapis w rejestrze usuwa automatyczny XML.",
     L"\r\n\r\nVZHĽAD A UKLADANIE\r\nZmeny vzhľadu sa ihneď ukazujú v náhľade; Zrušiť vráti nepoužité hodnoty a Predvolený vzhľad hodnoty daného typu widgetu. "
-    L"Digitálne hodiny ponúkajú písmo, vyhladzovanie, farby, nepriehľadnosť, odsadenie, štýl a šírku rámčeka aj priehľadné pozadie. Panel má samostatné písma "
-    L"horného riadka, času a spodného riadka, úvodnú nulu a štyri veľkosti ciferníka. Kalendár a panel môžu rámček skryť. Motívy a vyhladzovanie sa nastavujú "
-    L"pre aplikáciu aj widget; písmo natívneho kalendára možno vybrať iba pri zakázaných motívoch. Export a import XML pôsobia priamo na stav. Automatické XML "
+    L"Digitálne hodiny ponúkajú písmo, vyhladzovanie, farby, nepriehľadnosť, odsadenie, šírku rámčeka aj priehľadné pozadie. Digitálne hodiny, kalendár a panel majú rovnaké štyri štýly "
+    L"rámčeka; pri jednoduchom rámčeku možno zvoliť farbu. Panel má samostatné písma horného riadka, času a spodného riadka, úvodnú nulu a štyri veľkosti ciferníka. "
+    L"Motívy a vyhladzovanie sa nastavujú pre aplikáciu aj widget; písmo natívneho kalendára možno vybrať iba pri zakázaných motívoch. Dialógy písiem zobrazujú len "
+    L"použiteľné voľby a skrývajú náhľad a efekty; veľkosť je dostupná "
+    L"iba pre digitálne texty a texty panela. Export a import XML pôsobia priamo na stav. Automatické XML "
     L"je %AppData%\\FortSoft\\CalClock\\settings.xml; zápis XML odstráni HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické XML.",
     L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live preview; Cancel restores unapplied appearance and Default appearance restores the defaults for "
-    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border style and width, and a transparent background that leaves only digits and border. The panel "
-    L"has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Calendars and panels can show or hide their frame. Themes and font smoothing can "
-    L"be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Settings can be exported to XML and imported directly into application "
+    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border width and a transparent background. Digital clocks, calendars and panels share four border "
+    L"styles; the single-line border has a selectable colour. The panel has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Themes and font "
+    L"smoothing can be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Font dialogs show only applicable choices and hide "
+    L"the preview and effects; size is available only for digital and panel text. Settings can be exported to XML and imported directly into application "
     L"state. Automatic XML is %AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic XML.",
     L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live preview; Cancel restores unapplied appearance and Default appearance restores the defaults for "
-    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border style and width, and a transparent background that leaves only digits and border. The panel "
-    L"has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Calendars and panels can show or hide their frame. Themes and font smoothing can "
-    L"be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Settings can be exported to XML and imported directly into application "
+    L"that widget type. Digital clocks provide font, smoothing, colours, opacity, padding, border width and a transparent background. Digital clocks, calendars and panels share four border "
+    L"styles; the single-line border has a selectable colour. The panel has separate fonts for its top row, time and bottom row, a leading zero and four clock-face sizes. Themes and font "
+    L"smoothing can be set for the application and each widget; the native calendar font is selectable only when themes are disabled. Font dialogs show only applicable choices and hide "
+    L"the preview and effects; size is available only for digital and panel text. Settings can be exported to XML and imported directly into application "
     L"state. Automatic XML is %AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic XML.",
     L"\r\n\r\nARMAZENAMENTO\r\nAs definições são guardadas no registo em HKCU\\SOFTWARE\\FortSoft\\CalClock ou num XML em "
-    L"AppData\\Roaming\\FortSoft\\CalClock. A mudança de armazenamento remove apenas os dados CalClock anteriores. Importar XML carrega as "
+    L"AppData\\Roaming\\FortSoft\\CalClock. Relógios digitais, calendários e painéis partilham quatro estilos de moldura; a cor da moldura simples pode ser escolhida. Os diálogos de tipo de "
+    L"letra mostram apenas as opções aplicáveis e ocultam a pré-visualização e os efeitos. A mudança de "
+    L"armazenamento remove apenas os dados CalClock anteriores. Importar XML carrega as "
     L"definições na aplicação sem alterar ou apagar o armazenamento atual; Guardar ou Aplicar grava-as depois no destino escolhido.",
-    L"\r\n\r\nLAGRING\r\nInnstillinger lagres i registeret under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. Bytte av lagring "
-    L"fjerner bare tidligere CalClock-data. Import av XML laster inn innstillinger uten å endre eller slette gjeldende lagring; Lagre eller Bruk skriver dem senere til valgt mål.",
-    L"\r\n\r\nLAGRING\r\nInställningar sparas i registret under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. Byte av lagring tar "
-    L"bara bort tidigare CalClock-data. Import av XML läser in inställningar utan att ändra eller radera aktuell lagring; Spara eller Verkställ skriver dem sedan till valt mål.",
-    L"\r\n\r\nTALLENNUS\r\nAsetukset tallennetaan rekisteriin kohtaan HKCU\\SOFTWARE\\FortSoft\\CalClock tai XML-tiedostoon kansiossa AppData\\Roaming\\FortSoft\\CalClock. Tallennustavan "
-    L"vaihto poistaa vain aiemmat CalClock-tiedot. XML-tuonti lataa asetukset muuttamatta tai poistamatta nykyistä tallennusta; Tallenna tai Käytä kirjoittaa ne myöhemmin valittuun kohteeseen.",
-    L"\r\n\r\nLAGRING\r\nIndstillinger gemmes i registreringsdatabasen under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. Skift af lager "
-    L"fjerner kun tidligere CalClock-data. Import af XML indlæser indstillinger uden at ændre eller slette det aktuelle lager; Gem eller Anvend skriver dem derefter til det valgte mål.",
-    L"\r\n\r\nGEYMSLA\r\nStillingar eru vistaðar í skrásetningu undir HKCU\\SOFTWARE\\FortSoft\\CalClock eða sem XML í AppData\\Roaming\\FortSoft\\CalClock. Skipti um geymslu "
-    L"fjarlægja aðeins eldri CalClock-gögn. Innflutningur XML hleður stillingum án þess að breyta eða eyða núverandi geymslu; Vista eða Nota skrifar þær síðar á valinn stað.",
-    L"\r\n\r\nDEPOLAMA\r\nAyarlar HKCU\\SOFTWARE\\FortSoft\\CalClock altındaki kayıt defterinde veya AppData\\Roaming\\FortSoft\\CalClock içindeki XML dosyasında saklanır. Depolamayı "
-    L"değiştirmek yalnızca önceki CalClock verilerini kaldırır. XML içe aktarma mevcut depolamayı değiştirmeden veya silmeden ayarları yükler; Kaydet ya da Uygula bunları seçili hedefe yazar."
+    L"\r\n\r\nLAGRING\r\nInnstillinger lagres i registeret under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. "
+    L"Digitale klokker, kalendere og paneler har fire felles kantstiler; fargen på den enkle kanten kan velges. Skriftdialoger viser bare aktuelle valg og skjuler forhåndsvisning og effekter. "
+    L"Bytte av lagring fjerner bare tidligere CalClock-data. Import av XML "
+    L"laster inn innstillinger uten å endre eller slette gjeldende lagring; Lagre eller Bruk skriver dem senere til valgt mål.",
+    L"\r\n\r\nLAGRING\r\nInställningar sparas i registret under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. "
+    L"Digitala klockor, kalendrar och paneler har fyra gemensamma kantstilar; färgen på den enkla kanten kan väljas. Teckensnittsdialoger visar bara tillämpliga val och döljer förhandsvisning och "
+    L"effekter. Byte av lagring tar bara bort tidigare CalClock-data. Import av XML "
+    L"läser in inställningar utan att ändra eller radera aktuell lagring; Spara eller Verkställ skriver dem sedan till valt mål.",
+    L"\r\n\r\nTALLENNUS\r\nAsetukset tallennetaan rekisteriin kohtaan HKCU\\SOFTWARE\\FortSoft\\CalClock tai XML-tiedostoon kansiossa AppData\\Roaming\\FortSoft\\CalClock. "
+    L"Digitaalikelloilla, kalentereilla ja paneeleilla on neljä yhteistä reunatyyliä; yksinkertaisen reunan väri voidaan valita. Fonttivalinta näyttää vain käytettävät vaihtoehdot ja piilottaa "
+    L"esikatselun ja tehosteet. Tallennustavan vaihto poistaa vain aiemmat CalClock-tiedot. "
+    L"XML-tuonti lataa asetukset muuttamatta tai poistamatta nykyistä tallennusta; Tallenna tai Käytä kirjoittaa ne myöhemmin valittuun kohteeseen.",
+    L"\r\n\r\nLAGRING\r\nIndstillinger gemmes i registreringsdatabasen under HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i AppData\\Roaming\\FortSoft\\CalClock. "
+    L"Digitale ure, kalendere og paneler har fire fælles kanttyper; farven på den enkle kant kan vælges. Skrifttypedialoger viser kun relevante valg og skjuler forhåndsvisning og effekter. Skift "
+    L"af lager fjerner kun tidligere CalClock-data. Import af XML indlæser "
+    L"indstillinger uden at ændre eller slette det aktuelle lager; Gem eller Anvend skriver dem derefter til det valgte mål.",
+    L"\r\n\r\nGEYMSLA\r\nStillingar eru vistaðar í skrásetningu undir HKCU\\SOFTWARE\\FortSoft\\CalClock eða sem XML í AppData\\Roaming\\FortSoft\\CalClock. "
+    L"Stafrænar klukkur, dagatöl og spjöld hafa fjórar sameiginlegar rammagerðir; velja má lit einfalda rammans. Leturgluggar sýna aðeins viðeigandi val og fela forskoðun og áhrif. Skipti um "
+    L"geymslu fjarlægja aðeins eldri CalClock-gögn. Innflutningur "
+    L"XML hleður stillingum án þess að breyta eða eyða núverandi geymslu; Vista eða Nota skrifar þær síðar á valinn stað.",
+    L"\r\n\r\nDEPOLAMA\r\nAyarlar HKCU\\SOFTWARE\\FortSoft\\CalClock altındaki kayıt defterinde veya AppData\\Roaming\\FortSoft\\CalClock içindeki XML dosyasında saklanır. "
+    L"Dijital saatler, takvimler ve paneller aynı dört kenarlık stilini kullanır; basit kenarlığın rengi seçilebilir. Yazı tipi iletişim kutuları yalnızca uygulanabilir seçenekleri gösterir, önizleme "
+    L"ve efektleri gizler. Depolamayı değiştirmek yalnızca önceki CalClock verilerini kaldırır. "
+    L"XML içe aktarma mevcut depolamayı değiştirmeden veya silmeden ayarları yükler; Kaydet ya da Uygula bunları seçili hedefe yazar."
 };
 
 const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
@@ -3391,23 +3479,23 @@ const wchar_t* ABOUT_WEBSITE_LABELS[LANG_COUNT] = {
 };
 
 const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT] = {
-    L"Navštívit web CalClock",
-    L"Visit the CalClock website",
-    L"CalClock-Website besuchen",
-    L"Visiter le site web de CalClock",
-    L"Visitar el sitio web de CalClock",
-    L"Visita il sito web di CalClock",
-    L"Odwiedź witrynę CalClock",
-    L"Navštíviť web CalClock",
-    L"Visit the CalClock website",
-    L"Visit the CalClock website",
-    L"Visitar o site do CalClock",
-    L"Besøk CalClock-nettstedet",
-    L"Besök CalClock-webbplatsen",
-    L"Avaa CalClockin verkkosivusto",
-    L"Besøg CalClock-webstedet",
-    L"Heimsækja vefsvæði CalClock",
-    L"CalClock web sitesini ziyaret et"
+    L"Navštívit web",
+    L"Visit website",
+    L"Website besuchen",
+    L"Visiter le site web",
+    L"Visitar el sitio web",
+    L"Visita il sito web",
+    L"Odwiedź witrynę",
+    L"Navštíviť web",
+    L"Visit website",
+    L"Visit website",
+    L"Visitar o site",
+    L"Besøk nettstedet",
+    L"Besök webbplatsen",
+    L"Käy verkkosivustolla",
+    L"Besøg webstedet",
+    L"Heimsækja vefsvæði",
+    L"Web sitesini ziyaret et"
 };
 
 const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT] = {

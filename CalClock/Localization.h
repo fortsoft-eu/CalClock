@@ -4,6 +4,8 @@
 
 extern const wchar_t* TEXT[LANG_COUNT][TXT_COUNT];
 extern const wchar_t* LANGUAGE_NAMES[LANG_COUNT];
+extern const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT];
+extern const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT];
 extern const wchar_t* LANGUAGE_LOCALES[LANG_COUNT];
 extern const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT];
 extern const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT];
@@ -17,7 +19,6 @@ extern const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT];
 extern const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT];
 extern const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT];
 extern const wchar_t* UTC_TEXT_LABELS[LANG_COUNT];
-extern const wchar_t* SHOW_FRAME_LABELS[LANG_COUNT];
 extern const wchar_t* MONITOR_LABELS[LANG_COUNT];
 extern const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT];
 extern const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT];
@@ -31,6 +32,7 @@ extern const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT];
 extern const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT];
 extern const wchar_t* PADDING_LABELS[LANG_COUNT];
 extern const wchar_t* BORDER_LABELS[LANG_COUNT];
+extern const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT];
 extern const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT];

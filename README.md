@@ -8,8 +8,8 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 - Per-widget language, time zone, time offset, visibility, and always-on-top state
 - Analog clocks based on the Windows `ClockWndMain` control, with platform-detected sizes and second-hand support
 - Configurable digital clocks with fonts, colours, opacity, padding, borders, an optional leading zero, and an optional transparent background
-- Native Windows calendars with selectable dates, optional frames, week numbers, first-day settings, and 33 clipboard formats
-- Calendar-and-clock panels with four clock-face sizes, optional frames and UTC text, a leading-zero option, and separate fonts for each text row
+- Native Windows calendars with selectable dates, four border styles, configurable border colour, week numbers, first-day settings, and 33 clipboard formats
+- Calendar-and-clock panels with four clock-face sizes, four border styles, configurable border colour, UTC text, a leading-zero option, and separate fonts for each text row
 - Alarms with selectable weekdays, visual indication, internal audio playback, looping, local commands, and HTTP/HTTPS script calls
 - Per-clock audible time signals at 1, 5, 10, 15, 30, or 60-minute intervals, with coincident signals merged into one sequence
 - Per-clock Mute commands and a checked Mute all command in the notification-area menu
@@ -30,8 +30,8 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 | --- | --- |
 | Analog clock | A floating Windows clock face with the sizes and optional second hand supplied by the current Windows version |
 | Digital clock | A configurable floating digital display with optional UTC text, leading zero, borders, and transparent background |
-| Calendar | A movable native month calendar with date selection, an optional frame, and clipboard formats |
-| Calendar and clock | A combined panel with a native calendar, an analog clock, configurable text rows, UTC display, and an optional frame |
+| Calendar | A movable native month calendar with date selection, configurable borders, and clipboard formats |
+| Calendar and clock | A combined panel with a native calendar, an analog clock, configurable text rows, UTC display, and configurable borders |
 | Monitor clock | A digital clock filling one or more selected monitors, with optional blackout and UTC on a separate line |
 
 On first launch, CalClock selects the application language from the Windows user-interface language and falls back to US English when it is unsupported. It creates one visible analog clock by default. Every widget retains its own position and settings between runs. While Settings is open, a monitor clock is always represented by a movable preview with the aspect ratio of its selected monitor. `Esc` dismisses a monitor clock and removes its blackout even when Settings is active.
@@ -53,7 +53,7 @@ When several widgets are selected, their General, Appearance, Alarm, and Signal 
 
 Calendar dates can be copied using 33 formats covering local, sortable, day-first, month-first, textual, and weekday forms. Every mask is available in every interface language. The default local short format follows the widget language, and textual month and weekday names also use that language. Format entries show the mask and a live example.
 
-In a calendar-and-clock panel, the upper date is a link to today and is underlined while the pointer is over it. The native calendar remains fully interactive but omits its redundant Today row in this combined layout.
+In a calendar-and-clock panel, the upper date is a link that returns the calendar to today, while the lower time-zone text opens the classic Windows Date and Time settings. Both links can be reached with `Tab`, show a focus rectangle, and can be activated from the keyboard. The native calendar remains fully interactive but omits its redundant Today row in this combined layout.
 
 The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-overlapping grid while preserving their approximate manual layout. The widget whose menu invoked the command remains in place; the notification-area command arranges each monitor independently. Monitor clocks are excluded.
 
@@ -61,7 +61,7 @@ The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-o
 
 Appearance changes are previewed immediately on the selected widget. `Cancel` restores unapplied appearance changes, while `Default appearance` restores the defaults for that widget type.
 
-Digital widgets provide controls for font, font smoothing, colours, opacity, padding, border style and width, and transparent background where applicable. Font dialogs show only the choices used by their target; application and calendar UI fonts omit size, while digital and panel text fonts include it. Calendars and combined panels can show or hide their frame. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
+Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border colour; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Font dialogs show only the choices used by their target and omit the unused preview and effects; application and calendar UI fonts omit size, while digital and panel text fonts include it. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
 
 Application language, UI font, font smoothing, visual styles, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Applying a new application language immediately rebuilds the open Settings window in that language.
 
