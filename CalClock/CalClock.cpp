@@ -44,18 +44,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
-HINSTANCE hInstance = nullptr;
-HANDLE hSingleInstanceMutex = nullptr;
-HWND hController = nullptr;
-HWND hSettings = nullptr;
-HWND hHelp = nullptr;
-HWND hAbout = nullptr;
-HWND hAboutTooltip = nullptr;
-NOTIFYICONDATAW trayIcon = {};
-bool trayUsesVersion4 = false;
-HFONT hUiFont = nullptr;
-HFONT hAboutFont = nullptr;
-UINT taskbarCreatedMessage = 0;
+// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data, int characters, LPDWORD value);
@@ -64,74 +53,29 @@ typedef int(WINAPI* GetCalendarDateFormatProc)(CALID calendar, DWORD flags, cons
 typedef BOOL(WINAPI* ConvertCalDateTimeToSystemTimeProc)(const void* calendarDate, SYSTEMTIME* systemTime);
 typedef HRESULT(WINAPI* D2D1CreateFactoryProc)(D2D1_FACTORY_TYPE factoryType, REFIID interfaceId, const D2D1_FACTORY_OPTIONS* factoryOptions, void** factory);
 typedef HRESULT(WINAPI* DWriteCreateFactoryProc)(DWRITE_FACTORY_TYPE factoryType, REFIID interfaceId, IUnknown** factory);
-GetUserDefaultLcidProc originalGetUserDefaultLcid = nullptr;
-GetLocaleInfoWProc originalGetLocaleInfoW = nullptr;
-GetCalendarInfoWProc originalGetCalendarInfoW = nullptr;
-GetCalendarInfoExProc originalGetCalendarInfoEx = nullptr;
-GetCalendarDateFormatProc originalGetCalendarDateFormat = nullptr;
-ConvertCalDateTimeToSystemTimeProc convertCalDateTimeToSystemTime = nullptr;
-AppLanguage appLanguage = LANG_EN;
-bool themesDisabled = false;
-int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
-std::wstring appFontFace;
-int appFontDialogSize = 90;
-int appFontWeight = FW_NORMAL;
-bool appFontItalic = false;
-std::wstring settingsAppFontFace;
-int settingsAppFontDialogSize = 90;
-int settingsAppFontWeight = FW_NORMAL;
-bool settingsAppFontItalic = false;
-ID2D1Factory* d2dFactory = nullptr;
-IDWriteFactory* dwriteFactory = nullptr;
-HMODULE d2dModule = nullptr;
-HMODULE dwriteModule = nullptr;
-bool storageUsesXml = false;
-bool startWithWindows = false;
-bool snapWidgetsToWorkArea = true;
-bool useNtpTime = true;
-bool winsockReady = false;
-int ntpPreset = NTP_PRESET_AUTO;
-std::wstring ntpServers;
-std::wstring ntpActiveServer;
-bool ntpLastQueryFailed = false;
-std::atomic<LONGLONG> ntpOffset100Nanoseconds = 0;
-std::atomic<bool> ntpTimeValid = false;
-std::atomic<bool> ntpQueryRunning = false;
-std::atomic<bool> ntpStopRequested = false;
-std::atomic<ULONG> ntpGeneration = 0;
-ULONGLONG lastNtpAttemptTick = 0;
-ULONGLONG lastTimeSignalTarget = 0;
-std::vector<int> currentTimeSignalRegularWidgetIds;
-std::vector<int> currentTimeSignalAlarmWidgetIds;
-std::vector<int> lastMutedWidgetIds;
-HANDLE hNtpThread = nullptr;
-int settingsX = CW_USEDEFAULT;
-int settingsY = CW_USEDEFAULT;
-int settingsTab = 0;
-WidgetType lastAddedWidgetType = WIDGET_ANALOG;
-int helpX = CW_USEDEFAULT;
-int helpY = CW_USEDEFAULT;
-int aboutX = CW_USEDEFAULT;
-int aboutY = CW_USEDEFAULT;
-int nextWidgetId = 1;
-int selectedDraftIndex = 0;
-std::vector<std::unique_ptr<Widget>> widgets;
-std::vector<int> lastHiddenWidgetIds;
-std::vector<DisplayMonitor> displayMonitors;
-std::vector<HWND> blackoutWindows;
-std::vector<WidgetConfig> settingsDraft;
-std::vector<WidgetConfig> settingsAppearanceOriginals;
-std::vector<int> settingsAppearancePreviewIds;
-bool settingsAppearancePreviewActive = false;
-bool settingsApplicationFontPreviewActive = false;
-std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
 
+// Window layout and font dialog types
+enum FontDialogMode {
+    FONT_DIALOG_FACE_AND_STYLE,
+    FONT_DIALOG_WITH_SIZE
+};
+
+struct InformationWindowLayout {
+    RECT text = {};
+    RECT close = {};
+    RECT product = {};
+    RECT website = {};
+    RECT link = {};
+    bool initialized = false;
+};
+
+// Window classes and product constants
 const wchar_t CLASS_NAME[] = L"CalClockMultiWidgetWindow";
 const wchar_t BLACKOUT_CLASS_NAME[] = L"CalClockBlackoutWindow";
 const wchar_t CONTROLLER_TITLE[] = L"CalClockMessageController";
 const wchar_t ABOUT_WEBSITE_URL[] = L"https://fortsoft.cz/calclock/";
-const int ABOUT_WINDOW_WIDTH = 550;
-const int ABOUT_WINDOW_HEIGHT = 528;
+
+// Window messages, timers and subclass identifiers
 const UINT WM_TRAYICON = WM_APP + 1;
 const UINT WM_SHOW_EXISTING = WM_APP + 2;
 const UINT WM_NTP_RESULT = WM_APP + 3;
@@ -141,270 +85,132 @@ const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT_PTR TIMER_REFRESH = 1;
 static const UINT_PTR TIMER_EDIT_CLICKS = 0xCC01;
-static const int PANEL_SIDE_PADDING = 12;
-static const int PANEL_CALENDAR_OFFSET_Y = -4;
-static const int WORK_AREA_SNAP_DISTANCE = 5;
-const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
+const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
 
-const int ID_MENU_SETTINGS = 1001;
-const int ID_MENU_VISIBLE = 1002;
-const int ID_MENU_TOPMOST = 1003;
-const int ID_MENU_SECONDS = 1004;
-const int ID_MENU_STOP_ALARM = 1005;
+// Layout, appearance and alarm constants
+const int ABOUT_WINDOW_HEIGHT = 528;
+const int ABOUT_WINDOW_WIDTH = 550;
+const int ALARM_DAY_COUNT = 7;
+const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
+static const int PANEL_CALENDAR_OFFSET_Y = -4;
+static const int PANEL_SIDE_PADDING = 12;
+const int SETTINGS_HORIZONTAL_SCALE_DENOMINATOR = 5;
+const int SETTINGS_HORIZONTAL_SCALE_NUMERATOR = 6;
+const int SETTINGS_UNBOUNDED_LABEL_WIDTH = 4096;
+const int SETTINGS_WINDOW_HEIGHT = 431;
+const int SETTINGS_WINDOW_WIDTH = 778;
+static const int WORK_AREA_SNAP_DISTANCE = 5;
+
+// Widget panel control identifiers
+const int ID_PANEL_BOTTOM_FONT = 3075;
+const int ID_PANEL_DATE_LINK = 115;
+const int ID_PANEL_TIME_FONT = 3074;
+const int ID_PANEL_TIME_ZONE_LINK = 116;
+const int ID_PANEL_TOP_FONT = 3073;
+
+// Menu command identifiers
+const int ID_MENU_ABOUT = 1023;
+const int ID_MENU_ABOUT_COPY_INFORMATION = 1102;
+const int ID_MENU_ABOUT_COPY_URL = 1101;
+const int ID_MENU_ABOUT_OPEN_LINK = 1100;
 const int ID_MENU_ALARM_ENABLED = 1006;
-const int ID_MENU_TIME_SIGNAL_ENABLED = 1007;
-const int ID_MENU_MUTE = 1008;
-const int ID_MENU_SIZE_104 = 1010;
-const int ID_MENU_SIZE_198 = 1013;
 const int ID_MENU_ARRANGE_WIDGETS = 1050;
 const int ID_MENU_DATE_FORMAT_BASE = 1060;
-const int ID_MENU_SHOW_ALL = 1020;
-const int ID_MENU_HIDE_ALL = 1021;
-const int ID_MENU_HELP = 1022;
-const int ID_MENU_ABOUT = 1023;
 const int ID_MENU_EXIT = 1024;
-const int ID_MENU_ABOUT_OPEN_LINK = 1100;
-const int ID_MENU_ABOUT_COPY_URL = 1101;
-const int ID_MENU_ABOUT_COPY_INFORMATION = 1102;
+const int ID_MENU_HELP = 1022;
+const int ID_MENU_HIDE_ALL = 1021;
+const int ID_MENU_MUTE = 1008;
+const int ID_MENU_SECONDS = 1004;
+const int ID_MENU_SETTINGS = 1001;
+const int ID_MENU_SHOW_ALL = 1020;
+const int ID_MENU_SIZE_104 = 1010;
+const int ID_MENU_SIZE_198 = 1013;
+const int ID_MENU_STOP_ALARM = 1005;
+const int ID_MENU_TIME_SIGNAL_ENABLED = 1007;
+const int ID_MENU_TOPMOST = 1003;
+const int ID_MENU_VISIBLE = 1002;
 const int ID_MENU_WIDGET_BASE = 2000;
-const int ID_PANEL_DATE_LINK = 115;
-const int ID_PANEL_TIME_ZONE_LINK = 116;
-const int ID_LIST_WIDGETS = 3001;
-const int ID_ADD_TYPE = 3002;
+
+// Information window control identifiers
+const int ID_INFO_CLOSE = 3050;
+const int ID_INFO_ICON = 3200;
+const int ID_INFO_LINK = 3203;
+const int ID_INFO_PRODUCT = 3201;
+const int ID_INFO_TEXT = 3051;
+const int ID_INFO_WEBSITE = 3202;
+
+// Settings control identifiers
 const int ID_ADD = 3003;
-const int ID_REMOVE = 3004;
-const int ID_DUPLICATE = 3005;
-const int ID_TABS = 3006;
-const int ID_NAME = 3010;
-const int ID_TYPE = 3011;
-const int ID_VISIBLE = 3012;
-const int ID_TOPMOST = 3013;
-const int ID_SECONDS = 3014;
-const int ID_UTC = 3015;
-const int ID_TIMEZONE = 3016;
-const int ID_OFFSET = 3017;
-const int ID_WIDGET_LANGUAGE = 3018;
-const int ID_UTC_TEXT = 3019;
-const int ID_BLACKOUT_MONITORS = 3070;
-const int ID_MONITOR_LIST = 3071;
-const int ID_SIZE = 3020;
-const int ID_OPACITY = 3021;
-const int ID_FONT_SIZE = 3022;
-const int ID_LEADING_ZERO = 3023;
-const int ID_TRANSPARENT_BG = 3024;
-const int ID_TEXT_COLOR = 3025;
-const int ID_BACKGROUND_COLOR = 3026;
-const int ID_WEEK_NUMBERS = 3027;
-const int ID_SUNDAY_FIRST = 3028;
-const int ID_DATE_FORMAT = 3029;
-const int ID_FONT = 3052;
-const int ID_ALARM_TEXT_COLOR = 3053;
+const int ID_ADD_TYPE = 3002;
 const int ID_ALARM_BACKGROUND_COLOR = 3054;
-const int ID_PADDING = 3055;
-const int ID_BORDER = 3056;
-const int ID_WIDGET_DISABLE_THEMES = 3057;
-const int ID_DEFAULT_APPEARANCE = 3058;
-const int ID_BORDER_WIDTH = 3059;
-const int ID_BORDER_COLOR = 3090;
-const int ID_WIDGET_ANTIALIAS = 3072;
-const int ID_PANEL_TOP_FONT = 3073;
-const int ID_PANEL_TIME_FONT = 3074;
-const int ID_PANEL_BOTTOM_FONT = 3075;
-const int ID_TIME_SIGNAL = 3078;
-const int ID_ALARM_TIME_SIGNAL = 3079;
-const int ID_TIME_SIGNAL_NOTE = 3080;
-const int ID_START_WITH_WINDOWS = 3081;
-const int ID_SNAP_TO_WORK_AREA = 3091;
 const int ID_ALARM_DAY_BASE = 3082;
-const int ALARM_DAY_COUNT = 7;
-const int ID_SOUNDS_ENABLED = 3089;
 const int ID_ALARM_ENABLED = 3030;
+const int ID_ALARM_TEXT_COLOR = 3053;
 const int ID_ALARM_TIME = 3031;
-const int ID_RUN_COMMAND = 3032;
-const int ID_COMMAND = 3033;
-const int ID_BROWSE = 3034;
-const int ID_LOOP_AUDIO = 3035;
-const int ID_TEST_COMMAND = 3036;
-const int ID_REMOTE_SCRIPT = 3037;
-const int ID_REMOTE_SCRIPT_URL = 3038;
-const int ID_LANGUAGE = 3040;
-const int ID_VISUAL_STYLES = 3041;
-const int ID_SAVE = IDOK;
-const int ID_APPLY = 3043;
-const int ID_CANCEL = IDCANCEL;
-const int ID_IMPORT_SETTINGS = 3045;
-const int ID_EXPORT_SETTINGS = 3046;
-const int ID_USE_XML_SETTINGS = 3047;
+const int ID_ALARM_TIME_SIGNAL = 3079;
 const int ID_APP_ANTIALIAS = 3048;
 const int ID_APP_FONT = 3049;
 const int ID_APP_FONT_DEFAULT = 3076;
-const int ID_TIME_SOURCE = 3060;
+const int ID_APPLY = 3043;
+const int ID_BACKGROUND_COLOR = 3026;
+const int ID_BLACKOUT_MONITORS = 3070;
+const int ID_BORDER = 3056;
+const int ID_BORDER_COLOR = 3090;
+const int ID_BORDER_WIDTH = 3059;
+const int ID_BROWSE = 3034;
+const int ID_CANCEL = IDCANCEL;
+const int ID_COMMAND = 3033;
+const int ID_DATE_FORMAT = 3029;
+const int ID_DEFAULT_APPEARANCE = 3058;
+const int ID_DUPLICATE = 3005;
+const int ID_EXPORT_SETTINGS = 3046;
+const int ID_FONT = 3052;
+const int ID_FONT_SIZE = 3022;
+const int ID_IMPORT_SETTINGS = 3045;
+const int ID_LANGUAGE = 3040;
+const int ID_LEADING_ZERO = 3023;
+const int ID_LIST_WIDGETS = 3001;
+const int ID_LOOP_AUDIO = 3035;
+const int ID_MONITOR_LIST = 3071;
+const int ID_NAME = 3010;
+const int ID_NTP_PRESET = 3063;
 const int ID_NTP_SERVERS = 3061;
 const int ID_NTP_SYNC = 3062;
-const int ID_NTP_PRESET = 3063;
-const int ID_INFO_CLOSE = 3050;
-const int ID_INFO_TEXT = 3051;
-const int ID_INFO_ICON = 3200;
-const int ID_INFO_PRODUCT = 3201;
-const int ID_INFO_WEBSITE = 3202;
-const int ID_INFO_LINK = 3203;
-const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
-const int SETTINGS_HORIZONTAL_SCALE_NUMERATOR = 6;
-const int SETTINGS_HORIZONTAL_SCALE_DENOMINATOR = 5;
-const int SETTINGS_UNBOUNDED_LABEL_WIDTH = 4096;
-const int SETTINGS_WINDOW_WIDTH = 778;
-const int SETTINGS_WINDOW_HEIGHT = 431;
+const int ID_OFFSET = 3017;
+const int ID_OPACITY = 3021;
+const int ID_PADDING = 3055;
+const int ID_REMOTE_SCRIPT = 3037;
+const int ID_REMOTE_SCRIPT_URL = 3038;
+const int ID_REMOVE = 3004;
+const int ID_RUN_COMMAND = 3032;
+const int ID_SAVE = IDOK;
+const int ID_SECONDS = 3014;
+const int ID_SIZE = 3020;
+const int ID_SNAP_TO_WORK_AREA = 3091;
+const int ID_SOUNDS_ENABLED = 3089;
+const int ID_START_WITH_WINDOWS = 3081;
+const int ID_SUNDAY_FIRST = 3028;
+const int ID_TABS = 3006;
+const int ID_TEST_COMMAND = 3036;
+const int ID_TEXT_COLOR = 3025;
+const int ID_TIME_SIGNAL = 3078;
+const int ID_TIME_SIGNAL_NOTE = 3080;
+const int ID_TIME_SOURCE = 3060;
+const int ID_TIMEZONE = 3016;
+const int ID_TOPMOST = 3013;
+const int ID_TRANSPARENT_BG = 3024;
+const int ID_TYPE = 3011;
+const int ID_USE_XML_SETTINGS = 3047;
+const int ID_UTC = 3015;
+const int ID_UTC_TEXT = 3019;
+const int ID_VISIBLE = 3012;
+const int ID_VISUAL_STYLES = 3041;
+const int ID_WEEK_NUMBERS = 3027;
+const int ID_WIDGET_ANTIALIAS = 3072;
+const int ID_WIDGET_DISABLE_THEMES = 3057;
+const int ID_WIDGET_LANGUAGE = 3018;
 
-HWND hWidgetList = nullptr;
-HWND hAddType = nullptr;
-HWND hTabs = nullptr;
-HWND hGeneralPage = nullptr;
-HWND hAppearancePage = nullptr;
-HWND hAlarmPage = nullptr;
-HWND hTimeSignalPage = nullptr;
-HWND hTimePage = nullptr;
-HWND hApplicationPage = nullptr;
-HWND hNameEdit = nullptr;
-HWND hTypeCombo = nullptr;
-HWND hVisibleCheck = nullptr;
-HWND hTopmostCheck = nullptr;
-HWND hSecondsCheck = nullptr;
-HWND hUtcCheck = nullptr;
-HWND hUtcTextCheck = nullptr;
-HWND hTimeZoneLabel = nullptr;
-HWND hTimeZoneCombo = nullptr;
-HWND hMonitorLabel = nullptr;
-HWND hMonitorList = nullptr;
-HWND hBlackoutMonitorsCheck = nullptr;
-HWND hOffsetEdit = nullptr;
-HWND hWidgetLanguageCombo = nullptr;
-HWND hSizeCombo = nullptr;
-HWND hOpacityTrackBar = nullptr;
-HWND hOpacityValue = nullptr;
-HWND hFontSizeTrackBar = nullptr;
-HWND hFontSizeValue = nullptr;
-HWND hWidgetAntialiasLabel = nullptr;
-HWND hWidgetAntialiasCombo = nullptr;
-HWND hLeadingZeroCheck = nullptr;
-HWND hTransparentBackgroundCheck = nullptr;
-HWND hTextColorButton = nullptr;
-HWND hBackgroundColorButton = nullptr;
-HWND hWeekNumbersCheck = nullptr;
-HWND hSundayFirstCheck = nullptr;
-HWND hDateFormatLabel = nullptr;
-HWND hDateFormatCombo = nullptr;
-HWND hAlarmEnabledCheck = nullptr;
-HWND hAlarmDayChecks[ALARM_DAY_COUNT] = {};
-HWND hAlarmTimeEdit = nullptr;
-HWND hAlarmTimeSignalCheck = nullptr;
-HWND hRunCommandCheck = nullptr;
-HWND hCommandEdit = nullptr;
-HWND hBrowseButton = nullptr;
-HWND hLoopAudioCheck = nullptr;
-HWND hRemoteScriptCheck = nullptr;
-HWND hRemoteScriptLabel = nullptr;
-HWND hRemoteScriptEdit = nullptr;
-HWND hTimeSignalCombo = nullptr;
-HWND hLanguageCombo = nullptr;
-HWND hDisableThemesCheck = nullptr;
-HWND hUseXmlSettingsCheck = nullptr;
-HWND hStartWithWindowsCheck = nullptr;
-HWND hSnapToWorkAreaCheck = nullptr;
-HWND hSoundsMutedCheck = nullptr;
-HWND hAppAntialiasCombo = nullptr;
-HWND hAppFontLabel = nullptr;
-HWND hAppFontButton = nullptr;
-HWND hAppFontDefaultButton = nullptr;
-HWND hTimeSourceCombo = nullptr;
-HWND hNtpPresetLabel = nullptr;
-HWND hNtpPresetCombo = nullptr;
-HWND hNtpServersLabel = nullptr;
-HWND hNtpServersEdit = nullptr;
-HWND hNtpStatus = nullptr;
-HWND hNtpSyncButton = nullptr;
-HWND hSizeLabel = nullptr;
-HWND hOpacityLabel = nullptr;
-HWND hFontSizeLabel = nullptr;
-HWND hFontButton = nullptr;
-HWND hPanelTopFontButton = nullptr;
-HWND hPanelTimeFontButton = nullptr;
-HWND hPanelBottomFontButton = nullptr;
-HWND hFontDescription = nullptr;
-HWND hAlarmTextColorButton = nullptr;
-HWND hAlarmBackgroundColorButton = nullptr;
-HWND hPaddingLabel = nullptr;
-HWND hPaddingTrackBar = nullptr;
-HWND hPaddingValue = nullptr;
-HWND hBorderLabel = nullptr;
-HWND hBorderTrackBar = nullptr;
-HWND hBorderWidthLabel = nullptr;
-HWND hBorderWidthTrackBar = nullptr;
-HWND hBorderWidthValue = nullptr;
-HWND hBorderColorButton = nullptr;
-HWND hWidgetDisableThemesCheck = nullptr;
-HWND hDefaultAppearanceButton = nullptr;
-HWND hTestCommandButton = nullptr;
-HANDLE settingsPreviewStopEvent = nullptr;
-HANDLE settingsPreviewMuteEvent = nullptr;
-ULONG settingsPreviewGeneration = 0;
-int settingsContentWidth = 0;
-int settingsContentHeight = 0;
-int settingsVisualPreviewWidgetId = -1;
-bool updatingNtpPresetControls = false;
-bool displayRefreshPending = false;
-bool settingsVisualPreviewActive = false;
-bool settingsCommandTestActive = false;
-static HWND lastClickedEdit = nullptr;
-static POINT lastEditClickPoint = {};
-static int editClickCount = 0;
-std::vector<HWND> generalControls;
-std::vector<HWND> appearanceControls;
-std::vector<HWND> alarmControls;
-std::vector<HWND> timeSignalControls;
-std::vector<HWND> timeControls;
-std::vector<HWND> applicationControls;
-std::vector<HWND> settingsUnderlayLabels;
-
-static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
-static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
-static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
-static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
-static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
-static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
-static void RenderWidget(Widget* widget);
-static void SaveAllSettings();
-static void SaveSettingsWithoutAppearancePreviews();
-static void ShowSettingsWindow(int widgetId = -1);
-static void ShowSettingsTab(int tab);
-static void SynchronizeOpenSettings(const Widget* widget);
-static void RefreshInformationWindows();
-static std::wstring GetSystemMessageFontFace();
-static HFONT CreateWidgetDrawingFont(const WidgetConfig& config);
-static void StopSettingsPreview();
-static void UpdateFontDescription(const WidgetConfig& config);
-static void ApplyUiStyle(HWND window);
-static void UpdateSettingControlAvailability();
-static void PreviewSelectedWidgetAppearance(bool structuralChange);
-static void RestoreSettingsAppearancePreview();
-static void RefreshFullscreenPresentation();
-static Widget* FindWidgetById(int id);
-static void CloseWidgetAudio(Widget* widget);
-static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& configuration);
-static HFONT CreateCalendarUiFont(const WidgetConfig& config);
-static std::wstring GetControlText(HWND control);
-static void SetCheck(HWND control, bool checked);
-static void SetWidgetVisible(Widget* widget, bool visible);
-
-static_assert(ID_MENU_ARRANGE_WIDGETS < ID_MENU_DATE_FORMAT_BASE || ID_MENU_ARRANGE_WIDGETS >= ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT);
-
-static const wchar_t* T(TextId id) {
-    return TEXT[appLanguage][id];
-}
-
-static bool WidgetSupportsSound(WidgetType type) {
-    return type != WIDGET_CALENDAR;
-}
-
+// Language order
 static const AppLanguage LANGUAGE_DISPLAY_ORDER[LANG_COUNT] = {
     LANG_CZ,
     LANG_EN,
@@ -424,6 +230,290 @@ static const AppLanguage LANGUAGE_DISPLAY_ORDER[LANG_COUNT] = {
     LANG_SV,
     LANG_TR
 };
+
+static_assert(ID_MENU_ARRANGE_WIDGETS < ID_MENU_DATE_FORMAT_BASE || ID_MENU_ARRANGE_WIDGETS >= ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT);
+
+// Application instance
+HINSTANCE hInstance = nullptr;
+
+// Thread, mutex and event handles
+HANDLE hNtpThread = nullptr;
+HANDLE hSingleInstanceMutex = nullptr;
+HANDLE settingsPreviewMuteEvent = nullptr;
+HANDLE settingsPreviewStopEvent = nullptr;
+
+// Loaded modules
+HMODULE d2dModule = nullptr;
+HMODULE dwriteModule = nullptr;
+
+// Fonts
+HFONT hUiFont = nullptr;
+HFONT hAboutFont = nullptr;
+
+// Windows and tooltips
+HWND hController = nullptr;
+HWND hSettings = nullptr;
+HWND hHelp = nullptr;
+HWND hAbout = nullptr;
+HWND hAboutTooltip = nullptr;
+
+// Settings pages and widget list
+HWND hWidgetList = nullptr;
+HWND hAddType = nullptr;
+HWND hTabs = nullptr;
+HWND hGeneralPage = nullptr;
+HWND hAppearancePage = nullptr;
+HWND hAlarmPage = nullptr;
+HWND hTimeSignalPage = nullptr;
+HWND hTimePage = nullptr;
+HWND hApplicationPage = nullptr;
+
+// General widget controls
+HWND hNameEdit = nullptr;
+HWND hTypeCombo = nullptr;
+HWND hVisibleCheck = nullptr;
+HWND hTopmostCheck = nullptr;
+HWND hSecondsCheck = nullptr;
+HWND hUtcCheck = nullptr;
+HWND hUtcTextCheck = nullptr;
+HWND hTimeZoneLabel = nullptr;
+HWND hTimeZoneCombo = nullptr;
+HWND hMonitorLabel = nullptr;
+HWND hMonitorList = nullptr;
+HWND hBlackoutMonitorsCheck = nullptr;
+HWND hOffsetEdit = nullptr;
+HWND hWidgetLanguageCombo = nullptr;
+HWND hSoundsMutedCheck = nullptr;
+
+// Appearance controls
+HWND hAlarmBackgroundColorButton = nullptr;
+HWND hAlarmTextColorButton = nullptr;
+HWND hBackgroundColorButton = nullptr;
+HWND hBorderColorButton = nullptr;
+HWND hBorderLabel = nullptr;
+HWND hBorderTrackBar = nullptr;
+HWND hBorderWidthLabel = nullptr;
+HWND hBorderWidthTrackBar = nullptr;
+HWND hBorderWidthValue = nullptr;
+HWND hDateFormatCombo = nullptr;
+HWND hDateFormatLabel = nullptr;
+HWND hDefaultAppearanceButton = nullptr;
+HWND hFontButton = nullptr;
+HWND hFontDescription = nullptr;
+HWND hFontSizeLabel = nullptr;
+HWND hFontSizeTrackBar = nullptr;
+HWND hFontSizeValue = nullptr;
+HWND hLeadingZeroCheck = nullptr;
+HWND hOpacityLabel = nullptr;
+HWND hOpacityTrackBar = nullptr;
+HWND hOpacityValue = nullptr;
+HWND hPaddingLabel = nullptr;
+HWND hPaddingTrackBar = nullptr;
+HWND hPaddingValue = nullptr;
+HWND hPanelBottomFontButton = nullptr;
+HWND hPanelTimeFontButton = nullptr;
+HWND hPanelTopFontButton = nullptr;
+HWND hSizeCombo = nullptr;
+HWND hSizeLabel = nullptr;
+HWND hSundayFirstCheck = nullptr;
+HWND hTextColorButton = nullptr;
+HWND hTransparentBackgroundCheck = nullptr;
+HWND hWeekNumbersCheck = nullptr;
+HWND hWidgetAntialiasCombo = nullptr;
+HWND hWidgetAntialiasLabel = nullptr;
+HWND hWidgetDisableThemesCheck = nullptr;
+
+// Alarm and time signal controls
+HWND hAlarmDayChecks[ALARM_DAY_COUNT] = {};
+HWND hAlarmEnabledCheck = nullptr;
+HWND hAlarmTimeEdit = nullptr;
+HWND hAlarmTimeSignalCheck = nullptr;
+HWND hBrowseButton = nullptr;
+HWND hCommandEdit = nullptr;
+HWND hLoopAudioCheck = nullptr;
+HWND hRemoteScriptEdit = nullptr;
+HWND hRemoteScriptCheck = nullptr;
+HWND hRemoteScriptLabel = nullptr;
+HWND hRunCommandCheck = nullptr;
+HWND hTestCommandButton = nullptr;
+HWND hTimeSignalCombo = nullptr;
+
+// Time source controls
+HWND hNtpPresetCombo = nullptr;
+HWND hNtpPresetLabel = nullptr;
+HWND hNtpServersEdit = nullptr;
+HWND hNtpServersLabel = nullptr;
+HWND hNtpStatus = nullptr;
+HWND hNtpSyncButton = nullptr;
+HWND hTimeSourceCombo = nullptr;
+
+// Application settings controls
+HWND hAppAntialiasCombo = nullptr;
+HWND hAppFontButton = nullptr;
+HWND hAppFontDefaultButton = nullptr;
+HWND hAppFontLabel = nullptr;
+HWND hDisableThemesCheck = nullptr;
+HWND hLanguageCombo = nullptr;
+HWND hSnapToWorkAreaCheck = nullptr;
+HWND hStartWithWindowsCheck = nullptr;
+HWND hUseXmlSettingsCheck = nullptr;
+
+// Edit interaction window
+static HWND lastClickedEdit = nullptr;
+
+// Graphics factories
+ID2D1Factory* d2dFactory = nullptr;
+IDWriteFactory* dwriteFactory = nullptr;
+
+// Resolved locale functions
+GetUserDefaultLcidProc originalGetUserDefaultLcid = nullptr;
+GetLocaleInfoWProc originalGetLocaleInfoW = nullptr;
+GetCalendarInfoWProc originalGetCalendarInfoW = nullptr;
+GetCalendarInfoExProc originalGetCalendarInfoEx = nullptr;
+GetCalendarDateFormatProc originalGetCalendarDateFormat = nullptr;
+ConvertCalDateTimeToSystemTimeProc convertCalDateTimeToSystemTime = nullptr;
+
+// Notification area data
+NOTIFYICONDATAW trayIcon = {};
+
+// Information window layouts
+static InformationWindowLayout helpWindowLayout;
+static InformationWindowLayout aboutWindowLayout;
+
+// Edit interaction position
+static POINT lastEditClickPoint = {};
+
+// Language and widget type
+AppLanguage appLanguage = LANG_EN;
+WidgetType lastAddedWidgetType = WIDGET_ANALOG;
+
+// State flags
+bool appFontItalic = false;
+bool displayRefreshPending = false;
+bool ntpLastQueryFailed = false;
+bool settingsAppearancePreviewActive = false;
+bool settingsAppFontItalic = false;
+bool settingsApplicationFontPreviewActive = false;
+bool settingsCommandTestActive = false;
+bool settingsVisualPreviewActive = false;
+bool snapWidgetsToWorkArea = true;
+bool startWithWindows = false;
+bool storageUsesXml = false;
+bool themesDisabled = false;
+bool trayUsesVersion4 = false;
+bool updatingNtpPresetControls = false;
+bool useNtpTime = true;
+bool winsockReady = false;
+
+// Numeric settings and positions
+int aboutX = CW_USEDEFAULT;
+int aboutY = CW_USEDEFAULT;
+int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
+int appFontDialogSize = 90;
+int appFontWeight = FW_NORMAL;
+int helpX = CW_USEDEFAULT;
+int helpY = CW_USEDEFAULT;
+int nextWidgetId = 1;
+int ntpPreset = NTP_PRESET_AUTO;
+int selectedDraftIndex = 0;
+int settingsAppFontDialogSize = 90;
+int settingsAppFontWeight = FW_NORMAL;
+int settingsContentHeight = 0;
+int settingsContentWidth = 0;
+int settingsTab = 0;
+int settingsVisualPreviewWidgetId = -1;
+int settingsX = CW_USEDEFAULT;
+int settingsY = CW_USEDEFAULT;
+static int editClickCount = 0;
+
+// Message and generation identifiers
+ULONG settingsPreviewGeneration = 0;
+UINT taskbarCreatedMessage = 0;
+
+// Timing state
+ULONGLONG lastNtpAttemptTick = 0;
+ULONGLONG lastTimeSignalTarget = 0;
+
+// Thread-safe NTP state
+std::atomic<ULONG> ntpGeneration = 0;
+std::atomic<LONGLONG> ntpOffset100Nanoseconds = 0;
+std::atomic<bool> ntpQueryRunning = false;
+std::atomic<bool> ntpStopRequested = false;
+std::atomic<bool> ntpTimeValid = false;
+
+// Font names and NTP servers
+std::wstring appFontFace;
+std::wstring ntpActiveServer;
+std::wstring ntpServers;
+std::wstring settingsAppFontFace;
+
+// Widgets
+std::vector<std::unique_ptr<Widget>> widgets;
+
+// Widget configuration drafts
+std::vector<WidgetConfig> settingsAppearanceOriginals;
+std::vector<WidgetConfig> settingsDraft;
+
+// Widget identifiers
+std::vector<int> currentTimeSignalAlarmWidgetIds;
+std::vector<int> currentTimeSignalRegularWidgetIds;
+std::vector<int> lastHiddenWidgetIds;
+std::vector<int> lastMutedWidgetIds;
+std::vector<int> settingsAppearancePreviewIds;
+
+// Monitors and time zones
+std::vector<DisplayMonitor> displayMonitors;
+std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
+
+// Window and control collections
+std::vector<HWND> alarmControls;
+std::vector<HWND> appearanceControls;
+std::vector<HWND> applicationControls;
+std::vector<HWND> blackoutWindows;
+std::vector<HWND> generalControls;
+std::vector<HWND> settingsUnderlayLabels;
+std::vector<HWND> timeControls;
+std::vector<HWND> timeSignalControls;
+
+// Forward declarations
+static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static void RenderWidget(Widget* widget);
+static void SaveAllSettings();
+static void SaveSettingsWithoutAppearancePreviews();
+static void ShowSettingsWindow(int widgetId = -1);
+static void ShowSettingsTab(int tab);
+static void SynchronizeOpenSettings(const Widget* widget);
+static void RefreshInformationWindows();
+static void LayoutInformationWindow(HWND window);
+static std::wstring GetSystemMessageFontFace();
+static HFONT CreateWidgetDrawingFont(const WidgetConfig& config);
+static void StopSettingsPreview();
+static void UpdateFontDescription(const WidgetConfig& config);
+static void ApplyUiStyle(HWND window);
+static void UpdateSettingControlAvailability();
+static void PreviewSelectedWidgetAppearance(bool structuralChange);
+static void RestoreSettingsAppearancePreview();
+static void RefreshFullscreenPresentation();
+static Widget* FindWidgetById(int id);
+static void CloseWidgetAudio(Widget* widget);
+static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& configuration);
+static HFONT CreateCalendarUiFont(const WidgetConfig& config);
+static std::wstring GetControlText(HWND control);
+static void SetCheck(HWND control, bool checked);
+static void SetWidgetVisible(Widget* widget, bool visible);
+
+static const wchar_t* T(TextId id) {
+    return TEXT[appLanguage][id];
+}
+
+static bool WidgetSupportsSound(WidgetType type) {
+    return type != WIDGET_CALENDAR;
+}
 
 static AppLanguage LanguageFromCombo(HWND combo) {
     int selection = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
@@ -1430,7 +1520,11 @@ static void CheckTimeSignals() {
         }
         ULONGLONG target = 0;
         if (regularSignal && CalculateTimeSignalTarget(displayedValue, systemNow, static_cast<TimeSignalMode>(mode), &target)) {
-            candidates.push_back({ target, true, widget->config.id });
+            candidates.push_back(TimeSignalCandidate{
+                target,
+                true,
+                widget->config.id
+            });
         }
         if (alarmSignal && CalculateAlarmTimeSignalTarget(displayedValue, systemNow, widget->config.alarmHour, widget->config.alarmMinute, &target)) {
             bool enabledOnTargetDay = false;
@@ -1444,7 +1538,11 @@ static void CheckTimeSignals() {
                 enabledOnTargetDay = FileTimeToSystemTime(&targetDisplayedFileTime, &targetDisplayedTime) && AlarmEnabledOnDay(widget->config, targetDisplayedTime.wDayOfWeek);
             }
             if (enabledOnTargetDay) {
-                candidates.push_back({ target, false, widget->config.id });
+                candidates.push_back(TimeSignalCandidate{
+                    target,
+                    false,
+                    widget->config.id
+                });
             }
         }
     }
@@ -2011,6 +2109,9 @@ static void ApplyUiStyle(HWND window) {
     }
     SetWindowTheme(window, themesDisabled ? L"" : nullptr, themesDisabled ? L"" : nullptr);
     EnumChildWindows(window, ApplyFontAndTheme, 0);
+    if (window == hHelp || window == hAbout) {
+        LayoutInformationWindow(window);
+    }
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
 
@@ -3782,7 +3883,7 @@ static void SetWidgetVisible(Widget* widget, bool visible) {
         return;
     }
     if (widget->config.visible && !visible) {
-        RememberHiddenWidgets({ widget->config.id });
+        RememberHiddenWidgets(std::vector<int>{ widget->config.id });
     }
     widget->config.visible = visible;
     if (visible) {
@@ -3864,7 +3965,10 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
             groupIndex++;
         }
         if (groupIndex == groups.size()) {
-            groups.push_back({ monitor, {} });
+            groups.push_back(MonitorGroup{
+                monitor,
+                std::vector<Widget*>{}
+            });
         }
         groups[groupIndex].items.push_back(current);
     }
@@ -3891,14 +3995,20 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
                 failed = true;
                 break;
             }
-            placements.push_back({ current->config.id, rect });
+            placements.push_back(WidgetPlacement{
+                current->config.id,
+                rect
+            });
         }
         if (failed || !ArrangeWidgetPlacements(&placements, monitorInformation.rcWork, anchor == nullptr ? -1 : anchor->config.id)) {
             failed = true;
             break;
         }
         for (size_t index = 0; index < placements.size(); index++) {
-            pending.push_back({ groups[groupIndex].items[index], placements[index].rect });
+            pending.push_back(PendingPlacement{
+                groups[groupIndex].items[index],
+                placements[index].rect
+            });
         }
     }
     if (failed) {
@@ -4865,7 +4975,10 @@ static std::vector<HWND> GetAppearanceTabOrder() {
         LONG_PTR style = GetWindowLongPtrW(control, GWL_STYLE);
         RECT rect = {};
         if ((style & WS_TABSTOP) != 0 && GetWindowRect(control, &rect)) {
-            positionedControls.push_back({ control, rect });
+            positionedControls.push_back(PositionedControl{
+                control,
+                rect
+            });
         }
     }
     std::sort(positionedControls.begin(), positionedControls.end(), [](const PositionedControl& left, const PositionedControl& right) {
@@ -6414,11 +6527,6 @@ static void UpdateFontDescription(const WidgetConfig& config) {
     SetWindowTextW(hFontDescription, description.c_str());
 }
 
-enum FontDialogMode {
-    FONT_DIALOG_FACE_AND_STYLE,
-    FONT_DIALOG_WITH_SIZE
-};
-
 static void SetFontDialogControlVisibility(HWND dialog, FontDialogMode mode) {
     HWND child = GetWindow(dialog, GW_CHILD);
     while (child != nullptr) {
@@ -7375,10 +7483,115 @@ static void RefreshInformationWindows() {
         SetDlgItemTextW(hAbout, ID_INFO_WEBSITE, ABOUT_WEBSITE_LABELS[appLanguage]);
         SetDlgItemTextW(hAbout, ID_INFO_LINK, linkText.c_str());
         SetDlgItemTextW(hAbout, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());
+        LayoutInformationWindow(hAbout);
         if (hAboutTooltip != nullptr) {
             SendMessageW(hAboutTooltip, TTM_UPDATE, 0, 0);
         }
     }
+}
+
+static RECT InformationControlRect(HWND window, int id) {
+    RECT rect = {};
+    GetWindowRect(GetDlgItem(window, id), &rect);
+    MapWindowPoints(HWND_DESKTOP, window, reinterpret_cast<POINT*>(&rect), 2);
+    return rect;
+}
+
+static void InitializeInformationWindowLayout(HWND window, bool help) {
+    InformationWindowLayout& layout = help ? helpWindowLayout : aboutWindowLayout;
+    layout.text = InformationControlRect(window, ID_INFO_TEXT);
+    layout.close = InformationControlRect(window, ID_INFO_CLOSE);
+    if (!help) {
+        layout.product = InformationControlRect(window, ID_INFO_PRODUCT);
+        layout.website = InformationControlRect(window, ID_INFO_WEBSITE);
+        layout.link = InformationControlRect(window, ID_INFO_LINK);
+    }
+    layout.initialized = true;
+}
+
+static void PlaceInformationControl(HWND window, int id, int x, int y, int width, int height) {
+    HWND control = GetDlgItem(window, id);
+    int controlWidth = std::max(1, width);
+    int controlHeight = std::max(1, height);
+    UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
+    SetWindowPos(control, nullptr, x, y, controlWidth, controlHeight, flags);
+}
+
+static int InformationLabelHeight(HWND control, int width) {
+    std::wstring text = GetControlText(control);
+    HDC dc = GetDC(control);
+    if (dc == nullptr) {
+        return 0;
+    }
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
+    HGDIOBJ oldFont = font == nullptr ? nullptr : SelectObject(dc, font);
+    RECT bounds = { 0, 0, std::max(1, width), 0 };
+    UINT flags = DT_CALCRECT | DT_WORDBREAK | DT_NOPREFIX | DT_EXPANDTABS;
+    DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &bounds, flags);
+    if (oldFont != nullptr) {
+        SelectObject(dc, oldFont);
+    }
+    ReleaseDC(control, dc);
+    return bounds.bottom - bounds.top;
+}
+
+static void LayoutInformationWindow(HWND window) {
+    InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
+    if (!layout.initialized) {
+        return;
+    }
+    RECT client = {};
+    GetClientRect(window, &client);
+    int margin = layout.text.left;
+    int right = client.right - margin;
+    int buttonWidth = layout.close.right - layout.close.left;
+    int buttonHeight = layout.close.bottom - layout.close.top;
+    int buttonX = right - buttonWidth;
+    int buttonY = client.bottom - margin - buttonHeight;
+    int textTop = layout.text.top;
+    int textWidth = right - layout.text.left;
+    int buttonGap = layout.close.top - layout.text.bottom;
+    if (window == hAbout) {
+        HWND product = GetDlgItem(window, ID_INFO_PRODUCT);
+        int productWidth = right - layout.product.left;
+        int measuredHeight = InformationLabelHeight(product, productWidth);
+        int productHeight = std::max(static_cast<int>(layout.product.bottom - layout.product.top), measuredHeight);
+        int productGap = layout.website.top - layout.product.bottom;
+        int websiteY = layout.product.top + productHeight + productGap;
+        int websiteWidth = layout.website.right - layout.website.left;
+        int websiteHeight = layout.website.bottom - layout.website.top;
+        int linkWidth = right - layout.link.left;
+        int linkHeight = layout.link.bottom - layout.link.top;
+        int rowHeight = std::max(websiteHeight, linkHeight);
+        int textGap = layout.text.top - std::max(layout.website.bottom, layout.link.bottom);
+        textTop = websiteY + rowHeight + textGap;
+        PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth, productHeight);
+        PlaceInformationControl(window, ID_INFO_WEBSITE, layout.website.left, websiteY, websiteWidth, websiteHeight);
+        PlaceInformationControl(window, ID_INFO_LINK, layout.link.left, websiteY, linkWidth, linkHeight);
+    }
+    int textHeight = buttonY - buttonGap - textTop;
+    PlaceInformationControl(window, ID_INFO_TEXT, layout.text.left, textTop, textWidth, textHeight);
+    PlaceInformationControl(window, ID_INFO_CLOSE, buttonX, buttonY, buttonWidth, buttonHeight);
+    InvalidateRect(window, nullptr, TRUE);
+}
+
+static void FitInformationWindowToWorkArea(HWND window) {
+    if (window == nullptr || !IsWindow(window)) {
+        return;
+    }
+    MONITORINFO monitor = {};
+    monitor.cbSize = sizeof(monitor);
+    if (!GetMonitorInfoW(MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST), &monitor)) {
+        return;
+    }
+    RECT rect = {};
+    GetWindowRect(window, &rect);
+    int width = std::min(rect.right - rect.left, monitor.rcWork.right - monitor.rcWork.left);
+    int height = std::min(rect.bottom - rect.top, monitor.rcWork.bottom - monitor.rcWork.top);
+    int x = std::clamp(static_cast<int>(rect.left), static_cast<int>(monitor.rcWork.left), static_cast<int>(monitor.rcWork.right) - width);
+    int y = std::clamp(static_cast<int>(rect.top), static_cast<int>(monitor.rcWork.top), static_cast<int>(monitor.rcWork.bottom) - height);
+    SetWindowPos(window, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+    LayoutInformationWindow(window);
 }
 
 static void ShowInformationWindow(bool help) {
@@ -7387,10 +7600,31 @@ static void ShowInformationWindow(bool help) {
         SetForegroundWindowEx(*target);
         return;
     }
+    if (help) {
+        helpWindowLayout = {};
+    } else {
+        aboutWindowLayout = {};
+    }
     int* x = help ? &helpX : &aboutX;
     int* y = help ? &helpY : &aboutY;
+    int aboutExtraLineHeight = 0;
+    if (!help) {
+        if (hAboutFont == nullptr) {
+            hAboutFont = CreateAboutFont();
+        }
+        HDC dc = GetDC(nullptr);
+        if (dc != nullptr) {
+            HGDIOBJ oldFont = SelectObject(dc, hAboutFont != nullptr ? hAboutFont : hUiFont);
+            TEXTMETRICW metrics = {};
+            if (GetTextMetricsW(dc, &metrics)) {
+                aboutExtraLineHeight = metrics.tmHeight;
+            }
+            SelectObject(dc, oldFont);
+            ReleaseDC(nullptr, dc);
+        }
+    }
     int width = help ? 660 : ABOUT_WINDOW_WIDTH;
-    int height = help ? 500 : ABOUT_WINDOW_HEIGHT;
+    int height = help ? 500 : ABOUT_WINDOW_HEIGHT + aboutExtraLineHeight;
     DWORD extendedStyle = WS_EX_TOPMOST | (help ? 0 : WS_EX_DLGMODALFRAME);
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
     ClampFormPosition(x, y, width, height);
@@ -7419,19 +7653,18 @@ static void ShowInformationWindow(bool help) {
         HWND website = AddControl(0, L"STATIC", ABOUT_WEBSITE_LABELS[appLanguage], SS_LEFT | SS_NOPREFIX | SS_NOTIFY, 62, 145, 88, 20, *target, ID_INFO_WEBSITE);
         HWND link = AddControl(0, WC_LINK, linkText.c_str(), WS_TABSTOP, 150, 145, 368, 22, *target, ID_INFO_LINK);
         DWORD licenseStyle = WS_TABSTOP | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
-        HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), licenseStyle, 18, 177, 500, 256, *target, ID_INFO_TEXT);
+        HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), licenseStyle, 18, 177, 500, 256 + aboutExtraLineHeight, *target, ID_INFO_TEXT);
         SetWindowSubclass(product, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(website, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(link, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         hAboutTooltip = CreateControlTooltip(*target, link, LPSTR_TEXTCALLBACKW);
-        if (hAboutFont == nullptr) {
-            hAboutFont = CreateAboutFont();
-        }
         SendMessageW(license, EM_SETSEL, 0, 0);
-        HWND close = AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 418, 445, 100, 28, *target, ID_INFO_CLOSE);
+        HWND close = AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 418, 445 + aboutExtraLineHeight, 100, 28, *target, ID_INFO_CLOSE);
         SetFocus(close);
     }
     ApplyUiStyle(*target);
+    InitializeInformationWindowLayout(*target, help);
+    FitInformationWindowToWorkArea(*target);
     ShowWindow(*target, SW_SHOW);
     SetForegroundWindowEx(*target);
 }
@@ -7905,7 +8138,21 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 return MAKELRESULT(ID_SAVE, DC_HASDEFID);
             }
             break;
+        case WM_SIZE:
+            if ((window == hHelp || window == hAbout) && wParam != SIZE_MINIMIZED) {
+                LayoutInformationWindow(window);
+                return 0;
+            }
+            break;
+        case WM_SETTINGCHANGE:
+            if (window == hHelp || window == hAbout) {
+                FitInformationWindowToWorkArea(window);
+            }
+            break;
         case WM_DISPLAYCHANGE:
+            if (window == hHelp || window == hAbout) {
+                FitInformationWindowToWorkArea(window);
+            }
             if (!displayRefreshPending) {
                 displayRefreshPending = true;
                 PostMessageW(hController, WM_REFRESH_DISPLAYS, 0, 0);
