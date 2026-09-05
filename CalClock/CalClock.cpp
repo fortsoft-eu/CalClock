@@ -8593,8 +8593,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     MSG message = {};
     while (GetMessageW(&message, nullptr, 0, 0) > 0) {
         Widget* inputWidget = WidgetFromInputWindow(message.hwnd);
-        if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN) && message.wParam == VK_ESCAPE
-            && inputWidget != nullptr && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
+        if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN) && message.wParam == VK_ESCAPE && inputWidget != nullptr && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
             StopWidgetAlarm(inputWidget);
             continue;
         }

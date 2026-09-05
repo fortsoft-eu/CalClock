@@ -38,6 +38,7 @@ static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = {
     5,
     10,
     15,
+    20,
     30,
     60
 };

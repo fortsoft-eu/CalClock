@@ -1574,6 +1574,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každých 5 minut",
         L"Každých 10 minut",
         L"Každou čtvrthodinu",
+        L"Každých 20 minut",
         L"Každou půlhodinu",
         L"Každou hodinu"
     },
@@ -1583,6 +1584,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 5 minutes",
         L"Every 10 minutes",
         L"Every quarter hour",
+        L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
     },
@@ -1592,6 +1594,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Alle 5 Minuten",
         L"Alle 10 Minuten",
         L"Jede Viertelstunde",
+        L"Alle 20 Minuten",
         L"Jede halbe Stunde",
         L"Jede Stunde"
     },
@@ -1601,6 +1604,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Toutes les 5 minutes",
         L"Toutes les 10 minutes",
         L"Chaque quart d’heure",
+        L"Toutes les 20 minutes",
         L"Chaque demi-heure",
         L"Chaque heure"
     },
@@ -1610,6 +1614,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Cada 5 minutos",
         L"Cada 10 minutos",
         L"Cada cuarto de hora",
+        L"Cada 20 minutos",
         L"Cada media hora",
         L"Cada hora"
     },
@@ -1619,6 +1624,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Ogni 5 minuti",
         L"Ogni 10 minuti",
         L"Ogni quarto d’ora",
+        L"Ogni 20 minuti",
         L"Ogni mezz’ora",
         L"Ogni ora"
     },
@@ -1628,6 +1634,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Co 5 minut",
         L"Co 10 minut",
         L"Co kwadrans",
+        L"Co 20 minut",
         L"Co pół godziny",
         L"Co godzinę"
     },
@@ -1637,6 +1644,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každých 5 minút",
         L"Každých 10 minút",
         L"Každú štvrťhodinu",
+        L"Každých 20 minút",
         L"Každú polhodinu",
         L"Každú hodinu"
     },
@@ -1646,6 +1654,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 5 minutes",
         L"Every 10 minutes",
         L"Every quarter hour",
+        L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
     },
@@ -1655,6 +1664,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 5 minutes",
         L"Every 10 minutes",
         L"Every quarter hour",
+        L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
     },
@@ -1664,6 +1674,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"A cada 5 minutos",
         L"A cada 10 minutos",
         L"A cada quarto de hora",
+        L"A cada 20 minutos",
         L"A cada meia hora",
         L"A cada hora"
     },
@@ -1673,6 +1684,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Hvert 5. minutt",
         L"Hvert 10. minutt",
         L"Hvert kvarter",
+        L"Hvert 20. minutt",
         L"Hver halvtime",
         L"Hver time"
     },
@@ -1682,6 +1694,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Var 5:e minut",
         L"Var 10:e minut",
         L"Varje kvart",
+        L"Var 20:e minut",
         L"Varje halvtimme",
         L"Varje timme"
     },
@@ -1691,6 +1704,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"5 minuutin välein",
         L"10 minuutin välein",
         L"15 minuutin välein",
+        L"20 minuutin välein",
         L"30 minuutin välein",
         L"Tunnin välein"
     },
@@ -1700,6 +1714,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Hvert 5. minut",
         L"Hvert 10. minut",
         L"Hvert kvarter",
+        L"Hvert 20. minut",
         L"Hver halve time",
         L"Hver time"
     },
@@ -1709,6 +1724,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Á 5 mínútna fresti",
         L"Á 10 mínútna fresti",
         L"Á stundarfjórðungs fresti",
+        L"Á 20 mínútna fresti",
         L"Á hálftíma fresti",
         L"Á klukkustundar fresti"
     },
@@ -1718,6 +1734,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Her 5 dakikada",
         L"Her 10 dakikada",
         L"Her çeyrek saatte",
+        L"Her 20 dakikada",
         L"Her yarım saatte",
         L"Her saat"
     }
@@ -3192,83 +3209,100 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
 
 const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENÍ\r\nNa kartě Znamení se pro každý widget samostatně volí žádné znamení nebo interval jedné, pěti, deseti, patnácti, "
-    L"třiceti či šedesáti minut. Časová hranice vychází z času daného widgetu včetně UTC, časového pásma, offsetu a případné korekce NTP. Pět krátkých "
+    L"dvaceti, třiceti či šedesáti minut. Časová hranice vychází z času daného widgetu včetně UTC, časového pásma, offsetu a případné korekce NTP. Pět krátkých "
     L"tónů zazní v posledních pěti sekundách a dlouhý tón přesně na hranici. Pokud na stejný okamžik připadne znamení více widgetů, přehraje se jediná "
     L"společná sekvence. Po ztlumení může právě znějící tón doznít; další tóny se přeskočí a po zrušení ztlumení zazní až následující naplánovaný tón. "
-    L"Samostatný Kalendář nepodporuje budík, časové znamení ani ztlumení; příslušné volby jsou neaktivní a v jeho nabídce nejsou.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, thirty, or sixty minutes separately "
+    L"Samostatný Kalendář nepodporuje budík, časové znamení ani ztlumení; příslušné volby jsou neaktivní a v jeho nabídce nejsou."
+    L"\r\n\r\nPři intervalu 20 minut znamení zazní v :00, :20 a :40 podle času widgetu.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately "
     L"for each widget. The boundary follows that widget’s time, including UTC, time zone, offset, and any NTP correction. Five short pips sound "
     L"during the final five seconds and a long pip exactly on the boundary. If several widgets signal at the same instant, only one shared sequence "
     L"is played. After muting, a pip already sounding may finish; later pips are skipped and only the next scheduled pip sounds after unmuting. "
-    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them.",
+    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them."
+    L"\r\n\r\nWith a 20-minute interval, signals sound at :00, :20 and :40 in the widget's displayed time.",
     L"\r\n\r\nAKUSTISCHES ZEITZEICHEN\r\nAuf der Registerkarte Zeitzeichen wird für jedes Widget einzeln kein Signal oder ein Intervall von einer, fünf, zehn, fünfzehn, "
-    L"dreißig oder sechzig Minuten gewählt. Die Grenze folgt der Zeit dieses Widgets einschließlich UTC, Zeitzone, Offset und einer möglichen NTP-Korrektur. In den letzten "
+    L"zwanzig, dreißig oder sechzig Minuten gewählt. Die Grenze folgt der Zeit dieses Widgets einschließlich UTC, Zeitzone, Offset und einer möglichen NTP-Korrektur. In den letzten "
     L"fünf Sekunden erklingen fünf kurze Töne und genau an der Grenze ein langer Ton. Fallen Signale mehrerer Widgets auf denselben Zeitpunkt, wird nur eine gemeinsame "
     L"Folge wiedergegeben. Beim Stummschalten darf ein bereits klingender Ton enden; weitere Töne werden bis zum nächsten geplanten Ton nach dem Aufheben übersprungen. "
-    L"Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung; die zugehörigen Optionen sind deaktiviert und fehlen in seinem Menü.",
-    L"\r\n\r\nSIGNAL HORAIRE SONORE\r\nL’onglet Signal choisit séparément pour chaque widget aucun signal ou un intervalle d’une, cinq, dix, quinze, trente ou "
+    L"Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung; die zugehörigen Optionen sind deaktiviert und fehlen in seinem Menü."
+    L"\r\n\r\nBeim 20-Minuten-Intervall ertönt das Zeitzeichen um :00, :20 und :40 gemäß der Widget-Zeit.",
+    L"\r\n\r\nSIGNAL HORAIRE SONORE\r\nL’onglet Signal choisit séparément pour chaque widget aucun signal ou un intervalle d’une, cinq, dix, quinze, vingt, trente ou "
     L"soixante minutes. La limite suit l’heure du widget, y compris UTC, le fuseau horaire, le décalage et toute correction NTP. Cinq bips courts retentissent "
     L"pendant les cinq dernières secondes et un bip long exactement à la limite. Si plusieurs widgets signalent au même instant, une seule séquence commune est "
     L"jouée. Lors de la coupure, un bip déjà commencé peut finir ; les suivants sont ignorés et seul le prochain bip planifié retentit après le rétablissement. "
-    L"Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son ; les options correspondantes sont désactivées et absentes de son menu.",
+    L"Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son ; les options correspondantes sont désactivées et absentes de son menu."
+    L"\r\n\r\nAvec un intervalle de 20 minutes, le signal retentit à :00, :20 et :40 selon l’heure du widget.",
     L"\r\n\r\nSEÑAL HORARIA SONORA\r\nLa pestaña Señal permite elegir por separado para cada widget ninguna señal o un intervalo de uno, cinco, diez, quince, "
-    L"treinta o sesenta minutos. El límite sigue la hora del widget, incluidos UTC, zona horaria, offset y cualquier corrección NTP. Cinco pitidos cortos "
+    L"veinte, treinta o sesenta minutos. El límite sigue la hora del widget, incluidos UTC, zona horaria, offset y cualquier corrección NTP. Cinco pitidos cortos "
     L"suenan durante los últimos cinco segundos y uno largo exactamente en el límite. Si varios widgets coinciden, se reproduce una única secuencia compartida. "
     L"Al silenciar, puede terminar el pitido que ya suena; los siguientes se omiten y, al reactivar el sonido, suena solo el próximo pitido programado. "
-    L"Un Calendario independiente no admite alarma, señal horaria ni silencio; las opciones correspondientes están desactivadas y no aparecen en su menú.",
+    L"Un Calendario independiente no admite alarma, señal horaria ni silencio; las opciones correspondientes están desactivadas y no aparecen en su menú."
+    L"\r\n\r\nCon un intervalo de 20 minutos, la señal suena a :00, :20 y :40 según la hora del widget.",
     L"\r\n\r\nSEGNALE ORARIO ACUSTICO\r\nLa scheda Segnale consente di scegliere separatamente per ogni widget nessun segnale oppure un intervallo di uno, "
-    L"cinque, dieci, quindici, trenta o sessanta minuti. Il limite segue l’ora del widget, inclusi UTC, fuso orario, offset ed eventuale correzione NTP. Cinque "
+    L"cinque, dieci, quindici, venti, trenta o sessanta minuti. Il limite segue l’ora del widget, inclusi UTC, fuso orario, offset ed eventuale correzione NTP. Cinque "
     L"segnali brevi suonano negli ultimi cinque secondi e uno lungo esattamente al limite. Se più widget coincidono, viene riprodotta una sola sequenza comune. "
     L"Disattivando l’audio, un segnale già iniziato può terminare; i successivi vengono saltati e, alla riattivazione, suona solo il prossimo segnale programmato. "
-    L"Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio; le relative opzioni sono disabilitate e assenti dal menu.",
+    L"Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio; le relative opzioni sono disabilitate e assenti dal menu."
+    L"\r\n\r\nCon un intervallo di 20 minuti, il segnale suona a :00, :20 e :40 secondo l’ora del widget.",
     L"\r\n\r\nDŹWIĘKOWY SYGNAŁ CZASU\r\nKarta Sygnał pozwala osobno dla każdego widżetu wybrać brak sygnału albo odstęp jednej, pięciu, dziesięciu, piętnastu, "
-    L"trzydziestu lub sześćdziesięciu minut. Granica wynika z czasu widżetu, w tym UTC, strefy czasowej, offsetu i korekty NTP. Pięć krótkich sygnałów "
+    L"dwudziestu, trzydziestu lub sześćdziesięciu minut. Granica wynika z czasu widżetu, w tym UTC, strefy czasowej, offsetu i korekty NTP. Pięć krótkich sygnałów "
     L"rozlega się w ostatnich pięciu sekundach, a długi dokładnie na granicy. Gdy sygnały wielu widżetów przypadają jednocześnie, odtwarzana jest jedna wspólna "
     L"sekwencja. Po wyciszeniu rozpoczęty sygnał może wybrzmieć; następne są pomijane, a po włączeniu dźwięku zabrzmi dopiero kolejny zaplanowany sygnał. "
-    L"Samodzielny Kalendarz nie obsługuje alarmu, sygnału czasu ani wyciszenia; odpowiednie opcje są wyłączone i nie występują w jego menu.",
+    L"Samodzielny Kalendarz nie obsługuje alarmu, sygnału czasu ani wyciszenia; odpowiednie opcje są wyłączone i nie występują w jego menu."
+    L"\r\n\r\nPrzy odstępie 20 minut sygnał rozlega się o :00, :20 i :40 według czasu widżetu.",
     L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENIE\r\nNa karte Znamenie sa pre každý widget samostatne volí žiadne znamenie alebo interval jednej, piatich, desiatich, "
-    L"pätnástich, tridsiatich či šesťdesiatich minút. Časová hranica vychádza z času daného widgetu vrátane UTC, časového pásma, offsetu a prípadnej korekcie NTP. "
+    L"pätnástich, dvadsiatich, tridsiatich či šesťdesiatich minút. Časová hranica vychádza z času daného widgetu vrátane UTC, časového pásma, offsetu a prípadnej korekcie NTP. "
     L"Päť krátkych tónov zaznie v posledných piatich sekundách a dlhý tón presne na hranici. Ak na rovnaký okamih pripadne znamenie viacerých widgetov, prehrá "
     L"sa jediná spoločná sekvencia. Po stlmení môže práve znejúci tón doznieť; ďalšie sa preskočia a po zrušení stlmenia zaznie až nasledujúci naplánovaný tón. "
-    L"Samostatný Kalendár nepodporuje budík, časové znamenie ani stlmenie; príslušné voľby sú neaktívne a v jeho ponuke nie sú.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, thirty, or sixty minutes separately "
+    L"Samostatný Kalendár nepodporuje budík, časové znamenie ani stlmenie; príslušné voľby sú neaktívne a v jeho ponuke nie sú."
+    L"\r\n\r\nPri intervale 20 minút znamenie zaznie v :00, :20 a :40 podľa času widgetu.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately "
     L"for each widget. The boundary follows that widget’s time, including UTC, time zone, offset, and any NTP correction. Five short pips sound "
     L"during the final five seconds and a long pip exactly on the boundary. If several widgets signal at the same instant, only one shared sequence "
     L"is played. After muting, a pip already sounding may finish; later pips are skipped and only the next scheduled pip sounds after unmuting. "
-    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, thirty, or sixty minutes separately "
+    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them."
+    L"\r\n\r\nWith a 20-minute interval, signals sound at :00, :20 and :40 in the widget's displayed time.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe Signal tab selects no signal or an interval of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately "
     L"for each widget. The boundary follows that widget’s time, including UTC, time zone, offset, and any NTP correction. Five short pips sound "
     L"during the final five seconds and a long pip exactly on the boundary. If several widgets signal at the same instant, only one shared sequence "
     L"is played. After muting, a pip already sounding may finish; later pips are skipped and only the next scheduled pip sounds after unmuting. "
-    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them.",
-    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO separador Sinal escolhe para cada widget nenhum sinal ou intervalos de 1, 5, 10, 15, 30 ou 60 minutos. O limite "
+    L"A standalone Calendar supports neither alarms, time signals nor muting; the corresponding controls are disabled and its menu omits them."
+    L"\r\n\r\nWith a 20-minute interval, signals sound at :00, :20 and :40 in the widget's displayed time.",
+    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO separador Sinal escolhe para cada widget nenhum sinal ou intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos. O limite "
     L"segue a hora do widget, incluindo UTC, fuso, desvio e correção NTP. Soam cinco sinais curtos e um longo; sinais simultâneos de vários widgets "
     L"são unidos. Ao silenciar, o sinal já iniciado pode terminar; os seguintes são ignorados e só o próximo sinal agendado soa depois de repor o áudio. "
-    L"Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento; as opções correspondentes ficam desativadas e não aparecem no menu.",
-    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nFanen Signal velger for hver widget ingen signal eller intervaller på 1, 5, 10, 15, 30 eller 60 minutter. Grensen "
+    L"Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento; as opções correspondentes ficam desativadas e não aparecem no menu."
+    L"\r\n\r\nCom um intervalo de 20 minutos, o sinal soa aos :00, :20 e :40 segundo a hora do widget.",
+    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nFanen Signal velger for hver widget ingen signal eller intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter. Grensen "
     L"følger widgettiden, inkludert UTC, tidssone, forskyvning og NTP-korreksjon. Fem korte og ett langt pip høres; samtidige signaler fra flere widgeter "
     L"slås sammen. Ved demping kan et pip som allerede har startet fullføres; senere pip hoppes over, og bare neste planlagte pip høres etter oppheving. "
-    L"En frittstående Kalender støtter ikke alarm, tidssignal eller demping; de tilhørende valgene er deaktivert og finnes ikke i menyen.",
-    L"\r\n\r\nHÖRBAR TIDSSIGNAL\r\nFliken Signal väljer för varje widget ingen signal eller intervall på 1, 5, 10, 15, 30 eller 60 minuter. Gränsen "
+    L"En frittstående Kalender støtter ikke alarm, tidssignal eller demping; de tilhørende valgene er deaktivert og finnes ikke i menyen."
+    L"\r\n\r\nMed et intervall på 20 minutter lyder signalet ved :00, :20 og :40 etter widgettiden.",
+    L"\r\n\r\nHÖRBAR TIDSSIGNAL\r\nFliken Signal väljer för varje widget ingen signal eller intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter. Gränsen "
     L"följer widgetens tid, inklusive UTC, tidszon, förskjutning och NTP-korrigering. Fem korta och ett långt pip hörs; samtidiga signaler från flera "
     L"widgetar slås samman. Vid tystning får ett påbörjat pip avslutas; följande hoppas över och först nästa schemalagda pip hörs efter återaktivering. "
-    L"En fristående Kalender stöder inte alarm, tidssignal eller tystning; motsvarande val är inaktiva och saknas i menyn.",
-    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki-välilehdellä valitaan jokaiselle pienoisohjelmalle ei merkkiä tai 1, 5, 10, 15, 30 tai 60 minuutin väli. Raja "
+    L"En fristående Kalender stöder inte alarm, tidssignal eller tystning; motsvarande val är inaktiva och saknas i menyn."
+    L"\r\n\r\nMed ett intervall på 20 minuter hörs signalen vid :00, :20 och :40 enligt widgetens tid.",
+    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki-välilehdellä valitaan jokaiselle pienoisohjelmalle ei merkkiä tai 1, 5, 10, 15, 20, 30 tai 60 minuutin väli. Raja "
     L"seuraa pienoisohjelman aikaa, UTC:tä, aikavyöhykettä, poikkeamaa ja NTP-korjausta myöten. Viisi lyhyttä ja yksi pitkä merkki kuuluu; samanaikaiset "
     L"merkit yhdistetään. Mykistettäessä jo alkanut ääni saa päättyä; seuraavat ohitetaan ja mykistyksen jälkeen kuuluu vasta seuraava ajastettu ääni. "
-    L"Erillinen Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä; vastaavat valinnat ovat poissa käytöstä eivätkä näy valikossa.",
-    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nFanen Signal vælger for hver widget intet signal eller intervaller på 1, 5, 10, 15, 30 eller 60 minutter. Grænsen "
+    L"Erillinen Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä; vastaavat valinnat ovat poissa käytöstä eivätkä näy valikossa."
+    L"\r\n\r\nKun väli on 20 minuuttia, aikamerkki kuuluu kohdissa :00, :20 ja :40 pienoisohjelman ajan mukaan.",
+    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nFanen Signal vælger for hver widget intet signal eller intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter. Grænsen "
     L"følger widgettiden, inklusive UTC, tidszone, forskydning og NTP-korrektion. Fem korte og ét langt bip lyder; samtidige signaler fra flere widgets "
     L"flettes sammen. Ved dæmpning må et igangværende bip klinge ud; de følgende springes over, og først det næste planlagte bip lyder efter ophævelse. "
-    L"En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning; de tilhørende valg er deaktiverede og findes ikke i menuen.",
-    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nTímamerkisflipinn velur fyrir hverja græju ekkert merki eða 1, 5, 10, 15, 30 eða 60 mínútna bil. Mörkin fylgja "
+    L"En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning; de tilhørende valg er deaktiverede og findes ikke i menuen."
+    L"\r\n\r\nMed et interval på 20 minutter lyder signalet ved :00, :20 og :40 efter widgettiden.",
+    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nTímamerkisflipinn velur fyrir hverja græju ekkert merki eða 1, 5, 10, 15, 20, 30 eða 60 mínútna bil. Mörkin fylgja "
     L"tíma græjunnar, þar með talið UTC, tímabelti, hliðrun og NTP-leiðrétting. Fimm stutt og eitt langt píp hljóma; samtímamerki margra græja "
     L"eru sameinuð. Við þöggun má þegar hafið píp klárast; þeim næstu er sleppt og fyrst næsta áætlaða píp heyrist eftir að þöggun er aflétt. "
-    L"Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun; viðeigandi valkostir eru óvirkir og birtast ekki í valmyndinni.",
-    L"\r\n\r\nSESLİ ZAMAN SİNYALİ\r\nSinyal sekmesi her araç için sinyal yok seçeneğini veya 1, 5, 10, 15, 30 ya da 60 dakikalık aralıkları seçer. Sınır; "
+    L"Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun; viðeigandi valkostir eru óvirkir og birtast ekki í valmyndinni."
+    L"\r\n\r\nMeð 20 mínútna millibili hljómar tímamerkið á :00, :20 og :40 samkvæmt tíma græjunnar.",
+    L"\r\n\r\nSESLİ ZAMAN SİNYALİ\r\nSinyal sekmesi her araç için sinyal yok seçeneğini veya 1, 5, 10, 15, 20, 30 ya da 60 dakikalık aralıkları seçer. Sınır; "
     L"UTC, saat dilimi, ofset ve NTP düzeltmesi dâhil aracın zamanını izler. Beş kısa ve bir uzun ses çalar; birden çok aracın eşzamanlı sinyalleri "
     L"birleştirilir. Sessize alındığında başlamış olan ses bitebilir; sonrakiler atlanır ve ses açıldıktan sonra yalnızca sıradaki planlanmış ses çalar. "
     L"Bağımsız Takvim alarmı, zaman sinyalini veya sessize almayı desteklemez; ilgili seçenekler devre dışıdır ve menüsünde görünmez."
+    L"\r\n\r\n20 dakikalık aralıkta sinyal, aracın saatine göre :00, :20 ve :40’ta çalar."
 };
 
 const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {

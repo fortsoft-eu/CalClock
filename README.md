@@ -11,7 +11,7 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 - Native Windows calendars with selectable dates, four border styles, configurable border colour, week numbers, first-day settings, and 33 clipboard formats
 - Calendar-and-clock panels with four clock-face sizes, four border styles, configurable border colour, UTC text, a leading-zero option, and separate fonts for each text row
 - Alarms with selectable weekdays, visual indication, internal audio playback, looping, local commands, and HTTP/HTTPS script calls
-- Per-clock audible time signals at 1, 5, 10, 15, 30, or 60-minute intervals, with coincident signals merged into one sequence
+- Per-clock audible time signals at 1, 5, 10, 15, 20, 30, or 60-minute intervals, with coincident signals merged into one sequence
 - Per-clock Mute commands and a checked Mute all command in the notification-area menu
 - Optional automatic startup with Windows
 - Optional five-pixel snapping to work-area edges while dragging widgets, enabled by default, with edge attachment preserved when a widget changes size
@@ -79,7 +79,7 @@ Clock widgets support alarms on individually selected weekdays; all seven days a
 
 Run a file or command enables its field, Browse button, Test button, and looping option. Test and looping additionally require a nonblank field, but a running test can always be stopped. The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
 
-The per-widget Signal tab can disable audible time signals or schedule them every 1, 5, 10, 15, 30, or 60 minutes according to that widget's displayed time. Five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured; if any of their schedules meet at the same instant, CalClock plays only one shared sequence.
+The per-widget Signal tab can disable audible time signals or schedule them every 1, 5, 10, 15, 20, 30, or 60 minutes according to that widget's displayed time. The 20-minute interval signals at :00, :20, and :40 according to that displayed time. Five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured; if any of their schedules meet at the same instant, CalClock plays only one shared sequence.
 
 Alarm and time-signal enablement can also be toggled in each sound-capable widget's context menu. The alarm item shows its time and, unless all days are selected, its active weekdays. The checked Mute command affects its widget and is reflected by Muted on the General tab. A standalone Calendar has no alarm, time signal, or mute state, so these commands and settings are omitted or disabled for it. The notification-area command is named Mute all; pressing `M` on any widget performs the same global toggle. Global unmute restores only the widgets muted by the preceding global action. Internal audio continues silently and resumes when unmuted. A pip already in progress may finish, while subsequent pips are skipped until sound is enabled again. Non-audio commands and remote scripts are unaffected.
 
