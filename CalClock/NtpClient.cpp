@@ -1,4 +1,30 @@
-﻿#define NOMINMAX
+﻿/**
+ * This is open-source software licensed under the terms of the MIT License.
+ *
+ * Copyright (c) 2026 Petr Červinka - FortSoft <cervinka@fortsoft.eu>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **
+ * Last modified for version 1.4.1.3
+ */
+
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -114,7 +140,9 @@ ULONGLONG CurrentFileTimeValue() {
     typedef VOID(WINAPI* GetPreciseTimeProc)(LPFILETIME fileTime);
     static GetPreciseTimeProc getPreciseTime = []() {
         HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
-        return kernel == nullptr ? static_cast<GetPreciseTimeProc>(nullptr) : reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
+        return kernel == nullptr
+            ? static_cast<GetPreciseTimeProc>(nullptr)
+            : reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
         }();
     if (getPreciseTime != nullptr) {
         getPreciseTime(&fileTime);
@@ -202,9 +230,13 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             request[0] = 0x23;
             ULONGLONG t1 = CurrentFileTimeValue();
             WriteNtpTimestamp(request + 40, t1);
-            int sent = connected ? send(socketHandle, reinterpret_cast<const char*>(request), sizeof(request), 0) : SOCKET_ERROR;
+            int sent = connected
+                ? send(socketHandle, reinterpret_cast<const char*>(request), sizeof(request), 0)
+                : SOCKET_ERROR;
             BYTE response[48] = {};
-            int received = sent == sizeof(request) ? recv(socketHandle, reinterpret_cast<char*>(response), sizeof(response), 0) : SOCKET_ERROR;
+            int received = sent == sizeof(request)
+                ? recv(socketHandle, reinterpret_cast<char*>(response), sizeof(response), 0)
+                : SOCKET_ERROR;
             ULONGLONG t4 = CurrentFileTimeValue();
             closesocket(socketHandle);
             BYTE leap = response[0] >> 6;
@@ -272,7 +304,9 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         }
         std::sort(sortedOffsets.begin(), sortedOffsets.end());
         size_t middle = sortedOffsets.size() / 2;
-        LONGLONG medianOffset = sortedOffsets.size() % 2 == 0 ? sortedOffsets[middle - 1] / 2 + sortedOffsets[middle] / 2 : sortedOffsets[middle];
+        LONGLONG medianOffset = sortedOffsets.size() % 2 == 0
+            ? sortedOffsets[middle - 1] / 2 + sortedOffsets[middle] / 2
+            : sortedOffsets[middle];
         LONGLONG minimumDelay = samples[0].delay100Nanoseconds;
         for (size_t index = 1; index < samples.size(); index++) {
             minimumDelay = std::min(minimumDelay, samples[index].delay100Nanoseconds);
@@ -283,7 +317,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         size_t bestIndex = 0;
         bool acceptedAny = false;
         for (size_t index = 0; index < samples.size(); index++) {
-            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds) - static_cast<long double>(medianOffset));
+            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds)
+                - static_cast<long double>(medianOffset));
             if (difference > rejectionLimit) {
                 continue;
             }
@@ -313,7 +348,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         *parameters->queryRunning = false;
         return 0;
     }
-    if (parameters->notifyWindow != nullptr && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0, reinterpret_cast<LPARAM>(result.get()))) {
+    if (parameters->notifyWindow != nullptr && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0,
+        reinterpret_cast<LPARAM>(result.get()))) {
         result.release();
     } else {
         *parameters->queryRunning = false;

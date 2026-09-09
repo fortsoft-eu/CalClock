@@ -1,4 +1,30 @@
-﻿#define NOMINMAX
+﻿/**
+ * This is open-source software licensed under the terms of the MIT License.
+ *
+ * Copyright (c) 2026 Petr Červinka - FortSoft <cervinka@fortsoft.eu>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **
+ * Last modified for version 1.4.1.3
+ */
+
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "AnalogClockHost.h"
 #include <windows.h>
@@ -7,12 +33,7 @@
 
 static const int ANALOG_PROFILE_COUNT = 4;
 static const int ANALOG_PROFILE_LENGTH = 14;
-static const int ANALOG_PROFILE_SIZES[ANALOG_PROFILE_COUNT] = {
-    104,
-    130,
-    166,
-    198
-};
+static const int ANALOG_PROFILE_SIZES[ANALOG_PROFILE_COUNT] = { 104, 130, 166, 198 };
 
 typedef UINT(__fastcall* RegisterClockClassProc)(HINSTANCE);
 typedef ATOM(WINAPI* VistaRegisterClockClassProc)(HINSTANCE);
@@ -65,7 +86,8 @@ static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, 
             continue;
         }
         size_t size = section[index].Misc.VirtualSize;
-        if (size == 0 || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage || size > ntHeaders->OptionalHeader.SizeOfImage - section[index].VirtualAddress) {
+        if (size == 0 || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage
+            || size > ntHeaders->OptionalHeader.SizeOfImage - section[index].VirtualAddress) {
             continue;
         }
         if (size > selectedSize) {
@@ -93,7 +115,8 @@ static int AnalogProfileIndex(DWORD size) {
 static bool IsValidAnalogProfile(const DWORD* profile) {
     return !(profile == nullptr
         || AnalogProfileIndex(profile[0]) < 0
-        || profile[1] == 0 || profile[2] == 0
+        || profile[1] == 0
+        || profile[2] == 0
         || profile[1] == profile[2]
         || profile[3] == 0
         || profile[3] != profile[4]
@@ -149,13 +172,7 @@ static void CacheAnalogProfiles(DWORD* profileTable) {
 }
 
 static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
-    const BYTE prolog[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC
-    };
+    const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
     if (codeBegin == nullptr || address == nullptr || address < codeBegin + sizeof(prolog)) {
         return nullptr;
     }
@@ -172,49 +189,14 @@ static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
 
 static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* codeBegin, size_t codeSize, bool* usesStackArgument) {
     const BYTE classNameBytes[] = {
-        0x43,
-        0,
-        0x6C,
-        0,
-        0x6F,
-        0,
-        0x63,
-        0,
-        0x6B,
-        0,
-        0x57,
-        0,
-        0x6E,
-        0,
-        0x64,
-        0,
-        0x4D,
-        0,
-        0x61,
-        0,
-        0x69,
-        0,
-        0x6E,
-        0,
-        0,
-        0
+        0x43, 0, 0x6C, 0, 0x6F, 0, 0x63, 0,
+        0x6B, 0, 0x57, 0, 0x6E, 0, 0x64, 0,
+        0x4D, 0, 0x61, 0, 0x69, 0, 0x6E, 0,
+        0,    0
     };
-    const BYTE cursorPattern[] = {
-        0x68,
-        0x00,
-        0x7F,
-        0x00,
-        0x00
-    };
-    const BYTE stackArgumentPattern[] = {
-        0x8B,
-        0x75,
-        0x08
-    };
-    const BYTE fastcallPattern[] = {
-        0x8B,
-        0xF1
-    };
+    const BYTE cursorPattern[] = { 0x68, 0x00, 0x7F, 0x00, 0x00 };
+    const BYTE stackArgumentPattern[] = { 0x8B, 0x75, 0x08 };
+    const BYTE fastcallPattern[] = { 0x8B, 0xF1 };
     BYTE* result = nullptr;
     bool resultUsesStackArgument = false;
     BYTE* stringSearch = module;
@@ -261,44 +243,13 @@ static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* code
 }
 
 static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
-    const BYTE prolog[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC
-    };
-    const BYTE stateArgumentPattern[] = {
-        0x8B,
-        0xF1
-    };
-    const BYTE readyPattern[] = {
-        0x39,
-        0x46,
-        0x34
-    };
-    const BYTE facePattern[] = {
-        0x39,
-        0x46,
-        0x10
-    };
-    const BYTE remoteDirectPattern[] = {
-        0x83,
-        0x7E,
-        0x60,
-        0x00
-    };
-    const BYTE remoteAddressPattern[] = {
-        0x8D,
-        0x5E,
-        0x60
-    };
-    const BYTE secondsPattern[] = {
-        0x83,
-        0x7E,
-        0x58,
-        0x00
-    };
+    const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
+    const BYTE stateArgumentPattern[] = { 0x8B, 0xF1 };
+    const BYTE readyPattern[] = { 0x39, 0x46, 0x34 };
+    const BYTE facePattern[] = { 0x39, 0x46, 0x10 };
+    const BYTE remoteDirectPattern[] = { 0x83, 0x7E, 0x60, 0x00 };
+    const BYTE remoteAddressPattern[] = { 0x8D, 0x5E, 0x60 };
+    const BYTE secondsPattern[] = { 0x83, 0x7E, 0x58, 0x00 };
     BYTE* result = nullptr;
     BYTE* search = codeBegin;
     size_t remaining = codeSize;
@@ -334,23 +285,8 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
 
 static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
     const BYTE registerPattern[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC,
-        0x83,
-        0xEC,
-        0x28,
-        0x56,
-        0x8B,
-        0x75,
-        0x08,
-        0x57,
-        0x8D,
-        0x45,
-        0xD8,
-        0x50
+        0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x28, 0x56,
+        0x8B, 0x75, 0x08, 0x57, 0x8D, 0x45, 0xD8, 0x50
     };
     BYTE* registerAddress = nullptr;
     BYTE* search = module;
@@ -364,9 +300,8 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
             DWORD classAddressValue = 0;
             CopyMemory(&classAddressValue, candidate + 18, sizeof(classAddressValue));
             const wchar_t* className = reinterpret_cast<const wchar_t*>(static_cast<ULONG_PTR>(classAddressValue));
-            if (reinterpret_cast<const BYTE*>(className) >= module &&
-                reinterpret_cast<const BYTE*>(className) + sizeof(L"ClockWndMain") <= module + imageSize &&
-                wcscmp(className, L"ClockWndMain") == 0) {
+            if (reinterpret_cast<const BYTE*>(className) >= module && reinterpret_cast<const BYTE*>(className) +
+                sizeof(L"ClockWndMain") <= module + imageSize && wcscmp(className, L"ClockWndMain") == 0) {
                 if (registerAddress != nullptr) {
                     return nullptr;
                 }
@@ -381,30 +316,16 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
 
 static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) {
     const BYTE renderPattern[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC,
-        0x83,
-        0xEC,
-        0x34,
-        0x56,
-        0x57,
-        0x8B,
-        0xF1,
-        0x33,
-        0xFF,
-        0x39,
-        0x7E,
-        0x34
+        0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x34, 0x56,
+        0x57, 0x8B, 0xF1, 0x33, 0xFF, 0x39, 0x7E, 0x34
     };
     BYTE* registerAddress = FindLegacyClockRegisterAddress(module, imageSize);
     BYTE* renderAddress = FindModulePattern(module, imageSize, renderPattern, sizeof(renderPattern));
     if (registerAddress == nullptr || renderAddress == nullptr) {
         return false;
     }
-    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize - static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
+    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize -
+        static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
     if (secondRenderAddress != nullptr) {
         return false;
     }
@@ -416,57 +337,16 @@ static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) 
 
 static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     const BYTE renderPattern[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC,
-        0x83,
-        0xEC,
-        0x3C,
-        0x56,
-        0x57,
-        0x8B,
-        0xF1,
-        0x33,
-        0xFF,
-        0x39,
-        0x7E,
-        0x44
+        0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x3C, 0x56,
+        0x57, 0x8B, 0xF1, 0x33, 0xFF, 0x39, 0x7E, 0x44
     };
     const BYTE loadPattern[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC,
-        0x51,
-        0x56,
-        0x57,
-        0x8B,
-        0xF1,
-        0x33,
-        0xFF,
-        0x33,
-        0xC0,
-        0x39,
-        0x7E,
-        0x68
+        0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x51, 0x56, 0x57, 0x8B,
+        0xF1, 0x33, 0xFF, 0x33, 0xC0, 0x39, 0x7E, 0x68
     };
     const BYTE releasePattern[] = {
-        0x8B,
-        0xFF,
-        0x56,
-        0x8B,
-        0xF1,
-        0x8B,
-        0x4E,
-        0x14,
-        0x57,
-        0x33,
-        0xFF,
-        0x3B,
-        0xCF
+        0x8B, 0xFF, 0x56, 0x8B, 0xF1, 0x8B, 0x4E, 0x14, 0x57,
+        0x33, 0xFF, 0x3B, 0xCF
     };
     BYTE* registerAddress = FindLegacyClockRegisterAddress(module, imageSize);
     BYTE* renderAddress = FindModulePattern(module, imageSize, renderPattern, sizeof(renderPattern));
@@ -475,9 +355,12 @@ static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     if (registerAddress == nullptr || renderAddress == nullptr || loadAddress == nullptr || releaseAddress == nullptr) {
         return false;
     }
-    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize - static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
-    BYTE* secondLoadAddress = FindModulePattern(loadAddress + 1, imageSize - static_cast<size_t>(loadAddress + 1 - module), loadPattern, sizeof(loadPattern));
-    BYTE* secondReleaseAddress = FindModulePattern(releaseAddress + 1, imageSize - static_cast<size_t>(releaseAddress + 1 - module), releasePattern, sizeof(releasePattern));
+    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize -
+        static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
+    BYTE* secondLoadAddress = FindModulePattern(loadAddress + 1, imageSize -
+        static_cast<size_t>(loadAddress + 1 - module), loadPattern, sizeof(loadPattern));
+    BYTE* secondReleaseAddress = FindModulePattern(releaseAddress + 1, imageSize -
+        static_cast<size_t>(releaseAddress + 1 - module), releasePattern, sizeof(releasePattern));
     if (secondRenderAddress != nullptr || secondLoadAddress != nullptr || secondReleaseAddress != nullptr) {
         return false;
     }
@@ -499,7 +382,8 @@ static bool ResolveAnalogClockInternals() {
         return false;
     }
     IMAGE_NT_HEADERS32* ntHeaders = reinterpret_cast<IMAGE_NT_HEADERS32*>(module + dosHeader->e_lfanew);
-    if (ntHeaders->Signature != IMAGE_NT_SIGNATURE || ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC || ntHeaders->OptionalHeader.SizeOfImage == 0) {
+    if (ntHeaders->Signature != IMAGE_NT_SIGNATURE || ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC
+        || ntHeaders->OptionalHeader.SizeOfImage == 0) {
         return false;
     }
     size_t imageSize = ntHeaders->OptionalHeader.SizeOfImage;
@@ -523,31 +407,14 @@ static bool ResolveAnalogClockInternals() {
         registerAddress = nullptr;
     }
     const BYTE renderPattern[] = {
-        0x8B,
-        0xFF,
-        0x55,
-        0x8B,
-        0xEC,
-        0x83,
-        0xEC,
-        0x40,
-        0x53,
-        0x56,
-        0x8B,
-        0xF1,
-        0x33,
-        0xC0,
-        0x57,
-        0x89,
-        0x75,
-        0xDC,
-        0x39,
-        0x46,
-        0x34
+        0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC,
+        0x40, 0x53, 0x56, 0x8B, 0xF1, 0x33, 0xC0,
+        0x57, 0x89, 0x75, 0xDC, 0x39, 0x46, 0x34
     };
     BYTE* renderAddress = FindModulePattern(codeBegin, codeSize, renderPattern, sizeof(renderPattern));
     if (renderAddress != nullptr) {
-        BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, codeSize - static_cast<size_t>(renderAddress + 1 - codeBegin), renderPattern, sizeof(renderPattern));
+        BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, codeSize - static_cast<size_t>(renderAddress + 1 - codeBegin),
+            renderPattern, sizeof(renderPattern));
         if (secondRenderAddress != nullptr) {
             renderAddress = nullptr;
         }
@@ -724,7 +591,8 @@ HWND CreateAnalogClockControl(HWND parent, int x, int y, int size, bool showSeco
     if (analogClockImplementation == ANALOG_CLOCK_VISTA && (size == 103 || size == 129)) {
         style |= 0x8;
     }
-    HWND control = CreateWindowExW(0, L"ClockWndMain", L"", style, x, y, size, size, parent, reinterpret_cast<HMENU>(113), reinterpret_cast<HINSTANCE>(timeDateModule), nullptr);
+    HWND control = CreateWindowExW(0, L"ClockWndMain", L"", style, x, y, size, size, parent,
+        reinterpret_cast<HMENU>(113), reinterpret_cast<HINSTANCE>(timeDateModule), nullptr);
     if (control != nullptr) {
         if (!ConfigureAnalogClockControl(control, size, showSeconds)) {
             DestroyWindow(control);
@@ -799,18 +667,8 @@ int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     if (!LoadAnalogClockClass()) {
         return 0;
     }
-    const int vistaSizes[] = {
-        103,
-        128,
-        129,
-        160
-    };
-    const int otherSizes[] = {
-        104,
-        130,
-        166,
-        198
-    };
+    const int vistaSizes[] = { 103, 128, 129, 160 };
+    const int otherSizes[] = { 104, 130, 166, 198 };
     const int* supportedSizes = analogClockImplementation == ANALOG_CLOCK_VISTA ? vistaSizes : otherSizes;
     int count = analogClockImplementation == ANALOG_CLOCK_VISTA ? ARRAYSIZE(vistaSizes) : ARRAYSIZE(otherSizes);
     if (sizes != nullptr && capacity > 0) {

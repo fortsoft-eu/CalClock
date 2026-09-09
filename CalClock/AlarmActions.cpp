@@ -1,4 +1,30 @@
-﻿#define NOMINMAX
+﻿/**
+ * This is open-source software licensed under the terms of the MIT License.
+ *
+ * Copyright (c) 2026 Petr Červinka - FortSoft <cervinka@fortsoft.eu>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **
+ * Last modified for version 1.4.1.3
+ */
+
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "AlarmActions.h"
 #include <windows.h>
@@ -65,7 +91,9 @@ bool IsRemoteScriptUrlValid(const std::wstring& url) {
     if (!WinHttpCrackUrl(url.c_str(), 0, 0, &components)) {
         return false;
     }
-    return (components.nScheme == INTERNET_SCHEME_HTTP || components.nScheme == INTERNET_SCHEME_HTTPS) && components.lpszHostName != nullptr && components.dwHostNameLength != 0;
+    return (components.nScheme == INTERNET_SCHEME_HTTP || components.nScheme == INTERNET_SCHEME_HTTPS)
+        && components.lpszHostName != nullptr
+        && components.dwHostNameLength != 0;
 }
 
 static bool WaitForAudioStop(HANDLE stopEvent, DWORD milliseconds) {
@@ -95,7 +123,8 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
     IWMPPlayer4* player = nullptr;
     IWMPSettings* settings = nullptr;
     IWMPControls* controls = nullptr;
-    HRESULT result = CoCreateInstance(__uuidof(WindowsMediaPlayer), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IWMPPlayer4), reinterpret_cast<void**>(&player));
+    HRESULT result = CoCreateInstance(__uuidof(WindowsMediaPlayer), nullptr,
+        CLSCTX_INPROC_SERVER, __uuidof(IWMPPlayer4), reinterpret_cast<void**>(&player));
     if (SUCCEEDED(result)) {
         result = player->get_settings(&settings);
     }
@@ -197,7 +226,8 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     if (PlayWithWindowsMediaPlayer(*parameters) || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
         CloseHandle(parameters->stopEvent);
         CloseHandle(parameters->muteEvent);
-        PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
+        PostMessageW(parameters->notifyWindow, parameters->notifyMessage,
+            static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
         return 0;
     }
     std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_" + std::to_wstring(parameters->generation);
@@ -206,7 +236,9 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     if (opened && WaitForSingleObject(parameters->stopEvent, 0) != WAIT_OBJECT_0) {
         wchar_t volumeText[32] = {};
         command = L"status " + alias + L" volume";
-        int audibleVolume = mciSendStringW(command.c_str(), volumeText, ARRAYSIZE(volumeText), nullptr) == 0 ? std::clamp(_wtoi(volumeText), 0, 1000) : 1000;
+        int audibleVolume = mciSendStringW(command.c_str(), volumeText, ARRAYSIZE(volumeText), nullptr) == 0
+            ? std::clamp(_wtoi(volumeText), 0, 1000)
+            : 1000;
         bool muted = IsAudioMuted(parameters->muteEvent);
         command = L"setaudio " + alias + L" volume to " + std::to_wstring(muted ? 0 : audibleVolume);
         mciSendStringW(command.c_str(), nullptr, 0, nullptr);
@@ -222,7 +254,8 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
                 if (!parameters->loop) {
                     wchar_t mode[32] = {};
                     command = L"status " + alias + L" mode";
-                    if (mciSendStringW(command.c_str(), mode, ARRAYSIZE(mode), nullptr) != 0 || _wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0) {
+                    if (mciSendStringW(command.c_str(), mode, ARRAYSIZE(mode), nullptr) != 0
+                        || _wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0) {
                         break;
                     }
                 }
@@ -237,12 +270,13 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     }
     CloseHandle(parameters->stopEvent);
     CloseHandle(parameters->muteEvent);
-    PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
+    PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId),
+        static_cast<LPARAM>(parameters->generation));
     return 0;
 }
 
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation,
-    HANDLE* stopEvent, HANDLE* muteEvent) {
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, HWND notifyWindow, UINT notifyMessage,
+        int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
     if (stopEvent == nullptr || muteEvent == nullptr) {
         return false;
     }
@@ -350,7 +384,10 @@ static DWORD WINAPI RemoteScriptThreadProc(void* parameter) {
     WinHttpSetTimeouts(session, 5000, 5000, 5000, 5000);
     HINTERNET connection = WinHttpConnect(session, host.c_str(), components.nPort, 0);
     DWORD flags = components.nScheme == INTERNET_SCHEME_HTTPS ? WINHTTP_FLAG_SECURE : 0;
-    HINTERNET request = connection == nullptr ? nullptr : WinHttpOpenRequest(connection, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
+    HINTERNET request = nullptr;
+    if (connection != nullptr) {
+        request = WinHttpOpenRequest(connection, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
+    }
     if (request != nullptr && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {
         WinHttpReceiveResponse(request, nullptr);
     }
