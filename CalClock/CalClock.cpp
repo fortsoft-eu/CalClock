@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.4.2.0
  */
 
 #define NOMINMAX
@@ -153,6 +153,7 @@ const int ID_MENU_SIZE_104 = 1010;
 const int ID_MENU_SIZE_198 = 1013;
 const int ID_MENU_STOP_ALARM = 1005;
 const int ID_MENU_TIME_SIGNAL_ENABLED = 1007;
+const int ID_MENU_TODAY = 1009;
 const int ID_MENU_TOPMOST = 1003;
 const int ID_MENU_VISIBLE = 1002;
 const int ID_MENU_WIDGET_BASE = 2000;
@@ -532,6 +533,7 @@ static HFONT CreateCalendarUiFont(const WidgetConfig& config);
 static std::wstring GetControlText(HWND control);
 static void SetCheck(HWND control, bool checked);
 static void SetWidgetVisible(Widget* widget, bool visible);
+static void SelectCalendarToday(Widget* widget);
 
 static const wchar_t* T(TextId id) {
     return TEXT[appLanguage][id];
@@ -3881,7 +3883,9 @@ static void RefreshFullscreenPresentation() {
         std::vector<const DisplayMonitor*> selected = SelectedDisplayMonitors(widget->config);
         for (size_t monitorIndex = 0; monitorIndex < selected.size(); monitorIndex++) {
             occupiedDevices.push_back(selected[monitorIndex]->device);
-            HWND target = monitorIndex == 0 ? widget->window : monitorIndex - 1 < widget->fullscreenWindows.size() ? widget->fullscreenWindows[monitorIndex - 1] : nullptr;
+            HWND target = monitorIndex == 0
+                ? widget->window
+                : monitorIndex - 1 < widget->fullscreenWindows.size() ? widget->fullscreenWindows[monitorIndex - 1] : nullptr;
             if (target != nullptr) {
                 const RECT& rect = selected[monitorIndex]->rect;
                 SetWindowPos(target, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
@@ -4202,6 +4206,8 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         ApplyWidgetZOrder(widget);
         SynchronizeOpenSettings(widget);
         SaveAllSettings();
+    } else if (command == ID_MENU_TODAY) {
+        SelectCalendarToday(widget);
     } else if (command == ID_MENU_SECONDS) {
         if (widget->config.type == WIDGET_ANALOG && !AnalogClockSupportsSeconds(widget->config.size)) {
             return;
@@ -4297,6 +4303,9 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         widget->config.visible ? HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST, WT(widget, TXT_TOPMOST), &menuMnemonics);
+    }
+    if (widget->config.type == WIDGET_CALENDAR) {
+        AppendMenuCommand(menu, MF_STRING, ID_MENU_TODAY, PANEL_TODAY_TOOLTIP[widget->config.language], &menuMnemonics);
     }
     if (widget->config.type != WIDGET_CALENDAR) {
         bool secondsAvailable = widget->config.type != WIDGET_ANALOG || AnalogClockSupportsSeconds(widget->config.size);
@@ -7530,6 +7539,33 @@ static std::wstring LoadLicenseText() {
     if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes, static_cast<int>(byteCount), decoded.data(), characterCount) != characterCount) {
         return std::wstring();
     }
+    size_t headingStart = !decoded.empty() && decoded.front() == L'\uFEFF' ? 1 : 0;
+    while (headingStart < decoded.size() && iswspace(decoded[headingStart])) {
+        headingStart++;
+    }
+    size_t headingEnd = decoded.find_first_of(L"\r\n", headingStart);
+    std::wstring heading = decoded.substr(headingStart, headingEnd - headingStart);
+    std::wstring normalizedHeading;
+    bool whitespace = false;
+    for (wchar_t character : heading) {
+        if (iswspace(character)) {
+            whitespace = true;
+        } else {
+            if (whitespace && !normalizedHeading.empty()) {
+                normalizedHeading += L' ';
+            }
+            normalizedHeading += character;
+            whitespace = false;
+        }
+    }
+    size_t bodyStart = headingStart;
+    if (_wcsicmp(normalizedHeading.c_str(), L"MIT License") == 0) {
+        bodyStart = headingEnd == std::wstring::npos ? decoded.size() : headingEnd;
+        while (bodyStart < decoded.size() && iswspace(decoded[bodyStart])) {
+            bodyStart++;
+        }
+    }
+    decoded.erase(0, bodyStart);
     std::wstring result;
     result.reserve(decoded.size() + 32);
     for (size_t index = 0; index < decoded.size(); index++) {
@@ -8244,13 +8280,59 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
         if (message == WM_RBUTTONUP || message == WM_CONTEXTMENU) {
             return SendMessageW(parent, message, wParam, lParam);
         }
-        if (message == WM_LBUTTONDOWN && widget->config.type == WIDGET_CALENDAR) {
+        if (message == WM_CAPTURECHANGED || message == WM_CANCELMODE) {
+            widget->calendarTitlePressed = false;
+            if (message == WM_CANCELMODE && GetCapture() == window) {
+                ReleaseCapture();
+            }
+        }
+        if (message == WM_MOUSEMOVE && widget->calendarTitlePressed) {
+            POINT cursor = {};
+            GetCursorPos(&cursor);
+            int distanceX = abs(cursor.x - widget->calendarTitlePressScreen.x);
+            int distanceY = abs(cursor.y - widget->calendarTitlePressScreen.y);
+            if ((wParam & MK_LBUTTON) != 0
+                && (distanceX >= GetSystemMetrics(SM_CXDRAG) || distanceY >= GetSystemMetrics(SM_CYDRAG))) {
+                widget->calendarTitlePressed = false;
+                ReleaseCapture();
+                SendMessageW(parent, WM_LBUTTONDOWN, wParam, lParam);
+                if (widget->dragging) {
+                    RECT rect = {};
+                    GetWindowRect(parent, &rect);
+                    widget->dragOffset.x = widget->calendarTitlePressScreen.x - rect.left;
+                    widget->dragOffset.y = widget->calendarTitlePressScreen.y - rect.top;
+                    SendMessageW(parent, WM_MOUSEMOVE, wParam, lParam);
+                }
+            }
+            return 0;
+        }
+        if (message == WM_LBUTTONUP && widget->calendarTitlePressed) {
+            widget->calendarTitlePressed = false;
+            ReleaseCapture();
+            if (widget->calendarProc != nullptr) {
+                CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
+                CallWindowProcW(widget->calendarProc, window, WM_LBUTTONDOWN,
+                    widget->calendarTitlePressKeys, widget->calendarTitlePressPosition);
+                return CallWindowProcW(widget->calendarProc, window, WM_LBUTTONUP, wParam, lParam);
+            }
+            return 0;
+        }
+        if ((message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) && widget->config.type == WIDGET_CALENDAR) {
             MCHITTESTINFO hit = {};
             hit.cbSize = sizeof(hit);
             hit.pt.x = GET_X_LPARAM(lParam);
             hit.pt.y = GET_Y_LPARAM(lParam);
             MonthCal_HitTest(window, &hit);
-            bool draggableArea = hit.uHit == MCHT_NOWHERE || hit.uHit == MCHT_TITLEBK || hit.uHit == MCHT_CALENDARBK;
+            bool titleArea = hit.uHit == MCHT_TITLEBK || hit.uHit == MCHT_TITLEMONTH || hit.uHit == MCHT_TITLEYEAR;
+            if (titleArea) {
+                widget->calendarTitlePressed = true;
+                widget->calendarTitlePressPosition = lParam;
+                widget->calendarTitlePressKeys = wParam;
+                GetCursorPos(&widget->calendarTitlePressScreen);
+                SetCapture(window);
+                return 0;
+            }
+            bool draggableArea = hit.uHit == MCHT_NOWHERE || hit.uHit == MCHT_CALENDARBK;
             if (draggableArea) {
                 return SendMessageW(parent, message, wParam, lParam);
             }
@@ -8270,7 +8352,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
     return DefWindowProcW(window, message, wParam, lParam);
 }
 
-static void SelectPanelToday(Widget* widget) {
+static void SelectCalendarToday(Widget* widget) {
     if (widget == nullptr || widget->calendarChild == nullptr) {
         return;
     }
@@ -8280,6 +8362,7 @@ static void SelectPanelToday(Widget* widget) {
     SYSTEMTIME today = {};
     GetDisplayedTime(widget->config, &today);
     MonthCal_SetToday(widget->calendarChild, &today);
+    MonthCal_SetCurrentView(widget->calendarChild, MCMV_MONTH);
     MonthCal_SetCurSel(widget->calendarChild, &today);
     SetFocus(widget->calendarChild);
 }
@@ -8644,7 +8727,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             if (widget != nullptr && id == ID_PANEL_DATE_LINK && notification == BN_CLICKED
                 && reinterpret_cast<HWND>(lParam) == widget->panelDateLink) {
-                SelectPanelToday(widget);
+                SelectCalendarToday(widget);
                 return 0;
             }
             if (widget != nullptr && id == ID_PANEL_TIME_ZONE_LINK && notification == BN_CLICKED
@@ -9072,7 +9155,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
             continue;
         }
         if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
-            && message.wParam == VK_ESCAPE && HideFullscreenWidgetsFromEscape()) {
+            && message.wParam == VK_ESCAPE
+            && HideFullscreenWidgetsFromEscape()) {
             continue;
         }
         if (message.message == WM_KEYDOWN

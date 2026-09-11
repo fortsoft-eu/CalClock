@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.4.2.0
  */
 
 #pragma once
@@ -303,6 +303,10 @@ struct Widget {
     bool fullscreenPreview = false;
     bool dragging = false;
     POINT dragOffset = {};
+    bool calendarTitlePressed = false;
+    POINT calendarTitlePressScreen = {};
+    LPARAM calendarTitlePressPosition = 0;
+    WPARAM calendarTitlePressKeys = 0;
     bool rendered = false;
     bool alarmActive = false;
     bool flashPhase = false;
