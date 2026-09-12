@@ -1960,6 +1960,9 @@ static void ClampFormPosition(int* x, int* y, int width, int height) {
 }
 
 static void SaveFormPosition(HWND window, int* x, int* y) {
+    if ((window == hHelp || window == hAbout) && IsIconic(window)) {
+        return;
+    }
     RECT rect = {};
     if (window != nullptr && GetWindowRect(window, &rect)) {
         *x = rect.left;
@@ -7760,7 +7763,7 @@ static int InformationLabelHeight(HWND control, int width) {
 
 static void LayoutInformationWindow(HWND window) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
-    if (!layout.initialized) {
+    if (!layout.initialized || IsIconic(window)) {
         return;
     }
     RECT client = {};
@@ -7799,7 +7802,7 @@ static void LayoutInformationWindow(HWND window) {
 }
 
 static void FitInformationWindowToWorkArea(HWND window) {
-    if (window == nullptr || !IsWindow(window)) {
+    if (window == nullptr || !IsWindow(window) || IsIconic(window)) {
         return;
     }
     MONITORINFO monitor = {};
@@ -7851,7 +7854,7 @@ static void ShowInformationWindow(bool help) {
     DWORD extendedStyle = WS_EX_TOPMOST | (help ? 0 : WS_EX_DLGMODALFRAME);
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
     ClampFormPosition(x, y, width, height);
-    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
+    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
         *x, *y, width, height, nullptr, nullptr, hInstance, nullptr);
     std::wstring helpBody = std::wstring(HELP_TEXT[appLanguage])
         + HELP_ALARM_APPENDIX[appLanguage]
@@ -8418,6 +8421,15 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         case DM_GETDEFID:
             if (window == hSettings) {
                 return MAKELRESULT(ID_SAVE, DC_HASDEFID);
+            }
+            break;
+        case WM_SYSCOMMAND:
+            if ((wParam & 0xFFF0) == SC_MINIMIZE) {
+                if (window == hHelp) {
+                    SaveFormPosition(window, &helpX, &helpY);
+                } else if (window == hAbout) {
+                    SaveFormPosition(window, &aboutX, &aboutY);
+                }
             }
             break;
         case WM_SIZE:
