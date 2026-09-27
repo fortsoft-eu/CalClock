@@ -26,19 +26,33 @@
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include <windows.h>
+#include <dshow.h>
 #include <atomic>
+#include <cstddef>
+#include <memory>
 #include <string>
 
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
+struct AudioThreadParameters {
+    std::wstring path;
+    bool loop = false;
+    std::shared_ptr<std::atomic<int>> volume;
+    HANDLE stopEvent = nullptr;
+    HANDLE muteEvent = nullptr;
+    HWND notifyWindow = nullptr;
+    UINT notifyMessage = 0;
+    int widgetId = -1;
     ULONG generation = 0;
 };
 
-std::wstring NtpServersForPreset(int preset);
-bool HasNtpServers(const std::wstring& serverList);
-ULONGLONG CurrentFileTimeValue();
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested,
-    std::atomic<bool>* queryRunning);
+struct AudioSampleFormat {
+    WORD tag = 0;
+    WORD bits = 0;
+    WORD validBits = 0;
+    WORD blockAlign = 0;
+};
+
+double AudioPlaybackGain(const AudioThreadParameters& parameters);
+bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& format);
+HRESULT ApplyAudioGain(BYTE* data, size_t length, const AudioSampleFormat& format, double gain);
+void FreeAudioMediaType(AM_MEDIA_TYPE& type);

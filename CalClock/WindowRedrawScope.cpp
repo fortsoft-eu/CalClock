@@ -24,21 +24,20 @@
  * Last modified for version 1.5.0.0
  */
 
-#pragma once
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include "WindowRedrawScope.h"
 
-#include "CalClockTypes.h"
-#include <atomic>
-#include <string>
+WindowRedrawScope::WindowRedrawScope(HWND target) {
+    if (target != nullptr && IsWindowVisible(target)) {
+        window = target;
+        SendMessageW(window, WM_SETREDRAW, FALSE, 0);
+    }
+}
 
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
-    ULONG generation = 0;
-};
-
-std::wstring NtpServersForPreset(int preset);
-bool HasNtpServers(const std::wstring& serverList);
-ULONGLONG CurrentFileTimeValue();
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested,
-    std::atomic<bool>* queryRunning);
+WindowRedrawScope::~WindowRedrawScope() {
+    if (window != nullptr && IsWindow(window)) {
+        SendMessageW(window, WM_SETREDRAW, TRUE, 0);
+        RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+    }
+}

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #pragma once
@@ -29,14 +29,18 @@
 #include "CalClockTypes.h"
 #include <windows.h>
 
-bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime,
-    TimeSignalMode mode, ULONGLONG* targetSystemFileTime);
-bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime,
-    int alarmHour, int alarmMinute, ULONGLONG* targetSystemFileTime);
+bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, TimeSignalMode mode, ULONGLONG* targetSystemFileTime);
+bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, int alarmHour, int alarmMinute, ULONGLONG* targetSystemFileTime);
 bool TimeSignalTargetsCoincide(ULONGLONG left, ULONGLONG right);
-bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, HWND notifyWindow,
-    UINT notifyMessage);
-void SetTimeSignalMuted(bool muted);
+bool IsTimeSignalGeneratorRequired();
+double TimeSignalVolumeDecibels(double volume);
+double TimeSignalVolumeFromDecibels(double decibels);
+bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, bool generatedTone, double volume, HWND notifyWindow, UINT notifyMessage);
+bool StartTimeSignalVolumePreview(bool generatedTone, double volume);
+void SetTimeSignalPreviewVolume(double volume);
+void StopTimeSignalVolumePreview();
+void SetTimeSignalMuted(ULONGLONG target, bool muted);
+void CancelTimeSignalPlayback(ULONGLONG target);
 void FinishTimeSignalPlayback();
 void StopTimeSignalPlayback();
 bool IsTimeSignalPlaybackRunning();

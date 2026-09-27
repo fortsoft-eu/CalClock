@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #define NOMINMAX
@@ -57,7 +57,8 @@ struct NtpSample {
 static int AutomaticNtpPreset() {
     wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {};
     wchar_t country[4] = {};
-    if (GetUserDefaultLocaleName(localeName, ARRAYSIZE(localeName)) == 0 || GetLocaleInfoEx(localeName, LOCALE_SISO3166CTRYNAME, country, ARRAYSIZE(country)) == 0) {
+    if (GetUserDefaultLocaleName(localeName, ARRAYSIZE(localeName)) == 0
+        || GetLocaleInfoEx(localeName, LOCALE_SISO3166CTRYNAME, country, ARRAYSIZE(country)) == 0) {
         return NTP_PRESET_GLOBAL;
     }
     if (_wcsicmp(country, L"CZ") == 0 || _wcsicmp(country, L"SK") == 0) {
@@ -159,7 +160,7 @@ static void WriteNtpTimestamp(BYTE* destination, ULONGLONG fileTimeValue) {
     const ULONGLONG ntpEpochInFileTime = 94354848000000000ULL;
     ULONGLONG ntpValue = fileTimeValue - ntpEpochInFileTime;
     DWORD seconds = static_cast<DWORD>(ntpValue / 10000000ULL);
-    DWORD fraction = static_cast<DWORD>(((ntpValue % 10000000ULL) << 32) / 10000000ULL);
+    DWORD fraction = static_cast<DWORD>((ntpValue % 10000000ULL << 32) / 10000000ULL);
     seconds = htonl(seconds);
     fraction = htonl(fraction);
     CopyMemory(destination, &seconds, sizeof(seconds));
@@ -175,13 +176,13 @@ static ULONGLONG ReadNtpTimestamp(const BYTE* source, ULONGLONG referenceFileTim
     ULONGLONG seconds = ntohl(secondsNetwork);
     ULONGLONG fraction = ntohl(fractionNetwork);
     ULONGLONG referenceSeconds = (referenceFileTime - ntpEpochInFileTime) / 10000000ULL;
-    ULONGLONG candidate = (referenceSeconds & 0xFFFFFFFF00000000ULL) | seconds;
+    ULONGLONG candidate = referenceSeconds & 0xFFFFFFFF00000000ULL | seconds;
     if (candidate + 0x80000000ULL < referenceSeconds) {
         candidate += 0x100000000ULL;
     } else if (candidate > referenceSeconds + 0x80000000ULL && candidate >= 0x100000000ULL) {
         candidate -= 0x100000000ULL;
     }
-    return ntpEpochInFileTime + candidate * 10000000ULL + ((fraction * 10000000ULL) >> 32);
+    return ntpEpochInFileTime + candidate * 10000000ULL + (fraction * 10000000ULL >> 32);
 }
 
 static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverList) {
@@ -240,7 +241,7 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             ULONGLONG t4 = CurrentFileTimeValue();
             closesocket(socketHandle);
             BYTE leap = response[0] >> 6;
-            BYTE version = (response[0] >> 3) & 7;
+            BYTE version = response[0] >> 3 & 7;
             BYTE mode = response[0] & 7;
             BYTE stratum = response[1];
             BYTE zeroTimestamp[8] = {};
@@ -317,8 +318,7 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         size_t bestIndex = 0;
         bool acceptedAny = false;
         for (size_t index = 0; index < samples.size(); index++) {
-            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds)
-                - static_cast<long double>(medianOffset));
+            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds) - static_cast<long double>(medianOffset));
             if (difference > rejectionLimit) {
                 continue;
             }
@@ -348,8 +348,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         *parameters->queryRunning = false;
         return 0;
     }
-    if (parameters->notifyWindow != nullptr && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0,
-        reinterpret_cast<LPARAM>(result.get()))) {
+    if (parameters->notifyWindow != nullptr
+        && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0, reinterpret_cast<LPARAM>(result.get()))) {
         result.release();
     } else {
         *parameters->queryRunning = false;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #define NOMINMAX
@@ -45,6 +45,98 @@ struct RegistryTimeZoneInformation {
     SYSTEMTIME standardDate;
     SYSTEMTIME daylightDate;
 };
+
+static bool ParseTimeZoneOffset(const std::wstring& name, LONG* minutes) {
+    if (_wcsnicmp(name.c_str(), L"UTC", 3) != 0) {
+        return false;
+    }
+    if (name.size() == 3) {
+        *minutes = 0;
+        return true;
+    }
+    if (name[3] != L'+' && name[3] != L'-') {
+        return false;
+    }
+    size_t index = 4;
+    LONG hours = 0;
+    while (index < name.size() && name[index] >= L'0' && name[index] <= L'9') {
+        if (index >= 6) {
+            return false;
+        }
+        hours = hours * 10 + name[index] - L'0';
+        index++;
+    }
+    if (index == 4 || hours > 23) {
+        return false;
+    }
+    LONG fraction = 0;
+    if (index != name.size()) {
+        if (name[index] != L':'
+            || index + 3 != name.size()
+            || name[index + 1] < L'0'
+            || name[index + 1] > L'5'
+            || name[index + 2] < L'0'
+            || name[index + 2] > L'9') {
+            return false;
+        }
+        fraction = (name[index + 1] - L'0') * 10 + name[index + 2] - L'0';
+    }
+    LONG offset = hours * 60 + fraction;
+    *minutes = name[3] == L'-' ? -offset : offset;
+    return true;
+}
+
+static std::wstring FormatTimeZoneOffset(LONGLONG minutes) {
+    if (minutes == 0) {
+        return L"UTC";
+    }
+    wchar_t sign = minutes < 0 ? L'-' : L'+';
+    LONGLONG absoluteMinutes = minutes < 0 ? -minutes : minutes;
+    wchar_t formatted[32] = {};
+    swprintf_s(formatted, L"UTC%c%02lld:%02lld", sign, absoluteMinutes / 60, absoluteMinutes % 60);
+    return formatted;
+}
+
+static bool TimeZoneLess(const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMIC_TIME_ZONE_INFORMATION& right) {
+    LONG leftOffset = 0;
+    LONG rightOffset = 0;
+    bool leftFixed = ParseTimeZoneOffset(left.StandardName, &leftOffset);
+    bool rightFixed = ParseTimeZoneOffset(right.StandardName, &rightOffset);
+    if (leftFixed != rightFixed) {
+        return !leftFixed;
+    }
+    if (leftFixed && leftOffset != rightOffset) {
+        return leftOffset < rightOffset;
+    }
+    return _wcsicmp(left.StandardName, right.StandardName) < 0;
+}
+
+static void AddFixedTimeZones(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
+    for (LONG offset = -12 * 60; offset <= 14 * 60; offset += 15) {
+        bool exists = false;
+        for (const auto& zone : *zones) {
+            LONG existingOffset = 0;
+            if (ParseTimeZoneOffset(zone.StandardName, &existingOffset)
+                && existingOffset == offset
+                && zone.StandardDate.wMonth == 0
+                && zone.DaylightDate.wMonth == 0) {
+                exists = true;
+                break;
+            }
+        }
+        if (exists) {
+            continue;
+        }
+        DYNAMIC_TIME_ZONE_INFORMATION zone = {};
+        zone.Bias = -offset;
+        zone.DynamicDaylightTimeDisabled = TRUE;
+        std::wstring name = FormatTimeZoneOffset(offset);
+        wcscpy_s(zone.StandardName, name.c_str());
+        wcscpy_s(zone.DaylightName, name.c_str());
+        wcscpy_s(zone.TimeZoneKeyName, offset == 0 ? L"UTC+00:00" : name.c_str());
+        zones->push_back(zone);
+    }
+}
 
 static FARPROC FindProcedure(const wchar_t* moduleName, const char* procedureName) {
     HMODULE module = GetModuleHandleW(moduleName);
@@ -173,9 +265,37 @@ void LoadTimeZoneList(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     if (zones->empty()) {
         LoadTimeZoneListFromRegistry(zones);
     }
-    std::sort(zones->begin(), zones->end(), [](const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMIC_TIME_ZONE_INFORMATION& right) {
-        return _wcsicmp(left.StandardName, right.StandardName) < 0;
-    });
+    AddFixedTimeZones(zones);
+    std::sort(zones->begin(), zones->end(), TimeZoneLess);
+}
+
+std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc) {
+    std::wstring name = zone.StandardName;
+    LONG fixedOffset = 0;
+    if (ParseTimeZoneOffset(name, &fixedOffset)) {
+        return FormatTimeZoneOffset(fixedOffset);
+    }
+    LONGLONG offsetMinutes = -static_cast<LONGLONG>(zone.Bias);
+    if (zone.StandardDate.wMonth != 0) {
+        offsetMinutes -= zone.StandardBias;
+    }
+    SYSTEMTIME local = {};
+    FILETIME utcFileTime = {};
+    FILETIME localFileTime = {};
+    if (ConvertUtcToTimeZone(zone, utc, &local) && SystemTimeToFileTime(&utc, &utcFileTime) && SystemTimeToFileTime(&local, &localFileTime)) {
+        ULARGE_INTEGER utcTicks = {};
+        utcTicks.LowPart = utcFileTime.dwLowDateTime;
+        utcTicks.HighPart = utcFileTime.dwHighDateTime;
+        ULARGE_INTEGER localTicks = {};
+        localTicks.LowPart = localFileTime.dwLowDateTime;
+        localTicks.HighPart = localFileTime.dwHighDateTime;
+        offsetMinutes = (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart)) / 600000000;
+    }
+    std::wstring offset = FormatTimeZoneOffset(offsetMinutes);
+    if (name.empty()) {
+        return offset;
+    }
+    return L"(" + offset + L") " + name;
 }
 
 std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones) {
@@ -209,6 +329,12 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
 bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc, SYSTEMTIME* local) {
     if (local == nullptr) {
         return false;
+    }
+    LONG fixedOffset = 0;
+    if (ParseTimeZoneOffset(zone.TimeZoneKeyName, &fixedOffset)) {
+        TIME_ZONE_INFORMATION fixed = {};
+        fixed.Bias = -fixedOffset;
+        return SystemTimeToTzSpecificLocalTime(&fixed, &utc, local) != FALSE;
     }
     SystemTimeToTzSpecificLocalTimeExProc convertDynamic = GetSystemTimeToTzSpecificLocalTimeExProc();
     if (convertDynamic != nullptr) {

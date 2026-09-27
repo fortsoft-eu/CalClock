@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #define NOMINMAX
@@ -86,7 +86,8 @@ static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, 
             continue;
         }
         size_t size = section[index].Misc.VirtualSize;
-        if (size == 0 || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage
+        if (size == 0
+            || section[index].VirtualAddress >= ntHeaders->OptionalHeader.SizeOfImage
             || size > ntHeaders->OptionalHeader.SizeOfImage - section[index].VirtualAddress) {
             continue;
         }
@@ -189,10 +190,10 @@ static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
 
 static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* codeBegin, size_t codeSize, bool* usesStackArgument) {
     const BYTE classNameBytes[] = {
-        0x43, 0, 0x6C, 0, 0x6F, 0, 0x63, 0,
-        0x6B, 0, 0x57, 0, 0x6E, 0, 0x64, 0,
-        0x4D, 0, 0x61, 0, 0x69, 0, 0x6E, 0,
-        0,    0
+        0x43,    0, 0x6C,    0, 0x6F,    0, 0x63,    0,
+        0x6B,    0, 0x57,    0, 0x6E,    0, 0x64,    0,
+        0x4D,    0, 0x61,    0, 0x69,    0, 0x6E,    0,
+        0,       0
     };
     const BYTE cursorPattern[] = { 0x68, 0x00, 0x7F, 0x00, 0x00 };
     const BYTE stackArgumentPattern[] = { 0x8B, 0x75, 0x08 };
@@ -258,8 +259,13 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
         if (candidate == nullptr) {
             break;
         }
-        BYTE* next = FindModulePattern(candidate + sizeof(prolog), codeSize - static_cast<size_t>(candidate + sizeof(prolog) - codeBegin), prolog, sizeof(prolog));
-        size_t functionLength = next == nullptr ? codeSize - static_cast<size_t>(candidate - codeBegin) : static_cast<size_t>(next - candidate);
+        BYTE* next = FindModulePattern(candidate + sizeof(prolog),
+            codeSize - static_cast<size_t>(candidate + sizeof(prolog) - codeBegin),
+            prolog,
+            sizeof(prolog));
+        size_t functionLength = next == nullptr
+            ? codeSize - static_cast<size_t>(candidate - codeBegin)
+            : static_cast<size_t>(next - candidate);
         if (functionLength > 2048) {
             functionLength = 2048;
         }
@@ -300,8 +306,9 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
             DWORD classAddressValue = 0;
             CopyMemory(&classAddressValue, candidate + 18, sizeof(classAddressValue));
             const wchar_t* className = reinterpret_cast<const wchar_t*>(static_cast<ULONG_PTR>(classAddressValue));
-            if (reinterpret_cast<const BYTE*>(className) >= module && reinterpret_cast<const BYTE*>(className) +
-                sizeof(L"ClockWndMain") <= module + imageSize && wcscmp(className, L"ClockWndMain") == 0) {
+            if (reinterpret_cast<const BYTE*>(className) >= module
+                && reinterpret_cast<const BYTE*>(className) + sizeof(L"ClockWndMain") <= module + imageSize
+                && wcscmp(className, L"ClockWndMain") == 0) {
                 if (registerAddress != nullptr) {
                     return nullptr;
                 }
@@ -382,7 +389,8 @@ static bool ResolveAnalogClockInternals() {
         return false;
     }
     IMAGE_NT_HEADERS32* ntHeaders = reinterpret_cast<IMAGE_NT_HEADERS32*>(module + dosHeader->e_lfanew);
-    if (ntHeaders->Signature != IMAGE_NT_SIGNATURE || ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC
+    if (ntHeaders->Signature != IMAGE_NT_SIGNATURE
+        || ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC
         || ntHeaders->OptionalHeader.SizeOfImage == 0) {
         return false;
     }
@@ -591,8 +599,8 @@ HWND CreateAnalogClockControl(HWND parent, int x, int y, int size, bool showSeco
     if (analogClockImplementation == ANALOG_CLOCK_VISTA && (size == 103 || size == 129)) {
         style |= 0x8;
     }
-    HWND control = CreateWindowExW(0, L"ClockWndMain", L"", style, x, y, size, size, parent,
-        reinterpret_cast<HMENU>(113), reinterpret_cast<HINSTANCE>(timeDateModule), nullptr);
+    HWND control = CreateWindowExW(0, L"ClockWndMain", L"", style, x, y, size, size, parent, reinterpret_cast<HMENU>(113),
+        reinterpret_cast<HINSTANCE>(timeDateModule), nullptr);
     if (control != nullptr) {
         if (!ConfigureAnalogClockControl(control, size, showSeconds)) {
             DestroyWindow(control);

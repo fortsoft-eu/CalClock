@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #define NOMINMAX
@@ -62,7 +62,10 @@ static LONG AlignUpToGrid(LONG value, LONG origin) {
 
 static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, LONG gap) {
     for (const RECT& current : placed) {
-        if (candidate.right + gap > current.left && candidate.left < current.right + gap && candidate.bottom + gap > current.top && candidate.top < current.bottom + gap) {
+        if (candidate.right + gap > current.left
+            && candidate.left < current.right + gap
+            && candidate.bottom + gap > current.top
+            && candidate.top < current.bottom + gap) {
             return false;
         }
     }
@@ -89,7 +92,15 @@ static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& wo
             LONGLONG deltaX = static_cast<LONGLONG>(centerX) - CenterX(item.rect);
             LONGLONG deltaY = static_cast<LONGLONG>(centerY) - CenterY(item.rect);
             LONGLONG distance = deltaX * deltaX + deltaY * deltaY;
-            if (!found || distance < bestDistance || distance == bestDistance && (candidate.top < best.top || candidate.top == best.top && candidate.left < best.left)) {
+            bool betterPlacement = !found || distance < bestDistance;
+            if (found && distance == bestDistance) {
+                if (candidate.top < best.top) {
+                    betterPlacement = true;
+                } else if (candidate.top == best.top) {
+                    betterPlacement = candidate.left < best.left;
+                }
+            }
+            if (betterPlacement) {
                 found = true;
                 bestDistance = distance;
                 best = candidate;

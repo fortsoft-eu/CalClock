@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #pragma once
@@ -31,6 +31,8 @@
 extern const wchar_t* TEXT[LANG_COUNT][TXT_COUNT];
 extern const wchar_t* LANGUAGE_NAMES[LANG_COUNT];
 extern const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT];
+extern const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT];
+extern const wchar_t* WIDGET_LIMIT_MESSAGES[LANG_COUNT];
 extern const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT];
 extern const wchar_t* LANGUAGE_LOCALES[LANG_COUNT];
 extern const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT];
@@ -50,6 +52,7 @@ extern const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT];
 extern const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT];
 extern const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT];
+extern const wchar_t* SHOW_TODAY_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT];
 extern const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT];
@@ -60,6 +63,16 @@ extern const wchar_t* PADDING_LABELS[LANG_COUNT];
 extern const wchar_t* BORDER_LABELS[LANG_COUNT];
 extern const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT];
 extern const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT];
+extern const wchar_t* ADDITIONAL_CLOCK_NAME_FORMATS[LANG_COUNT];
+extern const wchar_t* ADDITIONAL_CLOCK_SHOW_FORMATS[LANG_COUNT];
+extern const wchar_t* TIME_FORMAT_LABELS[LANG_COUNT];
+extern const wchar_t* TIME_FORMAT_MODE_LABELS[LANG_COUNT][TIME_FORMAT_COUNT];
+extern const wchar_t* LEADING_ZERO_MODE_LABELS[LANG_COUNT][LEADING_ZERO_MODE_COUNT];
+extern const wchar_t* TIME_SIGNAL_SOUND_LABELS[LANG_COUNT];
+extern const wchar_t* ALARM_VOLUME_LABELS[LANG_COUNT];
+extern const wchar_t* TIME_SIGNAL_VOLUME_LABELS[LANG_COUNT];
+extern const wchar_t* TIME_SIGNAL_SYSTEM_SOUND_LABELS[LANG_COUNT];
+extern const wchar_t* TIME_SIGNAL_GENERATED_SOUND_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_FIELD_LABELS[LANG_COUNT];
@@ -81,7 +94,7 @@ extern const wchar_t* NTP_STATUS_FAILED[LANG_COUNT];
 extern const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT];
 extern const wchar_t* NTP_STATUS_SYNCHRONIZED[LANG_COUNT];
 extern const wchar_t* ANTIALIASING_LABELS[LANG_COUNT];
-extern const wchar_t* ANTIALIASING_NAMES[FONT_ANTIALIAS_COUNT];
+extern const wchar_t* ANTIALIASING_NAMES[LANG_COUNT][FONT_ANTIALIAS_COUNT];
 extern const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT];
 extern const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT];
 extern const wchar_t* STOP_TEST_LABELS[LANG_COUNT];
@@ -106,6 +119,8 @@ extern const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT];
 extern const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT];
 extern const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT];
 extern const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT];
+extern const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT];
+extern const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT];
 extern const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT];
 extern const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT];
 extern const wchar_t* ABOUT_TEXT[LANG_COUNT];

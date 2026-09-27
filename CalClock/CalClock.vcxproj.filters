@@ -21,6 +21,15 @@
     <ClCompile Include="AnalogClockHost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AudioDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioGainCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioProcessing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CalendarLocaleScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,6 +48,9 @@
     <ClCompile Include="SettingsStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TimeFormats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="TimeSignal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,12 +60,24 @@
     <ClCompile Include="WidgetLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WindowRedrawScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlarmActions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AnalogClockHost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioGainCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalClockTypes.h">
@@ -65,6 +89,12 @@
     <ClInclude Include="DateFormats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IAudioSampleCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IAudioSampleGrabber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Localization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -74,6 +104,9 @@
     <ClInclude Include="SettingsStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TimeFormats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="TimeSignal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WidgetLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowRedrawScope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">

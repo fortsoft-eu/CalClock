@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.2.0
+ * Last modified for version 1.5.0.0
  */
 
 #pragma once
@@ -30,8 +30,18 @@
 #include <string>
 #include <vector>
 
+const int MAX_WIDGET_COUNT = 32;
+const int ADDITIONAL_CLOCK_COUNT = 2;
 const int WIDGET_OPACITY_MIN = 1;
 const int WIDGET_OPACITY_MAX = 100;
+const int ALARM_VOLUME_MIN = -10000;
+const int ALARM_VOLUME_MAX = 0;
+const int ALARM_VOLUME_UNITY = -1800;
+const int ALARM_VOLUME_DEFAULT = ALARM_VOLUME_UNITY;
+
+const int TIME_SIGNAL_VOLUME_MIN = 0;
+const int TIME_SIGNAL_VOLUME_MAX = 357;
+const int TIME_SIGNAL_VOLUME_DEFAULT = 45;
 const int DIGITAL_FONT_SIZE_MIN = 1;
 const int DIGITAL_FONT_SIZE_MAX = 400;
 const int FULLSCREEN_FONT_SIZE_MIN = 1;
@@ -59,9 +69,24 @@ enum DigitalBorderStyle {
     DIGITAL_BORDER_STYLE_COUNT
 };
 
+enum LeadingZeroMode {
+    LEADING_ZERO_VISIBLE,
+    LEADING_ZERO_RESERVED,
+    LEADING_ZERO_OMITTED,
+    LEADING_ZERO_MODE_COUNT
+};
+
+enum TimeFormatMode {
+    TIME_FORMAT_CULTURE,
+    TIME_FORMAT_12_HOUR,
+    TIME_FORMAT_24_HOUR,
+    TIME_FORMAT_COUNT
+};
+
 enum FontAntialiasing {
     FONT_ANTIALIAS_GDI,
     FONT_ANTIALIAS_CLEARTYPE,
+    FONT_ANTIALIAS_NONE,
     FONT_ANTIALIAS_COUNT
 };
 
@@ -208,6 +233,13 @@ struct FontSelection {
     BYTE charSet = DEFAULT_CHARSET;
 };
 
+struct AdditionalClockConfig {
+    bool enabled = false;
+    std::wstring name;
+    std::wstring timeZoneKey;
+    int size = 104;
+};
+
 struct WidgetConfig {
     int id = 0;
     WidgetType type = WIDGET_ANALOG;
@@ -231,7 +263,9 @@ struct WidgetConfig {
     int fontSize = 0;
     int fontDialogSize = 90;
     int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
-    bool leadingZero = false;
+    int leadingZeroMode = LEADING_ZERO_VISIBLE;
+    bool showAmPm = true;
+    int timeFormat = TIME_FORMAT_CULTURE;
     bool transparentBackground = false;
     bool disableThemes = false;
     std::wstring fontFace;
@@ -243,14 +277,16 @@ struct WidgetConfig {
     FontSelection panelTopFont;
     FontSelection panelTimeFont;
     FontSelection panelBottomFont;
+    AdditionalClockConfig additionalClocks[ADDITIONAL_CLOCK_COUNT];
     int padding = 8;
-    int borderStyle = DIGITAL_BORDER_SINGLE;
+    int borderStyle = DIGITAL_BORDER_TOOL_WINDOW;
     int borderWidth = 1;
     COLORREF borderColor = 0;
     COLORREF textColor = 0;
     COLORREF backgroundColor = 0;
     COLORREF alarmTextColor = RGB(220, 0, 0);
     COLORREF alarmBackgroundColor = RGB(255, 255, 128);
+    bool showToday = true;
     bool weekNumbers = false;
     bool sundayFirst = false;
     int dateCopyFormat = DATE_LOCAL_SHORT;
@@ -263,6 +299,7 @@ struct WidgetConfig {
     int alarmMinute = 0;
     bool runCommand = false;
     bool loopAudio = false;
+    int alarmVolume = ALARM_VOLUME_DEFAULT;
     std::wstring command;
     bool callRemoteScript = false;
     std::wstring remoteScriptUrl;
@@ -272,6 +309,8 @@ struct SettingsSnapshot {
     AppLanguage language = LANG_EN;
     bool themesDisabled = false;
     bool snapWidgetsToWorkArea = true;
+    bool generatedTimeSignal = true;
+    double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
     int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
     std::wstring fontFace;
     int fontDialogSize = 90;
@@ -296,6 +335,7 @@ struct Widget {
     HWND window = nullptr;
     HWND analogChild = nullptr;
     WNDPROC analogProc = nullptr;
+    HWND additionalAnalogChildren[ADDITIONAL_CLOCK_COUNT] = {};
     HWND calendarChild = nullptr;
     WNDPROC calendarProc = nullptr;
     HFONT calendarFont = nullptr;
@@ -316,6 +356,7 @@ struct Widget {
     int lastObservedAlarmMinute = -1;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
+    int lastCalendarDateKey = -1;
     HWND panelDateLink = nullptr;
     HFONT panelDateFont = nullptr;
     bool panelDateHot = false;

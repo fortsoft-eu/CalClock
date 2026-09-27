@@ -21,17 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #pragma once
 
 #include <windows.h>
 #include <string>
+#include <atomic>
+#include <memory>
 
 bool LooksLikeAudio(const std::wstring& path);
 bool IsRemoteScriptUrlValid(const std::wstring& url);
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, HWND notifyWindow, 
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, const std::shared_ptr<std::atomic<int>>& volume, HWND notifyWindow,
     UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent);
 void SetAudioPlaybackMuted(HANDLE muteEvent, bool muted);
 void StartLocalCommandAsync(const std::wstring& command);

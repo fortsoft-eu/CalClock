@@ -26,19 +26,34 @@
 
 #pragma once
 
-#include "CalClockTypes.h"
-#include <atomic>
-#include <string>
+#include "AudioProcessing.h"
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include <vector>
+#include <wrl/client.h>
 
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
-    ULONG generation = 0;
+class AudioDecoder {
+public:
+    AudioDecoder() = default;
+    AudioDecoder(const AudioDecoder&) = delete;
+    AudioDecoder& operator=(const AudioDecoder&) = delete;
+    ~AudioDecoder();
+    HRESULT Open(const std::wstring& path);
+    HRESULT Read(std::vector<BYTE>& data, bool& end);
+    HRESULT Restart(const std::wstring& path);
+    const WAVEFORMATEX* GetWaveFormat() const;
+    const AudioSampleFormat& GetSampleFormat() const;
+
+private:
+    HMODULE platform = nullptr;
+    HMODULE readerLibrary = nullptr;
+    HRESULT(WINAPI* startup)(ULONG, DWORD) = nullptr;
+    HRESULT(WINAPI* shutdown)() = nullptr;
+    HRESULT(WINAPI* createType)(IMFMediaType**) = nullptr;
+    HRESULT(WINAPI* createReader)(LPCWSTR, IMFAttributes*, IMFSourceReader**) = nullptr;
+    HRESULT(WINAPI* createWaveFormat)(IMFMediaType*, WAVEFORMATEX**, UINT32*, UINT32) = nullptr;
+    Microsoft::WRL::ComPtr<IMFSourceReader> reader;
+    AudioSampleFormat format;
+    WAVEFORMATEX* wave = nullptr;
+    bool started = false;
 };
-
-std::wstring NtpServersForPreset(int preset);
-bool HasNtpServers(const std::wstring& serverList);
-ULONGLONG CurrentFileTimeValue();
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested,
-    std::atomic<bool>* queryRunning);

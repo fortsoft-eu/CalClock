@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #pragma once
 
 #include "CalClockTypes.h"
+
+const size_t MAX_WIDGET_CLIPBOARD_BYTES = 4 * 1024 * 1024;
 
 using WidgetDefaultsFactory = WidgetConfig(*)(WidgetType type, int index, AppLanguage language, int fontAntialiasing);
 
@@ -37,3 +39,6 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
 bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot);
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot);
 bool WriteRegistrySettings(const SettingsSnapshot& snapshot);
+bool SerializeWidgetClipboardData(const std::vector<WidgetConfig>& widgets, std::vector<BYTE>* data);
+bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults,
+    std::vector<WidgetConfig>* widgets);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.0.0
  */
 
 #define NOMINMAX
@@ -30,6 +30,11 @@
 #include <windows.h>
 #include <algorithm>
 #include <climits>
+#include <cmath>
+#include <iomanip>
+#include <limits>
+#include <locale>
+#include <sstream>
 #include <cwctype>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -80,6 +85,47 @@ static void WriteQword(HKEY key, const wchar_t* name, LONGLONG value) {
 
 static void WriteString(HKEY key, const wchar_t* name, const std::wstring& value) {
     RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
+}
+
+static std::wstring FormatRealNumber(double value) {
+    std::wostringstream stream;
+    stream.imbue(std::locale::classic());
+    stream << std::setprecision(std::numeric_limits<double>::max_digits10) << value;
+    return stream.str();
+}
+
+static bool ParseRealNumber(const std::wstring& text, double* value) {
+    std::wistringstream stream(text);
+    stream.imbue(std::locale::classic());
+    double parsed = 0.0;
+    if (!(stream >> parsed) || !std::isfinite(parsed)) {
+        return false;
+    }
+    stream >> std::ws;
+    if (!stream.eof()) {
+        return false;
+    }
+    *value = parsed;
+    return true;
+}
+
+static bool ReadTimeSignalVolume(HKEY key, double* volume) {
+    DWORD integer = 0;
+    if (ReadDword(key, L"TimeSignalVolume", &integer)) {
+        *volume = integer;
+        return true;
+    }
+    std::wstring text;
+    return ReadString(key, L"TimeSignalVolume", &text) && ParseRealNumber(text, volume);
+}
+
+static void WriteTimeSignalVolume(HKEY key, double volume) {
+    volume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
+    if (volume == std::floor(volume)) {
+        WriteDword(key, L"TimeSignalVolume", static_cast<DWORD>(volume));
+    } else {
+        WriteString(key, L"TimeSignalVolume", FormatRealNumber(volume));
+    }
 }
 
 std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
@@ -140,14 +186,7 @@ static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
     return selection;
 }
 
-bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot) {
-    if (path.empty() || snapshot.widgets.empty()) {
-        return false;
-    }
-    IStream* stream = nullptr;
-    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_CREATE | STGM_WRITE | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream))) {
-        return false;
-    }
+static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snapshot) {
     IXmlWriter* writer = nullptr;
     HRESULT result = CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), nullptr);
     if (SUCCEEDED(result)) {
@@ -170,6 +209,12 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"disableThemes", snapshot.themesDisabled);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlTextAttribute(writer, L"timeSignalVolume", FormatRealNumber(snapshot.timeSignalVolume));
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"snapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
@@ -258,6 +303,20 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
         if (SUCCEEDED(result)) {
             result = WriteXmlTextAttribute(writer, L"timeZoneKey", config.timeZoneKey);
         }
+        for (int index = 0; index < ADDITIONAL_CLOCK_COUNT && SUCCEEDED(result); index++) {
+            const AdditionalClockConfig& clock = config.additionalClocks[index];
+            std::wstring prefix = L"additionalClock" + std::to_wstring(index + 1);
+            result = WriteXmlNumberAttribute(writer, (prefix + L"Enabled").c_str(), clock.enabled);
+            if (SUCCEEDED(result)) {
+                result = WriteXmlTextAttribute(writer, (prefix + L"Name").c_str(), clock.name);
+            }
+            if (SUCCEEDED(result)) {
+                result = WriteXmlTextAttribute(writer, (prefix + L"TimeZoneKey").c_str(), clock.timeZoneKey);
+            }
+            if (SUCCEEDED(result)) {
+                result = WriteXmlNumberAttribute(writer, (prefix + L"Size").c_str(), clock.size);
+            }
+        }
         if (SUCCEEDED(result)) {
             result = WriteXmlTextAttribute(writer, L"monitorDevices", config.monitorDevices);
         }
@@ -295,7 +354,13 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"fontAntialiasing", config.fontAntialiasing);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"leadingZero", config.leadingZero);
+            result = WriteXmlNumberAttribute(writer, L"leadingZero", config.leadingZeroMode);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"showAmPm", config.showAmPm);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"timeFormat", config.timeFormat);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"transparentBackground", config.transparentBackground);
@@ -409,6 +474,9 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"alarmBackgroundColor", static_cast<DWORD>(config.alarmBackgroundColor));
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"showToday", config.showToday);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"weekNumbers", config.weekNumbers);
         }
         if (SUCCEEDED(result)) {
@@ -445,6 +513,9 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
             result = WriteXmlNumberAttribute(writer, L"loopAudio", config.loopAudio);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"alarmVolume", config.alarmVolume);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlTextAttribute(writer, L"command", config.command);
         }
         if (SUCCEEDED(result)) {
@@ -472,8 +543,52 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
     if (writer != nullptr) {
         writer->Release();
     }
-    stream->Release();
     return SUCCEEDED(result);
+}
+
+bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot) {
+    if (path.empty() || snapshot.widgets.empty() || snapshot.widgets.size() > MAX_WIDGET_COUNT) {
+        return false;
+    }
+    IStream* stream = nullptr;
+    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_CREATE | STGM_WRITE | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream))) {
+        return false;
+    }
+    bool success = WriteSettingsXmlStream(stream, snapshot);
+    stream->Release();
+    return success;
+}
+
+bool SerializeWidgetClipboardData(const std::vector<WidgetConfig>& widgets, std::vector<BYTE>* data) {
+    if (widgets.empty() || widgets.size() > MAX_WIDGET_COUNT || data == nullptr) {
+        return false;
+    }
+    IStream* stream = SHCreateMemStream(nullptr, 0);
+    if (stream == nullptr) {
+        return false;
+    }
+    SettingsSnapshot snapshot;
+    snapshot.widgets = widgets;
+    STATSTG information = {};
+    bool success = WriteSettingsXmlStream(stream, snapshot)
+        && SUCCEEDED(stream->Stat(&information, STATFLAG_NONAME))
+        && information.cbSize.HighPart == 0
+        && information.cbSize.LowPart > 0
+        && information.cbSize.LowPart <= MAX_WIDGET_CLIPBOARD_BYTES;
+    std::vector<BYTE> serialized;
+    if (success) {
+        serialized.resize(information.cbSize.LowPart);
+        LARGE_INTEGER beginning = {};
+        ULONG bytesRead = 0;
+        success = SUCCEEDED(stream->Seek(beginning, STREAM_SEEK_SET, nullptr))
+            && SUCCEEDED(stream->Read(serialized.data(), information.cbSize.LowPart, &bytesRead))
+            && bytesRead == information.cbSize.LowPart;
+    }
+    stream->Release();
+    if (success) {
+        *data = std::move(serialized);
+    }
+    return success;
 }
 
 static bool ReadXmlAttribute(IXmlReader* reader, const wchar_t* name, std::wstring* value) {
@@ -546,6 +661,22 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlAttribute(reader, L"timeZoneKey", &text)) {
         config->timeZoneKey = text;
     }
+    for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
+        AdditionalClockConfig& clock = config->additionalClocks[index];
+        std::wstring prefix = L"additionalClock" + std::to_wstring(index + 1);
+        if (ReadXmlNumberAttribute(reader, (prefix + L"Enabled").c_str(), &number)) {
+            clock.enabled = number != 0;
+        }
+        if (ReadXmlAttribute(reader, (prefix + L"Name").c_str(), &text)) {
+            clock.name = text;
+        }
+        if (ReadXmlAttribute(reader, (prefix + L"TimeZoneKey").c_str(), &text)) {
+            clock.timeZoneKey = text;
+        }
+        if (ReadXmlNumberAttribute(reader, (prefix + L"Size").c_str(), &number)) {
+            clock.size = static_cast<int>(std::clamp<LONGLONG>(number, 48, 256));
+        }
+    }
     if (ReadXmlAttribute(reader, L"monitorDevices", &text)) {
         config->monitorDevices = text;
     }
@@ -588,8 +719,14 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number) && number >= 0 && number < FONT_ANTIALIAS_COUNT) {
         config->fontAntialiasing = static_cast<int>(number);
     }
+    if (ReadXmlNumberAttribute(reader, L"timeFormat", &number) && number >= 0 && number < TIME_FORMAT_COUNT) {
+        config->timeFormat = static_cast<int>(number);
+    }
+    if (ReadXmlNumberAttribute(reader, L"showAmPm", &number)) {
+        config->showAmPm = number != 0;
+    }
     if (ReadXmlNumberAttribute(reader, L"leadingZero", &number)) {
-        config->leadingZero = number != 0;
+        config->leadingZeroMode = std::clamp(static_cast<int>(number), 0, LEADING_ZERO_MODE_COUNT - 1);
     }
     if (ReadXmlNumberAttribute(reader, L"transparentBackground", &number)) {
         config->transparentBackground = number != 0;
@@ -706,6 +843,9 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"alarmBackgroundColor", &number)) {
         config->alarmBackgroundColor = static_cast<COLORREF>(number & 0xFFFFFF);
     }
+    if (ReadXmlNumberAttribute(reader, L"showToday", &number)) {
+        config->showToday = number != 0;
+    }
     if (ReadXmlNumberAttribute(reader, L"weekNumbers", &number)) {
         config->weekNumbers = number != 0;
     }
@@ -742,6 +882,9 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"loopAudio", &number)) {
         config->loopAudio = number != 0;
     }
+    if (ReadXmlNumberAttribute(reader, L"alarmVolume", &number)) {
+        config->alarmVolume = static_cast<int>(std::clamp<LONGLONG>(number, ALARM_VOLUME_MIN, ALARM_VOLUME_MAX));
+    }
     if (ReadXmlAttribute(reader, L"command", &text)) {
         config->command = text;
     }
@@ -753,18 +896,7 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     }
 }
 
-bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
-    if (path.empty() || createDefaults == nullptr || snapshot == nullptr) {
-        return false;
-    }
-    WIN32_FILE_ATTRIBUTE_DATA fileData = {};
-    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fileData) || fileData.nFileSizeHigh != 0 || fileData.nFileSizeLow > 4 * 1024 * 1024) {
-        return false;
-    }
-    IStream* stream = nullptr;
-    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
-        return false;
-    }
+static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
     IXmlReader* reader = nullptr;
     HRESULT result = CreateXmlReader(__uuidof(IXmlReader), reinterpret_cast<void**>(&reader), nullptr);
     if (SUCCEEDED(result)) {
@@ -801,6 +933,14 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
             }
             if (ReadXmlNumberAttribute(reader, L"disableThemes", &number)) {
                 loaded.themesDisabled = number != 0;
+            }
+            if (ReadXmlNumberAttribute(reader, L"generatedTimeSignal", &number)) {
+                loaded.generatedTimeSignal = number == 0;
+            }
+            std::wstring volumeText;
+            double volume = 0.0;
+            if (ReadXmlAttribute(reader, L"timeSignalVolume", &volumeText) && ParseRealNumber(volumeText, &volume)) {
+                loaded.timeSignalVolume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
             }
             if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
                 loaded.snapWidgetsToWorkArea = number != 0;
@@ -857,7 +997,7 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
                 loaded.aboutY = static_cast<int>(number);
             }
         } else if (element == L"Widget" && rootFound) {
-            if (loaded.widgets.size() >= 32) {
+            if (loaded.widgets.size() >= MAX_WIDGET_COUNT) {
                 result = E_FAIL;
                 break;
             }
@@ -881,11 +1021,44 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
     if (reader != nullptr) {
         reader->Release();
     }
-    stream->Release();
     if (valid) {
         *snapshot = std::move(loaded);
     }
     return valid;
+}
+
+bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+    if (path.empty() || createDefaults == nullptr || snapshot == nullptr) {
+        return false;
+    }
+    WIN32_FILE_ATTRIBUTE_DATA fileData = {};
+    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fileData) || fileData.nFileSizeHigh != 0 || fileData.nFileSizeLow > 4 * 1024 * 1024) {
+        return false;
+    }
+    IStream* stream = nullptr;
+    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
+        return false;
+    }
+    bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot);
+    stream->Release();
+    return success;
+}
+
+bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets) {
+    if (data.empty() || data.size() > MAX_WIDGET_CLIPBOARD_BYTES || createDefaults == nullptr || widgets == nullptr) {
+        return false;
+    }
+    IStream* stream = SHCreateMemStream(data.data(), static_cast<UINT>(data.size()));
+    if (stream == nullptr) {
+        return false;
+    }
+    SettingsSnapshot snapshot;
+    bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, &snapshot);
+    stream->Release();
+    if (success) {
+        *widgets = std::move(snapshot.widgets);
+    }
+    return success;
 }
 
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
@@ -916,6 +1089,18 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         config->language = static_cast<AppLanguage>(value);
     }
     ReadString(key, L"TimeZoneKey", &config->timeZoneKey);
+    for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
+        AdditionalClockConfig& clock = config->additionalClocks[index];
+        std::wstring prefix = L"AdditionalClock" + std::to_wstring(index + 1);
+        if (ReadDword(key, (prefix + L"Enabled").c_str(), &value)) {
+            clock.enabled = value != 0;
+        }
+        ReadString(key, (prefix + L"Name").c_str(), &clock.name);
+        ReadString(key, (prefix + L"TimeZoneKey").c_str(), &clock.timeZoneKey);
+        if (ReadDword(key, (prefix + L"Size").c_str(), &value)) {
+            clock.size = static_cast<int>(std::clamp<DWORD>(value, 48, 256));
+        }
+    }
     ReadString(key, L"MonitorDevices", &config->monitorDevices);
     if (ReadDword(key, L"BlackoutOtherMonitors", &value)) {
         config->blackoutOtherMonitors = value != 0;
@@ -954,8 +1139,14 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
         config->fontAntialiasing = static_cast<int>(value);
     }
+    if (ReadDword(key, L"TimeFormat", &value) && value < TIME_FORMAT_COUNT) {
+        config->timeFormat = static_cast<int>(value);
+    }
+    if (ReadDword(key, L"ShowAmPm", &value)) {
+        config->showAmPm = value != 0;
+    }
     if (ReadDword(key, L"LeadingZero", &value)) {
-        config->leadingZero = value != 0;
+        config->leadingZeroMode = std::clamp(static_cast<int>(value), 0, LEADING_ZERO_MODE_COUNT - 1);
     }
     if (ReadDword(key, L"TransparentBackground", &value)) {
         config->transparentBackground = value != 0;
@@ -1068,6 +1259,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"AlarmBackgroundColor", &value)) {
         config->alarmBackgroundColor = static_cast<COLORREF>(value);
     }
+    if (ReadDword(key, L"ShowToday", &value)) {
+        config->showToday = value != 0;
+    }
     if (ReadDword(key, L"WeekNumbers", &value)) {
         config->weekNumbers = value != 0;
     }
@@ -1104,6 +1298,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"LoopAudio", &value)) {
         config->loopAudio = value != 0;
     }
+    if (ReadDword(key, L"AlarmVolume", &value)) {
+        config->alarmVolume = std::clamp(static_cast<int>(value), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
+    }
     ReadString(key, L"Command", &config->command);
     if (ReadDword(key, L"CallRemoteScript", &value)) {
         config->callRemoteScript = value != 0;
@@ -1123,6 +1320,14 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"ShowUtcText", config.showUtcText);
     WriteDword(key, L"WidgetLanguage", config.language);
     WriteString(key, L"TimeZoneKey", config.timeZoneKey);
+    for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
+        const AdditionalClockConfig& clock = config.additionalClocks[index];
+        std::wstring prefix = L"AdditionalClock" + std::to_wstring(index + 1);
+        WriteDword(key, (prefix + L"Enabled").c_str(), clock.enabled);
+        WriteString(key, (prefix + L"Name").c_str(), clock.name);
+        WriteString(key, (prefix + L"TimeZoneKey").c_str(), clock.timeZoneKey);
+        WriteDword(key, (prefix + L"Size").c_str(), clock.size);
+    }
     WriteString(key, L"MonitorDevices", config.monitorDevices);
     WriteDword(key, L"BlackoutOtherMonitors", config.blackoutOtherMonitors);
     WriteQword(key, L"OffsetMilliseconds", config.offsetMilliseconds);
@@ -1135,7 +1340,9 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"FontSize", config.fontSize);
     WriteDword(key, L"FontDialogSize", config.fontDialogSize);
     WriteDword(key, L"FontAntialiasing", config.fontAntialiasing);
-    WriteDword(key, L"LeadingZero", config.leadingZero);
+    WriteDword(key, L"LeadingZero", config.leadingZeroMode);
+    WriteDword(key, L"ShowAmPm", config.showAmPm);
+    WriteDword(key, L"TimeFormat", config.timeFormat);
     WriteDword(key, L"TransparentBackground", config.transparentBackground);
     WriteDword(key, L"DisableThemes", config.disableThemes);
     WriteString(key, L"FontFace", config.fontFace);
@@ -1173,6 +1380,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"BackgroundColor", config.backgroundColor);
     WriteDword(key, L"AlarmTextColor", config.alarmTextColor);
     WriteDword(key, L"AlarmBackgroundColor", config.alarmBackgroundColor);
+    WriteDword(key, L"ShowToday", config.showToday);
     WriteDword(key, L"WeekNumbers", config.weekNumbers);
     WriteDword(key, L"SundayFirst", config.sundayFirst);
     WriteDword(key, L"DateCopyFormat", config.dateCopyFormat);
@@ -1185,6 +1393,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"AlarmMinute", config.alarmMinute);
     WriteDword(key, L"RunCommand", config.runCommand);
     WriteDword(key, L"LoopAudio", config.loopAudio);
+    WriteDword(key, L"AlarmVolume", static_cast<DWORD>(config.alarmVolume));
     WriteString(key, L"Command", config.command);
     WriteDword(key, L"CallRemoteScript", config.callRemoteScript);
     WriteString(key, L"RemoteScriptUrl", config.remoteScriptUrl);
@@ -1248,6 +1457,13 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     } else if (ReadDword(root, L"VisualStyles", &value)) {
         loaded.themesDisabled = value == 0;
     }
+    if (ReadDword(root, L"GeneratedTimeSignal", &value)) {
+        loaded.generatedTimeSignal = value == 0;
+    }
+    double volume = 0.0;
+    if (ReadTimeSignalVolume(root, &volume)) {
+        loaded.timeSignalVolume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
+    }
     if (ReadDword(root, L"SnapWidgetsToWorkArea", &value)) {
         loaded.snapWidgetsToWorkArea = value != 0;
     }
@@ -1302,7 +1518,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     HKEY collection = nullptr;
     DWORD count = 0;
     if (RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &collection) == ERROR_SUCCESS && ReadDword(collection, L"Count", &count)) {
-        count = std::min<DWORD>(count, 32);
+        count = std::min<DWORD>(count, MAX_WIDGET_COUNT);
         for (DWORD index = 0; index < count; index++) {
             wchar_t subkey[24] = {};
             swprintf_s(subkey, L"%u", index);
@@ -1365,6 +1581,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
 }
 
 bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
+    if (snapshot.widgets.size() > MAX_WIDGET_COUNT) {
+        return false;
+    }
     HKEY root = nullptr;
     DWORD disposition = 0;
     if (RegCreateKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, nullptr, 0, KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
@@ -1374,6 +1593,8 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"Language", snapshot.language);
     WriteDword(root, L"DisableThemes", snapshot.themesDisabled);
     WriteDword(root, L"VisualStyles", !snapshot.themesDisabled);
+    WriteDword(root, L"GeneratedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
+    WriteTimeSignalVolume(root, snapshot.timeSignalVolume);
     WriteDword(root, L"SnapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
     WriteDword(root, L"FontAntialiasing", snapshot.fontAntialiasing);
     WriteString(root, L"FontFace", snapshot.fontFace);

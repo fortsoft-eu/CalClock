@@ -26,19 +26,14 @@
 
 #pragma once
 
-#include "CalClockTypes.h"
-#include <atomic>
-#include <string>
+#include "IAudioSampleCallback.h"
 
-struct NtpThreadResult {
-    bool success = false;
-    LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
-    ULONG generation = 0;
+struct __declspec(uuid("6B652FFF-11FE-4FCE-92AD-0266B5D7C78F")) IAudioSampleGrabber : IUnknown {
+    virtual HRESULT STDMETHODCALLTYPE SetOneShot(BOOL oneShot) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetMediaType(const AM_MEDIA_TYPE* type) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(AM_MEDIA_TYPE* type) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(BOOL bufferSamples) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(long* size, long* buffer) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(IMediaSample** sample) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetCallback(IAudioSampleCallback* callback, long method) = 0;
 };
-
-std::wstring NtpServersForPreset(int preset);
-bool HasNtpServers(const std::wstring& serverList);
-ULONGLONG CurrentFileTimeValue();
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested,
-    std::atomic<bool>* queryRunning);
