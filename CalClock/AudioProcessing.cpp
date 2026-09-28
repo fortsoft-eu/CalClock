@@ -37,10 +37,12 @@
 #pragma comment(lib, "Ole32.lib")
 #pragma comment(lib, "Strmiids.lib")
 
+/// Tests the optional mute event without waiting.
 static bool IsAudioMuted(HANDLE muteEvent) {
     return muteEvent != nullptr && WaitForSingleObject(muteEvent, 0) == WAIT_OBJECT_0;
 }
 
+/// Returns the current clamped alarm level in hundredths of a decibel, or the silence value when muted.
 static int AudioPlaybackVolume(const AudioThreadParameters& parameters) {
     if (IsAudioMuted(parameters.muteEvent)) {
         return ALARM_VOLUME_MIN;
@@ -48,11 +50,14 @@ static int AudioPlaybackVolume(const AudioThreadParameters& parameters) {
     return parameters.volume == nullptr ? ALARM_VOLUME_DEFAULT : std::clamp(parameters.volume->load(), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
 }
 
+/// Converts the current alarm level to linear sample gain, treating -18 dB as unity and the minimum as silence.
 double AudioPlaybackGain(const AudioThreadParameters& parameters) {
     int volume = AudioPlaybackVolume(parameters);
     return volume == ALARM_VOLUME_MIN ? 0.0 : std::pow(10.0, (volume - ALARM_VOLUME_UNITY) / 2000.0);
 }
 
+/// Validates a wave-format buffer and extracts the supported PCM or IEEE floating-point layout.
+/// Returns false for truncated, inconsistent, or unsupported formats; use format only on success.
 bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& format) {
     if (data == nullptr || size < sizeof(PCMWAVEFORMAT)) {
         return false;
@@ -90,6 +95,8 @@ bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& forma
         && (format.bits == 8 || format.bits == 16 || format.bits == 24 || format.bits == 32);
 }
 
+/// Applies linear gain in place to complete sample frames using a validated format.
+/// Clamps amplified samples to the representable range and writes format-correct silence for zero gain.
 HRESULT ApplyAudioGain(BYTE* data, size_t length, const AudioSampleFormat& format, double gain) {
     if (data == nullptr || format.blockAlign == 0 || length % format.blockAlign != 0) {
         return E_INVALIDARG;
@@ -147,6 +154,7 @@ HRESULT ApplyAudioGain(BYTE* data, size_t length, const AudioSampleFormat& forma
     return S_OK;
 }
 
+/// Releases the COM-allocated format buffer and optional interface, then clears the media type.
 void FreeAudioMediaType(AM_MEDIA_TYPE& type) {
     CoTaskMemFree(type.pbFormat);
     if (type.pUnk != nullptr) {

@@ -39,6 +39,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+/// Passes server names, notification details, and borrowed cancellation and activity flags to the NTP worker.
 struct NtpThreadParameters {
     std::wstring serverList;
     ULONG generation = 0;
@@ -48,12 +49,14 @@ struct NtpThreadParameters {
     std::atomic<bool>* queryRunning = nullptr;
 };
 
+/// Stores a validated server sample's clock offset and network delay in 100-nanosecond units.
 struct NtpSample {
     LONGLONG offset100Nanoseconds = 0;
     LONGLONG delay100Nanoseconds = 0;
     std::wstring server;
 };
 
+/// Chooses a regional NTP preset from the user's locale country, defaulting to the global pool.
 static int AutomaticNtpPreset() {
     wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {};
     wchar_t country[4] = {};
@@ -119,6 +122,8 @@ static int AutomaticNtpPreset() {
     return NTP_PRESET_GLOBAL;
 }
 
+/// Returns the preset's server list, resolving the automatic preset from the user's region.
+/// Returns an empty string for the custom preset.
 std::wstring NtpServersForPreset(int preset) {
     int selected = std::clamp(preset, 0, NTP_PRESET_COUNT - 1);
     if (selected == NTP_PRESET_AUTO) {
@@ -136,6 +141,7 @@ std::wstring NtpServersForPreset(int preset) {
     return std::wstring();
 }
 
+/// Returns current UTC as Windows FILETIME ticks, using the precise system clock when available.
 ULONGLONG CurrentFileTimeValue() {
     FILETIME fileTime = {};
     typedef VOID(WINAPI* GetPreciseTimeProc)(LPFILETIME fileTime);
@@ -156,6 +162,7 @@ ULONGLONG CurrentFileTimeValue() {
     return value.QuadPart;
 }
 
+/// Encodes a FILETIME timestamp into an eight-byte, network-order NTP timestamp.
 static void WriteNtpTimestamp(BYTE* destination, ULONGLONG fileTimeValue) {
     const ULONGLONG ntpEpochInFileTime = 94354848000000000ULL;
     ULONGLONG ntpValue = fileTimeValue - ntpEpochInFileTime;
@@ -167,6 +174,7 @@ static void WriteNtpTimestamp(BYTE* destination, ULONGLONG fileTimeValue) {
     CopyMemory(destination + sizeof(seconds), &fraction, sizeof(fraction));
 }
 
+/// Decodes an eight-byte NTP timestamp to FILETIME ticks, choosing the era nearest referenceFileTime.
 static ULONGLONG ReadNtpTimestamp(const BYTE* source, ULONGLONG referenceFileTime) {
     const ULONGLONG ntpEpochInFileTime = 94354848000000000ULL;
     DWORD secondsNetwork = 0;
@@ -185,6 +193,7 @@ static ULONGLONG ReadNtpTimestamp(const BYTE* source, ULONGLONG referenceFileTim
     return ntpEpochInFileTime + candidate * 10000000ULL + (fraction * 10000000ULL >> 32);
 }
 
+/// Splits server names on whitespace, commas, or semicolons and keeps at most eight distinct names of valid length.
 static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverList) {
     std::vector<std::wstring> servers;
     size_t start = 0;
@@ -207,6 +216,8 @@ static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverLi
     return servers;
 }
 
+/// Queries a server's UDP endpoints, validates NTP replies, and retains the successful sample with the least delay.
+/// Checks the cancellation flag between attempts and returns false if no valid sample is received.
 static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRequested, NtpSample* bestSample) {
     ADDRINFOW hints = {};
     hints.ai_family = AF_UNSPEC;
@@ -286,6 +297,8 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
     return success;
 }
 
+/// Queries configured servers, rejects offset outliers, and combines accepted samples using inverse-delay weights.
+/// Transfers a heap-allocated result to the notification receiver on a successful post; otherwise releases it locally.
 static DWORD WINAPI NtpThreadProc(void* parameter) {
     std::unique_ptr<NtpThreadParameters> parameters(static_cast<NtpThreadParameters*>(parameter));
     std::unique_ptr<NtpThreadResult> result(new NtpThreadResult());
@@ -357,10 +370,14 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
     return 0;
 }
 
+/// Reports whether the server list contains at least one accepted server name.
 bool HasNtpServers(const std::wstring& serverList) {
     return !ParseNtpServerList(serverList).empty();
 }
 
+/// Starts an NTP worker and returns its thread handle, or null on failure.
+/// The caller owns the handle and must keep both atomic flags alive until the worker exits; the receiver owns posted
+/// results.
 HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage,
     std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning) {
     if (stopRequested == nullptr || queryRunning == nullptr) {

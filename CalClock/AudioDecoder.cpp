@@ -33,6 +33,7 @@
 #pragma comment(lib, "Mfuuid.lib")
 #pragma comment(lib, "Ole32.lib")
 
+/// Releases the reader and wave format, shuts down Media Foundation, and unloads its libraries.
 AudioDecoder::~AudioDecoder() {
     reader.Reset();
     CoTaskMemFree(wave);
@@ -47,6 +48,8 @@ AudioDecoder::~AudioDecoder() {
     }
 }
 
+/// Loads Media Foundation and opens the first audio stream with a supported PCM output format.
+/// Call once on a new decoder; returns a failing HRESULT if loading, decoding, or format negotiation fails.
 HRESULT AudioDecoder::Open(const std::wstring& path) {
     wchar_t directory[MAX_PATH] = {};
     UINT length = GetSystemDirectoryW(directory, ARRAYSIZE(directory));
@@ -105,6 +108,8 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
     return result;
 }
 
+/// Reads the next decoded block after Open succeeds and reports the end-of-stream flag through end.
+/// Returns a failing HRESULT for decoding errors or an incompatible midstream format change.
 HRESULT AudioDecoder::Read(std::vector<BYTE>& data, bool& end) {
     Microsoft::WRL::ComPtr<IMFSample> sample;
     DWORD flags = 0;
@@ -154,6 +159,8 @@ HRESULT AudioDecoder::Read(std::vector<BYTE>& data, bool& end) {
     return result;
 }
 
+/// Reopens the audio stream at its beginning using the negotiated output format.
+/// Replaces the current reader only on success, avoiding reliance on decoder seek support.
 HRESULT AudioDecoder::Restart(const std::wstring& path) {
     Microsoft::WRL::ComPtr<IMFMediaType> type;
     HRESULT result = reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &type);
@@ -176,10 +183,12 @@ HRESULT AudioDecoder::Restart(const std::wstring& path) {
     return result;
 }
 
+/// Returns the decoder-owned wave format, or null before a format has been obtained.
 const WAVEFORMATEX* AudioDecoder::GetWaveFormat() const {
     return wave;
 }
 
+/// Returns the sample layout established by a successful Open call.
 const AudioSampleFormat& AudioDecoder::GetSampleFormat() const {
     return format;
 }

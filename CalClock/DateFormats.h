@@ -28,6 +28,9 @@
 
 #include "CalClockTypes.h"
 
+/// Formats a date with the selected copy format and widget language, falling back to yyyy-MM-dd on failure.
 std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex);
+/// Builds a format selector caption containing the pattern, any localized format label, and an example date.
 std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex);
+/// Reports whether a valid format begins a different group from its predecessor.
 bool DateFormatStartsGroup(int formatIndex);

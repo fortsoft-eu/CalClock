@@ -30,6 +30,7 @@
 #include <atomic>
 #include <string>
 
+/// Carries an NTP query generation, success state, selected server, and clock offset back to the UI thread.
 struct NtpThreadResult {
     bool success = false;
     LONGLONG offset100Nanoseconds = 0;
@@ -37,8 +38,15 @@ struct NtpThreadResult {
     ULONG generation = 0;
 };
 
+/// Returns the preset's server list, resolving the automatic preset from the user's region.
+/// Returns an empty string for the custom preset.
 std::wstring NtpServersForPreset(int preset);
+/// Reports whether the server list contains at least one accepted server name.
 bool HasNtpServers(const std::wstring& serverList);
+/// Returns current UTC as Windows FILETIME ticks, using the precise system clock when available.
 ULONGLONG CurrentFileTimeValue();
+/// Starts an NTP worker and returns its thread handle, or null on failure.
+/// The caller owns the handle and must keep both atomic flags alive until the worker exits; the receiver owns posted
+/// results.
 HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage, std::atomic<bool>* stopRequested,
     std::atomic<bool>* queryRunning);

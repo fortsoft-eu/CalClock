@@ -28,6 +28,7 @@
 
 thread_local LCID activeCalendarLocale = 0;
 
+/// Saves the thread's locale state and activates the requested calendar locale when its name is valid.
 CalendarLocaleScope::CalendarLocaleScope(const wchar_t* localeName) {
     previousOverride = activeCalendarLocale;
     previousLocale = GetThreadLocale();
@@ -39,6 +40,7 @@ CalendarLocaleScope::CalendarLocaleScope(const wchar_t* localeName) {
     }
 }
 
+/// Restores the previous calendar override, thread locale, and thread UI language.
 CalendarLocaleScope::~CalendarLocaleScope() {
     SetThreadUILanguage(previousUiLanguage);
     SetThreadLocale(previousLocale);

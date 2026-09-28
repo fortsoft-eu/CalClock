@@ -30,9 +30,12 @@
 
 extern thread_local LCID activeCalendarLocale;
 
+/// Temporarily overrides the current thread's calendar locale and UI language, restoring both on destruction.
 class CalendarLocaleScope {
 public:
+    /// Saves the thread's locale state and activates the requested calendar locale when its name is valid.
     explicit CalendarLocaleScope(const wchar_t* localeName);
+    /// Restores the previous calendar override, thread locale, and thread UI language.
     ~CalendarLocaleScope();
 
 private:

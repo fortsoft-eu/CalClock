@@ -28,7 +28,10 @@
 
 #include <dshow.h>
 
+/// Declares the legacy DirectShow Sample Grabber callback interface used for in-place audio gain.
 struct __declspec(uuid("0579154A-2B53-4994-B0D0-E773148EFF85")) IAudioSampleCallback : IUnknown {
+    /// Receives a borrowed media sample and its stream timestamp in seconds.
     virtual HRESULT STDMETHODCALLTYPE SampleCB(double time, IMediaSample* sample) = 0;
+    /// Receives a borrowed sample buffer, byte length, and stream timestamp in seconds.
     virtual HRESULT STDMETHODCALLTYPE BufferCB(double time, BYTE* buffer, long length) = 0;
 };

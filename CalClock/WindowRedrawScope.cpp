@@ -28,6 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include "WindowRedrawScope.h"
 
+/// Disables redraw only when target is a valid, currently visible window.
 WindowRedrawScope::WindowRedrawScope(HWND target) {
     if (target != nullptr && IsWindowVisible(target)) {
         window = target;
@@ -35,6 +36,7 @@ WindowRedrawScope::WindowRedrawScope(HWND target) {
     }
 }
 
+/// Reenables redraw if the target still exists and invalidates its frame and child controls.
 WindowRedrawScope::~WindowRedrawScope() {
     if (window != nullptr && IsWindow(window)) {
         SendMessageW(window, WM_SETREDRAW, TRUE, 0);

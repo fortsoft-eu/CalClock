@@ -29,12 +29,18 @@
 #include <windows.h>
 #include <vector>
 
+/// Associates a widget ID with its screen-space rectangle for arrangement without moving live windows.
 struct WidgetPlacement {
     int id = 0;
     RECT rect = {};
 };
 
+/// Arranges widget rectangles on a common grid inside the work area.
+/// Leaves items unchanged on failure; anchorId identifies a fixed widget or uses the work-area origin when absent.
 bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& work, int anchorId = -1);
+/// Snaps a proposed widget position to nearby work-area edges within snapDistance pixels.
 POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position, int snapDistance);
+/// Calculates a resized widget's position while preserving its attachment to nearby work-area edges.
+/// Optionally reports whether each axis was attached; prefers left and top when both opposite edges qualify.
 POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight, int snapDistance,
     bool* horizontalAttachment = nullptr, bool* verticalAttachment = nullptr);

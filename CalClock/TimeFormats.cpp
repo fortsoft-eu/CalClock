@@ -29,6 +29,8 @@
 #include "Localization.h"
 #include <algorithm>
 
+/// Reads a time-format property for the selected language without user locale overrides.
+/// Returns an empty string if Windows cannot provide the value.
 static std::wstring GetTimeLocaleValue(AppLanguage language, LCTYPE type) {
     const wchar_t* locale = LANGUAGE_LOCALES[std::clamp(static_cast<int>(language), 0, LANG_COUNT - 1)];
     int length = GetLocaleInfoEx(locale, type | LOCALE_NOUSEROVERRIDE, nullptr, 0);
@@ -43,10 +45,12 @@ static std::wstring GetTimeLocaleValue(AppLanguage language, LCTYPE type) {
     return value;
 }
 
+/// Tests whether the widget explicitly selects UTC through its flag or zero-offset time-zone key.
 bool WidgetUsesUtcTime(const WidgetConfig& config) {
     return config.showUtc || _wcsicmp(config.timeZoneKey.c_str(), L"UTC") == 0 || _wcsicmp(config.timeZoneKey.c_str(), L"UTC+00:00") == 0;
 }
 
+/// Resolves the explicit or culture-based hour cycle, always using 24-hour time for UTC.
 bool WidgetUsesTwelveHourTime(const WidgetConfig& config) {
     if (WidgetUsesUtcTime(config)) {
         return false;
@@ -66,6 +70,7 @@ bool WidgetUsesTwelveHourTime(const WidgetConfig& config) {
     return false;
 }
 
+/// Adapts the language's time pattern to the selected hour cycle and leading-zero mode while preserving literals.
 static std::wstring GetWidgetTimePattern(const WidgetConfig& config) {
     std::wstring pattern = GetTimeLocaleValue(config.language, LOCALE_STIMEFORMAT);
     bool twelveHour = WidgetUsesTwelveHourTime(config);
@@ -92,6 +97,8 @@ static std::wstring GetWidgetTimePattern(const WidgetConfig& config) {
     return result;
 }
 
+/// Formats a displayed time using the widget's language, seconds, leading-zero, and hour-cycle settings.
+/// Places the optional localized AM/PM marker on a separate line for fullscreen clocks; returns empty on failure.
 std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time) {
     std::wstring pattern = GetWidgetTimePattern(config);
     if (pattern.empty()) {

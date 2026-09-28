@@ -32,16 +32,30 @@
 #include <vector>
 #include <wrl/client.h>
 
+/// Decodes the first audio stream to PCM using dynamically loaded Media Foundation APIs.
+/// Owns the source reader, output format, and library handles; COM must be initialized by the caller.
 class AudioDecoder {
 public:
+    /// Creates an unopened decoder without loading Media Foundation.
     AudioDecoder() = default;
+    /// Prevents copying ownership of the decoder and Media Foundation resources.
     AudioDecoder(const AudioDecoder&) = delete;
+    /// Prevents copying ownership of the decoder and Media Foundation resources.
     AudioDecoder& operator=(const AudioDecoder&) = delete;
+    /// Releases the reader and wave format, shuts down Media Foundation, and unloads its libraries.
     ~AudioDecoder();
+    /// Loads Media Foundation and opens the first audio stream with a supported PCM output format.
+    /// Call once on a new decoder; returns a failing HRESULT if loading, decoding, or format negotiation fails.
     HRESULT Open(const std::wstring& path);
+    /// Reads the next decoded block after Open succeeds and reports the end-of-stream flag through end.
+    /// Returns a failing HRESULT for decoding errors or an incompatible midstream format change.
     HRESULT Read(std::vector<BYTE>& data, bool& end);
+    /// Reopens the audio stream at its beginning using the negotiated output format.
+    /// Replaces the current reader only on success, avoiding reliance on decoder seek support.
     HRESULT Restart(const std::wstring& path);
+    /// Returns the decoder-owned wave format, or null before a format has been obtained.
     const WAVEFORMATEX* GetWaveFormat() const;
+    /// Returns the sample layout established by a successful Open call.
     const AudioSampleFormat& GetSampleFormat() const;
 
 private:

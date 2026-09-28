@@ -32,26 +32,32 @@
 static const int WIDGET_GAP = 10;
 static const int WIDGET_GRID_STEP = 16;
 
+/// Returns the rectangle's horizontal extent in pixels.
 static LONG Width(const RECT& rect) {
     return rect.right - rect.left;
 }
 
+/// Returns the rectangle's vertical extent in pixels.
 static LONG Height(const RECT& rect) {
     return rect.bottom - rect.top;
 }
 
+/// Returns a rectangle with the original size and the supplied top-left coordinates.
 static RECT At(const RECT& original, LONG x, LONG y) {
     return { x, y, x + Width(original), y + Height(original) };
 }
 
+/// Returns the rectangle's horizontal center using integer pixel coordinates.
 static LONG CenterX(const RECT& rect) {
     return rect.left + Width(rect) / 2;
 }
 
+/// Returns the rectangle's vertical center using integer pixel coordinates.
 static LONG CenterY(const RECT& rect) {
     return rect.top + Height(rect) / 2;
 }
 
+/// Rounds a coordinate upward to the grid anchored at origin, including negative screen coordinates.
 static LONG AlignUpToGrid(LONG value, LONG origin) {
     LONG remainder = (value - origin) % WIDGET_GRID_STEP;
     if (remainder < 0) {
@@ -60,6 +66,7 @@ static LONG AlignUpToGrid(LONG value, LONG origin) {
     return remainder == 0 ? value : value + WIDGET_GRID_STEP - remainder;
 }
 
+/// Tests whether a candidate rectangle leaves at least gap pixels between it and every placed rectangle.
 static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, LONG gap) {
     for (const RECT& current : placed) {
         if (candidate.right + gap > current.left
@@ -72,6 +79,8 @@ static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, 
     return true;
 }
 
+/// Finds the nearest nonoverlapping grid position inside the work area with the requested gap.
+/// Breaks equal-distance ties by top, then left; writes placement only when a position is found.
 static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& work, const std::vector<RECT>& placed,
     LONG gridOriginX, LONG gridOriginY, LONG gap, RECT* placement) {
     LONG minimumCenterX = work.left + Width(item.rect) / 2;
@@ -113,6 +122,8 @@ static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& wo
     return found;
 }
 
+/// Plans placements around the selected widget's center or the work-area origin.
+/// Keeps the anchor fixed and retries without gaps if needed; returns false if any widget cannot fit.
 static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT& work, int anchorId,
     std::vector<WidgetPlacement>* arranged) {
     if (arranged == nullptr || original.empty()) {
@@ -164,6 +175,8 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
     return true;
 }
 
+/// Arranges widget rectangles on a common grid inside the work area.
+/// Leaves items unchanged on failure; anchorId identifies a fixed widget or uses the work-area origin when absent.
 bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& work, int anchorId) {
     if (items == nullptr) {
         return false;
@@ -185,6 +198,7 @@ bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& wo
     return true;
 }
 
+/// Snaps a proposed widget position to nearby work-area edges within snapDistance pixels.
 POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position, int snapDistance) {
     POINT result = position;
     LONG width = Width(widgetRect);
@@ -202,6 +216,8 @@ POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POI
     return result;
 }
 
+/// Calculates a resized widget's position while preserving its attachment to nearby work-area edges.
+/// Optionally reports whether each axis was attached; prefers left and top when both opposite edges qualify.
 POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight, int snapDistance,
     bool* horizontalAttachment, bool* verticalAttachment) {
     bool left = widgetRect.left >= work.left - snapDistance && widgetRect.left <= work.left + snapDistance;

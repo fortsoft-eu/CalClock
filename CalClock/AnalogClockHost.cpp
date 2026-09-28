@@ -41,6 +41,7 @@ typedef void(__fastcall* RenderClockProc)(void* state, void* unused, HDC targetD
 typedef BOOL(__fastcall* VistaLoadClockResourcesProc)(void* state);
 typedef void(__fastcall* VistaReleaseClockResourcesProc)(void* state);
 
+/// Identifies the detected timedate.cpl clock implementation and its private control layout.
 enum AnalogClockImplementation {
     ANALOG_CLOCK_UNKNOWN,
     ANALOG_CLOCK_MODERN,
@@ -58,6 +59,7 @@ static DWORD* analogProfileTable = nullptr;
 static DWORD detectedAnalogProfiles[ANALOG_PROFILE_COUNT][ANALOG_PROFILE_LENGTH] = {};
 static AnalogClockImplementation analogClockImplementation = ANALOG_CLOCK_UNKNOWN;
 
+/// Returns the first exact byte-pattern match in a bounded memory range, or null for invalid input or no match.
 static BYTE* FindModulePattern(BYTE* begin, size_t length, const BYTE* pattern, size_t patternLength) {
     if (begin == nullptr || pattern == nullptr || patternLength == 0 || length < patternLength) {
         return nullptr;
@@ -70,10 +72,12 @@ static BYTE* FindModulePattern(BYTE* begin, size_t length, const BYTE* pattern, 
     return nullptr;
 }
 
+/// Reports whether a bounded memory range contains the exact byte pattern.
 static bool ContainsPattern(const BYTE* begin, size_t length, const BYTE* pattern, size_t patternLength) {
     return FindModulePattern(const_cast<BYTE*>(begin), length, pattern, patternLength) != nullptr;
 }
 
+/// Finds the largest executable PE section whose virtual range fits inside the loaded image.
 static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, BYTE** codeBegin, size_t* codeSize) {
     if (module == nullptr || ntHeaders == nullptr || codeBegin == nullptr || codeSize == nullptr) {
         return false;
@@ -104,6 +108,7 @@ static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, 
     return true;
 }
 
+/// Returns the known clock-profile index for a pixel size, or -1 when unsupported.
 static int AnalogProfileIndex(DWORD size) {
     for (int index = 0; index < ANALOG_PROFILE_COUNT; index++) {
         if (size == static_cast<DWORD>(ANALOG_PROFILE_SIZES[index])) {
@@ -113,6 +118,7 @@ static int AnalogProfileIndex(DWORD size) {
     return -1;
 }
 
+/// Checks a candidate private clock profile against the expected size, resource, and hand geometry constraints.
 static bool IsValidAnalogProfile(const DWORD* profile) {
     return !(profile == nullptr
         || AnalogProfileIndex(profile[0]) < 0
@@ -134,6 +140,8 @@ static bool IsValidAnalogProfile(const DWORD* profile) {
         || profile[13] > profile[0]);
 }
 
+/// Finds a unique validated table containing all known analog-clock profiles.
+/// Returns null if no table matches or more than one candidate is found.
 static DWORD* FindAnalogProfileTable(BYTE* module, size_t imageSize) {
     const size_t tableSize = ANALOG_PROFILE_COUNT * ANALOG_PROFILE_LENGTH * sizeof(DWORD);
     DWORD* result = nullptr;
@@ -161,6 +169,7 @@ static DWORD* FindAnalogProfileTable(BYTE* module, size_t imageSize) {
     return result;
 }
 
+/// Copies detected clock profiles into the cache indexed by supported clock size.
 static void CacheAnalogProfiles(DWORD* profileTable) {
     ZeroMemory(detectedAnalogProfiles, sizeof(detectedAnalogProfiles));
     for (int row = 0; row < ANALOG_PROFILE_COUNT; row++) {
@@ -172,6 +181,7 @@ static void CacheAnalogProfiles(DWORD* profileTable) {
     }
 }
 
+/// Searches backward up to 192 bytes for the expected x86 function prologue without crossing codeBegin.
 static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
     const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
     if (codeBegin == nullptr || address == nullptr || address < codeBegin + sizeof(prolog)) {
@@ -188,6 +198,8 @@ static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
     return nullptr;
 }
 
+/// Locates a unique clock-class registration routine by its class-name reference and instruction patterns.
+/// Reports whether the detected routine takes its argument on the stack.
 static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* codeBegin, size_t codeSize, bool* usesStackArgument) {
     const BYTE classNameBytes[] = {
         0x43,    0, 0x6C,    0, 0x6F,    0, 0x63,    0,
@@ -243,6 +255,7 @@ static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* code
     return result;
 }
 
+/// Finds a unique modern clock-rendering routine using its expected state-access instruction patterns.
 static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
     const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
     const BYTE stateArgumentPattern[] = { 0x8B, 0xF1 };
@@ -289,6 +302,7 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
     return result;
 }
 
+/// Finds a unique legacy registration routine whose embedded class-name pointer lies within the module.
 static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
     const BYTE registerPattern[] = {
         0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x28, 0x56,
@@ -321,6 +335,7 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
     return registerAddress;
 }
 
+/// Resolves unique Windows 7 registration and rendering routines and records their calling conventions.
 static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) {
     const BYTE renderPattern[] = {
         0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x34, 0x56,
@@ -342,6 +357,7 @@ static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) 
     return true;
 }
 
+/// Resolves unique Vista clock registration, rendering, resource-loading, and resource-release routines.
 static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     const BYTE renderPattern[] = {
         0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x3C, 0x56,
@@ -379,6 +395,8 @@ static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     return true;
 }
 
+/// Validates the loaded 32-bit timedate.cpl image and resolves its clock routines and profile table.
+/// Selects the supported legacy or modern implementation and reports failure if required patterns are unavailable.
 static bool ResolveAnalogClockInternals() {
     if (timeDateModule == nullptr) {
         return false;
@@ -439,6 +457,7 @@ static bool ResolveAnalogClockInternals() {
     return true;
 }
 
+/// Tests whether the loaded timedate.cpl module has registered ClockWndMain.
 static bool IsAnalogClockClassRegistered() {
     if (timeDateModule == nullptr) {
         return false;
@@ -447,6 +466,8 @@ static bool IsAnalogClockClassRegistered() {
     return GetClassInfoW(reinterpret_cast<HINSTANCE>(timeDateModule), L"ClockWndMain", &clockClass) != FALSE;
 }
 
+/// Loads the system's 32-bit timedate.cpl, resolves its internals, and registers ClockWndMain when needed.
+/// Returns false on unsupported process architecture or unavailable clock internals.
 static bool LoadAnalogClockClass() {
     if (sizeof(void*) != 4) {
         return false;
@@ -492,6 +513,7 @@ static bool LoadAnalogClockClass() {
     return IsAnalogClockClassRegistered();
 }
 
+/// Returns a borrowed cached profile for the requested size, defaulting to the 130-pixel profile.
 static const DWORD* ProfileForSize(int size) {
     int profileIndex = AnalogProfileIndex(size);
     if (profileIndex < 0) {
@@ -500,6 +522,7 @@ static const DWORD* ProfileForSize(int size) {
     return detectedAnalogProfiles[profileIndex];
 }
 
+/// Prepares the module's shared profile table for the requested size and second-hand state before control creation.
 static bool ApplyAnalogProfile(int size, bool showSeconds) {
     if (!LoadAnalogClockClass()) {
         return false;
@@ -528,6 +551,7 @@ static bool ApplyAnalogProfile(int size, bool showSeconds) {
     return true;
 }
 
+/// Updates a Vista clock's resources, dimensions, geometry, and supported second-hand state.
 static bool ConfigureVistaAnalogClock(HWND control, int size, bool showSeconds) {
     LONG_PTR stateValue = GetWindowLongPtrW(control, GWLP_USERDATA);
     if (stateValue == 0 || vistaLoadClockResources == nullptr || vistaReleaseClockResources == nullptr) {
@@ -557,6 +581,7 @@ static bool ConfigureVistaAnalogClock(HWND control, int size, bool showSeconds) 
     return true;
 }
 
+/// Applies implementation-specific instance configuration to an existing native clock control.
 bool ConfigureAnalogClockControl(HWND control, int size, bool showSeconds) {
     if (analogClockImplementation == ANALOG_CLOCK_VISTA) {
         return ConfigureVistaAnalogClock(control, size, showSeconds);
@@ -570,6 +595,8 @@ bool ConfigureAnalogClockControl(HWND control, int size, bool showSeconds) {
     return true;
 }
 
+/// Updates the native clock instance's second-hand state without recreating it.
+/// Returns false if the instance state is unavailable or its profile does not match the requested size.
 bool SetAnalogClockSeconds(HWND control, int size, bool showSeconds) {
     LONG_PTR stateValue = GetWindowLongPtrW(control, GWLP_USERDATA);
     if (stateValue == 0) {
@@ -591,6 +618,8 @@ bool SetAnalogClockSeconds(HWND control, int size, bool showSeconds) {
     return true;
 }
 
+/// Creates and configures a native ClockWndMain child with the requested size, visibility, and second hand.
+/// Returns null on failure; the parent or caller is responsible for destroying the returned window.
 HWND CreateAnalogClockControl(HWND parent, int x, int y, int size, bool showSeconds, bool visible) {
     if (parent == nullptr || !ApplyAnalogProfile(size, showSeconds)) {
         return nullptr;
@@ -610,12 +639,14 @@ HWND CreateAnalogClockControl(HWND parent, int x, int y, int size, bool showSeco
     return control;
 }
 
+/// Sends the displayed time to the native clock control; ignores a null window handle.
 void SetAnalogClockTime(HWND control, const SYSTEMTIME& time) {
     if (control != nullptr) {
         SendMessageW(control, WM_USER + 1, 0, reinterpret_cast<LPARAM>(&time));
     }
 }
 
+/// Reads the native clock's background color when supported, otherwise returning the system window color.
 COLORREF ReadAnalogClockBackground(HWND control) {
     if (control == nullptr) {
         return GetSysColor(COLOR_WINDOW);
@@ -635,6 +666,8 @@ COLORREF ReadAnalogClockBackground(HWND control) {
     return GetSysColor(COLOR_WINDOW);
 }
 
+/// Renders the native clock into the supplied DC over a packed RGB background, restoring private background state
+/// afterward.
 bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background) {
     if (control == nullptr || targetDC == nullptr || renderClock == nullptr) {
         return false;
@@ -671,6 +704,8 @@ bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background) {
     return true;
 }
 
+/// Returns the number of supported native sizes and copies at most capacity entries into sizes when provided.
+/// Returns zero if the native clock implementation cannot be loaded.
 int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     if (!LoadAnalogClockClass()) {
         return 0;
@@ -686,6 +721,7 @@ int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     return count;
 }
 
+/// Reports whether the selected native size supports a second hand; assumes support if detection fails.
 bool AnalogClockSupportsSeconds(int size) {
     if (!LoadAnalogClockClass()) {
         return true;
@@ -693,6 +729,7 @@ bool AnalogClockSupportsSeconds(int size) {
     return analogClockImplementation != ANALOG_CLOCK_VISTA || size == 128 || size == 160;
 }
 
+/// Clears cached native clock pointers and profiles and unloads timedate.cpl after its controls have been destroyed.
 void ShutdownAnalogClockHost() {
     registerClockClass = nullptr;
     vistaRegisterClockClass = nullptr;

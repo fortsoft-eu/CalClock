@@ -52,6 +52,7 @@ const int DIGITAL_BORDER_WIDTH_MAX = 200;
 const unsigned int ALARM_DAYS_ALL = 0x7F;
 const int SETTINGS_TAB_COUNT = 6;
 
+/// Identifies the supported widget kinds and indexes their localized names.
 enum WidgetType {
     WIDGET_ANALOG,
     WIDGET_DIGITAL,
@@ -61,6 +62,7 @@ enum WidgetType {
     WIDGET_TYPE_COUNT
 };
 
+/// Selects no border, a native tool-window frame, a flat border, or a three-dimensional border.
 enum DigitalBorderStyle {
     DIGITAL_BORDER_NONE,
     DIGITAL_BORDER_TOOL_WINDOW,
@@ -69,6 +71,7 @@ enum DigitalBorderStyle {
     DIGITAL_BORDER_STYLE_COUNT
 };
 
+/// Selects a visible leading hour zero, an invisible zero with reserved space, or complete omission.
 enum LeadingZeroMode {
     LEADING_ZERO_VISIBLE,
     LEADING_ZERO_RESERVED,
@@ -76,6 +79,7 @@ enum LeadingZeroMode {
     LEADING_ZERO_MODE_COUNT
 };
 
+/// Selects the language's hour cycle or an explicit 12-hour or 24-hour display.
 enum TimeFormatMode {
     TIME_FORMAT_CULTURE,
     TIME_FORMAT_12_HOUR,
@@ -83,6 +87,7 @@ enum TimeFormatMode {
     TIME_FORMAT_COUNT
 };
 
+/// Identifies stored text-rendering modes independently of their order in the selector.
 enum FontAntialiasing {
     FONT_ANTIALIAS_GDI,
     FONT_ANTIALIAS_CLEARTYPE,
@@ -90,6 +95,7 @@ enum FontAntialiasing {
     FONT_ANTIALIAS_COUNT
 };
 
+/// Indexes supported application and widget languages and their associated locale tables.
 enum AppLanguage {
     LANG_CZ,
     LANG_EN,
@@ -111,6 +117,7 @@ enum AppLanguage {
     LANG_COUNT
 };
 
+/// Selects an automatic, regional, global, or custom NTP server list.
 enum NtpPreset {
     NTP_PRESET_AUTO,
     NTP_PRESET_CESNET,
@@ -120,6 +127,7 @@ enum NtpPreset {
     NTP_PRESET_COUNT
 };
 
+/// Indexes the available recurring Greenwich Time Signal intervals, including disabled output.
 enum TimeSignalMode {
     TIME_SIGNAL_NONE,
     TIME_SIGNAL_EVERY_MINUTE,
@@ -132,6 +140,7 @@ enum TimeSignalMode {
     TIME_SIGNAL_COUNT
 };
 
+/// Indexes the date patterns available when copying a calendar date.
 enum DateCopyFormat {
     DATE_LOCAL_SHORT,
     DATE_LOCAL_LONG,
@@ -169,6 +178,7 @@ enum DateCopyFormat {
     DATE_FORMAT_COUNT
 };
 
+/// Indexes common localized UI strings in the language text table.
 enum TextId {
     TXT_APP,
     TXT_SETTINGS,
@@ -223,6 +233,7 @@ enum TextId {
     TXT_COUNT
 };
 
+/// Stores a font face, dialog size, style, and character set independently of a live GDI font handle.
 struct FontSelection {
     std::wstring face;
     int dialogSize = 90;
@@ -233,6 +244,7 @@ struct FontSelection {
     BYTE charSet = DEFAULT_CHARSET;
 };
 
+/// Stores one optional panel clock's enabled state, name, time zone, and analog face size.
 struct AdditionalClockConfig {
     bool enabled = false;
     std::wstring name;
@@ -240,6 +252,7 @@ struct AdditionalClockConfig {
     int size = 104;
 };
 
+/// Contains the persistent identity, layout, appearance, time, calendar, and alarm settings of one widget.
 struct WidgetConfig {
     int id = 0;
     WidgetType type = WIDGET_ANALOG;
@@ -305,6 +318,7 @@ struct WidgetConfig {
     std::wstring remoteScriptUrl;
 };
 
+/// Captures persistent application settings, information-window positions, and the ordered widget configurations.
 struct SettingsSnapshot {
     AppLanguage language = LANG_EN;
     bool themesDisabled = false;
@@ -330,6 +344,7 @@ struct SettingsSnapshot {
     std::vector<WidgetConfig> widgets;
 };
 
+/// Combines a widget's configuration with live window handles, drawing state, input tracking, and alarm resources.
 struct Widget {
     WidgetConfig config;
     HWND window = nullptr;
@@ -381,6 +396,7 @@ struct Widget {
     POINT lastAnalogClickPoint = {};
 };
 
+/// Describes a display's screen rectangle, device name, and primary-monitor flag.
 struct DisplayMonitor {
     RECT rect = {};
     std::wstring device;

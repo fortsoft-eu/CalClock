@@ -40,6 +40,7 @@
 
 using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW*);
 
+/// Stores one six-pip sequence anchored to a system FILETIME target, with sound settings and completion notification.
 struct TimeSignalSequence {
     ULONGLONG target = 0;
     bool muted = false;
@@ -49,6 +50,7 @@ struct TimeSignalSequence {
     UINT notifyMessage = 0;
 };
 
+/// Describes a scheduled tone interval in 100-nanosecond system-time ticks with normalized amplitude and output mode.
 struct TimeSignalTone {
     ULONGLONG start = 0;
     ULONGLONG end = 0;
@@ -56,6 +58,7 @@ struct TimeSignalTone {
     bool generatedTone = true;
 };
 
+/// Owns PCM samples and the waveOut header state for one queued generator buffer.
 struct TimeSignalWaveBuffer {
     WAVEHDR header = {};
     std::vector<short> samples;
@@ -63,6 +66,7 @@ struct TimeSignalWaveBuffer {
     bool queued = false;
 };
 
+/// Tracks a continuous sine wave's sample origin and zero-crossing end across successive output buffers.
 struct TimeSignalPhase {
     LONGLONG origin = 0;
     LONGLONG end = 0;
@@ -97,8 +101,12 @@ static bool timeSignalPreviewGeneratedTone = true;
 static ULONGLONG timeSignalPreviewStart = 0;
 static std::atomic<double> timeSignalPreviewVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 
+/// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
+/// Tracks completed time to avoid replaying already rendered portions.
 static DWORD WINAPI TimeSignalThreadProc(void* parameter);
 
+/// Maps the next displayed interval boundary to system FILETIME ticks, preserving fractional widget offsets.
+/// Returns false for a disabled or invalid interval or a null output pointer.
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, TimeSignalMode mode, ULONGLONG* targetSystemFileTime) {
     int modeIndex = static_cast<int>(mode);
     if (targetSystemFileTime == nullptr || modeIndex <= TIME_SIGNAL_NONE || modeIndex >= TIME_SIGNAL_COUNT) {
@@ -111,6 +119,8 @@ bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFile
     return true;
 }
 
+/// Maps the next occurrence of an alarm's displayed hour and minute to system FILETIME ticks.
+/// Selects the following day when that time has already been reached; rejects invalid inputs.
 bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, int alarmHour, int alarmMinute, ULONGLONG* targetSystemFileTime) {
     if (targetSystemFileTime == nullptr || alarmHour < 0 || alarmHour > 23 || alarmMinute < 0 || alarmMinute > 59) {
         return false;
@@ -122,11 +132,13 @@ bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG syste
     return true;
 }
 
+/// Tests exact equality of system-time targets so distinct fractional offsets remain separate.
 bool TimeSignalTargetsCoincide(ULONGLONG left, ULONGLONG right) {
     ULONGLONG difference = left >= right ? left - right : right - left;
     return difference == 0;
 }
 
+/// Caches whether the Windows version requires generated audio instead of system Beep output.
 bool IsTimeSignalGeneratorRequired() {
     static int result = -1;
     if (result >= 0) {
@@ -149,6 +161,7 @@ bool IsTimeSignalGeneratorRequired() {
     return result != 0;
 }
 
+/// Maps an integer stored volume step to normalized amplitude, preserving the default -18 dB and full-scale endpoints.
 static double TimeSignalAmplitudeAtStep(int volume) {
     if (volume == TIME_SIGNAL_VOLUME_MAX) {
         return 1.0;
@@ -159,6 +172,7 @@ static double TimeSignalAmplitudeAtStep(int volume) {
     return GENERATOR_TONE_AMPLITUDE * volume / 100.0;
 }
 
+/// Interpolates stored volume steps into normalized amplitude; clamps the range and silences nonfinite values.
 static double TimeSignalAmplitude(double volume) {
     if (!std::isfinite(volume)) {
         return 0.0;
@@ -170,6 +184,8 @@ static double TimeSignalAmplitude(double volume) {
     return lowAmplitude + (TimeSignalAmplitudeAtStep(upper) - lowAmplitude) * (volume - lower);
 }
 
+/// Converts stored generator volume to decibels relative to full-scale sine amplitude.
+/// Returns negative infinity for silence.
 double TimeSignalVolumeDecibels(double volume) {
     double amplitude = TimeSignalAmplitude(volume);
     if (amplitude == 0.0) {
@@ -178,6 +194,7 @@ double TimeSignalVolumeDecibels(double volume) {
     return 20.0 * std::log10(amplitude);
 }
 
+/// Converts generator decibels to the interpolated stored volume scale, limiting positive levels to full scale.
 double TimeSignalVolumeFromDecibels(double decibels) {
     if (std::isnan(decibels)) {
         return TIME_SIGNAL_VOLUME_MIN;
@@ -198,6 +215,7 @@ double TimeSignalVolumeFromDecibels(double decibels) {
     return lower + (amplitude - lowAmplitude) / (highAmplitude - lowAmplitude);
 }
 
+/// Returns the short or long pip duration in milliseconds for the selected output method.
 static DWORD TimeSignalToneDuration(bool longTone, bool generatedTone) {
     if (generatedTone) {
         return longTone ? GENERATOR_LONG_PIP_DURATION : GENERATOR_SHORT_PIP_DURATION;
@@ -205,6 +223,8 @@ static DWORD TimeSignalToneDuration(bool longTone, bool generatedTone) {
     return longTone ? BEEP_LONG_PIP_DURATION : BEEP_SHORT_PIP_DURATION;
 }
 
+/// Collects scheduled and preview pips intersecting the requested system-time range under the schedule lock.
+/// Removes completed sequences and posts their completion notifications; preview pips follow whole seconds.
 static std::vector<TimeSignalTone> CollectTimeSignalTones(ULONGLONG from, ULONGLONG through) {
     std::vector<TimeSignalTone> tones;
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
@@ -244,6 +264,7 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(ULONGLONG from, ULONGL
     return tones;
 }
 
+/// Unions overlapping or touching tone intervals, keeping the greatest amplitude and any generator requirement.
 static std::vector<TimeSignalTone> MergeTimeSignalTones(std::vector<TimeSignalTone> tones) {
     std::sort(tones.begin(), tones.end(), [](const TimeSignalTone& left, const TimeSignalTone& right) {
         return left.start < right.start;
@@ -261,11 +282,14 @@ static std::vector<TimeSignalTone> MergeTimeSignalTones(std::vector<TimeSignalTo
     return merged;
 }
 
+/// Converts a system FILETIME timestamp to a signed sample offset from base, rounding toward the next sample.
 static LONGLONG TimeSignalSamplePosition(ULONGLONG time, ULONGLONG base) {
     LONGLONG difference = time >= base ? static_cast<LONGLONG>(time - base) : -static_cast<LONGLONG>(base - time);
     return static_cast<LONGLONG>(std::ceil(static_cast<double>(difference) * GENERATOR_SAMPLE_RATE / FILE_TIME_TICKS_PER_SECOND));
 }
 
+/// Fills a PCM buffer from merged intervals while retaining oscillator phase across uninterrupted sound.
+/// Starts at zero, extends each continuous segment to a full cycle, and applies a short endpoint envelope.
 static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals, ULONGLONG base, LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase) {
     const LONGLONG cycle = GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
     const LONGLONG fade = GENERATOR_SAMPLE_RATE * GENERATOR_FADE_DURATION / 1000;
@@ -303,6 +327,7 @@ static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals
     }
 }
 
+/// Tests under the schedule lock whether sequences or a preview remain and no stop has been requested.
 static bool HasTimeSignalWork() {
     AcquireSRWLockShared(&timeSignalScheduleLock);
     bool work = !timeSignalSequences.empty() || timeSignalPreviewActive;
@@ -310,6 +335,7 @@ static bool HasTimeSignalWork() {
     return work && WaitForSingleObject(hTimeSignalStopEvent, 0) != WAIT_OBJECT_0;
 }
 
+/// Returns the active preview's output choice, or fallback when no preview is running.
 static bool TimeSignalOutputUsesGenerator(bool fallback) {
     AcquireSRWLockShared(&timeSignalScheduleLock);
     bool generated = timeSignalPreviewActive ? timeSignalPreviewGeneratedTone : fallback;
@@ -317,6 +343,8 @@ static bool TimeSignalOutputUsesGenerator(bool fallback) {
     return generated;
 }
 
+/// Streams merged pips through waveOut, retaining phase and held intervals across output buffers.
+/// Drains and releases audio resources before returning; optionally reports the system time rendered through.
 static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = nullptr) {
     HANDLE completedEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
     if (completedEvent == nullptr) {
@@ -420,6 +448,7 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
     return ready;
 }
 
+/// Extends the planning horizon until the first merged tone's end is known, avoiding premature Beep interruptions.
 static std::vector<TimeSignalTone> PlanTimeSignalIntervals(ULONGLONG now) {
     ULONGLONG through = now + 7 * FILE_TIME_TICKS_PER_SECOND;
     while (true) {
@@ -431,6 +460,8 @@ static std::vector<TimeSignalTone> PlanTimeSignalIntervals(ULONGLONG now) {
     }
 }
 
+/// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
+/// Tracks completed time to avoid replaying already rendered portions.
 static DWORD WINAPI TimeSignalThreadProc(void*) {
     HANDLE events[] = { hTimeSignalStopEvent, hTimeSignalWakeEvent };
     ULONGLONG playedUntil = 0;
@@ -476,6 +507,7 @@ static DWORD WINAPI TimeSignalThreadProc(void*) {
     return 0;
 }
 
+/// Creates the shared playback worker and its events if needed, cleaning up handles on failure.
 static bool EnsureTimeSignalThread() {
     if (hTimeSignalThread != nullptr) {
         return true;
@@ -499,6 +531,7 @@ static bool EnsureTimeSignalThread() {
     return false;
 }
 
+/// Stops, joins, and releases the shared worker only when neither scheduled sequences nor a preview remain.
 static void StopIdleTimeSignalThread() {
     if (hTimeSignalThread == nullptr || HasTimeSignalWork()) {
         return;
@@ -513,6 +546,9 @@ static void StopIdleTimeSignalThread() {
     hTimeSignalWakeEvent = nullptr;
 }
 
+/// Schedules a six-pip sequence whose final pip starts at targetSystemFileTime in system FILETIME ticks.
+/// Deduplicates identical targets and starts the worker as needed; returns false for invalid notification data or
+/// startup failure.
 bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, bool generatedTone, double volume, HWND notifyWindow, UINT notifyMessage) {
     if (targetSystemFileTime < 5 * FILE_TIME_TICKS_PER_SECOND || notifyWindow == nullptr || notifyMessage == 0 || !EnsureTimeSignalThread()) {
         return false;
@@ -540,6 +576,7 @@ bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, bool ge
     return true;
 }
 
+/// Changes the mute state of the sequence with the given system-time target and wakes the playback worker.
 void SetTimeSignalMuted(ULONGLONG target, bool muted) {
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
     for (TimeSignalSequence& sequence : timeSignalSequences) {
@@ -553,6 +590,7 @@ void SetTimeSignalMuted(ULONGLONG target, bool muted) {
     }
 }
 
+/// Removes matching scheduled sequences and releases the worker if no other playback work remains.
 void CancelTimeSignalPlayback(ULONGLONG target) {
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
     for (auto sequence = timeSignalSequences.begin(); sequence != timeSignalSequences.end();) {
@@ -566,10 +604,13 @@ void CancelTimeSignalPlayback(ULONGLONG target) {
     StopIdleTimeSignalThread();
 }
 
+/// Atomically updates the preview volume after clamping it to the stored generator-volume range.
 void SetTimeSignalPreviewVolume(double volume) {
     timeSignalPreviewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX));
 }
 
+/// Starts or updates a preview merged with scheduled pips, beginning on the next whole system second.
+/// Uses a long pip every fifth second and returns false if the playback worker cannot start.
 bool StartTimeSignalVolumePreview(bool generatedTone, double volume) {
     if (!EnsureTimeSignalThread()) {
         return false;
@@ -586,6 +627,7 @@ bool StartTimeSignalVolumePreview(bool generatedTone, double volume) {
     return true;
 }
 
+/// Disables preview pips and releases the worker when no scheduled sequences remain.
 void StopTimeSignalVolumePreview() {
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
     timeSignalPreviewActive = false;
@@ -593,10 +635,12 @@ void StopTimeSignalVolumePreview() {
     StopIdleTimeSignalThread();
 }
 
+/// Releases an idle playback worker after sequence completion has been reported.
 void FinishTimeSignalPlayback() {
     StopIdleTimeSignalThread();
 }
 
+/// Clears all scheduled sequences and releases the worker if no preview remains active.
 void StopTimeSignalPlayback() {
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
     timeSignalSequences.clear();
@@ -604,6 +648,7 @@ void StopTimeSignalPlayback() {
     StopIdleTimeSignalThread();
 }
 
+/// Reports whether scheduled sequences remain, excluding preview-only playback.
 bool IsTimeSignalPlaybackRunning() {
     AcquireSRWLockShared(&timeSignalScheduleLock);
     bool running = !timeSignalSequences.empty();

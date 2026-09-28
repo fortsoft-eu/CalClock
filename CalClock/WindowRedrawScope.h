@@ -28,11 +28,17 @@
 
 #include <windows.h>
 
+/// Suspends painting for a visible window during a batch of updates and requests a repaint on destruction.
+/// Leaves initially hidden windows untouched so restoring redraw cannot make them visible.
 class WindowRedrawScope {
 public:
+    /// Disables redraw only when target is a valid, currently visible window.
     explicit WindowRedrawScope(HWND target);
+    /// Reenables redraw if the target still exists and invalidates its frame and child controls.
     ~WindowRedrawScope();
+    /// Prevents copying responsibility for restoring window redraw.
     WindowRedrawScope(const WindowRedrawScope&) = delete;
+    /// Prevents copying responsibility for restoring window redraw.
     WindowRedrawScope& operator=(const WindowRedrawScope&) = delete;
 
 private:

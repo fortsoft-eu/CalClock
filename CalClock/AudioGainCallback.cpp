@@ -28,8 +28,10 @@
 #define WIN32_LEAN_AND_MEAN
 #include "AudioGainCallback.h"
 
+/// Retains a reference to playback parameters and copies the initial decoded sample format.
 AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters, const AudioSampleFormat& format) : parameters(parameters), format(format) {}
 
+/// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output pointers.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::QueryInterface(REFIID id, void** object) {
     if (object == nullptr) {
         return E_POINTER;
@@ -43,10 +45,12 @@ HRESULT STDMETHODCALLTYPE AudioGainCallback::QueryInterface(REFIID id, void** ob
     return S_OK;
 }
 
+/// Atomically increments and returns the COM reference count.
 ULONG STDMETHODCALLTYPE AudioGainCallback::AddRef() {
     return ++references;
 }
 
+/// Atomically decrements the COM reference count and deletes the callback when it reaches zero.
 ULONG STDMETHODCALLTYPE AudioGainCallback::Release() {
     ULONG remaining = --references;
     if (remaining == 0) {
@@ -55,6 +59,7 @@ ULONG STDMETHODCALLTYPE AudioGainCallback::Release() {
     return remaining;
 }
 
+/// Validates sample format changes and applies the current playback gain directly to the sample data.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* sample) {
     if (sample == nullptr) {
         return E_POINTER;
@@ -78,6 +83,7 @@ HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* samp
     return ApplyAudioGain(data, static_cast<size_t>(length), format, AudioPlaybackGain(parameters));
 }
 
+/// Returns E_NOTIMPL because gain processing uses the sample callback interface.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::BufferCB(double, BYTE*, long) {
     return E_NOTIMPL;
 }

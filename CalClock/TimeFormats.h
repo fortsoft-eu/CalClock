@@ -28,6 +28,10 @@
 
 #include "CalClockTypes.h"
 
+/// Tests whether the widget explicitly selects UTC through its flag or zero-offset time-zone key.
 bool WidgetUsesUtcTime(const WidgetConfig& config);
+/// Resolves the explicit or culture-based hour cycle, always using 24-hour time for UTC.
 bool WidgetUsesTwelveHourTime(const WidgetConfig& config);
+/// Formats a displayed time using the widget's language, seconds, leading-zero, and hour-cycle settings.
+/// Places the optional localized AM/PM marker on a separate line for fullscreen clocks; returns empty on failure.
 std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time);

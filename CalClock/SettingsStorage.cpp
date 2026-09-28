@@ -49,18 +49,21 @@
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
 
+/// Reads a registry value and reports whether it was retrieved as REG_DWORD.
 static bool ReadDword(HKEY key, const wchar_t* name, DWORD* value) {
     DWORD type = 0;
     DWORD size = sizeof(*value);
     return RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_DWORD;
 }
 
+/// Reads a registry value into a signed 64-bit destination and reports whether its type is REG_QWORD.
 static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
     DWORD type = 0;
     DWORD size = sizeof(*value);
     return RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_QWORD;
 }
 
+/// Reads a registry string without expanding environment variables, replacing the destination only on success.
 static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     DWORD type = 0;
     DWORD size = 0;
@@ -75,18 +78,22 @@ static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     return true;
 }
 
+/// Writes a 32-bit registry value as REG_DWORD without reporting write errors.
 static void WriteDword(HKEY key, const wchar_t* name, DWORD value) {
     RegSetValueExW(key, name, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&value), sizeof(value));
 }
 
+/// Writes a signed 64-bit value's representation as REG_QWORD without reporting write errors.
 static void WriteQword(HKEY key, const wchar_t* name, LONGLONG value) {
     RegSetValueExW(key, name, 0, REG_QWORD, reinterpret_cast<const BYTE*>(&value), sizeof(value));
 }
 
+/// Writes a null-terminated Unicode REG_SZ value without reporting write errors.
 static void WriteString(HKEY key, const wchar_t* name, const std::wstring& value) {
     RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
 }
 
+/// Formats a double with locale-independent punctuation and enough precision for a round trip.
 static std::wstring FormatRealNumber(double value) {
     std::wostringstream stream;
     stream.imbue(std::locale::classic());
@@ -94,6 +101,7 @@ static std::wstring FormatRealNumber(double value) {
     return stream.str();
 }
 
+/// Parses a finite, locale-independent double, allowing surrounding whitespace but rejecting trailing nonspace text.
 static bool ParseRealNumber(const std::wstring& text, double* value) {
     std::wistringstream stream(text);
     stream.imbue(std::locale::classic());
@@ -109,6 +117,7 @@ static bool ParseRealNumber(const std::wstring& text, double* value) {
     return true;
 }
 
+/// Reads the stored generator volume from either an integral registry value or a decimal string.
 static bool ReadTimeSignalVolume(HKEY key, double* volume) {
     DWORD integer = 0;
     if (ReadDword(key, L"TimeSignalVolume", &integer)) {
@@ -119,6 +128,7 @@ static bool ReadTimeSignalVolume(HKEY key, double* volume) {
     return ReadString(key, L"TimeSignalVolume", &text) && ParseRealNumber(text, volume);
 }
 
+/// Clamps generator volume and writes whole steps as REG_DWORD or fractional steps as a decimal string.
 static void WriteTimeSignalVolume(HKEY key, double volume) {
     volume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
     if (volume == std::floor(volume)) {
@@ -128,6 +138,8 @@ static void WriteTimeSignalVolume(HKEY key, double volume) {
     }
 }
 
+/// Returns the per-user CalClock settings.xml path, optionally creating its directories.
+/// Returns an empty string if the location cannot be obtained or created.
 std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
     wchar_t appData[MAX_PATH] = {};
     if (SHGetFolderPathW(nullptr, CSIDL_APPDATA | (createDirectory ? CSIDL_FLAG_CREATE : 0), nullptr, SHGFP_TYPE_CURRENT, appData) != S_OK) {
@@ -144,6 +156,7 @@ std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
     return directory + L"\\settings.xml";
 }
 
+/// Deletes the automatic XML settings file and attempts to remove its now-empty application and vendor directories.
 void RemoveAutomaticXmlSettings() {
     std::wstring path = AutomaticXmlSettingsPath(false);
     if (path.empty()) {
@@ -164,16 +177,19 @@ void RemoveAutomaticXmlSettings() {
     RemoveDirectoryW(vendorDirectory.c_str());
 }
 
+/// Writes a text attribute and returns the XML writer's HRESULT.
 static HRESULT WriteXmlTextAttribute(IXmlWriter* writer, const wchar_t* name, const std::wstring& value) {
     return writer->WriteAttributeString(nullptr, name, nullptr, value.c_str());
 }
 
+/// Writes a signed integer as a decimal XML attribute and returns the writer's HRESULT.
 static HRESULT WriteXmlNumberAttribute(IXmlWriter* writer, const wchar_t* name, LONGLONG value) {
     wchar_t text[32] = {};
     _i64tow_s(value, text, ARRAYSIZE(text), 10);
     return writer->WriteAttributeString(nullptr, name, nullptr, text);
 }
 
+/// Copies the widget's primary font properties into a FontSelection value.
 static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
     FontSelection selection = {};
     selection.face = config.fontFace;
@@ -186,6 +202,7 @@ static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
     return selection;
 }
 
+/// Serializes global settings and widgets to an XML stream and reports whether writing and flushing succeeded.
 static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snapshot) {
     IXmlWriter* writer = nullptr;
     HRESULT result = CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), nullptr);
@@ -546,6 +563,8 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     return SUCCEEDED(result);
 }
 
+/// Writes a nonempty, bounded widget snapshot to the specified XML file, creating or replacing that file.
+/// Returns false for invalid input or a file or serialization error.
 bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot) {
     if (path.empty() || snapshot.widgets.empty() || snapshot.widgets.size() > MAX_WIDGET_COUNT) {
         return false;
@@ -559,6 +578,7 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
     return success;
 }
 
+/// Serializes selected widgets to bounded XML bytes, replacing data only when serialization succeeds.
 bool SerializeWidgetClipboardData(const std::vector<WidgetConfig>& widgets, std::vector<BYTE>* data) {
     if (widgets.empty() || widgets.size() > MAX_WIDGET_COUNT || data == nullptr) {
         return false;
@@ -591,6 +611,7 @@ bool SerializeWidgetClipboardData(const std::vector<WidgetConfig>& widgets, std:
     return success;
 }
 
+/// Reads a named attribute into an owned string and restores the reader to the element after accessing its value.
 static bool ReadXmlAttribute(IXmlReader* reader, const wchar_t* name, std::wstring* value) {
     if (reader->MoveToAttributeByName(name, nullptr) != S_OK) {
         return false;
@@ -606,6 +627,7 @@ static bool ReadXmlAttribute(IXmlReader* reader, const wchar_t* name, std::wstri
     return true;
 }
 
+/// Parses a nonempty decimal integer string and rejects unconsumed trailing characters.
 static bool ParseXmlNumber(const std::wstring& text, LONGLONG* value) {
     if (text.empty()) {
         return false;
@@ -619,11 +641,13 @@ static bool ParseXmlNumber(const std::wstring& text, LONGLONG* value) {
     return true;
 }
 
+/// Reads an XML attribute and parses its value as a decimal integer.
 static bool ReadXmlNumberAttribute(IXmlReader* reader, const wchar_t* name, LONGLONG* value) {
     std::wstring text;
     return ReadXmlAttribute(reader, name, &text) && ParseXmlNumber(text, value);
 }
 
+/// Starts with type-specific widget defaults, then reads recognized XML attributes with range checks and clamping.
 static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLanguage, int defaultFontAntialiasing, WidgetDefaultsFactory createDefaults, WidgetConfig* config) {
     LONGLONG number = 0;
     int type = WIDGET_ANALOG;
@@ -896,6 +920,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     }
 }
 
+/// Parses and validates a settings XML stream, including its root, widget count, and unique positive widget IDs.
+/// Assigns the destination snapshot only after validation succeeds.
 static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
     IXmlReader* reader = nullptr;
     HRESULT result = CreateXmlReader(__uuidof(IXmlReader), reinterpret_cast<void**>(&reader), nullptr);
@@ -1027,6 +1053,7 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
     return valid;
 }
 
+/// Loads and validates a settings XML file no larger than 4 MiB, leaving snapshot unchanged on failure.
 bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
     if (path.empty() || createDefaults == nullptr || snapshot == nullptr) {
         return false;
@@ -1044,6 +1071,7 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
     return success;
 }
 
+/// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged on failure.
 bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets) {
     if (data.empty() || data.size() > MAX_WIDGET_CLIPBOARD_BYTES || createDefaults == nullptr || widgets == nullptr) {
         return false;
@@ -1061,6 +1089,7 @@ bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage d
     return success;
 }
 
+/// Overlays recognized registry values on an initialized widget configuration, validating or clamping bounded options.
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     DWORD value = 0;
     if (ReadDword(key, L"Id", &value)) {
@@ -1308,6 +1337,7 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     ReadString(key, L"RemoteScriptUrl", &config->remoteScriptUrl);
 }
 
+/// Writes one widget's settings to an open registry key and removes the obsolete frame value.
 static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     RegDeleteValueW(key, L"ShowFrame");
     WriteDword(key, L"Id", config.id);
@@ -1399,6 +1429,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteString(key, L"RemoteScriptUrl", config.remoteScriptUrl);
 }
 
+/// Recognizes numeric widget subkeys outside the saved collection, including indices too large to represent.
 static bool IsObsoleteWidgetRegistryKey(const wchar_t* name, size_t widgetCount) {
     if (name == nullptr || name[0] == L'\0') {
         return false;
@@ -1417,6 +1448,7 @@ static bool IsObsoleteWidgetRegistryKey(const wchar_t* name, size_t widgetCount)
     return index >= widgetCount;
 }
 
+/// Deletes numeric widget subkeys beyond the saved count while preserving unrelated subkeys.
 static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount) {
     std::vector<std::wstring> obsoleteKeys;
     for (DWORD keyIndex = 0;; keyIndex++) {
@@ -1438,6 +1470,9 @@ static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount
     }
 }
 
+/// Loads per-user settings using supplied defaults and a widget-default factory, including the older single-widget
+/// layout.
+/// Returns false if arguments are invalid or the settings root cannot be opened.
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
     if (createDefaults == nullptr || snapshot == nullptr) {
         return false;
@@ -1580,6 +1615,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     return true;
 }
 
+/// Writes global settings and widget subkeys, removes obsolete widget keys, and deletes automatic XML after success.
+/// Reports key-creation failures; individual value writes do not return status.
 bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     if (snapshot.widgets.size() > MAX_WIDGET_COUNT) {
         return false;
@@ -1639,6 +1676,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     return written;
 }
 
+/// Deletes CalClock's per-user settings tree and attempts to remove the empty vendor key.
 void RemoveRegistrySettings() {
     RegDeleteTreeW(HKEY_CURRENT_USER, REGISTRY_PATH);
     RegDeleteKeyW(HKEY_CURRENT_USER, VENDOR_REGISTRY_PATH);

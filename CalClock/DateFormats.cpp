@@ -28,6 +28,7 @@
 #include "Localization.h"
 #include <algorithm>
 
+/// Groups date-copy formats for separators in the format selector.
 enum DateFormatGroup {
     DATE_FORMAT_GROUP_LOCAL,
     DATE_FORMAT_GROUP_SORTABLE,
@@ -37,6 +38,7 @@ enum DateFormatGroup {
     DATE_FORMAT_GROUP_WEEKDAY
 };
 
+/// Associates a date-format caption, Windows format pattern and flags, and selector group.
 struct DateFormatDefinition {
     const wchar_t* caption;
     const wchar_t* pattern;
@@ -247,6 +249,7 @@ const DateFormatDefinition DATE_FORMAT_DEFINITIONS[DATE_FORMAT_COUNT] = {
 
 static_assert(ARRAYSIZE(DATE_FORMAT_DEFINITIONS) == DATE_FORMAT_COUNT);
 
+/// Formats a date with the selected copy format and widget language, falling back to yyyy-MM-dd on failure.
 std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex) {
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
     const DateFormatDefinition& definition = DATE_FORMAT_DEFINITIONS[selected];
@@ -258,6 +261,7 @@ std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date
     return text;
 }
 
+/// Returns the language's short or long date pattern, or its localized label if Windows cannot supply the pattern.
 static std::wstring GetLocaleDatePattern(const WidgetConfig& config, int formatIndex) {
     LCTYPE type = formatIndex == DATE_LOCAL_LONG ? LOCALE_SLONGDATE : LOCALE_SSHORTDATE;
     wchar_t pattern[160] = {};
@@ -267,6 +271,7 @@ static std::wstring GetLocaleDatePattern(const WidgetConfig& config, int formatI
     return pattern;
 }
 
+/// Builds a format selector caption containing the pattern, any localized format label, and an example date.
 std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex) {
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
     const DateFormatDefinition& definition = DATE_FORMAT_DEFINITIONS[selected];
@@ -279,6 +284,7 @@ std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& dat
     return name + L"  —  " + FormatWidgetDate(config, date, selected);
 }
 
+/// Reports whether a valid format begins a different group from its predecessor.
 bool DateFormatStartsGroup(int formatIndex) {
     if (formatIndex <= 0 || formatIndex >= DATE_FORMAT_COUNT) {
         return false;
