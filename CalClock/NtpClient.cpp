@@ -39,6 +39,8 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+using GetPreciseTimeProc = VOID(WINAPI*)(LPFILETIME fileTime);
+
 /// Passes server names, notification details, and borrowed cancellation and activity flags to the NTP worker.
 struct NtpThreadParameters {
     std::wstring serverList;
@@ -144,13 +146,10 @@ std::wstring NtpServersForPreset(int preset) {
 /// Returns current UTC as Windows FILETIME ticks, using the precise system clock when available.
 ULONGLONG CurrentFileTimeValue() {
     FILETIME fileTime = {};
-    typedef VOID(WINAPI* GetPreciseTimeProc)(LPFILETIME fileTime);
-    static GetPreciseTimeProc getPreciseTime = []() {
-        HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
-        return kernel == nullptr
-            ? static_cast<GetPreciseTimeProc>(nullptr)
-            : reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
-        }();
+    static HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
+    static GetPreciseTimeProc getPreciseTime = kernel == nullptr
+        ? nullptr
+        : reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
     if (getPreciseTime != nullptr) {
         getPreciseTime(&fileTime);
     } else {
@@ -258,13 +257,15 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
                 : SOCKET_ERROR;
             ULONGLONG t4 = CurrentFileTimeValue();
             closesocket(socketHandle);
+            if (received < static_cast<int>(sizeof(response))) {
+                continue;
+            }
             BYTE leap = response[0] >> 6;
             BYTE version = response[0] >> 3 & 7;
             BYTE mode = response[0] & 7;
             BYTE stratum = response[1];
             BYTE zeroTimestamp[8] = {};
-            bool invalidResponse = received < static_cast<int>(sizeof(response))
-                || leap == 3
+            bool invalidResponse = leap == 3
                 || version < 3
                 || version > 4
                 || mode != 4
@@ -320,18 +321,19 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
     }
     if (!samples.empty()) {
         std::vector<LONGLONG> sortedOffsets;
+        size_t fastestIndex = 0;
         for (size_t index = 0; index < samples.size(); index++) {
             sortedOffsets.push_back(samples[index].offset100Nanoseconds);
+            if (samples[index].delay100Nanoseconds < samples[fastestIndex].delay100Nanoseconds) {
+                fastestIndex = index;
+            }
         }
         std::sort(sortedOffsets.begin(), sortedOffsets.end());
         size_t middle = sortedOffsets.size() / 2;
         LONGLONG medianOffset = sortedOffsets.size() % 2 == 0
             ? sortedOffsets[middle - 1] / 2 + sortedOffsets[middle] / 2
             : sortedOffsets[middle];
-        LONGLONG minimumDelay = samples[0].delay100Nanoseconds;
-        for (size_t index = 1; index < samples.size(); index++) {
-            minimumDelay = std::min(minimumDelay, samples[index].delay100Nanoseconds);
-        }
+        LONGLONG minimumDelay = samples[fastestIndex].delay100Nanoseconds;
         long double rejectionLimit = static_cast<long double>(std::max(1000000LL, minimumDelay * 4));
         long double weightedOffset = 0.0L;
         long double totalWeight = 0.0L;
@@ -353,11 +355,7 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
             acceptedAny = true;
         }
         if (!acceptedAny) {
-            for (size_t index = 1; index < samples.size(); index++) {
-                if (samples[index].delay100Nanoseconds < samples[bestIndex].delay100Nanoseconds) {
-                    bestIndex = index;
-                }
-            }
+            bestIndex = fastestIndex;
             result->offset100Nanoseconds = samples[bestIndex].offset100Nanoseconds;
         } else {
             result->offset100Nanoseconds = static_cast<LONGLONG>(std::llround(weightedOffset / totalWeight));

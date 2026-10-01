@@ -598,8 +598,8 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
             static_cast<LPARAM>(parameters->generation));
         return 0;
     }
-    std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_" +
-        std::to_wstring(parameters->generation);
+    std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_"
+        + std::to_wstring(parameters->generation);
     std::wstring command = L"open \"" + parameters->path + L"\" type mpegvideo alias " + alias;
     bool opened = mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
     if (opened && WaitForSingleObject(parameters->stopEvent, 0) != WAIT_OBJECT_0) {

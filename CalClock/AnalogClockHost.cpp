@@ -448,8 +448,8 @@ static bool ResolveWindows7AnalogClockInternals(BYTE* module, size_t imageSize) 
     if (registerAddress == nullptr || renderAddress == nullptr) {
         return false;
     }
-    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize -
-        static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
+    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1,
+        imageSize - static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
     if (secondRenderAddress != nullptr) {
         return false;
     }
@@ -521,12 +521,12 @@ static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     if (registerAddress == nullptr || renderAddress == nullptr || loadAddress == nullptr || releaseAddress == nullptr) {
         return false;
     }
-    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize -
-        static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
-    BYTE* secondLoadAddress = FindModulePattern(loadAddress + 1, imageSize -
-        static_cast<size_t>(loadAddress + 1 - module), loadPattern, sizeof(loadPattern));
-    BYTE* secondReleaseAddress = FindModulePattern(releaseAddress + 1, imageSize -
-        static_cast<size_t>(releaseAddress + 1 - module), releasePattern, sizeof(releasePattern));
+    BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize
+        - static_cast<size_t>(renderAddress + 1 - module), renderPattern, sizeof(renderPattern));
+    BYTE* secondLoadAddress = FindModulePattern(loadAddress + 1, imageSize
+        - static_cast<size_t>(loadAddress + 1 - module), loadPattern, sizeof(loadPattern));
+    BYTE* secondReleaseAddress = FindModulePattern(releaseAddress + 1, imageSize
+        - static_cast<size_t>(releaseAddress + 1 - module), releasePattern, sizeof(releasePattern));
     if (secondRenderAddress != nullptr || secondLoadAddress != nullptr || secondReleaseAddress != nullptr) {
         return false;
     }
@@ -600,8 +600,8 @@ static bool ResolveAnalogClockInternals() {
     };
     BYTE* renderAddress = FindModulePattern(codeBegin, codeSize, renderPattern, sizeof(renderPattern));
     if (renderAddress != nullptr) {
-        BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, codeSize -
-            static_cast<size_t>(renderAddress + 1 - codeBegin), renderPattern, sizeof(renderPattern));
+        BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, codeSize
+            - static_cast<size_t>(renderAddress + 1 - codeBegin), renderPattern, sizeof(renderPattern));
         if (secondRenderAddress != nullptr) {
             renderAddress = nullptr;
         }

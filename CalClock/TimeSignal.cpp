@@ -114,8 +114,7 @@ bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFile
         return false;
     }
     ULONGLONG interval = static_cast<ULONGLONG>(TIME_SIGNAL_MINUTES[modeIndex]) * FILE_TIME_TICKS_PER_MINUTE;
-    ULONGLONG remainder = displayedFileTime % interval;
-    ULONGLONG untilTarget = remainder == 0 ? interval : interval - remainder;
+    ULONGLONG untilTarget = interval - displayedFileTime % interval;
     *targetSystemFileTime = systemFileTime + untilTarget;
     return true;
 }
@@ -134,12 +133,6 @@ bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG syste
         : FILE_TIME_TICKS_PER_DAY - timeOfDay + alarmTime;
     *targetSystemFileTime = systemFileTime + untilTarget;
     return true;
-}
-
-/// Tests exact equality of system-time targets so distinct fractional offsets remain separate.
-bool TimeSignalTargetsCoincide(ULONGLONG left, ULONGLONG right) {
-    ULONGLONG difference = left >= right ? left - right : right - left;
-    return difference == 0;
 }
 
 /// Caches whether the Windows version requires generated audio instead of system Beep output.
@@ -433,12 +426,11 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
             }
         }
         std::vector<TimeSignalTone> intervals = MergeTimeSignalTones(tones);
-        bool hasWork = HasTimeSignalWork();
         if (!phase.active || nextSample > phase.end) {
             ULONGLONG bufferedDuration = GENERATOR_BUFFER_COUNT * GENERATOR_BUFFER_SAMPLES * FILE_TIME_TICKS_PER_SECOND
                 / GENERATOR_SAMPLE_RATE;
             bool gap = held.empty() && (intervals.empty() || intervals.front().start > bufferEnd + bufferedDuration);
-            if (gap || intervals.empty() && !hasWork || !TimeSignalOutputUsesGenerator(true)) {
+            if (gap || !TimeSignalOutputUsesGenerator(true)) {
                 break;
             }
         }
@@ -515,8 +507,8 @@ static DWORD WINAPI TimeSignalThreadProc(void*) {
                 WaitForMultipleObjects(ARRAYSIZE(events), events, FALSE, 100);
             }
         } else {
-            DWORD duration = static_cast<DWORD>(std::max<ULONGLONG>(1, (tone.end - now +
-                FILE_TIME_TICKS_PER_MILLISECOND - 1) / FILE_TIME_TICKS_PER_MILLISECOND));
+            DWORD duration = static_cast<DWORD>(std::max<ULONGLONG>(1,
+                (tone.end - now + FILE_TIME_TICKS_PER_MILLISECOND - 1) / FILE_TIME_TICKS_PER_MILLISECOND));
             Beep(BEEP_PIP_FREQUENCY, duration);
             playedThrough = tone.end;
         }
@@ -611,16 +603,19 @@ void AdjustTimeSignalPlaybackTime(LONGLONG adjustment) {
     }
 }
 
-/// Changes the mute state of the sequence with the given system-time target and wakes the playback worker.
+/// Changes the mute state of the matching sequence and wakes the playback worker only when that state changes.
 void SetTimeSignalMuted(ULONGLONG target, bool muted) {
+    bool changed = false;
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
     for (TimeSignalSequence& sequence : timeSignalSequences) {
         if (sequence.target == target) {
+            changed = sequence.muted != muted;
             sequence.muted = muted;
+            break;
         }
     }
     ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    if (hTimeSignalWakeEvent != nullptr) {
+    if (changed && hTimeSignalWakeEvent != nullptr) {
         SetEvent(hTimeSignalWakeEvent);
     }
 }

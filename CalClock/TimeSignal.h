@@ -39,9 +39,6 @@ bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFile
 bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, int alarmHour,
     int alarmMinute, ULONGLONG* targetSystemFileTime);
 
-/// Tests exact equality of system-time targets so distinct fractional offsets remain separate.
-bool TimeSignalTargetsCoincide(ULONGLONG left, ULONGLONG right);
-
 /// Caches whether the Windows version requires generated audio instead of system Beep output.
 bool IsTimeSignalGeneratorRequired();
 
@@ -72,7 +69,7 @@ void StopTimeSignalVolumePreview();
 /// Updates all targets under one lock, preserves preview timing, and wakes the worker to replan pending pips.
 void AdjustTimeSignalPlaybackTime(LONGLONG adjustment);
 
-/// Changes the mute state of the sequence with the given system-time target and wakes the playback worker.
+/// Changes the mute state of the matching sequence and wakes the playback worker only when that state changes.
 void SetTimeSignalMuted(ULONGLONG target, bool muted);
 
 /// Removes matching scheduled sequences and releases the worker if no other playback work remains.

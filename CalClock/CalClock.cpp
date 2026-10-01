@@ -1784,7 +1784,7 @@ static ULONGLONG GetNtpHourPosition() {
     return (local.wMinute * 60ULL + local.wSecond) * 1000 + local.wMilliseconds;
 }
 
-/// Starts a due or forced NTP query, postponing automatic requests around the hour until HH:00:10.
+/// Starts a due or forced NTP query on the UI thread, postponing automatic requests around the hour until HH:00:10.
 /// Manual requests bypass that postponement. Failed attempts retry after one minute before the first successful
 /// synchronization in this process, or ten minutes afterward; successful results schedule the next hourly request.
 static void StartNtpSynchronization(bool force, bool manual = false) {
@@ -1795,7 +1795,7 @@ static void StartNtpSynchronization(bool force, bool manual = false) {
         nextNtpAttemptTick = 0;
     }
     ULONGLONG now = GetTickCount64();
-    if (nextNtpAttemptTick != 0 && now < nextNtpAttemptTick) {
+    if (now < nextNtpAttemptTick) {
         return;
     }
     if (!manual) {
@@ -1806,10 +1806,7 @@ static void StartNtpSynchronization(bool force, bool manual = false) {
             return;
         }
     }
-    bool expected = false;
-    if (!ntpQueryRunning.compare_exchange_strong(expected, true)) {
-        return;
-    }
+    ntpQueryRunning = true;
     if (hNtpThread != nullptr) {
         CloseHandle(hNtpThread);
         hNtpThread = nullptr;
@@ -2099,7 +2096,7 @@ static void CheckTimeSignals() {
     for (const TimeSignalCandidate& candidate : candidates) {
         auto existing = currentTimeSignalSources.begin();
         while (existing != currentTimeSignalSources.end()) {
-            if (TimeSignalTargetsCoincide(candidate.target, existing->target)) {
+            if (candidate.target == existing->target) {
                 break;
             }
             existing++;
@@ -3941,8 +3938,8 @@ static void RenderCustomWidget(Widget* widget) {
         int minimumHitTestAlpha = (255 + opacity - 1) / std::max(1, static_cast<int>(opacity));
         for (int index = 0; index < width * height; index++) {
             DWORD pixel = pixels[index];
-            int coverage = 255 -
-                (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
+            int coverage = 255
+                - (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
             int alpha = std::max(minimumHitTestAlpha, coverage);
             int red = GetRValue(color) * alpha / 255;
             int green = GetGValue(color) * alpha / 255;
@@ -4318,22 +4315,19 @@ static void RenderWidgetIdentification(Widget* widget) {
     }
 }
 
-/// Applies the widget's persistent stacking policy to its main and additional fullscreen windows without activating
-/// them.
-static void ApplyWidgetZOrder(Widget* widget) {
+/// Changes the widget's topmost state without activation. Explicitly unpinning may also send it to the back.
+static void ApplyWidgetZOrder(Widget* widget, bool sendToBack = false) {
     if (widget == nullptr || widget->window == nullptr) {
         return;
     }
     bool topMost = widget->config.topMost || widget->config.type == WIDGET_FULLSCREEN;
-    if (topMost) {
-        SetWindowPos(widget->window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    } else {
-        SetWindowPos(widget->window, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-        SetWindowPos(widget->window, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    HWND insertAfter = topMost ? HWND_TOPMOST : HWND_NOTOPMOST;
+    if (!topMost && sendToBack) {
+        insertAfter = HWND_BOTTOM;
     }
+    SetWindowPos(widget->window, insertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     for (size_t index = 0; index < widget->fullscreenWindows.size(); index++) {
-        SetWindowPos(widget->fullscreenWindows[index], topMost ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, 0, 0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        SetWindowPos(widget->fullscreenWindows[index], insertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 }
 
@@ -5152,8 +5146,8 @@ static void CreateWidgetWindow(Widget* widget) {
     widget->lastAlarmMinute = -1;
     SYSTEMTIME alarmObservation = {};
     GetDisplayedTime(widget->config, &alarmObservation);
-    widget->lastObservedAlarmDate = alarmObservation.wYear * 10000 + alarmObservation.wMonth * 100 +
-        alarmObservation.wDay;
+    widget->lastObservedAlarmDate = alarmObservation.wYear * 10000 + alarmObservation.wMonth * 100
+        + alarmObservation.wDay;
     widget->lastObservedAlarmMinute = alarmObservation.wHour * 60 + alarmObservation.wMinute;
     widget->lastRenderKey = -1;
     widget->lastPanelDateKey = -1;
@@ -5192,7 +5186,6 @@ static void CreateWidgetWindow(Widget* widget) {
                 RedrawWindow(widget->fullscreenWindows[index], nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
             }
         }
-        ApplyWidgetZOrder(widget);
     }
 }
 
@@ -5406,7 +5399,7 @@ static void SetWidgetVisible(Widget* widget, bool visible) {
             }
         }
         RenderWidget(widget);
-        ApplyWidgetZOrder(widget);
+        BringWidgetForward(widget);
     } else {
         SaveWidgetPosition(widget);
         ShowWindow(widget->window, SW_HIDE);
@@ -5712,7 +5705,7 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         SetWidgetVisible(widget, !widget->config.visible);
     } else if (command == ID_MENU_TOPMOST) {
         widget->config.topMost = !widget->config.topMost;
-        ApplyWidgetZOrder(widget);
+        ApplyWidgetZOrder(widget, !widget->config.topMost);
         SynchronizeOpenSettings(widget, command);
         SaveAllSettings();
     } else if (command == ID_MENU_SHOW_TODAY && widget->config.type == WIDGET_CALENDAR) {
@@ -8926,7 +8919,11 @@ static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configu
         return;
     }
     if (themeChanged || !WidgetConfigurationsDifferOnlyInRuntimeSettings(widget->config, configuration)) {
+        bool sendToBack = widget->config.topMost && !configuration.topMost;
         RecreateWidgetForConfiguration(widget, configuration);
+        if (sendToBack) {
+            ApplyWidgetZOrder(widget, true);
+        }
         return;
     }
     WidgetConfig previous = widget->config;
@@ -8966,9 +8963,6 @@ static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configu
             SetWindowTextW(window, configuration.name.c_str());
         }
     }
-    if (previous.topMost != configuration.topMost) {
-        ApplyWidgetZOrder(widget);
-    }
     if (previous.visible != configuration.visible) {
         ShowWindow(widget->window, configuration.visible ? SW_SHOWNOACTIVATE : SW_HIDE);
         if (!widget->fullscreenPreview) {
@@ -8977,8 +8971,11 @@ static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configu
             }
         }
         if (configuration.visible) {
-            ApplyWidgetZOrder(widget);
+            BringWidgetForward(widget);
         }
+    }
+    if (previous.topMost != configuration.topMost) {
+        ApplyWidgetZOrder(widget, !configuration.topMost);
     }
     bool secondsChanged = previous.showSeconds != configuration.showSeconds;
     if (secondsChanged) {
