@@ -188,7 +188,13 @@ static void CacheAnalogProfiles(DWORD* profileTable) {
 
 /// Searches backward up to 192 bytes for the expected x86 function prologue without crossing codeBegin.
 static BYTE* FindPreviousFunctionStart(BYTE* codeBegin, BYTE* address) {
-    const BYTE prolog[] = { 0x8B, 0xFF, 0x55, 0x8B, 0xEC };
+    const BYTE prolog[] = {
+        0x8B,
+        0xFF,
+        0x55,
+        0x8B,
+        0xEC
+    };
     if (codeBegin == nullptr || address == nullptr || address < codeBegin + sizeof(prolog)) {
         return nullptr;
     }
@@ -321,16 +327,19 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
         0x46,
         0x10
     };
-    const BYTE remoteDirectPattern[] = { 0x83,
+    const BYTE remoteDirectPattern[] = {
+        0x83,
         0x7E,
         0x60,
         0x00
     };
-    const BYTE remoteAddressPattern[] = { 0x8D,
+    const BYTE remoteAddressPattern[] = {
+        0x8D,
         0x5E,
         0x60
     };
-    const BYTE secondsPattern[] = { 0x83,
+    const BYTE secondsPattern[] = {
+        0x83,
         0x7E,
         0x58,
         0x00
@@ -873,8 +882,18 @@ int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     if (!LoadAnalogClockClass()) {
         return 0;
     }
-    const int vistaSizes[] = { 103, 128, 129, 160 };
-    const int otherSizes[] = { 104, 130, 166, 198 };
+    const int vistaSizes[] = {
+        103,
+        128,
+        129,
+        160
+    };
+    const int otherSizes[] = {
+        104,
+        130,
+        166,
+        198
+    };
     const int* supportedSizes = analogClockImplementation == ANALOG_CLOCK_VISTA ? vistaSizes : otherSizes;
     int count = analogClockImplementation == ANALOG_CLOCK_VISTA ? ARRAYSIZE(vistaSizes) : ARRAYSIZE(otherSizes);
     if (sizes != nullptr && capacity > 0) {

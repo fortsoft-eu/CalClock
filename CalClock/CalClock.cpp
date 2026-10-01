@@ -1215,7 +1215,12 @@ static int GetAnalogClockSizes(int* sizes) {
     if (count > 0) {
         return count;
     }
-    const int fallbackSizes[] = { 104, 130, 166, 198 };
+    const int fallbackSizes[] = {
+        104,
+        130,
+        166,
+        198
+    };
     CopyMemory(sizes, fallbackSizes, sizeof(fallbackSizes));
     return ARRAYSIZE(fallbackSizes);
 }
@@ -1224,8 +1229,18 @@ static int GetAnalogClockSizes(int* sizes) {
 static int NormalizeAnalogClockSize(int size) {
     int sizes[4] = {};
     int count = GetAnalogClockSizes(sizes);
-    const int vistaSizes[] = { 103, 128, 129, 160 };
-    const int otherSizes[] = { 104, 130, 166, 198 };
+    const int vistaSizes[] = {
+        103,
+        128,
+        129,
+        160
+    };
+    const int otherSizes[] = {
+        104,
+        130,
+        166,
+        198
+    };
     const int* sourceSizes = sizes[0] == vistaSizes[0] ? otherSizes : vistaSizes;
     for (int index = 0; index < ARRAYSIZE(vistaSizes); index++) {
         if (size == sourceSizes[index]) {
@@ -2410,7 +2425,16 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
             lineHeight = std::max(lineHeight, timeTextHeight + 4);
         }
         if (additional) {
-            SYSTEMTIME date = { 2026, 9, 0, 1, 0, 0, 0, 0 };
+            SYSTEMTIME date = {
+                2026,
+                9,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+            };
             for (int day = 1; day <= 7; day++) {
                 date.wDay = static_cast<WORD>(day);
                 wchar_t text[128] = {};
@@ -3108,7 +3132,10 @@ static void PresentLayeredBitmap(Widget* widget, HDC sourceDC, HDC screenDC, int
         widget->config.x = destination.x;
         widget->config.y = destination.y;
     }
-    POINT source = { 0, 0 };
+    POINT source = {
+        0,
+        0
+    };
     SIZE size = { width, height };
     BLENDFUNCTION blend = { AC_SRC_OVER, 0, opacity, AC_SRC_ALPHA };
     if (UpdateLayeredWindow(widget->window, screenDC, &destination, &size, sourceDC, &source, 0, &blend, ULW_ALPHA)) {
@@ -3654,7 +3681,10 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
             format, static_cast<float>(width), clockMetrics.height, &footerLayout);
         if (SUCCEEDED(result) && footerLayout != nullptr) {
             footerLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-            DWRITE_TEXT_RANGE footerRange = { 0, static_cast<UINT32>(footerText.size()) };
+            DWRITE_TEXT_RANGE footerRange = {
+                0,
+                static_cast<UINT32>(footerText.size())
+            };
             footerLayout->SetUnderline(config.fontUnderline, footerRange);
             footerLayout->SetStrikethrough(config.fontStrikeOut, footerRange);
         }
@@ -3685,7 +3715,10 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     if (SUCCEEDED(result) && config.leadingZeroMode == LEADING_ZERO_RESERVED && text[0] == L'0') {
         result = target->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f), &hiddenBrush);
         if (SUCCEEDED(result)) {
-            DWRITE_TEXT_RANGE leadingZeroRange = { 0, 1 };
+            DWRITE_TEXT_RANGE leadingZeroRange = {
+                0,
+                1
+            };
             result = layout->SetDrawingEffect(hiddenBrush, leadingZeroRange);
         }
     }
@@ -5067,9 +5100,9 @@ static bool SetFullscreenPreview(Widget* widget) {
     return true;
 }
 
-/// Creates a widget's main and required child or monitor windows, then applies layout, theme, rendering, visibility,
-/// and stacking.
-static void CreateWidgetWindow(Widget* widget) {
+/// Creates a widget's main and required child or monitor windows and applies layout, theme, rendering, and visibility.
+/// Activates the main window when replacing an active widget; other creation paths leave activation unchanged.
+static void CreateWidgetWindow(Widget* widget, bool activate = false) {
     if (widget == nullptr) {
         return;
     }
@@ -5178,7 +5211,7 @@ static void CreateWidgetWindow(Widget* widget) {
     }
     if (widget->config.visible) {
         RenderWidget(widget);
-        ShowWindow(widget->window, SW_SHOWNOACTIVATE);
+        ShowWindow(widget->window, activate ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE);
         RedrawWindow(widget->window, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
         if (!widget->fullscreenPreview) {
             for (size_t index = 0; index < widget->fullscreenWindows.size(); index++) {
@@ -5776,7 +5809,12 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         recreateConfiguration = widget->config;
         recreateConfiguration.size = sizes[sizeIndex];
         if (recreateConfiguration.type == WIDGET_DIGITAL) {
-            const int fonts[] = { 28, 44, 58, 72 };
+            const int fonts[] = {
+                28,
+                44,
+                58,
+                72
+            };
             recreateConfiguration.fontSize = fonts[sizeIndex];
         }
         recreate = true;
@@ -7936,7 +7974,12 @@ static void UpdateComboBoxDropDownWidth(HWND combo) {
         listStyle = static_cast<DWORD>(GetWindowLongPtrW(information.hwndList, GWL_STYLE));
         listExtendedStyle = static_cast<DWORD>(GetWindowLongPtrW(information.hwndList, GWL_EXSTYLE));
     }
-    RECT listRect = { 0, 0, width, 1 };
+    RECT listRect = {
+        0,
+        0,
+        width,
+        1
+    };
     if (AdjustWindowRectEx(&listRect, listStyle, FALSE, listExtendedStyle)) {
         width = listRect.right - listRect.left;
     } else {
@@ -8541,7 +8584,8 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
 static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration) {
     Widget replacement;
     replacement.config = configuration;
-    CreateWidgetWindow(&replacement);
+    bool activate = GetActiveWindow() == widget->window;
+    CreateWidgetWindow(&replacement, activate);
     if (replacement.window == nullptr) {
         return false;
     }
@@ -8626,6 +8670,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
             && RecreatePanelWidgetBuffered(widget, positionedConfiguration)) {
         return;
     }
+    bool activate = GetActiveWindow() == widget->window;
     bool alarmActive = widget->alarmActive;
     bool flashPhase = widget->flashPhase;
     int lastAlarmDate = widget->lastAlarmDate;
@@ -8673,7 +8718,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     widget->calendarChild = nullptr;
     widget->calendarProc = nullptr;
     widget->config = positionedConfiguration;
-    CreateWidgetWindow(widget);
+    CreateWidgetWindow(widget, activate);
     if (fullscreenChanged && (hSettings == nullptr || !IsWindow(hSettings))) {
         RefreshFullscreenPresentation();
     }
@@ -10737,7 +10782,12 @@ static int InformationLabelHeight(HWND control, int width) {
     std::wstring text = GetControlText(control);
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
     HGDIOBJ oldFont = font == nullptr ? nullptr : SelectObject(dc, font);
-    RECT bounds = { 0, 0, std::max(1, width), 0 };
+    RECT bounds = {
+        0,
+        0,
+        std::max(1, width),
+        0
+    };
     UINT flags = DT_CALCRECT | DT_WORDBREAK | DT_NOPREFIX | DT_EXPANDTABS;
     DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &bounds, flags);
     if (oldFont != nullptr) {

@@ -89,7 +89,16 @@ static const size_t GENERATOR_BUFFER_SAMPLES = 960;
 static const size_t GENERATOR_BUFFER_COUNT = 3;
 static const double GENERATOR_TONE_AMPLITUDE = 0.28;
 static const double PI = 3.14159265358979323846;
-static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = { 0, 1, 5, 10, 15, 20, 30, 60 };
+static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = {
+    0,
+    1,
+    5,
+    10,
+    15,
+    20,
+    30,
+    60
+};
 
 static HANDLE hTimeSignalThread = nullptr;
 static HANDLE hTimeSignalStopEvent = nullptr;
