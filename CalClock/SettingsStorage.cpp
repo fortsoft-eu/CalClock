@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -53,21 +53,24 @@ const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
 static bool ReadDword(HKEY key, const wchar_t* name, DWORD* value) {
     DWORD type = 0;
     DWORD size = sizeof(*value);
-    return RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_DWORD;
+    return RegQueryValueExW(key, name, nullptr, &type,
+        reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_DWORD;
 }
 
 /// Reads a registry value into a signed 64-bit destination and reports whether its type is REG_QWORD.
 static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
     DWORD type = 0;
     DWORD size = sizeof(*value);
-    return RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_QWORD;
+    return RegQueryValueExW(key, name, nullptr, &type,
+        reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_QWORD;
 }
 
 /// Reads a registry string without expanding environment variables, replacing the destination only on success.
 static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     DWORD type = 0;
     DWORD size = 0;
-    if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS || type != REG_SZ && type != REG_EXPAND_SZ || size < sizeof(wchar_t)) {
+    if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS
+            || type != REG_SZ && type != REG_EXPAND_SZ || size < sizeof(wchar_t)) {
         return false;
     }
     std::vector<wchar_t> buffer(size / sizeof(wchar_t) + 1, 0);
@@ -90,7 +93,8 @@ static void WriteQword(HKEY key, const wchar_t* name, LONGLONG value) {
 
 /// Writes a null-terminated Unicode REG_SZ value without reporting write errors.
 static void WriteString(HKEY key, const wchar_t* name, const std::wstring& value) {
-    RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
+    RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()),
+        static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
 }
 
 /// Formats a double with locale-independent punctuation and enough precision for a round trip.
@@ -142,7 +146,8 @@ static void WriteTimeSignalVolume(HKEY key, double volume) {
 /// Returns an empty string if the location cannot be obtained or created.
 std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
     wchar_t appData[MAX_PATH] = {};
-    if (SHGetFolderPathW(nullptr, CSIDL_APPDATA | (createDirectory ? CSIDL_FLAG_CREATE : 0), nullptr, SHGFP_TYPE_CURRENT, appData) != S_OK) {
+    if (SHGetFolderPathW(nullptr, CSIDL_APPDATA | (createDirectory ? CSIDL_FLAG_CREATE : 0), nullptr, SHGFP_TYPE_CURRENT,
+        appData) != S_OK) {
         return L"";
     }
     std::wstring vendorDirectory = std::wstring(appData) + L"\\FortSoft";
@@ -488,7 +493,8 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"alarmTextColor", static_cast<DWORD>(config.alarmTextColor));
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"alarmBackgroundColor", static_cast<DWORD>(config.alarmBackgroundColor));
+            result = WriteXmlNumberAttribute(writer, L"alarmBackgroundColor",
+                static_cast<DWORD>(config.alarmBackgroundColor));
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"showToday", config.showToday);
@@ -570,7 +576,8 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
         return false;
     }
     IStream* stream = nullptr;
-    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_CREATE | STGM_WRITE | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream))) {
+    if (FAILED(SHCreateStreamOnFileEx(path.c_str(),
+        STGM_CREATE | STGM_WRITE | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream))) {
         return false;
     }
     bool success = WriteSettingsXmlStream(stream, snapshot);
@@ -648,7 +655,8 @@ static bool ReadXmlNumberAttribute(IXmlReader* reader, const wchar_t* name, LONG
 }
 
 /// Starts with type-specific widget defaults, then reads recognized XML attributes with range checks and clamping.
-static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLanguage, int defaultFontAntialiasing, WidgetDefaultsFactory createDefaults, WidgetConfig* config) {
+static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLanguage, int defaultFontAntialiasing,
+        WidgetDefaultsFactory createDefaults, WidgetConfig* config) {
     LONGLONG number = 0;
     int type = WIDGET_ANALOG;
     if (ReadXmlNumberAttribute(reader, L"type", &number) && number >= 0 && number < WIDGET_TYPE_COUNT) {
@@ -922,7 +930,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
 
 /// Parses and validates a settings XML stream, including its root, widget count, and unique positive widget IDs.
 /// Assigns the destination snapshot only after validation succeeds.
-static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults,
+        SettingsSnapshot* snapshot) {
     IXmlReader* reader = nullptr;
     HRESULT result = CreateXmlReader(__uuidof(IXmlReader), reinterpret_cast<void**>(&reader), nullptr);
     if (SUCCEEDED(result)) {
@@ -971,7 +980,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
                 loaded.snapWidgetsToWorkArea = number != 0;
             }
-            if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number) && number >= 0 && number < FONT_ANTIALIAS_COUNT) {
+            if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number)
+                    && number >= 0
+                    && number < FONT_ANTIALIAS_COUNT) {
                 loaded.fontAntialiasing = static_cast<int>(number);
             }
             std::wstring applicationFontFace;
@@ -1007,7 +1018,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < SETTINGS_TAB_COUNT) {
                 loaded.settingsTab = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"lastAddedWidgetType", &number) && number >= 0 && number < WIDGET_TYPE_COUNT) {
+            if (ReadXmlNumberAttribute(reader, L"lastAddedWidgetType", &number)
+                    && number >= 0
+                    && number < WIDGET_TYPE_COUNT) {
                 loaded.lastAddedWidgetType = static_cast<WidgetType>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"helpX", &number) && number >= INT_MIN && number <= INT_MAX) {
@@ -1028,7 +1041,8 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
                 break;
             }
             WidgetConfig config = {};
-            ReadWidgetXml(reader, static_cast<int>(loaded.widgets.size()), defaultLanguage, loaded.fontAntialiasing, createDefaults, &config);
+            ReadWidgetXml(reader, static_cast<int>(loaded.widgets.size()), defaultLanguage, loaded.fontAntialiasing,
+                createDefaults, &config);
             loaded.widgets.push_back(config);
         }
     }
@@ -1054,16 +1068,19 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
 }
 
 /// Loads and validates a settings XML file no larger than 4 MiB, leaving snapshot unchanged on failure.
-bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults,
+        SettingsSnapshot* snapshot) {
     if (path.empty() || createDefaults == nullptr || snapshot == nullptr) {
         return false;
     }
     WIN32_FILE_ATTRIBUTE_DATA fileData = {};
-    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fileData) || fileData.nFileSizeHigh != 0 || fileData.nFileSizeLow > 4 * 1024 * 1024) {
+    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard,
+        &fileData) || fileData.nFileSizeHigh != 0 || fileData.nFileSizeLow > 4 * 1024 * 1024) {
         return false;
     }
     IStream* stream = nullptr;
-    if (FAILED(SHCreateStreamOnFileEx(path.c_str(), STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
+    if (FAILED(SHCreateStreamOnFileEx(path.c_str(),
+        STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
         return false;
     }
     bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot);
@@ -1072,7 +1089,8 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
 }
 
 /// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged on failure.
-bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets) {
+bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage,
+        WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets) {
     if (data.empty() || data.size() > MAX_WIDGET_CLIPBOARD_BYTES || createDefaults == nullptr || widgets == nullptr) {
         return false;
     }
@@ -1473,12 +1491,14 @@ static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount
 /// Loads per-user settings using supplied defaults and a widget-default factory, including the older single-widget
 /// layout.
 /// Returns false if arguments are invalid or the settings root cannot be opened.
-bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults,
+        SettingsSnapshot* snapshot) {
     if (createDefaults == nullptr || snapshot == nullptr) {
         return false;
     }
     HKEY root = nullptr;
-    if (RegOpenKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &root) != ERROR_SUCCESS) {
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &root) !=
+            ERROR_SUCCESS) {
         return false;
     }
     SettingsSnapshot loaded = defaults;
@@ -1552,14 +1572,16 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     }
     HKEY collection = nullptr;
     DWORD count = 0;
-    if (RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &collection) == ERROR_SUCCESS && ReadDword(collection, L"Count", &count)) {
+    if (RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &collection) == ERROR_SUCCESS
+            && ReadDword(collection, L"Count", &count)) {
         count = std::min<DWORD>(count, MAX_WIDGET_COUNT);
         for (DWORD index = 0; index < count; index++) {
             wchar_t subkey[24] = {};
             swprintf_s(subkey, L"%u", index);
             HKEY item = nullptr;
             if (RegOpenKeyExW(collection, subkey, 0, KEY_QUERY_VALUE, &item) == ERROR_SUCCESS) {
-                WidgetConfig config = createDefaults(WIDGET_ANALOG, static_cast<int>(index), loaded.language, loaded.fontAntialiasing);
+                WidgetConfig config = createDefaults(WIDGET_ANALOG, static_cast<int>(index), loaded.language,
+                    loaded.fontAntialiasing);
                 ReadWidgetConfig(item, &config);
                 loaded.widgets.push_back(config);
                 RegCloseKey(item);
@@ -1623,7 +1645,8 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     }
     HKEY root = nullptr;
     DWORD disposition = 0;
-    if (RegCreateKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, nullptr, 0, KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
+    if (RegCreateKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, nullptr, 0,
+        KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
         return false;
     }
     WriteDword(root, L"SchemaVersion", 15);
@@ -1652,14 +1675,16 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     bool written = false;
     HKEY collection = nullptr;
     REGSAM collectionAccess = KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_CREATE_SUB_KEY | KEY_ENUMERATE_SUB_KEYS | DELETE;
-    if (RegCreateKeyExW(root, L"Widgets", 0, nullptr, 0, collectionAccess, nullptr, &collection, &disposition) == ERROR_SUCCESS) {
+    if (RegCreateKeyExW(root, L"Widgets", 0, nullptr, 0, collectionAccess, nullptr, &collection, &disposition) ==
+            ERROR_SUCCESS) {
         WriteDword(collection, L"Count", static_cast<DWORD>(snapshot.widgets.size()));
         written = true;
         for (size_t index = 0; index < snapshot.widgets.size(); index++) {
             wchar_t subkey[24] = {};
             swprintf_s(subkey, L"%zu", index);
             HKEY item = nullptr;
-            if (RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &item, &disposition) == ERROR_SUCCESS) {
+            if (RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &item, &disposition) ==
+                    ERROR_SUCCESS) {
                 WriteWidgetConfig(item, snapshot.widgets[index]);
                 RegCloseKey(item);
             } else {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -76,7 +76,21 @@ struct AudioOutputBuffer {
     std::vector<BYTE> data;
 };
 
-const CLSID AUDIO_SAMPLE_GRABBER = { 0xC1F400A0, 0x3F08, 0x11D3, { 0x9F, 0x0B, 0x00, 0x60, 0x08, 0x03, 0x9E, 0x37 } };
+const CLSID AUDIO_SAMPLE_GRABBER = {
+    0xC1F400A0,
+    0x3F08,
+    0x11D3,
+    {
+        0x9F,
+        0x0B,
+        0x00,
+        0x60,
+        0x08,
+        0x03,
+        0x9E,
+        0x37
+    }
+};
 
 /// Recognizes supported audio filename extensions case-insensitively without opening the file.
 bool LooksLikeAudio(const std::wstring& path) {
@@ -328,7 +342,7 @@ static bool StreamDecodedAudio(AudioDecoder& decoder, const AudioThreadParameter
         buffer.header.lpData = reinterpret_cast<LPSTR>(buffer.data.data());
         buffer.header.dwBufferLength = static_cast<DWORD>(length);
         if (waveOutPrepareHeader(output, &buffer.header, sizeof(buffer.header)) != MMSYSERR_NOERROR
-            || waveOutWrite(output, &buffer.header, sizeof(buffer.header)) != MMSYSERR_NOERROR) {
+                || waveOutWrite(output, &buffer.header, sizeof(buffer.header)) != MMSYSERR_NOERROR) {
             result = E_FAIL;
             break;
         }
@@ -387,7 +401,8 @@ static bool PlayWithDirectShow(const AudioThreadParameters& parameters) {
     IMediaEvent* events = nullptr;
     IMediaSeeking* seeking = nullptr;
     IBasicAudio* audio = nullptr;
-    HRESULT result = CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, reinterpret_cast<void**>(&graph));
+    HRESULT result = CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC_SERVER, IID_IGraphBuilder,
+        reinterpret_cast<void**>(&graph));
     if (SUCCEEDED(result)) {
         result = graph->RenderFile(parameters.path.c_str(), nullptr);
     }
@@ -574,16 +589,17 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
 static DWORD WINAPI AudioThreadProc(void* parameter) {
     std::unique_ptr<AudioThreadParameters> parameters(static_cast<AudioThreadParameters*>(parameter));
     if (PlayDecodedAudio(*parameters)
-        || PlayWithDirectShow(*parameters)
-        || PlayWithWindowsMediaPlayer(*parameters)
-        || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
+            || PlayWithDirectShow(*parameters)
+            || PlayWithWindowsMediaPlayer(*parameters)
+            || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
         CloseHandle(parameters->stopEvent);
         CloseHandle(parameters->muteEvent);
         PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId),
             static_cast<LPARAM>(parameters->generation));
         return 0;
     }
-    std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_" + std::to_wstring(parameters->generation);
+    std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_" +
+        std::to_wstring(parameters->generation);
     std::wstring command = L"open \"" + parameters->path + L"\" type mpegvideo alias " + alias;
     bool opened = mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
     if (opened && WaitForSingleObject(parameters->stopEvent, 0) != WAIT_OBJECT_0) {
@@ -603,7 +619,7 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
                     wchar_t mode[32] = {};
                     command = L"status " + alias + L" mode";
                     if (mciSendStringW(command.c_str(), mode, ARRAYSIZE(mode), nullptr) != 0
-                        || _wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0) {
+                            || _wcsicmp(mode, L"playing") != 0 && _wcsicmp(mode, L"seeking") != 0) {
                         break;
                     }
                 }
@@ -625,8 +641,8 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
 
 /// Starts an audio worker with independent stop and mute handles and a shared live volume value.
 /// On success, transfers the returned event handles to the caller; the worker owns duplicate handles.
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, const std::shared_ptr<std::atomic<int>>& volume,
-        HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, const std::shared_ptr<std::atomic<int>>&
+    volume, HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
     if (stopEvent == nullptr || muteEvent == nullptr) {
         return false;
     }
@@ -640,13 +656,15 @@ bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, co
         return false;
     }
     HANDLE workerEvent = nullptr;
-    if (!DuplicateHandle(GetCurrentProcess(), ownerEvent, GetCurrentProcess(), &workerEvent, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+    if (!DuplicateHandle(GetCurrentProcess(), ownerEvent, GetCurrentProcess(), &workerEvent, 0, FALSE,
+        DUPLICATE_SAME_ACCESS)) {
         CloseHandle(ownerEvent);
         CloseHandle(ownerMuteEvent);
         return false;
     }
     HANDLE workerMuteEvent = nullptr;
-    if (!DuplicateHandle(GetCurrentProcess(), ownerMuteEvent, GetCurrentProcess(), &workerMuteEvent, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+    if (!DuplicateHandle(GetCurrentProcess(), ownerMuteEvent, GetCurrentProcess(), &workerMuteEvent, 0, FALSE,
+        DUPLICATE_SAME_ACCESS)) {
         CloseHandle(workerEvent);
         CloseHandle(ownerEvent);
         CloseHandle(ownerMuteEvent);
@@ -732,7 +750,8 @@ static DWORD WINAPI RemoteScriptThreadProc(void* parameter) {
     if (path.empty()) {
         path = L"/";
     }
-    HINTERNET session = WinHttpOpen(L"CalClock/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    HINTERNET session = WinHttpOpen(L"CalClock/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS, 0);
     if (session == nullptr) {
         return 0;
     }
@@ -741,9 +760,11 @@ static DWORD WINAPI RemoteScriptThreadProc(void* parameter) {
     DWORD flags = components.nScheme == INTERNET_SCHEME_HTTPS ? WINHTTP_FLAG_SECURE : 0;
     HINTERNET request = nullptr;
     if (connection != nullptr) {
-        request = WinHttpOpenRequest(connection, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
+        request = WinHttpOpenRequest(connection, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER,
+            WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
     }
-    if (request != nullptr && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {
+    if (request != nullptr
+            && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {
         WinHttpReceiveResponse(request, nullptr);
     }
     if (request != nullptr) {

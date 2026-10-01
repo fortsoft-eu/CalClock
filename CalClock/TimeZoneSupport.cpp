@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -33,7 +33,8 @@
 
 typedef DWORD(WINAPI* EnumDynamicTimeZoneInformationProc)(DWORD index, PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
 typedef DWORD(WINAPI* GetDynamicTimeZoneInformationProc)(PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
-typedef BOOL(WINAPI* GetTimeZoneInformationForYearProc)(USHORT year, PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZoneInformation,
+typedef BOOL(WINAPI* GetTimeZoneInformationForYearProc)(USHORT year,
+    PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZoneInformation,
     LPTIME_ZONE_INFORMATION timeZoneInformation);
 typedef BOOL(WINAPI* SystemTimeToTzSpecificLocalTimeExProc)(const DYNAMIC_TIME_ZONE_INFORMATION* timeZoneInformation,
     const SYSTEMTIME* universalTime, SYSTEMTIME* localTime);
@@ -152,29 +153,30 @@ static FARPROC FindProcedure(const wchar_t* moduleName, const char* procedureNam
 
 /// Caches the optional dynamic time-zone enumeration entry point for compatibility with older Windows versions.
 static EnumDynamicTimeZoneInformationProc GetEnumDynamicTimeZoneInformationProc() {
-    static EnumDynamicTimeZoneInformationProc procedure =
-        reinterpret_cast<EnumDynamicTimeZoneInformationProc>(FindProcedure(L"Advapi32.dll", "EnumDynamicTimeZoneInformation"));
+    static EnumDynamicTimeZoneInformationProc procedure = reinterpret_cast<EnumDynamicTimeZoneInformationProc>(
+        FindProcedure(L"Advapi32.dll", "EnumDynamicTimeZoneInformation"));
     return procedure;
 }
 
 /// Caches the optional system dynamic time-zone query entry point.
 static GetDynamicTimeZoneInformationProc GetGetDynamicTimeZoneInformationProc() {
     static GetDynamicTimeZoneInformationProc procedure =
-        reinterpret_cast<GetDynamicTimeZoneInformationProc>(FindProcedure(L"Kernel32.dll", "GetDynamicTimeZoneInformation"));
+        reinterpret_cast<GetDynamicTimeZoneInformationProc>(FindProcedure(L"Kernel32.dll",
+            "GetDynamicTimeZoneInformation"));
     return procedure;
 }
 
 /// Caches the optional entry point for retrieving a time zone's rules for a specific year.
 static GetTimeZoneInformationForYearProc GetGetTimeZoneInformationForYearProc() {
-    static GetTimeZoneInformationForYearProc procedure =
-        reinterpret_cast<GetTimeZoneInformationForYearProc>(FindProcedure(L"Kernel32.dll", "GetTimeZoneInformationForYear"));
+    static GetTimeZoneInformationForYearProc procedure = reinterpret_cast<GetTimeZoneInformationForYearProc>(
+        FindProcedure(L"Kernel32.dll", "GetTimeZoneInformationForYear"));
     return procedure;
 }
 
 /// Caches the optional dynamic UTC-to-local conversion entry point.
 static SystemTimeToTzSpecificLocalTimeExProc GetSystemTimeToTzSpecificLocalTimeExProc() {
-    static SystemTimeToTzSpecificLocalTimeExProc procedure =
-        reinterpret_cast<SystemTimeToTzSpecificLocalTimeExProc>(FindProcedure(L"Kernel32.dll", "SystemTimeToTzSpecificLocalTimeEx"));
+    static SystemTimeToTzSpecificLocalTimeExProc procedure = reinterpret_cast<SystemTimeToTzSpecificLocalTimeExProc>(
+        FindProcedure(L"Kernel32.dll", "SystemTimeToTzSpecificLocalTimeEx"));
     return procedure;
 }
 
@@ -213,13 +215,15 @@ static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source,
 /// Appends zones with valid TZI records from the Windows time-zone registry, supplying missing names from their keys.
 static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     HKEY root = nullptr;
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones", 0, KEY_READ, &root) != ERROR_SUCCESS) {
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones", 0, KEY_READ,
+        &root) != ERROR_SUCCESS) {
         return;
     }
     for (DWORD index = 0;; index++) {
         wchar_t keyName[128] = {};
         DWORD keyNameLength = ARRAYSIZE(keyName);
-        LSTATUS enumerationStatus = RegEnumKeyExW(root, index, keyName, &keyNameLength, nullptr, nullptr, nullptr, nullptr);
+        LSTATUS enumerationStatus = RegEnumKeyExW(root, index, keyName, &keyNameLength,
+            nullptr, nullptr, nullptr, nullptr);
         if (enumerationStatus == ERROR_NO_MORE_ITEMS) {
             break;
         }
@@ -233,7 +237,8 @@ static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATI
         RegistryTimeZoneInformation registryInformation = {};
         DWORD type = 0;
         DWORD bytes = sizeof(registryInformation);
-        LSTATUS informationStatus = RegQueryValueExW(key, L"TZI", nullptr, &type, reinterpret_cast<BYTE*>(&registryInformation), &bytes);
+        LSTATUS informationStatus = RegQueryValueExW(key, L"TZI", nullptr, &type,
+            reinterpret_cast<BYTE*>(&registryInformation), &bytes);
         if (informationStatus == ERROR_SUCCESS && type == REG_BINARY && bytes == sizeof(registryInformation)) {
             DYNAMIC_TIME_ZONE_INFORMATION zone = {};
             zone.Bias = registryInformation.bias;
@@ -299,14 +304,17 @@ std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, cons
     SYSTEMTIME local = {};
     FILETIME utcFileTime = {};
     FILETIME localFileTime = {};
-    if (ConvertUtcToTimeZone(zone, utc, &local) && SystemTimeToFileTime(&utc, &utcFileTime) && SystemTimeToFileTime(&local, &localFileTime)) {
+    if (ConvertUtcToTimeZone(zone, utc, &local)
+            && SystemTimeToFileTime(&utc, &utcFileTime)
+            && SystemTimeToFileTime(&local, &localFileTime)) {
         ULARGE_INTEGER utcTicks = {};
         utcTicks.LowPart = utcFileTime.dwLowDateTime;
         utcTicks.HighPart = utcFileTime.dwHighDateTime;
         ULARGE_INTEGER localTicks = {};
         localTicks.LowPart = localFileTime.dwLowDateTime;
         localTicks.HighPart = localFileTime.dwHighDateTime;
-        offsetMinutes = (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart)) / 600000000;
+        offsetMinutes = (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart))
+            / 600000000;
     }
     std::wstring offset = FormatTimeZoneOffset(offsetMinutes);
     if (name.empty()) {
@@ -327,7 +335,8 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
     }
     HKEY key = nullptr;
     wchar_t keyName[128] = {};
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key) == ERROR_SUCCESS) {
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key) ==
+            ERROR_SUCCESS) {
         ReadRegistryString(key, L"TimeZoneKeyName", keyName, ARRAYSIZE(keyName));
         RegCloseKey(key);
     }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -72,17 +72,22 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
-// Function pointer types
+/// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
-typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data, int characters, LPDWORD value);
-typedef int(WINAPI* GetCalendarInfoExProc)(LPCWSTR localeName, CALID calendar, LPCWSTR reserved, CALTYPE type, LPWSTR data, int characters, LPDWORD value);
-typedef int(WINAPI* GetCalendarDateFormatProc)(CALID calendar, DWORD flags, const void* calendarDate, LPCWSTR format, LPWSTR data, int characters);
+typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
+    int characters, LPDWORD value);
+typedef int(WINAPI* GetCalendarInfoExProc)(LPCWSTR localeName, CALID calendar, LPCWSTR reserved,
+    CALTYPE type, LPWSTR data, int characters, LPDWORD value);
+typedef int(WINAPI* GetCalendarDateFormatProc)(CALID calendar, DWORD flags, const void* calendarDate,
+    LPCWSTR format, LPWSTR data, int characters);
 typedef BOOL(WINAPI* ConvertCalDateTimeToSystemTimeProc)(const void* calendarDate, SYSTEMTIME* systemTime);
-typedef HRESULT(WINAPI* D2D1CreateFactoryProc)(D2D1_FACTORY_TYPE factoryType, REFIID interfaceId, const D2D1_FACTORY_OPTIONS* factoryOptions, void** factory);
-typedef HRESULT(WINAPI* DWriteCreateFactoryProc)(DWRITE_FACTORY_TYPE factoryType, REFIID interfaceId, IUnknown** factory);
+typedef HRESULT(WINAPI* D2D1CreateFactoryProc)(D2D1_FACTORY_TYPE factoryType, REFIID interfaceId,
+    const D2D1_FACTORY_OPTIONS* factoryOptions, void** factory);
+typedef HRESULT(WINAPI* DWriteCreateFactoryProc)(DWRITE_FACTORY_TYPE factoryType, REFIID interfaceId,
+    IUnknown** factory);
 
-// Window layout and font dialog types
+/// Window layout and font dialog types
 /// Selects whether the shared font dialog exposes face and style only or also permits size changes.
 enum FontDialogMode {
     FONT_DIALOG_FACE_AND_STYLE,
@@ -177,7 +182,7 @@ struct InformationWindowLayout {
     bool initialized = false;
 };
 
-// Window classes and product constants
+/// Window classes and product constants
 const wchar_t CLASS_NAME[] = L"CalClockMultiWidgetWindow";
 const wchar_t BLACKOUT_CLASS_NAME[] = L"CalClockBlackoutWindow";
 const wchar_t CONTROLLER_TITLE[] = L"CalClockMessageController";
@@ -185,7 +190,7 @@ const wchar_t ABOUT_WEBSITE_URL[] = L"https://fortsoft.cz/calclock/";
 const wchar_t WIDGET_CLIPBOARD_FORMAT[] = L"FortSoft.CalClock.Widgets.XML.v1";
 const wchar_t SETTINGS_COMBO_HEIGHT_PROPERTY[] = L"CalClock.SettingsComboHeight";
 
-// Window messages, timers and subclass identifiers
+/// Window messages, timers and subclass identifiers
 const UINT WM_TRAYICON = WM_APP + 1;
 const UINT WM_SHOW_EXISTING = WM_APP + 2;
 const UINT WM_NTP_RESULT = WM_APP + 3;
@@ -201,7 +206,7 @@ const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
 const UINT_PTR SETTINGS_CONTROL_SUBCLASS_ID = 0xCC05;
 const UINT_PTR ABOUT_LICENSE_SUBCLASS_ID = 0xCC06;
 
-// Layout, appearance and alarm constants
+/// Layout, appearance and alarm constants
 const int ABOUT_WINDOW_HEIGHT = 528;
 const int ABOUT_WINDOW_WIDTH = 550;
 const int ALARM_DAY_COUNT = 7;
@@ -221,14 +226,14 @@ const double TIME_SIGNAL_VOLUME_SLIDER_MIN_DB = -60.0;
 const double TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB = -18.0;
 static const int WORK_AREA_SNAP_DISTANCE = 5;
 
-// Widget panel control identifiers
+/// Widget panel control identifiers
 const int ID_PANEL_BOTTOM_FONT = 3075;
 const int ID_PANEL_DATE_LINK = 115;
 const int ID_PANEL_TIME_FONT = 3074;
 const int ID_PANEL_TIME_ZONE_LINK = 116;
 const int ID_PANEL_TOP_FONT = 3073;
 
-// Menu command identifiers
+/// Menu command identifiers
 const int ID_MENU_ABOUT = 1023;
 const int ID_MENU_ABOUT_COPY_INFORMATION = 1102;
 const int ID_MENU_ABOUT_COPY_URL = 1101;
@@ -253,7 +258,7 @@ const int ID_MENU_TOPMOST = 1003;
 const int ID_MENU_VISIBLE = 1002;
 const int ID_MENU_WIDGET_BASE = 2000;
 
-// Information window control identifiers
+/// Information window control identifiers
 const int ID_INFO_CLOSE = 3050;
 const int ID_INFO_ICON = 3200;
 const int ID_INFO_LINK = 3203;
@@ -261,7 +266,7 @@ const int ID_INFO_PRODUCT = 3201;
 const int ID_INFO_TEXT = 3051;
 const int ID_INFO_WEBSITE = 3202;
 
-// Settings control identifiers
+/// Settings control identifiers
 const int ID_ADD = 3003;
 const int ID_ADD_TYPE = 3002;
 const int ID_ADDITIONAL_ENABLED_BASE = 3110;
@@ -343,7 +348,7 @@ const int ID_WIDGET_ANTIALIAS = 3072;
 const int ID_WIDGET_DISABLE_THEMES = 3057;
 const int ID_WIDGET_LANGUAGE = 3018;
 
-// Language order
+/// Language order
 static const AppLanguage LANGUAGE_DISPLAY_ORDER[LANG_COUNT] = {
     LANG_CZ,
     LANG_EN,
@@ -364,33 +369,34 @@ static const AppLanguage LANGUAGE_DISPLAY_ORDER[LANG_COUNT] = {
     LANG_TR
 };
 
-static_assert(ID_MENU_ARRANGE_WIDGETS < ID_MENU_DATE_FORMAT_BASE || ID_MENU_ARRANGE_WIDGETS >= ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT);
+static_assert(ID_MENU_ARRANGE_WIDGETS < ID_MENU_DATE_FORMAT_BASE
+    || ID_MENU_ARRANGE_WIDGETS >= ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT);
 
-// Application instance
+/// Application instance
 HINSTANCE hInstance = nullptr;
 
-// Thread, mutex and event handles
+/// Thread, mutex and event handles
 HANDLE hNtpThread = nullptr;
 HANDLE hSingleInstanceMutex = nullptr;
 HANDLE settingsPreviewMuteEvent = nullptr;
 HANDLE settingsPreviewStopEvent = nullptr;
 
-// Loaded modules
+/// Loaded modules
 HMODULE d2dModule = nullptr;
 HMODULE dwriteModule = nullptr;
 
-// Fonts
+/// Fonts
 HFONT hUiFont = nullptr;
 HFONT hAboutFont = nullptr;
 
-// Windows and tooltips
+/// Windows and tooltips
 HWND hController = nullptr;
 HWND hSettings = nullptr;
 HWND hHelp = nullptr;
 HWND hAbout = nullptr;
 HWND hAboutTooltip = nullptr;
 
-// Settings pages and widget list
+/// Settings pages and widget list
 HWND hWidgetList = nullptr;
 HWND hAddType = nullptr;
 HWND hTabs = nullptr;
@@ -401,7 +407,7 @@ HWND hTimeSignalPage = nullptr;
 HWND hTimePage = nullptr;
 HWND hApplicationPage = nullptr;
 
-// General widget controls
+/// General widget controls
 HWND hNameEdit = nullptr;
 HWND hTypeCombo = nullptr;
 HWND hVisibleCheck = nullptr;
@@ -427,7 +433,7 @@ HWND hOffsetEdit = nullptr;
 HWND hWidgetLanguageCombo = nullptr;
 HWND hSoundsMutedCheck = nullptr;
 
-// Appearance controls
+/// Appearance controls
 HWND hAlarmBackgroundColorButton = nullptr;
 HWND hAlarmTextColorButton = nullptr;
 HWND hBackgroundColorButton = nullptr;
@@ -467,7 +473,7 @@ HWND hWidgetAntialiasCombo = nullptr;
 HWND hWidgetAntialiasLabel = nullptr;
 HWND hWidgetDisableThemesCheck = nullptr;
 
-// Alarm and time signal controls
+/// Alarm and time signal controls
 HWND hAlarmDayChecks[ALARM_DAY_COUNT] = {};
 HWND hAlarmEnabledCheck = nullptr;
 HWND hAlarmTimeEdit = nullptr;
@@ -485,7 +491,7 @@ HWND hRunCommandCheck = nullptr;
 HWND hTestCommandButton = nullptr;
 HWND hTimeSignalCombo = nullptr;
 
-// Time source controls
+/// Time source controls
 HWND hNtpPresetCombo = nullptr;
 HWND hNtpPresetLabel = nullptr;
 HWND hNtpServersEdit = nullptr;
@@ -494,7 +500,7 @@ HWND hNtpStatus = nullptr;
 HWND hNtpSyncButton = nullptr;
 HWND hTimeSourceCombo = nullptr;
 
-// Application settings controls
+/// Application settings controls
 HWND hAppAntialiasCombo = nullptr;
 HWND hAppFontButton = nullptr;
 HWND hAppFontDefaultButton = nullptr;
@@ -510,15 +516,15 @@ HWND hTimeSignalVolumeValue = nullptr;
 HWND hStartWithWindowsCheck = nullptr;
 HWND hUseXmlSettingsCheck = nullptr;
 
-// Mouse interaction windows
+/// Mouse interaction windows
 static HWND hFullscreenCursorWindow = nullptr;
 static HWND lastClickedEdit = nullptr;
 
-// Graphics factories
+/// Graphics factories
 ID2D1Factory* d2dFactory = nullptr;
 IDWriteFactory* dwriteFactory = nullptr;
 
-// Resolved locale functions
+/// Resolved locale functions
 GetUserDefaultLcidProc originalGetUserDefaultLcid = nullptr;
 GetLocaleInfoWProc originalGetLocaleInfoW = nullptr;
 GetCalendarInfoWProc originalGetCalendarInfoW = nullptr;
@@ -526,25 +532,26 @@ GetCalendarInfoExProc originalGetCalendarInfoEx = nullptr;
 GetCalendarDateFormatProc originalGetCalendarDateFormat = nullptr;
 ConvertCalDateTimeToSystemTimeProc convertCalDateTimeToSystemTime = nullptr;
 
-// Notification area data
+/// Notification area data
 NOTIFYICONDATAW trayIcon = {};
 
-// Information window layouts
+/// Information window layouts
 static InformationWindowLayout helpWindowLayout;
 static InformationWindowLayout aboutWindowLayout;
 
-// Mouse interaction positions
+/// Mouse interaction positions
 static POINT fullscreenCursorPosition = {};
 static POINT lastEditClickPoint = {};
 
-// Language and widget type
+/// Language and widget type
 AppLanguage appLanguage = LANG_EN;
 WidgetType lastAddedWidgetType = WIDGET_ANALOG;
 
-// State flags
+/// State flags
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 static bool fullscreenCursorHidden = false;
+bool ntpHasSynchronized = false;
 bool ntpLastQueryFailed = false;
 bool settingsAppearancePreviewActive = false;
 bool settingsAppFontItalic = false;
@@ -564,7 +571,7 @@ bool updatingSettingsControls = false;
 bool useNtpTime = true;
 bool winsockReady = false;
 
-// Numeric settings and positions
+/// Numeric settings and positions
 int aboutX = CW_USEDEFAULT;
 int aboutY = CW_USEDEFAULT;
 int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
@@ -587,47 +594,49 @@ double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 std::shared_ptr<std::atomic<int>> settingsPreviewVolume;
 static int editClickCount = 0;
 
-// Message and generation identifiers
+/// Message and generation identifiers
 ULONG settingsPreviewGeneration = 0;
 UINT taskbarCreatedMessage = 0;
 
-// Timing state
-static ULONGLONG fullscreenCursorActivityTick = 0;
+/// Timing state
+LONGLONG currentTimeSignalOffset = 0;
 ULONGLONG lastNtpAttemptTick = 0;
+ULONGLONG nextNtpAttemptTick = 0;
+static ULONGLONG fullscreenCursorActivityTick = 0;
 
-// Thread-safe NTP state
+/// Thread-safe NTP state
 std::atomic<ULONG> ntpGeneration = 0;
 std::atomic<LONGLONG> ntpOffset100Nanoseconds = 0;
 std::atomic<bool> ntpQueryRunning = false;
 std::atomic<bool> ntpStopRequested = false;
 std::atomic<bool> ntpTimeValid = false;
 
-// Font names and NTP servers
+/// Font names and NTP servers
 std::wstring appFontFace;
 std::wstring ntpActiveServer;
 std::wstring ntpServers;
 std::wstring settingsAppFontFace;
 
-// Widgets
+/// Widgets
 std::vector<std::unique_ptr<Widget>> widgets;
 
-// Widget configuration drafts
+/// Widget configuration drafts
 std::vector<WidgetConfig> settingsAppearanceOriginals;
 std::vector<WidgetConfig> settingsDraft;
 std::vector<WidgetConfig> settingsAppliedWidgets;
 
-// Widget identifiers
+/// Widget identifiers
 std::vector<TimeSignalSourceGroup> currentTimeSignalSources;
 std::vector<int> lastHiddenWidgetIds;
 std::vector<int> lastMutedWidgetIds;
 std::vector<int> settingsAppearancePreviewIds;
 std::vector<int> disabledArrangementCommands;
 
-// Monitors and time zones
+/// Monitors and time zones
 std::vector<DisplayMonitor> displayMonitors;
 std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
 
-// Window and control collections
+/// Window and control collections
 std::vector<HWND> alarmControls;
 std::vector<HWND> appearanceControls;
 std::vector<HWND> applicationControls;
@@ -636,125 +645,181 @@ std::vector<HWND> generalControls;
 std::vector<HWND> timeControls;
 std::vector<HWND> timeSignalControls;
 
-// Forward declarations
+/// Forward declarations
+
 /// Dispatches controller, widget, settings-page, and information-window messages.
 /// Coordinates painting, input, timers, background-worker results, settings actions, and orderly application shutdown.
 static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+
 /// Integrates the primary native clock with widget dragging, face-only second-hand toggling, context menus, and
 /// identification painting.
 static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+
 /// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling a
 /// second hand.
-static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
 /// Preserves native calendar navigation while distinguishing title clicks from widget drags.
 /// Applies the widget locale to native processing and handles context menus and identification feedback.
 static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+
 /// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
 /// Treats double-clicks as button presses and removes the subclass on destruction.
-static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
 /// Adds Ctrl+A and triple-click line selection while preserving normal edit and dialog behavior.
 /// Clears click tracking on timeout, focus changes, other mouse buttons, and destruction.
-static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
 /// On associated buttons, transfers focus to the widget list before handling the shortcut.
-static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
 /// Tracks mouse capture on the volume slider to control preview playback and stops it during subclass destruction.
-static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData);
+static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
 /// Serializes selected widgets to the application's registered clipboard format, transferring memory ownership only on
 /// success.
 static void CopySelectedWidgetsToClipboard();
+
 /// Reads and validates the application's bounded clipboard payload, validates pending edits, and appends widget copies.
 static void PasteWidgetsFromClipboard();
+
 /// Updates a visible widget through the rendering path appropriate to its type, resizing only when needed.
 static void RenderWidget(Widget* widget);
+
 /// Captures current settings and saves them to the selected XML or registry backend.
 /// Removes registry settings after a successful switch to XML storage.
 static void SaveAllSettings();
+
 /// Captures the form's screen position, using and translating its normal placement when minimized.
 static void SaveFormPosition(HWND window, int* x, int* y);
+
 /// Temporarily substitutes committed widget configurations while saving, then restores the active appearance previews.
 static void SaveSettingsWithoutAppearancePreviews();
+
 /// Opens or activates the non-topmost settings form and optionally selects a widget by ID.
 /// Creates draft snapshots and fullscreen previews when opening a new form.
 static void ShowSettingsWindow(int widgetId = -1);
+
 /// Hides inactive pages before revealing the selected page, updates its state and mnemonics, and ends inapplicable
 /// previews.
 static void ShowSettingsTab(int tab);
+
 /// Propagates a live menu change into draft, applied, and preview-original configurations.
 /// Updates selected controls as needed and reevaluates Apply without rebuilding the settings form.
 static void SynchronizeOpenSettings(const Widget* widget, int command);
+
 /// Updates open Help and About windows for the application language and recalculates their layouts.
 static void RefreshInformationWindows();
+
 /// Anchors Help or About controls to the client area, measures wrapped product text, and preserves right and bottom
 /// spacing.
 static void LayoutInformationWindow(HWND window);
+
 /// Returns the Windows message-font face, falling back to the stock GUI font or an empty string.
 static std::wstring GetSystemMessageFontFace();
+
 /// Creates a caller-owned GDI font using the widget's point size, style, face, and antialiasing settings.
 static HFONT CreateWidgetDrawingFont(const WidgetConfig& config);
+
 /// Creates a caller-owned GDI font from panel font properties, converting the dialog size from tenths of a point.
 static HFONT CreatePanelFont(const FontSelection& selection, int fontAntialiasing);
+
 /// Cancels the alarm test, releases its event handles, restores temporary visual alarm state, and resets the Test
 /// caption.
 static void StopSettingsPreview();
+
 /// Updates font-button captions and the selected widget's font description without rewriting unchanged text.
 static void UpdateFontDescription(const WidgetConfig& config);
+
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and requests
 /// repainting.
 static void ApplyUiStyle(HWND window);
+
 /// Updates control enabled states for the selected widget and temporarily clears inapplicable checkbox values.
 /// When requested, hides inapplicable controls before relayout and reveals applicable controls afterward.
 static void UpdateSettingControlAvailability(bool updateLayout = false);
+
 /// Reenables Apply when pending changes exist; disabling is reserved for a successful explicit Apply action.
 static void UpdateSettingsApplyButton();
+
 /// Saves the selected appearance draft, tracks the widget for later restoration, and updates its live preview.
 static void PreviewSelectedWidgetAppearance(bool structuralChange);
+
 /// Restores committed configurations for previewed widgets and clears preview tracking.
 static void RestoreSettingsAppearancePreview();
+
 /// Reconciles fullscreen clocks, settings previews, and blackout windows with current monitor and visibility settings.
 static void RefreshFullscreenPresentation();
+
 /// Returns a borrowed pointer to the widget with the given persistent ID, or null when absent.
 static Widget* FindWidgetById(int id);
+
 /// Requests audio cancellation, closes the widget-owned event handles, and advances the generation to reject stale
 /// notifications.
 static void CloseWidgetAudio(Widget* widget);
+
 /// Rebuilds a widget for a new configuration while preserving screen-edge attachments and relevant runtime state.
 static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& configuration);
+
 /// Creates a calendar font from system message-font metrics and widget face and style settings.
 /// Returns null on failure; the caller owns the returned GDI font.
 static HFONT CreateCalendarUiFont(const WidgetConfig& config);
+
 /// Returns an owned copy of a control's current Unicode text.
 static std::wstring GetControlText(HWND control);
+
 /// Moves or resizes a control only when necessary, retaining combo height and extending settings text controls to the
 /// common right edge.
 static void SetControlPosition(HWND control, int x, int y, int width, int height);
+
 /// Tests whether a handle matches one of the settings page handles.
 static bool IsSettingsPageWindow(HWND window);
+
 /// Updates a nonnull control's text only when the visible string changes.
 static void SetControlText(HWND control, const wchar_t* text);
+
 /// Updates a caption only when its text differs after mnemonic removal, preserving existing mnemonic assignments
 /// otherwise.
 static void SetControlCaption(HWND control, const wchar_t* caption);
+
 /// Changes a nonnull control's enabled state only when needed.
 static void SetControlEnabled(HWND control, bool enabled);
+
 /// Changes a nonnull control's own visibility style only when needed.
 static void SetControlVisible(HWND control, bool visible);
+
 /// Changes a combo box selection only when the selected index differs.
 static void SetComboSelection(HWND combo, int selection);
+
 /// Updates a trackbar's range only when either endpoint differs.
 static void SetTrackBarRange(HWND trackBar, int minimum, int maximum);
+
 /// Clamps a requested trackbar position to its range and updates it only when changed.
 static void SetTrackBarPosition(HWND trackBar, int position);
+
 /// Updates an owner-drawn button's stored color and invalidates it only when the color changes.
 static void SetButtonColor(HWND button, COLORREF color);
+
 /// Changes a checkbox's checked state only when it differs from the requested state.
 static void SetCheck(HWND control, bool checked);
+
 /// Shows or hides one widget, updates fullscreen presentation and open settings as needed, and saves the visibility
 /// change.
 static void SetWidgetVisible(Widget* widget, bool visible);
+
 /// Selects the widget's displayed current date, optionally preserving the calendar's month, year, or decade view.
 /// An explicit navigation request returns to month view and focuses the calendar.
 static void SelectCalendarToday(Widget* widget, bool preserveView = false);
+
+/// Returns system UTC adjusted by the last valid NTP offset when network time is enabled.
+static void GetApplicationUtcTime(SYSTEMTIME* utc);
 
 /// Returns a borrowed common UI string in the current application language.
 static const wchar_t* T(TextId id) {
@@ -817,7 +882,8 @@ static void PopulateFontAntialiasingCombo(HWND combo) {
         FONT_ANTIALIAS_NONE
     };
     for (FontAntialiasing mode : modes) {
-        LRESULT index = SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(ANTIALIASING_NAMES[appLanguage][mode]));
+        LRESULT index = SendMessageW(combo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(ANTIALIASING_NAMES[appLanguage][mode]));
         SendMessageW(combo, CB_SETITEMDATA, index, mode);
     }
 }
@@ -870,14 +936,16 @@ static std::wstring UniqueMnemonic(const wchar_t* text, std::vector<wchar_t>* us
     size_t mnemonicPosition = std::wstring::npos;
     if (preferredPosition < plainText.size()) {
         wchar_t key = MnemonicKey(plainText[preferredPosition]);
-        if (std::iswalnum(plainText[preferredPosition]) && std::find(usedMnemonics->begin(), usedMnemonics->end(), key) == usedMnemonics->end()) {
+        if (std::iswalnum(plainText[preferredPosition])
+                && std::find(usedMnemonics->begin(), usedMnemonics->end(), key) == usedMnemonics->end()) {
             mnemonicPosition = preferredPosition;
         }
     }
     if (mnemonicPosition == std::wstring::npos) {
         for (size_t index = 0; index < plainText.size(); index++) {
             wchar_t key = MnemonicKey(plainText[index]);
-            if (std::iswalnum(plainText[index]) && std::find(usedMnemonics->begin(), usedMnemonics->end(), key) == usedMnemonics->end()) {
+            if (std::iswalnum(plainText[index])
+                    && std::find(usedMnemonics->begin(), usedMnemonics->end(), key) == usedMnemonics->end()) {
                 mnemonicPosition = index;
                 break;
             }
@@ -900,7 +968,8 @@ static std::wstring UniqueMnemonic(const wchar_t* text, std::vector<wchar_t>* us
 }
 
 /// Appends a menu command with a mnemonic unique among the supplied used keys.
-static void AppendMenuCommand(HMENU menu, UINT flags, UINT_PTR command, const wchar_t* text, std::vector<wchar_t>* usedMnemonics) {
+static void AppendMenuCommand(HMENU menu, UINT flags, UINT_PTR command, const wchar_t* text,
+        std::vector<wchar_t>* usedMnemonics) {
     std::wstring label = UniqueMnemonic(text, usedMnemonics);
     AppendMenuW(menu, flags, command, label.c_str());
 }
@@ -924,49 +993,66 @@ static LCID WINAPI CalendarGetUserDefaultLCID() {
 
 /// Forwards a locale-property request using the active calendar override when present.
 static int WINAPI CalendarGetLocaleInfoW(LCID locale, LCTYPE type, LPWSTR data, int characters) {
+    if (originalGetLocaleInfoW == nullptr) {
+        return 0;
+    }
     LCID selectedLocale = activeCalendarLocale == 0 ? locale : activeCalendarLocale;
-    return originalGetLocaleInfoW == nullptr ? 0 : originalGetLocaleInfoW(selectedLocale, type, data, characters);
+    return originalGetLocaleInfoW(selectedLocale, type, data, characters);
 }
 
 /// Forwards a calendar-property request using the active calendar locale when present.
-static int WINAPI CalendarGetCalendarInfoW(LCID locale, CALID calendar, CALTYPE type, LPWSTR data, int characters, LPDWORD value) {
+static int WINAPI CalendarGetCalendarInfoW(LCID locale, CALID calendar, CALTYPE type, LPWSTR data, int characters,
+        LPDWORD value) {
+    if (originalGetCalendarInfoW == nullptr) {
+        return 0;
+    }
     LCID selectedLocale = activeCalendarLocale == 0 ? locale : activeCalendarLocale;
-    return originalGetCalendarInfoW == nullptr ? 0 : originalGetCalendarInfoW(selectedLocale, calendar, type, data, characters, value);
+    return originalGetCalendarInfoW(selectedLocale, calendar, type, data, characters, value);
 }
 
 /// Converts the active calendar override to a locale name and forwards the calendar-property request.
-static int WINAPI CalendarGetCalendarInfoEx(LPCWSTR localeName, CALID calendar, LPCWSTR reserved, CALTYPE type, LPWSTR data, int characters,
-        LPDWORD value) {
+static int WINAPI CalendarGetCalendarInfoEx(LPCWSTR localeName, CALID calendar, LPCWSTR reserved, CALTYPE type,
+        LPWSTR data, int characters, LPDWORD value) {
+    if (originalGetCalendarInfoEx == nullptr) {
+        return 0;
+    }
     wchar_t selectedName[LOCALE_NAME_MAX_LENGTH] = {};
     LPCWSTR selectedLocaleName = localeName;
-    if (activeCalendarLocale != 0 && LCIDToLocaleName(activeCalendarLocale, selectedName, ARRAYSIZE(selectedName), 0) != 0) {
+    if (activeCalendarLocale != 0
+            && LCIDToLocaleName(activeCalendarLocale, selectedName, ARRAYSIZE(selectedName), 0) != 0) {
         selectedLocaleName = selectedName;
     }
-    return originalGetCalendarInfoEx == nullptr ? 0 : originalGetCalendarInfoEx(selectedLocaleName, calendar, reserved, type, data, characters, value);
+    return originalGetCalendarInfoEx(selectedLocaleName, calendar, reserved, type, data, characters, value);
 }
 
 /// Formats a calendar date in the active override locale when conversion is available.
 /// Falls back to the original common-controls date-formatting import otherwise.
-static int WINAPI CalendarGetCalendarDateFormat(CALID calendar, DWORD flags, const void* calendarDate, LPCWSTR format, LPWSTR data, int characters) {
+static int WINAPI CalendarGetCalendarDateFormat(CALID calendar, DWORD flags, const void* calendarDate, LPCWSTR format,
+        LPWSTR data, int characters) {
     if (activeCalendarLocale != 0 && calendarDate != nullptr && data != nullptr && characters > 0) {
         if (convertCalDateTimeToSystemTime == nullptr) {
             HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
             if (kernel != nullptr) {
                 convertCalDateTimeToSystemTime =
-                    reinterpret_cast<ConvertCalDateTimeToSystemTimeProc>(GetProcAddress(kernel, "ConvertCalDateTimeToSystemTime"));
+                    reinterpret_cast<ConvertCalDateTimeToSystemTimeProc>(GetProcAddress(kernel,
+                        "ConvertCalDateTimeToSystemTime"));
             }
         }
         SYSTEMTIME systemTime = {};
         wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {};
-        if (convertCalDateTimeToSystemTime != nullptr && convertCalDateTimeToSystemTime(calendarDate, &systemTime) &&
-            LCIDToLocaleName(activeCalendarLocale, localeName, ARRAYSIZE(localeName), 0) != 0) {
+        if (convertCalDateTimeToSystemTime != nullptr
+                && convertCalDateTimeToSystemTime(calendarDate, &systemTime)
+                && LCIDToLocaleName(activeCalendarLocale, localeName, ARRAYSIZE(localeName), 0) != 0) {
             int result = GetDateFormatEx(localeName, flags, &systemTime, format, data, characters, nullptr);
             if (result != 0) {
                 return result;
             }
         }
     }
-    return originalGetCalendarDateFormat == nullptr ? 0 : originalGetCalendarDateFormat(calendar, flags, calendarDate, format, data, characters);
+    if (originalGetCalendarDateFormat == nullptr) {
+        return 0;
+    }
+    return originalGetCalendarDateFormat(calendar, flags, calendarDate, format, data, characters);
 }
 
 /// Replaces a named comctl32 import with a locale wrapper and saves the original address.
@@ -1025,19 +1111,24 @@ static bool InstallCalendarLocaleHook() {
         return true;
     }
     ULONG_PTR original = 0;
-    bool defaultHook = PatchCommonControlsImport("GetUserDefaultLCID", reinterpret_cast<ULONG_PTR>(&CalendarGetUserDefaultLCID), &original);
+    bool defaultHook = PatchCommonControlsImport("GetUserDefaultLCID",
+        reinterpret_cast<ULONG_PTR>(&CalendarGetUserDefaultLCID), &original);
     originalGetUserDefaultLcid = reinterpret_cast<GetUserDefaultLcidProc>(original);
     original = 0;
-    bool localeHook = PatchCommonControlsImport("GetLocaleInfoW", reinterpret_cast<ULONG_PTR>(&CalendarGetLocaleInfoW), &original);
+    bool localeHook = PatchCommonControlsImport("GetLocaleInfoW",
+        reinterpret_cast<ULONG_PTR>(&CalendarGetLocaleInfoW), &original);
     originalGetLocaleInfoW = reinterpret_cast<GetLocaleInfoWProc>(original);
     original = 0;
-    bool calendarHook = PatchCommonControlsImport("GetCalendarInfoW", reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarInfoW), &original);
+    bool calendarHook = PatchCommonControlsImport("GetCalendarInfoW",
+        reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarInfoW), &original);
     originalGetCalendarInfoW = reinterpret_cast<GetCalendarInfoWProc>(original);
     original = 0;
-    PatchCommonControlsImport("GetCalendarInfoEx", reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarInfoEx), &original);
+    PatchCommonControlsImport("GetCalendarInfoEx",
+        reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarInfoEx), &original);
     originalGetCalendarInfoEx = reinterpret_cast<GetCalendarInfoExProc>(original);
     original = 0;
-    bool dateHook = PatchCommonControlsImport("GetCalendarDateFormat", reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarDateFormat), &original);
+    bool dateHook = PatchCommonControlsImport("GetCalendarDateFormat",
+        reinterpret_cast<ULONG_PTR>(&CalendarGetCalendarDateFormat), &original);
     originalGetCalendarDateFormat = reinterpret_cast<GetCalendarDateFormatProc>(original);
     return defaultHook && localeHook && calendarHook && dateHook;
 }
@@ -1061,14 +1152,15 @@ static BOOL CALLBACK CollectDisplayMonitor(HMONITOR monitor, HDC, LPRECT, LPARAM
 static void RefreshDisplayMonitors() {
     displayMonitors.clear();
     EnumDisplayMonitors(nullptr, nullptr, CollectDisplayMonitor, reinterpret_cast<LPARAM>(&displayMonitors));
-    std::stable_sort(displayMonitors.begin(), displayMonitors.end(), [](const DisplayMonitor& left, const DisplayMonitor& right) {
-        if (left.primary != right.primary) {
-            return left.primary;
-        }
-        if (left.rect.top != right.rect.top) {
-            return left.rect.top < right.rect.top;
-        }
-        return left.rect.left < right.rect.left;
+    std::stable_sort(displayMonitors.begin(), displayMonitors.end(),
+        [](const DisplayMonitor& left, const DisplayMonitor& right) {
+            if (left.primary != right.primary) {
+                return left.primary;
+            }
+            if (left.rect.top != right.rect.top) {
+                return left.rect.top < right.rect.top;
+            }
+            return left.rect.left < right.rect.left;
     });
 }
 
@@ -1370,10 +1462,12 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     ntpActiveServer.clear();
     ntpLastQueryFailed = false;
     lastNtpAttemptTick = 0;
+    nextNtpAttemptTick = 0;
     settingsX = snapshot.settingsX;
     settingsY = snapshot.settingsY;
     settingsTab = std::clamp(snapshot.settingsTab, 0, SETTINGS_TAB_COUNT - 1);
-    lastAddedWidgetType = static_cast<WidgetType>(std::clamp(static_cast<int>(snapshot.lastAddedWidgetType), 0, WIDGET_TYPE_COUNT - 1));
+    lastAddedWidgetType =
+        static_cast<WidgetType>(std::clamp(static_cast<int>(snapshot.lastAddedWidgetType), 0, WIDGET_TYPE_COUNT - 1));
     helpX = snapshot.helpX;
     helpY = snapshot.helpY;
     aboutX = snapshot.aboutX;
@@ -1430,7 +1524,8 @@ static bool IsStartWithWindowsEnabled() {
     }
     wchar_t actual[MAX_PATH * 2] = {};
     DWORD size = sizeof(actual);
-    if (RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ, nullptr, actual, &size) != ERROR_SUCCESS) {
+    if (RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ, nullptr, actual, &size) !=
+            ERROR_SUCCESS) {
         return false;
     }
     return _wcsicmp(actual, expected.c_str()) == 0;
@@ -1476,7 +1571,6 @@ static void LoadAllSettings() {
     ntpPreset = NTP_PRESET_AUTO;
     ntpServers = NtpServersForPreset(ntpPreset);
     LoadTimeZones();
-    SettingsSnapshot defaults = CaptureSettingsSnapshot();
     std::wstring xmlPath = AutomaticXmlSettingsPath(false);
     storageUsesXml = !xmlPath.empty() && GetFileAttributesW(xmlPath.c_str()) != INVALID_FILE_ATTRIBUTES;
     SettingsSnapshot snapshot = {};
@@ -1484,6 +1578,7 @@ static void LoadAllSettings() {
         ApplySettingsSnapshot(snapshot);
         return;
     }
+    SettingsSnapshot defaults = CaptureSettingsSnapshot();
     if (ReadRegistrySettings(defaults, CreateStoredWidgetDefaults, &snapshot)) {
         ApplySettingsSnapshot(snapshot);
         return;
@@ -1581,14 +1676,16 @@ static bool ParseOffset(const wchar_t* text, LONGLONG* result) {
     if (groups.size() == 1) {
         const std::wstring& compact = groups[0];
         size_t secondsStart = compact.size() > 2 ? compact.size() - 2 : 0;
-        size_t minutesStart = secondsStart > 2 ? secondsStart - 2 : 0;
         if (!ParseUnsignedGroup(compact.substr(secondsStart), &seconds)) {
             return false;
         }
-        if (secondsStart > 0 && !ParseUnsignedGroup(compact.substr(minutesStart, secondsStart - minutesStart), &minutes)) {
+        size_t minutesStart = secondsStart > 2 ? secondsStart - 2 : 0;
+        if (secondsStart > 0
+                && !ParseUnsignedGroup(compact.substr(minutesStart, secondsStart - minutesStart), &minutes)) {
             return false;
         }
-        if (minutesStart > 0 && !ParseUnsignedGroup(compact.substr(0, minutesStart), &hours)) {
+        if (minutesStart > 0
+                && !ParseUnsignedGroup(compact.substr(0, minutesStart), &hours)) {
             return false;
         }
     } else {
@@ -1629,7 +1726,9 @@ static bool ParseOffset(const wchar_t* text, LONGLONG* result) {
 /// value.
 static std::wstring FormatOffset(LONGLONG milliseconds) {
     bool negative = milliseconds < 0;
-    ULONGLONG value = negative ? static_cast<ULONGLONG>(-(milliseconds + 1)) + 1ULL : static_cast<ULONGLONG>(milliseconds);
+    ULONGLONG value = negative
+        ? static_cast<ULONGLONG>(-(milliseconds + 1)) + 1ULL
+        : static_cast<ULONGLONG>(milliseconds);
     ULONGLONG hours = value / 3600000;
     int minutes = static_cast<int>(value / 60000 % 60);
     int seconds = static_cast<int>(value / 1000 % 60);
@@ -1663,9 +1762,9 @@ static bool ParseAlarmTime(const wchar_t* text, int* hour, int* minute) {
     ULONGLONG parsedHour = 0;
     ULONGLONG parsedMinute = 0;
     if (!ParseUnsignedGroup(groups[0], &parsedHour)
-        || groups.size() == 2 && !ParseUnsignedGroup(groups[1], &parsedMinute)
-        || parsedHour > 23
-        || parsedMinute > 59) {
+            || groups.size() == 2 && !ParseUnsignedGroup(groups[1], &parsedMinute)
+            || parsedHour > 23
+            || parsedMinute > 59) {
         return false;
     }
     *hour = static_cast<int>(parsedHour);
@@ -1673,15 +1772,39 @@ static bool ParseAlarmTime(const wchar_t* text, int* hour, int* minute) {
     return true;
 }
 
-/// Starts an eligible NTP query unless one is already running, respecting retry intervals unless forced.
-static void StartNtpSynchronization(bool force) {
-    if (!useNtpTime || !winsockReady) {
+/// Returns milliseconds elapsed in the current local hour using the application's corrected UTC time.
+/// Falls back to UTC fields if conversion to the Windows local time zone fails.
+static ULONGLONG GetNtpHourPosition() {
+    SYSTEMTIME utc = {};
+    GetApplicationUtcTime(&utc);
+    SYSTEMTIME local = {};
+    if (!SystemTimeToTzSpecificLocalTime(nullptr, &utc, &local)) {
+        local = utc;
+    }
+    return (local.wMinute * 60ULL + local.wSecond) * 1000 + local.wMilliseconds;
+}
+
+/// Starts a due or forced NTP query, postponing automatic requests around the hour until HH:00:10.
+/// Manual requests bypass that postponement. Failed attempts retry after one minute before the first successful
+/// synchronization in this process, or ten minutes afterward; successful results schedule the next hourly request.
+static void StartNtpSynchronization(bool force, bool manual = false) {
+    if (!useNtpTime || !winsockReady || ntpQueryRunning) {
         return;
     }
+    if (force) {
+        nextNtpAttemptTick = 0;
+    }
     ULONGLONG now = GetTickCount64();
-    ULONGLONG interval = ntpTimeValid && !ntpLastQueryFailed ? 5ULL * 60ULL * 1000ULL : 60ULL * 1000ULL;
-    if (!force && lastNtpAttemptTick != 0 && now - lastNtpAttemptTick < interval) {
+    if (nextNtpAttemptTick != 0 && now < nextNtpAttemptTick) {
         return;
+    }
+    if (!manual) {
+        ULONGLONG hourPosition = GetNtpHourPosition();
+        if (hourPosition < 10000 || hourPosition >= 3595000) {
+            ULONGLONG delay = hourPosition < 10000 ? 10000 - hourPosition : 3610000 - hourPosition;
+            nextNtpAttemptTick = now + delay;
+            return;
+        }
     }
     bool expected = false;
     if (!ntpQueryRunning.compare_exchange_strong(expected, true)) {
@@ -1693,9 +1816,12 @@ static void StartNtpSynchronization(bool force) {
     }
     ntpStopRequested = false;
     lastNtpAttemptTick = now;
-    hNtpThread = StartNtpQueryThread(ntpServers, ntpGeneration.load(), hController, WM_NTP_RESULT, &ntpStopRequested, &ntpQueryRunning);
+    nextNtpAttemptTick = now + (ntpHasSynchronized ? 10ULL : 1ULL) * 60 * 1000;
+    hNtpThread = StartNtpQueryThread(ntpServers, ntpGeneration.load(), hController,
+        WM_NTP_RESULT, &ntpStopRequested, &ntpQueryRunning);
     if (hNtpThread == nullptr) {
         ntpQueryRunning = false;
+        ntpLastQueryFailed = true;
     }
 }
 
@@ -1721,12 +1847,14 @@ static bool StopNtpSynchronization() {
     return threadFinished;
 }
 
+/// Returns the active NTP correction shared by widget display and time-signal scheduling, in FILETIME ticks.
+static LONGLONG GetApplicationTimeOffset() {
+    return useNtpTime && ntpTimeValid ? ntpOffset100Nanoseconds.load() : 0;
+}
+
 /// Returns system UTC adjusted by the last valid NTP offset when network time is enabled.
 static void GetApplicationUtcTime(SYSTEMTIME* utc) {
-    ULONGLONG value = CurrentFileTimeValue();
-    if (useNtpTime && ntpTimeValid) {
-        value = static_cast<ULONGLONG>(static_cast<LONGLONG>(value) + ntpOffset100Nanoseconds.load());
-    }
+    ULONGLONG value = static_cast<ULONGLONG>(static_cast<LONGLONG>(CurrentFileTimeValue()) + GetApplicationTimeOffset());
     FILETIME fileTime = {};
     ULARGE_INTEGER parts = {};
     parts.QuadPart = value;
@@ -1804,7 +1932,8 @@ static bool HasUnmutedTimeSignalSource(const std::vector<int>& widgetIds) {
 /// Mutes each shared sequence only when none of its regular or alarm contributors is audible.
 static void UpdateCurrentTimeSignalMute() {
     for (const TimeSignalSourceGroup& group : currentTimeSignalSources) {
-        bool audible = HasUnmutedTimeSignalSource(group.regularWidgetIds) || HasUnmutedTimeSignalSource(group.alarmWidgetIds);
+        bool audible = HasUnmutedTimeSignalSource(group.regularWidgetIds)
+            || HasUnmutedTimeSignalSource(group.alarmWidgetIds);
         SetTimeSignalMuted(group.target, !audible);
     }
 }
@@ -1881,11 +2010,20 @@ static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
 }
 
 /// Schedules approaching regular and alarm GTS targets from each widget's displayed time, retaining fractional offsets.
-/// Groups identical targets, tracks canceled alarm contributors, and updates the shared mute state.
+/// Retimes existing sequences when the NTP correction changes, preserving their contributors and canceled alarms.
+/// Groups identical targets and updates the shared mute state.
 static void CheckTimeSignals() {
     ULONGLONG systemNow = CurrentFileTimeValue();
-    ULONGLONG applicationNow = static_cast<ULONGLONG>(static_cast<LONGLONG>(systemNow) +
-        (useNtpTime && ntpTimeValid ? ntpOffset100Nanoseconds.load() : 0));
+    LONGLONG applicationOffset = GetApplicationTimeOffset();
+    LONGLONG adjustment = currentTimeSignalOffset - applicationOffset;
+    if (adjustment != 0) {
+        AdjustTimeSignalPlaybackTime(adjustment);
+        for (TimeSignalSourceGroup& group : currentTimeSignalSources) {
+            group.target = static_cast<ULONGLONG>(static_cast<LONGLONG>(group.target) + adjustment);
+        }
+        currentTimeSignalOffset = applicationOffset;
+    }
+    ULONGLONG applicationNow = static_cast<ULONGLONG>(static_cast<LONGLONG>(systemNow) + applicationOffset);
     for (auto group = currentTimeSignalSources.begin(); group != currentTimeSignalSources.end();) {
         if (group->target + 10000000 < systemNow) {
             group = currentTimeSignalSources.erase(group);
@@ -1911,14 +2049,16 @@ static void CheckTimeSignals() {
         }
         displayedValue += applicationNow % 10000;
         ULONGLONG target = 0;
-        if (regularSignal && CalculateTimeSignalTarget(displayedValue, systemNow, static_cast<TimeSignalMode>(mode), &target)) {
+        if (regularSignal && CalculateTimeSignalTarget(displayedValue, systemNow,
+            static_cast<TimeSignalMode>(mode), &target)) {
             candidates.push_back(TimeSignalCandidate{
                 target,
                 true,
                 widget->config.id
             });
         }
-        if (alarmSignal && CalculateAlarmTimeSignalTarget(displayedValue, systemNow, widget->config.alarmHour, widget->config.alarmMinute, &target)) {
+        if (alarmSignal && CalculateAlarmTimeSignalTarget(displayedValue, systemNow,
+            widget->config.alarmHour, widget->config.alarmMinute, &target)) {
             bool enabledOnTargetDay = false;
             if (target >= systemNow) {
                 ULARGE_INTEGER targetDisplayedValue = {};
@@ -1964,14 +2104,18 @@ static void CheckTimeSignals() {
             }
             existing++;
         }
-        if (existing == currentTimeSignalSources.end()) {
-            if (!StartTimeSignalPlayback(candidate.target, true, generatedTimeSignal, timeSignalVolume, hController, WM_TIME_SIGNAL_FINISHED)) {
+        if (existing == currentTimeSignalSources.end() || adjustment != 0) {
+            if (!StartTimeSignalPlayback(candidate.target, true, generatedTimeSignal,
+                timeSignalVolume, hController, WM_TIME_SIGNAL_FINISHED)) {
                 continue;
             }
-            currentTimeSignalSources.push_back(TimeSignalSourceGroup{ candidate.target });
-            existing = currentTimeSignalSources.end() - 1;
+            if (existing == currentTimeSignalSources.end()) {
+                currentTimeSignalSources.push_back(TimeSignalSourceGroup{ candidate.target });
+                existing = currentTimeSignalSources.end() - 1;
+            }
         }
-        auto cancelledAlarmWidget = std::find(existing->cancelledAlarmWidgetIds.begin(), existing->cancelledAlarmWidgetIds.end(), candidate.widgetId);
+        auto cancelledAlarmWidget = std::find(existing->cancelledAlarmWidgetIds.begin(),
+            existing->cancelledAlarmWidgetIds.end(), candidate.widgetId);
         if (!candidate.regular && cancelledAlarmWidget != existing->cancelledAlarmWidgetIds.end()) {
             continue;
         }
@@ -1992,8 +2136,9 @@ static void ShowCopiedDateTooltip(Widget* widget, const std::wstring& text) {
         DestroyWindow(widget->copyTooltip);
     }
     widget->copyTooltipText = text;
-    widget->copyTooltip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, widget->window, nullptr, hInstance, nullptr);
+    widget->copyTooltip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr,
+        WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, widget->window, nullptr, hInstance, nullptr);
     if (widget->copyTooltip == nullptr) {
         return;
     }
@@ -2323,7 +2468,12 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
     }
     int contentHeight = std::max(static_cast<int>(calendarSize.cy), groupHeight);
     int calendarTop = 35 + (contentHeight - calendarSize.cy) / 2 + PANEL_CALENDAR_OFFSET_Y;
-    layout.calendar = RECT{ PANEL_SIDE_PADDING, calendarTop, PANEL_SIDE_PADDING + calendarSize.cx, calendarTop + calendarSize.cy };
+    layout.calendar = RECT{
+        PANEL_SIDE_PADDING,
+        calendarTop,
+        PANEL_SIDE_PADDING + calendarSize.cx,
+        calendarTop + calendarSize.cy
+    };
     int clockBottom = 35 + (contentHeight - groupHeight) / 2 + clockHeight;
     int left = layout.calendar.right + 12;
     for (int index = 0; index <= ADDITIONAL_CLOCK_COUNT; index++) {
@@ -2333,13 +2483,33 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
         WidgetConfig clock = index == 0 ? config : AdditionalClockConfiguration(config, index - 1);
         int width = std::max(GetPanelClockGroupWidth(clock), weekdayWidth);
         int clockLeft = left + (width - clock.size) / 2;
-        layout.clocks[index] = RECT{ clockLeft, clockBottom - clock.size, clockLeft + clock.size, clockBottom };
-        layout.times[index] = RECT{ left, clockBottom + 2, left + width, clockBottom + 2 + lineHeight };
+        layout.clocks[index] = RECT{
+            clockLeft,
+            clockBottom - clock.size,
+            clockLeft + clock.size,
+            clockBottom
+        };
+        layout.times[index] = RECT{
+            left,
+            clockBottom + 2,
+            left + width,
+            clockBottom + 2 + lineHeight
+        };
         if (additional) {
-            layout.days[index] = RECT{ left, layout.times[index].bottom - 2, left + width, layout.times[index].bottom + lineHeight - 2 };
+            layout.days[index] = RECT{
+                left,
+                layout.times[index].bottom - 2,
+                left + width,
+                layout.times[index].bottom + lineHeight - 2
+            };
         }
         if (index > 0) {
-            layout.names[index - 1] = RECT{ left, clockBottom - clock.size - nameHeight - 2, left + width, clockBottom - clock.size - 2 };
+            layout.names[index - 1] = RECT{
+                left,
+                clockBottom - clock.size - nameHeight - 2,
+                left + width,
+                clockBottom - clock.size - 2
+            };
         }
         left += width + 12;
     }
@@ -2351,7 +2521,12 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
         int footerTextOffset = (footerHeight - footerTextHeight) / 2;
         footerTop = std::max(static_cast<int>(layout.calendar.bottom) + 4, dayTextBottom + rowGap - footerTextOffset);
     }
-    layout.footer = RECT{ PANEL_SIDE_PADDING, footerTop, layout.clientSize.cx - PANEL_SIDE_PADDING, footerTop + footerHeight };
+    layout.footer = RECT{
+        PANEL_SIDE_PADDING,
+        footerTop,
+        layout.clientSize.cx - PANEL_SIDE_PADDING,
+        footerTop + footerHeight
+    };
     layout.clientSize.cy = layout.footer.bottom + 7;
     return layout;
 }
@@ -2403,7 +2578,12 @@ static void GetWidgetDimensions(const WidgetConfig& config, int* width, int* hei
             DWORD style = WS_POPUP;
             DWORD extendedStyle = WS_EX_TOOLWINDOW;
             ApplyNativeBorderStyle(config.borderStyle, &style, &extendedStyle);
-            RECT rect = { 0, 0, *width, *height };
+            RECT rect = {
+                0,
+                0,
+                *width,
+                *height
+            };
             if (AdjustWindowRectEx(&rect, style, FALSE, extendedStyle)) {
                 *width = rect.right - rect.left;
                 *height = rect.bottom - rect.top;
@@ -2421,7 +2601,12 @@ static void GetWidgetDimensions(const WidgetConfig& config, int* width, int* hei
         DWORD style = WS_POPUP | WS_CLIPCHILDREN;
         DWORD extendedStyle = WS_EX_TOOLWINDOW;
         ApplyNativeBorderStyle(config.borderStyle, &style, &extendedStyle);
-        RECT rect = { 0, 0, *width, *height };
+        RECT rect = {
+            0,
+            0,
+            *width,
+            *height
+        };
         if (AdjustWindowRectEx(&rect, style, FALSE, extendedStyle)) {
             *width = rect.right - rect.left;
             *height = rect.bottom - rect.top;
@@ -2441,7 +2626,9 @@ static bool GetPositionPreservingWorkAreaAttachment(HWND window, int newWidth, i
         return false;
     }
     HMONITOR monitor = MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-    MONITORINFO information = { sizeof(information) };
+    MONITORINFO information = {
+        sizeof(information)
+    };
     if (monitor == nullptr || !GetMonitorInfoW(monitor, &information)) {
         return false;
     }
@@ -2486,7 +2673,12 @@ static void ClampWidgetPosition(WidgetConfig* config) {
     int width = 0;
     int height = 0;
     GetWidgetDimensions(*config, &width, &height);
-    RECT desired = { config->x, config->y, config->x + width, config->y + height };
+    RECT desired = {
+        config->x,
+        config->y,
+        config->x + width,
+        config->y + height
+    };
     HMONITOR monitor = MonitorFromRect(&desired, MONITOR_DEFAULTTONEAREST);
     MONITORINFO information = {};
     information.cbSize = sizeof(information);
@@ -2506,7 +2698,12 @@ static void ClampFormPosition(int* x, int* y, int width, int height) {
     if (*x == CW_USEDEFAULT || *y == CW_USEDEFAULT) {
         return;
     }
-    RECT desired = { *x, *y, *x + width, *y + height };
+    RECT desired = {
+        *x,
+        *y,
+        *x + width,
+        *y + height
+    };
     HMONITOR monitor = MonitorFromRect(&desired, MONITOR_DEFAULTTONEAREST);
     MONITORINFO information = {};
     information.cbSize = sizeof(information);
@@ -2542,7 +2739,8 @@ static void SaveFormPosition(HWND window, int* x, int* y) {
             if (!GetMonitorInfoW(monitor, &information)) {
                 return;
             }
-            OffsetRect(&rect, information.rcWork.left - information.rcMonitor.left, information.rcWork.top - information.rcMonitor.top);
+            OffsetRect(&rect, information.rcWork.left - information.rcMonitor.left,
+                information.rcWork.top - information.rcMonitor.top);
         }
     } else if (!GetWindowRect(window, &rect)) {
         return;
@@ -2555,12 +2753,15 @@ static void SaveFormPosition(HWND window, int* x, int* y) {
 static std::wstring GetSystemMessageFontFace() {
     NONCLIENTMETRICSW metrics = {};
     metrics.cbSize = sizeof(metrics);
-    if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0) && metrics.lfMessageFont.lfFaceName[0] != L'\0') {
+    if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0)
+            && metrics.lfMessageFont.lfFaceName[0] != L'\0') {
         return metrics.lfMessageFont.lfFaceName;
     }
     HFONT fallbackFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
     LOGFONTW fallback = {};
-    if (fallbackFont != nullptr && GetObjectW(fallbackFont, sizeof(fallback), &fallback) == sizeof(fallback) && fallback.lfFaceName[0] != L'\0') {
+    if (fallbackFont != nullptr
+            && GetObjectW(fallbackFont, sizeof(fallback), &fallback) == sizeof(fallback)
+            && fallback.lfFaceName[0] != L'\0') {
         return fallback.lfFaceName;
     }
     return std::wstring();
@@ -2611,7 +2812,9 @@ static HFONT CreateCalendarUiFont(const WidgetConfig& config) {
 /// Refreshes the application font caption and whether restoring the default font is available.
 static void UpdateApplicationFontButtons() {
     if (hAppFontButton != nullptr) {
-        std::wstring caption = settingsAppFontFace.empty() ? SYSTEM_DEFAULT_FONT_LABELS[appLanguage] : settingsAppFontFace;
+        std::wstring caption = settingsAppFontFace.empty()
+            ? SYSTEM_DEFAULT_FONT_LABELS[appLanguage]
+            : settingsAppFontFace;
         caption += L"…";
         SetWindowTextW(hAppFontButton, caption.c_str());
     }
@@ -2742,7 +2945,9 @@ static void RestoreApplicationFontPreview() {
 
 /// Applies the current UI font and theme policy to a child, preserving the separate About license font.
 static BOOL CALLBACK ApplyFontAndTheme(HWND child, LPARAM) {
-    HFONT font = GetParent(child) == hAbout && GetDlgCtrlID(child) == ID_INFO_TEXT && hAboutFont != nullptr ? hAboutFont : hUiFont;
+    HFONT font = GetParent(child) == hAbout && GetDlgCtrlID(child) == ID_INFO_TEXT && hAboutFont != nullptr
+        ? hAboutFont
+        : hUiFont;
     if (font != nullptr) {
         SendMessageW(child, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
     }
@@ -2867,7 +3072,10 @@ static void CaptureAnalogBackground(Widget* widget) {
 
 /// Returns a cached panel background when available, otherwise reading the native clock background.
 static COLORREF PanelBackgroundColor(const Widget* widget) {
-    return widget != nullptr && widget->analogBackground != CLR_INVALID ? widget->analogBackground : ReadAnalogBackground(widget);
+    if (widget != nullptr && widget->analogBackground != CLR_INVALID) {
+        return widget->analogBackground;
+    }
+    return ReadAnalogBackground(widget);
 }
 
 /// Creates a top-down 32-bit DIB and exposes its writable pixels.
@@ -2914,7 +3122,9 @@ static void PresentLayeredBitmap(Widget* widget, HDC sourceDC, HDC screenDC, int
 /// Renders the current analog clock into a new 32-bit bitmap over the requested background.
 /// Transfers bitmap ownership on success and deletes it on rendering failure.
 static bool RenderAnalogBackground(Widget* widget, HDC reference, DWORD background, HBITMAP* bitmap, DWORD** pixels) {
-    if (widget == nullptr || widget->analogChild == nullptr || !CreateDib(reference, widget->config.size, widget->config.size, bitmap, pixels)) {
+    if (widget == nullptr
+            || widget->analogChild == nullptr
+            || !CreateDib(reference, widget->config.size, widget->config.size, bitmap, pixels)) {
         return false;
     }
     HDC memory = CreateCompatibleDC(reference);
@@ -2938,17 +3148,17 @@ static bool RenderAnalogBackground(Widget* widget, HDC reference, DWORD backgrou
 /// Renders the native face against light and dark backgrounds to reconstruct transparency, then presents the layered
 /// widget.
 static void RenderAnalogWidget(Widget* widget) {
-    int size = widget->config.size;
     HDC screen = GetDC(nullptr);
     if (screen == nullptr) {
         return;
     }
+    int size = widget->config.size;
     HBITMAP whiteBitmap = nullptr;
     HBITMAP blackBitmap = nullptr;
     DWORD* whitePixels = nullptr;
     DWORD* blackPixels = nullptr;
     if (!RenderAnalogBackground(widget, screen, 0xFFFFFFFF, &whiteBitmap, &whitePixels)
-        || !RenderAnalogBackground(widget, screen, 0xFF000000, &blackBitmap, &blackPixels)) {
+            || !RenderAnalogBackground(widget, screen, 0xFF000000, &blackBitmap, &blackPixels)) {
         if (whiteBitmap != nullptr) {
             DeleteObject(whiteBitmap);
         }
@@ -2960,14 +3170,13 @@ static void RenderAnalogWidget(Widget* widget) {
     }
     HBITMAP outputBitmap = nullptr;
     DWORD* output = nullptr;
-    HDC outputDC = CreateCompatibleDC(screen);
     if (!CreateDib(screen, size, size, &outputBitmap, &output)) {
         DeleteObject(whiteBitmap);
         DeleteObject(blackBitmap);
-        DeleteDC(outputDC);
         ReleaseDC(nullptr, screen);
         return;
     }
+    HDC outputDC = CreateCompatibleDC(screen);
     for (int index = 0; index < size * size; index++) {
         DWORD white = whitePixels[index];
         DWORD black = blackPixels[index];
@@ -3021,8 +3230,9 @@ static HFONT CreatePanelFont(const FontSelection& selection, int fontAntialiasin
         ReleaseDC(nullptr, screen);
     }
     int height = -MulDiv(std::clamp(selection.dialogSize, 10, 9990), dpi, 720);
-    return CreateFontW(height, 0, 0, 0, selection.weight, selection.italic, selection.underline, selection.strikeOut, selection.charSet,
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, selection.face.c_str());
+    return CreateFontW(height, 0, 0, 0, selection.weight, selection.italic, selection.underline,
+        selection.strikeOut, selection.charSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        FontQuality(fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, selection.face.c_str());
 }
 
 /// Creates a caller-owned GDI font using the widget's point size, style, face, and antialiasing settings.
@@ -3033,8 +3243,9 @@ static HFONT CreateWidgetDrawingFont(const WidgetConfig& config) {
         ReleaseDC(nullptr, screen);
     }
     int height = -MulDiv(config.fontSize, dpi, 72);
-    return CreateFontW(height, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet,
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+    return CreateFontW(height, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline,
+        config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
 }
 
 /// Builds sample clock text with uniform digits and any fullscreen AM/PM or UTC footer for stable measurement.
@@ -3088,9 +3299,11 @@ static SIZE MeasureFullscreenClockText(HDC dc, const WidgetConfig& config, SIZE*
 static HFONT CreateFullscreenDrawingFont(const WidgetConfig& config, const RECT& client, HDC dc) {
     int width = client.right - client.left;
     int height = client.bottom - client.top;
-    int pixelHeight = std::max(1, height * std::clamp(config.fontSize, FULLSCREEN_FONT_SIZE_MIN, FULLSCREEN_FONT_SIZE_MAX) / 100);
-    HFONT font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet,
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+    int pixelHeight = std::max(1, height *
+        std::clamp(config.fontSize, FULLSCREEN_FONT_SIZE_MIN, FULLSCREEN_FONT_SIZE_MAX) / 100);
+    HFONT font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline,
+        config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
     if (font == nullptr || dc == nullptr) {
         return font;
     }
@@ -3103,8 +3316,9 @@ static HFONT CreateFullscreenDrawingFont(const WidgetConfig& config, const RECT&
         int heightFittedHeight = MulDiv(pixelHeight, height, measured.cy);
         pixelHeight = std::max(1, std::min(pixelHeight - 1, std::min(widthFittedHeight, heightFittedHeight)));
         DeleteObject(font);
-        font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline, config.fontStrikeOut, config.fontCharSet,
-            OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
+        font = CreateFontW(-pixelHeight, 0, 0, 0, config.fontWeight, config.fontItalic, config.fontUnderline,
+            config.fontStrikeOut, config.fontCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
         if (font == nullptr) {
             return nullptr;
         }
@@ -3138,6 +3352,10 @@ static void DrawClockText(HDC dc, const std::wstring& text, RECT rect, HFONT fon
         DrawCenteredText(dc, text, rect, font, color, format, backgroundColor);
         return;
     }
+    int savedDC = SaveDC(dc);
+    if (savedDC == 0) {
+        return;
+    }
     size_t lineEnd = text.find(L"\r\n");
     std::wstring firstLine = text.substr(0, lineEnd);
     std::wstring visibleLine = firstLine.substr(1);
@@ -3147,10 +3365,6 @@ static void DrawClockText(HDC dc, const std::wstring& text, RECT rect, HFONT fon
     GetTextExtentPoint32W(dc, firstLine.c_str(), static_cast<int>(firstLine.size()), &fullExtent);
     GetTextExtentPoint32W(dc, visibleLine.c_str(), static_cast<int>(visibleLine.size()), &visibleExtent);
     SelectObject(dc, oldFont);
-    int savedDC = SaveDC(dc);
-    if (savedDC == 0) {
-        return;
-    }
     IntersectClipRect(dc, rect.left, rect.top, rect.right, rect.bottom);
     RECT firstRect = rect;
     firstRect.left += fullExtent.cx - visibleExtent.cx;
@@ -3168,14 +3382,19 @@ static void DrawClockText(HDC dc, const std::wstring& text, RECT rect, HFONT fon
 
 /// Draws the numeric time and its prefix or suffix in stable measured regions so proportional digits do not shift the
 /// marker.
-static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color, const WidgetConfig& config,
-        UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE, COLORREF backgroundColor = CLR_INVALID) {
+static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color,
+        const WidgetConfig& config, UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+        COLORREF backgroundColor = CLR_INVALID) {
     size_t firstDigit = text.find_first_of(L"0123456789");
-    size_t lastDigit = text.find_last_of(L"0123456789");
     if (firstDigit == std::wstring::npos) {
         DrawClockText(dc, text, rect, font, color, config.leadingZeroMode, format, backgroundColor);
         return;
     }
+    int savedDC = SaveDC(dc);
+    if (savedDC == 0) {
+        return;
+    }
+    size_t lastDigit = text.find_last_of(L"0123456789");
     WidgetConfig clock = config;
     clock.showAmPm = false;
     clock.showUtcText = false;
@@ -3201,10 +3420,6 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
     }
     RECT clockRect = { left + prefixWidth, rect.top, left + prefixWidth + clockSize.cx, rect.bottom };
     UINT lineFormat = format & ~(DT_CENTER | DT_RIGHT) | DT_NOCLIP;
-    int savedDC = SaveDC(dc);
-    if (savedDC == 0) {
-        return;
-    }
     IntersectClipRect(dc, rect.left, rect.top, rect.right, rect.bottom);
     if (firstDigit != 0) {
         RECT prefixRect = { left, rect.top, clockRect.left, rect.bottom };
@@ -3219,7 +3434,8 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
 }
 
 /// Draws a centered fullscreen clock with stable numeric bounds and a separately centered footer using GDI.
-static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT& rect, const WidgetConfig& config, COLORREF color, COLORREF backgroundColor) {
+static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT& rect, const WidgetConfig& config,
+        COLORREF color, COLORREF backgroundColor) {
     HFONT font = CreateFullscreenDrawingFont(config, rect, dc);
     if (font == nullptr) {
         return;
@@ -3234,12 +3450,14 @@ static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT
     clockRect.right = clockRect.left + clockSize.cx;
     clockRect.top += (rect.bottom - rect.top - measured.cy) / 2;
     clockRect.bottom = clockRect.top + clockSize.cy;
-    DrawClockText(dc, text.substr(0, lineEnd), clockRect, font, color, config.leadingZeroMode, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
+    DrawClockText(dc, text.substr(0, lineEnd), clockRect, font, color, config.leadingZeroMode,
+        DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
     if (lineEnd != std::wstring::npos) {
         RECT footerRect = rect;
         footerRect.top = clockRect.bottom;
         footerRect.bottom = footerRect.top + clockSize.cy;
-        DrawCenteredText(dc, text.substr(lineEnd + 2), footerRect, font, color, DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
+        DrawCenteredText(dc, text.substr(lineEnd + 2), footerRect, font, color,
+            DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
     }
     DeleteObject(font);
 }
@@ -3286,24 +3504,30 @@ static void InitializeDirectTextRendering() {
         ShutdownDirectTextRendering();
         return;
     }
-    D2D1CreateFactoryProc createD2dFactory = reinterpret_cast<D2D1CreateFactoryProc>(GetProcAddress(d2dModule, "D2D1CreateFactory"));
-    DWriteCreateFactoryProc createDwriteFactory = reinterpret_cast<DWriteCreateFactoryProc>(GetProcAddress(dwriteModule, "DWriteCreateFactory"));
+    D2D1CreateFactoryProc createD2dFactory =
+        reinterpret_cast<D2D1CreateFactoryProc>(GetProcAddress(d2dModule, "D2D1CreateFactory"));
+    DWriteCreateFactoryProc createDwriteFactory =
+        reinterpret_cast<DWriteCreateFactoryProc>(GetProcAddress(dwriteModule, "DWriteCreateFactory"));
     if (createD2dFactory == nullptr || createDwriteFactory == nullptr) {
         ShutdownDirectTextRendering();
         return;
     }
     D2D1_FACTORY_OPTIONS options = {};
-    HRESULT d2dResult = createD2dFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options, reinterpret_cast<void**>(&d2dFactory));
-    HRESULT dwriteResult = createDwriteFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&dwriteFactory));
+    HRESULT d2dResult = createD2dFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options,
+        reinterpret_cast<void**>(&d2dFactory));
+    HRESULT dwriteResult = createDwriteFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(&dwriteFactory));
     if (FAILED(d2dResult) || FAILED(dwriteResult) || d2dFactory == nullptr || dwriteFactory == nullptr) {
         ShutdownDirectTextRendering();
     }
 }
 
 /// Creates a temporary DirectWrite layout and returns its metrics for the supplied font and layout bounds.
-static HRESULT MeasureDirectText(IDWriteTextFormat* format, const std::wstring& text, float width, float height, DWRITE_TEXT_METRICS* metrics) {
+static HRESULT MeasureDirectText(IDWriteTextFormat* format, const std::wstring& text, float width, float height,
+        DWRITE_TEXT_METRICS* metrics) {
     IDWriteTextLayout* layout = nullptr;
-    HRESULT result = dwriteFactory->CreateTextLayout(text.c_str(), static_cast<UINT32>(text.size()), format, width, height, &layout);
+    HRESULT result = dwriteFactory->CreateTextLayout(text.c_str(), static_cast<UINT32>(text.size()), format, width,
+        height, &layout);
     if (SUCCEEDED(result) && layout != nullptr) {
         result = layout->GetMetrics(metrics);
         layout->Release();
@@ -3312,8 +3536,8 @@ static HRESULT MeasureDirectText(IDWriteTextFormat* format, const std::wstring& 
 }
 
 /// Measures stable DirectWrite bounds for the clock and footer using the widest digit and both day periods.
-static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const WidgetConfig& config, float width, float height,
-        DWRITE_TEXT_METRICS* maximum, DWRITE_TEXT_METRICS* clockMetrics) {
+static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const WidgetConfig& config, float width,
+        float height, DWRITE_TEXT_METRICS* maximum, DWRITE_TEXT_METRICS* clockMetrics) {
     wchar_t widestDigit = L'0';
     float digitWidth = 0.0f;
     for (wchar_t digit = L'0'; digit <= L'9'; digit++) {
@@ -3336,13 +3560,15 @@ static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const Widg
         if (FAILED(result)) {
             return result;
         }
-        maximum->widthIncludingTrailingWhitespace = std::max(maximum->widthIncludingTrailingWhitespace, metrics.widthIncludingTrailingWhitespace);
+        maximum->widthIncludingTrailingWhitespace =
+            std::max(maximum->widthIncludingTrailingWhitespace, metrics.widthIncludingTrailingWhitespace);
         maximum->height = std::max(maximum->height, metrics.height);
         result = MeasureDirectText(format, text.substr(0, text.find(L"\r\n")), width, height, &metrics);
         if (FAILED(result)) {
             return result;
         }
-        clockMetrics->widthIncludingTrailingWhitespace = std::max(clockMetrics->widthIncludingTrailingWhitespace, metrics.widthIncludingTrailingWhitespace);
+        clockMetrics->widthIncludingTrailingWhitespace =
+            std::max(clockMetrics->widthIncludingTrailingWhitespace, metrics.widthIncludingTrailingWhitespace);
         clockMetrics->height = std::max(clockMetrics->height, metrics.height);
     }
     return S_OK;
@@ -3351,14 +3577,16 @@ static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const Widg
 /// Renders fullscreen clock text through DirectWrite and Direct2D with stable positioning and the selected
 /// antialiasing.
 /// Returns false when optional rendering support is unavailable or drawing fails.
-static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, const WidgetConfig& config, COLORREF color, COLORREF backgroundColor) {
+static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, const WidgetConfig& config,
+        COLORREF color, COLORREF backgroundColor) {
     if (d2dFactory == nullptr || dwriteFactory == nullptr || dc == nullptr || text == nullptr || text[0] == L'\0') {
         return false;
     }
     int width = std::max(1L, rect.right - rect.left);
     int height = std::max(1L, rect.bottom - rect.top);
     D2D1_RENDER_TARGET_PROPERTIES properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE), 96.0f, 96.0f, D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE);
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE), 96.0f, 96.0f,
+        D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE);
     ID2D1DCRenderTarget* target = nullptr;
     HRESULT result = d2dFactory->CreateDCRenderTarget(&properties, &target);
     if (FAILED(result) || target == nullptr) {
@@ -3369,13 +3597,14 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         target->Release();
         return false;
     }
-    float fontSize = std::max(1.0f, static_cast<float>(height) *
-        static_cast<float>(std::clamp(config.fontSize, FULLSCREEN_FONT_SIZE_MIN, FULLSCREEN_FONT_SIZE_MAX)) / 100.0f);
+    float fontSize = std::max(1.0f, static_cast<float>(height) * static_cast<float>(std::clamp(config.fontSize,
+        FULLSCREEN_FONT_SIZE_MIN, FULLSCREEN_FONT_SIZE_MAX)) / 100.0f);
     DWRITE_FONT_WEIGHT weight = static_cast<DWRITE_FONT_WEIGHT>(std::clamp(config.fontWeight, 1, 999));
     DWRITE_FONT_STYLE style = config.fontItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
     IDWriteTextFormat* format = nullptr;
     const wchar_t* fontFace = config.fontFace.empty() ? L"Arial" : config.fontFace.c_str();
-    result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize, LANGUAGE_LOCALES[config.language], &format);
+    result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL,
+        fontSize, LANGUAGE_LOCALES[config.language], &format);
     if (FAILED(result) || format == nullptr) {
         target->Release();
         return false;
@@ -3385,19 +3614,28 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
     DWRITE_TEXT_METRICS metrics = {};
     DWRITE_TEXT_METRICS clockMetrics = {};
-    result = MeasureFullscreenDirectText(format, config, static_cast<float>(width), static_cast<float>(height), &metrics, &clockMetrics);
-    if (SUCCEEDED(result) && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width) || metrics.height > static_cast<float>(height))) {
-        float widthScale = metrics.widthIncludingTrailingWhitespace > 0.0f ? static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace : 1.0f;
-        float heightScale = metrics.height > 0.0f ? static_cast<float>(height) / metrics.height : 1.0f;
+    result = MeasureFullscreenDirectText(format, config,
+        static_cast<float>(width), static_cast<float>(height), &metrics, &clockMetrics);
+    if (SUCCEEDED(result)
+            && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width)
+                || metrics.height > static_cast<float>(height))) {
+        float widthScale = metrics.widthIncludingTrailingWhitespace > 0.0f
+            ? static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace
+            : 1.0f;
+        float heightScale = metrics.height > 0.0f
+            ? static_cast<float>(height) / metrics.height :
+            1.0f;
         fontSize = std::max(1.0f, fontSize * std::min(widthScale, heightScale));
         format->Release();
         format = nullptr;
-        result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize, LANGUAGE_LOCALES[config.language], &format);
+        result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL,
+            fontSize, LANGUAGE_LOCALES[config.language], &format);
         if (SUCCEEDED(result) && format != nullptr) {
             format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
             format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
             format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-            result = MeasureFullscreenDirectText(format, config, static_cast<float>(width), static_cast<float>(height), &metrics, &clockMetrics);
+            result = MeasureFullscreenDirectText(format, config,
+                static_cast<float>(width), static_cast<float>(height), &metrics, &clockMetrics);
         }
     }
     std::wstring clockText = text;
@@ -3415,8 +3653,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
             clockMetrics.widthIncludingTrailingWhitespace, clockMetrics.height, &layout);
     }
     if (SUCCEEDED(result) && !footerText.empty()) {
-        result = dwriteFactory->CreateTextLayout(footerText.c_str(), static_cast<UINT32>(footerText.size()), format,
-            static_cast<float>(width), clockMetrics.height, &footerLayout);
+        result = dwriteFactory->CreateTextLayout(footerText.c_str(), static_cast<UINT32>(footerText.size()),
+            format, static_cast<float>(width), clockMetrics.height, &footerLayout);
         if (SUCCEEDED(result) && footerLayout != nullptr) {
             footerLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
             DWRITE_TEXT_RANGE footerRange = { 0, static_cast<UINT32>(footerText.size()) };
@@ -3444,7 +3682,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     layout->SetUnderline(config.fontUnderline, range);
     layout->SetStrikethrough(config.fontStrikeOut, range);
     ID2D1SolidColorBrush* brush = nullptr;
-    result = target->CreateSolidColorBrush(D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f), &brush);
+    result = target->CreateSolidColorBrush(D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f,
+        GetBValue(color) / 255.0f), &brush);
     ID2D1SolidColorBrush* hiddenBrush = nullptr;
     if (SUCCEEDED(result) && config.leadingZeroMode == LEADING_ZERO_RESERVED && text[0] == L'0') {
         result = target->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f), &hiddenBrush);
@@ -3456,12 +3695,14 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     if (SUCCEEDED(result) && brush != nullptr) {
         target->SetTextAntialiasMode(DirectWriteAntialiasMode(config.fontAntialiasing));
         target->BeginDraw();
-        target->Clear(D2D1::ColorF(GetRValue(backgroundColor) / 255.0f, GetGValue(backgroundColor) / 255.0f, GetBValue(backgroundColor) / 255.0f));
+        target->Clear(D2D1::ColorF(GetRValue(backgroundColor) / 255.0f, GetGValue(backgroundColor) / 255.0f,
+            GetBValue(backgroundColor) / 255.0f));
         float clockLeft = (static_cast<float>(width) - clockMetrics.widthIncludingTrailingWhitespace) / 2.0f;
         float clockTop = (static_cast<float>(height) - metrics.height) / 2.0f;
         target->DrawTextLayout(D2D1::Point2F(clockLeft, clockTop), layout, brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
         if (footerLayout != nullptr) {
-            target->DrawTextLayout(D2D1::Point2F(0.0f, clockTop + clockMetrics.height), footerLayout, brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+            target->DrawTextLayout(D2D1::Point2F(0.0f, clockTop + clockMetrics.height), footerLayout, brush,
+                D2D1_DRAW_TEXT_OPTIONS_CLIP);
         }
         result = target->EndDraw();
     }
@@ -3505,7 +3746,10 @@ static void DrawBorderStyle(HDC dc, int width, int height, int borderStyle, COLO
 
 /// Converts a COLORREF to a fully opaque ARGB pixel for a layered bitmap.
 static DWORD LayeredOpaquePixel(COLORREF color) {
-    return 0xFF000000 | static_cast<DWORD>(GetRValue(color)) << 16 | static_cast<DWORD>(GetGValue(color)) << 8 | GetBValue(color);
+    return 0xFF000000
+        | static_cast<DWORD>(GetRValue(color)) << 16
+        | static_cast<DWORD>(GetGValue(color)) << 8
+        | GetBValue(color);
 }
 
 /// Writes one inset frame directly to an ARGB buffer with separate top-left and bottom-right colors.
@@ -3598,13 +3842,15 @@ static void PaintOpaqueDigitalWidget(Widget* widget, HWND window, HDC dc) {
     RECT textRect = client;
     int textInset = GetDigitalTextInset(widget, client);
     InflateRect(&textRect, -textInset, -textInset);
-    bool fullscreenDrawn = widget->config.type == WIDGET_FULLSCREEN && DrawFullscreenText(dc, text, textRect, widget->config, textColor, backgroundColor);
+    bool fullscreenDrawn = widget->config.type == WIDGET_FULLSCREEN
+        && DrawFullscreenText(dc, text, textRect, widget->config, textColor, backgroundColor);
     if (!fullscreenDrawn) {
         if (widget->config.type == WIDGET_FULLSCREEN) {
             DrawFullscreenClockText(dc, text, textRect, widget->config, textColor, backgroundColor);
         } else {
             HFONT font = CreateWidgetDrawingFont(widget->config);
-            DrawWidgetTimeText(dc, text, textRect, font, textColor, widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE, backgroundColor);
+            DrawWidgetTimeText(dc, text, textRect, font, textColor, widget->config,
+                DT_LEFT | DT_VCENTER | DT_SINGLELINE, backgroundColor);
             DeleteObject(font);
         }
     }
@@ -3669,14 +3915,16 @@ static void RenderCustomWidget(Widget* widget) {
         height - inset
     };
     HFONT font = CreateWidgetDrawingFont(widget->config);
-    DrawWidgetTimeText(dc, text, textRect, font, transparentDigital ? RGB(0, 0, 0) : textColor, widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    DrawWidgetTimeText(dc, text, textRect, font, transparentDigital ? RGB(0, 0, 0) : textColor,
+        widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     DeleteObject(font);
     if (transparentDigital && widget->config.borderStyle == DIGITAL_BORDER_SINGLE) {
         DrawBorderStyle(dc, width, height, DIGITAL_BORDER_TOOL_WINDOW, RGB(0, 0, 0));
     } else if (!transparentDigital) {
         DrawBorderStyle(dc, width, height, widget->config.borderStyle, textColor);
     }
-    DrawDigitalWidthBorder(dc, width, height, borderStyleInset, widget->config.borderWidth, transparentDigital ? RGB(0, 0, 0) : textColor);
+    DrawDigitalWidthBorder(dc, width, height, borderStyleInset,
+        widget->config.borderWidth, transparentDigital ? RGB(0, 0, 0) : textColor);
     if (widget->identifyActive && widget->identifyPhase) {
         HPEN pen = CreatePen(PS_SOLID, 3, IDENTIFY_COLOR);
         HGDIOBJ oldPen = SelectObject(dc, pen);
@@ -3693,7 +3941,8 @@ static void RenderCustomWidget(Widget* widget) {
         int minimumHitTestAlpha = (255 + opacity - 1) / std::max(1, static_cast<int>(opacity));
         for (int index = 0; index < width * height; index++) {
             DWORD pixel = pixels[index];
-            int coverage = 255 - (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
+            int coverage = 255 -
+                (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
             int alpha = std::max(minimumHitTestAlpha, coverage);
             int red = GetRValue(color) * alpha / 255;
             int green = GetGValue(color) * alpha / 255;
@@ -3780,7 +4029,8 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     RECT client = {};
     GetClientRect(widget->window, &client);
     wchar_t dateText[128] = {};
-    GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText, ARRAYSIZE(dateText), nullptr);
+    GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText,
+        ARRAYSIZE(dateText), nullptr);
     RECT dateRect = { PANEL_SIDE_PADDING, 7, client.right - PANEL_SIDE_PADDING, 34 };
     UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, dateRect);
     std::wstring zoneName = widget->config.showUtc ? L"UTC" : widget->config.timeZoneKey;
@@ -3804,14 +4054,15 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
 
 /// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
 /// Treats double-clicks as button presses and removes the subclass on destruction.
-static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    HWND parent = GetParent(window);
-    Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     if (message == WM_SETCURSOR) {
         SetCursor(LoadCursorW(nullptr, IDC_HAND));
         return TRUE;
     }
+    HWND parent = GetParent(window);
+    Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
         SetFocus(window);
         if (message == WM_LBUTTONDBLCLK) {
@@ -3846,30 +4097,32 @@ static void CreatePanelLinks(Widget* widget) {
     if (widget->config.type != WIDGET_PANEL) {
         return;
     }
-    widget->panelDateLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW, 0, 0, 0, 0, widget->window,
-        reinterpret_cast<HMENU>(ID_PANEL_DATE_LINK), hInstance, nullptr);
+    widget->panelDateLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
+        0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_DATE_LINK), hInstance, nullptr);
     if (widget->panelDateLink == nullptr) {
         return;
     }
     SetWindowSubclass(widget->panelDateLink, PanelLinkButtonSubclassProc, ID_PANEL_DATE_LINK, 0);
     ApplyWidgetTheme(widget->panelDateLink, widget->config);
     ApplyPanelLinkFont(widget->panelDateLink, widget->config.panelTopFont, widget->config.fontAntialiasing, &widget->panelDateFont);
-    widget->panelTimeZoneLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW, 0, 0, 0, 0, widget->window,
-        reinterpret_cast<HMENU>(ID_PANEL_TIME_ZONE_LINK), hInstance, nullptr);
+    widget->panelTimeZoneLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
+        0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_TIME_ZONE_LINK), hInstance, nullptr);
     if (widget->panelTimeZoneLink == nullptr) {
         return;
     }
     SetWindowSubclass(widget->panelTimeZoneLink, PanelLinkButtonSubclassProc, ID_PANEL_TIME_ZONE_LINK, 0);
     ApplyWidgetTheme(widget->panelTimeZoneLink, widget->config);
-    ApplyPanelLinkFont(widget->panelTimeZoneLink, widget->config.panelBottomFont, widget->config.fontAntialiasing, &widget->panelTimeZoneFont);
+    ApplyPanelLinkFont(widget->panelTimeZoneLink, widget->config.panelBottomFont,
+        widget->config.fontAntialiasing, &widget->panelTimeZoneFont);
     SetWindowPos(widget->panelDateLink, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SetWindowPos(widget->calendarChild, widget->panelDateLink, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SetWindowPos(widget->panelTimeZoneLink, widget->calendarChild, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SYSTEMTIME displayed = {};
     GetDisplayedTime(widget->config, &displayed);
     UpdatePanelLinks(widget, displayed);
-    widget->panelDateTooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, widget->window, nullptr, hInstance, nullptr);
+    widget->panelDateTooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW, nullptr,
+        WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        widget->window, nullptr, hInstance, nullptr);
     if (widget->panelDateTooltip == nullptr) {
         return;
     }
@@ -3920,8 +4173,8 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
             DrawCenteredText(dc, day, layout.days[index], timeFont, RGB(0, 0, 0));
         }
         if (index > 0) {
-            DrawCenteredText(dc, AdditionalClockName(widget->config, index - 1), layout.names[index - 1], nameFont, RGB(0, 0, 0),
-                DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+            DrawCenteredText(dc, AdditionalClockName(widget->config, index - 1), layout.names[index - 1], nameFont,
+                RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
         }
     }
     DeleteObject(nameFont);
@@ -4033,8 +4286,10 @@ static void RenderWidget(Widget* widget) {
         int desiredHeight = 0;
         GetWidgetDimensions(widget->config, &desiredWidth, &desiredHeight);
         RECT current = {};
-        if (GetWindowRect(widget->window, &current) && (current.right - current.left != desiredWidth || current.bottom - current.top != desiredHeight)) {
-            ResizeWidgetPreservingWorkAreaAttachment(widget, desiredWidth, desiredHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        if (GetWindowRect(widget->window, &current)
+                && (current.right - current.left != desiredWidth || current.bottom - current.top != desiredHeight)) {
+            ResizeWidgetPreservingWorkAreaAttachment(widget, desiredWidth, desiredHeight,
+                SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
         }
         InvalidateRect(widget->window, nullptr, FALSE);
         UpdateWindow(widget->window);
@@ -4077,7 +4332,8 @@ static void ApplyWidgetZOrder(Widget* widget) {
         SetWindowPos(widget->window, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
     for (size_t index = 0; index < widget->fullscreenWindows.size(); index++) {
-        SetWindowPos(widget->fullscreenWindows[index], topMost ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        SetWindowPos(widget->fullscreenWindows[index], topMost ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 }
 
@@ -4136,7 +4392,8 @@ static void IdentifyWidget(Widget* widget) {
     widget->identifyEndTick = GetTickCount64() + 1600;
     SetWindowPos(widget->window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     for (size_t index = 0; index < widget->fullscreenWindows.size(); index++) {
-        SetWindowPos(widget->fullscreenWindows[index], HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        SetWindowPos(widget->fullscreenWindows[index], HWND_TOPMOST, 0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
     RenderWidgetIdentification(widget);
 }
@@ -4183,7 +4440,9 @@ static void CloseWidgetAudio(Widget* widget) {
 
 /// Applies the selected draft widget's mute state to the active alarm preview.
 static void UpdateSettingsPreviewMute() {
-    if (settingsPreviewMuteEvent == nullptr || selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
+    if (settingsPreviewMuteEvent == nullptr
+            || selectedDraftIndex < 0
+            || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
     }
     SetAudioPlaybackMuted(settingsPreviewMuteEvent, settingsDraft[selectedDraftIndex].soundsMuted);
@@ -4312,7 +4571,10 @@ static bool UpdateFullscreenCursor(bool mouseActivity = false, bool forceCursor 
         return false;
     }
     Widget* widget = WidgetFromInputWindow(window);
-    bool fullscreen = widget != nullptr && widget->config.type == WIDGET_FULLSCREEN && widget->config.visible && !widget->fullscreenPreview;
+    bool fullscreen = widget != nullptr
+        && widget->config.type == WIDGET_FULLSCREEN
+        && widget->config.visible
+        && !widget->fullscreenPreview;
     bool blackout = std::find(blackoutWindows.begin(), blackoutWindows.end(), window) != blackoutWindows.end();
     if (!fullscreen && !blackout) {
         ResetFullscreenCursor(hFullscreenCursorWindow);
@@ -4402,10 +4664,12 @@ static void StopWidgetAlarm(Widget* widget) {
         if (group.target > now + 5 * 10000000ULL) {
             continue;
         }
-        if (std::find(group.alarmWidgetIds.begin(), group.alarmWidgetIds.end(), widget->config.id) != group.alarmWidgetIds.end()) {
+        if (std::find(group.alarmWidgetIds.begin(), group.alarmWidgetIds.end(), widget->config.id) !=
+                group.alarmWidgetIds.end()) {
             group.cancelledAlarmWidgetIds.push_back(widget->config.id);
         }
-        group.alarmWidgetIds.erase(std::remove(group.alarmWidgetIds.begin(), group.alarmWidgetIds.end(), widget->config.id), group.alarmWidgetIds.end());
+        group.alarmWidgetIds.erase(std::remove(group.alarmWidgetIds.begin(), group.alarmWidgetIds.end(),
+            widget->config.id), group.alarmWidgetIds.end());
         if (group.regularWidgetIds.empty() && group.alarmWidgetIds.empty()) {
             CancelTimeSignalPlayback(group.target);
         }
@@ -4440,8 +4704,8 @@ static void StartWidgetAlarm(Widget* widget) {
     if (widget->config.runCommand && !widget->config.command.empty()) {
         if (LooksLikeAudio(widget->config.command)) {
             StartAudioPlaybackAsync(widget->config.command, widget->config.loopAudio, widget->config.soundsMuted,
-                std::make_shared<std::atomic<int>>(widget->config.alarmVolume), hController,
-                WM_AUDIO_FINISHED, widget->config.id, widget->audioGeneration, &widget->audioStopEvent, &widget->audioMuteEvent);
+                std::make_shared<std::atomic<int>>(widget->config.alarmVolume), hController, WM_AUDIO_FINISHED,
+                widget->config.id, widget->audioGeneration, &widget->audioStopEvent, &widget->audioMuteEvent);
         } else {
             StartLocalCommandAsync(widget->config.command);
         }
@@ -4596,7 +4860,8 @@ static void CreateAnalogChild(Widget* widget) {
         childY = clockPosition.y;
     }
     bool showAnalogSeconds = widget->config.showSeconds && AnalogClockSupportsSeconds(widget->config.size);
-    widget->analogChild = CreateAnalogClockControl(widget->window, childX, childY, widget->config.size, showAnalogSeconds, true);
+    widget->analogChild = CreateAnalogClockControl(widget->window, childX, childY, widget->config.size,
+        showAnalogSeconds, true);
     if (widget->analogChild != nullptr) {
         ApplyWidgetTheme(widget->analogChild, widget->config);
         if (!ConfigureAnalogClockControl(widget->analogChild, widget->config.size, showAnalogSeconds)) {
@@ -4604,7 +4869,8 @@ static void CreateAnalogChild(Widget* widget) {
             widget->analogChild = nullptr;
             return;
         }
-        widget->analogProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(widget->analogChild, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(AnalogChildProc)));
+        widget->analogProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(widget->analogChild, GWLP_WNDPROC,
+            reinterpret_cast<LONG_PTR>(AnalogChildProc)));
         UpdateAnalogTime(widget);
         if (widget->config.type == WIDGET_PANEL) {
             CaptureAnalogBackground(widget);
@@ -4662,7 +4928,8 @@ static bool UpdateAnalogSeconds(Widget* widget) {
         childX = clockPosition.x;
         childY = clockPosition.y;
     }
-    HWND replacement = CreateAnalogClockControl(widget->window, childX, childY, widget->config.size, showAnalogSeconds, false);
+    HWND replacement = CreateAnalogClockControl(widget->window, childX, childY, widget->config.size,
+        showAnalogSeconds, false);
     if (replacement == nullptr) {
         return false;
     }
@@ -4671,7 +4938,8 @@ static bool UpdateAnalogSeconds(Widget* widget) {
         DestroyWindow(replacement);
         return false;
     }
-    WNDPROC replacementProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(replacement, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(AnalogChildProc)));
+    WNDPROC replacementProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(replacement, GWLP_WNDPROC,
+        reinterpret_cast<LONG_PTR>(AnalogChildProc)));
     if (replacementProc == nullptr) {
         DestroyWindow(replacement);
         return false;
@@ -4736,7 +5004,8 @@ static void CreateCalendarChild(Widget* widget) {
             calendarSize.cx = minimum.right - minimum.left;
             calendarSize.cy = minimum.bottom - minimum.top;
         }
-        SetWindowPos(widget->calendarChild, nullptr, childX, childY, calendarSize.cx, calendarSize.cy, SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(widget->calendarChild, nullptr, childX, childY, calendarSize.cx, calendarSize.cy,
+            SWP_NOZORDER | SWP_NOACTIVATE);
         widget->calendarProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(widget->calendarChild, GWLP_WNDPROC,
             reinterpret_cast<LONG_PTR>(CalendarChildProc)));
         ShowWindow(widget->calendarChild, SW_SHOWNOACTIVATE);
@@ -4774,15 +5043,19 @@ static bool SetFullscreenPreview(Widget* widget) {
     if (!GetPrimarySelectedMonitorRect(widget->config, &monitorRect)) {
         return false;
     }
-    int monitorWidth = monitorRect.right - monitorRect.left;
-    int monitorHeight = monitorRect.bottom - monitorRect.top;
     int previewWidth = 0;
     int previewHeight = 0;
     if (!GetFullscreenPreviewDimensions(widget->config, &previewWidth, &previewHeight)) {
         return false;
     }
-    int previewX = widget->config.previewX == CW_USEDEFAULT ? monitorRect.left + (monitorWidth - previewWidth) / 2 : widget->config.previewX;
-    int previewY = widget->config.previewY == CW_USEDEFAULT ? monitorRect.top + (monitorHeight - previewHeight) / 2 : widget->config.previewY;
+    int monitorWidth = monitorRect.right - monitorRect.left;
+    int monitorHeight = monitorRect.bottom - monitorRect.top;
+    int previewX = widget->config.previewX == CW_USEDEFAULT
+        ? monitorRect.left + (monitorWidth - previewWidth) / 2
+        : widget->config.previewX;
+    int previewY = widget->config.previewY == CW_USEDEFAULT
+        ? monitorRect.top + (monitorHeight - previewHeight) / 2
+        : widget->config.previewY;
     RECT currentRect = {};
     if (widget->fullscreenPreview && GetWindowRect(widget->window, &currentRect)) {
         POINT position = { currentRect.left, currentRect.top };
@@ -4879,7 +5152,8 @@ static void CreateWidgetWindow(Widget* widget) {
     widget->lastAlarmMinute = -1;
     SYSTEMTIME alarmObservation = {};
     GetDisplayedTime(widget->config, &alarmObservation);
-    widget->lastObservedAlarmDate = alarmObservation.wYear * 10000 + alarmObservation.wMonth * 100 + alarmObservation.wDay;
+    widget->lastObservedAlarmDate = alarmObservation.wYear * 10000 + alarmObservation.wMonth * 100 +
+        alarmObservation.wDay;
     widget->lastObservedAlarmMinute = alarmObservation.wHour * 60 + alarmObservation.wMinute;
     widget->lastRenderKey = -1;
     widget->lastPanelDateKey = -1;
@@ -5023,7 +5297,10 @@ static void RefreshFullscreenPresentation() {
     std::vector<std::wstring> occupiedDevices;
     for (size_t widgetIndex = 0; widgetIndex < widgets.size(); widgetIndex++) {
         Widget* widget = widgets[widgetIndex].get();
-        if (widget->config.type != WIDGET_FULLSCREEN || !widget->config.visible || widget->fullscreenPreview || widget->window == nullptr) {
+        if (widget->config.type != WIDGET_FULLSCREEN
+                || !widget->config.visible
+                || widget->fullscreenPreview
+                || widget->window == nullptr) {
             continue;
         }
         for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
@@ -5044,7 +5321,8 @@ static void RefreshFullscreenPresentation() {
             }
             if (target != nullptr) {
                 const RECT& rect = selected[monitorIndex]->rect;
-                SetWindowPos(target, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                SetWindowPos(target, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+                    SWP_NOACTIVATE | SWP_SHOWWINDOW);
             }
         }
     }
@@ -5061,11 +5339,13 @@ static void RefreshFullscreenPresentation() {
                 continue;
             }
             const RECT& rect = displayMonitors[monitorIndex].rect;
-            HWND blackout = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_TOPMOST | WS_EX_NOACTIVATE, BLACKOUT_CLASS_NAME, L"", WS_POPUP,
-                rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, hInstance, nullptr);
+            HWND blackout = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_TOPMOST | WS_EX_NOACTIVATE,
+                BLACKOUT_CLASS_NAME, L"", WS_POPUP, rect.left, rect.top, rect.right - rect.left,
+                rect.bottom - rect.top, nullptr, nullptr, hInstance, nullptr);
             if (blackout != nullptr) {
                 ShowWindow(blackout, SW_SHOWNOACTIVATE);
-                SetWindowPos(blackout, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                SetWindowPos(blackout, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left,
+                    rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
                 blackoutWindows.push_back(blackout);
             }
         }
@@ -5180,14 +5460,20 @@ static void SetAllVisible(bool visible) {
 /// Uses the supplied widget as the grid anchor; returns no placements if arrangement is unavailable or fails.
 static std::vector<PendingWidgetPlacement> PlanVisibleWidgetArrangement(Widget* anchor) {
     if (anchor != nullptr
-        && (anchor->window == nullptr || !IsWindowVisible(anchor->window) || !anchor->config.visible || anchor->config.type == WIDGET_FULLSCREEN)) {
+            && (anchor->window == nullptr
+                || !IsWindowVisible(anchor->window)
+                || !anchor->config.visible
+                || anchor->config.type == WIDGET_FULLSCREEN)) {
         return {};
     }
     std::vector<MonitorGroup> groups;
     HMONITOR anchorMonitor = anchor == nullptr ? nullptr : MonitorFromWindow(anchor->window, MONITOR_DEFAULTTONEAREST);
     for (size_t index = 0; index < widgets.size(); index++) {
         Widget* current = widgets[index].get();
-        if (!current->config.visible || current->window == nullptr || !IsWindowVisible(current->window) || current->config.type == WIDGET_FULLSCREEN) {
+        if (!current->config.visible
+                || current->window == nullptr
+                || !IsWindowVisible(current->window)
+                || current->config.type == WIDGET_FULLSCREEN) {
             continue;
         }
         HMONITOR monitor = MonitorFromWindow(current->window, MONITOR_DEFAULTTONEAREST);
@@ -5230,7 +5516,8 @@ static std::vector<PendingWidgetPlacement> PlanVisibleWidgetArrangement(Widget* 
                 rect
             });
         }
-        if (failed || !ArrangeWidgetPlacements(&placements, monitorInformation.rcWork, anchor == nullptr ? -1 : anchor->config.id)) {
+        if (failed || !ArrangeWidgetPlacements(&placements, monitorInformation.rcWork,
+            anchor == nullptr ? -1 : anchor->config.id)) {
             failed = true;
             break;
         }
@@ -5259,7 +5546,8 @@ static std::vector<PendingWidgetPlacement> PlanVisibleWidgetArrangement(Widget* 
 /// movement becomes possible.
 static UINT WidgetArrangementMenuFlags(Widget* anchor) {
     int id = anchor == nullptr ? -1 : anchor->config.id;
-    std::vector<int>::iterator disabled = std::find(disabledArrangementCommands.begin(), disabledArrangementCommands.end(), id);
+    std::vector<int>::iterator disabled = std::find(disabledArrangementCommands.begin(),
+        disabledArrangementCommands.end(), id);
     if (disabled == disabledArrangementCommands.end()) {
         return MF_STRING;
     }
@@ -5277,12 +5565,14 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
     if (anchor == nullptr) {
         disabledArrangementCommands.clear();
     } else {
-        std::vector<int>::iterator trayCommand = std::find(disabledArrangementCommands.begin(), disabledArrangementCommands.end(), -1);
+        std::vector<int>::iterator trayCommand = std::find(disabledArrangementCommands.begin(),
+            disabledArrangementCommands.end(), -1);
         if (trayCommand != disabledArrangementCommands.end()) {
             disabledArrangementCommands.erase(trayCommand);
         }
     }
-    if (std::find(disabledArrangementCommands.begin(), disabledArrangementCommands.end(), id) == disabledArrangementCommands.end()) {
+    if (std::find(disabledArrangementCommands.begin(), disabledArrangementCommands.end(), id) ==
+            disabledArrangementCommands.end()) {
         disabledArrangementCommands.push_back(id);
     }
     std::vector<PendingWidgetPlacement> pending = PlanVisibleWidgetArrangement(anchor);
@@ -5293,7 +5583,8 @@ static void ArrangeVisibleWidgets(Widget* anchor) {
         Widget* current = pending[index].widget;
         current->config.x = pending[index].rect.left;
         current->config.y = pending[index].rect.top;
-        SetWindowPos(current->window, nullptr, current->config.x, current->config.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(current->window, nullptr, current->config.x, current->config.y, 0, 0,
+            SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
         for (WidgetConfig& draft : settingsDraft) {
             if (draft.id == current->config.id) {
                 draft.x = current->config.x;
@@ -5436,7 +5727,8 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         }
         bool previousShowSeconds = widget->config.showSeconds;
         widget->config.showSeconds = !widget->config.showSeconds;
-        if ((widget->config.type == WIDGET_ANALOG || widget->config.type == WIDGET_PANEL) && !UpdateAnalogSeconds(widget)) {
+        if ((widget->config.type == WIDGET_ANALOG || widget->config.type == WIDGET_PANEL)
+                && !UpdateAnalogSeconds(widget)) {
             widget->config.showSeconds = previousShowSeconds;
             return;
         }
@@ -5471,7 +5763,9 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         if (!WidgetSupportsSound(widget->config.type)) {
             return;
         }
-        widget->config.timeSignal = widget->config.timeSignal == TIME_SIGNAL_NONE ? TIME_SIGNAL_EVERY_HOUR : TIME_SIGNAL_NONE;
+        widget->config.timeSignal = widget->config.timeSignal == TIME_SIGNAL_NONE
+            ? TIME_SIGNAL_EVERY_HOUR
+            : TIME_SIGNAL_NONE;
         SynchronizeOpenSettings(widget, command);
         SaveSettingsWithoutAppearancePreviews();
     } else if (command == ID_MENU_MUTE) {
@@ -5482,7 +5776,6 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
     } else if (command >= ID_MENU_SIZE_104 && command <= ID_MENU_SIZE_198) {
         int sizes[4] = {};
         int sizeCount = GetAnalogClockSizes(sizes);
-        const int fonts[] = { 28, 44, 58, 72 };
         int sizeIndex = command - ID_MENU_SIZE_104;
         if (sizeIndex >= sizeCount) {
             return;
@@ -5490,6 +5783,7 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         recreateConfiguration = widget->config;
         recreateConfiguration.size = sizes[sizeIndex];
         if (recreateConfiguration.type == WIDGET_DIGITAL) {
+            const int fonts[] = { 28, 44, 58, 72 };
             recreateConfiguration.fontSize = fonts[sizeIndex];
         }
         recreate = true;
@@ -5522,10 +5816,11 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
 static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     HMENU menu = CreatePopupMenu();
     std::vector<wchar_t> menuMnemonics;
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE,
-        widget->config.visible ? HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible ?
+        HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
     if (widget->config.type != WIDGET_FULLSCREEN) {
-        AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST, WT(widget, TXT_TOPMOST), &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST,
+            WT(widget, TXT_TOPMOST), &menuMnemonics);
     }
     if (widget->config.type == WIDGET_CALENDAR) {
         AppendMenuCommand(menu, MF_STRING, ID_MENU_TODAY, PANEL_TODAY_TOOLTIP[widget->config.language], &menuMnemonics);
@@ -5587,7 +5882,8 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         UINT arrangeFlags = WidgetArrangementMenuFlags(widget);
-        AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, ARRANGE_WIDGET_LABELS[widget->config.language], &menuMnemonics);
+        AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, ARRANGE_WIDGET_LABELS[widget->config.language],
+            &menuMnemonics);
     }
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     AppendApplicationMenuCommands(menu, widget->config.language, &menuMnemonics);
@@ -5621,11 +5917,11 @@ static HMENU CreateAdditionalClockMenu(const Widget* widget, int index) {
 /// saves settings.
 static void HandleAdditionalClockMenuCommand(Widget* widget, int index, int command) {
     if (widget == nullptr
-        || index < 0
-        || index >= ADDITIONAL_CLOCK_COUNT
-        || widget->config.type != WIDGET_PANEL
-        || command < ID_MENU_SIZE_104
-        || command > ID_MENU_SIZE_198) {
+            || index < 0
+            || index >= ADDITIONAL_CLOCK_COUNT
+            || widget->config.type != WIDGET_PANEL
+            || command < ID_MENU_SIZE_104
+            || command > ID_MENU_SIZE_198) {
         return;
     }
     int sizes[4] = {};
@@ -5706,7 +6002,8 @@ static void ShowTrayContextMenu() {
     int command = TrackPopupMenu(menu, TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, hController, nullptr);
     DestroyMenu(menu);
     if (command >= ID_MENU_WIDGET_BASE && command < ID_MENU_WIDGET_BASE + static_cast<int>(widgets.size())) {
-        SetWidgetVisible(widgets[command - ID_MENU_WIDGET_BASE].get(), !widgets[command - ID_MENU_WIDGET_BASE]->config.visible);
+        SetWidgetVisible(widgets[command - ID_MENU_WIDGET_BASE].get(),
+            !widgets[command - ID_MENU_WIDGET_BASE]->config.visible);
     } else {
         SendMessageW(hController, WM_COMMAND, command, 0);
     }
@@ -5749,9 +6046,11 @@ static bool SettingsControlIsAbove(const PositionedControl& left, const Position
 
 /// Creates a transparent, sibling-clipped label extending to the common settings content edge and optionally records it
 /// in a group.
-static HWND AddUnderlayStatic(HWND parent, const wchar_t* text, DWORD style, int x, int y, int height, std::vector<HWND>* group = nullptr) {
+static HWND AddUnderlayStatic(HWND parent, const wchar_t* text, DWORD style, int x, int y, int height,
+        std::vector<HWND>* group = nullptr) {
     int right = parent == hSettings ? SETTINGS_WIDGET_LIST_RIGHT : SETTINGS_PAGE_CONTENT_RIGHT;
-    HWND control = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", text, WS_CHILD | WS_CLIPSIBLINGS | style | SS_LEFTNOWORDWRAP,
+    HWND control = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", text,
+        WS_CHILD | WS_CLIPSIBLINGS | style | SS_LEFTNOWORDWRAP,
         x, y, right - x, height, parent, nullptr, hInstance, nullptr);
     if (group != nullptr) {
         group->push_back(control);
@@ -5773,7 +6072,8 @@ static HWND AddControl(DWORD extended, const wchar_t* className, const wchar_t* 
         x, y, width, height, parent, reinterpret_cast<HMENU>(static_cast<INT_PTR>(id)), hInstance, nullptr);
     if (control != nullptr && _wcsicmp(className, L"EDIT") == 0) {
         SetWindowSubclass(control, EditSubclassProc, static_cast<UINT_PTR>(id), 0);
-    } else if (control != nullptr && (id == ID_LIST_WIDGETS || id == ID_MONITOR_LIST || id == ID_REMOVE || id == ID_DUPLICATE)) {
+    } else if (control != nullptr
+            && (id == ID_LIST_WIDGETS || id == ID_MONITOR_LIST || id == ID_REMOVE || id == ID_DUPLICATE)) {
         SetWindowSubclass(control, WidgetListSubclassProc, static_cast<UINT_PTR>(id), 0);
     }
     if (group != nullptr) {
@@ -5788,8 +6088,9 @@ static HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text)
     if (parent == nullptr || control == nullptr || text == nullptr) {
         return nullptr;
     }
-    HWND tooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, parent, nullptr, hInstance, nullptr);
+    HWND tooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW,
+        nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT, parent, nullptr, hInstance, nullptr);
     if (tooltip == nullptr) {
         return nullptr;
     }
@@ -5950,7 +6251,8 @@ static bool ScrollSettingsWindow(int bar, int request) {
     }
     int deltaX = bar == SB_HORZ ? oldPosition - position : 0;
     int deltaY = bar == SB_VERT ? oldPosition - position : 0;
-    ScrollWindowEx(hSettings, deltaX, deltaY, nullptr, nullptr, nullptr, nullptr, SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
+    ScrollWindowEx(hSettings, deltaX, deltaY, nullptr, nullptr, nullptr, nullptr,
+        SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
     UpdateWindow(hSettings);
     return true;
 }
@@ -5995,7 +6297,8 @@ static void SetControlPosition(HWND control, int x, int y, int width, int height
         return;
     }
     HWND parent = GetParent(control);
-    if ((parent == hSettings || IsSettingsPageWindow(parent)) && GetSettingsControlLayer(control) != SETTINGS_CONTROL_FOREGROUND) {
+    if ((parent == hSettings || IsSettingsPageWindow(parent))
+            && GetSettingsControlLayer(control) != SETTINGS_CONTROL_FOREGROUND) {
         int right = parent == hSettings ? SETTINGS_WIDGET_LIST_RIGHT : SETTINGS_PAGE_CONTENT_RIGHT;
         width = std::max(1, ScaleSettingsHorizontal(right) - x);
     }
@@ -6043,8 +6346,8 @@ static bool IsSettingsControlPointCovered(HWND control, POINT point) {
 
 /// Prevents mouse clicks and captured releases from activating controls covered by higher siblings.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
-static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
-        DWORD_PTR referenceData) {
+static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     switch (message) {
         case BM_CLICK:
         {
@@ -6177,7 +6480,8 @@ static void SelectEditLine(HWND window) {
 
 /// Adds Ctrl+A and triple-click line selection while preserving normal edit and dialog behavior.
 /// Clears click tracking on timeout, focus changes, other mouse buttons, and destruction.
-static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     if (message == WM_TIMER && wParam == TIMER_EDIT_CLICKS) {
         KillTimer(window, TIMER_EDIT_CLICKS);
@@ -6205,14 +6509,16 @@ static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wPara
         LRESULT result = DefSubclassProc(window, message, wParam, lParam);
         DWORD selectionStart = 0;
         DWORD selectionEnd = 0;
-        SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart), reinterpret_cast<LPARAM>(&selectionEnd));
+        SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
+            reinterpret_cast<LPARAM>(&selectionEnd));
         POINT clickPoint = {
             GET_X_LPARAM(lParam),
             GET_Y_LPARAM(lParam)
         };
         if (selectionEnd > selectionStart) {
             editClickCount = 2;
-        } else if (editClickCount == 0 || abs(clickPoint.x - lastEditClickPoint.x) < 2 && abs(clickPoint.y - lastEditClickPoint.y) < 2) {
+        } else if (editClickCount == 0
+                || abs(clickPoint.x - lastEditClickPoint.x) < 2 && abs(clickPoint.y - lastEditClickPoint.y) < 2) {
             editClickCount++;
         } else {
             editClickCount = 0;
@@ -6249,7 +6555,8 @@ static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wPara
 
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
 /// On associated buttons, transfers focus to the widget list before handling the shortcut.
-static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     bool widgetCommands = subclassId == ID_LIST_WIDGETS || subclassId == ID_REMOVE || subclassId == ID_DUPLICATE;
     HWND list = widgetCommands ? hWidgetList : window;
@@ -6263,7 +6570,8 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
     }
     if (message == WM_KEYDOWN && wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
         SendMessageW(list, LB_SETSEL, TRUE, -1);
-        SendMessageW(GetParent(list), WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(list), LBN_SELCHANGE), reinterpret_cast<LPARAM>(list));
+        SendMessageW(GetParent(list), WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(list), LBN_SELCHANGE),
+            reinterpret_cast<LPARAM>(list));
         return 0;
     }
     if (message == WM_KEYDOWN && widgetCommands && GetFocus() == list && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
@@ -6287,7 +6595,8 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
             bool selected = SendMessageW(list, LB_GETSEL, caretIndex, 0) > 0;
             SendMessageW(list, LB_SETSEL, !selected, caretIndex);
             SendMessageW(list, LB_SETCARETINDEX, std::min(caretIndex + 1, count - 1), TRUE);
-            SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE), reinterpret_cast<LPARAM>(list));
+            SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE),
+                reinterpret_cast<LPARAM>(list));
         }
         return 0;
     }
@@ -6416,7 +6725,9 @@ static void SetComboSelection(HWND combo, int selection) {
 
 /// Updates a trackbar's range only when either endpoint differs.
 static void SetTrackBarRange(HWND trackBar, int minimum, int maximum) {
-    if (trackBar != nullptr && (SendMessageW(trackBar, TBM_GETRANGEMIN, 0, 0) != minimum || SendMessageW(trackBar, TBM_GETRANGEMAX, 0, 0) != maximum)) {
+    if (trackBar != nullptr
+            && (SendMessageW(trackBar, TBM_GETRANGEMIN, 0, 0) != minimum
+                || SendMessageW(trackBar, TBM_GETRANGEMAX, 0, 0) != maximum)) {
         SendMessageW(trackBar, TBM_SETRANGE, TRUE, MAKELPARAM(minimum, maximum));
     }
 }
@@ -6605,12 +6916,15 @@ static int TimeSignalVolumeSliderPosition(double volume) {
     double position = 0.0;
     if (decibels < TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB) {
         position = 1.0 + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1) / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB);
+            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1)
+            / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB);
     } else {
         position = TIME_SIGNAL_VOLUME_SLIDER_MIDDLE + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MAX - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE) / -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB;
+            * (TIME_SIGNAL_VOLUME_SLIDER_MAX - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE)
+            / -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB;
     }
-    return std::clamp(static_cast<int>(std::lround(position)), TIME_SIGNAL_VOLUME_SLIDER_MIN + 1, TIME_SIGNAL_VOLUME_SLIDER_MAX);
+    return std::clamp(static_cast<int>(std::lround(position)), TIME_SIGNAL_VOLUME_SLIDER_MIN + 1,
+        TIME_SIGNAL_VOLUME_SLIDER_MAX);
 }
 
 /// Maps the slider's two decibel segments back to stored generator volume, reserving the left endpoint for silence.
@@ -6622,7 +6936,8 @@ static double TimeSignalVolumeFromSliderPosition(int position) {
     double decibels = 0.0;
     if (position < TIME_SIGNAL_VOLUME_SLIDER_MIDDLE) {
         decibels = TIME_SIGNAL_VOLUME_SLIDER_MIN_DB + static_cast<double>(position - 1)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB) / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1);
+            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB)
+            / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1);
     } else {
         decibels = TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB + static_cast<double>(position - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE)
             * -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB / (TIME_SIGNAL_VOLUME_SLIDER_MAX - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE);
@@ -6676,15 +6991,20 @@ static void UpdateAlarmVolumeControls() {
 /// position.
 static double SelectedTimeSignalVolume() {
     int position = static_cast<int>(SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0));
-    return position == TimeSignalVolumeSliderPosition(timeSignalVolume) ? timeSignalVolume : TimeSignalVolumeFromSliderPosition(position);
+    return position == TimeSignalVolumeSliderPosition(timeSignalVolume)
+        ? timeSignalVolume
+        : TimeSignalVolumeFromSliderPosition(position);
 }
 
 /// Starts or stops the merged time-signal preview from the Test button and active slider drag, updating the button
 /// caption.
 static void UpdateTimeSignalVolumePreview() {
-    bool dragging = timeSignalVolumeDragging && hTimeSignalVolumeTrackBar != nullptr && IsWindowEnabled(hTimeSignalVolumeTrackBar);
+    bool dragging = timeSignalVolumeDragging
+        && hTimeSignalVolumeTrackBar != nullptr
+        && IsWindowEnabled(hTimeSignalVolumeTrackBar);
     if (settingsTimeSignalTestActive || dragging) {
-        bool generatedTone = IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+        bool generatedTone = IsTimeSignalGeneratorRequired()
+            || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
         double volume = SelectedTimeSignalVolume();
         if (!StartTimeSignalVolumePreview(generatedTone, volume)) {
             settingsTimeSignalTestActive = false;
@@ -6692,12 +7012,15 @@ static void UpdateTimeSignalVolumePreview() {
     } else {
         StopTimeSignalVolumePreview();
     }
-    const wchar_t* caption = settingsTimeSignalTestActive ? STOP_TEST_LABELS[appLanguage] : TEST_COMMAND_LABELS[appLanguage];
+    const wchar_t* caption = settingsTimeSignalTestActive
+        ? STOP_TEST_LABELS[appLanguage]
+        : TEST_COMMAND_LABELS[appLanguage];
     SetControlCaption(hTimeSignalTestButton, caption);
 }
 
 /// Tracks mouse capture on the volume slider to control preview playback and stops it during subclass destruction.
-static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
         LRESULT result = DefSubclassProc(window, message, wParam, lParam);
@@ -6756,7 +7079,9 @@ static void UpdateNtpSettingsControls() {
     int source = static_cast<int>(SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0));
     bool ntpSelected = source == 1;
     int selectedPreset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
-    bool settingsApplied = ntpSelected == useNtpTime && selectedPreset == ntpPreset && GetControlText(hNtpServersEdit) == ntpServers;
+    bool settingsApplied = ntpSelected == useNtpTime
+        && selectedPreset == ntpPreset
+        && GetControlText(hNtpServersEdit) == ntpServers;
     SetControlEnabled(hNtpPresetLabel, ntpSelected);
     SetControlEnabled(hNtpPresetCombo, ntpSelected);
     SetControlEnabled(hNtpServersLabel, ntpSelected);
@@ -6841,7 +7166,12 @@ static bool SettingsControlComesFirst(const PositionedControl& left, const Posit
 static std::vector<HWND> GetSettingsTabOrder() {
     HWND page = GetActiveSettingsPage();
     const std::vector<HWND>* groups[] = {
-        &generalControls, &appearanceControls, &alarmControls, &timeSignalControls, &timeControls, &applicationControls
+        &generalControls,
+        &appearanceControls,
+        &alarmControls,
+        &timeSignalControls,
+        &timeControls,
+        &applicationControls
     };
     const std::vector<HWND>* group = nullptr;
     for (int tab = 0; tab < SETTINGS_TAB_COUNT; tab++) {
@@ -6897,7 +7227,8 @@ static std::vector<int> GetSelectedWidgetIndices() {
         return selected;
     }
     selected.resize(count);
-    int copied = static_cast<int>(SendMessageW(hWidgetList, LB_GETSELITEMS, count, reinterpret_cast<LPARAM>(selected.data())));
+    int copied = static_cast<int>(SendMessageW(hWidgetList, LB_GETSELITEMS, count,
+        reinterpret_cast<LPARAM>(selected.data())));
     if (copied < 0) {
         selected.clear();
     } else {
@@ -6995,7 +7326,8 @@ static void LoadMonitorSelection(const WidgetConfig& config) {
     for (size_t index = 0; index < displayMonitors.size(); index++) {
         int width = displayMonitors[index].rect.right - displayMonitors[index].rect.left;
         int height = displayMonitors[index].rect.bottom - displayMonitors[index].rect.top;
-        labels.push_back(std::to_wstring(index + 1) + L".  (" + std::to_wstring(width) + L" × " + std::to_wstring(height) + L")");
+        labels.push_back(std::to_wstring(index + 1) + L".  (" + std::to_wstring(width) + L" × "
+            + std::to_wstring(height) + L")");
         if (!changed) {
             LRESULT length = SendMessageW(hMonitorList, LB_GETTEXTLEN, index, 0);
             std::wstring current(length == LB_ERR ? 0 : static_cast<size_t>(length) + 1, L'\0');
@@ -7010,7 +7342,8 @@ static void LoadMonitorSelection(const WidgetConfig& config) {
         WindowRedrawScope redraw(hMonitorList);
         SendMessageW(hMonitorList, LB_RESETCONTENT, 0, 0);
         for (size_t index = 0; index < labels.size(); index++) {
-            int item = static_cast<int>(SendMessageW(hMonitorList, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(labels[index].c_str())));
+            int item = static_cast<int>(SendMessageW(hMonitorList, LB_ADDSTRING, 0,
+                reinterpret_cast<LPARAM>(labels[index].c_str())));
             SendMessageW(hMonitorList, LB_SETITEMDATA, item, index);
         }
     }
@@ -7022,7 +7355,8 @@ static void LoadMonitorSelection(const WidgetConfig& config) {
         }
     }
     for (size_t index = 0; index < displayMonitors.size(); index++) {
-        bool selected = ContainsMonitorDevice(config.monitorDevices, displayMonitors[index].device) || !anySelected && index == 0;
+        bool selected =
+            ContainsMonitorDevice(config.monitorDevices, displayMonitors[index].device) || !anySelected && index == 0;
         if ((SendMessageW(hMonitorList, LB_GETSEL, index, 0) > 0) != selected) {
             SendMessageW(hMonitorList, LB_SETSEL, selected, index);
         }
@@ -7082,7 +7416,8 @@ static void UpdateAppearanceSliderLabels(HWND changedTrackBar = nullptr) {
         SetSliderValueText(hOpacityValue, opacity, L" %");
     }
     if (changedTrackBar == nullptr || changedTrackBar == hFontSizeTrackBar) {
-        bool fullscreen = selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+        bool fullscreen = selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())
             && settingsDraft[selectedDraftIndex].type == WIDGET_FULLSCREEN;
         SetSliderValueText(hFontSizeValue, fontSize, fullscreen ? L" %" : L" pt");
     }
@@ -7092,7 +7427,9 @@ static void UpdateAppearanceSliderLabels(HWND changedTrackBar = nullptr) {
     if (changedTrackBar == nullptr || changedTrackBar == hBorderWidthTrackBar) {
         SetSliderValueText(hBorderWidthValue, borderWidth, L" px");
     }
-    if (changedTrackBar == hFontSizeTrackBar && selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+    if (changedTrackBar == hFontSizeTrackBar
+            && selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         WidgetConfig preview = settingsDraft[selectedDraftIndex];
         preview.fontSize = fontSize;
         UpdateFontDescription(preview);
@@ -7108,22 +7445,29 @@ static void ReadAppearanceControls(WidgetConfig& config) {
         config.size = sizes[sizeIndex];
     }
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-        config.additionalClocks[index].size = GetSelectedAnalogClockSize(config.additionalClocks[index].size, hAdditionalSizeCombos[index]);
+        config.additionalClocks[index].size = GetSelectedAnalogClockSize(config.additionalClocks[index].size,
+            hAdditionalSizeCombos[index]);
     }
-    config.opacity = std::clamp(static_cast<int>(SendMessageW(hOpacityTrackBar, TBM_GETPOS, 0, 0)), WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX);
+    config.opacity = std::clamp(static_cast<int>(SendMessageW(hOpacityTrackBar, TBM_GETPOS, 0, 0)),
+        WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX);
     int minimumFontSize = config.type == WIDGET_FULLSCREEN ? FULLSCREEN_FONT_SIZE_MIN : DIGITAL_FONT_SIZE_MIN;
     int maximumFontSize = config.type == WIDGET_FULLSCREEN ? FULLSCREEN_FONT_SIZE_MAX : DIGITAL_FONT_SIZE_MAX;
-    config.fontSize = std::clamp(static_cast<int>(SendMessageW(hFontSizeTrackBar, TBM_GETPOS, 0, 0)), minimumFontSize, maximumFontSize);
+    config.fontSize = std::clamp(static_cast<int>(SendMessageW(hFontSizeTrackBar, TBM_GETPOS, 0, 0)),
+        minimumFontSize, maximumFontSize);
     if (config.type == WIDGET_DIGITAL) {
         config.fontDialogSize = config.fontSize * 10;
     }
     config.fontAntialiasing = SelectedFontAntialiasing(hWidgetAntialiasCombo, config.fontAntialiasing);
     int maximumPadding = config.type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
-    config.padding = std::clamp(static_cast<int>(SendMessageW(hPaddingTrackBar, TBM_GETPOS, 0, 0)), 0, maximumPadding);
-    config.borderStyle = std::clamp(static_cast<int>(SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0)), 0, DIGITAL_BORDER_STYLE_COUNT - 1);
-    config.borderWidth = std::clamp(static_cast<int>(SendMessageW(hBorderWidthTrackBar, TBM_GETPOS, 0, 0)), 0, DIGITAL_BORDER_WIDTH_MAX);
+    config.padding = std::clamp(static_cast<int>(SendMessageW(hPaddingTrackBar, TBM_GETPOS, 0, 0)), 0,
+        maximumPadding);
+    config.borderStyle = std::clamp(static_cast<int>(SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0)), 0,
+        DIGITAL_BORDER_STYLE_COUNT - 1);
+    config.borderWidth = std::clamp(static_cast<int>(SendMessageW(hBorderWidthTrackBar, TBM_GETPOS, 0, 0)), 0,
+        DIGITAL_BORDER_WIDTH_MAX);
     config.borderColor = static_cast<COLORREF>(GetWindowLongPtrW(hBorderColorButton, GWLP_USERDATA));
-    config.leadingZeroMode = std::clamp(static_cast<int>(SendMessageW(hLeadingZeroCombo, CB_GETCURSEL, 0, 0)), 0, LEADING_ZERO_MODE_COUNT - 1);
+    config.leadingZeroMode = std::clamp(static_cast<int>(SendMessageW(hLeadingZeroCombo, CB_GETCURSEL, 0, 0)), 0,
+        LEADING_ZERO_MODE_COUNT - 1);
     config.transparentBackground = GetCheck(hTransparentBackgroundCheck);
     config.disableThemes = GetCheck(hWidgetDisableThemesCheck);
     config.textColor = static_cast<COLORREF>(GetWindowLongPtrW(hTextColorButton, GWLP_USERDATA));
@@ -7269,8 +7613,11 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         }
     }
     int selectedSize = GetSelectedAnalogClockSize(settingsDraft[selectedDraftIndex].size);
-    bool supportsSeconds = type != WIDGET_CALENDAR && (type != WIDGET_ANALOG || AnalogClockSupportsSeconds(selectedSize));
-    bool supportsAmPm = (digital || panel) && WidgetUsesTwelveHourTime(timeConfiguration) && GetSelectedWidgetIndices().size() == 1;
+    bool supportsSeconds = type != WIDGET_CALENDAR
+        && (type != WIDGET_ANALOG || AnalogClockSupportsSeconds(selectedSize));
+    bool supportsAmPm = (digital || panel)
+        && WidgetUsesTwelveHourTime(timeConfiguration)
+        && GetSelectedWidgetIndices().size() == 1;
     SetCheck(hShowAmPmCheck, settingsDraft[selectedDraftIndex].showAmPm && supportsAmPm);
     if (type == WIDGET_ANALOG || type == WIDGET_CALENDAR) {
         SetCheck(hSecondsCheck, settingsDraft[selectedDraftIndex].showSeconds && supportsSeconds);
@@ -7337,7 +7684,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
             SetSettingsControlPosition(hShowTodayCheck, 8, calendarTop + 60, 364, 24);
             int dateFormatTop = calendarTop + (panel ? 30 : 90);
             SetSettingsControlPosition(hDateFormatLabel, 8, dateFormatTop + 4, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
-            int dateFormatWidth = ScaleSettingsHorizontal(238) + ScaleSettingsHorizontal(178) - ScaleSettingsHorizontal(191);
+            int dateFormatWidth = ScaleSettingsHorizontal(238)
+                + ScaleSettingsHorizontal(178)
+                - ScaleSettingsHorizontal(191);
             SetControlPosition(hDateFormatCombo, ScaleSettingsHorizontal(191), dateFormatTop, dateFormatWidth, 240);
         }
         if (supportsBorderStyle) {
@@ -7353,7 +7702,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
             SetSettingsControlPosition(hBorderTrackBar, 121, borderTop, 111, 32);
             SetSettingsControlPosition(hBorderColorButton, 238, borderTop + 2, 178, 27);
         }
-        if (hWidgetDisableThemesCheck != nullptr && hWidgetAntialiasLabel != nullptr && hWidgetAntialiasCombo != nullptr) {
+        if (hWidgetDisableThemesCheck != nullptr
+                && hWidgetAntialiasLabel != nullptr
+                && hWidgetAntialiasCombo != nullptr) {
             const int optionsTop = 292;
             SetSettingsControlPosition(hWidgetAntialiasLabel, 8, optionsTop + 4, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
             SetSettingsControlPosition(hWidgetAntialiasCombo, 148, optionsTop, 87, 100);
@@ -7364,7 +7715,10 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         { hTransparentBackgroundCheck, !fullscreen },
         { hPaddingTrackBar, digital },
         { hBorderTrackBar, supportsBorderStyle },
-        { hBorderColorButton, supportsBorderStyle && SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW },
+        {
+            hBorderColorButton,
+            supportsBorderStyle && SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW
+        },
         { hBorderWidthTrackBar, !fullscreen },
         { hFontButton, digital || calendarFontEnabled },
         { hSecondsCheck, supportsSeconds },
@@ -7403,7 +7757,12 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     for (int day = 0; day < ALARM_DAY_COUNT; day++) {
         controlStates.push_back(ControlState{ hAlarmDayChecks[day], supportsAlarm && GetCheck(hAlarmEnabledCheck) });
     }
-    const std::vector<HWND>* groups[] = { &generalControls, &appearanceControls, &alarmControls, &timeSignalControls };
+    const std::vector<HWND>* groups[] = {
+        &generalControls,
+        &appearanceControls,
+        &alarmControls,
+        &timeSignalControls
+    };
     for (const std::vector<HWND>* group : groups) {
         bool groupEnabled = singleSelection;
         if (group == &alarmControls || group == &timeSignalControls) {
@@ -7441,7 +7800,10 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT message, 
         information.cbSize = sizeof(information);
         RECT current = {};
         RECT comboRect = {};
-        if (position != nullptr && GetMonitorInfoW(monitor, &information) && GetWindowRect(window, &current) && GetWindowRect(combo, &comboRect)) {
+        if (position != nullptr
+                && GetMonitorInfoW(monitor, &information)
+                && GetWindowRect(window, &current)
+                && GetWindowRect(combo, &comboRect)) {
             LONG workWidth = information.rcWork.right - information.rcWork.left;
             if (workWidth > 0) {
                 LONG currentWidth = position->flags & SWP_NOSIZE ? current.right - current.left : position->cx;
@@ -7487,11 +7849,13 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
         std::wstring label = TimeZoneDisplayName(timeZones[index], utc);
         if (!changed) {
             int length = static_cast<int>(SendMessageW(combo, CB_GETLBTEXTLEN, index, 0));
-            if (length != static_cast<int>(label.size()) || SendMessageW(combo, CB_GETITEMDATA, index, 0) != static_cast<LRESULT>(index)) {
+            if (length != static_cast<int>(label.size())
+                    || SendMessageW(combo, CB_GETITEMDATA, index, 0) != static_cast<LRESULT>(index)) {
                 changed = true;
             } else {
                 std::wstring current(length + 1, L'\0');
-                changed = SendMessageW(combo, CB_GETLBTEXT, index, reinterpret_cast<LPARAM>(current.data())) != length || label != current.c_str();
+                changed = SendMessageW(combo, CB_GETLBTEXT, index,
+                    reinterpret_cast<LPARAM>(current.data())) != length || label != current.c_str();
             }
         }
         labels.push_back(std::move(label));
@@ -7504,7 +7868,8 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
     LRESULT selectedZone = selected == CB_ERR ? CB_ERR : SendMessageW(combo, CB_GETITEMDATA, selected, 0);
     SendMessageW(combo, CB_RESETCONTENT, 0, 0);
     for (size_t index = 0; index < labels.size(); index++) {
-        int item = static_cast<int>(SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(labels[index].c_str())));
+        int item = static_cast<int>(SendMessageW(combo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(labels[index].c_str())));
         if (item != CB_ERR && item != CB_ERRSPACE) {
             SendMessageW(combo, CB_SETITEMDATA, item, index);
             if (selectedZone == static_cast<LRESULT>(index)) {
@@ -7533,7 +7898,8 @@ static void UpdateComboBoxDropDownWidth(HWND combo) {
     HWND list = combo;
     if (GetComboBoxInfo(combo, &information) && information.hwndList != nullptr) {
         list = information.hwndList;
-        SetWindowSubclass(information.hwndList, ComboBoxDropDownSubclassProc, COMBO_BOX_DROPDOWN_SUBCLASS_ID, reinterpret_cast<DWORD_PTR>(combo));
+        SetWindowSubclass(information.hwndList, ComboBoxDropDownSubclassProc, COMBO_BOX_DROPDOWN_SUBCLASS_ID,
+            reinterpret_cast<DWORD_PTR>(combo));
     }
     HDC dc = GetDC(list);
     if (dc == nullptr) {
@@ -7640,7 +8006,8 @@ static void LoadDraftIntoControls() {
     SetComboSelection(hTypeCombo, config.type);
     SetCheck(hVisibleCheck, config.visible);
     SetCheck(hTopmostCheck, config.type == WIDGET_FULLSCREEN || config.topMost);
-    bool supportsSeconds = config.type != WIDGET_CALENDAR && (config.type != WIDGET_ANALOG || AnalogClockSupportsSeconds(config.size));
+    bool supportsSeconds = config.type != WIDGET_CALENDAR
+        && (config.type != WIDGET_ANALOG || AnalogClockSupportsSeconds(config.size));
     SetCheck(hSecondsCheck, config.showSeconds && supportsSeconds);
     SetCheck(hUtcCheck, config.showUtc);
     SetCheck(hUtcTextCheck, config.showUtcText);
@@ -7651,7 +8018,9 @@ static void LoadDraftIntoControls() {
         const AdditionalClockConfig& clock = config.additionalClocks[index];
         SetCheck(hAdditionalEnabledChecks[index], clock.enabled);
         SetControlText(hAdditionalNameEdits[index], clock.name.c_str());
-        SelectTimeZoneInCombo(clock.timeZoneKey.empty() ? config.timeZoneKey : clock.timeZoneKey, hAdditionalTimeZoneCombos[index]);
+        SelectTimeZoneInCombo(clock.timeZoneKey.empty()
+            ? config.timeZoneKey
+            : clock.timeZoneKey, hAdditionalTimeZoneCombos[index]);
     }
     LoadMonitorSelection(config);
     SetCheck(hBlackoutMonitorsCheck, config.blackoutOtherMonitors);
@@ -7765,7 +8134,8 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     config.visible = GetCheck(hVisibleCheck);
     config.topMost = GetCheck(hTopmostCheck);
     int selectedSize = GetSelectedAnalogClockSize(config.size);
-    bool preserveSeconds = config.type == WIDGET_CALENDAR || config.type == WIDGET_ANALOG && !AnalogClockSupportsSeconds(selectedSize);
+    bool preserveSeconds = config.type == WIDGET_CALENDAR
+        || config.type == WIDGET_ANALOG && !AnalogClockSupportsSeconds(selectedSize);
     if (!preserveSeconds) {
         config.showSeconds = GetCheck(hSecondsCheck);
     }
@@ -7774,7 +8144,8 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     if (IsWindowEnabled(hShowAmPmCheck)) {
         config.showAmPm = GetCheck(hShowAmPmCheck);
     }
-    config.timeFormat = std::clamp(static_cast<int>(SendMessageW(hTimeFormatCombo, CB_GETCURSEL, 0, 0)), 0, TIME_FORMAT_COUNT - 1);
+    config.timeFormat = std::clamp(static_cast<int>(SendMessageW(hTimeFormatCombo, CB_GETCURSEL, 0, 0)), 0,
+        TIME_FORMAT_COUNT - 1);
     config.language = LanguageFromCombo(hWidgetLanguageCombo);
     int zoneSelection = static_cast<int>(SendMessageW(hTimeZoneCombo, CB_GETCURSEL, 0, 0));
     if (zoneSelection != CB_ERR) {
@@ -7789,7 +8160,8 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
         clock.name = GetControlText(hAdditionalNameEdits[index]);
         int selected = static_cast<int>(SendMessageW(hAdditionalTimeZoneCombos[index], CB_GETCURSEL, 0, 0));
         if (selected != CB_ERR) {
-            size_t zone = static_cast<size_t>(SendMessageW(hAdditionalTimeZoneCombos[index], CB_GETITEMDATA, selected, 0));
+            size_t zone = static_cast<size_t>(SendMessageW(hAdditionalTimeZoneCombos[index], CB_GETITEMDATA,
+                selected, 0));
             if (zone < timeZones.size()) {
                 clock.timeZoneKey = timeZones[zone].TimeZoneKeyName;
             }
@@ -7819,7 +8191,9 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     config.callRemoteScript = remoteScriptEnabled;
     config.remoteScriptUrl = remoteScriptUrl;
     int timeSignal = static_cast<int>(SendMessageW(hTimeSignalCombo, CB_GETCURSEL, 0, 0));
-    config.timeSignal = supportsSound ? static_cast<TimeSignalMode>(std::clamp(timeSignal, 0, TIME_SIGNAL_COUNT - 1)) : TIME_SIGNAL_NONE;
+    config.timeSignal = supportsSound
+        ? static_cast<TimeSignalMode>(std::clamp(timeSignal, 0, TIME_SIGNAL_COUNT - 1))
+        : TIME_SIGNAL_NONE;
     return true;
 }
 
@@ -7949,7 +8323,8 @@ static void PasteWidgetsFromClipboard() {
     }
     CloseClipboard();
     std::vector<WidgetConfig> originals;
-    if (!DeserializeWidgetClipboardData(data, appLanguage, CreateStoredWidgetDefaults, &originals) || !SaveControlsToDraft(true)) {
+    if (!DeserializeWidgetClipboardData(data, appLanguage, CreateStoredWidgetDefaults, &originals)
+            || !SaveControlsToDraft(true)) {
         return;
     }
     AppendWidgetCopies(originals);
@@ -8011,7 +8386,10 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         const AdditionalClockConfig& first = left.additionalClocks[index];
         const AdditionalClockConfig& second = right.additionalClocks[index];
-        if (first.enabled != second.enabled || first.name != second.name || first.timeZoneKey != second.timeZoneKey || first.size != second.size) {
+        if (first.enabled != second.enabled
+                || first.name != second.name
+                || first.timeZoneKey != second.timeZoneKey
+                || first.size != second.size) {
             return false;
         }
     }
@@ -8082,19 +8460,21 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
 /// Treats invalid current input as a pending change so Apply can remain available for validation.
 static bool HasPendingSettingsChanges() {
     if (LanguageFromCombo(hLanguageCombo) != appLanguage
-        || GetCheck(hDisableThemesCheck) != themesDisabled
-        || GetCheck(hStartWithWindowsCheck) != startWithWindows
-        || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
-        || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
-        || SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing) != appFontAntialiasing
-        || settingsAppFontFace != appFontFace
-        || settingsAppFontDialogSize != appFontDialogSize
-        || settingsAppFontWeight != appFontWeight
-        || settingsAppFontItalic != appFontItalic
-        || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) != (IsTimeSignalGeneratorRequired() || generatedTimeSignal ? 0 : 1)
-        || SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0) != TimeSignalVolumeSliderPosition(timeSignalVolume)
-        || SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) != (useNtpTime ? 1 : 0)
-        || SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0) != ntpPreset) {
+            || GetCheck(hDisableThemesCheck) != themesDisabled
+            || GetCheck(hStartWithWindowsCheck) != startWithWindows
+            || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
+            || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
+            || SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing) != appFontAntialiasing
+            || settingsAppFontFace != appFontFace
+            || settingsAppFontDialogSize != appFontDialogSize
+            || settingsAppFontWeight != appFontWeight
+            || settingsAppFontItalic != appFontItalic
+            || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) != (IsTimeSignalGeneratorRequired()
+                || generatedTimeSignal ? 0 : 1)
+            || SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0) !=
+                TimeSignalVolumeSliderPosition(timeSignalVolume)
+            || SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) != (useNtpTime ? 1 : 0)
+            || SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0) != ntpPreset) {
         return true;
     }
     if (ntpPreset == NTP_PRESET_CUSTOM && GetControlText(hNtpServersEdit) != ntpServers) {
@@ -8226,12 +8606,16 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
         int newHeight = 0;
         GetWidgetDimensions(configuration, &newWidth, &newHeight);
         POINT position = { targetX, targetY };
-        if (GetPositionPreservingWorkAreaAttachment(widget->window, newWidth, newHeight, &position, &horizontalAttachment)) {
+        if (GetPositionPreservingWorkAreaAttachment(widget->window, newWidth, newHeight, &position,
+            &horizontalAttachment)) {
             targetX = position.x;
             targetY = position.y;
         }
     }
-    if (hasPosition && !horizontalAttachment && widget->config.type == WIDGET_PANEL && configuration.type == WIDGET_PANEL) {
+    if (hasPosition
+            && !horizontalAttachment
+            && widget->config.type == WIDGET_PANEL
+            && configuration.type == WIDGET_PANEL) {
         POINT previousClockPosition = {};
         POINT newClockPosition = {};
         GetPanelLayout(widget->config, nullptr, &previousClockPosition, nullptr);
@@ -8244,7 +8628,9 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
         positionedConfiguration.x = targetX;
         positionedConfiguration.y = targetY;
     }
-    if (widget->config.type == WIDGET_PANEL && configuration.type == WIDGET_PANEL && RecreatePanelWidgetBuffered(widget, positionedConfiguration)) {
+    if (widget->config.type == WIDGET_PANEL
+            && configuration.type == WIDGET_PANEL
+            && RecreatePanelWidgetBuffered(widget, positionedConfiguration)) {
         return;
     }
     bool alarmActive = widget->alarmActive;
@@ -8388,8 +8774,10 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
     }
     CopyWidgetAppearance(&widget->config, appearance);
     if ((panelFontChanged || fontAntialiasingChanged) && widget->config.type == WIDGET_PANEL) {
-        ApplyPanelLinkFont(widget->panelDateLink, widget->config.panelTopFont, widget->config.fontAntialiasing, &widget->panelDateFont);
-        ApplyPanelLinkFont(widget->panelTimeZoneLink, widget->config.panelBottomFont, widget->config.fontAntialiasing, &widget->panelTimeZoneFont);
+        ApplyPanelLinkFont(widget->panelDateLink, widget->config.panelTopFont, widget->config.fontAntialiasing,
+            &widget->panelDateFont);
+        ApplyPanelLinkFont(widget->panelTimeZoneLink, widget->config.panelBottomFont, widget->config.fontAntialiasing,
+            &widget->panelTimeZoneFont);
         widget->rendered = false;
     }
     if ((fontAntialiasingChanged || fontSelectionChanged) && widget->calendarChild != nullptr) {
@@ -8468,7 +8856,8 @@ static void PreviewSelectedWidgetAppearance(bool structuralChange) {
     if (widget == nullptr || widget->config.type != appearance.type) {
         return;
     }
-    if (std::find(settingsAppearancePreviewIds.begin(), settingsAppearancePreviewIds.end(), appearance.id) == settingsAppearancePreviewIds.end()) {
+    if (std::find(settingsAppearancePreviewIds.begin(), settingsAppearancePreviewIds.end(), appearance.id) ==
+            settingsAppearancePreviewIds.end()) {
         settingsAppearancePreviewIds.push_back(appearance.id);
     }
     settingsAppearancePreviewActive = true;
@@ -8525,14 +8914,14 @@ static bool SelectDraftWidgetById(int widgetId) {
 /// Applies a committed configuration with the least required window work, preserving unchanged widgets and updating
 /// runtime-only fields in place.
 static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configuration, bool previousThemesDisabled) {
-    bool previousThemeDisabled = previousThemesDisabled || widget->config.disableThemes;
-    bool newThemeDisabled = themesDisabled || configuration.disableThemes;
-    bool themeChanged = previousThemeDisabled != newThemeDisabled;
     if (widget->window == nullptr) {
         widget->config = configuration;
         CreateWidgetWindow(widget);
         return;
     }
+    bool previousThemeDisabled = previousThemesDisabled || widget->config.disableThemes;
+    bool newThemeDisabled = themesDisabled || configuration.disableThemes;
+    bool themeChanged = previousThemeDisabled != newThemeDisabled;
     if (!themeChanged && WidgetConfigurationsEqual(widget->config, configuration)) {
         return;
     }
@@ -8656,8 +9045,11 @@ static void ApplySettingsDraft() {
                     GetWidgetDimensions(settingsDraft[draftIndex], &newWidth, &newHeight);
                     POINT position = { rect.left, rect.top };
                     bool horizontalAttachment = false;
-                    GetPositionPreservingWorkAreaAttachment(current->window, newWidth, newHeight, &position, &horizontalAttachment);
-                    if (!horizontalAttachment && current->config.type == WIDGET_PANEL && settingsDraft[draftIndex].type == WIDGET_PANEL) {
+                    GetPositionPreservingWorkAreaAttachment(current->window, newWidth, newHeight, &position,
+                        &horizontalAttachment);
+                    if (!horizontalAttachment
+                            && current->config.type == WIDGET_PANEL
+                            && settingsDraft[draftIndex].type == WIDGET_PANEL) {
                         POINT currentClockPosition = {};
                         POINT draftClockPosition = {};
                         GetPanelLayout(current->config, nullptr, &currentClockPosition, nullptr);
@@ -8696,14 +9088,19 @@ static void ApplySettingsDraft() {
         }
     }
     bool newUseNtpTime = SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1;
-    int newNtpPreset = std::clamp(static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0)), 0, NTP_PRESET_COUNT - 1);
-    std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM ? GetControlText(hNtpServersEdit) : NtpServersForPreset(newNtpPreset);
+    int newNtpPreset = std::clamp(static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0)), 0,
+        NTP_PRESET_COUNT - 1);
+    std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
+        ? GetControlText(hNtpServersEdit)
+        : NtpServersForPreset(newNtpPreset);
     if (!HasNtpServers(newNtpServers)) {
         newNtpPreset = NTP_PRESET_GLOBAL;
         newNtpServers = NtpServersForPreset(newNtpPreset);
     }
     bool previousUseNtpTime = useNtpTime;
-    bool ntpSettingsChanged = previousUseNtpTime != newUseNtpTime || ntpPreset != newNtpPreset || ntpServers != newNtpServers;
+    bool ntpSettingsChanged = previousUseNtpTime != newUseNtpTime
+        || ntpPreset != newNtpPreset
+        || ntpServers != newNtpServers;
     bool keepCurrentNtpTime = previousUseNtpTime && newUseNtpTime && ntpTimeValid.load();
     useNtpTime = newUseNtpTime;
     ntpPreset = newNtpPreset;
@@ -8716,9 +9113,12 @@ static void ApplySettingsDraft() {
         }
         ntpLastQueryFailed = false;
         lastNtpAttemptTick = 0;
+        nextNtpAttemptTick = 0;
     }
     if (previousThemesDisabled != themesDisabled) {
-        SetThemeAppProperties(themesDisabled ? STAP_ALLOW_NONCLIENT : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
+        SetThemeAppProperties(themesDisabled
+            ? STAP_ALLOW_NONCLIENT
+            : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
     }
     for (const WidgetConfig& configuration : settingsDraft) {
         Widget* current = FindWidgetById(configuration.id);
@@ -8797,7 +9197,9 @@ static void ApplySettingsDraft() {
         SetWindowTextW(hNtpServersEdit, ntpServers.c_str());
     }
     UpdateNtpSettingsControls();
-    if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size()) && GetSelectedWidgetIndices().size() == 1) {
+    if (selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+            && GetSelectedWidgetIndices().size() == 1) {
         const WidgetConfig& configuration = settingsDraft[selectedDraftIndex];
         if (GetControlText(hNameEdit) != configuration.name) {
             SetWindowTextW(hNameEdit, configuration.name.c_str());
@@ -8858,7 +9260,11 @@ static void SynchronizeOpenSettings(const Widget* widget, int command) {
     if (hSettings == nullptr || !IsWindow(hSettings) || widget == nullptr) {
         return;
     }
-    std::vector<WidgetConfig>* groups[] = { &settingsDraft, &settingsAppliedWidgets, &settingsAppearanceOriginals };
+    std::vector<WidgetConfig>* groups[] = {
+        &settingsDraft,
+        &settingsAppliedWidgets,
+        &settingsAppearanceOriginals
+    };
     for (std::vector<WidgetConfig>* group : groups) {
         for (WidgetConfig& configuration : *group) {
             if (configuration.id == widget->config.id) {
@@ -8938,7 +9344,8 @@ static bool ChooseButtonColor(HWND button) {
 /// Updates font-button captions and the selected widget's font description without rewriting unchanged text.
 static void UpdateFontDescription(const WidgetConfig& config) {
     if (hFontButton != nullptr) {
-        std::wstring caption = config.type == WIDGET_CALENDAR || config.type == WIDGET_PANEL ? CALENDAR_FONT_LABELS[appLanguage] : config.fontFace + L"…";
+        std::wstring caption = config.type == WIDGET_CALENDAR
+            || config.type == WIDGET_PANEL ? CALENDAR_FONT_LABELS[appLanguage] : config.fontFace + L"…";
         SetControlCaption(hFontButton, caption.c_str());
     }
     if (hPanelTopFontButton != nullptr) {
@@ -8997,7 +9404,9 @@ static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT message, WPARAM, LPARA
         return 0;
     }
     const CHOOSEFONTW* choice = reinterpret_cast<const CHOOSEFONTW*>(parameter);
-    FontDialogMode mode = choice == nullptr ? FONT_DIALOG_FACE_AND_STYLE : static_cast<FontDialogMode>(choice->lCustData);
+    FontDialogMode mode = choice == nullptr
+        ? FONT_DIALOG_FACE_AND_STYLE
+        : static_cast<FontDialogMode>(choice->lCustData);
     SetFontDialogControlVisibility(dialog, mode);
     RECT faceRect = {};
     RECT styleRect = {};
@@ -9055,14 +9464,15 @@ static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT message, WPARAM, LPARA
     int newClientHeight = buttonY + buttonHeight + verticalMargin;
     int nonClientWidth = windowRect.right - windowRect.left - (clientRect.right - clientRect.left);
     int nonClientHeight = windowRect.bottom - windowRect.top - (clientRect.bottom - clientRect.top);
-    SetWindowPos(dialog, nullptr, 0, 0, newClientWidth + nonClientWidth, newClientHeight + nonClientHeight, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+    SetWindowPos(dialog, nullptr, 0, 0, newClientWidth + nonClientWidth, newClientHeight + nonClientHeight,
+        SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
     return 0;
 }
 
 /// Opens the customized font dialog with size in tenths of a point and copies accepted attributes back to the caller.
 /// Returns false for missing required outputs or a canceled or unsuccessful dialog.
-static bool ChooseFontAttributes(HWND owner, std::wstring* face, int* sizeTenths, int* weight, bool* italic, BYTE* charSet, FontDialogMode mode,
-    bool* underline = nullptr, bool* strikeOut = nullptr) {
+static bool ChooseFontAttributes(HWND owner, std::wstring* face, int* sizeTenths, int* weight, bool* italic,
+        BYTE* charSet, FontDialogMode mode, bool* underline = nullptr, bool* strikeOut = nullptr) {
     if (face == nullptr || sizeTenths == nullptr || weight == nullptr || italic == nullptr || charSet == nullptr) {
         return false;
     }
@@ -9117,8 +9527,8 @@ static void ChooseWidgetFont() {
     }
     WidgetConfig& config = settingsDraft[selectedDraftIndex];
     FontDialogMode mode = config.type == WIDGET_DIGITAL ? FONT_DIALOG_WITH_SIZE : FONT_DIALOG_FACE_AND_STYLE;
-    if (!ChooseFontAttributes(hSettings, &config.fontFace, &config.fontDialogSize, &config.fontWeight, &config.fontItalic,
-        &config.fontCharSet, mode, &config.fontUnderline, &config.fontStrikeOut)) {
+    if (!ChooseFontAttributes(hSettings, &config.fontFace, &config.fontDialogSize, &config.fontWeight,
+        &config.fontItalic, &config.fontCharSet, mode, &config.fontUnderline, &config.fontStrikeOut)) {
         return;
     }
     if (config.type == WIDGET_DIGITAL) {
@@ -9136,8 +9546,8 @@ static void ChoosePanelFont(FontSelection* selection) {
     if (selection == nullptr) {
         return;
     }
-    if (!ChooseFontAttributes(hSettings, &selection->face, &selection->dialogSize, &selection->weight, &selection->italic,
-        &selection->charSet, FONT_DIALOG_WITH_SIZE, &selection->underline, &selection->strikeOut)) {
+    if (!ChooseFontAttributes(hSettings, &selection->face, &selection->dialogSize, &selection->weight,
+        &selection->italic, &selection->charSet, FONT_DIALOG_WITH_SIZE, &selection->underline, &selection->strikeOut)) {
         return;
     }
     PreviewSelectedWidgetAppearance(false);
@@ -9155,8 +9565,8 @@ static void ChooseApplicationFont() {
             charSet = metrics.lfMessageFont.lfCharSet;
         }
     }
-    if (ChooseFontAttributes(hSettings, &selectedFace, &settingsAppFontDialogSize, &settingsAppFontWeight, &settingsAppFontItalic,
-        &charSet, FONT_DIALOG_FACE_AND_STYLE)) {
+    if (ChooseFontAttributes(hSettings, &selectedFace, &settingsAppFontDialogSize, &settingsAppFontWeight,
+        &settingsAppFontItalic, &charSet, FONT_DIALOG_FACE_AND_STYLE)) {
         settingsAppFontFace = selectedFace;
         UpdateApplicationFontButtons();
         ApplyApplicationFontPreview();
@@ -9260,8 +9670,9 @@ static void TestSettingsCommand() {
             && selectedDraftIndex < static_cast<int>(settingsDraft.size())
             && settingsDraft[selectedDraftIndex].soundsMuted;
         settingsPreviewVolume = std::make_shared<std::atomic<int>>(SelectedAlarmVolume());
-        StartAudioPlaybackAsync(path, GetCheck(hLoopAudioCheck), muted, settingsPreviewVolume, hController, WM_SETTINGS_AUDIO_FINISHED,
-            -1, settingsPreviewGeneration, &settingsPreviewStopEvent, &settingsPreviewMuteEvent);
+        StartAudioPlaybackAsync(path, GetCheck(hLoopAudioCheck), muted, settingsPreviewVolume,
+            hController, WM_SETTINGS_AUDIO_FINISHED, -1, settingsPreviewGeneration, &settingsPreviewStopEvent,
+            &settingsPreviewMuteEvent);
     } else {
         StartLocalCommandAsync(path);
     }
@@ -9315,7 +9726,8 @@ static void CreateSettingsControls() {
     }
     SendMessageW(hAddType, CB_SETCURSEL, lastAddedWidgetType, 0);
     AddControl(0, L"BUTTON", Mnemonic(TXT_ADD).c_str(), WS_TABSTOP, 228, 5, 84, 27, hSettings, ID_ADD);
-    hWidgetList = AddControl(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_TABSTOP | LBS_NOTIFY | LBS_EXTENDEDSEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL,
+    hWidgetList = AddControl(WS_EX_CLIENTEDGE, L"LISTBOX", L"",
+        WS_TABSTOP | LBS_NOTIFY | LBS_EXTENDEDSEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL,
         10, 39, 302, 368, hSettings, ID_LIST_WIDGETS);
     AddControl(0, L"BUTTON", Mnemonic(TXT_REMOVE).c_str(), WS_TABSTOP, 10, 413, 148, 27, hSettings, ID_REMOVE);
     AddControl(0, L"BUTTON", Mnemonic(TXT_DUPLICATE).c_str(), WS_TABSTOP, 164, 413, 148, 27, hSettings, ID_DUPLICATE);
@@ -9397,19 +9809,22 @@ static void CreateSettingsControls() {
     hWidgetLanguageCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         fieldLeft, 176, field, 220, hGeneralPage, ID_WIDGET_LANGUAGE, &generalControls);
     PopulateLanguageCombo(hWidgetLanguageCombo);
-    hTimeFormatLabel = AddUnderlayStatic(hGeneralPage, TIME_FORMAT_LABELS[appLanguage], WS_VISIBLE, left, 212, 22, &generalControls);
+    hTimeFormatLabel = AddUnderlayStatic(hGeneralPage, TIME_FORMAT_LABELS[appLanguage], WS_VISIBLE, left, 212, 22,
+        &generalControls);
     hTimeFormatCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         fieldLeft, 208, 126, 120, hGeneralPage, ID_TIME_FORMAT, &generalControls);
     for (int mode = 0; mode < TIME_FORMAT_COUNT; mode++) {
-        SendMessageW(hTimeFormatCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(TIME_FORMAT_MODE_LABELS[appLanguage][mode]));
+        SendMessageW(hTimeFormatCombo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(TIME_FORMAT_MODE_LABELS[appLanguage][mode]));
     }
     hShowAmPmCheck = AddControl(0, L"BUTTON", L"AM/PM", WS_TABSTOP | BS_AUTOCHECKBOX,
         left + 300, 208, 94, 24, hGeneralPage, ID_SHOW_AM_PM, &generalControls);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         int top = 234 + index * 80;
         std::wstring label = AdditionalClockLabel(appLanguage, index, true);
-        hAdditionalEnabledChecks[index] = AddControl(0, L"BUTTON", label.c_str(), WS_TABSTOP | WS_CLIPSIBLINGS | BS_AUTOCHECKBOX,
-            left, top, 244, 24, hGeneralPage, ID_ADDITIONAL_ENABLED_BASE + index, &generalControls);
+        hAdditionalEnabledChecks[index] = AddControl(0, L"BUTTON", label.c_str(),
+            WS_TABSTOP | WS_CLIPSIBLINGS | BS_AUTOCHECKBOX, left, top, 244, 24, hGeneralPage,
+            ID_ADDITIONAL_ENABLED_BASE + index, &generalControls);
         hAdditionalNameLabels[index] = AddStatic(hGeneralPage, TXT_NAME, left, top + 28, 22, &generalControls);
         hAdditionalNameEdits[index] = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL,
             fieldLeft, top + 24, field, 24, hGeneralPage, ID_ADDITIONAL_NAME_BASE + index, &generalControls);
@@ -9421,10 +9836,11 @@ static void CreateSettingsControls() {
         FillTimeZoneCombo(hAdditionalTimeZoneCombos[index]);
     }
     hMonitorLabel = AddUnderlayStatic(hGeneralPage, MONITOR_LABELS[appLanguage], 0, left, 254, 22, &generalControls);
-    hMonitorList = AddControl(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_TABSTOP | LBS_EXTENDEDSEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL,
+    hMonitorList = AddControl(WS_EX_CLIENTEDGE, L"LISTBOX", L"",
+        WS_TABSTOP | LBS_EXTENDEDSEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL,
         fieldLeft, 250, field, 64, hGeneralPage, ID_MONITOR_LIST, &generalControls);
-    hBlackoutMonitorsCheck = AddControl(0, L"BUTTON", BLACKOUT_MONITOR_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
-        left, 318, 350, 24, hGeneralPage, ID_BLACKOUT_MONITORS, &generalControls);
+    hBlackoutMonitorsCheck = AddControl(0, L"BUTTON", BLACKOUT_MONITOR_LABELS[appLanguage],
+        WS_TABSTOP | BS_AUTOCHECKBOX, left, 318, 350, 24, hGeneralPage, ID_BLACKOUT_MONITORS, &generalControls);
     hSizeLabel = AddStatic(hAppearancePage, TXT_SIZE, 8, 12, 22, &appearanceControls);
     hSizeCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         148, 8, 87, 180, hAppearancePage, ID_SIZE, &appearanceControls);
@@ -9478,7 +9894,8 @@ static void CreateSettingsControls() {
         52, 130, 178, 27, hAppearancePage, ID_ALARM_TEXT_COLOR, &appearanceControls);
     hAlarmBackgroundColorButton = AddControl(0, L"BUTTON", ALARM_BACKGROUND_COLOR_LABELS[appLanguage], WS_TABSTOP,
         238, 130, 178, 27, hAppearancePage, ID_ALARM_BACKGROUND_COLOR, &appearanceControls);
-    hPaddingLabel = AddUnderlayStatic(hAppearancePage, PADDING_LABELS[appLanguage], WS_VISIBLE, 8, 169, 22, &appearanceControls);
+    hPaddingLabel = AddUnderlayStatic(hAppearancePage, PADDING_LABELS[appLanguage], WS_VISIBLE,
+        8, 169, 22, &appearanceControls);
     hPaddingTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
         121, 162, 250, 32, hAppearancePage, ID_PADDING, &appearanceControls);
     SendMessageW(hPaddingTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_PADDING_MAX));
@@ -9488,7 +9905,8 @@ static void CreateSettingsControls() {
     hPaddingValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
         368, 169, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
     appearanceControls.push_back(hPaddingValue);
-    hBorderWidthLabel = AddUnderlayStatic(hAppearancePage, BORDER_WIDTH_LABELS[appLanguage], WS_VISIBLE, 8, 201, 22, &appearanceControls);
+    hBorderWidthLabel = AddUnderlayStatic(hAppearancePage, BORDER_WIDTH_LABELS[appLanguage], WS_VISIBLE,
+        8, 201, 22, &appearanceControls);
     hBorderWidthTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
         121, 194, 250, 32, hAppearancePage, ID_BORDER_WIDTH, &appearanceControls);
     SendMessageW(hBorderWidthTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_BORDER_WIDTH_MAX));
@@ -9498,7 +9916,8 @@ static void CreateSettingsControls() {
     hBorderWidthValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
         368, 201, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
     appearanceControls.push_back(hBorderWidthValue);
-    hBorderLabel = AddUnderlayStatic(hAppearancePage, BORDER_LABELS[appLanguage], WS_VISIBLE, 8, 233, 22, &appearanceControls);
+    hBorderLabel = AddUnderlayStatic(hAppearancePage, BORDER_LABELS[appLanguage], WS_VISIBLE,
+        8, 233, 22, &appearanceControls);
     hBorderTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
         121, 226, 111, 32, hAppearancePage, ID_BORDER, &appearanceControls);
     SendMessageW(hBorderTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, 3));
@@ -9507,13 +9926,16 @@ static void CreateSettingsControls() {
     SendMessageW(hBorderTrackBar, TBM_SETPAGESIZE, 0, 1);
     hBorderColorButton = AddControl(0, L"BUTTON", BORDER_COLOR_LABELS[appLanguage], WS_TABSTOP,
         238, 228, 178, 27, hAppearancePage, ID_BORDER_COLOR, &appearanceControls);
-    hLeadingZeroLabel = AddUnderlayStatic(hAppearancePage, T(TXT_LEADING_ZERO), WS_VISIBLE, 8, 262, 22, &appearanceControls);
+    hLeadingZeroLabel = AddUnderlayStatic(hAppearancePage, T(TXT_LEADING_ZERO), WS_VISIBLE,
+        8, 262, 22, &appearanceControls);
     hLeadingZeroCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         148, 258, 87, 120, hAppearancePage, ID_LEADING_ZERO, &appearanceControls);
     for (int mode = 0; mode < LEADING_ZERO_MODE_COUNT; mode++) {
-        SendMessageW(hLeadingZeroCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LEADING_ZERO_MODE_LABELS[appLanguage][mode]));
+        SendMessageW(hLeadingZeroCombo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(LEADING_ZERO_MODE_LABELS[appLanguage][mode]));
     }
-    hTransparentBackgroundCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_TRANSPARENT_BG).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
+    hTransparentBackgroundCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_TRANSPARENT_BG).c_str(),
+        WS_TABSTOP | BS_AUTOCHECKBOX,
         242, 258, 174, 24, hAppearancePage, ID_TRANSPARENT_BG, &appearanceControls);
     hWeekNumbersCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_WEEK_NUMBERS).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
         8, 110, 150, 24, hAppearancePage, ID_WEEK_NUMBERS, &appearanceControls);
@@ -9521,15 +9943,17 @@ static void CreateSettingsControls() {
         8, 140, 205, 24, hAppearancePage, ID_SUNDAY_FIRST, &appearanceControls);
     hShowTodayCheck = AddControl(0, L"BUTTON", SHOW_TODAY_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         8, 170, 364, 24, hAppearancePage, ID_SHOW_TODAY, &appearanceControls);
-    hDateFormatLabel = AddUnderlayStatic(hAppearancePage, DATE_FORMAT_LABELS[appLanguage], WS_VISIBLE, 8, 110, 22, &appearanceControls);
+    hDateFormatLabel = AddUnderlayStatic(hAppearancePage, DATE_FORMAT_LABELS[appLanguage], WS_VISIBLE,
+        8, 110, 22, &appearanceControls);
     hDateFormatCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL,
         191, 106, 225, 240, hAppearancePage, ID_DATE_FORMAT, &appearanceControls);
-    hWidgetAntialiasLabel = AddUnderlayStatic(hAppearancePage, ANTIALIASING_LABELS[appLanguage], WS_VISIBLE, 8, 296, 22, &appearanceControls);
+    hWidgetAntialiasLabel = AddUnderlayStatic(hAppearancePage, ANTIALIASING_LABELS[appLanguage], WS_VISIBLE,
+        8, 296, 22, &appearanceControls);
     hWidgetAntialiasCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         148, 292, 87, 100, hAppearancePage, ID_WIDGET_ANTIALIAS, &appearanceControls);
     PopulateFontAntialiasingCombo(hWidgetAntialiasCombo);
-    hWidgetDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
-        243, 292, 130, 24, hAppearancePage, ID_WIDGET_DISABLE_THEMES, &appearanceControls);
+    hWidgetDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(),
+        WS_TABSTOP | BS_AUTOCHECKBOX, 243, 292, 130, 24, hAppearancePage, ID_WIDGET_DISABLE_THEMES, &appearanceControls);
     hDefaultAppearanceButton = AddControl(0, L"BUTTON", DEFAULT_APPEARANCE_LABELS[appLanguage], WS_TABSTOP,
         238, 318, 178, 27, hAppearancePage, ID_DEFAULT_APPEARANCE, &appearanceControls);
     int y = 12;
@@ -9552,17 +9976,22 @@ static void CreateSettingsControls() {
     hRunCommandCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_RUN_FILE).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 290, 24, hAlarmPage, ID_RUN_COMMAND, &alarmControls);
     y += 30;
-    hCommandEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL, left, y, 275, 24, hAlarmPage, ID_COMMAND, &alarmControls);
-    hBrowseButton = AddControl(0, L"BUTTON", Mnemonic(TXT_BROWSE).c_str(), WS_TABSTOP, left + 282, y - 3, 88, 27, hAlarmPage, ID_BROWSE, &alarmControls);
+    hCommandEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL, left, y, 275, 24,
+        hAlarmPage, ID_COMMAND, &alarmControls);
+    hBrowseButton = AddControl(0, L"BUTTON", Mnemonic(TXT_BROWSE).c_str(), WS_TABSTOP, left + 282, y - 3, 88, 27,
+        hAlarmPage, ID_BROWSE, &alarmControls);
     y += 32;
     hTestCommandButton = AddControl(0, L"BUTTON", TEST_COMMAND_LABELS[appLanguage], WS_TABSTOP,
         left, y - 2, 102, 27, hAlarmPage, ID_TEST_COMMAND, &alarmControls);
     hLoopAudioCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_LOOP_AUDIO).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
         left + 110, y, 260, 24, hAlarmPage, ID_LOOP_AUDIO, &alarmControls);
     y += 34;
-    hAlarmVolumeLabel = AddUnderlayStatic(hAlarmPage, ALARM_VOLUME_LABELS[appLanguage], WS_VISIBLE, left, y + 7, 22, &alarmControls);
-    hAlarmVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, y, 174, 32, hAlarmPage, ID_ALARM_VOLUME, &alarmControls);
-    SendMessageW(hAlarmVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN, TIME_SIGNAL_VOLUME_SLIDER_MAX));
+    hAlarmVolumeLabel = AddUnderlayStatic(hAlarmPage, ALARM_VOLUME_LABELS[appLanguage], WS_VISIBLE,
+        left, y + 7, 22, &alarmControls);
+    hAlarmVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, y, 174, 32,
+        hAlarmPage, ID_ALARM_VOLUME, &alarmControls);
+    SendMessageW(hAlarmVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
+        TIME_SIGNAL_VOLUME_SLIDER_MAX));
     for (int decibels = -54; decibels < 0; decibels += 6) {
         SendMessageW(hAlarmVolumeTrackBar, TBM_SETTIC, 0, AlarmVolumeSliderPosition(decibels * 100));
     }
@@ -9573,17 +10002,21 @@ static void CreateSettingsControls() {
     hRemoteScriptCheck = AddControl(0, L"BUTTON", REMOTE_SCRIPT_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 300, 24, hAlarmPage, ID_REMOTE_SCRIPT, &alarmControls);
     y += 30;
-    hRemoteScriptLabel = AddUnderlayStatic(hAlarmPage, REMOTE_SCRIPT_URL_LABELS[appLanguage], WS_VISIBLE, left, y + 3, 22, &alarmControls);
+    hRemoteScriptLabel = AddUnderlayStatic(hAlarmPage, REMOTE_SCRIPT_URL_LABELS[appLanguage], WS_VISIBLE,
+        left, y + 3, 22, &alarmControls);
     hRemoteScriptEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL,
         left + 96, y, 274, 24, hAlarmPage, ID_REMOTE_SCRIPT_URL, &alarmControls);
     y += 34;
-    hAlarmTimeSignalCheck = AddControl(0, L"BUTTON", ALARM_TIME_SIGNAL_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
+    hAlarmTimeSignalCheck = AddControl(0, L"BUTTON", ALARM_TIME_SIGNAL_LABELS[appLanguage],
+        WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 360, 24, hAlarmPage, ID_ALARM_TIME_SIGNAL, &alarmControls);
-    AddUnderlayStatic(hTimeSignalPage, TIME_SIGNAL_FIELD_LABELS[appLanguage], WS_VISIBLE, left, 16, 22, &timeSignalControls);
+    AddUnderlayStatic(hTimeSignalPage, TIME_SIGNAL_FIELD_LABELS[appLanguage], WS_VISIBLE,
+        left, 16, 22, &timeSignalControls);
     hTimeSignalCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         fieldLeft + 50, 12, field - 50, 220, hTimeSignalPage, ID_TIME_SIGNAL, &timeSignalControls);
     for (int mode = 0; mode < TIME_SIGNAL_COUNT; mode++) {
-        SendMessageW(hTimeSignalCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(TIME_SIGNAL_MODE_LABELS[appLanguage][mode]));
+        SendMessageW(hTimeSignalCombo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(TIME_SIGNAL_MODE_LABELS[appLanguage][mode]));
     }
     HWND timeSignalNote = AddControl(0, L"STATIC", TIME_SIGNAL_NOTE[appLanguage], SS_OWNERDRAW,
         left, 56, 364, pageHeight - 64, hTimeSignalPage, ID_TIME_SIGNAL_NOTE);
@@ -9594,14 +10027,16 @@ static void CreateSettingsControls() {
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(SYSTEM_TIME_LABELS[appLanguage]));
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_TIME_LABELS[appLanguage]));
     SendMessageW(hTimeSourceCombo, CB_SETCURSEL, useNtpTime ? 1 : 0, 0);
-    hNtpPresetLabel = AddUnderlayStatic(hTimePage, NTP_PRESET_FIELD_LABELS[appLanguage], WS_VISIBLE, 8, 50, 22, &timeControls);
+    hNtpPresetLabel = AddUnderlayStatic(hTimePage, NTP_PRESET_FIELD_LABELS[appLanguage], WS_VISIBLE,
+        8, 50, 22, &timeControls);
     hNtpPresetCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         132, 46, 240, 220, hTimePage, ID_NTP_PRESET, &timeControls);
     for (int preset = 0; preset < NTP_PRESET_COUNT; preset++) {
         SendMessageW(hNtpPresetCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_PRESET_LABELS[appLanguage][preset]));
     }
     SendMessageW(hNtpPresetCombo, CB_SETCURSEL, ntpPreset, 0);
-    hNtpServersLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", NTP_SERVERS_LABELS[appLanguage], WS_CHILD | WS_VISIBLE,
+    hNtpServersLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", NTP_SERVERS_LABELS[appLanguage],
+        WS_CHILD | WS_VISIBLE,
         8, 82, 364, 22, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hNtpServersLabel);
     hNtpServersEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", ntpServers.c_str(), WS_TABSTOP | ES_AUTOHSCROLL,
@@ -9611,31 +10046,38 @@ static void CreateSettingsControls() {
     hNtpStatus = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_LEFT,
         8, 178, 364, 66, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hNtpStatus);
-    HWND timeGlobalNote = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", TIME_GLOBAL_NOTE[appLanguage], WS_CHILD | WS_VISIBLE | SS_LEFT,
+    HWND timeGlobalNote = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", TIME_GLOBAL_NOTE[appLanguage],
+        WS_CHILD | WS_VISIBLE | SS_LEFT,
         8, 264, 364, 42, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(timeGlobalNote);
     UpdateNtpSettingsControls();
-    hAppFontLabel = AddUnderlayStatic(hApplicationPage, APPLICATION_FONT_LABELS[appLanguage], WS_VISIBLE, 8, 18, 22, &applicationControls);
-    hAppFontButton = AddControl(0, L"BUTTON", L"", WS_TABSTOP, 174, 12, 154, 27, hApplicationPage, ID_APP_FONT, &applicationControls);
+    hAppFontLabel = AddUnderlayStatic(hApplicationPage, APPLICATION_FONT_LABELS[appLanguage], WS_VISIBLE,
+        8, 18, 22, &applicationControls);
+    hAppFontButton = AddControl(0, L"BUTTON", L"", WS_TABSTOP, 174, 12, 154, 27, hApplicationPage,
+        ID_APP_FONT, &applicationControls);
     hAppFontDefaultButton = AddControl(0, L"BUTTON", DEFAULT_FONT_LABELS[appLanguage], WS_TABSTOP,
         334, 12, 84, 27, hApplicationPage, ID_APP_FONT_DEFAULT, &applicationControls);
     UpdateApplicationFontButtons();
-    AddUnderlayStatic(hApplicationPage, ANTIALIASING_LABELS[appLanguage], WS_VISIBLE, 8, 50, 22, &applicationControls);
+    AddUnderlayStatic(hApplicationPage, ANTIALIASING_LABELS[appLanguage], WS_VISIBLE,
+        8, 50, 22, &applicationControls);
     hAppAntialiasCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         174, 46, 244, 100, hApplicationPage, ID_APP_ANTIALIAS, &applicationControls);
     PopulateFontAntialiasingCombo(hAppAntialiasCombo);
     SelectFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
-    AddUnderlayStatic(hApplicationPage, APPLICATION_LANGUAGE_LABELS[appLanguage], WS_VISIBLE, 8, 84, 22, &applicationControls);
+    AddUnderlayStatic(hApplicationPage, APPLICATION_LANGUAGE_LABELS[appLanguage], WS_VISIBLE,
+        8, 84, 22, &applicationControls);
     hLanguageCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         174, 80, 244, 220, hApplicationPage, ID_LANGUAGE, &applicationControls);
     PopulateLanguageCombo(hLanguageCombo);
     SendMessageW(hLanguageCombo, CB_SETCURSEL, ComboIndexForLanguage(appLanguage), 0);
-    HWND timeSignalSoundLabel = AddUnderlayStatic(hApplicationPage, TIME_SIGNAL_SOUND_LABELS[appLanguage], WS_VISIBLE,
-        8, 118, 22, &applicationControls);
+    HWND timeSignalSoundLabel = AddUnderlayStatic(hApplicationPage, TIME_SIGNAL_SOUND_LABELS[appLanguage],
+        WS_VISIBLE, 8, 118, 22, &applicationControls);
     hTimeSignalSoundCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
         174, 114, 136, 100, hApplicationPage, ID_TIME_SIGNAL_SOUND, &applicationControls);
-    SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(TIME_SIGNAL_GENERATED_SOUND_LABELS[appLanguage]));
-    SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(TIME_SIGNAL_SYSTEM_SOUND_LABELS[appLanguage]));
+    SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0,
+        reinterpret_cast<LPARAM>(TIME_SIGNAL_GENERATED_SOUND_LABELS[appLanguage]));
+    SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0,
+        reinterpret_cast<LPARAM>(TIME_SIGNAL_SYSTEM_SOUND_LABELS[appLanguage]));
     bool generatorRequired = IsTimeSignalGeneratorRequired();
     SendMessageW(hTimeSignalSoundCombo, CB_SETCURSEL, generatorRequired || generatedTimeSignal ? 0 : 1, 0);
     EnableWindow(hTimeSignalSoundCombo, !generatorRequired);
@@ -9647,21 +10089,24 @@ static void CreateSettingsControls() {
         8, 151, 22, &applicationControls);
     hTimeSignalVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ,
         174, 144, 174, 32, hApplicationPage, ID_TIME_SIGNAL_VOLUME, &applicationControls);
-    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN, TIME_SIGNAL_VOLUME_SLIDER_MAX));
+    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETRANGE, TRUE,
+        MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN, TIME_SIGNAL_VOLUME_SLIDER_MAX));
     for (int decibels = -54; decibels < 0; decibels += 6) {
-        SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETTIC, 0, TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(decibels)));
+        SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETTIC, 0,
+            TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(decibels)));
     }
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETLINESIZE, 0, 10);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPOS, TRUE, TimeSignalVolumeSliderPosition(timeSignalVolume));
     SetWindowSubclass(hTimeSignalVolumeTrackBar, TimeSignalVolumeSubclassProc, ID_TIME_SIGNAL_VOLUME, 0);
-    hTimeSignalVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT, 352, 151, 66, 22, hApplicationPage, 0, &applicationControls);
+    hTimeSignalVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT, 352, 151, 66, 22, hApplicationPage, 0,
+        &applicationControls);
     UpdateTimeSignalVolumeControls();
-    hDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
-        8, 184, 240, 24, hApplicationPage, ID_VISUAL_STYLES, &applicationControls);
+    hDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(),
+        WS_TABSTOP | BS_AUTOCHECKBOX, 8, 184, 240, 24, hApplicationPage, ID_VISUAL_STYLES, &applicationControls);
     SetCheck(hDisableThemesCheck, themesDisabled);
-    hStartWithWindowsCheck = AddControl(0, L"BUTTON", START_WITH_WINDOWS_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
-        8, 214, 300, 24, hApplicationPage, ID_START_WITH_WINDOWS, &applicationControls);
+    hStartWithWindowsCheck = AddControl(0, L"BUTTON", START_WITH_WINDOWS_LABELS[appLanguage],
+        WS_TABSTOP | BS_AUTOCHECKBOX, 8, 214, 300, 24, hApplicationPage, ID_START_WITH_WINDOWS, &applicationControls);
     SetCheck(hStartWithWindowsCheck, startWithWindows);
     hUseXmlSettingsCheck = AddControl(0, L"BUTTON", XML_STORAGE_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         8, 244, 240, 24, hApplicationPage, ID_USE_XML_SETTINGS, &applicationControls);
@@ -9669,11 +10114,15 @@ static void CreateSettingsControls() {
     hSnapToWorkAreaCheck = AddControl(0, L"BUTTON", SNAP_TO_WORK_AREA_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         8, 274, 400, 24, hApplicationPage, ID_SNAP_TO_WORK_AREA, &applicationControls);
     SetCheck(hSnapToWorkAreaCheck, snapWidgetsToWorkArea);
-    AddControl(0, L"BUTTON", IMPORT_SETTINGS_LABELS[appLanguage], WS_TABSTOP, 10, 450, 148, 27, hSettings, ID_IMPORT_SETTINGS);
-    AddControl(0, L"BUTTON", EXPORT_SETTINGS_LABELS[appLanguage], WS_TABSTOP, 164, 450, 148, 27, hSettings, ID_EXPORT_SETTINGS);
-    AddControl(0, L"BUTTON", Mnemonic(TXT_SAVE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 482, 450, 84, 27, hSettings, ID_SAVE);
+    AddControl(0, L"BUTTON", IMPORT_SETTINGS_LABELS[appLanguage], WS_TABSTOP, 10, 450, 148, 27, hSettings,
+        ID_IMPORT_SETTINGS);
+    AddControl(0, L"BUTTON", EXPORT_SETTINGS_LABELS[appLanguage], WS_TABSTOP, 164, 450, 148, 27, hSettings,
+        ID_EXPORT_SETTINGS);
+    AddControl(0, L"BUTTON", Mnemonic(TXT_SAVE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 482, 450, 84, 27, hSettings,
+        ID_SAVE);
     AddControl(0, L"BUTTON", Mnemonic(TXT_CANCEL).c_str(), WS_TABSTOP, 570, 450, 84, 27, hSettings, ID_CANCEL);
-    AddControl(0, L"BUTTON", Mnemonic(TXT_APPLY).c_str(), WS_TABSTOP | WS_DISABLED, 658, 450, 84, 27, hSettings, ID_APPLY);
+    AddControl(0, L"BUTTON", Mnemonic(TXT_APPLY).c_str(), WS_TABSTOP | WS_DISABLED, 658, 450, 84, 27, hSettings,
+        ID_APPLY);
     ScaleSettingsChildren(hSettings);
     ScaleSettingsChildren(hGeneralPage);
     ScaleSettingsChildren(hAppearancePage);
@@ -9907,7 +10356,9 @@ static void ImportSettings() {
     storageUsesXml = useXmlStorage;
     ResetUiFont();
     if (previousThemesDisabled != themesDisabled) {
-        SetThemeAppProperties(themesDisabled ? STAP_ALLOW_NONCLIENT : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
+        SetThemeAppProperties(themesDisabled
+            ? STAP_ALLOW_NONCLIENT
+            : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
     }
     for (size_t index = 0; index < widgets.size(); index++) {
         CreateWidgetWindow(widgets[index].get());
@@ -9970,8 +10421,8 @@ static void ShowSettingsWindow(int widgetId) {
     int settingsHeight = 0;
     GetSettingsWindowLayout(extendedStyle, &style, &settingsWidth, &settingsHeight);
     ClampFormPosition(&settingsX, &settingsY, settingsWidth, settingsHeight);
-    hSettings = CreateWindowExW(extendedStyle, CLASS_NAME, T(TXT_SETTINGS), style, settingsX, settingsY, settingsWidth, settingsHeight,
-        nullptr, nullptr, hInstance, nullptr);
+    hSettings = CreateWindowExW(extendedStyle, CLASS_NAME, T(TXT_SETTINGS),
+        style, settingsX, settingsY, settingsWidth, settingsHeight, nullptr, nullptr, hInstance, nullptr);
     RefreshFullscreenPresentation();
     CreateSettingsControls();
     RefreshWidgetList(true, false);
@@ -10005,12 +10456,14 @@ static std::wstring LoadLicenseText() {
     if (bytes == nullptr || byteCount == 0 || byteCount > static_cast<DWORD>(INT_MAX)) {
         return std::wstring();
     }
-    int characterCount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes, static_cast<int>(byteCount), nullptr, 0);
+    int characterCount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes,
+        static_cast<int>(byteCount), nullptr, 0);
     if (characterCount <= 0) {
         return std::wstring();
     }
     std::wstring decoded(characterCount, L'\0');
-    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes, static_cast<int>(byteCount), decoded.data(), characterCount) != characterCount) {
+    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes, static_cast<int>(byteCount),
+        decoded.data(), characterCount) != characterCount) {
         return std::wstring();
     }
     size_t headingStart = !decoded.empty() && decoded.front() == L'\uFEFF' ? 1 : 0;
@@ -10071,7 +10524,8 @@ static std::wstring GetApplicationVersion() {
     }
     VS_FIXEDFILEINFO* information = nullptr;
     UINT informationSize = 0;
-    bool invalidVersionInfo = !VerQueryValueW(data.data(), L"\\", reinterpret_cast<void**>(&information), &informationSize)
+    bool invalidVersionInfo =
+        !VerQueryValueW(data.data(), L"\\", reinterpret_cast<void**>(&information), &informationSize)
         || information == nullptr
         || informationSize < sizeof(VS_FIXEDFILEINFO)
         || information->dwSignature != VS_FFI_SIGNATURE;
@@ -10122,11 +10576,11 @@ static std::wstring BuildAboutClipboardText() {
 /// Displays the applicable About context commands and handles opening the website or copying its URL or product
 /// information.
 static void ShowAboutContextMenu(HWND source, LPARAM location) {
-    int controlId = GetDlgCtrlID(source);
     HMENU menu = CreatePopupMenu();
     if (menu == nullptr) {
         return;
     }
+    int controlId = GetDlgCtrlID(source);
     if (controlId == ID_INFO_LINK) {
         AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_OPEN_LINK, OPEN_IN_BROWSER_LABELS[appLanguage]);
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -10155,7 +10609,8 @@ static void ShowAboutContextMenu(HWND source, LPARAM location) {
 }
 
 /// Adds the About context menu to product and website controls and removes the subclass on destruction.
-static LRESULT CALLBACK AboutControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK AboutControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     if (message == WM_CONTEXTMENU) {
         ShowAboutContextMenu(window, lParam);
@@ -10197,7 +10652,8 @@ static void UpdateAboutLicenseScrollBar(HWND window) {
 
 /// Recalculates horizontal scrollbar visibility after native size, font, text, or theme updates and removes the
 /// subclass on destruction.
-static LRESULT CALLBACK AboutLicenseSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK AboutLicenseSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     if (message == WM_SIZE || message == WM_SETFONT || message == WM_SETTEXT || message == WM_THEMECHANGED) {
         LRESULT result = DefSubclassProc(window, message, wParam, lParam);
@@ -10277,11 +10733,11 @@ static void PlaceInformationControl(HWND window, int id, int x, int y, int width
 /// Measures a label's wrapped height at the requested width using its actual font, or returns zero if a DC is
 /// unavailable.
 static int InformationLabelHeight(HWND control, int width) {
-    std::wstring text = GetControlText(control);
     HDC dc = GetDC(control);
     if (dc == nullptr) {
         return 0;
     }
+    std::wstring text = GetControlText(control);
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
     HGDIOBJ oldFont = font == nullptr ? nullptr : SelectObject(dc, font);
     RECT bounds = { 0, 0, std::max(1, width), 0 };
@@ -10326,7 +10782,8 @@ static void LayoutInformationWindow(HWND window) {
         int rowHeight = std::max(websiteHeight, linkHeight);
         int textGap = layout.text.top - std::max(layout.website.bottom, layout.link.bottom);
         textTop = websiteY + rowHeight + textGap;
-        PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth, productHeight);
+        PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth,
+            productHeight);
         PlaceInformationControl(window, ID_INFO_WEBSITE, layout.website.left, websiteY, websiteWidth, websiteHeight);
         PlaceInformationControl(window, ID_INFO_LINK, layout.link.left, websiteY, linkWidth, linkHeight);
     }
@@ -10350,8 +10807,10 @@ static void FitInformationWindowToWorkArea(HWND window) {
     GetWindowRect(window, &rect);
     int width = std::min(rect.right - rect.left, monitor.rcWork.right - monitor.rcWork.left);
     int height = std::min(rect.bottom - rect.top, monitor.rcWork.bottom - monitor.rcWork.top);
-    int x = std::clamp(static_cast<int>(rect.left), static_cast<int>(monitor.rcWork.left), static_cast<int>(monitor.rcWork.right) - width);
-    int y = std::clamp(static_cast<int>(rect.top), static_cast<int>(monitor.rcWork.top), static_cast<int>(monitor.rcWork.bottom) - height);
+    int x = std::clamp(static_cast<int>(rect.left), static_cast<int>(monitor.rcWork.left),
+        static_cast<int>(monitor.rcWork.right) - width);
+    int y = std::clamp(static_cast<int>(rect.top), static_cast<int>(monitor.rcWork.top),
+        static_cast<int>(monitor.rcWork.bottom) - height);
     SetWindowPos(window, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
     LayoutInformationWindow(window);
 }
@@ -10392,7 +10851,8 @@ static void ShowInformationWindow(bool help) {
     DWORD extendedStyle = WS_EX_TOPMOST | (help ? 0 : WS_EX_DLGMODALFRAME);
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
     ClampFormPosition(x, y, width, height);
-    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(),
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
         *x, *y, width, height, nullptr, nullptr, hInstance, nullptr);
     std::wstring helpBody = std::wstring(HELP_TEXT[appLanguage])
         + HELP_ALARM_APPENDIX[appLanguage]
@@ -10407,20 +10867,25 @@ static void ShowInformationWindow(bool help) {
         + HELP_FULLSCREEN_APPENDIX[appLanguage];
     if (help) {
         DWORD textStyle = WS_TABSTOP | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
-        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle, 18, 18, 610, 385, *target, ID_INFO_TEXT);
+        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle,
+            18, 18, 610, 385, *target, ID_INFO_TEXT);
         SendMessageW(text, EM_SETSEL, 0, 0);
-        AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 528, 415, 100, 28, *target, ID_INFO_CLOSE);
+        AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON,
+            528, 415, 100, 28, *target, ID_INFO_CLOSE);
     } else {
         std::wstring productText = BuildAboutProductText();
         std::wstring linkText = BuildAboutLinkText();
         HWND icon = AddControl(0, L"STATIC", L"", SS_ICON, 18, 18, 32, 32, *target, ID_INFO_ICON);
-        HICON applicationIcon = static_cast<HICON>(LoadImageW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), IMAGE_ICON, 32, 32, LR_SHARED));
+        HICON applicationIcon = static_cast<HICON>(LoadImageW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), IMAGE_ICON,
+            32, 32, LR_SHARED));
         SendMessageW(icon, STM_SETICON, reinterpret_cast<WPARAM>(applicationIcon), 0);
-        HWND product = AddControl(0, L"STATIC", productText.c_str(), SS_LEFT | SS_NOPREFIX | SS_NOTIFY, 62, 12, 456, 126, *target, ID_INFO_PRODUCT);
+        HWND product = AddControl(0, L"STATIC", productText.c_str(), SS_LEFT | SS_NOPREFIX | SS_NOTIFY,
+            62, 12, 456, 126, *target, ID_INFO_PRODUCT);
         HWND website = AddControl(0, L"STATIC", ABOUT_WEBSITE_LABELS[appLanguage], SS_LEFT | SS_NOPREFIX | SS_NOTIFY,
             62, 145, 88, 20, *target, ID_INFO_WEBSITE);
         HWND link = AddControl(0, WC_LINK, linkText.c_str(), WS_TABSTOP, 150, 145, 368, 22, *target, ID_INFO_LINK);
-        DWORD licenseStyle = WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
+        DWORD licenseStyle =
+            WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
         HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), licenseStyle,
             18, 177, 500, 256 + aboutExtraLineHeight, *target, ID_INFO_TEXT);
         SetWindowSubclass(license, AboutLicenseSubclassProc, ABOUT_LICENSE_SUBCLASS_ID, 0);
@@ -10441,8 +10906,7 @@ static void ShowInformationWindow(bool help) {
 }
 
 /// Dispatches settings notifications and actions, validating edits and coordinating selection, previews, duplication,
-/// and persistence.
-/// Disables Apply only after its successful explicit invocation.
+/// and persistence. Disables Apply only after its successful explicit invocation.
 static void HandleSettingsCommand(int id, int notification) {
     if (updatingSettingsControls) {
         return;
@@ -10456,7 +10920,9 @@ static void HandleSettingsCommand(int id, int notification) {
             StopSettingsPreview();
         }
         std::vector<int> selected = GetSelectedWidgetIndices();
-        int selectionIndex = selected.size() == 1 ? selected.front() : static_cast<int>(SendMessageW(hWidgetList, LB_GETCARETINDEX, 0, 0));
+        int selectionIndex = selected.size() == 1
+            ? selected.front()
+            : static_cast<int>(SendMessageW(hWidgetList, LB_GETCARETINDEX, 0, 0));
         if (selectionIndex >= 0 && selectionIndex < static_cast<int>(settingsDraft.size())) {
             selectedDraftIndex = selectionIndex;
         }
@@ -10471,11 +10937,12 @@ static void HandleSettingsCommand(int id, int notification) {
             StopSettingsPreview();
         }
         int type = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
-        if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size()) && type >= 0 && type < WIDGET_TYPE_COUNT) {
+        if (selectedDraftIndex >= 0
+                && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+                && type >= 0 && type < WIDGET_TYPE_COUNT) {
             WidgetConfig& config = settingsDraft[selectedDraftIndex];
             WidgetType previousType = config.type;
             std::wstring editedName = GetControlText(hNameEdit);
-            bool defaultName = editedName.empty() || editedName == TypeName(previousType);
             if (!SaveControlsToDraft(true)) {
                 SetComboSelection(hTypeCombo, previousType);
                 return;
@@ -10483,6 +10950,7 @@ static void HandleSettingsCommand(int id, int notification) {
             WidgetType selectedType = static_cast<WidgetType>(type);
             config.type = selectedType;
             if (selectedType != previousType) {
+                bool defaultName = editedName.empty() || editedName == TypeName(previousType);
                 if (defaultName) {
                     config.name = TypeName(selectedType);
                 }
@@ -10505,7 +10973,8 @@ static void HandleSettingsCommand(int id, int notification) {
                     preview.blackoutOtherMonitors = config.blackoutOtherMonitors;
                     preview.offsetMilliseconds = config.offsetMilliseconds;
                     CopyWidgetAppearance(&preview, config);
-                    if (std::find(settingsAppearancePreviewIds.begin(), settingsAppearancePreviewIds.end(), config.id) == settingsAppearancePreviewIds.end()) {
+                    if (std::find(settingsAppearancePreviewIds.begin(), settingsAppearancePreviewIds.end(), config.id) ==
+                            settingsAppearancePreviewIds.end()) {
                         settingsAppearancePreviewIds.push_back(config.id);
                     }
                     settingsAppearancePreviewActive = true;
@@ -10573,9 +11042,13 @@ static void HandleSettingsCommand(int id, int notification) {
         if (remoteScriptEnabled) {
             SetFocus(hRemoteScriptEdit);
         }
-    } else if (id >= ID_ADDITIONAL_ENABLED_BASE && id < ID_ADDITIONAL_ENABLED_BASE + ADDITIONAL_CLOCK_COUNT && notification == BN_CLICKED) {
+    } else if (id >= ID_ADDITIONAL_ENABLED_BASE
+            && id < ID_ADDITIONAL_ENABLED_BASE + ADDITIONAL_CLOCK_COUNT
+            && notification == BN_CLICKED) {
         UpdateSettingControlAvailability();
-    } else if (id >= ID_ADDITIONAL_SIZE_BASE && id < ID_ADDITIONAL_SIZE_BASE + ADDITIONAL_CLOCK_COUNT && notification == CBN_SELCHANGE) {
+    } else if (id >= ID_ADDITIONAL_SIZE_BASE
+            && id < ID_ADDITIONAL_SIZE_BASE + ADDITIONAL_CLOCK_COUNT
+            && notification == CBN_SELCHANGE) {
         SaveAppearanceControlsToDraft();
         UpdateSettingControlAvailability();
         PreviewSelectedWidgetAppearance(true);
@@ -10625,7 +11098,7 @@ static void HandleSettingsCommand(int id, int notification) {
         }
         UpdateNtpSettingsControls();
     } else if (id == ID_NTP_SYNC && notification == BN_CLICKED) {
-        StartNtpSynchronization(true);
+        StartNtpSynchronization(true, true);
         UpdateNtpSettingsControls();
     } else if (id == ID_ADD) {
         if (settingsDraft.size() >= MAX_WIDGET_COUNT) {
@@ -10706,11 +11179,17 @@ static void HandleSettingsCommand(int id, int notification) {
         }
     } else if (id == ID_FONT) {
         ChooseWidgetFont();
-    } else if (id == ID_PANEL_TOP_FONT && selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+    } else if (id == ID_PANEL_TOP_FONT
+            && selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         ChoosePanelFont(&settingsDraft[selectedDraftIndex].panelTopFont);
-    } else if (id == ID_PANEL_TIME_FONT && selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+    } else if (id == ID_PANEL_TIME_FONT
+            && selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         ChoosePanelFont(&settingsDraft[selectedDraftIndex].panelTimeFont);
-    } else if (id == ID_PANEL_BOTTOM_FONT && selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+    } else if (id == ID_PANEL_BOTTOM_FONT
+            && selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         ChoosePanelFont(&settingsDraft[selectedDraftIndex].panelBottomFont);
     } else if (id == ID_APP_FONT) {
         ChooseApplicationFont();
@@ -10749,7 +11228,8 @@ static void HandleSettingsCommand(int id, int notification) {
         bool widgetListChanged = settingsDraft.size() != widgets.size();
         if (!widgetListChanged) {
             for (size_t index = 0; index < settingsDraft.size(); index++) {
-                if (settingsDraft[index].id != widgets[index]->config.id || settingsDraft[index].name != widgets[index]->config.name) {
+                if (settingsDraft[index].id != widgets[index]->config.id
+                        || settingsDraft[index].name != widgets[index]->config.name) {
                     widgetListChanged = true;
                     break;
                 }
@@ -10807,7 +11287,8 @@ static void DrawIdentificationOutline(HWND window, bool ellipse) {
 
 /// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling a
 /// second hand.
-static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     HWND parent = GetParent(window);
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     int index = static_cast<int>(referenceData);
@@ -10845,7 +11326,8 @@ static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPA
     }
     LRESULT result = DefSubclassProc(window, message, wParam, lParam);
     if (message == WM_THEMECHANGED && widget != nullptr && index >= 0 && index < ADDITIONAL_CLOCK_COUNT) {
-        ConfigureAnalogClockControl(window, NormalizeAnalogClockSize(widget->config.additionalClocks[index].size), false);
+        ConfigureAnalogClockControl(window,
+            NormalizeAnalogClockSize(widget->config.additionalClocks[index].size), false);
     }
     return result;
 }
@@ -10892,11 +11374,11 @@ static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam
             widget->lastAnalogClickTick = 0;
         }
         if (message == WM_LBUTTONDOWN
-            || message == WM_LBUTTONUP
-            || message == WM_MOUSEMOVE
-            || message == WM_LBUTTONDBLCLK
-            || message == WM_RBUTTONUP
-            || message == WM_CONTEXTMENU) {
+                || message == WM_LBUTTONUP
+                || message == WM_MOUSEMOVE
+                || message == WM_LBUTTONDBLCLK
+                || message == WM_RBUTTONUP
+                || message == WM_CONTEXTMENU) {
             if (message != WM_CONTEXTMENU) {
                 POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
                 MapWindowPoints(window, parent, &point, 1);
@@ -11198,7 +11680,10 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                     ntpOffset100Nanoseconds = result->offset100Nanoseconds;
                     ntpActiveServer = result->server;
                     ntpTimeValid = true;
+                    ntpHasSynchronized = true;
                     ntpLastQueryFailed = false;
+                    nextNtpAttemptTick = GetTickCount64() + 3610000 - GetNtpHourPosition();
+                    CheckTimeSignals();
                     for (size_t index = 0; index < widgets.size(); index++) {
                         widgets[index]->lastRenderKey = -1;
                         widgets[index]->rendered = false;
@@ -11231,16 +11716,21 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         case WM_CTLCOLORBTN:
         {
             HWND control = reinterpret_cast<HWND>(lParam);
-            bool tabControlChild = std::find(generalControls.begin(), generalControls.end(), control) != generalControls.end()
+            bool tabControlChild = std::find(generalControls.begin(), generalControls.end(), control) !=
+                generalControls.end()
                 || std::find(appearanceControls.begin(), appearanceControls.end(), control) != appearanceControls.end()
                 || std::find(alarmControls.begin(), alarmControls.end(), control) != alarmControls.end()
                 || std::find(timeSignalControls.begin(), timeSignalControls.end(), control) != timeSignalControls.end()
                 || std::find(timeControls.begin(), timeControls.end(), control) != timeControls.end()
-                || std::find(applicationControls.begin(), applicationControls.end(), control) != applicationControls.end();
+                || std::find(applicationControls.begin(), applicationControls.end(), control) !=
+                applicationControls.end();
             LONG_PTR style = GetWindowLongPtrW(control, GWL_STYLE);
             UINT buttonType = static_cast<UINT>(style & BS_TYPEMASK);
             if (tabControlChild
-                && (buttonType == BS_CHECKBOX || buttonType == BS_AUTOCHECKBOX || buttonType == BS_3STATE || buttonType == BS_AUTO3STATE)) {
+                    && (buttonType == BS_CHECKBOX
+                        || buttonType == BS_AUTOCHECKBOX
+                        || buttonType == BS_3STATE
+                        || buttonType == BS_AUTO3STATE)) {
                 int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
                 SetBkColor(reinterpret_cast<HDC>(wParam), GetSysColor(colorIndex));
                 SetBkMode(reinterpret_cast<HDC>(wParam), OPAQUE);
@@ -11297,7 +11787,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
                 FillRect(item->hDC, &item->rcItem, GetSysColorBrush(colorIndex));
                 SetBkMode(item->hDC, TRANSPARENT);
-                SetTextColor(item->hDC, GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
+                SetTextColor(item->hDC,
+                    GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
                 HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
                 if (font != nullptr) {
                     SelectObject(item->hDC, font);
@@ -11386,12 +11877,13 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                     return 0;
                 }
                 if (trackBar == hOpacityTrackBar
-                    || trackBar == hFontSizeTrackBar
-                    || trackBar == hPaddingTrackBar
-                    || trackBar == hBorderTrackBar
-                    || trackBar == hBorderWidthTrackBar) {
+                        || trackBar == hFontSizeTrackBar
+                        || trackBar == hPaddingTrackBar
+                        || trackBar == hBorderTrackBar
+                        || trackBar == hBorderWidthTrackBar) {
                     if (trackBar == hBorderTrackBar) {
-                        SetControlEnabled(hBorderColorButton, SendMessageW(trackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW);
+                        SetControlEnabled(hBorderColorButton,
+                            SendMessageW(trackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW);
                     }
                     UpdateAppearanceSliderLabels(trackBar);
                     PreviewSelectedWidgetAppearance(false);
@@ -11415,11 +11907,11 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             break;
         case WM_COMMAND:
         {
-            int id = LOWORD(wParam);
-            int notification = HIWORD(wParam);
             if (IsSettingsPageWindow(window)) {
                 return SendMessageW(hSettings, WM_COMMAND, wParam, lParam);
             }
+            int id = LOWORD(wParam);
+            int notification = HIWORD(wParam);
             if (window == hSettings) {
                 if (notification == CBN_DROPDOWN) {
                     HWND control = reinterpret_cast<HWND>(lParam);
@@ -11440,13 +11932,17 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 }
                 return 0;
             }
-            if (widget != nullptr && id == ID_PANEL_DATE_LINK && notification == BN_CLICKED
-                && reinterpret_cast<HWND>(lParam) == widget->panelDateLink) {
+            if (widget != nullptr
+                    && id == ID_PANEL_DATE_LINK
+                    && notification == BN_CLICKED
+                    && reinterpret_cast<HWND>(lParam) == widget->panelDateLink) {
                 SelectCalendarToday(widget);
                 return 0;
             }
-            if (widget != nullptr && id == ID_PANEL_TIME_ZONE_LINK && notification == BN_CLICKED
-                && reinterpret_cast<HWND>(lParam) == widget->panelTimeZoneLink) {
+            if (widget != nullptr
+                    && id == ID_PANEL_TIME_ZONE_LINK
+                    && notification == BN_CLICKED
+                    && reinterpret_cast<HWND>(lParam) == widget->panelTimeZoneLink) {
                 OpenDateTimeControlPanel(widget->window);
                 return 0;
             }
@@ -11476,39 +11972,40 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         }
         case WM_NOTIFY:
             if (window == hAbout
-                && hAboutTooltip != nullptr
-                && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == hAboutTooltip
-                && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
+                    && hAboutTooltip != nullptr
+                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == hAboutTooltip
+                    && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
                 NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
                 information->lpszText = const_cast<wchar_t*>(ABOUT_VISIT_TOOLTIP[appLanguage]);
                 return 0;
             }
             if (window == hAbout
-                && reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_INFO_LINK
-                && (reinterpret_cast<NMHDR*>(lParam)->code == NM_CLICK || reinterpret_cast<NMHDR*>(lParam)->code == NM_RETURN)) {
+                    && reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_INFO_LINK
+                    && (reinterpret_cast<NMHDR*>(lParam)->code == NM_CLICK
+                        || reinterpret_cast<NMHDR*>(lParam)->code == NM_RETURN)) {
                 ShellExecuteW(hAbout, L"open", ABOUT_WEBSITE_URL, nullptr, nullptr, SW_SHOWNORMAL);
                 return 0;
             }
             if (widget != nullptr
-                && widget->panelDateTooltip != nullptr
-                && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->panelDateTooltip
-                && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
+                    && widget->panelDateTooltip != nullptr
+                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->panelDateTooltip
+                    && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
                 NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
                 information->lpszText = const_cast<wchar_t*>(PANEL_TODAY_TOOLTIP[widget->config.language]);
                 return 0;
             }
             if (widget != nullptr
-                && widget->calendarChild != nullptr
-                && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->calendarChild
-                && reinterpret_cast<NMHDR*>(lParam)->code == MCN_SELECT) {
+                    && widget->calendarChild != nullptr
+                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->calendarChild
+                    && reinterpret_cast<NMHDR*>(lParam)->code == MCN_SELECT) {
                 NMSELCHANGE* selection = reinterpret_cast<NMSELCHANGE*>(lParam);
                 CopyWidgetDate(widget, selection->stSelStart);
                 return 0;
             }
             if (window == hSettings
-                && hTabs != nullptr
-                && reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_TABS
-                && reinterpret_cast<NMHDR*>(lParam)->code == TCN_SELCHANGE) {
+                    && hTabs != nullptr
+                    && reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_TABS
+                    && reinterpret_cast<NMHDR*>(lParam)->code == TCN_SELCHANGE) {
                 settingsTab = std::clamp(TabCtrl_GetCurSel(hTabs), 0, SETTINGS_TAB_COUNT - 1);
                 ShowSettingsTab(settingsTab);
                 return 0;
@@ -11540,12 +12037,17 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 for (size_t index = 0; index < widgets.size(); index++) {
                     if (widgets[index]->config.visible) {
                         anyVisible = true;
-                        SetWindowPos(widgets[index]->window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-                        for (size_t windowIndex = 0; windowIndex < widgets[index]->fullscreenWindows.size(); windowIndex++) {
-                            SetWindowPos(widgets[index]->fullscreenWindows[windowIndex], HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                        SetWindowPos(widgets[index]->window, HWND_TOPMOST, 0, 0, 0, 0,
+                            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                        for (size_t windowIndex = 0;
+                                windowIndex < widgets[index]->fullscreenWindows.size();
+                                windowIndex++) {
+                            SetWindowPos(widgets[index]->fullscreenWindows[windowIndex], HWND_TOPMOST, 0, 0, 0, 0,
+                                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                         }
                         if (!widgets[index]->config.topMost && widgets[index]->config.type != WIDGET_FULLSCREEN) {
-                            SetWindowPos(widgets[index]->window, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                            SetWindowPos(widgets[index]->window, HWND_NOTOPMOST, 0, 0, 0, 0,
+                                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                         }
                     }
                 }
@@ -11713,7 +12215,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_LBUTTONDBLCLK:
-            if (widget != nullptr && widget->alarmStoppedTick != 0 && GetTickCount64() - widget->alarmStoppedTick <= GetDoubleClickTime()) {
+            if (widget != nullptr
+                    && widget->alarmStoppedTick != 0
+                    && GetTickCount64() - widget->alarmStoppedTick <= GetDoubleClickTime()) {
                 return 0;
             }
             if (widget != nullptr && widget->config.type == WIDGET_PANEL) {
@@ -11789,7 +12293,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             break;
         case WM_DESTROY:
             if (IsSettingsPageWindow(window)) {
-                for (HWND control = GetWindow(window, GW_CHILD); control != nullptr; control = GetWindow(control, GW_HWNDNEXT)) {
+                for (HWND control = GetWindow(window, GW_CHILD);
+                        control != nullptr;
+                        control = GetWindow(control, GW_HWNDNEXT)) {
                     RemovePropW(control, SETTINGS_COMBO_HEIGHT_PROPERTY);
                 }
             }
@@ -11816,7 +12322,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 /// Enforces one application instance, initializes services and windows, and runs the message loop with custom keyboard
 /// navigation.
 /// Releases rendering, synchronization, and process resources before returning the message-loop exit code.
-int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPWSTR commandLine, _In_ int showCommand) {
+int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPWSTR commandLine,
+        _In_ int showCommand) {
     UNREFERENCED_PARAMETER(previousInstance);
     UNREFERENCED_PARAMETER(commandLine);
     UNREFERENCED_PARAMETER(showCommand);
@@ -11849,7 +12356,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     if (!anyWidgetVisible && !widgets.empty()) {
         widgets[0]->config.visible = true;
     }
-    SetThemeAppProperties(themesDisabled ? STAP_ALLOW_NONCLIENT : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
+    SetThemeAppProperties(themesDisabled
+        ? STAP_ALLOW_NONCLIENT
+        : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
     WNDCLASSEXW blackoutClass = {};
     blackoutClass.cbSize = sizeof(blackoutClass);
     blackoutClass.lpfnWndProc = BlackoutWindowProc;
@@ -11880,7 +12389,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
         return 1;
     }
     taskbarCreatedMessage = RegisterWindowMessageW(L"TaskbarCreated");
-    hController = CreateWindowExW(WS_EX_TOOLWINDOW, CLASS_NAME, CONTROLLER_TITLE, WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, instance, nullptr);
+    hController = CreateWindowExW(WS_EX_TOOLWINDOW, CLASS_NAME, CONTROLLER_TITLE, WS_POPUP,
+        0, 0, 0, 0, nullptr, nullptr, instance, nullptr);
     if (hController == nullptr) {
         if (winsockReady) {
             WSACleanup();
@@ -11900,9 +12410,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     while (GetMessageW(&message, nullptr, 0, 0) > 0) {
         Widget* inputWidget = WidgetFromInputWindow(message.hwnd);
         if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
-            && message.wParam == VK_ESCAPE
-            && inputWidget != nullptr
-            && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
+                && message.wParam == VK_ESCAPE
+                && inputWidget != nullptr
+                && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
             StopWidgetAlarm(inputWidget);
             continue;
         }
@@ -11910,14 +12420,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
             && message.wParam == VK_ESCAPE && HideFullscreenWidgetsFromEscape()) {
             continue;
         }
-        if (message.message == WM_KEYDOWN && message.wParam == L'M' && (message.lParam & 1LL << 30) == 0 && inputWidget != nullptr) {
+        if (message.message == WM_KEYDOWN
+                && message.wParam == L'M'
+                && (message.lParam & 1LL << 30) == 0
+                && inputWidget != nullptr) {
             ToggleAllWidgetSounds();
             continue;
         }
-        if (inputWidget != nullptr && inputWidget->config.type == WIDGET_PANEL && IsDialogMessageW(inputWidget->window, &message)) {
+        if (inputWidget != nullptr
+                && inputWidget->config.type == WIDGET_PANEL
+                && IsDialogMessageW(inputWidget->window, &message)) {
             continue;
         }
-        if (message.message == WM_KEYDOWN && message.wParam == VK_TAB && GetKeyState(VK_CONTROL) >= 0 && hTabs != nullptr) {
+        if (message.message == WM_KEYDOWN
+                && message.wParam == VK_TAB
+                && GetKeyState(VK_CONTROL) >= 0
+                && hTabs != nullptr) {
             HWND focused = GetFocus();
             HWND firstPageControl = GetSettingsPageBoundaryControl(false);
             HWND lastPageControl = GetSettingsPageBoundaryControl(true);

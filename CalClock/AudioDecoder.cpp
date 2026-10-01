@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -57,18 +57,26 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
         return E_FAIL;
     }
     std::wstring platformPath = std::wstring(directory) + L"\\mfplat.dll";
-    std::wstring readerPath = std::wstring(directory) + L"\\mfreadwrite.dll";
     platform = LoadLibraryW(platformPath.c_str());
+    if (platform == nullptr) {
+        return E_NOINTERFACE;
+    }
+    std::wstring readerPath = std::wstring(directory) + L"\\mfreadwrite.dll";
     readerLibrary = LoadLibraryW(readerPath.c_str());
-    if (platform == nullptr || readerLibrary == nullptr) {
+    if (readerLibrary == nullptr) {
         return E_NOINTERFACE;
     }
     startup = reinterpret_cast<decltype(startup)>(GetProcAddress(platform, "MFStartup"));
     shutdown = reinterpret_cast<decltype(shutdown)>(GetProcAddress(platform, "MFShutdown"));
     createType = reinterpret_cast<decltype(createType)>(GetProcAddress(platform, "MFCreateMediaType"));
-    createWaveFormat = reinterpret_cast<decltype(createWaveFormat)>(GetProcAddress(platform, "MFCreateWaveFormatExFromMFMediaType"));
+    createWaveFormat =
+        reinterpret_cast<decltype(createWaveFormat)>(GetProcAddress(platform, "MFCreateWaveFormatExFromMFMediaType"));
     createReader = reinterpret_cast<decltype(createReader)>(GetProcAddress(readerLibrary, "MFCreateSourceReaderFromURL"));
-    if (startup == nullptr || shutdown == nullptr || createType == nullptr || createWaveFormat == nullptr || createReader == nullptr) {
+    if (startup == nullptr
+            || shutdown == nullptr
+            || createType == nullptr
+            || createWaveFormat == nullptr
+            || createReader == nullptr) {
         return E_NOINTERFACE;
     }
     HRESULT result = startup(MF_VERSION, MFSTARTUP_FULL);
@@ -96,7 +104,8 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
         result = reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
     }
     if (SUCCEEDED(result)) {
-        result = reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), type.ReleaseAndGetAddressOf());
+        result = reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM),
+            type.ReleaseAndGetAddressOf());
     }
     UINT32 size = 0;
     if (SUCCEEDED(result)) {
@@ -113,7 +122,8 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
 HRESULT AudioDecoder::Read(std::vector<BYTE>& data, bool& end) {
     Microsoft::WRL::ComPtr<IMFSample> sample;
     DWORD flags = 0;
-    HRESULT result = reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &flags, nullptr, &sample);
+    HRESULT result = reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &flags,
+        nullptr, &sample);
     if (FAILED(result)) {
         return result;
     }
@@ -175,7 +185,8 @@ HRESULT AudioDecoder::Restart(const std::wstring& path) {
         result = replacement->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), TRUE);
     }
     if (SUCCEEDED(result)) {
-        result = replacement->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
+        result = replacement->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr,
+            type.Get());
     }
     if (SUCCEEDED(result)) {
         reader = replacement;

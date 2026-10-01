@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.4.1.3
+ * Last modified for version 1.5.1.0
  */
 
 #pragma once
@@ -30,7 +30,9 @@
 
 /// Formats a date with the selected copy format and widget language, falling back to yyyy-MM-dd on failure.
 std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex);
+
 /// Builds a format selector caption containing the pattern, any localized format label, and an example date.
 std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex);
+
 /// Reports whether a valid format begins a different group from its predecessor.
 bool DateFormatStartsGroup(int formatIndex);

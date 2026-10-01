@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #pragma once
@@ -33,15 +33,21 @@
 
 /// Recognizes supported audio filename extensions case-insensitively without opening the file.
 bool LooksLikeAudio(const std::wstring& path);
+
 /// Accepts an HTTP or HTTPS URL with a nonempty host that WinHTTP can parse.
 bool IsRemoteScriptUrlValid(const std::wstring& url);
+
 /// Starts an audio worker with independent stop and mute handles and a shared live volume value.
 /// On success, transfers the returned event handles to the caller; the worker owns duplicate handles.
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, const std::shared_ptr<std::atomic<int>>& volume, HWND notifyWindow,
-    UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent);
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted,
+    const std::shared_ptr<std::atomic<int>>& volume, HWND notifyWindow, UINT notifyMessage,
+    int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent);
+
 /// Signals or resets an existing mute event without stopping playback; ignores a null handle.
 void SetAudioPlaybackMuted(HANDLE muteEvent, bool muted);
+
 /// Starts a detached shell-launch worker; releases its parameters if thread creation fails.
 void StartLocalCommandAsync(const std::wstring& command);
+
 /// Validates an HTTP or HTTPS URL and starts a detached request worker when valid.
 void StartRemoteScriptAsync(const std::wstring& url);

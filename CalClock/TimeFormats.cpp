@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -47,7 +47,9 @@ static std::wstring GetTimeLocaleValue(AppLanguage language, LCTYPE type) {
 
 /// Tests whether the widget explicitly selects UTC through its flag or zero-offset time-zone key.
 bool WidgetUsesUtcTime(const WidgetConfig& config) {
-    return config.showUtc || _wcsicmp(config.timeZoneKey.c_str(), L"UTC") == 0 || _wcsicmp(config.timeZoneKey.c_str(), L"UTC+00:00") == 0;
+    return config.showUtc
+        || _wcsicmp(config.timeZoneKey.c_str(), L"UTC") == 0
+        || _wcsicmp(config.timeZoneKey.c_str(), L"UTC+00:00") == 0;
 }
 
 /// Resolves the explicit or culture-based hour cycle, always using 24-hour time for UTC.

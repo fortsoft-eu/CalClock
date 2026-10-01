@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -61,7 +61,7 @@ static int AutomaticNtpPreset() {
     wchar_t localeName[LOCALE_NAME_MAX_LENGTH] = {};
     wchar_t country[4] = {};
     if (GetUserDefaultLocaleName(localeName, ARRAYSIZE(localeName)) == 0
-        || GetLocaleInfoEx(localeName, LOCALE_SISO3166CTRYNAME, country, ARRAYSIZE(country)) == 0) {
+            || GetLocaleInfoEx(localeName, LOCALE_SISO3166CTRYNAME, country, ARRAYSIZE(country)) == 0) {
         return NTP_PRESET_GLOBAL;
     }
     if (_wcsicmp(country, L"CZ") == 0 || _wcsicmp(country, L"SK") == 0) {
@@ -198,16 +198,22 @@ static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverLi
     std::vector<std::wstring> servers;
     size_t start = 0;
     while (start < serverList.size()) {
-        while (start < serverList.size() && (serverList[start] == L';' || serverList[start] == L',' || iswspace(serverList[start]))) {
+        while (start < serverList.size()
+                && (serverList[start] == L';' || serverList[start] == L',' || iswspace(serverList[start]))) {
             start++;
         }
         size_t end = start;
-        while (end < serverList.size() && serverList[end] != L';' && serverList[end] != L',' && !iswspace(serverList[end])) {
+        while (end < serverList.size()
+                && serverList[end] != L';'
+                && serverList[end] != L','
+                && !iswspace(serverList[end])) {
             end++;
         }
         if (end > start) {
             std::wstring server = serverList.substr(start, end - start);
-            if (server.size() <= 253 && servers.size() < 8 && std::find(servers.begin(), servers.end(), server) == servers.end()) {
+            if (server.size() <= 253
+                    && servers.size() < 8
+                    && std::find(servers.begin(), servers.end(), server) == servers.end()) {
                 servers.push_back(server);
             }
         }
@@ -237,7 +243,8 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             DWORD timeout = 1200;
             setsockopt(socketHandle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
             setsockopt(socketHandle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
-            bool connected = connect(socketHandle, address->ai_addr, static_cast<int>(address->ai_addrlen)) != SOCKET_ERROR;
+            bool connected = connect(socketHandle, address->ai_addr,
+                static_cast<int>(address->ai_addrlen)) != SOCKET_ERROR;
             BYTE request[48] = {};
             request[0] = 0x23;
             ULONGLONG t1 = CurrentFileTimeValue();
@@ -273,12 +280,12 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             if (t3 < t2) {
                 continue;
             }
-            LONGLONG firstLeg = static_cast<LONGLONG>(t2) - static_cast<LONGLONG>(t1);
-            LONGLONG secondLeg = static_cast<LONGLONG>(t3) - static_cast<LONGLONG>(t4);
             LONGLONG networkDelay = static_cast<LONGLONG>(t4 - t1) - static_cast<LONGLONG>(t3 - t2);
             if (networkDelay < 0 || networkDelay > 10LL * 10000000LL) {
                 continue;
             }
+            LONGLONG firstLeg = static_cast<LONGLONG>(t2) - static_cast<LONGLONG>(t1);
+            LONGLONG secondLeg = static_cast<LONGLONG>(t3) - static_cast<LONGLONG>(t4);
             NtpSample sample = {};
             sample.offset100Nanoseconds = (firstLeg + secondLeg) / 2;
             sample.delay100Nanoseconds = networkDelay;
@@ -331,7 +338,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         size_t bestIndex = 0;
         bool acceptedAny = false;
         for (size_t index = 0; index < samples.size(); index++) {
-            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds) - static_cast<long double>(medianOffset));
+            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds)
+                - static_cast<long double>(medianOffset));
             if (difference > rejectionLimit) {
                 continue;
             }

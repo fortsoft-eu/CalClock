@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #pragma once
@@ -32,17 +32,23 @@
 /// Applies live alarm gain and mute state to DirectShow samples through a reference-counted COM callback.
 /// The referenced playback parameters must outlive the callback.
 class AudioGainCallback final : public IAudioSampleCallback {
+
 public:
     /// Retains a reference to playback parameters and copies the initial decoded sample format.
     AudioGainCallback(const AudioThreadParameters& parameters, const AudioSampleFormat& format);
+
     /// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output pointers.
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID id, void** object) override;
+
     /// Atomically increments and returns the COM reference count.
     ULONG STDMETHODCALLTYPE AddRef() override;
+
     /// Atomically decrements the COM reference count and deletes the callback when it reaches zero.
     ULONG STDMETHODCALLTYPE Release() override;
+
     /// Validates sample format changes and applies the current playback gain directly to the sample data.
     HRESULT STDMETHODCALLTYPE SampleCB(double time, IMediaSample* sample) override;
+
     /// Returns E_NOTIMPL because gain processing uses the sample callback interface.
     HRESULT STDMETHODCALLTYPE BufferCB(double time, BYTE* buffer, long length) override;
 

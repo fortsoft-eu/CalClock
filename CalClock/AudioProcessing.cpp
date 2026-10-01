@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -47,13 +47,19 @@ static int AudioPlaybackVolume(const AudioThreadParameters& parameters) {
     if (IsAudioMuted(parameters.muteEvent)) {
         return ALARM_VOLUME_MIN;
     }
-    return parameters.volume == nullptr ? ALARM_VOLUME_DEFAULT : std::clamp(parameters.volume->load(), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
+    if (parameters.volume == nullptr) {
+        return ALARM_VOLUME_DEFAULT;
+    }
+    return std::clamp(parameters.volume->load(), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
 }
 
 /// Converts the current alarm level to linear sample gain, treating -18 dB as unity and the minimum as silence.
 double AudioPlaybackGain(const AudioThreadParameters& parameters) {
     int volume = AudioPlaybackVolume(parameters);
-    return volume == ALARM_VOLUME_MIN ? 0.0 : std::pow(10.0, (volume - ALARM_VOLUME_UNITY) / 2000.0);
+    if (volume == ALARM_VOLUME_MIN) {
+        return 0.0;
+    }
+    return std::pow(10.0, (volume - ALARM_VOLUME_UNITY) / 2000.0);
 }
 
 /// Validates a wave-format buffer and extracts the supported PCM or IEEE floating-point layout.

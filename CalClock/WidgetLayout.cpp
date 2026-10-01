@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -186,7 +186,10 @@ bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& wo
     }
     for (size_t index = 0; index < items->size(); index++) {
         const WidgetPlacement& item = (*items)[index];
-        if (Width(item.rect) <= 0 || Height(item.rect) <= 0 || Width(item.rect) > Width(work) || Height(item.rect) > Height(work)) {
+        if (Width(item.rect) <= 0
+                || Height(item.rect) <= 0
+                || Width(item.rect) > Width(work)
+                || Height(item.rect) > Height(work)) {
             return false;
         }
     }
@@ -218,8 +221,8 @@ POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POI
 
 /// Calculates a resized widget's position while preserving its attachment to nearby work-area edges.
 /// Optionally reports whether each axis was attached; prefers left and top when both opposite edges qualify.
-POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight, int snapDistance,
-    bool* horizontalAttachment, bool* verticalAttachment) {
+POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight,
+        int snapDistance, bool* horizontalAttachment, bool* verticalAttachment) {
     bool left = widgetRect.left >= work.left - snapDistance && widgetRect.left <= work.left + snapDistance;
     bool right = widgetRect.right >= work.right - snapDistance && widgetRect.right <= work.right + snapDistance;
     bool top = widgetRect.top >= work.top - snapDistance && widgetRect.top <= work.top + snapDistance;

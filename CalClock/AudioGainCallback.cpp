@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.1.0
  */
 
 #define NOMINMAX
@@ -29,7 +29,8 @@
 #include "AudioGainCallback.h"
 
 /// Retains a reference to playback parameters and copies the initial decoded sample format.
-AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters, const AudioSampleFormat& format) : parameters(parameters), format(format) {}
+AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters, const AudioSampleFormat& format) :
+    parameters(parameters), format(format) {}
 
 /// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output pointers.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::QueryInterface(REFIID id, void** object) {
@@ -76,8 +77,11 @@ HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* samp
     }
     BYTE* data = nullptr;
     HRESULT result = sample->GetPointer(&data);
+    if (FAILED(result)) {
+        return E_FAIL;
+    }
     long length = sample->GetActualDataLength();
-    if (FAILED(result) || length < 0) {
+    if (length < 0) {
         return E_FAIL;
     }
     return ApplyAudioGain(data, static_cast<size_t>(length), format, AudioPlaybackGain(parameters));
