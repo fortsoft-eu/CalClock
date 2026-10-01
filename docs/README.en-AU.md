@@ -1,6 +1,6 @@
 ﻿# CalClock
 
-[Čeština](docs/README.cs-CZ.md) · **English (US)** · [Deutsch](docs/README.de-DE.md) · [Français](docs/README.fr-FR.md) · [Español](docs/README.es-ES.md) · [Italiano](docs/README.it-IT.md) · [Polski](docs/README.pl-PL.md) · [Slovenčina](docs/README.sk-SK.md) · [English (UK)](docs/README.en-GB.md) · [English (Australia)](docs/README.en-AU.md) · [Português](docs/README.pt-PT.md) · [Norsk](docs/README.nb-NO.md) · [Svenska](docs/README.sv-SE.md) · [Suomi](docs/README.fi-FI.md) · [Dansk](docs/README.da-DK.md) · [Íslenska](docs/README.is-IS.md) · [Türkçe](docs/README.tr-TR.md)
+[Čeština](README.cs-CZ.md) · [English (US)](../README.md) · [Deutsch](README.de-DE.md) · [Français](README.fr-FR.md) · [Español](README.es-ES.md) · [Italiano](README.it-IT.md) · [Polski](README.pl-PL.md) · [Slovenčina](README.sk-SK.md) · [English (UK)](README.en-GB.md) · **English (Australia)** · [Português](README.pt-PT.md) · [Norsk](README.nb-NO.md) · [Svenska](README.sv-SE.md) · [Suomi](README.fi-FI.md) · [Dansk](README.da-DK.md) · [Íslenska](README.is-IS.md) · [Türkçe](README.tr-TR.md)
 
 CalClock is a native Win32/x86 application for Windows Vista and later that displays independently configured floating clocks and calendars on the Windows desktop. It runs in the notification area and does not require a permanent control window.
 
@@ -9,15 +9,15 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 - Up to 32 independently configured widgets
 - Per-widget language, time zone, time offset, visibility, and always-on-top state
 - Analog clocks based on the Windows `ClockWndMain` control, with platform-detected sizes and second-hand support
-- Configurable digital clocks with fonts, colors, opacity, padding, borders, an optional leading zero, and an optional transparent background
-- Native Windows calendars with selectable dates, four border styles, configurable border color, week numbers, first-day settings, and 33 clipboard formats
-- Calendar-and-clock panels with up to two additional named clocks in independent time zones, separate clock-face sizes, four border styles, configurable border color, UTC text, a leading-zero option, and separate fonts for each text row
+- Configurable digital clocks with fonts, colours, opacity, padding, borders, an optional leading zero, and an optional transparent background
+- Native Windows calendars with selectable dates, four border styles, configurable border colour, week numbers, first-day settings, and 33 clipboard formats
+- Calendar-and-clock panels with up to two additional named clocks in independent time zones, separate clock-face sizes, four border styles, configurable border colour, UTC text, a leading-zero option, and separate fonts for each text row
 - Alarms with selectable weekdays, visual indication, internal audio playback, looping, local commands, and HTTP/HTTPS script calls
 - Per-clock audible time signals at 1, 5, 10, 15, 20, 30, or 60-minute intervals, with coincident signals merged into one sequence
 - Per-clock Mute commands and a checked Mute all command in the notification-area menu
 - Optional automatic startup with Windows
 - Optional five-pixel snapping to work-area edges while dragging widgets, enabled by default, with edge attachment preserved when a widget changes size
-- NTP synchronization without changing the Windows system clock
+- NTP synchronisation without changing the Windows system clock
 - Multiple NTP presets for Czechia and Slovakia, PTB, Ubuntu/NTP Pool, or custom servers
 - Registry or XML settings storage, including XML import and export
 - Notification-area controls with restoration of the most recently hidden widgets
@@ -68,7 +68,7 @@ For standalone calendars, **Today row** in the widget menu or on the Appearance 
 
 Appearance changes are previewed immediately on the selected widget. `Cancel` restores unapplied appearance changes, while `Default appearance` restores the defaults for that widget type.
 
-Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border color; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Font dialogs show only the choices used by their target and omit the unused preview and effects; application and calendar UI fonts omit size, while digital and panel text fonts include it. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
+Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border colour; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Font dialogs show only the choices used by their target and omit the unused preview and effects; application and calendar UI fonts omit size, while digital and panel text fonts include it. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
 
 Application language, UI font, font smoothing, visual styles, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Applying a new application language immediately rebuilds the open Settings window in that language. Font antialiasing offers **ClearType**, **GDI**, and **None**. On the Appearance tab, font antialiasing and the option to disable themes occupy the same position for every widget type, with **Default appearance** below them.
 
@@ -76,7 +76,7 @@ The **Audio volume** slider on the Alarm tab controls internally played audio fi
 
 The alarm weekday controls follow the first day of the week used by the selected application culture. Stored alarm days retain their meaning when the application language changes. Enabling an alarm from a widget menu when no weekday is selected opens that widget's Alarm tab instead of enabling an alarm that cannot run.
 
-The default digital-clock border width is zero. **Leading zero** offers **Show** (the default), **Keep space**, and **No space**. **Keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Floating digital clocks align time to the left and keep a fixed size as time advances. Monitor clocks center a fixed time area sized for the selected font and format, including space for two hour digits. Changing time does not recenter or resize the text. The AM/PM or UTC row stays centered independently. Monitor clocks default to white text on a black background.
+The default digital-clock border width is zero. **Leading zero** offers **Show** (the default), **Keep space**, and **No space**. **Keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Floating digital clocks align time to the left and keep a fixed size as time advances. Monitor clocks centre a fixed time area sized for the selected font and format, including space for two hour digits. Changing time does not recentre or resize the text. The AM/PM or UTC row stays centred independently. Monitor clocks default to white text on a black background.
 
 ## Time and alarms
 
@@ -90,9 +90,9 @@ Each widget can use an arbitrary Windows time zone and a signed offset in the fo
 
 The offset is useful in broadcast studios, for example, to compensate for transmission path delay. Advancing the studio clock by the measured delay allows its time signal to reach listeners at the intended time.
 
-CalClock can use either the Windows system time or an application-local correction obtained from NTP servers. This selection is global for all widgets. Synchronization never changes the Windows clock. If an NTP connection is lost after a successful synchronization, the last known correction remains active in process memory. Changing servers also retains the current valid correction until a new response is obtained.
+CalClock can use either the Windows system time or an application-local correction obtained from NTP servers. This selection is global for all widgets. Synchronisation never changes the Windows clock. If an NTP connection is lost after a successful synchronisation, the last known correction remains active in process memory. Changing servers also retains the current valid correction until a new response is obtained.
 
-Clock widgets support alarms on individually selected weekdays; all seven days are enabled by default. An alarm makes its hidden widget visible and brings it in front of other windows without permanently changing its always-on-top setting. WAV, MP3, WMA, MIDI, AAC, M4A, and FLAC files are recognized for internal playback once or continuously; actual decoding support is provided by the multimedia components installed in Windows. Other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL. Independently of these actions, an alarm may use the six-pip time signal whose first short pip sounds five seconds before the configured alarm time.
+Clock widgets support alarms on individually selected weekdays; all seven days are enabled by default. An alarm makes its hidden widget visible and brings it in front of other windows without permanently changing its always-on-top setting. WAV, MP3, WMA, MIDI, AAC, M4A, and FLAC files are recognised for internal playback once or continuously; actual decoding support is provided by the multimedia components installed in Windows. Other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL. Independently of these actions, an alarm may use the six-pip time signal whose first short pip sounds five seconds before the configured alarm time.
 
 Run a file or command enables its field, Browse button, Test button, and looping option. Test and looping additionally require a nonblank field, but a running test can always be stopped. The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
 
@@ -141,8 +141,8 @@ Release\CalClock.exe
 
 Only the Win32/x86 configuration is supported. The project intentionally does not provide an x64 configuration because its integration with the Windows clock control requires x86 compatibility.
 
-## License
+## Licence
 
-CalClock is available under the [MIT License](license.txt).
+CalClock is available under the [MIT License](../license.txt).
 
 Copyright © Petr Červinka — FortSoft 2026
