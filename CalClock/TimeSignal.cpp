@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.1.2
  */
 
 #define NOMINMAX
@@ -577,7 +577,7 @@ bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, bool ge
         return false;
     }
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    auto existing = timeSignalSequences.begin();
+    std::vector<TimeSignalSequence>::iterator existing = timeSignalSequences.begin();
     while (existing != timeSignalSequences.end()) {
         if (existing->target == targetSystemFileTime) {
             break;
@@ -632,7 +632,8 @@ void SetTimeSignalMuted(ULONGLONG target, bool muted) {
 /// Removes matching scheduled sequences and releases the worker if no other playback work remains.
 void CancelTimeSignalPlayback(ULONGLONG target) {
     AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    for (auto sequence = timeSignalSequences.begin(); sequence != timeSignalSequences.end();) {
+    for (std::vector<TimeSignalSequence>::iterator sequence = timeSignalSequences.begin();
+            sequence != timeSignalSequences.end();) {
         if (sequence->target == target) {
             sequence = timeSignalSequences.erase(sequence);
         } else {

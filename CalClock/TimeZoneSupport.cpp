@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.1.2
  */
 
 #define NOMINMAX
@@ -121,7 +121,7 @@ static bool TimeZoneLess(const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMI
 static void AddFixedTimeZones(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     for (LONG offset = -12 * 60; offset <= 14 * 60; offset += 15) {
         bool exists = false;
-        for (const auto& zone : *zones) {
+        for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : *zones) {
             LONG existingOffset = 0;
             if (ParseTimeZoneOffset(zone.StandardName, &existingOffset)
                 && existingOffset == offset

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.1
+ * Last modified for version 1.5.1.2
  */
 
 #define NOMINMAX
@@ -2056,7 +2056,8 @@ static void CheckTimeSignals() {
         currentTimeSignalOffset = applicationOffset;
     }
     ULONGLONG applicationNow = static_cast<ULONGLONG>(static_cast<LONGLONG>(systemNow) + applicationOffset);
-    for (auto group = currentTimeSignalSources.begin(); group != currentTimeSignalSources.end();) {
+    for (std::vector<TimeSignalSourceGroup>::iterator group = currentTimeSignalSources.begin();
+            group != currentTimeSignalSources.end();) {
         if (group->target + 10000000 < systemNow) {
             group = currentTimeSignalSources.erase(group);
         } else {
@@ -2111,7 +2112,8 @@ static void CheckTimeSignals() {
             }
         }
     }
-    for (auto group = currentTimeSignalSources.begin(); group != currentTimeSignalSources.end();) {
+    for (std::vector<TimeSignalSourceGroup>::iterator group = currentTimeSignalSources.begin();
+            group != currentTimeSignalSources.end();) {
         bool shouldCancel = group->target > systemNow + 5 * 10000000ULL;
         if (shouldCancel) {
             for (const TimeSignalCandidate& candidate : candidates) {
@@ -2129,7 +2131,7 @@ static void CheckTimeSignals() {
         }
     }
     for (const TimeSignalCandidate& candidate : candidates) {
-        auto existing = currentTimeSignalSources.begin();
+        std::vector<TimeSignalSourceGroup>::iterator existing = currentTimeSignalSources.begin();
         while (existing != currentTimeSignalSources.end()) {
             if (candidate.target == existing->target) {
                 break;
@@ -2146,7 +2148,7 @@ static void CheckTimeSignals() {
                 existing = currentTimeSignalSources.end() - 1;
             }
         }
-        auto cancelledAlarmWidget = std::find(existing->cancelledAlarmWidgetIds.begin(),
+        std::vector<int>::iterator cancelledAlarmWidget = std::find(existing->cancelledAlarmWidgetIds.begin(),
             existing->cancelledAlarmWidgetIds.end(), candidate.widgetId);
         if (!candidate.regular && cancelledAlarmWidget != existing->cancelledAlarmWidgetIds.end()) {
             continue;
@@ -9372,7 +9374,7 @@ static void ApplySettingsDraft() {
     for (const WidgetConfig& configuration : settingsDraft) {
         Widget* current = FindWidgetById(configuration.id);
         if (current == nullptr) {
-            auto added = std::make_unique<Widget>();
+            std::unique_ptr<Widget> added = std::make_unique<Widget>();
             added->config = configuration;
             CreateWidgetWindow(added.get());
             widgets.push_back(std::move(added));
