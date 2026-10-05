@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.2.0
  */
 
 #pragma once
@@ -75,7 +75,7 @@ extern const wchar_t* TIME_SIGNAL_SYSTEM_SOUND_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_GENERATED_SOUND_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_FIELD_LABELS[LANG_COUNT];
+extern const wchar_t* TIME_SIGNAL_ENABLED_LABELS[LANG_COUNT];
 extern const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT];
 extern const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT];
 extern const wchar_t* TIME_TAB_LABELS[LANG_COUNT];

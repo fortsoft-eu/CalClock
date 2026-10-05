@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.2.0
  */
 
 #pragma once
@@ -303,7 +303,8 @@ struct WidgetConfig {
     bool weekNumbers = false;
     bool sundayFirst = false;
     int dateCopyFormat = DATE_LOCAL_SHORT;
-    TimeSignalMode timeSignal = TIME_SIGNAL_NONE;
+    bool timeSignalEnabled = false;
+    TimeSignalMode timeSignal = TIME_SIGNAL_EVERY_HOUR;
     bool soundsMuted = false;
     bool alarmEnabled = false;
     unsigned int alarmDays = ALARM_DAYS_ALL;

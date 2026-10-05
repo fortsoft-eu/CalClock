@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.2.0
  */
 
 #define NOMINMAX
@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <algorithm>
 #include <climits>
+#include <cerrno>
 #include <cmath>
 #include <iomanip>
 #include <limits>
@@ -49,20 +50,30 @@
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
 
-/// Reads a registry value and reports whether it was retrieved as REG_DWORD.
+/// Reads a complete REG_DWORD value, leaving the destination unchanged on failure.
 static bool ReadDword(HKEY key, const wchar_t* name, DWORD* value) {
     DWORD type = 0;
-    DWORD size = sizeof(*value);
-    return RegQueryValueExW(key, name, nullptr, &type,
-        reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_DWORD;
+    DWORD parsed = 0;
+    DWORD size = sizeof(parsed);
+    LSTATUS result = RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(&parsed), &size);
+    if (result != ERROR_SUCCESS || type != REG_DWORD || size != sizeof(parsed)) {
+        return false;
+    }
+    *value = parsed;
+    return true;
 }
 
-/// Reads a registry value into a signed 64-bit destination and reports whether its type is REG_QWORD.
+/// Reads a complete REG_QWORD value, leaving the destination unchanged on failure.
 static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
     DWORD type = 0;
-    DWORD size = sizeof(*value);
-    return RegQueryValueExW(key, name, nullptr, &type,
-        reinterpret_cast<BYTE*>(value), &size) == ERROR_SUCCESS && type == REG_QWORD;
+    LONGLONG parsed = 0;
+    DWORD size = sizeof(parsed);
+    LSTATUS result = RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(&parsed), &size);
+    if (result != ERROR_SUCCESS || type != REG_QWORD || size != sizeof(parsed)) {
+        return false;
+    }
+    *value = parsed;
+    return true;
 }
 
 /// Reads a registry string without expanding environment variables, replacing the destination only on success.
@@ -70,11 +81,12 @@ static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     DWORD type = 0;
     DWORD size = 0;
     if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS
-            || type != REG_SZ && type != REG_EXPAND_SZ || size < sizeof(wchar_t)) {
+            || type != REG_SZ && type != REG_EXPAND_SZ || size < sizeof(wchar_t) || size % sizeof(wchar_t) != 0) {
         return false;
     }
     std::vector<wchar_t> buffer(size / sizeof(wchar_t) + 1, 0);
-    if (RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(buffer.data()), &size) != ERROR_SUCCESS) {
+    if (RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(buffer.data()), &size) != ERROR_SUCCESS
+            || type != REG_SZ && type != REG_EXPAND_SZ || size % sizeof(wchar_t) != 0) {
         return false;
     }
     *value = buffer.data();
@@ -509,6 +521,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"dateCopyFormat", config.dateCopyFormat);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"timeSignalEnabled", config.timeSignalEnabled);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"timeSignal", config.timeSignal);
         }
         if (SUCCEEDED(result)) {
@@ -634,14 +649,15 @@ static bool ReadXmlAttribute(IXmlReader* reader, const wchar_t* name, std::wstri
     return true;
 }
 
-/// Parses a nonempty decimal integer string and rejects unconsumed trailing characters.
+/// Parses a nonempty decimal integer string, rejecting overflow and unconsumed trailing characters.
 static bool ParseXmlNumber(const std::wstring& text, LONGLONG* value) {
     if (text.empty()) {
         return false;
     }
     wchar_t* end = nullptr;
+    errno = 0;
     LONGLONG parsed = _wcstoi64(text.c_str(), &end, 10);
-    if (end == text.c_str() || *end != L'\0') {
+    if (errno == ERANGE || end == text.c_str() || *end != L'\0') {
         return false;
     }
     *value = parsed;
@@ -652,6 +668,19 @@ static bool ParseXmlNumber(const std::wstring& text, LONGLONG* value) {
 static bool ReadXmlNumberAttribute(IXmlReader* reader, const wchar_t* name, LONGLONG* value) {
     std::wstring text;
     return ReadXmlAttribute(reader, name, &text) && ParseXmlNumber(text, value);
+}
+
+/// Verifies that stored widgets have distinct positive IDs before replacing application settings.
+static bool StoredWidgetIdsAreValid(const std::vector<WidgetConfig>& widgets) {
+    std::vector<int> ids;
+    for (const WidgetConfig& widget : widgets) {
+        bool duplicate = std::find(ids.begin(), ids.end(), widget.id) != ids.end();
+        if (widget.id <= 0 || duplicate) {
+            return false;
+        }
+        ids.push_back(widget.id);
+    }
+    return true;
 }
 
 /// Starts with type-specific widget defaults, then reads recognized XML attributes with range checks and clamping.
@@ -731,21 +760,21 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->previewY = static_cast<int>(number);
     }
     if (ReadXmlNumberAttribute(reader, L"size", &number)) {
-        config->size = std::clamp(static_cast<int>(number), 104, 198);
+        config->size = static_cast<int>(std::clamp<LONGLONG>(number, 104, 198));
     }
     if (ReadXmlNumberAttribute(reader, L"opacity", &number)) {
-        config->opacity = std::clamp(static_cast<int>(number), WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX);
+        config->opacity = static_cast<int>(std::clamp<LONGLONG>(number, WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX));
     }
     if (ReadXmlNumberAttribute(reader, L"fontSize", &number)) {
         int minimumFontSize = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_FONT_SIZE_MIN : DIGITAL_FONT_SIZE_MIN;
         int maximumFontSize = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_FONT_SIZE_MAX : DIGITAL_FONT_SIZE_MAX;
-        config->fontSize = std::clamp(static_cast<int>(number), minimumFontSize, maximumFontSize);
+        config->fontSize = static_cast<int>(std::clamp<LONGLONG>(number, minimumFontSize, maximumFontSize));
     }
     if (config->type == WIDGET_DIGITAL) {
         config->fontDialogSize = config->fontSize * 10;
     }
     if (ReadXmlNumberAttribute(reader, L"fontDialogSize", &number)) {
-        int savedSize = static_cast<int>(number);
+        int savedSize = static_cast<int>(std::clamp<LONGLONG>(number, 0, 9990));
         config->fontDialogSize = std::clamp(savedSize < 10 ? savedSize * 10 : savedSize, 10, 9990);
     }
     if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number) && number >= 0 && number < FONT_ANTIALIAS_COUNT) {
@@ -758,7 +787,7 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->showAmPm = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"leadingZero", &number)) {
-        config->leadingZeroMode = std::clamp(static_cast<int>(number), 0, LEADING_ZERO_MODE_COUNT - 1);
+        config->leadingZeroMode = static_cast<int>(std::clamp<LONGLONG>(number, 0, LEADING_ZERO_MODE_COUNT - 1));
     }
     if (ReadXmlNumberAttribute(reader, L"transparentBackground", &number)) {
         config->transparentBackground = number != 0;
@@ -770,7 +799,7 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->fontFace = text;
     }
     if (ReadXmlNumberAttribute(reader, L"fontWeight", &number)) {
-        config->fontWeight = std::clamp(static_cast<int>(number), 0, 1000);
+        config->fontWeight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
     }
     if (ReadXmlNumberAttribute(reader, L"fontItalic", &number)) {
         config->fontItalic = number != 0;
@@ -791,10 +820,10 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->panelTopFont.face = text;
     }
     if (ReadXmlNumberAttribute(reader, L"panelTopFontSize", &number)) {
-        config->panelTopFont.dialogSize = std::clamp(static_cast<int>(number), 10, 9990);
+        config->panelTopFont.dialogSize = static_cast<int>(std::clamp<LONGLONG>(number, 10, 9990));
     }
     if (ReadXmlNumberAttribute(reader, L"panelTopFontWeight", &number)) {
-        config->panelTopFont.weight = std::clamp(static_cast<int>(number), 0, 1000);
+        config->panelTopFont.weight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
     }
     if (ReadXmlNumberAttribute(reader, L"panelTopFontItalic", &number)) {
         config->panelTopFont.italic = number != 0;
@@ -812,10 +841,10 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->panelTimeFont.face = text;
     }
     if (ReadXmlNumberAttribute(reader, L"panelTimeFontSize", &number)) {
-        config->panelTimeFont.dialogSize = std::clamp(static_cast<int>(number), 10, 9990);
+        config->panelTimeFont.dialogSize = static_cast<int>(std::clamp<LONGLONG>(number, 10, 9990));
     }
     if (ReadXmlNumberAttribute(reader, L"panelTimeFontWeight", &number)) {
-        config->panelTimeFont.weight = std::clamp(static_cast<int>(number), 0, 1000);
+        config->panelTimeFont.weight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
     }
     if (ReadXmlNumberAttribute(reader, L"panelTimeFontItalic", &number)) {
         config->panelTimeFont.italic = number != 0;
@@ -833,10 +862,10 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->panelBottomFont.face = text;
     }
     if (ReadXmlNumberAttribute(reader, L"panelBottomFontSize", &number)) {
-        config->panelBottomFont.dialogSize = std::clamp(static_cast<int>(number), 10, 9990);
+        config->panelBottomFont.dialogSize = static_cast<int>(std::clamp<LONGLONG>(number, 10, 9990));
     }
     if (ReadXmlNumberAttribute(reader, L"panelBottomFontWeight", &number)) {
-        config->panelBottomFont.weight = std::clamp(static_cast<int>(number), 0, 1000);
+        config->panelBottomFont.weight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
     }
     if (ReadXmlNumberAttribute(reader, L"panelBottomFontItalic", &number)) {
         config->panelBottomFont.italic = number != 0;
@@ -852,13 +881,13 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     }
     if (ReadXmlNumberAttribute(reader, L"padding", &number)) {
         int maximumPadding = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
-        config->padding = std::clamp(static_cast<int>(number), 0, maximumPadding);
+        config->padding = static_cast<int>(std::clamp<LONGLONG>(number, 0, maximumPadding));
     }
     if (ReadXmlNumberAttribute(reader, L"borderStyle", &number)) {
-        config->borderStyle = std::clamp(static_cast<int>(number), 0, DIGITAL_BORDER_STYLE_COUNT - 1);
+        config->borderStyle = static_cast<int>(std::clamp<LONGLONG>(number, 0, DIGITAL_BORDER_STYLE_COUNT - 1));
     }
     if (ReadXmlNumberAttribute(reader, L"borderWidth", &number)) {
-        config->borderWidth = std::clamp(static_cast<int>(number), 0, DIGITAL_BORDER_WIDTH_MAX);
+        config->borderWidth = static_cast<int>(std::clamp<LONGLONG>(number, 0, DIGITAL_BORDER_WIDTH_MAX));
     }
     if (ReadXmlNumberAttribute(reader, L"borderColor", &number)) {
         config->borderColor = static_cast<COLORREF>(number & 0xFFFFFF);
@@ -885,10 +914,16 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->sundayFirst = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"dateCopyFormat", &number)) {
-        config->dateCopyFormat = std::clamp(static_cast<int>(number), 0, DATE_FORMAT_COUNT - 1);
+        config->dateCopyFormat = static_cast<int>(std::clamp<LONGLONG>(number, 0, DATE_FORMAT_COUNT - 1));
     }
-    if (ReadXmlNumberAttribute(reader, L"timeSignal", &number) && number >= 0 && number < TIME_SIGNAL_COUNT) {
+    if (ReadXmlNumberAttribute(reader, L"timeSignal", &number)
+            && number > TIME_SIGNAL_NONE
+            && number < TIME_SIGNAL_COUNT) {
         config->timeSignal = static_cast<TimeSignalMode>(number);
+        config->timeSignalEnabled = true;
+    }
+    if (ReadXmlNumberAttribute(reader, L"timeSignalEnabled", &number)) {
+        config->timeSignalEnabled = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"soundsMuted", &number)) {
         config->soundsMuted = number != 0;
@@ -903,10 +938,10 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->alarmTimeSignal = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"alarmHour", &number)) {
-        config->alarmHour = std::clamp(static_cast<int>(number), 0, 23);
+        config->alarmHour = static_cast<int>(std::clamp<LONGLONG>(number, 0, 23));
     }
     if (ReadXmlNumberAttribute(reader, L"alarmMinute", &number)) {
-        config->alarmMinute = std::clamp(static_cast<int>(number), 0, 59);
+        config->alarmMinute = static_cast<int>(std::clamp<LONGLONG>(number, 0, 59));
     }
     if (ReadXmlNumberAttribute(reader, L"runCommand", &number)) {
         config->runCommand = number != 0;
@@ -990,11 +1025,11 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
                 loaded.fontFace = applicationFontFace;
             }
             if (ReadXmlNumberAttribute(reader, L"fontDialogSize", &number)) {
-                int savedSize = static_cast<int>(number);
+                int savedSize = static_cast<int>(std::clamp<LONGLONG>(number, 0, 9990));
                 loaded.fontDialogSize = std::clamp(savedSize < 10 ? savedSize * 10 : savedSize, 10, 9990);
             }
             if (ReadXmlNumberAttribute(reader, L"fontWeight", &number)) {
-                loaded.fontWeight = std::clamp(static_cast<int>(number), 0, 1000);
+                loaded.fontWeight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
             }
             if (ReadXmlNumberAttribute(reader, L"fontItalic", &number)) {
                 loaded.fontItalic = number != 0;
@@ -1046,18 +1081,7 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             loaded.widgets.push_back(config);
         }
     }
-    bool valid = SUCCEEDED(result) && rootFound && !loaded.widgets.empty();
-    if (valid) {
-        std::vector<int> ids;
-        for (size_t index = 0; index < loaded.widgets.size(); index++) {
-            int id = loaded.widgets[index].id;
-            if (id <= 0 || std::find(ids.begin(), ids.end(), id) != ids.end()) {
-                valid = false;
-                break;
-            }
-            ids.push_back(id);
-        }
-    }
+    bool valid = SUCCEEDED(result) && rootFound && !loaded.widgets.empty() && StoredWidgetIdsAreValid(loaded.widgets);
     if (reader != nullptr) {
         reader->Release();
     }
@@ -1110,7 +1134,7 @@ bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage d
 /// Overlays recognized registry values on an initialized widget configuration, validating or clamping bounded options.
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     DWORD value = 0;
-    if (ReadDword(key, L"Id", &value)) {
+    if (ReadDword(key, L"Id", &value) && value > 0 && value <= INT_MAX) {
         config->id = static_cast<int>(value);
     }
     if (ReadDword(key, L"Type", &value) && value < WIDGET_TYPE_COUNT) {
@@ -1180,7 +1204,7 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         config->fontDialogSize = config->fontSize * 10;
     }
     if (ReadDword(key, L"FontDialogSize", &value)) {
-        int savedSize = static_cast<int>(value);
+        int savedSize = static_cast<int>(std::min<DWORD>(value, 9990));
         config->fontDialogSize = std::clamp(savedSize < 10 ? savedSize * 10 : savedSize, 10, 9990);
     }
     if (ReadDword(key, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
@@ -1318,8 +1342,12 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"DateCopyFormat", &value) && value < DATE_FORMAT_COUNT) {
         config->dateCopyFormat = static_cast<int>(value);
     }
-    if (ReadDword(key, L"TimeSignal", &value) && value < TIME_SIGNAL_COUNT) {
+    if (ReadDword(key, L"TimeSignal", &value) && value > TIME_SIGNAL_NONE && value < TIME_SIGNAL_COUNT) {
         config->timeSignal = static_cast<TimeSignalMode>(value);
+        config->timeSignalEnabled = true;
+    }
+    if (ReadDword(key, L"TimeSignalEnabled", &value)) {
+        config->timeSignalEnabled = value != 0;
     }
     if (ReadDword(key, L"SoundsMuted", &value)) {
         config->soundsMuted = value != 0;
@@ -1432,6 +1460,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"WeekNumbers", config.weekNumbers);
     WriteDword(key, L"SundayFirst", config.sundayFirst);
     WriteDword(key, L"DateCopyFormat", config.dateCopyFormat);
+    WriteDword(key, L"TimeSignalEnabled", config.timeSignalEnabled);
     WriteDword(key, L"TimeSignal", config.timeSignal);
     WriteDword(key, L"SoundsMuted", config.soundsMuted);
     WriteDword(key, L"AlarmEnabled", config.alarmEnabled);
@@ -1489,8 +1518,7 @@ static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount
 }
 
 /// Loads per-user settings using supplied defaults and a widget-default factory, including the older single-widget
-/// layout.
-/// Returns false if arguments are invalid or the settings root cannot be opened.
+/// layout. Returns false if arguments are invalid or the settings root cannot be opened.
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults,
         SettingsSnapshot* snapshot) {
     if (createDefaults == nullptr || snapshot == nullptr) {
@@ -1530,7 +1558,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         loaded.fontFace.clear();
     }
     if (ReadDword(root, L"FontDialogSize", &value)) {
-        int savedSize = static_cast<int>(value);
+        int savedSize = static_cast<int>(std::min<DWORD>(value, 9990));
         loaded.fontDialogSize = std::clamp(savedSize < 10 ? savedSize * 10 : savedSize, 10, 9990);
     }
     if (ReadDword(root, L"FontWeight", &value)) {
@@ -1587,6 +1615,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
                 RegCloseKey(item);
             }
         }
+    }
+    if (collection != nullptr) {
         RegCloseKey(collection);
     }
     if (loaded.widgets.empty()) {
@@ -1615,10 +1645,10 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         if (ReadDword(root, L"AlarmEnabled", &value)) {
             config.alarmEnabled = value != 0;
         }
-        if (ReadDword(root, L"AlarmHour", &value)) {
+        if (ReadDword(root, L"AlarmHour", &value) && value < 24) {
             config.alarmHour = static_cast<int>(value);
         }
-        if (ReadDword(root, L"AlarmMinute", &value)) {
+        if (ReadDword(root, L"AlarmMinute", &value) && value < 60) {
             config.alarmMinute = static_cast<int>(value);
         }
         if (ReadDword(root, L"AlarmRunCommand", &value)) {
@@ -1633,6 +1663,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         loaded.widgets.push_back(config);
     }
     RegCloseKey(root);
+    if (!StoredWidgetIdsAreValid(loaded.widgets)) {
+        return false;
+    }
     *snapshot = std::move(loaded);
     return true;
 }

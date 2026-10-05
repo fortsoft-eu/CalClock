@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.2
+ * Last modified for version 1.5.2.0
  */
 
 #define NOMINMAX
@@ -343,7 +343,8 @@ const int ID_SUNDAY_FIRST = 3028;
 const int ID_TABS = 3006;
 const int ID_TEST_COMMAND = 3036;
 const int ID_TEXT_COLOR = 3025;
-const int ID_TIME_SIGNAL = 3078;
+const int ID_TIME_SIGNAL_ENABLED = 3078;
+const int ID_TIME_SIGNAL_INTERVAL_BASE = 3150;
 const int ID_TIME_SIGNAL_NOTE = 3080;
 const int ID_TIME_SIGNAL_SOUND = 3093;
 const int ID_TIME_SIGNAL_VOLUME = 3094;
@@ -505,7 +506,8 @@ HWND hRemoteScriptCheck = nullptr;
 HWND hRemoteScriptLabel = nullptr;
 HWND hRunCommandCheck = nullptr;
 HWND hTestCommandButton = nullptr;
-HWND hTimeSignalCombo = nullptr;
+HWND hTimeSignalEnabledCheck = nullptr;
+HWND hTimeSignalIntervalRadios[TIME_SIGNAL_COUNT - 1] = {};
 
 /// Time source controls
 HWND hNtpPresetCombo = nullptr;
@@ -1339,10 +1341,36 @@ static void SetDefaultWidgetAppearance(WidgetConfig* config, WidgetType type) {
     config->panelBottomFont = panelFont;
 }
 
+/// Allocates an unused positive widget ID, wrapping safely when a stored ID reaches the integer limit.
+static int AllocateWidgetId() {
+    while (true) {
+        int candidate = nextWidgetId;
+        nextWidgetId = nextWidgetId < INT_MAX ? nextWidgetId + 1 : 1;
+        bool used = false;
+        for (const std::unique_ptr<Widget>& widget : widgets) {
+            if (widget->config.id == candidate) {
+                used = true;
+                break;
+            }
+        }
+        if (!used) {
+            for (const WidgetConfig& config : settingsDraft) {
+                if (config.id == candidate) {
+                    used = true;
+                    break;
+                }
+            }
+        }
+        if (!used) {
+            return candidate;
+        }
+    }
+}
+
 /// Builds a visible widget with localized defaults and an initial position, allocating a new widget ID.
 static WidgetConfig DefaultConfig(WidgetType type, int index) {
     WidgetConfig config = {};
-    config.id = nextWidgetId++;
+    config.id = AllocateWidgetId();
     config.type = type;
     config.name = TypeName(type);
     config.visible = true;
@@ -1374,7 +1402,8 @@ static WidgetConfig DefaultConfig(WidgetType type, int index) {
     config.runCommand = false;
     config.loopAudio = false;
     config.callRemoteScript = false;
-    config.timeSignal = TIME_SIGNAL_NONE;
+    config.timeSignalEnabled = false;
+    config.timeSignal = TIME_SIGNAL_EVERY_HOUR;
     return config;
 }
 
@@ -1513,7 +1542,9 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     for (size_t index = 0; index < snapshot.widgets.size(); index++) {
         std::unique_ptr<Widget> widget(new Widget());
         widget->config = snapshot.widgets[index];
-        nextWidgetId = std::max(nextWidgetId, widget->config.id + 1);
+        if (widget->config.id < INT_MAX) {
+            nextWidgetId = std::max(nextWidgetId, widget->config.id + 1);
+        }
         widgets.push_back(std::move(widget));
     }
 }
@@ -1926,8 +1957,14 @@ static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, 
     ULARGE_INTEGER value = {};
     value.LowPart = fileTime.dwLowDateTime;
     value.HighPart = fileTime.dwHighDateTime;
-    LONGLONG adjusted = static_cast<LONGLONG>(value.QuadPart) + config.offsetMilliseconds * 10000;
-    value.QuadPart = static_cast<ULONGLONG>(adjusted);
+    LONGLONG current = static_cast<LONGLONG>(value.QuadPart);
+    if (config.offsetMilliseconds > (LLONG_MAX - current) / 10000) {
+        value.QuadPart = LLONG_MAX;
+    } else if (config.offsetMilliseconds < -current / 10000) {
+        value.QuadPart = 0;
+    } else {
+        value.QuadPart = static_cast<ULONGLONG>(current + config.offsetMilliseconds * 10000);
+    }
     fileTime.dwLowDateTime = value.LowPart;
     fileTime.dwHighDateTime = value.HighPart;
     FileTimeToSystemTime(&fileTime, displayed);
@@ -1950,11 +1987,11 @@ static void ClearCurrentTimeSignalSources() {
     currentTimeSignalSources.clear();
 }
 
-/// Reports whether any listed widget still exists and has sound enabled.
-static bool HasUnmutedTimeSignalSource(const std::vector<int>& widgetIds) {
+/// Reports whether any listed widget is audible, also requiring regular time signals to remain enabled.
+static bool HasUnmutedTimeSignalSource(const std::vector<int>& widgetIds, bool regular) {
     for (size_t index = 0; index < widgetIds.size(); index++) {
         Widget* widget = FindWidgetById(widgetIds[index]);
-        if (widget != nullptr && !widget->config.soundsMuted) {
+        if (widget != nullptr && !widget->config.soundsMuted && (!regular || widget->config.timeSignalEnabled)) {
             return true;
         }
     }
@@ -1964,8 +2001,8 @@ static bool HasUnmutedTimeSignalSource(const std::vector<int>& widgetIds) {
 /// Mutes each shared sequence only when none of its regular or alarm contributors is audible.
 static void UpdateCurrentTimeSignalMute() {
     for (const TimeSignalSourceGroup& group : currentTimeSignalSources) {
-        bool audible = HasUnmutedTimeSignalSource(group.regularWidgetIds)
-            || HasUnmutedTimeSignalSource(group.alarmWidgetIds);
+        bool audible = HasUnmutedTimeSignalSource(group.regularWidgetIds, true)
+            || HasUnmutedTimeSignalSource(group.alarmWidgetIds, false);
         SetTimeSignalMuted(group.target, !audible);
     }
 }
@@ -2015,8 +2052,9 @@ static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
     wchar_t time[16] = {};
     swprintf_s(time, L"%02d:%02d", config.alarmHour, config.alarmMinute);
     std::wstring label = TEXT[config.language][TXT_ALARM];
-    label += L" ";
+    label += L" (";
     label += time;
+    label += L")";
     unsigned int alarmDays = config.alarmDays & ALARM_DAYS_ALL;
     if (alarmDays != ALARM_DAYS_ALL) {
         label += L" (";
@@ -2038,6 +2076,15 @@ static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
         }
         label += L")";
     }
+    return label;
+}
+
+/// Builds a localized signal menu caption with the retained interval, whether enabled or disabled.
+static std::wstring TimeSignalMenuLabel(const WidgetConfig& config) {
+    std::wstring label = TIME_SIGNAL_MENU_LABELS[config.language];
+    label += L" (";
+    label += TIME_SIGNAL_MODE_LABELS[config.language][config.timeSignal];
+    label += L")";
     return label;
 }
 
@@ -2069,8 +2116,13 @@ static void CheckTimeSignals() {
         Widget* widget = widgets[index].get();
         int mode = static_cast<int>(widgets[index]->config.timeSignal);
         bool supportsSound = WidgetSupportsSound(widget->config.type);
-        bool regularSignal = supportsSound && mode > TIME_SIGNAL_NONE && mode < TIME_SIGNAL_COUNT;
-        bool alarmSignal = supportsSound && widget->config.alarmEnabled && widget->config.alarmTimeSignal;
+        bool regularSignal = supportsSound
+            && widget->config.timeSignalEnabled
+            && mode > TIME_SIGNAL_NONE
+            && mode < TIME_SIGNAL_COUNT;
+        bool alarmSignal = supportsSound
+            && widget->config.alarmEnabled
+            && widget->config.alarmTimeSignal;
         if (!regularSignal && !alarmSignal) {
             continue;
         }
@@ -5811,9 +5863,8 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         if (!WidgetSupportsSound(widget->config.type)) {
             return;
         }
-        widget->config.timeSignal = widget->config.timeSignal == TIME_SIGNAL_NONE
-            ? TIME_SIGNAL_EVERY_HOUR
-            : TIME_SIGNAL_NONE;
+        widget->config.timeSignalEnabled = !widget->config.timeSignalEnabled;
+        UpdateCurrentTimeSignalMute();
         SynchronizeOpenSettings(widget, command);
         SaveSettingsWithoutAppearancePreviews();
     } else if (command == ID_MENU_MUTE) {
@@ -5865,6 +5916,26 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
     }
 }
 
+/// Handles Alt+0 through Alt+3 on analog and calendar-with-clock widgets using their existing size commands.
+/// Ignores key repeats and leaves other widgets and modified key combinations to their usual handlers.
+static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& message) {
+    if (widget == nullptr
+            || widget->config.type != WIDGET_ANALOG && widget->config.type != WIDGET_PANEL
+            || message.message != WM_SYSKEYDOWN
+            || message.wParam < L'0'
+            || message.wParam > L'3'
+            || (message.lParam & 1LL << 29) == 0
+            || GetKeyState(VK_CONTROL) < 0
+            || GetKeyState(VK_SHIFT) < 0) {
+        return false;
+    }
+    if ((message.lParam & 1LL << 30) == 0) {
+        int command = ID_MENU_SIZE_104 + static_cast<int>(message.wParam - L'0');
+        HandleWidgetMenuCommand(widget, command);
+    }
+    return true;
+}
+
 /// Builds the widget's localized context menu with applicable states, displays it, and dispatches the selected command.
 static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     HMENU menu = CreatePopupMenu();
@@ -5893,8 +5964,9 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         UINT alarmFlags = MF_STRING | (widget->config.alarmEnabled ? MF_CHECKED : 0);
         std::wstring alarmLabel = AlarmMenuLabel(widget->config);
         AppendMenuCommand(menu, alarmFlags, ID_MENU_ALARM_ENABLED, alarmLabel.c_str(), &menuMnemonics);
-        AppendMenuCommand(menu, MF_STRING | (widget->config.timeSignal != TIME_SIGNAL_NONE ? MF_CHECKED : 0),
-            ID_MENU_TIME_SIGNAL_ENABLED, TIME_SIGNAL_MENU_LABELS[widget->config.language], &menuMnemonics);
+        std::wstring signalLabel = TimeSignalMenuLabel(widget->config);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.timeSignalEnabled ? MF_CHECKED : 0),
+            ID_MENU_TIME_SIGNAL_ENABLED, signalLabel.c_str(), &menuMnemonics);
         AppendMenuCommand(menu, MF_STRING | (widget->config.soundsMuted ? MF_CHECKED : 0),
             ID_MENU_MUTE, MUTE_LABELS[widget->config.language], &menuMnemonics);
     }
@@ -5906,6 +5978,7 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
             std::wstring label = WT(widget, TXT_SIZE);
             label += L" ";
             label += std::to_wstring(sizes[index]);
+            label += L"\tAlt+" + std::to_wstring(index);
             AppendMenuCommand(menu, MF_STRING | (widget->config.size == sizes[index] ? MF_CHECKED : 0),
                 ID_MENU_SIZE_104 + index, label.c_str(), &menuMnemonics);
         }
@@ -6077,7 +6150,12 @@ static SettingsControlLayer GetSettingsControlLayer(HWND control) {
     if (_wcsicmp(className, L"BUTTON") == 0) {
         LONG_PTR style = GetWindowLongPtrW(control, GWL_STYLE);
         UINT type = static_cast<UINT>(style & BS_TYPEMASK);
-        if (type == BS_CHECKBOX || type == BS_AUTOCHECKBOX || type == BS_3STATE || type == BS_AUTO3STATE) {
+        if (type == BS_CHECKBOX
+                || type == BS_AUTOCHECKBOX
+                || type == BS_3STATE
+                || type == BS_AUTO3STATE
+                || type == BS_RADIOBUTTON
+                || type == BS_AUTORADIOBUTTON) {
             return SETTINGS_CONTROL_CHECKBOX;
         }
     }
@@ -6102,9 +6180,8 @@ static bool SettingsControlIsAbove(const PositionedControl& left, const Position
 static HWND AddUnderlayStatic(HWND parent, const wchar_t* text, DWORD style, int x, int y, int height,
         std::vector<HWND>* group = nullptr) {
     int right = parent == hSettings ? SETTINGS_WIDGET_LIST_RIGHT : SETTINGS_PAGE_CONTENT_RIGHT;
-    HWND control = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", text,
-        WS_CHILD | WS_CLIPSIBLINGS | style | SS_LEFTNOWORDWRAP,
-        x, y, right - x, height, parent, nullptr, hInstance, nullptr);
+    HWND control = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", text, WS_CHILD | WS_CLIPSIBLINGS | style
+        | SS_LEFTNOWORDWRAP, x, y, right - x, height, parent, nullptr, hInstance, nullptr);
     if (group != nullptr) {
         group->push_back(control);
     }
@@ -7952,50 +8029,158 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         }
     }
     std::vector<ControlState> controlStates = {
-        { hTransparentBackgroundCheck, !fullscreen },
-        { hPaddingTrackBar, digital },
-        { hBorderTrackBar, supportsBorderStyle },
+        {
+            hTransparentBackgroundCheck,
+            !fullscreen
+        },
+        {
+            hPaddingTrackBar,
+            digital
+        },
+        {
+            hBorderTrackBar,
+            supportsBorderStyle
+        },
         {
             hBorderColorButton,
             supportsBorderStyle && SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW
         },
-        { hBorderWidthTrackBar, !fullscreen },
-        { hFontButton, digital || calendarFontEnabled },
-        { hSecondsCheck, supportsSeconds },
-        { hTimeFormatCombo, (digital || panel) && !WidgetUsesUtcTime(timeConfiguration) },
-        { hShowAmPmCheck, supportsAmPm },
-        { hUtcTextCheck, (digital || panel) && utc },
-        { hTimeZoneLabel, !utc },
-        { hTimeZoneCombo, !utc },
-        { hTopmostCheck, !fullscreen },
-        { hOpacityTrackBar, !fullscreen },
-        { hSoundsMutedCheck, supportsAlarm },
-        { hAlarmEnabledCheck, supportsAlarm },
-        { hAlarmTimeEdit, supportsAlarm },
-        { hRunCommandCheck, supportsAlarm },
-        { hCommandEdit, runCommand },
-        { hBrowseButton, runCommand },
-        { hAlarmVolumeLabel, runCommand && LooksLikeAudio(commandText) },
-        { hAlarmVolumeTrackBar, runCommand && LooksLikeAudio(commandText) },
-        { hAlarmVolumeValue, runCommand && LooksLikeAudio(commandText) },
-        { hLoopAudioCheck, runCommand && hasCommand },
-        { hTestCommandButton, settingsCommandTestActive || runCommand && hasCommand },
-        { hRemoteScriptCheck, supportsAlarm },
-        { hRemoteScriptLabel, supportsAlarm && GetCheck(hRemoteScriptCheck) },
-        { hRemoteScriptEdit, supportsAlarm && GetCheck(hRemoteScriptCheck) }
+        {
+            hBorderWidthTrackBar,
+            !fullscreen
+        },
+        {
+            hFontButton,
+            digital || calendarFontEnabled
+        },
+        {
+            hSecondsCheck,
+            supportsSeconds
+        },
+        {
+            hTimeFormatCombo,
+            (digital || panel) && !WidgetUsesUtcTime(timeConfiguration)
+        },
+        {
+            hShowAmPmCheck,
+            supportsAmPm
+        },
+        {
+            hUtcTextCheck,
+            (digital || panel) && utc
+        },
+        {
+            hTimeZoneLabel,
+            !utc
+        },
+        {
+            hTimeZoneCombo,
+            !utc
+        },
+        {
+            hTopmostCheck,
+            !fullscreen
+        },
+        {
+            hOpacityTrackBar,
+            !fullscreen
+        },
+        {
+            hSoundsMutedCheck,
+            supportsAlarm
+        },
+        {
+            hAlarmEnabledCheck,
+            supportsAlarm
+        },
+        {
+            hAlarmTimeEdit,
+            supportsAlarm
+        },
+        {
+            hRunCommandCheck,
+            supportsAlarm
+        },
+        {
+            hCommandEdit,
+            runCommand
+        },
+        {
+            hBrowseButton,
+            runCommand
+        },
+        {
+            hAlarmVolumeLabel,
+            runCommand && LooksLikeAudio(commandText)
+        },
+        {
+            hAlarmVolumeTrackBar,
+            runCommand && LooksLikeAudio(commandText)
+        },
+        {
+            hAlarmVolumeValue,
+            runCommand && LooksLikeAudio(commandText)
+        },
+        {
+            hLoopAudioCheck,
+            runCommand && hasCommand
+        },
+        {
+            hTestCommandButton,
+            settingsCommandTestActive || runCommand && hasCommand
+        },
+        {
+            hRemoteScriptCheck,
+            supportsAlarm
+        },
+        {
+            hRemoteScriptLabel,
+            supportsAlarm && GetCheck(hRemoteScriptCheck)
+        },
+        {
+            hRemoteScriptEdit,
+            supportsAlarm && GetCheck(hRemoteScriptCheck)
+        }
     };
     bool singleSelection = GetSelectedWidgetIndices().size() == 1;
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         bool enabled = panel && GetCheck(hAdditionalEnabledChecks[index]);
-        controlStates.push_back(ControlState{ hAdditionalEnabledChecks[index], panel });
-        controlStates.push_back(ControlState{ hAdditionalNameLabels[index], enabled });
-        controlStates.push_back(ControlState{ hAdditionalNameEdits[index], enabled });
-        controlStates.push_back(ControlState{ hAdditionalTimeZoneLabels[index], enabled });
-        controlStates.push_back(ControlState{ hAdditionalTimeZoneCombos[index], enabled });
-        controlStates.push_back(ControlState{ hAdditionalSizeCombos[index], enabled });
+        controlStates.push_back(ControlState{
+            hAdditionalEnabledChecks[index],
+            panel
+        });
+        controlStates.push_back(ControlState{
+            hAdditionalNameLabels[index],
+            enabled
+        });
+        controlStates.push_back(ControlState{
+            hAdditionalNameEdits[index],
+            enabled
+        });
+        controlStates.push_back(ControlState{
+            hAdditionalTimeZoneLabels[index],
+            enabled
+        });
+        controlStates.push_back(ControlState{
+            hAdditionalTimeZoneCombos[index],
+            enabled
+        });
+        controlStates.push_back(ControlState{
+            hAdditionalSizeCombos[index],
+            enabled
+        });
     }
     for (int day = 0; day < ALARM_DAY_COUNT; day++) {
-        controlStates.push_back(ControlState{ hAlarmDayChecks[day], supportsAlarm && GetCheck(hAlarmEnabledCheck) });
+        controlStates.push_back(ControlState{
+            hAlarmDayChecks[day],
+            supportsAlarm && GetCheck(hAlarmEnabledCheck)
+        });
+    }
+    for (HWND radio : hTimeSignalIntervalRadios) {
+        controlStates.push_back(ControlState{
+            radio,
+            supportsAlarm && GetCheck(hTimeSignalEnabledCheck)
+        });
     }
     const std::vector<HWND>* groups[] = {
         &generalControls,
@@ -8031,7 +8216,8 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
 
 /// Adjusts a dropdown's pending position and size to the monitor work area before it becomes visible.
 /// Removes its subclass when the native list window is destroyed.
-static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
     if (message == WM_WINDOWPOSCHANGING) {
         WINDOWPOS* position = reinterpret_cast<WINDOWPOS*>(lParam);
         HWND combo = reinterpret_cast<HWND>(referenceData);
@@ -8120,8 +8306,7 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
 }
 
 /// Measures current items in the dropdown font immediately before opening, adding borders, padding, and scrollbar
-/// space.
-/// Keeps the dropdown at least as wide as its combo and installs work-area positioning support.
+/// space. Keeps the dropdown at least as wide as its combo and installs work-area positioning support.
 static void UpdateComboBoxDropDownWidth(HWND combo) {
     if (combo == nullptr) {
         return;
@@ -8330,7 +8515,10 @@ static void LoadDraftIntoControls() {
     SetCheck(hRemoteScriptCheck, config.callRemoteScript);
     SetControlText(hRemoteScriptEdit, config.remoteScriptUrl.c_str());
     SetCheck(hAlarmTimeSignalCheck, config.alarmTimeSignal);
-    SetComboSelection(hTimeSignalCombo, config.timeSignal);
+    SetCheck(hTimeSignalEnabledCheck, config.timeSignalEnabled);
+    for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
+        SetCheck(hTimeSignalIntervalRadios[mode - 1], config.timeSignal == mode);
+    }
     UpdateSettingsSelectionState(true);
     updatingSettingsControls = previousUpdating;
 }
@@ -8435,10 +8623,13 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     config.alarmVolume = SelectedAlarmVolume();
     config.callRemoteScript = remoteScriptEnabled;
     config.remoteScriptUrl = remoteScriptUrl;
-    int timeSignal = static_cast<int>(SendMessageW(hTimeSignalCombo, CB_GETCURSEL, 0, 0));
-    config.timeSignal = supportsSound
-        ? static_cast<TimeSignalMode>(std::clamp(timeSignal, 0, TIME_SIGNAL_COUNT - 1))
-        : TIME_SIGNAL_NONE;
+    config.timeSignalEnabled = supportsSound && GetCheck(hTimeSignalEnabledCheck);
+    for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
+        if (GetCheck(hTimeSignalIntervalRadios[mode - 1])) {
+            config.timeSignal = static_cast<TimeSignalMode>(mode);
+            break;
+        }
+    }
     return true;
 }
 
@@ -8488,7 +8679,7 @@ static void AppendWidgetCopies(const std::vector<WidgetConfig>& originals) {
     int firstCopyIndex = static_cast<int>(settingsDraft.size());
     for (size_t index = 0; index < copyCount; index++) {
         WidgetConfig copy = originals[index];
-        copy.id = nextWidgetId++;
+        copy.id = AllocateWidgetId();
         copy.name += WIDGET_COPY_SUFFIXES[appLanguage];
         copy.x = std::min(copy.x, INT_MAX - 28) + 28;
         copy.y = std::min(copy.y, INT_MAX - 28) + 28;
@@ -8686,6 +8877,7 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
         && left.weekNumbers == right.weekNumbers
         && left.sundayFirst == right.sundayFirst
         && left.dateCopyFormat == right.dateCopyFormat
+        && left.timeSignalEnabled == right.timeSignalEnabled
         && left.timeSignal == right.timeSignal
         && left.soundsMuted == right.soundsMuted
         && left.alarmEnabled == right.alarmEnabled
@@ -8782,6 +8974,7 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
     normalized.command = right.command;
     normalized.callRemoteScript = right.callRemoteScript;
     normalized.remoteScriptUrl = right.remoteScriptUrl;
+    normalized.timeSignalEnabled = right.timeSignalEnabled;
     normalized.timeSignal = right.timeSignal;
     normalized.alarmTimeSignal = right.alarmTimeSignal;
     normalized.soundsMuted = right.soundsMuted;
@@ -9207,8 +9400,9 @@ static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configu
         targetY = configuration.previewY;
     }
     RECT currentPosition = {};
-    if (positionChanged && GetWindowRect(widget->window, &currentPosition)
-        && (currentPosition.left != targetX || currentPosition.top != targetY)) {
+    if (positionChanged
+            && GetWindowRect(widget->window, &currentPosition)
+            && (currentPosition.left != targetX || currentPosition.top != targetY)) {
         SetWindowPos(widget->window, nullptr, targetX, targetY, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
     }
     if (previous.name != configuration.name) {
@@ -9488,7 +9682,7 @@ static void CopyWidgetMenuSetting(WidgetConfig* target, const WidgetConfig& sour
     } else if (command == ID_MENU_ALARM_ENABLED) {
         target->alarmEnabled = source.alarmEnabled;
     } else if (command == ID_MENU_TIME_SIGNAL_ENABLED) {
-        target->timeSignal = source.timeSignal;
+        target->timeSignalEnabled = source.timeSignalEnabled;
     } else if (command == ID_MENU_SHOW_TODAY) {
         target->showToday = source.showToday;
     } else if (command >= ID_MENU_DATE_FORMAT_BASE && command < ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT) {
@@ -9544,7 +9738,8 @@ static void SynchronizeOpenSettings(const Widget* widget, int command) {
             SetCheck(hAlarmEnabledCheck, configuration.alarmEnabled);
             UpdateSettingControlAvailability();
         } else if (command == ID_MENU_TIME_SIGNAL_ENABLED) {
-            SetComboSelection(hTimeSignalCombo, configuration.timeSignal);
+            SetCheck(hTimeSignalEnabledCheck, configuration.timeSignalEnabled);
+            UpdateSettingControlAvailability();
         } else if (command == ID_MENU_SHOW_TODAY) {
             SetCheck(hShowTodayCheck, configuration.showToday);
         } else if (command >= ID_MENU_DATE_FORMAT_BASE && command < ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT) {
@@ -10258,19 +10453,22 @@ static void CreateSettingsControls() {
     hRemoteScriptEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL,
         left + 96, y, 274, 24, hAlarmPage, ID_REMOTE_SCRIPT_URL, &alarmControls);
     y += 34;
-    hAlarmTimeSignalCheck = AddControl(0, L"BUTTON", ALARM_TIME_SIGNAL_LABELS[appLanguage],
-        WS_TABSTOP | BS_AUTOCHECKBOX,
+    hAlarmTimeSignalCheck = AddControl(0, L"BUTTON", ALARM_TIME_SIGNAL_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 360, 24, hAlarmPage, ID_ALARM_TIME_SIGNAL, &alarmControls);
-    AddUnderlayStatic(hTimeSignalPage, TIME_SIGNAL_FIELD_LABELS[appLanguage], WS_VISIBLE,
-        left, 16, 22, &timeSignalControls);
-    hTimeSignalCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
-        fieldLeft + 50, 12, field - 50, 220, hTimeSignalPage, ID_TIME_SIGNAL, &timeSignalControls);
-    for (int mode = 0; mode < TIME_SIGNAL_COUNT; mode++) {
-        SendMessageW(hTimeSignalCombo, CB_ADDSTRING, 0,
-            reinterpret_cast<LPARAM>(TIME_SIGNAL_MODE_LABELS[appLanguage][mode]));
+    hTimeSignalEnabledCheck = AddControl(0, L"BUTTON", TIME_SIGNAL_ENABLED_LABELS[appLanguage], WS_TABSTOP | WS_GROUP
+        | BS_AUTOCHECKBOX, left, 12, 364, 24, hTimeSignalPage, ID_TIME_SIGNAL_ENABLED, &timeSignalControls);
+    y = 44;
+    for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
+        DWORD style = BS_AUTORADIOBUTTON;
+        if (mode == TIME_SIGNAL_EVERY_MINUTE) {
+            style |= WS_GROUP | WS_TABSTOP;
+        }
+        hTimeSignalIntervalRadios[mode - 1] = AddControl(0, L"BUTTON", TIME_SIGNAL_MODE_LABELS[appLanguage][mode],
+            style, left, y, 364, 24, hTimeSignalPage, ID_TIME_SIGNAL_INTERVAL_BASE + mode - 1, &timeSignalControls);
+        y += 28;
     }
-    HWND timeSignalNote = AddControl(0, L"STATIC", TIME_SIGNAL_NOTE[appLanguage], SS_OWNERDRAW,
-        left, 56, 364, pageHeight - 64, hTimeSignalPage, ID_TIME_SIGNAL_NOTE);
+    HWND timeSignalNote = AddControl(0, L"STATIC", TIME_SIGNAL_NOTE[appLanguage], WS_GROUP | SS_OWNERDRAW,
+        left, y + 12, 364, pageHeight - y - 20, hTimeSignalPage, ID_TIME_SIGNAL_NOTE);
     timeSignalControls.push_back(timeSignalNote);
     AddUnderlayStatic(hTimePage, TIME_SOURCE_LABELS[appLanguage], WS_VISIBLE, 8, 16, 22, &timeControls);
     hTimeSourceCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
@@ -10390,8 +10588,7 @@ static void CreateSettingsControls() {
     updatingSettingsControls = previousUpdating;
 }
 
-/// Stops previews and rebuilds settings controls with redraw suspended, then restores the selected tab and draft
-/// values.
+/// Stops previews and rebuilds settings controls with redraw suspended, then restores the selected tab and draft values.
 static void RebuildSettingsControls() {
     WindowRedrawScope redraw(hSettings);
     timeSignalVolumeDragging = false;
@@ -10455,7 +10652,8 @@ static void RebuildSettingsControls() {
     hAlarmVolumeLabel = nullptr;
     hAlarmVolumeTrackBar = nullptr;
     hAlarmVolumeValue = nullptr;
-    hTimeSignalCombo = nullptr;
+    hTimeSignalEnabledCheck = nullptr;
+    std::fill(std::begin(hTimeSignalIntervalRadios), std::end(hTimeSignalIntervalRadios), nullptr);
     hStartWithWindowsCheck = nullptr;
     hSoundsMutedCheck = nullptr;
     hBorderColorButton = nullptr;
@@ -10475,8 +10673,7 @@ static void RebuildSettingsControls() {
 }
 
 /// Stops tests, restores uncommitted previews, remembers the form position and selected tab, and destroys settings
-/// controls.
-/// Clears draft state and restores normal fullscreen presentation.
+/// controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow() {
     timeSignalVolumeDragging = false;
     settingsTimeSignalTestActive = false;
@@ -10525,7 +10722,8 @@ static void CloseSettingsWindow() {
     hAlarmVolumeLabel = nullptr;
     hAlarmVolumeTrackBar = nullptr;
     hAlarmVolumeValue = nullptr;
-    hTimeSignalCombo = nullptr;
+    hTimeSignalEnabledCheck = nullptr;
+    std::fill(std::begin(hTimeSignalIntervalRadios), std::end(hTimeSignalIntervalRadios), nullptr);
     hStartWithWindowsCheck = nullptr;
     hSoundsMutedCheck = nullptr;
     hBorderColorButton = nullptr;
@@ -11245,7 +11443,7 @@ static void HandleSettingsCommand(int id, int notification) {
         UpdateSettingControlAvailability();
     } else if (id == ID_UTC && notification == BN_CLICKED || id == ID_TIMEZONE && notification == CBN_SELCHANGE) {
         UpdateSettingControlAvailability();
-    } else if (id == ID_ALARM_ENABLED && notification == BN_CLICKED) {
+    } else if ((id == ID_ALARM_ENABLED || id == ID_TIME_SIGNAL_ENABLED) && notification == BN_CLICKED) {
         UpdateSettingControlAvailability();
     } else if (id == ID_RUN_COMMAND && notification == BN_CLICKED) {
         UpdateSettingControlAvailability();
@@ -11986,7 +12184,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                     && (buttonType == BS_CHECKBOX
                         || buttonType == BS_AUTOCHECKBOX
                         || buttonType == BS_3STATE
-                        || buttonType == BS_AUTO3STATE)) {
+                        || buttonType == BS_AUTO3STATE
+                        || buttonType == BS_RADIOBUTTON
+                        || buttonType == BS_AUTORADIOBUTTON)) {
                 int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
                 SetBkColor(reinterpret_cast<HDC>(wParam), GetSysColor(colorIndex));
                 SetBkMode(reinterpret_cast<HDC>(wParam), OPAQUE);
@@ -12681,6 +12881,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
                 && (message.lParam & 1LL << 30) == 0
                 && inputWidget != nullptr) {
             ToggleAllWidgetSounds();
+            continue;
+        }
+        if (HandleWidgetSizeShortcut(inputWidget, message)) {
             continue;
         }
         if (inputWidget != nullptr

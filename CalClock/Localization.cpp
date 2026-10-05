@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.5.2.0
  */
 
 #include "Localization.h"
@@ -1834,24 +1834,24 @@ const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT] = {
     L"&Sinyal"
 };
 
-const wchar_t* TIME_SIGNAL_FIELD_LABELS[LANG_COUNT] = {
-    L"Zvukové &časové znamení:",
-    L"&Audible time signal:",
-    L"Akustisches &Zeitzeichen:",
-    L"&Signal horaire sonore :",
-    L"Señal horaria &sonora:",
-    L"Segnale orario &acustico:",
-    L"&Dźwiękowy sygnał czasu:",
-    L"Zvukové č&asové znamenie:",
-    L"&Audible time signal:",
-    L"&Audible time signal:",
-    L"&Sinal horário sonoro:",
-    L"&Hørbart tidssignal:",
-    L"&Hörbar tidssignal:",
-    L"&Äänimerkki:",
-    L"&Hørbart tidssignal:",
-    L"&Hljóðtímamerki:",
-    L"&Sesli zaman sinyali:"
+const wchar_t* TIME_SIGNAL_ENABLED_LABELS[LANG_COUNT] = {
+    L"Časové znamení &aktivní",
+    L"Time signal &active",
+    L"Zeitzeichen &aktiv",
+    L"Signal horaire &actif",
+    L"Señal horaria &activa",
+    L"Segnale orario &attivo",
+    L"Sygnał czasu &aktywny",
+    L"Časové znamenie &aktívne",
+    L"Time signal &active",
+    L"Time signal &active",
+    L"Sinal horário &ativo",
+    L"Tidssignal &aktivt",
+    L"Tidssignal &aktiv",
+    L"Äänimerkki &käytössä",
+    L"Tidssignal &aktivt",
+    L"Tímamerki &virkt",
+    L"Zaman sinyali &etkin"
 };
 
 const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
@@ -3114,7 +3114,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"schránky; všechny masky jsou dostupné v každém jazyce a slovní formáty používají jazyk widgetu. Výchozí Krátké datum se řídí jazykem widgetu. "
     L"Insert přepne označení aktuální položky a posune kurzor seznamu o řádek dolů."
     L" Ctrl+C zkopíruje označené widgety. Ctrl+V přidá kopie na konec v pořadí seznamu s příponou názvu podle jazyka aplikace. Ctrl+A, Ctrl+C, Ctrl+V, Delete a Insert fungují i na tlačítkách Odebrat a Duplikovat; před provedením akce přesunou fokus do seznamu widgetů."
-    L" Maximální počet widgetů je 32. Při duplikování nebo vložení se přidají v pořadí pouze kopie, které se vejdou do limitu; na zbývající se zobrazí upozornění.",
+    L" Maximální počet widgetů je 32. Při duplikování nebo vložení se přidají v pořadí pouze kopie, které se vejdou do limitu; na zbývající se zobrazí upozornění."
+    L" Na widgetech Ručičkové hodiny a Kalendář s hodinami zvolíte pomocí Alt+0, Alt+1, Alt+2 nebo Alt+3 velikost hlavního ciferníku"
+    L" od nejmenší po největší.",
     L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nUse Ctrl, Shift or Ctrl+A to select several widgets. Controls on the General, Appearance, Alarm and Signal tabs are "
     L"then disabled, while the global Time and Application tabs remain available. Settings remembers the last open tab, and Add remembers the last type actually "
     L"added. Remove or Del removes all selected items when the changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible and "
@@ -3123,7 +3125,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"available in every language, while textual formats use the widget language. The default Short date follows the widget language. "
     L"Insert toggles the current item and moves the list cursor down one row."
     L" Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in the application language. Ctrl+A, Ctrl+C, Ctrl+V, Delete and Insert also work from the Remove and Duplicate buttons, moving focus to the widget list before performing the action."
-    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies.",
+    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies."
+    L" Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock widget to select the main clock face size, from"
+    L" smallest to largest.",
     L"\r\n\r\nAUSWAHL, TASTEN UND DATUMSKOPIE\r\nMit Strg, Umschalt oder Strg+A wählen Sie mehrere Widgets. Die Bedienelemente der Registerkarten Allgemein, Darstellung, "
     L"Wecker und Zeitzeichen werden dann deaktiviert; die globalen Registerkarten Zeit und Anwendung bleiben verfügbar. Einstellungen merkt sich die zuletzt geöffnete "
     L"Registerkarte, Hinzufügen den zuletzt hinzugefügten Typ. Entfernen oder Entf löscht beim Anwenden alle ausgewählten Einträge. Ein Doppelklick macht ein "
@@ -3132,7 +3136,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"Muster sind in jeder Sprache verfügbar; Textformate verwenden die Widget-Sprache. Das voreingestellte Kurze Datum folgt der Widget-Sprache. "
     L"Einfg schaltet die Markierung des aktuellen Eintrags um und bewegt den Listencursor eine Zeile nach unten."
     L" Strg+C kopiert ausgewählte Widgets. Strg+V fügt Kopien in Listenreihenfolge am Ende hinzu, mit einem Namenszusatz in der Anwendungssprache. Strg+A, Strg+C, Strg+V, Entf und Einfg funktionieren auch auf Entfernen und Duplizieren und setzen vor der Aktion den Fokus auf die Widget-Liste."
-    L" Maximal 32 Widgets sind möglich. Beim Duplizieren oder Einfügen werden Kopien der Reihe nach bis zum Limit hinzugefügt; für die übrigen erscheint ein Hinweis.",
+    L" Maximal 32 Widgets sind möglich. Beim Duplizieren oder Einfügen werden Kopien der Reihe nach bis zum Limit hinzugefügt; für die übrigen erscheint ein Hinweis."
+    L" Mit Alt+0, Alt+1, Alt+2 oder Alt+3 wählen Sie bei Analoguhr und Kalender mit Uhr die Größe des Hauptzifferblatts von der "
+    L"kleinsten bis zur größten.",
     L"\r\n\r\nSÉLECTION, TOUCHES ET COPIE DE DATE\r\nCtrl, Maj ou Ctrl+A sélectionne plusieurs widgets. Les commandes des onglets Général, Apparence, Alarme et Signal sont alors désactivées, "
     L"mais les onglets globaux Heure et Application restent disponibles. Paramètres mémorise le dernier onglet ouvert et Ajouter le dernier type réellement ajouté. Supprimer ou Suppr "
     L"retire toute la sélection lors de l’application. Un double-clic rend visible un widget masqué, coche Visible et l’identifie brièvement ; Paramètres dans son menu le sélectionne "
@@ -3140,7 +3146,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"modèles sont disponibles dans chaque langue ; les formats textuels utilisent la langue du widget. La Date courte par défaut suit la langue du widget. "
     L"Inser bascule la sélection de l’élément courant et descend le curseur de liste d’une ligne."
     L" Ctrl+C copie les widgets sélectionnés. Ctrl+V ajoute les copies à la fin dans l’ordre de la liste, avec un suffixe dans la langue de l’application. Ctrl+A, Ctrl+C, Ctrl+V, Suppr et Inser fonctionnent aussi sur Supprimer et Dupliquer et déplacent le focus vers la liste avant l’action."
-    L" Le nombre de widgets est limité à 32. Lors de la duplication ou du collage, les copies sont ajoutées dans l’ordre jusqu’à la limite ; un message signale les copies restantes.",
+    L" Le nombre de widgets est limité à 32. Lors de la duplication ou du collage, les copies sont ajoutées dans l’ordre jusqu’à la limite ; un message signale les copies restantes."
+    L" Appuyez sur Alt+0, Alt+1, Alt+2 ou Alt+3 dans les widgets Horloge analogique et Calendrier avec horloge pour choisir la "
+    L"taille du cadran principal, de la plus petite à la plus grande.",
     L"\r\n\r\nSELECCIÓN, TECLAS Y COPIA DE FECHA\r\nCtrl, Mayús o Ctrl+A selecciona varios widgets. Los controles de General, Apariencia, Alarma y Señal se desactivan, pero las "
     L"pestañas globales Hora y Aplicación siguen disponibles. Configuración recuerda la última pestaña abierta y Añadir el último tipo realmente añadido. Quitar o Supr elimina todos "
     L"los seleccionados al aplicar los cambios. Un doble clic muestra un widget oculto, activa Visible y lo identifica brevemente; Configuración en su menú lo selecciona en la "
@@ -3148,7 +3156,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"usan el idioma del widget. Todos los patrones están disponibles en cualquier idioma y la Fecha corta predeterminada sigue el idioma del widget. "
     L"Insert alterna la selección del elemento actual y baja el cursor de la lista una fila."
     L" Ctrl+C copia los widgets seleccionados. Ctrl+V añade las copias al final en el orden de la lista, con un sufijo en el idioma de la aplicación. Ctrl+A, Ctrl+C, Ctrl+V, Supr e Insert también funcionan desde Quitar y Duplicar y pasan el foco a la lista antes de actuar."
-    L" Se permiten hasta 32 widgets. Al duplicar o pegar, las copias se añaden en orden hasta alcanzar el límite; se muestra un aviso para las restantes.",
+    L" Se permiten hasta 32 widgets. Al duplicar o pegar, las copias se añaden en orden hasta alcanzar el límite; se muestra un aviso para las restantes."
+    L" Pulse Alt+0, Alt+1, Alt+2 o Alt+3 en Reloj analógico o Calendario con reloj para elegir el tamaño de la esfera principal, del"
+    L" menor al mayor.",
     L"\r\n\r\nSELEZIONE, TASTI E COPIA DELLA DATA\r\nCtrl, Maiusc o Ctrl+A seleziona più widget. I controlli delle schede Generale, Aspetto, Sveglia e Segnale vengono disattivati, mentre le "
     L"schede globali Ora e Applicazione restano disponibili. Impostazioni ricorda l’ultima scheda aperta e Aggiungi l’ultimo tipo realmente aggiunto. Rimuovi o Canc elimina tutti gli "
     L"elementi selezionati quando si applicano le modifiche. Un doppio clic rende visibile un widget nascosto, seleziona Visibile e lo identifica brevemente; Impostazioni nel suo "
@@ -3156,7 +3166,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"formati testuali usano la lingua del widget. Tutti i modelli sono disponibili in ogni lingua e la Data breve predefinita segue la lingua del widget. "
     L"Ins commuta la selezione dell’elemento corrente e sposta il cursore dell’elenco una riga in basso."
     L" Ctrl+C copia i widget selezionati. Ctrl+V aggiunge le copie in fondo nell’ordine dell’elenco, con un suffisso nella lingua dell’applicazione. Ctrl+A, Ctrl+C, Ctrl+V, Canc e Ins funzionano anche da Rimuovi e Duplica e spostano il focus nell’elenco prima dell’azione."
-    L" Sono consentiti fino a 32 widget. Quando si duplica o incolla, le copie vengono aggiunte in ordine fino al limite; un avviso segnala quelle rimanenti.",
+    L" Sono consentiti fino a 32 widget. Quando si duplica o incolla, le copie vengono aggiunte in ordine fino al limite; un avviso segnala quelle rimanenti."
+    L" Premere Alt+0, Alt+1, Alt+2 o Alt+3 nei widget Orologio analogico e Calendario con orologio per scegliere la dimensione del "
+    L"quadrante principale, dalla più piccola alla più grande.",
     L"\r\n\r\nZAZNACZANIE, KLAWISZE I KOPIOWANIE DATY\r\nCtrl, Shift lub Ctrl+A zaznacza wiele widżetów. Elementy kart Ogólne, Wygląd, Alarm i Sygnał są wtedy wyłączone, "
     L"ale globalne karty Czas i Aplikacja pozostają dostępne. Ustawienia pamiętają ostatnio otwartą kartę, a Dodaj ostatnio rzeczywiście dodany typ. Usuń lub Del "
     L"usuwa wszystkie zaznaczone pozycje po zastosowaniu zmian. Dwuklik pokazuje ukryty widżet, zaznacza Widoczny i krótko go wskazuje; Ustawienia w jego menu "
@@ -3164,7 +3176,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"Wszystkie wzorce są dostępne w każdym języku, a formaty słowne używają języka widżetu. Domyślna Data krótka zależy od języka widżetu. "
     L"Insert przełącza zaznaczenie bieżącej pozycji i przesuwa kursor listy o jeden wiersz w dół."
     L" Ctrl+C kopiuje zaznaczone widżety. Ctrl+V dodaje kopie na końcu w kolejności listy, z przyrostkiem w języku aplikacji. Ctrl+A, Ctrl+C, Ctrl+V, Delete i Insert działają też na przyciskach Usuń i Duplikuj i przed wykonaniem akcji przenoszą fokus na listę."
-    L" Dozwolone są maksymalnie 32 widżety. Podczas powielania lub wklejania kopie są dodawane w kolejności do osiągnięcia limitu; dla pozostałych pojawia się powiadomienie.",
+    L" Dozwolone są maksymalnie 32 widżety. Podczas powielania lub wklejania kopie są dodawane w kolejności do osiągnięcia limitu; dla pozostałych pojawia się powiadomienie."
+    L" W widżetach Zegar analogowy i Kalendarz z zegarem klawisze Alt+0, Alt+1, Alt+2 i Alt+3 wybierają rozmiar głównej tarczy od "
+    L"najmniejszego do największego.",
     L"\r\n\r\nVÝBER, KLÁVESY A KOPÍROVANIE DÁTUMU\r\nPomocou Ctrl, Shift alebo Ctrl+A označíte viac widgetov. Prvky kariet Všeobecné, Vzhľad, Budík a Znamenie sa "
     L"deaktivujú, globálne karty Čas a Aplikácia však zostanú dostupné. Nastavenie si pamätá poslednú otvorenú kartu a Pridať posledný skutočne pridaný typ. "
     L"Odobrať alebo Del odstráni po použití zmien všetky označené položky. Dvojklik zobrazí skrytý widget, začiarkne Zobrazené a krátko ho zvýrazní; Nastavenia v "
@@ -3172,7 +3186,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"masky sú dostupné v každom jazyku, slovné formáty používajú jazyk widgetu a predvolený Krátky dátum sa riadi jazykom widgetu. "
     L"Insert prepne označenie aktuálnej položky a posunie kurzor zoznamu o riadok nižšie."
     L" Ctrl+C skopíruje označené widgety. Ctrl+V pridá kópie na koniec v poradí zoznamu s príponou podľa jazyka aplikácie. Ctrl+A, Ctrl+C, Ctrl+V, Delete a Insert fungujú aj na tlačidlách Odobrať a Duplikovať; pred vykonaním akcie presunú fokus do zoznamu."
-    L" Maximálny počet widgetov je 32. Pri duplikovaní alebo vložení sa pridajú v poradí iba kópie, ktoré sa zmestia do limitu; na zostávajúce sa zobrazí upozornenie.",
+    L" Maximálny počet widgetov je 32. Pri duplikovaní alebo vložení sa pridajú v poradí iba kópie, ktoré sa zmestia do limitu; na zostávajúce sa zobrazí upozornenie."
+    L" Na widgetoch Ručičkové hodiny a Kalendár s hodinami zvolíte pomocou Alt+0, Alt+1, Alt+2 alebo Alt+3 veľkosť hlavného "
+    L"ciferníka od najmenšej po najväčšiu.",
     L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nUse Ctrl, Shift or Ctrl+A to select several widgets. Controls on the General, Appearance, Alarm and Signal tabs are "
     L"then disabled, while the global Time and Application tabs remain available. Settings remembers the last open tab, and Add remembers the last type actually "
     L"added. Remove or Del removes all selected items when the changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible and "
@@ -3181,7 +3197,9 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"available in every language, while textual formats use the widget language. The default Short date follows the widget language. "
     L"Insert toggles the current item and moves the list cursor down one row."
     L" Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in the application language. Ctrl+A, Ctrl+C, Ctrl+V, Delete and Insert also work from the Remove and Duplicate buttons, moving focus to the widget list before performing the action."
-    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies.",
+    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies."
+    L" Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock widget to select the main clock face size, from"
+    L" smallest to largest.",
     L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nUse Ctrl, Shift or Ctrl+A to select several widgets. Controls on the General, Appearance, Alarm and Signal tabs are "
     L"then disabled, while the global Time and Application tabs remain available. Settings remembers the last open tab, and Add remembers the last type actually "
     L"added. Remove or Del removes all selected items when the changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible and "
@@ -3190,51 +3208,67 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"available in every language, while textual formats use the widget language. The default Short date follows the widget language. "
     L"Insert toggles the current item and moves the list cursor down one row."
     L" Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in the application language. Ctrl+A, Ctrl+C, Ctrl+V, Delete and Insert also work from the Remove and Duplicate buttons, moving focus to the widget list before performing the action."
-    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies.",
+    L" Up to 32 widgets are allowed. When duplicating or pasting, copies are added in order until the limit is reached; a notification appears for the remaining copies."
+    L" Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock widget to select the main clock face size, from"
+    L" smallest to largest.",
     L"\r\n\r\nSELEÇÃO E DATA\r\nUm clique direito e Definições seleciona o widget correspondente. Ctrl+A seleciona todos os widgets ou monitores; "
     L"Delete remove os widgets selecionados. Um duplo clique numa entrada torna o widget visível e realça-o brevemente. Num calendário, clicar num "
     L"dia seleciona-o e copia-o no formato escolhido; todos os formatos estão disponíveis em todos os idiomas. Se forem selecionados vários "
     L"widgets, as opções específicas ficam desativadas, mas os separadores globais Hora e Aplicação permanecem disponíveis. Insert alterna a seleção do item "
     L"atual e desloca o cursor da lista uma linha para baixo."
     L" Ctrl+C copia os widgets selecionados. Ctrl+V acrescenta cópias no fim pela ordem da lista, com um sufixo no idioma da aplicação. Ctrl+A, Ctrl+C, Ctrl+V, Delete e Insert também funcionam nos botões Remover e Duplicar e passam o foco para a lista antes da ação."
-    L" São permitidos até 32 widgets. Ao duplicar ou colar, as cópias são acrescentadas pela ordem até ao limite; é apresentado um aviso sobre as restantes.",
+    L" São permitidos até 32 widgets. Ao duplicar ou colar, as cópias são acrescentadas pela ordem até ao limite; é apresentado um aviso sobre as restantes."
+    L" Prima Alt+0, Alt+1, Alt+2 ou Alt+3 nos widgets Relógio analógico e Calendário com relógio para escolher o tamanho do "
+    L"mostrador principal, do menor ao maior.",
     L"\r\n\r\nVALG OG DATO\r\nHøyreklikk og Innstillinger velger den aktuelle widgeten. Ctrl+A velger alle widgeter eller skjermer; Delete fjerner valgte widgeter. "
     L"Dobbeltklikk på en oppføring gjør widgeten synlig og fremhever den kort. Klikk på en dag i kalenderen for å velge og kopiere den i valgt format; alle formater er "
     L"tilgjengelige på alle språk. Når flere widgeter er valgt, deaktiveres widgetvalgene, men de globale fanene Tid og Program forblir tilgjengelige. Insert "
     L"veksler markeringen av gjeldende oppføring og flytter listepekeren én rad ned."
     L" Ctrl+C kopierer valgte widgeter. Ctrl+V legger kopier nederst i listens rekkefølge med et navnetillegg på programspråket. Ctrl+A, Ctrl+C, Ctrl+V, Delete og Insert virker også fra Fjern og Dupliser og flytter fokus til listen før handlingen."
-    L" Opptil 32 widgeter er tillatt. Ved duplisering eller innliming legges kopier til i rekkefølge til grensen er nådd; et varsel vises for resten.",
+    L" Opptil 32 widgeter er tillatt. Ved duplisering eller innliming legges kopier til i rekkefølge til grensen er nådd; et varsel vises for resten."
+    L" Trykk Alt+0, Alt+1, Alt+2 eller Alt+3 på Analog klokke eller Kalender med klokke for å velge størrelsen på hovedurskiven, fra"
+    L" minst til størst.",
     L"\r\n\r\nMARKERING OCH DATUM\r\nHögerklick och Inställningar markerar den aktuella widgeten. Ctrl+A markerar alla widgetar eller bildskärmar; Delete tar bort markerade "
     L"widgetar. Dubbelklick på en post visar widgeten och markerar den kort. Klicka på en dag i kalendern för att välja och kopiera den i valt format; alla format finns "
     L"på alla språk. När flera widgetar är markerade inaktiveras widgetalternativen, men de globala flikarna Tid och Program förblir tillgängliga. Insert "
     L"växlar markeringen av den aktuella posten och flyttar listmarkören en rad ned."
     L" Ctrl+C kopierar markerade widgetar. Ctrl+V lägger kopior sist i listordning med ett namntillägg på programspråket. Ctrl+A, Ctrl+C, Ctrl+V, Delete och Insert fungerar också från Ta bort och Duplicera och flyttar fokus till listan före åtgärden."
-    L" Upp till 32 widgetar tillåts. Vid duplicering eller inklistring läggs kopior till i ordning tills gränsen nås; ett meddelande visas för de återstående.",
+    L" Upp till 32 widgetar tillåts. Vid duplicering eller inklistring läggs kopior till i ordning tills gränsen nås; ett meddelande visas för de återstående."
+    L" Tryck Alt+0, Alt+1, Alt+2 eller Alt+3 på Analog klocka eller Kalender med klocka för att välja huvudurtavlans storlek, från "
+    L"minst till störst.",
     L"\r\n\r\nVALINTA JA PÄIVÄMÄÄRÄ\r\nNapsauta hiiren kakkospainikkeella ja valitse Asetukset valitaksesi kyseisen pienoisohjelman. Ctrl+A valitsee kaikki "
     L"pienoisohjelmat tai näytöt; Delete poistaa valitut pienoisohjelmat. Luettelon kaksoisnapsautus näyttää pienoisohjelman ja korostaa sen hetkeksi. "
     L"Kalenteripäivän napsautus valitsee ja kopioi sen valitussa muodossa; kaikki muodot ovat käytettävissä kaikilla kielillä. Kun useita "
     L"pienoisohjelmia on valittu, niiden asetukset poistetaan käytöstä, mutta yleiset Aika- ja Sovellus-välilehdet pysyvät käytettävissä. Insert vaihtaa "
     L"nykyisen kohteen valinnan ja siirtää luettelokohdistinta yhden rivin alaspäin."
     L" Ctrl+C kopioi valitut pienoisohjelmat. Ctrl+V lisää kopiot loppuun luettelon järjestyksessä ja liittää nimeen sovelluksen kielisen päätteen. Ctrl+A, Ctrl+C, Ctrl+V, Delete ja Insert toimivat myös Poista- ja Monista-painikkeista ja siirtävät kohdistuksen luetteloon ennen toimintoa."
-    L" Pienoisohjelmia voi olla enintään 32. Monistettaessa tai liitettäessä kopiot lisätään järjestyksessä rajaan asti; jäljelle jäävistä näytetään ilmoitus.",
+    L" Pienoisohjelmia voi olla enintään 32. Monistettaessa tai liitettäessä kopiot lisätään järjestyksessä rajaan asti; jäljelle jäävistä näytetään ilmoitus."
+    L" Valitse pääkellotaulun koko pienimmästä suurimpaan näppäimillä Alt+0, Alt+1, Alt+2 tai Alt+3 Analoginen kello- tai Kalenteri "
+    L"ja kello -pienoisohjelmassa.",
     L"\r\n\r\nMARKERING OG DATO\r\nHøjreklik og Indstillinger markerer den pågældende widget. Ctrl+A markerer alle widgets eller skærme; Delete fjerner markerede "
     L"widgets. Dobbeltklik på en post viser widgeten og fremhæver den kort. Klik på en kalenderdag for at vælge og kopiere den i det valgte format; alle formater "
     L"findes på alle sprog. Når flere widgets er markeret, deaktiveres widgetvalgene, men de globale faner Tid og Program forbliver tilgængelige. Insert skifter "
     L"markeringen af det aktuelle element og flytter listemarkøren én række ned."
     L" Ctrl+C kopierer markerede widgets. Ctrl+V tilføjer kopier nederst i listens rækkefølge med et navnetillæg på programmets sprog. Ctrl+A, Ctrl+C, Ctrl+V, Delete og Insert virker også fra Fjern og Dupliker og flytter fokus til listen før handlingen."
-    L" Der kan være op til 32 widgets. Ved duplikering eller indsættelse tilføjes kopier i rækkefølge indtil grænsen; en meddelelse vises for resten.",
+    L" Der kan være op til 32 widgets. Ved duplikering eller indsættelse tilføjes kopier i rækkefølge indtil grænsen; en meddelelse vises for resten."
+    L" Tryk Alt+0, Alt+1, Alt+2 eller Alt+3 på Analogt ur eller Kalender med ur for at vælge hovedurskivens størrelse, fra mindst "
+    L"til størst.",
     L"\r\n\r\nVAL OG DAGSETNING\r\nHægrismellur og Stillingar velja viðkomandi græju. Ctrl+A velur allar græjur eða skjái; Delete fjarlægir valdar græjur. "
     L"Tvísmellur á færslu sýnir græjuna og auðkennir hana stuttlega. Smelltu á dag í dagatali til að velja og afrita hann á völdu sniði; öll snið eru tiltæk á "
     L"öllum tungumálum. Þegar margar græjur eru valdar óvirkjast græjustillingarnar, en almennu fliparnir Tími og Forrit eru áfram tiltækir. Insert víxlar vali "
     L"núverandi færslu og færir listabendilinn eina línu niður."
     L" Ctrl+C afritar valdar græjur. Ctrl+V bætir afritum aftast í röð listans með viðskeyti á tungumáli forritsins. Ctrl+A, Ctrl+C, Ctrl+V, Delete og Insert virka líka á Fjarlægja og Afrita og færa fókus í listann áður en aðgerðin er framkvæmd."
-    L" Að hámarki eru 32 græjur leyfðar. Við afritun eða límingu er afritum bætt við í röð þar til hámarkinu er náð; tilkynning birtist um þau sem eftir eru.",
+    L" Að hámarki eru 32 græjur leyfðar. Við afritun eða límingu er afritum bætt við í röð þar til hámarkinu er náð; tilkynning birtist um þau sem eftir eru."
+    L" Ýttu á Alt+0, Alt+1, Alt+2 eða Alt+3 á græjunum Vísaklukka og Dagatal með klukku til að velja stærð aðalskífunnar, frá "
+    L"minnstu til stærstu.",
     L"\r\n\r\nSEÇİM VE TARİH\r\nSağ tıklayıp Ayarlar'ı seçmek ilgili aracı seçer. Ctrl+A tüm araçları veya monitörleri seçer; Delete seçili araçları kaldırır. Listedeki bir "
     L"öğeye çift tıklamak aracı görünür yapar ve kısa süre vurgular. Takvimde bir güne tıklamak günü seçili biçimde panoya kopyalar; tüm biçimler tüm dillerde "
     L"kullanılabilir. Birden çok araç seçildiğinde araca özgü seçenekler devre dışı kalır, ancak genel Zaman ve Uygulama sekmeleri kullanılabilir. Insert "
     L"geçerli öğenin seçimini değiştirir ve liste imlecini bir satır aşağı taşır."
     L" Ctrl+C seçili araçları kopyalar. Ctrl+V kopyaları liste sırasıyla sona ekler ve adlarına uygulama dilinde bir ek getirir. Ctrl+A, Ctrl+C, Ctrl+V, Delete ve Insert, Kaldır ve Çoğalt düğmelerinde de çalışır ve işlemden önce odağı listeye taşır."
     L" En fazla 32 araç kullanılabilir. Çoğaltırken veya yapıştırırken kopyalar sınıra kadar sırayla eklenir; kalan kopyalar için bir bildirim gösterilir."
+    L" Analog saat veya Saatli takvim aracında ana kadranın boyutunu küçükten büyüğe seçmek için Alt+0, Alt+1, Alt+2 veya Alt+3 "
+    L"tuşlarına basın."
 };
 
 const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
@@ -3777,8 +3811,9 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
 };
 
 const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
-    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENÍ\r\nZnamení odpovídá Greenwich Time Signal (GTS). Na kartě Znamení se pro každý widget samostatně volí žádné "
-    L"znamení nebo interval jedné, pěti, deseti, patnácti, dvaceti, třiceti či šedesáti minut. Časová hranice vychází z času daného widgetu "
+    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENÍ\r\nZnamení odpovídá Greenwich Time Signal (GTS). Na kartě Znamení je zatržítko Časové znamení aktivní a přepínače intervalů 1, 5, 10, 15, 20, 30 nebo 60 minut podle času "
+    L"zobrazovaného widgetem. Znamení je zpočátku vypnuté a je zvolen hodinový interval. Vypnutí a zapnutí příkazem Signál v menu "
+    L"widgetu interval zachovává. Menu zobrazuje čas budíku a interval znamení v závorkách. Časová hranice vychází z času daného widgetu "
     L"včetně UTC, časového pásma, offsetu a případné korekce NTP. Pět krátkých tónů zazní v posledních pěti sekundách a dlouhý tón přesně na "
     L"hranici. Pokud na stejný okamžik připadne znamení více widgetů, přehraje se jediná společná sekvence. Po ztlumení může právě znějící tón "
     L"doznít; další tóny se přeskočí a po zrušení ztlumení zazní až následující naplánovaný tón. Samostatný Kalendář nepodporuje budík, časové "
@@ -3794,8 +3829,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"sekundy. Dráha jezdce odpovídá stupnici v dB; −18 dB je uprostřed dráhy.\r\n\r\nVýběr zvuku je dostupný jen tehdy, pokud systém podporuje "
     L"obě možnosti. Offsety widgetů se uplatní i v setinách sekundy. Překrývající se tóny widgetů, budíků a testu znějí jako jediný souvislý tón "
     L"až do konce posledního překryvu.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab selects no signal or an interval "
-    L"of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately for each widget. The boundary follows that widget’s time, including "
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes "
+    L"according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and "
+    L"on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The boundary follows that widget’s time, including "
     L"UTC, time zone, offset, and any NTP correction. Five short pips sound during the final five seconds and a long pip exactly on the boundary. "
     L"If several widgets signal at the same instant, only one shared sequence is played. After muting, a pip already sounding may finish; later "
     L"pips are skipped and only the next scheduled pip sounds after unmuting. A standalone Calendar supports neither alarms, time signals nor "
@@ -3811,8 +3847,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"test lets the current pip finish; a long pip can take up to half a second to end. The slider follows a decibel scale, with −18 dB at the "
     L"midpoint.\r\n\r\nThe sound choice is available only when the system supports both options. Widget offsets also apply in hundredths of a "
     L"second. Overlapping widget, alarm, and test tones play as one continuous tone until the last overlap ends.",
-    L"\r\n\r\nAKUSTISCHES ZEITZEICHEN\r\nDas Signal entspricht dem Greenwich Time Signal (GTS). Auf der Registerkarte Zeitzeichen wird für jedes "
-    L"Widget einzeln kein Signal oder ein Intervall von einer, fünf, zehn, fünfzehn, zwanzig, dreißig oder sechzig Minuten gewählt. Die Grenze "
+    L"\r\n\r\nAKUSTISCHES ZEITZEICHEN\r\nDas Signal entspricht dem Greenwich Time Signal (GTS). Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und Optionsfelder für Intervalle von 1, 5, "
+    L"10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten Widget-Zeit. Anfangs ist das Signal ausgeschaltet und das "
+    L"Stundenintervall ausgewählt. Aus- und Einschalten über Zeitzeichen im Widget-Menü behält das Intervall bei. Das Menü zeigt die"
+    L" Weckzeit und das Signalintervall in Klammern. Die Grenze "
     L"folgt der Zeit dieses Widgets einschließlich UTC, Zeitzone, Offset und einer möglichen NTP-Korrektur. In den letzten fünf Sekunden "
     L"erklingen fünf kurze Töne und genau an der Grenze ein langer Ton. Fallen Signale mehrerer Widgets auf denselben Zeitpunkt, wird nur eine "
     L"gemeinsame Folge wiedergegeben. Beim Stummschalten darf ein bereits klingender Ton enden; weitere Töne werden bis zum nächsten geplanten "
@@ -3831,8 +3869,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"Dezibelskala; −18 dB liegt in der Mitte.\r\n\r\nDie Klangauswahl ist nur verfügbar, wenn das System beide Optionen unterstützt. "
     L"Widget-Versätze gelten auch in Hundertstelsekunden. Überlappende Töne von Widgets, Weckern und Tests erklingen als ein durchgehender Ton "
     L"bis zum Ende der letzten Überlappung.",
-    L"\r\n\r\nSIGNAL HORAIRE SONORE\r\nLe signal reprend le Greenwich Time Signal (GTS). L’onglet Signal choisit séparément pour chaque widget "
-    L"aucun signal ou un intervalle d’une, cinq, dix, quinze, vingt, trente ou soixante minutes. La limite suit l’heure du widget, y compris UTC, "
+    L"\r\n\r\nSIGNAL HORAIRE SONORE\r\nLe signal reprend le Greenwich Time Signal (GTS). L’onglet Signal propose la case Signal horaire actif et des boutons radio pour les intervalles de 1, 5, 10, 15, 20, 30 ou 60 "
+    L"minutes selon l’heure affichée par le widget. Le signal est initialement désactivé, avec un intervalle d’une heure "
+    L"sélectionné. Désactiver puis réactiver Signal dans le menu du widget conserve l’intervalle. Le menu affiche l’heure de "
+    L"l’alarme et l’intervalle du signal entre parenthèses. La limite suit l’heure du widget, y compris UTC, "
     L"le fuseau horaire, le décalage et toute correction NTP. Cinq bips courts retentissent pendant les cinq dernières secondes et un bip long "
     L"exactement à la limite. Si plusieurs widgets signalent au même instant, une seule séquence commune est jouée. Lors de la coupure, un bip "
     L"déjà commencé peut finir ; les suivants sont ignorés et seul le prochain bip planifié retentit après le rétablissement. Un Calendrier "
@@ -3850,8 +3890,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"long peut encore durer jusqu’à une demi-seconde. Le curseur suit une échelle en décibels ; −18 dB se trouve au milieu.\r\n\r\nLe choix du "
     L"son est disponible uniquement si le système prend en charge les deux options. Les décalages des widgets s’appliquent aussi aux centièmes de "
     L"seconde. Les sons des widgets, alarmes et tests qui se chevauchent forment un seul son continu jusqu’à la fin du dernier chevauchement.",
-    L"\r\n\r\nSEÑAL HORARIA SONORA\r\nLa señal sigue el patrón del Greenwich Time Signal (GTS). La pestaña Señal permite elegir por separado para "
-    L"cada widget ninguna señal o un intervalo de uno, cinco, diez, quince, veinte, treinta o sesenta minutos. El límite sigue la hora del "
+    L"\r\n\r\nSEÑAL HORARIA SONORA\r\nLa señal sigue el patrón del Greenwich Time Signal (GTS). La pestaña Señal incluye la casilla Señal horaria activa y botones de opción para intervalos de 1, 5, 10, 15, 20, 30 o 60 "
+    L"minutos según la hora mostrada por el widget. La señal está inicialmente desactivada y el intervalo seleccionado es de una "
+    L"hora. Desactivar y activar Señal en el menú del widget conserva el intervalo. El menú muestra la hora de la alarma y el "
+    L"intervalo de la señal entre paréntesis. El límite sigue la hora del "
     L"widget, incluidos UTC, zona horaria, offset y cualquier corrección NTP. Cinco pitidos cortos suenan durante los últimos cinco segundos y "
     L"uno largo exactamente en el límite. Si varios widgets coinciden, se reproduce una única secuencia compartida. Al silenciar, puede terminar "
     L"el pitido que ya suena; los siguientes se omiten y, al reactivar el sonido, suena solo el próximo pitido programado. Un Calendario "
@@ -3869,8 +3911,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"segundo. El control sigue una escala en decibelios; −18 dB queda en el centro.\r\n\r\nLa elección del sonido solo está disponible si el "
     L"sistema admite ambas opciones. Los desfases de los widgets también se aplican en centésimas de segundo. Los tonos superpuestos de widgets, "
     L"alarmas y pruebas suenan como un único tono continuo hasta que termina la última superposición.",
-    L"\r\n\r\nSEGNALE ORARIO ACUSTICO\r\nIl segnale segue lo schema del Greenwich Time Signal (GTS). La scheda Segnale consente di scegliere "
-    L"separatamente per ogni widget nessun segnale oppure un intervallo di uno, cinque, dieci, quindici, venti, trenta o sessanta minuti. Il "
+    L"\r\n\r\nSEGNALE ORARIO ACUSTICO\r\nIl segnale segue lo schema del Greenwich Time Signal (GTS). La scheda Segnale contiene la casella Segnale orario attivo e pulsanti di opzione per intervalli di 1, 5, 10, 15, 20, 30 o 60 "
+    L"minuti secondo l’ora visualizzata dal widget. Inizialmente il segnale è disattivato e l’intervallo selezionato è di un’ora. "
+    L"Disattivare e riattivare Segnale nel menu del widget mantiene l’intervallo. Il menu mostra tra parentesi l’ora della sveglia e"
+    L" l’intervallo del segnale. Il "
     L"limite segue l’ora del widget, inclusi UTC, fuso orario, offset ed eventuale correzione NTP. Cinque segnali brevi suonano negli ultimi "
     L"cinque secondi e uno lungo esattamente al limite. Se più widget coincidono, viene riprodotta una sola sequenza comune. Disattivando "
     L"l’audio, un segnale già iniziato può terminare; i successivi vengono saltati e, alla riattivazione, suona solo il prossimo segnale "
@@ -3888,8 +3932,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"termina; un tono lungo può richiedere fino a mezzo secondo. Il cursore segue una scala in decibel; −18 dB si trova al centro.\r\n\r\nLa "
     L"scelta del suono è disponibile solo se il sistema supporta entrambe le opzioni. Gli offset dei widget si applicano anche ai centesimi di "
     L"secondo. I toni sovrapposti di widget, sveglie e test formano un unico tono continuo fino alla fine dell’ultima sovrapposizione.",
-    L"\r\n\r\nDŹWIĘKOWY SYGNAŁ CZASU\r\nSygnał odpowiada Greenwich Time Signal (GTS). Karta Sygnał pozwala osobno dla każdego widżetu wybrać brak "
-    L"sygnału albo odstęp jednej, pięciu, dziesięciu, piętnastu, dwudziestu, trzydziestu lub sześćdziesięciu minut. Granica wynika z czasu "
+    L"\r\n\r\nDŹWIĘKOWY SYGNAŁ CZASU\r\nSygnał odpowiada Greenwich Time Signal (GTS). Karta Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, 20, 30 lub 60 minut według "
+    L"czasu wyświetlanego przez widżet. Początkowo sygnał jest wyłączony i wybrany jest odstęp jednej godziny. Wyłączenie i "
+    L"włączenie opcji Sygnał w menu widżetu zachowuje odstęp. Menu pokazuje godzinę alarmu i odstęp sygnału w nawiasach. Granica wynika z czasu "
     L"widżetu, w tym UTC, strefy czasowej, offsetu i korekty NTP. Pięć krótkich sygnałów rozlega się w ostatnich pięciu sekundach, a długi "
     L"dokładnie na granicy. Gdy sygnały wielu widżetów przypadają jednocześnie, odtwarzana jest jedna wspólna sekwencja. Po wyciszeniu rozpoczęty "
     L"sygnał może wybrzmieć; następne są pomijane, a po włączeniu dźwięku zabrzmi dopiero kolejny zaplanowany sygnał. Samodzielny Kalendarz nie "
@@ -3906,8 +3951,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"pół sekundy. Suwak ma skalę decybelową; −18 dB znajduje się w połowie zakresu.\r\n\r\nWybór dźwięku jest dostępny tylko wtedy, gdy system "
     L"obsługuje obie opcje. Przesunięcia widżetów uwzględniają także setne części sekundy. Nakładające się tony widżetów, alarmów i testów tworzą "
     L"jeden ciągły ton do końca ostatniego nakładania.",
-    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENIE\r\nZnamenie zodpovedá Greenwich Time Signal (GTS). Na karte Znamenie sa pre každý widget samostatne volí "
-    L"žiadne znamenie alebo interval jednej, piatich, desiatich, pätnástich, dvadsiatich, tridsiatich či šesťdesiatich minút. Časová hranica "
+    L"\r\n\r\nZVUKOVÉ ČASOVÉ ZNAMENIE\r\nZnamenie zodpovedá Greenwich Time Signal (GTS). Na karte Znamenie je začiarkavacie políčko Časové znamenie aktívne a prepínače intervalov 1, 5, 10, 15, 20, 30 alebo 60 minút "
+    L"podľa času zobrazovaného widgetom. Znamenie je spočiatku vypnuté a je zvolený hodinový interval. Vypnutie a zapnutie príkazom "
+    L"Signál v menu widgetu zachováva interval. Menu zobrazuje čas budíka a interval znamenia v zátvorkách. Časová hranica "
     L"vychádza z času daného widgetu vrátane UTC, časového pásma, offsetu a prípadnej korekcie NTP. Päť krátkych tónov zaznie v posledných "
     L"piatich sekundách a dlhý tón presne na hranici. Ak na rovnaký okamih pripadne znamenie viacerých widgetov, prehrá sa jediná spoločná "
     L"sekvencia. Po stlmení môže práve znejúci tón doznieť; ďalšie sa preskočia a po zrušení stlmenia zaznie až nasledujúci naplánovaný tón. "
@@ -3923,8 +3969,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"práve rozohraný tón doznie; pri dlhom tóne to môže trvať až pol sekundy. Dráha jazdca zodpovedá stupnici v dB; −18 dB je uprostred "
     L"dráhy.\r\n\r\nVýber zvuku je dostupný iba vtedy, keď systém podporuje obe možnosti. Offsety widgetov sa uplatnia aj v stotinách sekundy. "
     L"Prekrývajúce sa tóny widgetov, budíkov a testu znejú ako jediný súvislý tón až do konca posledného prekrytia.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab selects no signal or an interval "
-    L"of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately for each widget. The boundary follows that widget’s time, including "
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes "
+    L"according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and "
+    L"on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The boundary follows that widget’s time, including "
     L"UTC, time zone, offset, and any NTP correction. Five short pips sound during the final five seconds and a long pip exactly on the boundary. "
     L"If several widgets signal at the same instant, only one shared sequence is played. After muting, a pip already sounding may finish; later "
     L"pips are skipped and only the next scheduled pip sounds after unmuting. A standalone Calendar supports neither alarms, time signals nor "
@@ -3940,8 +3987,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"stopped. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. The slider follows a decibel scale, "
     L"with −18 dB at the midpoint.\r\n\r\nThe sound choice is available only when the system supports both options. Widget offsets also apply in "
     L"hundredths of a second. Overlapping widget, alarm, and test tones play as one continuous tone until the last overlap ends.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab selects no signal or an interval "
-    L"of one, five, ten, fifteen, twenty, thirty, or sixty minutes separately for each widget. The boundary follows that widget’s time, including "
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes "
+    L"according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and "
+    L"on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The boundary follows that widget’s time, including "
     L"UTC, time zone, offset, and any NTP correction. Five short pips sound during the final five seconds and a long pip exactly on the boundary. "
     L"If several widgets signal at the same instant, only one shared sequence is played. After muting, a pip already sounding may finish; later "
     L"pips are skipped and only the next scheduled pip sounds after unmuting. A standalone Calendar supports neither alarms, time signals nor "
@@ -3957,8 +4005,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"stopped. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. The slider follows a decibel scale, "
     L"with −18 dB at the midpoint.\r\n\r\nThe sound choice is available only when the system supports both options. Widget offsets also apply in "
     L"hundredths of a second. Overlapping widget, alarm, and test tones play as one continuous tone until the last overlap ends.",
-    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO sinal segue o padrão do Greenwich Time Signal (GTS). O separador Sinal escolhe para cada widget nenhum "
-    L"sinal ou intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos. O limite segue a hora do widget, incluindo UTC, fuso, desvio e correção NTP. "
+    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO sinal segue o padrão do Greenwich Time Signal (GTS). O separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos "
+    L"segundo a hora apresentada pelo widget. Inicialmente, o sinal está desativado e está selecionado o intervalo de uma hora. "
+    L"Desativar e ativar Sinal no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal entre "
+    L"parênteses. O limite segue a hora do widget, incluindo UTC, fuso, desvio e correção NTP. "
     L"Soam cinco sinais curtos e um longo; sinais simultâneos de vários widgets são unidos. Ao silenciar, o sinal já iniciado pode terminar; os "
     L"seguintes são ignorados e só o próximo sinal agendado soa depois de repor o áudio. Um Calendário autónomo não suporta alarme, sinal horário "
     L"nem silenciamento; as opções correspondentes ficam desativadas e não aparecem no menu.\r\n\r\nCom um intervalo de 20 minutos, o sinal soa "
@@ -3974,8 +4024,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"longo pode demorar até meio segundo. O controlo segue uma escala em decibéis; −18 dB fica no ponto médio.\r\n\r\nA escolha do som só está "
     L"disponível quando o sistema suporta ambas as opções. Os desvios dos widgets também se aplicam em centésimos de segundo. Os sons sobrepostos "
     L"de widgets, alarmes e testes formam um único som contínuo até ao fim da última sobreposição.",
-    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønsteret til Greenwich Time Signal (GTS). Fanen Signal velger for hver widget ingen signal "
-    L"eller intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter. Grensen følger widgettiden, inkludert UTC, tidssone, forskyvning og "
+    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønsteret til Greenwich Time Signal (GTS). Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller på 1, 5, 10, 15, 20, 30 eller 60 "
+    L"minutter etter widgetens viste tid. Signalet er først slått av, med et intervall på én time valgt. Å slå Signal av og på i "
+    L"widgetmenyen beholder intervallet. Menyen viser alarmtid og signalintervall i parentes. Grensen følger widgettiden, inkludert UTC, tidssone, forskyvning og "
     L"NTP-korreksjon. Fem korte og ett langt pip høres; samtidige signaler fra flere widgeter slås sammen. Ved demping kan et pip som allerede "
     L"har startet fullføres; senere pip hoppes over, og bare neste planlagte pip høres etter oppheving. En frittstående Kalender støtter ikke "
     L"alarm, tidssignal eller demping; de tilhørende valgene er deaktivert og finnes ikke i menyen.\r\n\r\nMed et intervall på 20 minutter lyder "
@@ -3991,8 +4042,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"sekund. Glidebryteren følger en desibelskala; −18 dB ligger i midten.\r\n\r\nLydvalget er bare tilgjengelig når systemet støtter begge "
     L"alternativene. Widgetforskyvninger gjelder også i hundredeler av et sekund. Overlappende toner fra widgeter, alarmer og tester spilles som "
     L"én sammenhengende tone til den siste overlappingen er slutt.",
-    L"\r\n\r\nHÖRBAR TIDSSIGNAL\r\nSignalen följer mönstret för Greenwich Time Signal (GTS). Fliken Signal väljer för varje widget ingen signal "
-    L"eller intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter. Gränsen följer widgetens tid, inklusive UTC, tidszon, förskjutning och "
+    L"\r\n\r\nHÖRBAR TIDSSIGNAL\r\nSignalen följer mönstret för Greenwich Time Signal (GTS). Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter "
+    L"enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i "
+    L"widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. Gränsen följer widgetens tid, inklusive UTC, tidszon, förskjutning och "
     L"NTP-korrigering. Fem korta och ett långt pip hörs; samtidiga signaler från flera widgetar slås samman. Vid tystning får ett påbörjat pip "
     L"avslutas; följande hoppas över och först nästa schemalagda pip hörs efter återaktivering. En fristående Kalender stöder inte alarm, "
     L"tidssignal eller tystning; motsvarande val är inaktiva och saknas i menyn.\r\n\r\nMed ett intervall på 20 minuter hörs signalen vid :00, "
@@ -4007,8 +4059,10 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"tonen klart; en lång ton kan ta upp till en halv sekund. Reglaget följer en decibelskala; −18 dB ligger i mitten.\r\n\r\nLjudvalet är bara "
     L"tillgängligt när systemet stöder båda alternativen. Widgetförskjutningar gäller även i hundradels sekunder. Överlappande toner från "
     L"widgetar, alarm och tester spelas som en sammanhängande ton tills den sista överlappningen är slut.",
-    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki noudattaa Greenwich Time Signal (GTS) -mallia. Aikamerkki-välilehdellä valitaan jokaiselle "
-    L"pienoisohjelmalle ei merkkiä tai 1, 5, 10, 15, 20, 30 tai 60 minuutin väli. Raja seuraa pienoisohjelman aikaa, UTC:tä, aikavyöhykettä, "
+    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki noudattaa Greenwich Time Signal (GTS) -mallia. Aikamerkki-välilehdellä on Äänimerkki käytössä -valintaruutu ja valintanapit 1, 5, 10, 15, 20, 30 tai 60 minuutin väleille "
+    L"pienoisohjelman näyttämän ajan mukaan. Äänimerkki on aluksi pois käytöstä, ja valittuna on tunnin väli. Aikamerkin poistaminen"
+    L" käytöstä ja ottaminen uudelleen käyttöön pienoisohjelman valikosta säilyttää aikavälin. Valikko näyttää herätysajan ja "
+    L"aikamerkin välin sulkeissa. Raja seuraa pienoisohjelman aikaa, UTC:tä, aikavyöhykettä, "
     L"poikkeamaa ja NTP-korjausta myöten. Viisi lyhyttä ja yksi pitkä merkki kuuluu; samanaikaiset merkit yhdistetään. Mykistettäessä jo alkanut "
     L"ääni saa päättyä; seuraavat ohitetaan ja mykistyksen jälkeen kuuluu vasta seuraava ajastettu ääni. Erillinen Kalenteri ei tue herätystä, "
     L"aikamerkkiä eikä mykistystä; vastaavat valinnat ovat poissa käytöstä eivätkä näy valikossa.\r\n\r\nKun väli on 20 minuuttia, aikamerkki "
@@ -4025,8 +4079,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"desibeliasteikkoa; −18 dB on keskikohdassa.\r\n\r\nÄänen voi valita vain, jos järjestelmä tukee molempia vaihtoehtoja. Pienoisohjelmien "
     L"aikapoikkeamat huomioidaan myös sekunnin sadasosina. Pienoisohjelmien, herätysten ja testien päällekkäiset äänet soivat yhtenä jatkuvana "
     L"äänenä viimeisen päällekkäisyyden loppuun asti.",
-    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønstret for Greenwich Time Signal (GTS). Fanen Signal vælger for hver widget intet signal "
-    L"eller intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter. Grænsen følger widgettiden, inklusive UTC, tidszone, forskydning og "
+    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønstret for Greenwich Time Signal (GTS). Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 "
+    L"minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås "
+    L"fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. Grænsen følger widgettiden, inklusive UTC, tidszone, forskydning og "
     L"NTP-korrektion. Fem korte og ét langt bip lyder; samtidige signaler fra flere widgets flettes sammen. Ved dæmpning må et igangværende bip "
     L"klinge ud; de følgende springes over, og først det næste planlagte bip lyder efter ophævelse. En selvstændig Kalender understøtter ikke "
     L"alarm, tidssignal eller dæmpning; de tilhørende valg er deaktiverede og findes ikke i menuen.\r\n\r\nMed et interval på 20 minutter lyder "
@@ -4042,8 +4097,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"ligger i midten.\r\n\r\nLydvalget er kun tilgængeligt, når systemet understøtter begge muligheder. Widgetforskydninger gælder også i "
     L"hundrededele af et sekund. Overlappende toner fra widgets, alarmer og test afspilles som én sammenhængende tone indtil den sidste "
     L"overlapning slutter.",
-    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nMerkið fylgir mynstri Greenwich Time Signal (GTS). Tímamerkisflipinn velur fyrir hverja græju ekkert merki eða 1, "
-    L"5, 10, 15, 20, 30 eða 60 mínútna bil. Mörkin fylgja tíma græjunnar, þar með talið UTC, tímabelti, hliðrun og NTP-leiðrétting. Fimm stutt og "
+    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nMerkið fylgir mynstri Greenwich Time Signal (GTS). Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 eða 60 mínútna bil samkvæmt sýndum "
+    L"tíma græjunnar. Í upphafi er slökkt á merkinu og klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd "
+    L"græjunnar helst bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. Mörkin fylgja tíma græjunnar, þar með talið UTC, tímabelti, hliðrun og NTP-leiðrétting. Fimm stutt og "
     L"eitt langt píp hljóma; samtímamerki margra græja eru sameinuð. Við þöggun má þegar hafið píp klárast; þeim næstu er sleppt og fyrst næsta "
     L"áætlaða píp heyrist eftir að þöggun er aflétt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun; viðeigandi valkostir eru "
     L"óvirkir og birtast ekki í valmyndinni.\r\n\r\nMeð 20 mínútna millibili hljómar tímamerkið á :00, :20 og :40 samkvæmt tíma "
@@ -4058,8 +4114,9 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"klárast tónninn sem er í gangi; langur tónn getur tekið allt að hálfa sekúndu. Sleðinn fylgir desíbelakvarða; −18 dB er í "
     L"miðjunni.\r\n\r\nAðeins er hægt að velja hljóð þegar kerfið styður báða valkostina. Hliðrun græja tekur einnig mið af hundraðshlutum úr "
     L"sekúndu. Tónar frá græjum, vekjurum og prófunum sem skarast hljóma sem einn samfelldur tónn þar til síðustu skörun lýkur.",
-    L"\r\n\r\nSESLİ ZAMAN SİNYALİ\r\nSinyal, Greenwich Time Signal (GTS) düzenini izler. Sinyal sekmesi her araç için sinyal yok seçeneğini veya "
-    L"1, 5, 10, 15, 20, 30 ya da 60 dakikalık aralıkları seçer. Sınır; UTC, saat dilimi, ofset ve NTP düzeltmesi dâhil aracın zamanını izler. Beş "
+    L"\r\n\r\nSESLİ ZAMAN SİNYALİ\r\nSinyal, Greenwich Time Signal (GTS) düzenini izler. Sinyal sekmesinde Zaman sinyali etkin onay kutusu ve aracın gösterdiği saate göre 1, 5, 10, 15, 20, 30 veya 60 dakikalık "
+    L"aralıklar için seçenek düğmeleri bulunur. Sinyal başlangıçta kapalıdır ve bir saatlik aralık seçilidir. Araç menüsünde Sinyal "
+    L"seçeneğini kapatıp açmak aralığı korur. Menü, alarm saatini ve sinyal aralığını parantez içinde gösterir. Sınır; UTC, saat dilimi, ofset ve NTP düzeltmesi dâhil aracın zamanını izler. Beş "
     L"kısa ve bir uzun ses çalar; birden çok aracın eşzamanlı sinyalleri birleştirilir. Sessize alındığında başlamış olan ses bitebilir; "
     L"sonrakiler atlanır ve ses açıldıktan sonra yalnızca sıradaki planlanmış ses çalar. Bağımsız Takvim alarmı, zaman sinyalini veya sessize "
     L"almayı desteklemez; ilgili seçenekler devre dışıdır ve menüsünde görünmez.\r\n\r\n20 dakikalık aralıkta sinyal, aracın saatine göre :00, "
