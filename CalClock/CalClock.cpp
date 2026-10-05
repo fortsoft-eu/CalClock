@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.1.1
  */
 
 #define NOMINMAX
@@ -180,6 +180,22 @@ struct InformationWindowLayout {
     RECT website = {};
     RECT link = {};
     bool initialized = false;
+};
+
+/// Keeps the original line boundaries while a triple-click selection is extended by dragging.
+struct EditLineSelection {
+    HWND window = nullptr;
+    int anchorLine = -1;
+    int anchorStart = 0;
+    int anchorEnd = 0;
+};
+
+/// Preserves the clicked word until the mouse is released or native word dragging begins.
+struct EditWordSelection {
+    HWND window = nullptr;
+    int start = 0;
+    int end = 0;
+    POINT anchor = {};
 };
 
 /// Window classes and product constants
@@ -543,6 +559,10 @@ static InformationWindowLayout aboutWindowLayout;
 static POINT fullscreenCursorPosition = {};
 static POINT lastEditClickPoint = {};
 
+/// Edit selection state
+static EditLineSelection editLineSelection;
+static EditWordSelection editWordSelection;
+
 /// Language and widget type
 AppLanguage appLanguage = LANG_EN;
 WidgetType lastAddedWidgetType = WIDGET_ANALOG;
@@ -669,8 +689,8 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
 static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
-/// Adds Ctrl+A and triple-click line selection while preserving normal edit and dialog behavior.
-/// Clears click tracking on timeout, focus changes, other mouse buttons, and destruction.
+/// Adds Ctrl+A, stable double-click word selection, and triple-click selection with whole-line dragging.
+/// Preserves native modifier-clicks and button releases, and clears state when input is canceled or the edit is destroyed.
 static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
@@ -6491,95 +6511,282 @@ static void ResetEditClicks() {
     editClickCount = 0;
 }
 
-/// Extends the edit selection to the boundaries of its current text line.
-static void SelectEditLine(HWND window) {
-    DWORD selectionStart = 0;
-    DWORD selectionEnd = 0;
-    SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart), reinterpret_cast<LPARAM>(&selectionEnd));
-    std::wstring text = GetControlText(window);
-    size_t start = std::min(static_cast<size_t>(selectionStart), text.size());
-    size_t end = text.find_first_of(L"\r\n", start);
-    if (end == std::wstring::npos) {
-        end = text.size();
+/// Returns the character boundaries of a displayed edit line, excluding its line break.
+static bool GetEditLineBounds(HWND window, int line, int& start, int& end) {
+    int lineCount = static_cast<int>(SendMessageW(window, EM_GETLINECOUNT, 0, 0));
+    if (line < 0 || line >= lineCount) {
+        return false;
     }
-    end = std::max(end, std::min(static_cast<size_t>(selectionEnd), text.size()));
-    while (start > 0 && text[start - 1] != L'\r' && text[start - 1] != L'\n') {
-        start--;
+    start = static_cast<int>(SendMessageW(window, EM_LINEINDEX, line, 0));
+    if (start < 0) {
+        return false;
     }
-    SendMessageW(window, EM_SETSEL, static_cast<WPARAM>(start), static_cast<LPARAM>(end));
+    int length = static_cast<int>(SendMessageW(window, EM_LINELENGTH, start, 0));
+    end = start + length;
+    return true;
 }
 
-/// Adds Ctrl+A and triple-click line selection while preserving normal edit and dialog behavior.
-/// Clears click tracking on timeout, focus changes, other mouse buttons, and destruction.
+/// Finds the displayed line under the mouse, optionally scrolling while dragging beyond the client area.
+static int EditLineFromMousePoint(HWND window, POINT point, bool scrollWhenOutside) {
+    RECT client = {};
+    GetClientRect(window, &client);
+    if (scrollWhenOutside && point.y < client.top) {
+        SendMessageW(window, WM_VSCROLL, SB_LINEUP, 0);
+    } else if (scrollWhenOutside && point.y >= client.bottom) {
+        SendMessageW(window, WM_VSCROLL, SB_LINEDOWN, 0);
+    }
+    point.x = std::clamp(point.x, client.left, std::max(client.left, client.right - 1));
+    point.y = std::clamp(point.y, client.top, std::max(client.top, client.bottom - 1));
+    LRESULT position = SendMessageW(window, EM_CHARFROMPOS, 0, MAKELPARAM(point.x, point.y));
+    return HIWORD(position);
+}
+
+/// Recognizes letters, digits, and underscores as parts of words for double-click selection.
+static bool IsEditWordCharacter(wchar_t character) {
+    return character == L'_' || IsCharAlphaNumericW(character);
+}
+
+/// Selects the word under the mouse and remembers its bounds for the physical button release.
+static void SelectEditWordAtMousePoint(HWND window, LPARAM mousePosition) {
+    std::wstring text = GetControlText(window);
+    if (text.empty()) {
+        return;
+    }
+    LRESULT position = SendMessageW(window, EM_CHARFROMPOS, 0, mousePosition);
+    int lineStart = static_cast<int>(SendMessageW(window, EM_LINEINDEX, HIWORD(position), 0));
+    if (lineStart < 0) {
+        return;
+    }
+    size_t character = static_cast<size_t>(lineStart & ~0xffff) | LOWORD(position);
+    if (character < static_cast<size_t>(lineStart)) {
+        character += 0x10000;
+    }
+    character = std::min(character, text.size() - 1);
+    if (!IsEditWordCharacter(text[character]) && character > 0 && IsEditWordCharacter(text[character - 1])) {
+        character--;
+    }
+    if (!IsEditWordCharacter(text[character])) {
+        return;
+    }
+    size_t start = character;
+    size_t end = character + 1;
+    while (start > 0 && IsEditWordCharacter(text[start - 1])) {
+        start--;
+    }
+    while (end < text.size() && IsEditWordCharacter(text[end])) {
+        end++;
+    }
+    SendMessageW(window, EM_SETSEL, start, end);
+    editWordSelection.window = window;
+    editWordSelection.start = static_cast<int>(start);
+    editWordSelection.end = static_cast<int>(end);
+    editWordSelection.anchor = POINT{
+        GET_X_LPARAM(mousePosition),
+        GET_Y_LPARAM(mousePosition)
+    };
+}
+
+/// Starts whole-line dragging from the third click's position instead of relying on the previous caret or selection.
+static bool BeginEditLineSelection(HWND window, LPARAM mousePosition) {
+    POINT point = {
+        GET_X_LPARAM(mousePosition),
+        GET_Y_LPARAM(mousePosition)
+    };
+    int line = EditLineFromMousePoint(window, point, false);
+    int start = 0;
+    int end = 0;
+    if (!GetEditLineBounds(window, line, start, end)) {
+        return false;
+    }
+    editLineSelection.window = window;
+    editLineSelection.anchorLine = line;
+    editLineSelection.anchorStart = start;
+    editLineSelection.anchorEnd = end;
+    SetCapture(window);
+    SendMessageW(window, EM_SETSEL, start, end);
+    SendMessageW(window, EM_SCROLLCARET, 0, 0);
+    return true;
+}
+
+/// Extends a triple-click selection by whole displayed lines, retaining the original line as the anchor.
+static void UpdateEditLineSelection(HWND window, LPARAM mousePosition) {
+    POINT point = {
+        GET_X_LPARAM(mousePosition),
+        GET_Y_LPARAM(mousePosition)
+    };
+    int line = EditLineFromMousePoint(window, point, true);
+    int start = 0;
+    int end = 0;
+    if (!GetEditLineBounds(window, line, start, end)) {
+        return;
+    }
+    if (line < editLineSelection.anchorLine) {
+        SendMessageW(window, EM_SETSEL, editLineSelection.anchorEnd, start);
+    } else {
+        SendMessageW(window, EM_SETSEL, editLineSelection.anchorStart, end);
+    }
+    SendMessageW(window, EM_SCROLLCARET, 0, 0);
+}
+
+/// Ends an edit's whole-line drag and releases mouse capture if the edit still owns it.
+static void EndEditLineSelection(HWND window) {
+    if (editLineSelection.window != window) {
+        return;
+    }
+    editLineSelection = {};
+    if (GetCapture() == window) {
+        ReleaseCapture();
+    }
+}
+
+/// Adds Ctrl+A, stable double-click word selection, and triple-click selection with whole-line dragging.
+/// Preserves native modifier-clicks and button releases, and clears state when input is canceled or the edit is destroyed.
 static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_TIMER && wParam == TIMER_EDIT_CLICKS) {
-        KillTimer(window, TIMER_EDIT_CLICKS);
-        if (lastClickedEdit == window) {
-            ResetEditClicks();
-        }
-        return 0;
-    }
-    bool isMouseButtonMessage = message == WM_RBUTTONDOWN
-        || message == WM_RBUTTONDBLCLK
-        || message == WM_MBUTTONDOWN
-        || message == WM_MBUTTONDBLCLK
-        || message == WM_XBUTTONDOWN
-        || message == WM_XBUTTONDBLCLK;
-    bool editLostFocus = message == WM_KILLFOCUS && lastClickedEdit == window;
-    if (isMouseButtonMessage || editLostFocus) {
-        ResetEditClicks();
-    }
-    if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
-        if (lastClickedEdit != window) {
-            ResetEditClicks();
-        }
-        lastClickedEdit = window;
-        KillTimer(window, TIMER_EDIT_CLICKS);
-        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-        DWORD selectionStart = 0;
-        DWORD selectionEnd = 0;
-        SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
-            reinterpret_cast<LPARAM>(&selectionEnd));
-        POINT clickPoint = {
-            GET_X_LPARAM(lParam),
-            GET_Y_LPARAM(lParam)
-        };
-        if (selectionEnd > selectionStart) {
-            editClickCount = 2;
-        } else if (editClickCount == 0
-                || abs(clickPoint.x - lastEditClickPoint.x) < 2 && abs(clickPoint.y - lastEditClickPoint.y) < 2) {
-            editClickCount++;
-        } else {
-            editClickCount = 0;
-        }
-        lastEditClickPoint = clickPoint;
-        if (editClickCount == 3) {
-            ResetEditClicks();
-            DefSubclassProc(window, WM_LBUTTONUP, wParam & ~static_cast<WPARAM>(MK_LBUTTON), lParam);
-            if ((GetWindowLongPtrW(window, GWL_STYLE) & ES_MULTILINE) != 0) {
-                SelectEditLine(window);
-            } else {
-                SendMessageW(window, EM_SETSEL, 0, -1);
+    switch (message) {
+        case WM_TIMER:
+            if (wParam == TIMER_EDIT_CLICKS) {
+                if (lastClickedEdit == window) {
+                    ResetEditClicks();
+                }
+                return 0;
             }
-            SetFocus(window);
-            return 0;
+            break;
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONDBLCLK:
+        {
+            if (wParam & (MK_SHIFT | MK_CONTROL)) {
+                ResetEditClicks();
+                editWordSelection = {};
+                return DefSubclassProc(window, message, wParam, lParam);
+            }
+            if (lastClickedEdit != window) {
+                ResetEditClicks();
+            }
+            lastClickedEdit = window;
+            KillTimer(window, TIMER_EDIT_CLICKS);
+            editWordSelection = {};
+            LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+            DWORD selectionStart = 0;
+            DWORD selectionEnd = 0;
+            SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
+                reinterpret_cast<LPARAM>(&selectionEnd));
+            POINT clickPoint = {
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam)
+            };
+            if (selectionEnd > selectionStart) {
+                SelectEditWordAtMousePoint(window, lParam);
+                editClickCount = 2;
+            } else if (editClickCount == 0
+                    || abs(clickPoint.x - lastEditClickPoint.x) < 2 && abs(clickPoint.y - lastEditClickPoint.y) < 2) {
+                editClickCount++;
+            } else {
+                editClickCount = 0;
+            }
+            lastEditClickPoint = clickPoint;
+            if (editClickCount == 3) {
+                ResetEditClicks();
+                if (BeginEditLineSelection(window, lParam)) {
+                    return 0;
+                }
+            }
+            SetTimer(window, TIMER_EDIT_CLICKS, GetDoubleClickTime(), nullptr);
+            return result;
         }
-        SetTimer(window, TIMER_EDIT_CLICKS, GetDoubleClickTime(), nullptr);
-        return result;
-    }
-    bool selectAll = message == WM_KEYDOWN && wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-    selectAll = selectAll || message == WM_CHAR && wParam == 1;
-    if (selectAll) {
-        SendMessageW(window, EM_SETSEL, 0, -1);
-        return 0;
-    }
-    if (message == WM_NCDESTROY) {
-        if (lastClickedEdit == window) {
-            ResetEditClicks();
-        }
-        RemoveWindowSubclass(window, EditSubclassProc, subclassId);
+        case WM_MOUSEMOVE:
+            if (editLineSelection.window == window) {
+                if (wParam & MK_LBUTTON) {
+                    UpdateEditLineSelection(window, lParam);
+                } else {
+                    EndEditLineSelection(window);
+                }
+                return 0;
+            }
+            if (editWordSelection.window == window && wParam & MK_LBUTTON) {
+                POINT point = {
+                    GET_X_LPARAM(lParam),
+                    GET_Y_LPARAM(lParam)
+                };
+                if (point.x != editWordSelection.anchor.x || point.y != editWordSelection.anchor.y) {
+                    editWordSelection = {};
+                }
+            }
+            break;
+        case WM_LBUTTONUP:
+            if (editLineSelection.window == window) {
+                UpdateEditLineSelection(window, lParam);
+                DWORD selectionStart = 0;
+                DWORD selectionEnd = 0;
+                SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
+                    reinterpret_cast<LPARAM>(&selectionEnd));
+                bool reversed = selectionStart < static_cast<DWORD>(editLineSelection.anchorStart);
+                editLineSelection = {};
+                LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+                if (GetCapture() == window) {
+                    ReleaseCapture();
+                }
+                if (reversed) {
+                    SendMessageW(window, EM_SETSEL, selectionEnd, selectionStart);
+                } else {
+                    SendMessageW(window, EM_SETSEL, selectionStart, selectionEnd);
+                }
+                SendMessageW(window, EM_SCROLLCARET, 0, 0);
+                return result;
+            }
+            if (editWordSelection.window == window) {
+                int start = editWordSelection.start;
+                int end = editWordSelection.end;
+                editWordSelection = {};
+                LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+                SendMessageW(window, EM_SETSEL, start, end);
+                return result;
+            }
+            break;
+        case WM_CAPTURECHANGED:
+            if (reinterpret_cast<HWND>(lParam) != window) {
+                if (editLineSelection.window == window) {
+                    editLineSelection = {};
+                }
+                if (editWordSelection.window == window) {
+                    editWordSelection = {};
+                    ResetEditClicks();
+                }
+            }
+            break;
+        case WM_KEYDOWN:
+            if (wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+                SendMessageW(window, EM_SETSEL, 0, -1);
+                return 0;
+            }
+            break;
+        case WM_CHAR:
+            if (wParam == 1) {
+                SendMessageW(window, EM_SETSEL, 0, -1);
+                return 0;
+            }
+            break;
+        case WM_CANCELMODE:
+        case WM_KILLFOCUS:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONDBLCLK:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONDBLCLK:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONDBLCLK:
+        case WM_NCDESTROY:
+            EndEditLineSelection(window);
+            if (lastClickedEdit == window) {
+                ResetEditClicks();
+            }
+            if (editWordSelection.window == window) {
+                editWordSelection = {};
+            }
+            if (message == WM_NCDESTROY) {
+                RemoveWindowSubclass(window, EditSubclassProc, subclassId);
+            }
+            break;
     }
     return DefSubclassProc(window, message, wParam, lParam);
 }
