@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.2.2
  */
 
 #define NOMINMAX
@@ -372,19 +372,22 @@ static bool StreamDecodedAudio(AudioDecoder& decoder, const AudioThreadParameter
     return started || stopped;
 }
 
-/// Initializes COM and tries Media Foundation decoding with PCM playback, releasing the decoder before COM shutdown.
+/// Opens and streams an audio file, releasing the decoder before returning.
+static bool DecodeAndPlayAudio(const AudioThreadParameters& parameters) {
+    AudioDecoder decoder;
+    if (FAILED(decoder.Open(parameters.path))) {
+        return false;
+    }
+    return StreamDecodedAudio(decoder, parameters);
+}
+
+/// Initializes COM, plays decoded audio, and shuts COM down after the decoder is released.
 static bool PlayDecodedAudio(const AudioThreadParameters& parameters) {
     HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     if (FAILED(initialized)) {
         return false;
     }
-    bool handled = false;
-    {
-        AudioDecoder decoder;
-        if (SUCCEEDED(decoder.Open(parameters.path))) {
-            handled = StreamDecodedAudio(decoder, parameters);
-        }
-    }
+    bool handled = DecodeAndPlayAudio(parameters);
     CoUninitialize();
     return handled;
 }

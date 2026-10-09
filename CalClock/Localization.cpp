@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.2.2
  */
 
 #include "Localization.h"
@@ -78,8 +78,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Opravdu odebrat označené widgety?",
         L"Musí zůstat alespoň jeden widget.",
         L"Zavřít"
-    },
-    {
+    }, {
         L"Clocks and calendars",
         L"Settings",
         L"Add",
@@ -130,8 +129,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Remove the selected widgets?",
         L"At least one widget must remain.",
         L"Close"
-    },
-    {
+    }, {
         L"Uhren und Kalender",
         L"Einstellungen",
         L"Hinzufügen",
@@ -182,8 +180,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Ausgewähltes Element entfernen?",
         L"Mindestens ein Element muss bleiben.",
         L"Schließen"
-    },
-    {
+    }, {
         L"Horloges et calendriers",
         L"Paramètres",
         L"Ajouter",
@@ -234,8 +231,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Supprimer le panneau sélectionné ?",
         L"Au moins un panneau doit rester.",
         L"Fermer"
-    },
-    {
+    }, {
         L"Relojes y calendarios",
         L"Configuración",
         L"Añadir",
@@ -286,8 +282,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"¿Quitar el panel seleccionado?",
         L"Debe quedar al menos un panel.",
         L"Cerrar"
-    },
-    {
+    }, {
         L"Orologi e calendari",
         L"Impostazioni",
         L"Aggiungi",
@@ -338,8 +333,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Rimuovere il pannello selezionato?",
         L"Deve restare almeno un pannello.",
         L"Chiudi"
-    },
-    {
+    }, {
         L"Zegary i kalendarze",
         L"Ustawienia",
         L"Dodaj",
@@ -390,8 +384,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Usunąć wybrany panel?",
         L"Musi pozostać co najmniej jeden panel.",
         L"Zamknij"
-    },
-    {
+    }, {
         L"Hodiny a kalendáre",
         L"Nastavenia",
         L"Pridať",
@@ -442,8 +435,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Odobrať vybraný panel?",
         L"Musí zostať aspoň jeden panel.",
         L"Zavrieť"
-    },
-    {
+    }, {
         L"Clocks and calendars",
         L"Settings",
         L"Add",
@@ -494,8 +486,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Remove the selected widgets?",
         L"At least one widget must remain.",
         L"Close"
-    },
-    {
+    }, {
         L"Clocks and calendars",
         L"Settings",
         L"Add",
@@ -546,8 +537,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Remove the selected widgets?",
         L"At least one widget must remain.",
         L"Close"
-    },
-    {
+    }, {
         L"Relógios e calendários",
         L"Definições",
         L"Adicionar",
@@ -598,8 +588,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Remover os widgets selecionados?",
         L"Tem de permanecer pelo menos um widget.",
         L"Fechar"
-    },
-    {
+    }, {
         L"Klokker og kalendere",
         L"Innstillinger",
         L"Legg til",
@@ -650,8 +639,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Fjerne de valgte widgetene?",
         L"Minst én widget må beholdes.",
         L"Lukk"
-    },
-    {
+    }, {
         L"Klockor och kalendrar",
         L"Inställningar",
         L"Lägg till",
@@ -702,8 +690,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Ta bort de markerade widgetarna?",
         L"Minst en widget måste finnas kvar.",
         L"Stäng"
-    },
-    {
+    }, {
         L"Kellot ja kalenterit",
         L"Asetukset",
         L"Lisää",
@@ -754,8 +741,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Poistetaanko valitut pienoisohjelmat?",
         L"Vähintään yhden pienoisohjelman on jäätävä.",
         L"Sulje"
-    },
-    {
+    }, {
         L"Ure og kalendere",
         L"Indstillinger",
         L"Tilføj",
@@ -806,8 +792,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Fjern de valgte widgets?",
         L"Mindst én widget skal bevares.",
         L"Luk"
-    },
-    {
+    }, {
         L"Klukkur og dagatöl",
         L"Stillingar",
         L"Bæta við",
@@ -858,8 +843,7 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Fjarlægja valdar græjur?",
         L"Að minnsta kosti ein græja verður að vera eftir.",
         L"Loka"
-    },
-    {
+    }, {
         L"Saatler ve takvimler",
         L"Ayarlar",
         L"Ekle",
@@ -1864,8 +1848,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každých 20 minut",
         L"Každou půlhodinu",
         L"Každou hodinu"
-    },
-    {
+    }, {
         L"None",
         L"Every minute",
         L"Every 5 minutes",
@@ -1874,8 +1857,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
-    },
-    {
+    }, {
         L"Kein",
         L"Jede Minute",
         L"Alle 5 Minuten",
@@ -1884,8 +1866,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Alle 20 Minuten",
         L"Jede halbe Stunde",
         L"Jede Stunde"
-    },
-    {
+    }, {
         L"Aucun",
         L"Chaque minute",
         L"Toutes les 5 minutes",
@@ -1894,8 +1875,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Toutes les 20 minutes",
         L"Chaque demi-heure",
         L"Chaque heure"
-    },
-    {
+    }, {
         L"Ninguno",
         L"Cada minuto",
         L"Cada 5 minutos",
@@ -1904,8 +1884,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Cada 20 minutos",
         L"Cada media hora",
         L"Cada hora"
-    },
-    {
+    }, {
         L"Nessuno",
         L"Ogni minuto",
         L"Ogni 5 minuti",
@@ -1914,8 +1893,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Ogni 20 minuti",
         L"Ogni mezz’ora",
         L"Ogni ora"
-    },
-    {
+    }, {
         L"Brak",
         L"Co minutę",
         L"Co 5 minut",
@@ -1924,8 +1902,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Co 20 minut",
         L"Co pół godziny",
         L"Co godzinę"
-    },
-    {
+    }, {
         L"Žiadne",
         L"Každú minútu",
         L"Každých 5 minút",
@@ -1934,8 +1911,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každých 20 minút",
         L"Každú polhodinu",
         L"Každú hodinu"
-    },
-    {
+    }, {
         L"None",
         L"Every minute",
         L"Every 5 minutes",
@@ -1944,8 +1920,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
-    },
-    {
+    }, {
         L"None",
         L"Every minute",
         L"Every 5 minutes",
@@ -1954,8 +1929,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Every 20 minutes",
         L"Every half hour",
         L"Every hour"
-    },
-    {
+    }, {
         L"Nenhum",
         L"A cada minuto",
         L"A cada 5 minutos",
@@ -1964,8 +1938,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"A cada 20 minutos",
         L"A cada meia hora",
         L"A cada hora"
-    },
-    {
+    }, {
         L"Ingen",
         L"Hvert minutt",
         L"Hvert 5. minutt",
@@ -1974,8 +1947,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Hvert 20. minutt",
         L"Hver halvtime",
         L"Hver time"
-    },
-    {
+    }, {
         L"Ingen",
         L"Varje minut",
         L"Var 5:e minut",
@@ -1984,8 +1956,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Var 20:e minut",
         L"Varje halvtimme",
         L"Varje timme"
-    },
-    {
+    }, {
         L"Ei mitään",
         L"Minuutin välein",
         L"5 minuutin välein",
@@ -1994,8 +1965,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"20 minuutin välein",
         L"30 minuutin välein",
         L"Tunnin välein"
-    },
-    {
+    }, {
         L"Intet",
         L"Hvert minut",
         L"Hvert 5. minut",
@@ -2004,8 +1974,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Hvert 20. minut",
         L"Hver halve time",
         L"Hver time"
-    },
-    {
+    }, {
         L"Ekkert",
         L"Á hverri mínútu",
         L"Á 5 mínútna fresti",
@@ -2014,8 +1983,7 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Á 20 mínútna fresti",
         L"Á hálftíma fresti",
         L"Á klukkustundar fresti"
-    },
-    {
+    }, {
         L"Yok",
         L"Her dakika",
         L"Her 5 dakikada",
@@ -2174,113 +2142,97 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
         L"PTB – Německo a Evropa",
         L"Celý svět – Ubuntu / NTP Pool",
         L"Vlastní"
-    },
-    {
+    }, {
         L"Automatic by region",
         L"Czechia and Slovakia – CESNET/NIC.CZ",
         L"PTB – Germany and Europe",
         L"Worldwide – Ubuntu / NTP Pool",
         L"Custom"
-    },
-    {
+    }, {
         L"Automatisch nach Region",
         L"Tschechien und Slowakei – CESNET/NIC.CZ",
         L"PTB – Deutschland und Europa",
         L"Weltweit – Ubuntu / NTP Pool",
         L"Benutzerdefiniert"
-    },
-    {
+    }, {
         L"Automatique selon la région",
         L"Tchéquie et Slovaquie – CESNET/NIC.CZ",
         L"PTB – Allemagne et Europe",
         L"Monde entier – Ubuntu / NTP Pool",
         L"Personnalisé"
-    },
-    {
+    }, {
         L"Automático según la región",
         L"Chequia y Eslovaquia – CESNET/NIC.CZ",
         L"PTB – Alemania y Europa",
         L"Todo el mundo – Ubuntu / NTP Pool",
         L"Personalizado"
-    },
-    {
+    }, {
         L"Automatico in base all’area",
         L"Cechia e Slovacchia – CESNET/NIC.CZ",
         L"PTB – Germania ed Europa",
         L"Tutto il mondo – Ubuntu / NTP Pool",
         L"Personalizzato"
-    },
-    {
+    }, {
         L"Automatycznie według regionu",
         L"Czechy i Słowacja – CESNET/NIC.CZ",
         L"PTB – Niemcy i Europa",
         L"Cały świat – Ubuntu / NTP Pool",
         L"Własny"
-    },
-    {
+    }, {
         L"Automaticky podľa oblasti",
         L"Česko a Slovensko – CESNET/NIC.CZ",
         L"PTB – Nemecko a Európa",
         L"Celý svet – Ubuntu / NTP Pool",
         L"Vlastné"
-    },
-    {
+    }, {
         L"Automatic by region",
         L"Czechia and Slovakia – CESNET/NIC.CZ",
         L"PTB – Germany and Europe",
         L"Worldwide – Ubuntu / NTP Pool",
         L"Custom"
-    },
-    {
+    }, {
         L"Automatic by region",
         L"Czechia and Slovakia – CESNET/NIC.CZ",
         L"PTB – Germany and Europe",
         L"Worldwide – Ubuntu / NTP Pool",
         L"Custom"
-    },
-    {
+    }, {
         L"Automático por região",
         L"Chéquia e Eslováquia – CESNET/NIC.CZ",
         L"PTB – Alemanha e Europa",
         L"Mundial – Ubuntu / NTP Pool",
         L"Personalizado"
-    },
-    {
+    }, {
         L"Automatisk etter region",
         L"Tsjekkia og Slovakia – CESNET/NIC.CZ",
         L"PTB – Tyskland og Europa",
         L"Hele verden – Ubuntu / NTP Pool",
         L"Egendefinert"
-    },
-    {
+    }, {
         L"Automatiskt efter region",
         L"Tjeckien och Slovakien – CESNET/NIC.CZ",
         L"PTB – Tyskland och Europa",
         L"Hela världen – Ubuntu / NTP Pool",
         L"Anpassad"
-    },
-    {
+    }, {
         L"Automaattinen alueen mukaan",
         L"Tšekki ja Slovakia – CESNET/NIC.CZ",
         L"PTB – Saksa ja Eurooppa",
         L"Maailmanlaajuinen – Ubuntu / NTP Pool",
         L"Mukautettu"
-    },
-    {
+    }, {
         L"Automatisk efter område",
         L"Tjekkiet og Slovakiet – CESNET/NIC.CZ",
         L"PTB – Tyskland og Europa",
         L"Hele verden – Ubuntu / NTP Pool",
         L"Brugerdefineret"
-    },
-    {
+    }, {
         L"Sjálfvirkt eftir svæði",
         L"Tékkland og Slóvakía – CESNET/NIC.CZ",
         L"PTB – Þýskaland og Evrópa",
         L"Allur heimurinn – Ubuntu / NTP Pool",
         L"Sérsniðið"
-    },
-    {
+    }, {
         L"Bölgeye göre otomatik",
         L"Çekya ve Slovakya – CESNET/NIC.CZ",
         L"PTB – Almanya ve Avrupa",
@@ -2450,23 +2402,75 @@ const wchar_t* ANTIALIASING_LABELS[LANG_COUNT] = {
 };
 
 const wchar_t* ANTIALIASING_NAMES[LANG_COUNT][FONT_ANTIALIAS_COUNT] = {
-    { L"GDI", L"ClearType", L"Žádné" },
-    { L"GDI", L"ClearType", L"None" },
-    { L"GDI", L"ClearType", L"Keine" },
-    { L"GDI", L"ClearType", L"Aucun" },
-    { L"GDI", L"ClearType", L"Ninguno" },
-    { L"GDI", L"ClearType", L"Nessuno" },
-    { L"GDI", L"ClearType", L"Brak" },
-    { L"GDI", L"ClearType", L"Žiadne" },
-    { L"GDI", L"ClearType", L"None" },
-    { L"GDI", L"ClearType", L"None" },
-    { L"GDI", L"ClearType", L"Nenhuma" },
-    { L"GDI", L"ClearType", L"Ingen" },
-    { L"GDI", L"ClearType", L"Ingen" },
-    { L"GDI", L"ClearType", L"Ei mitään" },
-    { L"GDI", L"ClearType", L"Ingen" },
-    { L"GDI", L"ClearType", L"Engin" },
-    { L"GDI", L"ClearType", L"Yok" }
+    {
+        L"GDI",
+        L"ClearType",
+        L"Žádné"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"None"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Keine"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Aucun"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Ninguno"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Nessuno"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Brak"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Žiadne"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"None"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"None"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Nenhuma"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Ingen"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Ingen"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Ei mitään"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Ingen"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Engin"
+    }, {
+        L"GDI",
+        L"ClearType",
+        L"Yok"
+    }
 };
 
 const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT] = {

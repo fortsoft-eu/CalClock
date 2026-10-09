@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.2
+ * Last modified for version 1.5.2.2
  */
 
 #define NOMINMAX
@@ -124,9 +124,9 @@ static void AddFixedTimeZones(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones)
         for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : *zones) {
             LONG existingOffset = 0;
             if (ParseTimeZoneOffset(zone.StandardName, &existingOffset)
-                && existingOffset == offset
-                && zone.StandardDate.wMonth == 0
-                && zone.DaylightDate.wMonth == 0) {
+                    && existingOffset == offset
+                    && zone.StandardDate.wMonth == 0
+                    && zone.DaylightDate.wMonth == 0) {
                 exists = true;
                 break;
             }
@@ -335,8 +335,9 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
     }
     HKEY key = nullptr;
     wchar_t keyName[128] = {};
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key) ==
-            ERROR_SUCCESS) {
+    LSTATUS result = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation",
+        0, KEY_READ, &key);
+    if (result == ERROR_SUCCESS) {
         ReadRegistryString(key, L"TimeZoneKeyName", keyName, ARRAYSIZE(keyName));
         RegCloseKey(key);
     }

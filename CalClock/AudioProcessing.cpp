@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.2.2
  */
 
 #define NOMINMAX
@@ -97,7 +97,9 @@ bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& forma
     if (format.tag == WAVE_FORMAT_IEEE_FLOAT) {
         return (format.bits == 32 || format.bits == 64) && format.validBits == format.bits;
     }
-    return format.tag == WAVE_FORMAT_PCM && format.validBits > 0 && format.validBits <= format.bits
+    return format.tag == WAVE_FORMAT_PCM
+        && format.validBits > 0
+        && format.validBits <= format.bits
         && (format.bits == 8 || format.bits == 16 || format.bits == 24 || format.bits == 32);
 }
 

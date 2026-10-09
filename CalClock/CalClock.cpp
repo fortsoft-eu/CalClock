@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.1
+ * Last modified for version 1.5.2.2
  */
 
 #define NOMINMAX
@@ -1149,20 +1149,22 @@ static BOOL CALLBACK CollectDisplayMonitor(HMONITOR monitor, HDC, LPRECT, LPARAM
     return TRUE;
 }
 
+/// Orders the primary monitor first, then the remaining monitors by screen position.
+static bool DisplayMonitorComesFirst(const DisplayMonitor& left, const DisplayMonitor& right) {
+    if (left.primary != right.primary) {
+        return left.primary;
+    }
+    if (left.rect.top != right.rect.top) {
+        return left.rect.top < right.rect.top;
+    }
+    return left.rect.left < right.rect.left;
+}
+
 /// Rebuilds the monitor list with the primary monitor first, then orders the remainder by screen position.
 static void RefreshDisplayMonitors() {
     displayMonitors.clear();
     EnumDisplayMonitors(nullptr, nullptr, CollectDisplayMonitor, reinterpret_cast<LPARAM>(&displayMonitors));
-    std::stable_sort(displayMonitors.begin(), displayMonitors.end(),
-        [](const DisplayMonitor& left, const DisplayMonitor& right) {
-            if (left.primary != right.primary) {
-                return left.primary;
-            }
-            if (left.rect.top != right.rect.top) {
-                return left.rect.top < right.rect.top;
-            }
-            return left.rect.left < right.rect.left;
-    });
+    std::stable_sort(displayMonitors.begin(), displayMonitors.end(), DisplayMonitorComesFirst);
 }
 
 /// Tests case-insensitive membership in a semicolon-separated list of monitor device names.
@@ -7820,152 +7822,115 @@ static void UpdateSettingControlVisibility(bool showApplicable) {
         {
             hMonitorLabel,
             fullscreen
-        },
-        {
+        }, {
             hMonitorList,
             fullscreen
-        },
-        {
+        }, {
             hBlackoutMonitorsCheck,
             fullscreen
-        },
-        {
+        }, {
             hSizeLabel,
             hasSize
-        },
-        {
+        }, {
             hSizeCombo,
             hasSize
-        },
-        {
+        }, {
             hFontSizeLabel,
             digital
-        },
-        {
+        }, {
             hFontSizeTrackBar,
             digital
-        },
-        {
+        }, {
             hFontSizeValue,
             digital
-        },
-        {
+        }, {
             hFontDescription,
             digital
-        },
-        {
+        }, {
             hLeadingZeroLabel,
             digital || panel
-        },
-        {
+        }, {
             hLeadingZeroCombo,
             digital || panel
-        },
-        {
+        }, {
             hTransparentBackgroundCheck,
             digital && !fullscreen
-        },
-        {
+        }, {
             hTextColorButton,
             digital
-        },
-        {
+        }, {
             hAlarmTextColorButton,
             digital
-        },
-        {
+        }, {
             hAlarmBackgroundColorButton,
             digital
-        },
-        {
+        }, {
             hPaddingLabel,
             digital
-        },
-        {
+        }, {
             hPaddingTrackBar,
             digital
-        },
-        {
+        }, {
             hPaddingValue,
             digital
-        },
-        {
+        }, {
             hBorderLabel,
             supportsBorderStyle
-        },
-        {
+        }, {
             hBorderTrackBar,
             supportsBorderStyle
-        },
-        {
+        }, {
             hBorderColorButton,
             supportsBorderStyle
-        },
-        {
+        }, {
             hBorderWidthLabel,
             digital && !fullscreen
-        },
-        {
+        }, {
             hBorderWidthTrackBar,
             digital && !fullscreen
-        },
-        {
+        }, {
             hBorderWidthValue,
             digital && !fullscreen
-        },
-        {
+        }, {
             hFontButton,
             hasTextFont
-        },
-        {
+        }, {
             hPanelTopFontButton,
             panel
-        },
-        {
+        }, {
             hPanelTimeFontButton,
             panel
-        },
-        {
+        }, {
             hPanelBottomFontButton,
             panel
-        },
-        {
+        }, {
             hDefaultAppearanceButton,
             true
-        },
-        {
+        }, {
             hBackgroundColorButton,
             digital
-        },
-        {
+        }, {
             hShowTodayCheck,
             type == WIDGET_CALENDAR
-        },
-        {
+        }, {
             hWeekNumbersCheck,
             calendar
-        },
-        {
+        }, {
             hSundayFirstCheck,
             calendar
-        },
-        {
+        }, {
             hDateFormatLabel,
             calendar
-        },
-        {
+        }, {
             hDateFormatCombo,
             calendar
-        },
-        {
+        }, {
             hTimeFormatLabel,
             digital || panel
-        },
-        {
+        }, {
             hTimeFormatCombo,
             digital || panel
-        },
-        {
+        }, {
             hShowAmPmCheck,
             digital || panel
         }
@@ -8139,112 +8104,85 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         {
             hTransparentBackgroundCheck,
             !fullscreen
-        },
-        {
+        }, {
             hPaddingTrackBar,
             digital
-        },
-        {
+        }, {
             hBorderTrackBar,
             supportsBorderStyle
-        },
-        {
+        }, {
             hBorderColorButton,
             supportsBorderStyle && SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0) == DIGITAL_BORDER_TOOL_WINDOW
-        },
-        {
+        }, {
             hBorderWidthTrackBar,
             !fullscreen
-        },
-        {
+        }, {
             hFontButton,
             digital || calendarFontEnabled
-        },
-        {
+        }, {
             hSecondsCheck,
             supportsSeconds
-        },
-        {
+        }, {
             hTimeFormatCombo,
             (digital || panel) && !WidgetUsesUtcTime(timeConfiguration)
-        },
-        {
+        }, {
             hShowAmPmCheck,
             supportsAmPm
-        },
-        {
+        }, {
             hUtcTextCheck,
             (digital || panel) && utc
-        },
-        {
+        }, {
             hTimeZoneLabel,
             !utc
-        },
-        {
+        }, {
             hTimeZoneCombo,
             !utc
-        },
-        {
+        }, {
             hTopmostCheck,
             !fullscreen
-        },
-        {
+        }, {
             hOpacityTrackBar,
             !fullscreen
-        },
-        {
+        }, {
             hSoundsMutedCheck,
             supportsAlarm
-        },
-        {
+        }, {
             hAlarmEnabledCheck,
             supportsAlarm
-        },
-        {
+        }, {
             hAlarmTimeEdit,
             supportsAlarm
-        },
-        {
+        }, {
             hRunCommandCheck,
             supportsAlarm
-        },
-        {
+        }, {
             hCommandEdit,
             runCommand
-        },
-        {
+        }, {
             hBrowseButton,
             runCommand
-        },
-        {
+        }, {
             hAlarmVolumeLabel,
             runCommand && LooksLikeAudio(commandText)
-        },
-        {
+        }, {
             hAlarmVolumeTrackBar,
             runCommand && LooksLikeAudio(commandText)
-        },
-        {
+        }, {
             hAlarmVolumeValue,
             runCommand && LooksLikeAudio(commandText)
-        },
-        {
+        }, {
             hLoopAudioCheck,
             runCommand && hasCommand
-        },
-        {
+        }, {
             hTestCommandButton,
             settingsCommandTestActive || runCommand && hasCommand
-        },
-        {
+        }, {
             hRemoteScriptCheck,
             supportsAlarm
-        },
-        {
+        }, {
             hRemoteScriptLabel,
             supportsAlarm && GetCheck(hRemoteScriptCheck)
-        },
-        {
+        }, {
             hRemoteScriptEdit,
             supportsAlarm && GetCheck(hRemoteScriptCheck)
         }
@@ -12945,7 +12883,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
             continue;
         }
         if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
-            && message.wParam == VK_ESCAPE && HideFullscreenWidgetsFromEscape()) {
+                && message.wParam == VK_ESCAPE
+                && HideFullscreenWidgetsFromEscape()) {
             continue;
         }
         if (message.message == WM_KEYDOWN

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.2.2
  */
 
 #define NOMINMAX
@@ -29,8 +29,8 @@
 #include "AudioGainCallback.h"
 
 /// Retains a reference to playback parameters and copies the initial decoded sample format.
-AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters, const AudioSampleFormat& format) :
-    parameters(parameters), format(format) {}
+AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters,
+    const AudioSampleFormat& format) : parameters(parameters), format(format) {}
 
 /// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output pointers.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::QueryInterface(REFIID id, void** object) {
@@ -67,7 +67,8 @@ HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* samp
     }
     AM_MEDIA_TYPE* changedType = nullptr;
     if (sample->GetMediaType(&changedType) == S_OK && changedType != nullptr) {
-        bool supported = changedType->majortype == MEDIATYPE_Audio && changedType->formattype == FORMAT_WaveFormatEx
+        bool supported = changedType->majortype == MEDIATYPE_Audio
+            && changedType->formattype == FORMAT_WaveFormatEx
             && GetAudioSampleFormat(changedType->pbFormat, changedType->cbFormat, format);
         FreeAudioMediaType(*changedType);
         CoTaskMemFree(changedType);
