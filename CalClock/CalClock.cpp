@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.2.1
  */
 
 #define NOMINMAX
@@ -4783,8 +4783,8 @@ static Widget* WidgetFromInputWindow(HWND window) {
         if (window == widget->window || IsChild(widget->window, window)) {
             return widget;
         }
-        for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-            HWND fullscreenWindow = widget->fullscreenWindows[windowIndex];
+        for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+            HWND fullscreenWindow = widget->fullscreenWindows[wndIndex];
             if (window == fullscreenWindow || IsChild(fullscreenWindow, window)) {
                 return widget;
             }
@@ -5465,9 +5465,9 @@ static void DestroyWidgetWindow(Widget* widget) {
         DeleteObject(widget->panelTimeZoneFont);
         widget->panelTimeZoneFont = nullptr;
     }
-    for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-        if (IsWindow(widget->fullscreenWindows[windowIndex])) {
-            DestroyWindow(widget->fullscreenWindows[windowIndex]);
+    for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+        if (IsWindow(widget->fullscreenWindows[wndIndex])) {
+            DestroyWindow(widget->fullscreenWindows[wndIndex]);
         }
     }
     widget->fullscreenWindows.clear();
@@ -5548,8 +5548,8 @@ static void RefreshFullscreenPresentation() {
                 || widget->window == nullptr) {
             continue;
         }
-        for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-            ShowWindow(widget->fullscreenWindows[windowIndex], SW_HIDE);
+        for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+            ShowWindow(widget->fullscreenWindows[wndIndex], SW_HIDE);
         }
         blackoutRequested = blackoutRequested || widget->config.blackoutOtherMonitors;
         if (escapeTarget == nullptr) {
@@ -5682,8 +5682,8 @@ static void SetAllVisible(bool visible) {
         if (visible) {
             ShowWindow(widgets[index]->window, SW_SHOWNOACTIVATE);
             if (!widgets[index]->fullscreenPreview) {
-                for (size_t windowIndex = 0; windowIndex < widgets[index]->fullscreenWindows.size(); windowIndex++) {
-                    ShowWindow(widgets[index]->fullscreenWindows[windowIndex], SW_SHOWNOACTIVATE);
+                for (size_t wndIndex = 0; wndIndex < widgets[index]->fullscreenWindows.size(); wndIndex++) {
+                    ShowWindow(widgets[index]->fullscreenWindows[wndIndex], SW_SHOWNOACTIVATE);
                 }
             }
             RenderWidget(widgets[index].get());
@@ -5691,8 +5691,8 @@ static void SetAllVisible(bool visible) {
         } else {
             SaveWidgetPosition(widgets[index].get());
             ShowWindow(widgets[index]->window, SW_HIDE);
-            for (size_t windowIndex = 0; windowIndex < widgets[index]->fullscreenWindows.size(); windowIndex++) {
-                ShowWindow(widgets[index]->fullscreenWindows[windowIndex], SW_HIDE);
+            for (size_t wndIndex = 0; wndIndex < widgets[index]->fullscreenWindows.size(); wndIndex++) {
+                ShowWindow(widgets[index]->fullscreenWindows[wndIndex], SW_HIDE);
             }
         }
         SynchronizeOpenSettings(widgets[index].get(), ID_MENU_VISIBLE);
@@ -5877,8 +5877,8 @@ static bool RestoreLastHiddenWidgets() {
         widget->config.visible = true;
         ShowWindow(widget->window, SW_SHOWNOACTIVATE);
         if (!widget->fullscreenPreview) {
-            for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-                ShowWindow(widget->fullscreenWindows[windowIndex], SW_SHOWNOACTIVATE);
+            for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+                ShowWindow(widget->fullscreenWindows[wndIndex], SW_SHOWNOACTIVATE);
             }
         }
         RenderWidget(widget);
@@ -6892,8 +6892,8 @@ static bool HideFullscreenWidgetsFromEscape() {
         widget->config.visible = false;
         hiddenWidgetIds.push_back(widget->config.id);
         ShowWindow(widget->window, SW_HIDE);
-        for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-            ShowWindow(widget->fullscreenWindows[windowIndex], SW_HIDE);
+        for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+            ShowWindow(widget->fullscreenWindows[wndIndex], SW_HIDE);
         }
         for (size_t draftIndex = 0; draftIndex < settingsDraft.size(); draftIndex++) {
             if (settingsDraft[draftIndex].id == widget->config.id) {
@@ -7817,44 +7817,158 @@ static void UpdateSettingControlVisibility(bool showApplicable) {
     bool hasSize = type == WIDGET_ANALOG || panel;
     bool hasTextFont = digital || calendar;
     ControlVisibility controlStates[] = {
-        { hMonitorLabel, fullscreen },
-        { hMonitorList, fullscreen },
-        { hBlackoutMonitorsCheck, fullscreen },
-        { hSizeLabel, hasSize },
-        { hSizeCombo, hasSize },
-        { hFontSizeLabel, digital },
-        { hFontSizeTrackBar, digital },
-        { hFontSizeValue, digital },
-        { hFontDescription, digital },
-        { hLeadingZeroLabel, digital || panel },
-        { hLeadingZeroCombo, digital || panel },
-        { hTransparentBackgroundCheck, digital && !fullscreen },
-        { hTextColorButton, digital },
-        { hAlarmTextColorButton, digital },
-        { hAlarmBackgroundColorButton, digital },
-        { hPaddingLabel, digital },
-        { hPaddingTrackBar, digital },
-        { hPaddingValue, digital },
-        { hBorderLabel, supportsBorderStyle },
-        { hBorderTrackBar, supportsBorderStyle },
-        { hBorderColorButton, supportsBorderStyle },
-        { hBorderWidthLabel, digital && !fullscreen },
-        { hBorderWidthTrackBar, digital && !fullscreen },
-        { hBorderWidthValue, digital && !fullscreen },
-        { hFontButton, hasTextFont },
-        { hPanelTopFontButton, panel },
-        { hPanelTimeFontButton, panel },
-        { hPanelBottomFontButton, panel },
-        { hDefaultAppearanceButton, true },
-        { hBackgroundColorButton, digital },
-        { hShowTodayCheck, type == WIDGET_CALENDAR },
-        { hWeekNumbersCheck, calendar },
-        { hSundayFirstCheck, calendar },
-        { hDateFormatLabel, calendar },
-        { hDateFormatCombo, calendar },
-        { hTimeFormatLabel, digital || panel },
-        { hTimeFormatCombo, digital || panel },
-        { hShowAmPmCheck, digital || panel }
+        {
+            hMonitorLabel,
+            fullscreen
+        },
+        {
+            hMonitorList,
+            fullscreen
+        },
+        {
+            hBlackoutMonitorsCheck,
+            fullscreen
+        },
+        {
+            hSizeLabel,
+            hasSize
+        },
+        {
+            hSizeCombo,
+            hasSize
+        },
+        {
+            hFontSizeLabel,
+            digital
+        },
+        {
+            hFontSizeTrackBar,
+            digital
+        },
+        {
+            hFontSizeValue,
+            digital
+        },
+        {
+            hFontDescription,
+            digital
+        },
+        {
+            hLeadingZeroLabel,
+            digital || panel
+        },
+        {
+            hLeadingZeroCombo,
+            digital || panel
+        },
+        {
+            hTransparentBackgroundCheck,
+            digital && !fullscreen
+        },
+        {
+            hTextColorButton,
+            digital
+        },
+        {
+            hAlarmTextColorButton,
+            digital
+        },
+        {
+            hAlarmBackgroundColorButton,
+            digital
+        },
+        {
+            hPaddingLabel,
+            digital
+        },
+        {
+            hPaddingTrackBar,
+            digital
+        },
+        {
+            hPaddingValue,
+            digital
+        },
+        {
+            hBorderLabel,
+            supportsBorderStyle
+        },
+        {
+            hBorderTrackBar,
+            supportsBorderStyle
+        },
+        {
+            hBorderColorButton,
+            supportsBorderStyle
+        },
+        {
+            hBorderWidthLabel,
+            digital && !fullscreen
+        },
+        {
+            hBorderWidthTrackBar,
+            digital && !fullscreen
+        },
+        {
+            hBorderWidthValue,
+            digital && !fullscreen
+        },
+        {
+            hFontButton,
+            hasTextFont
+        },
+        {
+            hPanelTopFontButton,
+            panel
+        },
+        {
+            hPanelTimeFontButton,
+            panel
+        },
+        {
+            hPanelBottomFontButton,
+            panel
+        },
+        {
+            hDefaultAppearanceButton,
+            true
+        },
+        {
+            hBackgroundColorButton,
+            digital
+        },
+        {
+            hShowTodayCheck,
+            type == WIDGET_CALENDAR
+        },
+        {
+            hWeekNumbersCheck,
+            calendar
+        },
+        {
+            hSundayFirstCheck,
+            calendar
+        },
+        {
+            hDateFormatLabel,
+            calendar
+        },
+        {
+            hDateFormatCombo,
+            calendar
+        },
+        {
+            hTimeFormatLabel,
+            digital || panel
+        },
+        {
+            hTimeFormatCombo,
+            digital || panel
+        },
+        {
+            hShowAmPmCheck,
+            digital || panel
+        }
     };
     for (const ControlVisibility& state : controlStates) {
         if (state.control != nullptr && (!state.visible || showApplicable)) {
@@ -9101,8 +9215,8 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
         DeleteObject(widget->panelTimeZoneFont);
         widget->panelTimeZoneFont = nullptr;
     }
-    for (size_t windowIndex = 0; windowIndex < widget->fullscreenWindows.size(); windowIndex++) {
-        DestroyWindow(widget->fullscreenWindows[windowIndex]);
+    for (size_t wndIndex = 0; wndIndex < widget->fullscreenWindows.size(); wndIndex++) {
+        DestroyWindow(widget->fullscreenWindows[wndIndex]);
     }
     widget->fullscreenWindows.clear();
     widget->window = nullptr;
@@ -12460,10 +12574,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                         anyVisible = true;
                         SetWindowPos(widgets[index]->window, HWND_TOPMOST, 0, 0, 0, 0,
                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-                        for (size_t windowIndex = 0;
-                                windowIndex < widgets[index]->fullscreenWindows.size();
-                                windowIndex++) {
-                            SetWindowPos(widgets[index]->fullscreenWindows[windowIndex], HWND_TOPMOST, 0, 0, 0, 0,
+                        for (size_t wndIndex = 0; wndIndex < widgets[index]->fullscreenWindows.size(); wndIndex++) {
+                            SetWindowPos(widgets[index]->fullscreenWindows[wndIndex], HWND_TOPMOST, 0, 0, 0, 0,
                                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                         }
                         if (!widgets[index]->config.topMost && widgets[index]->config.type != WIDGET_FULLSCREEN) {
@@ -12734,8 +12846,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 }
 
 /// Enforces one application instance, initializes services and windows, and runs the message loop with custom keyboard
-/// navigation.
-/// Releases rendering, synchronization, and process resources before returning the message-loop exit code.
+/// navigation. Releases rendering, synchronization, and process resources before returning the message-loop exit code.
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPWSTR commandLine,
         _In_ int showCommand) {
     UNREFERENCED_PARAMETER(previousInstance);

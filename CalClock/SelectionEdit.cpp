@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.2.1
  */
 
 #include "SelectionEdit.h"
@@ -128,7 +128,7 @@ static int SelectionPosition(HWND window, POINT point) {
     if (lineStart < 0) {
         return 0;
     }
-    int position = lineStart & ~0xffff | LOWORD(hit);
+    int position = lineStart & ~0xFFFF | LOWORD(hit);
     if (position < lineStart) {
         position += 0x10000;
     }
@@ -145,11 +145,11 @@ static CharacterType SelectionCharacterType(wchar_t character) {
     WORD extended = 0;
     GetStringTypeW(CT_CTYPE1, &character, 1, &basic);
     GetStringTypeW(CT_CTYPE3, &character, 1, &extended);
-    if (character == L'_' || character >= 0x0300 && character <= 0x036f
-            || character >= 0x1ab0 && character <= 0x1aff
-            || character >= 0x1dc0 && character <= 0x1dff
-            || character >= 0x20d0 && character <= 0x20ff
-            || character >= 0xfe20 && character <= 0xfe2f
+    if (character == L'_' || character >= 0x0300 && character <= 0x036F
+            || character >= 0x1AB0 && character <= 0x1AFF
+            || character >= 0x1DC0 && character <= 0x1DFF
+            || character >= 0x20D0 && character <= 0x20FF
+            || character >= 0xFE20 && character <= 0xFE2F
             || basic & (C1_ALPHA | C1_DIGIT)
             || extended & (C3_NONSPACING | C3_DIACRITIC | C3_VOWELMARK)) {
         return CharacterType::Word;
