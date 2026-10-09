@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.2.0
  */
 
 #define NOMINMAX
@@ -491,8 +491,8 @@ static bool PlayWithWindowsMediaPlayer(const AudioThreadParameters& parameters) 
     IWMPPlayer4* player = nullptr;
     IWMPSettings* settings = nullptr;
     IWMPControls* controls = nullptr;
-    HRESULT result = CoCreateInstance(__uuidof(WindowsMediaPlayer), nullptr,
-        CLSCTX_INPROC_SERVER, __uuidof(IWMPPlayer4), reinterpret_cast<void**>(&player));
+    HRESULT result = CoCreateInstance(__uuidof(WindowsMediaPlayer), nullptr, CLSCTX_INPROC_SERVER,
+        __uuidof(IWMPPlayer4), reinterpret_cast<void**>(&player));
     if (SUCCEEDED(result)) {
         result = player->get_settings(&settings);
     }

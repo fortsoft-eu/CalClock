@@ -85,6 +85,7 @@
     <ClCompile Include="DateFormats.cpp" />
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="NtpClient.cpp" />
+    <ClCompile Include="SelectionEdit.cpp" />
     <ClCompile Include="SettingsStorage.cpp" />
     <ClCompile Include="TimeFormats.cpp" />
     <ClCompile Include="TimeSignal.cpp" />
@@ -105,6 +106,7 @@
     <ClInclude Include="IAudioSampleGrabber.h" />
     <ClInclude Include="Localization.h" />
     <ClInclude Include="NtpClient.h" />
+    <ClInclude Include="SelectionEdit.h" />
     <ClInclude Include="SettingsStorage.h" />
     <ClInclude Include="TimeFormats.h" />
     <ClInclude Include="TimeSignal.h" />

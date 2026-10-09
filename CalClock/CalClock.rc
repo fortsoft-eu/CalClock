@@ -40,6 +40,18 @@ IDI_CLOCK               ICON                    "CalClock.ico"
 IDR_LICENSE             RCDATA                  "..\\license.txt"
 
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SETTINGS_PAGE DIALOGEX 0, 0, 0, 0
+STYLE DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+BEGIN
+END
+
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //

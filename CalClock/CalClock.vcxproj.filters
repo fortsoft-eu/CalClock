@@ -45,6 +45,9 @@
     <ClCompile Include="NtpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelectionEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SettingsStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NtpClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SettingsStorage.h">

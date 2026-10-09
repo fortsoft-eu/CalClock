@@ -38,6 +38,7 @@
 #include "DateFormats.h"
 #include "Localization.h"
 #include "NtpClient.h"
+#include "SelectionEdit.h"
 #include "SettingsStorage.h"
 #include "TimeFormats.h"
 #include "TimeSignal.h"
@@ -182,22 +183,6 @@ struct InformationWindowLayout {
     bool initialized = false;
 };
 
-/// Keeps the original line boundaries while a triple-click selection is extended by dragging.
-struct EditLineSelection {
-    HWND window = nullptr;
-    int anchorLine = -1;
-    int anchorStart = 0;
-    int anchorEnd = 0;
-};
-
-/// Preserves the clicked word until the mouse is released or native word dragging begins.
-struct EditWordSelection {
-    HWND window = nullptr;
-    int start = 0;
-    int end = 0;
-    POINT anchor = {};
-};
-
 /// Window classes and product constants
 const wchar_t CLASS_NAME[] = L"CalClockMultiWidgetWindow";
 const wchar_t BLACKOUT_CLASS_NAME[] = L"CalClockBlackoutWindow";
@@ -214,8 +199,8 @@ const UINT WM_AUDIO_FINISHED = WM_APP + 4;
 const UINT WM_SETTINGS_AUDIO_FINISHED = WM_APP + 5;
 const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
+const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
 const UINT_PTR TIMER_REFRESH = 1;
-static const UINT_PTR TIMER_EDIT_CLICKS = 0xCC01;
 static const ULONGLONG FULLSCREEN_CURSOR_IDLE_DELAY = 3000;
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
 const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
@@ -536,7 +521,6 @@ HWND hUseXmlSettingsCheck = nullptr;
 
 /// Mouse interaction windows
 static HWND hFullscreenCursorWindow = nullptr;
-static HWND lastClickedEdit = nullptr;
 
 /// Graphics factories
 ID2D1Factory* d2dFactory = nullptr;
@@ -559,11 +543,8 @@ static InformationWindowLayout aboutWindowLayout;
 
 /// Mouse interaction positions
 static POINT fullscreenCursorPosition = {};
-static POINT lastEditClickPoint = {};
 
 /// Edit selection state
-static EditLineSelection editLineSelection;
-static EditWordSelection editWordSelection;
 
 /// Language and widget type
 AppLanguage appLanguage = LANG_EN;
@@ -614,7 +595,6 @@ int settingsX = CW_USEDEFAULT;
 int settingsY = CW_USEDEFAULT;
 double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 std::shared_ptr<std::atomic<int>> settingsPreviewVolume;
-static int editClickCount = 0;
 
 /// Message and generation identifiers
 ULONG settingsPreviewGeneration = 0;
@@ -691,11 +671,6 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
 static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
-/// Adds Ctrl+A, stable double-click word selection, and triple-click selection with whole-line dragging.
-/// Preserves native modifier-clicks and button releases, and clears state when input is canceled or the edit is destroyed.
-static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
-    UINT_PTR subclassId, DWORD_PTR referenceData);
-
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
 /// On associated buttons, transfers focus to the widget list before handling the shortcut.
 static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
@@ -724,6 +699,10 @@ static void SaveFormPosition(HWND window, int* x, int* y);
 
 /// Temporarily substitutes committed widget configurations while saving, then restores the active appearance previews.
 static void SaveSettingsWithoutAppearancePreviews();
+
+/// Stops tests, restores uncommitted previews, remembers the form position and selected tab, and destroys settings
+/// controls. Clears draft state and restores normal fullscreen presentation.
+static void CloseSettingsWindow();
 
 /// Opens or activates the non-topmost settings form and optionally selects a widget by ID.
 /// Creates draft snapshots and fullscreen previews when opening a new form.
@@ -2080,10 +2059,18 @@ static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
 }
 
 /// Builds a localized signal menu caption with the retained interval, whether enabled or disabled.
+/// Lowercases the interval's initial using the widget locale while preserving capitalization within the phrase.
 static std::wstring TimeSignalMenuLabel(const WidgetConfig& config) {
+    std::wstring interval = TIME_SIGNAL_MODE_LABELS[config.language][config.timeSignal];
+    wchar_t initial = 0;
+    bool initialMapped = LCMapStringEx(LANGUAGE_LOCALES[config.language], LCMAP_LOWERCASE | LCMAP_LINGUISTIC_CASING,
+        interval.c_str(), 1, &initial, 1, nullptr, nullptr, 0) == 1;
+    if (initialMapped) {
+        interval[0] = initial;
+    }
     std::wstring label = TIME_SIGNAL_MENU_LABELS[config.language];
     label += L" (";
-    label += TIME_SIGNAL_MODE_LABELS[config.language][config.timeSignal];
+    label += interval;
     label += L")";
     return label;
 }
@@ -3048,7 +3035,162 @@ static BOOL CALLBACK ApplyFontAndTheme(HWND child, LPARAM) {
     }
     const wchar_t* themeName = themesDisabled ? L"" : nullptr;
     SetWindowTheme(child, themeName, themeName);
+    if (IsSettingsPageWindow(child)) {
+        EnableThemeDialogTexture(child, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
+    }
     return TRUE;
+}
+
+/// Matches a single-line edit's height and left margin to native combo metrics without requiring a combo window.
+/// Uses the control font and current theme or system borders, preserving position, width, and the right margin.
+static void UpdateEditMetrics(HWND edit) {
+    WINDOWINFO information = {};
+    information.cbSize = sizeof(information);
+    if (edit == nullptr || !GetWindowInfo(edit, &information)) {
+        return;
+    }
+    TEXTMETRICW textMetrics = {};
+    bool textMeasured = false;
+    HDC dc = GetDC(edit);
+    if (dc != nullptr) {
+        HFONT font = reinterpret_cast<HFONT>(SendMessageW(edit, WM_GETFONT, 0, 0));
+        HGDIOBJ previousFont = nullptr;
+        if (font != nullptr) {
+            previousFont = SelectObject(dc, font);
+        }
+        textMeasured = GetTextMetricsW(dc, &textMetrics) != FALSE;
+        if (previousFont != nullptr && previousFont != HGDI_ERROR) {
+            SelectObject(dc, previousFont);
+        }
+        ReleaseDC(edit, dc);
+    }
+    LONG contentLeft = GetSystemMetrics(SM_CXEDGE) + GetSystemMetrics(SM_CXBORDER);
+    LONG contentTop = GetSystemMetrics(SM_CYEDGE) + GetSystemMetrics(SM_CYBORDER);
+    LONG contentBottom = contentTop;
+    if (GetWindowTheme(edit) != nullptr) {
+        HTHEME theme = OpenThemeData(nullptr, L"Combobox");
+        if (theme != nullptr) {
+            RECT bounds = {
+                0,
+                0,
+                information.rcWindow.right - information.rcWindow.left,
+                information.rcWindow.bottom - information.rcWindow.top
+            };
+            RECT content = {};
+            HRESULT result = GetThemeBackgroundContentRect(theme, nullptr, CP_READONLY, CBRO_NORMAL, &bounds, &content);
+            if (SUCCEEDED(result)) {
+                contentLeft = content.left;
+                contentTop = content.top;
+                contentBottom = bounds.bottom - content.bottom;
+            }
+            CloseThemeData(theme);
+        }
+    }
+    LONG borderWidth = information.rcClient.left - information.rcWindow.left;
+    LONG leftMargin = std::max(0L, contentLeft - borderWidth);
+    DWORD margins = static_cast<DWORD>(SendMessageW(edit, EM_GETMARGINS, 0, 0));
+    if (LOWORD(margins) != leftMargin) {
+        SendMessageW(edit, EM_SETMARGINS, EC_LEFTMARGIN, MAKELPARAM(leftMargin, 0));
+    }
+    if (textMeasured) {
+        LONG height = textMetrics.tmHeight + contentTop + contentBottom + 2 * GetSystemMetrics(SM_CYBORDER);
+        if (height != information.rcWindow.bottom - information.rcWindow.top) {
+            SetWindowPos(edit, nullptr, 0, 0, information.rcWindow.right - information.rcWindow.left, height,
+                SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+    }
+}
+
+/// Aligns a settings push button or checkbox with adjacent text using their shared application font.
+/// Accounts for classic buttons' inclusive text rectangles and preserves size, horizontal position, and Z order.
+static void AlignSettingsButton(HWND button, HWND reference) {
+    WINDOWINFO buttonInfo = {};
+    buttonInfo.cbSize = sizeof(buttonInfo);
+    WINDOWINFO referenceInfo = {};
+    referenceInfo.cbSize = sizeof(referenceInfo);
+    if (button == nullptr || reference == nullptr
+            || !GetWindowInfo(button, &buttonInfo) || !GetWindowInfo(reference, &referenceInfo)) {
+        return;
+    }
+    HDC dc = GetDC(button);
+    if (dc == nullptr) {
+        return;
+    }
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
+    HGDIOBJ previousFont = font == nullptr ? nullptr : SelectObject(dc, font);
+    TEXTMETRICW metrics = {};
+    bool measured = GetTextMetricsW(dc, &metrics) != FALSE;
+    if (previousFont != nullptr && previousFont != HGDI_ERROR) {
+        SelectObject(dc, previousFont);
+    }
+    ReleaseDC(button, dc);
+    if (!measured) {
+        return;
+    }
+    wchar_t className[32] = {};
+    GetClassNameW(reference, className, ARRAYSIZE(className));
+    LONG textTop = referenceInfo.rcClient.top;
+    if (_wcsicmp(className, WC_COMBOBOXW) == 0) {
+        COMBOBOXINFO combo = {};
+        combo.cbSize = sizeof(combo);
+        if (!GetComboBoxInfo(reference, &combo)) {
+            return;
+        }
+        textTop += combo.rcItem.top + GetSystemMetrics(SM_CYBORDER);
+    } else if (_wcsicmp(className, L"EDIT") == 0) {
+        RECT text = {};
+        SendMessageW(reference, EM_GETRECT, 0, reinterpret_cast<LPARAM>(&text));
+        textTop += text.top;
+    } else if (_wcsicmp(className, L"BUTTON") == 0) {
+        LONG contentHeight = referenceInfo.rcClient.bottom - referenceInfo.rcClient.top;
+        if (GetWindowTheme(reference) == nullptr) {
+            contentHeight -= GetSystemMetrics(SM_CYBORDER);
+        }
+        textTop += (contentHeight - metrics.tmHeight) / 2;
+    }
+    LONG buttonContentHeight = buttonInfo.rcClient.bottom - buttonInfo.rcClient.top;
+    if (GetWindowTheme(button) == nullptr) {
+        buttonContentHeight -= GetSystemMetrics(SM_CYBORDER);
+    }
+    LONG buttonTextTop = buttonInfo.rcClient.top - buttonInfo.rcWindow.top
+        + (buttonContentHeight - metrics.tmHeight) / 2;
+    LONG top = textTop - buttonTextTop;
+    if (top != buttonInfo.rcWindow.top) {
+        POINT position = { buttonInfo.rcWindow.left, top };
+        ScreenToClient(GetParent(button), &position);
+        SetWindowPos(button, nullptr, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+}
+
+/// Aligns mixed settings rows after the shared font, theme, or page layout changes.
+static void AlignSettingsButtons() {
+    AlignSettingsButton(GetDlgItem(hSettings, ID_ADD), hAddType);
+    AlignSettingsButton(hBrowseButton, hCommandEdit);
+    AlignSettingsButton(hTestCommandButton, hLoopAudioCheck);
+    AlignSettingsButton(hBorderColorButton, hBorderLabel);
+    AlignSettingsButton(hAppFontButton, hAppFontLabel);
+    AlignSettingsButton(hAppFontDefaultButton, hAppFontLabel);
+    AlignSettingsButton(hTimeSignalTestButton, hTimeSignalSoundCombo);
+    AlignSettingsButton(hShowAmPmCheck, hTimeFormatCombo);
+    AlignSettingsButton(hTransparentBackgroundCheck, hLeadingZeroCombo);
+    AlignSettingsButton(hWidgetDisableThemesCheck, hWidgetAntialiasCombo);
+}
+
+/// Updates single-line edit dimensions and aligns mixed rows after font, theme, or system metrics changes.
+static void UpdateSettingsControlMetrics() {
+    const HWND edits[] = {
+        hNameEdit, hOffsetEdit,
+        hAdditionalNameEdits[0],
+        hAdditionalNameEdits[1],
+        hAlarmTimeEdit,
+        hCommandEdit,
+        hRemoteScriptEdit,
+        hNtpServersEdit
+    };
+    for (HWND edit : edits) {
+        UpdateEditMetrics(edit);
+    }
+    AlignSettingsButtons();
 }
 
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and requests
@@ -3071,6 +3213,9 @@ static void ApplyUiStyle(HWND window) {
     const wchar_t* themeName = themesDisabled ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
     EnumChildWindows(window, ApplyFontAndTheme, 0);
+    if (window == hSettings) {
+        UpdateSettingsControlMetrics();
+    }
     if (window == hHelp || window == hAbout) {
         LayoutInformationWindow(window);
     }
@@ -5917,20 +6062,43 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
 }
 
 /// Handles Alt+0 through Alt+3 on analog and calendar-with-clock widgets using their existing size commands.
+/// Accepts top-row and numeric-keypad digits with either Num Lock state, distinguishing dedicated navigation keys.
 /// Ignores key repeats and leaves other widgets and modified key combinations to their usual handlers.
 static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& message) {
     if (widget == nullptr
             || widget->config.type != WIDGET_ANALOG && widget->config.type != WIDGET_PANEL
             || message.message != WM_SYSKEYDOWN
-            || message.wParam < L'0'
-            || message.wParam > L'3'
             || (message.lParam & 1LL << 29) == 0
             || GetKeyState(VK_CONTROL) < 0
             || GetKeyState(VK_SHIFT) < 0) {
         return false;
     }
+    int sizeIndex = -1;
+    if (message.wParam >= L'0' && message.wParam <= L'3') {
+        sizeIndex = static_cast<int>(message.wParam - L'0');
+    } else if (message.wParam >= VK_NUMPAD0 && message.wParam <= VK_NUMPAD3) {
+        sizeIndex = static_cast<int>(message.wParam - VK_NUMPAD0);
+    } else if ((message.lParam & 1LL << 24) == 0) {
+        switch (message.wParam) {
+            case VK_INSERT:
+                sizeIndex = 0;
+                break;
+            case VK_END:
+                sizeIndex = 1;
+                break;
+            case VK_DOWN:
+                sizeIndex = 2;
+                break;
+            case VK_NEXT:
+                sizeIndex = 3;
+                break;
+        }
+    }
+    if (sizeIndex < 0) {
+        return false;
+    }
     if ((message.lParam & 1LL << 30) == 0) {
-        int command = ID_MENU_SIZE_104 + static_cast<int>(message.wParam - L'0');
+        int command = ID_MENU_SIZE_104 + sizeIndex;
         HandleWidgetMenuCommand(widget, command);
     }
     return true;
@@ -5940,8 +6108,9 @@ static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& message) {
 static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     HMENU menu = CreatePopupMenu();
     std::vector<wchar_t> menuMnemonics;
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible ?
-        HIDE_WIDGET_LABELS[widget->config.language] : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible
+        ? HIDE_WIDGET_LABELS[widget->config.language]
+        : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST,
             WT(widget, TXT_TOPMOST), &menuMnemonics);
@@ -5978,7 +6147,6 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
             std::wstring label = WT(widget, TXT_SIZE);
             label += L" ";
             label += std::to_wstring(sizes[index]);
-            label += L"\tAlt+" + std::to_wstring(index);
             AppendMenuCommand(menu, MF_STRING | (widget->config.size == sizes[index] ? MF_CHECKED : 0),
                 ID_MENU_SIZE_104 + index, label.c_str(), &menuMnemonics);
         }
@@ -6194,14 +6362,18 @@ static HWND AddStatic(HWND parent, TextId id, int x, int y, int height, std::vec
     return AddUnderlayStatic(parent, text.c_str(), WS_VISIBLE, x, y, height, group);
 }
 
-/// Creates a visible settings child and installs edit or widget-list keyboard subclasses where applicable.
+/// Creates a visible child with text selection or widget-list keyboard handling where applicable.
+/// Destroys an edit if its selection handler cannot be attached and records the failed handle for the caller.
 /// Optionally appends the handle to its page's control group.
 static HWND AddControl(DWORD extended, const wchar_t* className, const wchar_t* text, DWORD style,
         int x, int y, int width, int height, HWND parent, int id, std::vector<HWND>* group = nullptr) {
-    HWND control = CreateWindowExW(extended, className, text, WS_CHILD | WS_VISIBLE | style,
-        x, y, width, height, parent, reinterpret_cast<HMENU>(static_cast<INT_PTR>(id)), hInstance, nullptr);
+    HWND control = CreateWindowExW(extended, className, text, WS_CHILD | WS_VISIBLE | style, x, y,
+        width, height, parent, reinterpret_cast<HMENU>(static_cast<INT_PTR>(id)), hInstance, nullptr);
     if (control != nullptr && _wcsicmp(className, L"EDIT") == 0) {
-        SetWindowSubclass(control, EditSubclassProc, static_cast<UINT_PTR>(id), 0);
+        if (!InstallSelectionEditHandler(control)) {
+            DestroyWindow(control);
+            control = nullptr;
+        }
     } else if (control != nullptr
             && (id == ID_LIST_WIDGETS || id == ID_MONITOR_LIST || id == ID_REMOVE || id == ID_DUPLICATE)) {
         SetWindowSubclass(control, WidgetListSubclassProc, static_cast<UINT_PTR>(id), 0);
@@ -6384,6 +6556,63 @@ static bool ScrollSettingsWindow(int bar, int request) {
     ScrollWindowEx(hSettings, deltaX, deltaY, nullptr, nullptr, nullptr, nullptr,
         SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
     UpdateWindow(hSettings);
+    return true;
+}
+
+/// Scrolls overflowing tab headers under the pointer by one tab per wheel message, without changing selection or focus.
+/// Uses the native scroll-button bounds and handles wheel input only while the scroll buttons are visible.
+/// Includes transparent header gaps where native hit testing returns the settings window.
+static bool ScrollSettingsTabHeaders(WPARAM wParam, LPARAM lParam) {
+    int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+    if (delta == 0 || hSettings == nullptr || hTabs == nullptr || GetActiveWindow() != hSettings
+            || !IsWindowEnabled(hSettings) || !IsWindowVisible(hTabs)) {
+        return false;
+    }
+    int count = TabCtrl_GetItemCount(hTabs);
+    RECT header = {};
+    RECT client = {};
+    if (count <= 0 || !TabCtrl_GetItemRect(hTabs, 0, &header) || !GetClientRect(hTabs, &client)) {
+        return false;
+    }
+    POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+    HWND hovered = WindowFromPoint(point);
+    if (hovered != hTabs && hovered != hSettings && !IsChild(hTabs, hovered)) {
+        return false;
+    }
+    ScreenToClient(hTabs, &point);
+    header.left = client.left;
+    header.right = client.right;
+    if (!PtInRect(&header, point)) {
+        return false;
+    }
+    HWND scrollButtons = FindWindowExW(hTabs, nullptr, UPDOWN_CLASSW, nullptr);
+    if (scrollButtons == nullptr || !IsWindowVisible(scrollButtons)) {
+        return false;
+    }
+    RECT last = {};
+    RECT buttons = {};
+    if (!TabCtrl_GetItemRect(hTabs, count - 1, &last) || !GetWindowRect(scrollButtons, &buttons)) {
+        return true;
+    }
+    MapWindowPoints(HWND_DESKTOP, hTabs, reinterpret_cast<POINT*>(&buttons), 2);
+    if (delta < 0 && last.right <= buttons.left) {
+        return true;
+    }
+    int firstVisible = 0;
+    for (int index = 0; index < count; index++) {
+        RECT item = {};
+        if (!TabCtrl_GetItemRect(hTabs, index, &item)) {
+            return true;
+        }
+        if (item.left >= 0) {
+            firstVisible = index;
+            break;
+        }
+    }
+    int direction = delta > 0 ? -1 : 1;
+    int position = std::clamp(firstVisible + direction, 0, count - 1);
+    SendMessageW(hTabs, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, position), 0);
+    SendMessageW(hTabs, WM_HSCROLL, MAKEWPARAM(SB_ENDSCROLL, position), 0);
     return true;
 }
 
@@ -6578,296 +6807,6 @@ static void UpdateSettingsTextControlLayout(HWND parent) {
         }
         previous = control.window;
     }
-}
-
-/// Cancels triple-click tracking and its timer for the last edit control.
-static void ResetEditClicks() {
-    if (lastClickedEdit != nullptr) {
-        KillTimer(lastClickedEdit, TIMER_EDIT_CLICKS);
-    }
-    lastClickedEdit = nullptr;
-    lastEditClickPoint = {};
-    editClickCount = 0;
-}
-
-/// Returns the character boundaries of a displayed edit line, excluding its line break.
-static bool GetEditLineBounds(HWND window, int line, int& start, int& end) {
-    int lineCount = static_cast<int>(SendMessageW(window, EM_GETLINECOUNT, 0, 0));
-    if (line < 0 || line >= lineCount) {
-        return false;
-    }
-    start = static_cast<int>(SendMessageW(window, EM_LINEINDEX, line, 0));
-    if (start < 0) {
-        return false;
-    }
-    int length = static_cast<int>(SendMessageW(window, EM_LINELENGTH, start, 0));
-    end = start + length;
-    return true;
-}
-
-/// Finds the displayed line under the mouse, optionally scrolling while dragging beyond the client area.
-static int EditLineFromMousePoint(HWND window, POINT point, bool scrollWhenOutside) {
-    RECT client = {};
-    GetClientRect(window, &client);
-    if (scrollWhenOutside && point.y < client.top) {
-        SendMessageW(window, WM_VSCROLL, SB_LINEUP, 0);
-    } else if (scrollWhenOutside && point.y >= client.bottom) {
-        SendMessageW(window, WM_VSCROLL, SB_LINEDOWN, 0);
-    }
-    point.x = std::clamp(point.x, client.left, std::max(client.left, client.right - 1));
-    point.y = std::clamp(point.y, client.top, std::max(client.top, client.bottom - 1));
-    LRESULT position = SendMessageW(window, EM_CHARFROMPOS, 0, MAKELPARAM(point.x, point.y));
-    return HIWORD(position);
-}
-
-/// Recognizes letters, digits, and underscores as parts of words for double-click selection.
-static bool IsEditWordCharacter(wchar_t character) {
-    return character == L'_' || IsCharAlphaNumericW(character);
-}
-
-/// Selects the word under the mouse and remembers its bounds for the physical button release.
-static void SelectEditWordAtMousePoint(HWND window, LPARAM mousePosition) {
-    std::wstring text = GetControlText(window);
-    if (text.empty()) {
-        return;
-    }
-    LRESULT position = SendMessageW(window, EM_CHARFROMPOS, 0, mousePosition);
-    int lineStart = static_cast<int>(SendMessageW(window, EM_LINEINDEX, HIWORD(position), 0));
-    if (lineStart < 0) {
-        return;
-    }
-    size_t character = static_cast<size_t>(lineStart & ~0xffff) | LOWORD(position);
-    if (character < static_cast<size_t>(lineStart)) {
-        character += 0x10000;
-    }
-    character = std::min(character, text.size() - 1);
-    if (!IsEditWordCharacter(text[character]) && character > 0 && IsEditWordCharacter(text[character - 1])) {
-        character--;
-    }
-    if (!IsEditWordCharacter(text[character])) {
-        return;
-    }
-    size_t start = character;
-    size_t end = character + 1;
-    while (start > 0 && IsEditWordCharacter(text[start - 1])) {
-        start--;
-    }
-    while (end < text.size() && IsEditWordCharacter(text[end])) {
-        end++;
-    }
-    SendMessageW(window, EM_SETSEL, start, end);
-    editWordSelection.window = window;
-    editWordSelection.start = static_cast<int>(start);
-    editWordSelection.end = static_cast<int>(end);
-    editWordSelection.anchor = POINT{
-        GET_X_LPARAM(mousePosition),
-        GET_Y_LPARAM(mousePosition)
-    };
-}
-
-/// Starts whole-line dragging from the third click's position instead of relying on the previous caret or selection.
-static bool BeginEditLineSelection(HWND window, LPARAM mousePosition) {
-    POINT point = {
-        GET_X_LPARAM(mousePosition),
-        GET_Y_LPARAM(mousePosition)
-    };
-    int line = EditLineFromMousePoint(window, point, false);
-    int start = 0;
-    int end = 0;
-    if (!GetEditLineBounds(window, line, start, end)) {
-        return false;
-    }
-    editLineSelection.window = window;
-    editLineSelection.anchorLine = line;
-    editLineSelection.anchorStart = start;
-    editLineSelection.anchorEnd = end;
-    SetCapture(window);
-    SendMessageW(window, EM_SETSEL, start, end);
-    SendMessageW(window, EM_SCROLLCARET, 0, 0);
-    return true;
-}
-
-/// Extends a triple-click selection by whole displayed lines, retaining the original line as the anchor.
-static void UpdateEditLineSelection(HWND window, LPARAM mousePosition) {
-    POINT point = {
-        GET_X_LPARAM(mousePosition),
-        GET_Y_LPARAM(mousePosition)
-    };
-    int line = EditLineFromMousePoint(window, point, true);
-    int start = 0;
-    int end = 0;
-    if (!GetEditLineBounds(window, line, start, end)) {
-        return;
-    }
-    if (line < editLineSelection.anchorLine) {
-        SendMessageW(window, EM_SETSEL, editLineSelection.anchorEnd, start);
-    } else {
-        SendMessageW(window, EM_SETSEL, editLineSelection.anchorStart, end);
-    }
-    SendMessageW(window, EM_SCROLLCARET, 0, 0);
-}
-
-/// Ends an edit's whole-line drag and releases mouse capture if the edit still owns it.
-static void EndEditLineSelection(HWND window) {
-    if (editLineSelection.window != window) {
-        return;
-    }
-    editLineSelection = {};
-    if (GetCapture() == window) {
-        ReleaseCapture();
-    }
-}
-
-/// Adds Ctrl+A, stable double-click word selection, and triple-click selection with whole-line dragging.
-/// Preserves native modifier-clicks and button releases, and clears state when input is canceled or the edit is destroyed.
-static LRESULT CALLBACK EditSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
-        UINT_PTR subclassId, DWORD_PTR referenceData) {
-    UNREFERENCED_PARAMETER(referenceData);
-    switch (message) {
-        case WM_TIMER:
-            if (wParam == TIMER_EDIT_CLICKS) {
-                if (lastClickedEdit == window) {
-                    ResetEditClicks();
-                }
-                return 0;
-            }
-            break;
-        case WM_LBUTTONDOWN:
-        case WM_LBUTTONDBLCLK:
-        {
-            if (wParam & (MK_SHIFT | MK_CONTROL)) {
-                ResetEditClicks();
-                editWordSelection = {};
-                return DefSubclassProc(window, message, wParam, lParam);
-            }
-            if (lastClickedEdit != window) {
-                ResetEditClicks();
-            }
-            lastClickedEdit = window;
-            KillTimer(window, TIMER_EDIT_CLICKS);
-            editWordSelection = {};
-            LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-            DWORD selectionStart = 0;
-            DWORD selectionEnd = 0;
-            SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
-                reinterpret_cast<LPARAM>(&selectionEnd));
-            POINT clickPoint = {
-                GET_X_LPARAM(lParam),
-                GET_Y_LPARAM(lParam)
-            };
-            if (selectionEnd > selectionStart) {
-                SelectEditWordAtMousePoint(window, lParam);
-                editClickCount = 2;
-            } else if (editClickCount == 0
-                    || abs(clickPoint.x - lastEditClickPoint.x) < 2 && abs(clickPoint.y - lastEditClickPoint.y) < 2) {
-                editClickCount++;
-            } else {
-                editClickCount = 0;
-            }
-            lastEditClickPoint = clickPoint;
-            if (editClickCount == 3) {
-                ResetEditClicks();
-                if (BeginEditLineSelection(window, lParam)) {
-                    return 0;
-                }
-            }
-            SetTimer(window, TIMER_EDIT_CLICKS, GetDoubleClickTime(), nullptr);
-            return result;
-        }
-        case WM_MOUSEMOVE:
-            if (editLineSelection.window == window) {
-                if (wParam & MK_LBUTTON) {
-                    UpdateEditLineSelection(window, lParam);
-                } else {
-                    EndEditLineSelection(window);
-                }
-                return 0;
-            }
-            if (editWordSelection.window == window && wParam & MK_LBUTTON) {
-                POINT point = {
-                    GET_X_LPARAM(lParam),
-                    GET_Y_LPARAM(lParam)
-                };
-                if (point.x != editWordSelection.anchor.x || point.y != editWordSelection.anchor.y) {
-                    editWordSelection = {};
-                }
-            }
-            break;
-        case WM_LBUTTONUP:
-            if (editLineSelection.window == window) {
-                UpdateEditLineSelection(window, lParam);
-                DWORD selectionStart = 0;
-                DWORD selectionEnd = 0;
-                SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&selectionStart),
-                    reinterpret_cast<LPARAM>(&selectionEnd));
-                bool reversed = selectionStart < static_cast<DWORD>(editLineSelection.anchorStart);
-                editLineSelection = {};
-                LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-                if (GetCapture() == window) {
-                    ReleaseCapture();
-                }
-                if (reversed) {
-                    SendMessageW(window, EM_SETSEL, selectionEnd, selectionStart);
-                } else {
-                    SendMessageW(window, EM_SETSEL, selectionStart, selectionEnd);
-                }
-                SendMessageW(window, EM_SCROLLCARET, 0, 0);
-                return result;
-            }
-            if (editWordSelection.window == window) {
-                int start = editWordSelection.start;
-                int end = editWordSelection.end;
-                editWordSelection = {};
-                LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-                SendMessageW(window, EM_SETSEL, start, end);
-                return result;
-            }
-            break;
-        case WM_CAPTURECHANGED:
-            if (reinterpret_cast<HWND>(lParam) != window) {
-                if (editLineSelection.window == window) {
-                    editLineSelection = {};
-                }
-                if (editWordSelection.window == window) {
-                    editWordSelection = {};
-                    ResetEditClicks();
-                }
-            }
-            break;
-        case WM_KEYDOWN:
-            if (wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                SendMessageW(window, EM_SETSEL, 0, -1);
-                return 0;
-            }
-            break;
-        case WM_CHAR:
-            if (wParam == 1) {
-                SendMessageW(window, EM_SETSEL, 0, -1);
-                return 0;
-            }
-            break;
-        case WM_CANCELMODE:
-        case WM_KILLFOCUS:
-        case WM_RBUTTONDOWN:
-        case WM_RBUTTONDBLCLK:
-        case WM_MBUTTONDOWN:
-        case WM_MBUTTONDBLCLK:
-        case WM_XBUTTONDOWN:
-        case WM_XBUTTONDBLCLK:
-        case WM_NCDESTROY:
-            EndEditLineSelection(window);
-            if (lastClickedEdit == window) {
-                ResetEditClicks();
-            }
-            if (editWordSelection.window == window) {
-                editWordSelection = {};
-            }
-            if (message == WM_NCDESTROY) {
-                RemoveWindowSubclass(window, EditSubclassProc, subclassId);
-            }
-            break;
-    }
-    return DefSubclassProc(window, message, wParam, lParam);
 }
 
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
@@ -7194,6 +7133,60 @@ static bool IsSettingsPageWindow(HWND window) {
         || window == hApplicationPage;
 }
 
+/// Uses the native tab texture for a dialog page and forwards settings commands, sliders, and scrolling.
+/// Draws the wrapped signal description over the dialog background and releases child layout properties on destruction.
+static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+        case WM_INITDIALOG:
+            EnableThemeDialogTexture(window, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
+            return TRUE;
+        case WM_COMMAND:
+        case WM_HSCROLL:
+        case WM_MOUSEWHEEL:
+            SendMessageW(hSettings, message, wParam, lParam);
+            return TRUE;
+        case WM_DRAWITEM:
+        {
+            DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+            if (item == nullptr || item->CtlID != ID_TIME_SIGNAL_NOTE) {
+                return FALSE;
+            }
+            int savedState = SaveDC(item->hDC);
+            DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
+            SetBkMode(item->hDC, TRANSPARENT);
+            SetTextColor(item->hDC,
+                GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
+            HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
+            if (font != nullptr) {
+                SelectObject(item->hDC, font);
+            }
+            std::wstring text = GetControlText(item->hwndItem);
+            RECT textRect = item->rcItem;
+            DrawWordWrappedText(item->hDC, text, textRect);
+            RestoreDC(item->hDC, savedState);
+            return TRUE;
+        }
+        case WM_DESTROY:
+            for (HWND control = GetWindow(window, GW_CHILD);
+                    control != nullptr;
+                    control = GetWindow(control, GW_HWNDNEXT)) {
+                RemovePropW(control, SETTINGS_COMBO_HEIGHT_PROPERTY);
+            }
+            break;
+    }
+    return FALSE;
+}
+
+/// Creates a native child dialog at the existing settings-page coordinates without changing focus or window order.
+static HWND CreateSettingsPage(int x, int y, int width, int height) {
+    HWND page = CreateDialogParamW(hInstance, MAKEINTRESOURCEW(IDD_SETTINGS_PAGE), hSettings, SettingsPageProc, 0);
+    if (page != nullptr && !SetWindowPos(page, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE)) {
+        DestroyWindow(page);
+        return nullptr;
+    }
+    return page;
+}
+
 /// Assigns unique mnemonics across the main settings controls and the active page.
 static void AssignSettingsMnemonics() {
     if (hSettings == nullptr || !IsWindow(hSettings)) {
@@ -7348,10 +7341,10 @@ static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, 
         return result;
     }
     if (message == WM_LBUTTONUP
-        || message == WM_CAPTURECHANGED
-        || message == WM_CANCELMODE
-        || message == WM_ENABLE && wParam == FALSE
-        || message == WM_SHOWWINDOW && wParam == FALSE) {
+            || message == WM_CAPTURECHANGED
+            || message == WM_CANCELMODE
+            || message == WM_ENABLE && wParam == FALSE
+            || message == WM_SHOWWINDOW && wParam == FALSE) {
         timeSignalVolumeDragging = false;
         UpdateTimeSignalVolumePreview();
     }
@@ -7960,7 +7953,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         int opacityTop = hasSize ? 38 : 4;
         SetSettingsControlPosition(hOpacityLabel, 8, opacityTop + 7, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
         SetSettingsControlPosition(hOpacityTrackBar, 121, opacityTop, 250, 32);
-        SetSettingsControlPosition(hOpacityValue, 368, opacityTop + 7, 48, 22);
+        SetSettingsControlPosition(hOpacityValue, 246, opacityTop + 7, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22);
         if (hasTextFont) {
             int fontX = panel ? 238 : 52;
             int fontY = 0;
@@ -7985,7 +7978,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
             SetSettingsControlPosition(hTransparentBackgroundCheck, 242, 258, 174, 24);
         }
         int defaultAppearanceX = 238;
-        int defaultAppearanceY = 318;
+        int defaultAppearanceY = 368;
         SetSettingsControlPosition(hDefaultAppearanceButton, defaultAppearanceX, defaultAppearanceY, 178, 27);
         if (digital) {
             SetSettingsControlPosition(hBackgroundColorButton, 238, 100, 178, 27);
@@ -8022,7 +8015,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         if (hWidgetDisableThemesCheck != nullptr
                 && hWidgetAntialiasLabel != nullptr
                 && hWidgetAntialiasCombo != nullptr) {
-            const int optionsTop = 292;
+            const int optionsTop = type == WIDGET_ANALOG ? 92 : 292;
             SetSettingsControlPosition(hWidgetAntialiasLabel, 8, optionsTop + 4, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
             SetSettingsControlPosition(hWidgetAntialiasCombo, 148, optionsTop, 87, 100);
             SetSettingsControlPosition(hWidgetDisableThemesCheck, 243, optionsTop, 130, 24);
@@ -8205,6 +8198,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         }
     }
     if (updateLayout) {
+        AlignSettingsButtons();
         UpdateSettingsTextControlLayout(hGeneralPage);
         UpdateSettingsTextControlLayout(hAppearancePage);
         UpdateSettingControlVisibility(true);
@@ -10154,8 +10148,8 @@ static void BrowseForCommand() {
 }
 
 /// Creates all settings pages and controls, populates selectors, and applies shared layout, clipping, scrolling, fonts,
-/// and themes.
-static void CreateSettingsControls() {
+/// and themes. Returns false when a required control or its text-selection handler could not be created.
+static bool CreateSettingsControls() {
     WindowRedrawScope redraw(hSettings);
     bool previousUpdating = updatingSettingsControls;
     updatingSettingsControls = true;
@@ -10179,7 +10173,8 @@ static void CreateSettingsControls() {
     AddControl(0, L"BUTTON", Mnemonic(TXT_DUPLICATE).c_str(), WS_TABSTOP, 164, 413, 148, 27, hSettings, ID_DUPLICATE);
     hTabs = AddControl(0, WC_TABCONTROLW, L"", WS_TABSTOP | TCS_FOCUSONBUTTONDOWN, 322, 7, 430, 435, hSettings, ID_TABS);
     if (hTabs == nullptr) {
-        return;
+        updatingSettingsControls = previousUpdating;
+        return false;
     }
     TCITEMW tab = {};
     tab.mask = TCIF_TEXT;
@@ -10206,18 +10201,18 @@ static void CreateSettingsControls() {
     int pageY = 7 + pageRect.top;
     int pageWidth = pageRect.right - pageRect.left;
     int pageHeight = pageRect.bottom - pageRect.top;
-    hGeneralPage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
-    hAppearancePage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
-    hAlarmPage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
-    hTimeSignalPage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
-    hTimePage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
-    hApplicationPage = CreateWindowExW(WS_EX_CONTROLPARENT, CLASS_NAME, L"", WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        pageX, pageY, pageWidth, pageHeight, hSettings, nullptr, hInstance, nullptr);
+    hGeneralPage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    hAppearancePage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    hAlarmPage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    hTimeSignalPage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    hTimePage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    hApplicationPage = CreateSettingsPage(pageX, pageY, pageWidth, pageHeight);
+    for (int index = 0; index < SETTINGS_TAB_COUNT; index++) {
+        if (GetSettingsPage(index) == nullptr) {
+            updatingSettingsControls = previousUpdating;
+            return false;
+        }
+    }
     int left = 8;
     int label = 162;
     int field = 244;
@@ -10311,9 +10306,8 @@ static void CreateSettingsControls() {
     SendMessageW(hOpacityTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hOpacityTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hOpacityTrackBar, TBM_SETPAGESIZE, 0, 5);
-    hOpacityValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        368, 11, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
-    appearanceControls.push_back(hOpacityValue);
+    hOpacityValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        246, 11, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22, hAppearancePage, 0, &appearanceControls);
     hFontSizeLabel = AddStatic(hAppearancePage, TXT_FONT_SIZE, 8, 45, 22, &appearanceControls);
     hFontSizeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
         121, 38, 250, 32, hAppearancePage, ID_FONT_SIZE, &appearanceControls);
@@ -10321,9 +10315,8 @@ static void CreateSettingsControls() {
     SendMessageW(hFontSizeTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hFontSizeTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hFontSizeTrackBar, TBM_SETPAGESIZE, 0, 5);
-    hFontSizeValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        368, 45, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
-    appearanceControls.push_back(hFontSizeValue);
+    hFontSizeValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        246, 45, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22, hAppearancePage, 0, &appearanceControls);
     hFontButton = AddControl(0, L"BUTTON", FONT_BUTTON_LABELS[appLanguage], WS_TABSTOP,
         52, 70, 178, 27, hAppearancePage, ID_FONT, &appearanceControls);
     hPanelTopFontButton = AddControl(0, L"BUTTON", PANEL_TOP_FONT_LABELS[appLanguage], WS_TABSTOP,
@@ -10348,9 +10341,8 @@ static void CreateSettingsControls() {
     SendMessageW(hPaddingTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hPaddingTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hPaddingTrackBar, TBM_SETPAGESIZE, 0, 5);
-    hPaddingValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        368, 169, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
-    appearanceControls.push_back(hPaddingValue);
+    hPaddingValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        246, 169, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22, hAppearancePage, 0, &appearanceControls);
     hBorderWidthLabel = AddUnderlayStatic(hAppearancePage, BORDER_WIDTH_LABELS[appLanguage], WS_VISIBLE,
         8, 201, 22, &appearanceControls);
     hBorderWidthTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
@@ -10359,9 +10351,8 @@ static void CreateSettingsControls() {
     SendMessageW(hBorderWidthTrackBar, TBM_SETTICFREQ, 1, 0);
     SendMessageW(hBorderWidthTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hBorderWidthTrackBar, TBM_SETPAGESIZE, 0, 1);
-    hBorderWidthValue = CreateWindowExW(0, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        368, 201, 48, 22, hAppearancePage, nullptr, hInstance, nullptr);
-    appearanceControls.push_back(hBorderWidthValue);
+    hBorderWidthValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        246, 201, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22, hAppearancePage, 0, &appearanceControls);
     hBorderLabel = AddUnderlayStatic(hAppearancePage, BORDER_LABELS[appLanguage], WS_VISIBLE,
         8, 233, 22, &appearanceControls);
     hBorderTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
@@ -10401,7 +10392,7 @@ static void CreateSettingsControls() {
     hWidgetDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(),
         WS_TABSTOP | BS_AUTOCHECKBOX, 243, 292, 130, 24, hAppearancePage, ID_WIDGET_DISABLE_THEMES, &appearanceControls);
     hDefaultAppearanceButton = AddControl(0, L"BUTTON", DEFAULT_APPEARANCE_LABELS[appLanguage], WS_TABSTOP,
-        238, 318, 178, 27, hAppearancePage, ID_DEFAULT_APPEARANCE, &appearanceControls);
+        238, 368, 178, 27, hAppearancePage, ID_DEFAULT_APPEARANCE, &appearanceControls);
     int y = 12;
     hAlarmEnabledCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_ALARM_ACTIVE).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 175, 24, hAlarmPage, ID_ALARM_ENABLED, &alarmControls);
@@ -10417,7 +10408,7 @@ static void CreateSettingsControls() {
     std::wstring alarmTimeLabel = Mnemonic(TXT_ALARM_TIME);
     AddUnderlayStatic(hAlarmPage, alarmTimeLabel.c_str(), WS_VISIBLE, left, y - 1, 22, &alarmControls);
     hAlarmTimeEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL,
-        left + 154, y - 4, 100, 24, hAlarmPage, ID_ALARM_TIME, &alarmControls);
+        left + 154, y - 4, 87, 24, hAlarmPage, ID_ALARM_TIME, &alarmControls);
     y += 36;
     hRunCommandCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_RUN_FILE).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 290, 24, hAlarmPage, ID_RUN_COMMAND, &alarmControls);
@@ -10443,7 +10434,8 @@ static void CreateSettingsControls() {
     }
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETLINESIZE, 0, 10);
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
-    hAlarmVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT, 352, y + 7, 66, 22, hAlarmPage, 0, &alarmControls);
+    hAlarmVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        261, y + 7, SETTINGS_PAGE_CONTENT_RIGHT - 261, 22, hAlarmPage, 0, &alarmControls);
     y += 36;
     hRemoteScriptCheck = AddControl(0, L"BUTTON", REMOTE_SCRIPT_LABELS[appLanguage], WS_TABSTOP | BS_AUTOCHECKBOX,
         left, y, 300, 24, hAlarmPage, ID_REMOTE_SCRIPT, &alarmControls);
@@ -10533,7 +10525,7 @@ static void CreateSettingsControls() {
     EnableWindow(timeSignalSoundLabel, !generatorRequired);
     settingsTimeSignalTestActive = false;
     hTimeSignalTestButton = AddControl(0, L"BUTTON", TEST_COMMAND_LABELS[appLanguage], WS_TABSTOP,
-        316, 114, 102, 27, hApplicationPage, ID_TIME_SIGNAL_TEST, &applicationControls);
+        316, 112, 102, 27, hApplicationPage, ID_TIME_SIGNAL_TEST, &applicationControls);
     hTimeSignalVolumeLabel = AddUnderlayStatic(hApplicationPage, TIME_SIGNAL_VOLUME_LABELS[appLanguage], WS_VISIBLE,
         8, 151, 22, &applicationControls);
     hTimeSignalVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ,
@@ -10548,8 +10540,8 @@ static void CreateSettingsControls() {
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPOS, TRUE, TimeSignalVolumeSliderPosition(timeSignalVolume));
     SetWindowSubclass(hTimeSignalVolumeTrackBar, TimeSignalVolumeSubclassProc, ID_TIME_SIGNAL_VOLUME, 0);
-    hTimeSignalVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT, 352, 151, 66, 22, hApplicationPage, 0,
-        &applicationControls);
+    hTimeSignalVolumeValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS,
+        261, 151, SETTINGS_PAGE_CONTENT_RIGHT - 261, 22, hApplicationPage, 0, &applicationControls);
     UpdateTimeSignalVolumeControls();
     hDisableThemesCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_VISUAL_STYLES).c_str(),
         WS_TABSTOP | BS_AUTOCHECKBOX, 8, 184, 240, 24, hApplicationPage, ID_VISUAL_STYLES, &applicationControls);
@@ -10572,6 +10564,22 @@ static void CreateSettingsControls() {
     AddControl(0, L"BUTTON", Mnemonic(TXT_CANCEL).c_str(), WS_TABSTOP, 570, 450, 84, 27, hSettings, ID_CANCEL);
     AddControl(0, L"BUTTON", Mnemonic(TXT_APPLY).c_str(), WS_TABSTOP | WS_DISABLED, 658, 450, 84, 27, hSettings,
         ID_APPLY);
+    const std::vector<HWND>* groups[] = {
+        &generalControls,
+        &appearanceControls,
+        &alarmControls,
+        &timeSignalControls,
+        &timeControls,
+        &applicationControls
+    };
+    for (const std::vector<HWND>* group : groups) {
+        for (HWND control : *group) {
+            if (control == nullptr) {
+                updatingSettingsControls = previousUpdating;
+                return false;
+            }
+        }
+    }
     ScaleSettingsChildren(hSettings);
     ScaleSettingsChildren(hGeneralPage);
     ScaleSettingsChildren(hAppearancePage);
@@ -10586,6 +10594,7 @@ static void CreateSettingsControls() {
     InitializeSettingsScrollBars();
     ApplyUiStyle(hSettings);
     updatingSettingsControls = previousUpdating;
+    return true;
 }
 
 /// Stops previews and rebuilds settings controls with redraw suspended, then restores the selected tab and draft values.
@@ -10661,7 +10670,10 @@ static void RebuildSettingsControls() {
         hAlarmDayChecks[day] = nullptr;
     }
     SetWindowTextW(hSettings, T(TXT_SETTINGS));
-    CreateSettingsControls();
+    if (!CreateSettingsControls()) {
+        CloseSettingsWindow();
+        return;
+    }
     RefreshWidgetList(true, false);
     LoadDraftIntoControls();
     if (hTabs == nullptr) {
@@ -10870,10 +10882,16 @@ static void ShowSettingsWindow(int widgetId) {
     int settingsHeight = 0;
     GetSettingsWindowLayout(extendedStyle, &style, &settingsWidth, &settingsHeight);
     ClampFormPosition(&settingsX, &settingsY, settingsWidth, settingsHeight);
-    hSettings = CreateWindowExW(extendedStyle, CLASS_NAME, T(TXT_SETTINGS),
-        style, settingsX, settingsY, settingsWidth, settingsHeight, nullptr, nullptr, hInstance, nullptr);
+    hSettings = CreateWindowExW(extendedStyle, CLASS_NAME, T(TXT_SETTINGS), style, settingsX, settingsY,
+        settingsWidth, settingsHeight, nullptr, nullptr, hInstance, nullptr);
+    if (hSettings == nullptr) {
+        return;
+    }
     RefreshFullscreenPresentation();
-    CreateSettingsControls();
+    if (!CreateSettingsControls()) {
+        CloseSettingsWindow();
+        return;
+    }
     RefreshWidgetList(true, false);
     LoadDraftIntoControls();
     if (hTabs != nullptr) {
@@ -10888,9 +10906,8 @@ static void ShowSettingsWindow(int widgetId) {
 }
 
 /// Decodes the embedded UTF-8 license, removes an optional BOM and a case-insensitive MIT License heading, and trims
-/// outer whitespace.
-/// Accepts whitespace between heading words, preserves the license body, and normalizes line endings for the edit
-/// control.
+/// outer whitespace. Accepts whitespace between heading words, preserves the license body, and normalizes line endings
+/// for the edit control.
 static std::wstring LoadLicenseText() {
     HRSRC resource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_LICENSE), RT_RCDATA);
     if (resource == nullptr) {
@@ -11269,8 +11286,7 @@ static void FitInformationWindowToWorkArea(HWND window) {
     LayoutInformationWindow(window);
 }
 
-/// Creates or activates Help or About with localized content, saved placement, minimization, and work-area-aware
-/// layout.
+/// Creates or activates Help or About with localized content, saved placement, minimization, and work-area-aware layout.
 static void ShowInformationWindow(bool help) {
     HWND* target = help ? &hHelp : &hAbout;
     if (*target != nullptr && IsWindow(*target)) {
@@ -11305,9 +11321,11 @@ static void ShowInformationWindow(bool help) {
     DWORD extendedStyle = WS_EX_TOPMOST | (help ? 0 : WS_EX_DLGMODALFRAME);
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
     ClampFormPosition(x, y, width, height);
-    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(),
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-        *x, *y, width, height, nullptr, nullptr, hInstance, nullptr);
+    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU
+        | WS_MINIMIZEBOX, *x, *y, width, height, nullptr, nullptr, hInstance, nullptr);
+    if (*target == nullptr) {
+        return;
+    }
     std::wstring helpBody = std::wstring(HELP_TEXT[appLanguage])
         + HELP_ALARM_APPENDIX[appLanguage]
         + HELP_SELECTION_APPENDIX[appLanguage]
@@ -11321,11 +11339,16 @@ static void ShowInformationWindow(bool help) {
         + HELP_FULLSCREEN_APPENDIX[appLanguage];
     if (help) {
         DWORD textStyle = WS_TABSTOP | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
-        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle,
-            18, 18, 610, 385, *target, ID_INFO_TEXT);
+        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle, 18, 18, 610, 385,
+            *target, ID_INFO_TEXT);
+        if (text == nullptr) {
+            DestroyWindow(*target);
+            *target = nullptr;
+            return;
+        }
         SendMessageW(text, EM_SETSEL, 0, 0);
-        AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON,
-            528, 415, 100, 28, *target, ID_INFO_CLOSE);
+        AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 528, 415, 100, 28,
+            *target, ID_INFO_CLOSE);
     } else {
         std::wstring productText = BuildAboutProductText();
         std::wstring linkText = BuildAboutLinkText();
@@ -11342,6 +11365,11 @@ static void ShowInformationWindow(bool help) {
             WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
         HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), licenseStyle,
             18, 177, 500, 256 + aboutExtraLineHeight, *target, ID_INFO_TEXT);
+        if (license == nullptr) {
+            DestroyWindow(*target);
+            *target = nullptr;
+            return;
+        }
         SetWindowSubclass(license, AboutLicenseSubclassProc, ABOUT_LICENSE_SUBCLASS_ID, 0);
         SetWindowSubclass(product, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(website, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
@@ -12055,6 +12083,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_SETTINGCHANGE:
+            if (window == hSettings) {
+                PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
+            }
             if (window == hHelp || window == hAbout) {
                 FitInformationWindowToWorkArea(window);
             }
@@ -12155,49 +12186,24 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 return 0;
             }
             break;
-        case WM_CTLCOLORSTATIC:
-        {
-            HDC dc = reinterpret_cast<HDC>(wParam);
-            if (IsSettingsPageWindow(window)) {
-                int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
-                SetTextColor(dc, GetSysColor(COLOR_WINDOWTEXT));
-                SetBkColor(dc, GetSysColor(colorIndex));
-                SetBkMode(dc, OPAQUE);
-                return reinterpret_cast<LRESULT>(GetSysColorBrush(colorIndex));
+        case WM_THEMECHANGED:
+        case WM_SYSCOLORCHANGE:
+            if (window == hSettings) {
+                PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
+                RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
             }
             break;
-        }
-        case WM_CTLCOLORBTN:
-        {
-            HWND control = reinterpret_cast<HWND>(lParam);
-            bool tabControlChild = std::find(generalControls.begin(), generalControls.end(), control) !=
-                generalControls.end()
-                || std::find(appearanceControls.begin(), appearanceControls.end(), control) != appearanceControls.end()
-                || std::find(alarmControls.begin(), alarmControls.end(), control) != alarmControls.end()
-                || std::find(timeSignalControls.begin(), timeSignalControls.end(), control) != timeSignalControls.end()
-                || std::find(timeControls.begin(), timeControls.end(), control) != timeControls.end()
-                || std::find(applicationControls.begin(), applicationControls.end(), control) !=
-                applicationControls.end();
-            LONG_PTR style = GetWindowLongPtrW(control, GWL_STYLE);
-            UINT buttonType = static_cast<UINT>(style & BS_TYPEMASK);
-            if (tabControlChild
-                    && (buttonType == BS_CHECKBOX
-                        || buttonType == BS_AUTOCHECKBOX
-                        || buttonType == BS_3STATE
-                        || buttonType == BS_AUTO3STATE
-                        || buttonType == BS_RADIOBUTTON
-                        || buttonType == BS_AUTORADIOBUTTON)) {
-                int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
-                SetBkColor(reinterpret_cast<HDC>(wParam), GetSysColor(colorIndex));
-                SetBkMode(reinterpret_cast<HDC>(wParam), OPAQUE);
-                return reinterpret_cast<LRESULT>(GetSysColorBrush(colorIndex));
+        case WM_UPDATE_SETTINGS_CONTROL_METRICS:
+            if (window == hSettings) {
+                UpdateSettingsControlMetrics();
+                return 0;
             }
             break;
-        }
         case WM_DRAWITEM:
         {
             DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
-            bool panelLink = widget != nullptr && item != nullptr
+            bool panelLink = widget != nullptr
+                && item != nullptr
                 && (item->hwndItem == widget->panelDateLink || item->hwndItem == widget->panelTimeZoneLink);
             if (panelLink) {
                 int savedState = SaveDC(item->hDC);
@@ -12238,33 +12244,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 RestoreDC(item->hDC, savedState);
                 return TRUE;
             }
-            if (window == hTimeSignalPage && item != nullptr && item->CtlID == ID_TIME_SIGNAL_NOTE) {
-                int savedState = SaveDC(item->hDC);
-                int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
-                FillRect(item->hDC, &item->rcItem, GetSysColorBrush(colorIndex));
-                SetBkMode(item->hDC, TRANSPARENT);
-                SetTextColor(item->hDC,
-                    GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
-                HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
-                if (font != nullptr) {
-                    SelectObject(item->hDC, font);
-                }
-                std::wstring text = GetControlText(item->hwndItem);
-                RECT textRect = item->rcItem;
-                DrawWordWrappedText(item->hDC, text, textRect);
-                RestoreDC(item->hDC, savedState);
-                return TRUE;
-            }
             break;
         }
         case WM_ERASEBKGND:
-            if (IsSettingsPageWindow(window)) {
-                RECT rect = {};
-                GetClientRect(window, &rect);
-                int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
-                FillRect(reinterpret_cast<HDC>(wParam), &rect, GetSysColorBrush(colorIndex));
-                return 1;
-            }
             if (widget != nullptr) {
                 bool requiresBackground = widget->config.type == WIDGET_PANEL
                     || widget->config.type == WIDGET_CALENDAR
@@ -12273,15 +12255,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 if (requiresBackground) {
                     return 1;
                 }
-            }
-            break;
-        case WM_PRINTCLIENT:
-            if (IsSettingsPageWindow(window)) {
-                RECT rect = {};
-                GetClientRect(window, &rect);
-                int colorIndex = themesDisabled ? COLOR_BTNFACE : COLOR_WINDOW;
-                FillRect(reinterpret_cast<HDC>(wParam), &rect, GetSysColorBrush(colorIndex));
-                return 0;
             }
             break;
         case WM_PAINT:
@@ -12311,9 +12284,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_HSCROLL:
-            if (window == hAppearancePage || window == hApplicationPage || window == hAlarmPage) {
-                return SendMessageW(hSettings, WM_HSCROLL, wParam, lParam);
-            }
             if (window == hSettings) {
                 if (lParam == 0 && ScrollSettingsWindow(SB_HORZ, LOWORD(wParam))) {
                     return 0;
@@ -12354,18 +12324,13 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_MOUSEWHEEL:
-            if (IsSettingsPageWindow(window)) {
-                return SendMessageW(hSettings, WM_MOUSEWHEEL, wParam, lParam);
-            }
-            if (window == hSettings && ScrollSettingsWheel(wParam)) {
+            if (window == hSettings
+                    && (ScrollSettingsTabHeaders(wParam, lParam) || ScrollSettingsWheel(wParam))) {
                 return 0;
             }
             break;
         case WM_COMMAND:
         {
-            if (IsSettingsPageWindow(window)) {
-                return SendMessageW(hSettings, WM_COMMAND, wParam, lParam);
-            }
             int id = LOWORD(wParam);
             int notification = HIWORD(wParam);
             if (window == hSettings) {
@@ -12748,13 +12713,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_DESTROY:
-            if (IsSettingsPageWindow(window)) {
-                for (HWND control = GetWindow(window, GW_CHILD);
-                        control != nullptr;
-                        control = GetWindow(control, GW_HWNDNEXT)) {
-                    RemovePropW(control, SETTINGS_COMBO_HEIGHT_PROPERTY);
-                }
-            }
             if (widget != nullptr && window == widget->window) {
                 widget->panelDateTooltip = nullptr;
             }
@@ -12864,6 +12822,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     StartNtpSynchronization(true);
     MSG message = {};
     while (GetMessageW(&message, nullptr, 0, 0) > 0) {
+        if (message.message == WM_MOUSEWHEEL && ScrollSettingsTabHeaders(message.wParam, message.lParam)) {
+            continue;
+        }
         Widget* inputWidget = WidgetFromInputWindow(message.hwnd);
         if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
                 && message.wParam == VK_ESCAPE
