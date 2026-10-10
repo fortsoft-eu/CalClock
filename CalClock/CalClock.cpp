@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.5.3.0
  */
 
 #define NOMINMAX
@@ -73,7 +73,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
-/// Function pointer types
+ /// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
@@ -201,6 +201,9 @@ const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
 const UINT_PTR TIMER_REFRESH = 1;
+const UINT REFRESH_MAX_INTERVAL = 100;
+const LONGLONG REFRESH_SECOND_TICKS = 10000000;
+const LONGLONG REFRESH_MILLISECOND_TICKS = 10000;
 static const ULONGLONG FULLSCREEN_CURSOR_IDLE_DELAY = 3000;
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
 const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
@@ -1896,6 +1899,36 @@ static LONGLONG GetApplicationTimeOffset() {
     return useNtpTime && ntpTimeValid ? ntpOffset100Nanoseconds.load() : 0;
 }
 
+/// Calculates the next refresh delay from visible widgets' second boundaries, including NTP and fractional offsets.
+/// Keeps maintenance responsive and respects the minimum interval of the Windows UI timer.
+static UINT WidgetRefreshDelay(ULONGLONG systemNow, LONGLONG applicationOffset) {
+    UINT delay = REFRESH_MAX_INTERVAL;
+    LONGLONG applicationPhase = static_cast<LONGLONG>(systemNow % REFRESH_SECOND_TICKS)
+        + applicationOffset % REFRESH_SECOND_TICKS;
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        if (!widget->config.visible) {
+            continue;
+        }
+        LONGLONG phase = applicationPhase + widget->config.offsetMilliseconds % 1000 * REFRESH_MILLISECOND_TICKS;
+        phase %= REFRESH_SECOND_TICKS;
+        if (phase < 0) {
+            phase += REFRESH_SECOND_TICKS;
+        }
+        LONGLONG remaining = REFRESH_SECOND_TICKS - phase;
+        UINT milliseconds = static_cast<UINT>((remaining + REFRESH_MILLISECOND_TICKS - 1) / REFRESH_MILLISECOND_TICKS);
+        delay = std::min(delay, milliseconds);
+    }
+    return std::max(static_cast<UINT>(USER_TIMER_MINIMUM), delay);
+}
+
+/// Reanchors the UI timer to the nearest displayed second instead of accumulating a fixed polling interval.
+static void ScheduleWidgetRefresh() {
+    if (hController != nullptr) {
+        UINT delay = WidgetRefreshDelay(CurrentFileTimeValue(), GetApplicationTimeOffset());
+        SetTimer(hController, TIMER_REFRESH, delay, nullptr);
+    }
+}
+
 /// Returns system UTC adjusted by the last valid NTP offset when network time is enabled.
 static void GetApplicationUtcTime(SYSTEMTIME* utc) {
     ULONGLONG value = static_cast<ULONGLONG>(static_cast<LONGLONG>(CurrentFileTimeValue()) + GetApplicationTimeOffset());
@@ -3379,7 +3412,6 @@ static bool RenderAnalogBackground(Widget* widget, HDC reference, DWORD backgrou
         return false;
     }
     HGDIOBJ oldBitmap = SelectObject(memory, *bitmap);
-    UpdateAnalogTime(widget);
     bool rendered = RenderAnalogClock(widget->analogChild, memory, background);
     SelectObject(memory, oldBitmap);
     DeleteDC(memory);
@@ -3402,6 +3434,7 @@ static void RenderAnalogWidget(Widget* widget) {
     HBITMAP blackBitmap = nullptr;
     DWORD* whitePixels = nullptr;
     DWORD* blackPixels = nullptr;
+    UpdateAnalogTime(widget);
     if (!RenderAnalogBackground(widget, screen, 0xFFFFFFFF, &whiteBitmap, &whitePixels)
             || !RenderAnalogBackground(widget, screen, 0xFF000000, &blackBitmap, &blackPixels)) {
         if (whiteBitmap != nullptr) {
@@ -4513,6 +4546,7 @@ static void RenderWidget(Widget* widget) {
                 InvalidateRect(widget->window, &textRect, FALSE);
             }
         }
+        RedrawWindow(widget->window, nullptr, nullptr, RDW_UPDATENOW | RDW_ALLCHILDREN);
         widget->rendered = true;
         return;
     }
@@ -12228,6 +12262,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                             RenderWidget(widgets[index].get());
                         }
                     }
+                    ScheduleWidgetRefresh();
                 } else {
                     ntpLastQueryFailed = true;
                     if (!ntpTimeValid) {
@@ -12615,6 +12650,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                         RenderWidget(current);
                     }
                 }
+                ScheduleWidgetRefresh();
                 return 0;
             }
             break;
@@ -12866,7 +12902,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     }
     RefreshFullscreenPresentation();
     AddTrayIcon();
-    SetTimer(hController, TIMER_REFRESH, 100, nullptr);
+    ScheduleWidgetRefresh();
     SaveAllSettings();
     StartNtpSynchronization(true);
     MSG message = {};
