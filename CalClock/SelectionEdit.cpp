@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.1
+ * Last modified for version 1.5.3.1
  */
 
 #include "SelectionEdit.h"
@@ -259,17 +259,17 @@ static bool BeginSelection(HWND window, SelectionState& state, POINT point) {
 }
 
 /// Adds system-sized repeated clicks and anchored selection while preserving native ordinary and modifier gestures.
-static LRESULT CALLBACK SelectionEditProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
+static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
         DWORD_PTR referenceData) {
     SelectionState& state = *reinterpret_cast<SelectionState*>(referenceData);
-    switch (message) {
+    switch (msg) {
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
         {
             EndSelection(window, state);
             if (wParam & (MK_SHIFT | MK_CONTROL)) {
                 state.clickCount = 0;
-                return DefSubclassProc(window, message, wParam, lParam);
+                return DefSubclassProc(window, msg, wParam, lParam);
             }
             SetFocus(window);
             const POINT point = POINT{
@@ -317,7 +317,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT message, WPARAM wPar
             }
             if (state.unit == SelectionUnit::Native) {
                 state.unit = SelectionUnit::None;
-                const LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+                const LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
                 DWORD start = 0;
                 DWORD end = 0;
                 SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
@@ -373,7 +373,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT message, WPARAM wPar
             HeapFree(GetProcessHeap(), 0, &state);
             break;
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Allocates the text field's independent gesture state.

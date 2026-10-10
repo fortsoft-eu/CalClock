@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.3.0
+ * Last modified for version 1.5.3.1
  */
 
 #define NOMINMAX
@@ -11404,7 +11404,7 @@ static void ShowInformationWindow(bool help) {
     }
     int width = help ? 660 : ABOUT_WINDOW_WIDTH;
     int height = help ? 500 : ABOUT_WINDOW_HEIGHT + aboutExtraLineHeight;
-    DWORD extendedStyle = WS_EX_TOPMOST | (help ? 0 : WS_EX_DLGMODALFRAME);
+    DWORD extendedStyle = help ? 0 : WS_EX_DLGMODALFRAME;
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
     ClampFormPosition(x, y, width, height);
     *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU
@@ -11716,7 +11716,7 @@ static void HandleSettingsCommand(int id, int notification) {
         }
         std::sort(selected.begin(), selected.end());
         int firstRemoved = selected.front();
-        for (std::vector<int>::reverse_iterator index = selected.rbegin(); index != selected.rend(); ++index) {
+        for (std::vector<int>::reverse_iterator index = selected.rbegin(); index != selected.rend(); index++) {
             if (*index >= 0 && *index < static_cast<int>(settingsDraft.size())) {
                 settingsDraft.erase(settingsDraft.begin() + *index);
             }
