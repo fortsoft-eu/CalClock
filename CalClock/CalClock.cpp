@@ -73,7 +73,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
- /// Function pointer types
+/// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
@@ -208,7 +208,7 @@ static const ULONGLONG FULLSCREEN_CURSOR_IDLE_DELAY = 3000;
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
 const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
 const UINT_PTR SETTINGS_CONTROL_SUBCLASS_ID = 0xCC05;
-const UINT_PTR ABOUT_LICENSE_SUBCLASS_ID = 0xCC06;
+const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
 
 /// Layout, appearance and alarm constants
 const int ABOUT_WINDOW_HEIGHT = 528;
@@ -263,7 +263,7 @@ const int ID_MENU_VISIBLE = 1002;
 const int ID_MENU_WIDGET_BASE = 2000;
 
 /// Information window control identifiers
-const int ID_INFO_CLOSE = 3050;
+const int ID_INFO_CLOSE = IDOK;
 const int ID_INFO_ICON = 3200;
 const int ID_INFO_LINK = 3203;
 const int ID_INFO_PRODUCT = 3201;
@@ -398,7 +398,9 @@ HFONT hAboutFont = nullptr;
 HWND hController = nullptr;
 HWND hSettings = nullptr;
 HWND hHelp = nullptr;
+HWND hHelpFocusedControl = nullptr;
 HWND hAbout = nullptr;
+HWND hAboutFocusedControl = nullptr;
 HWND hAboutTooltip = nullptr;
 
 /// Settings pages and widget list
@@ -11202,18 +11204,28 @@ static void UpdateAboutLicenseScrollBar(HWND window) {
     }
 }
 
-/// Recalculates horizontal scrollbar visibility after native size, font, text, or theme updates and removes the
-/// subclass on destruction.
-static LRESULT CALLBACK AboutLicenseSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+/// Lets the information window handle Enter, Escape and Tab from its read-only text field.
+/// Updates the About license horizontal scrollbar after native content or layout changes and removes the subclass
+/// on destruction.
+static LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_SIZE || message == WM_SETFONT || message == WM_SETTEXT || message == WM_THEMECHANGED) {
+    if (message == WM_GETDLGCODE) {
+        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+        if (wParam == VK_RETURN || wParam == VK_ESCAPE || wParam == VK_TAB) {
+            result &= ~DLGC_WANTALLKEYS;
+        }
+        return result;
+    }
+    bool updateLicenseScroll = GetParent(window) == hAbout
+        && (message == WM_SIZE || message == WM_SETFONT || message == WM_SETTEXT || message == WM_THEMECHANGED);
+    if (updateLicenseScroll) {
         LRESULT result = DefSubclassProc(window, message, wParam, lParam);
         UpdateAboutLicenseScrollBar(window);
         return result;
     }
     if (message == WM_NCDESTROY) {
-        RemoveWindowSubclass(window, AboutLicenseSubclassProc, subclassId);
+        RemoveWindowSubclass(window, InformationTextSubclassProc, subclassId);
     }
     return DefSubclassProc(window, message, wParam, lParam);
 }
@@ -11432,6 +11444,7 @@ static void ShowInformationWindow(bool help) {
             *target = nullptr;
             return;
         }
+        SetWindowSubclass(text, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0);
         SendMessageW(text, EM_SETSEL, 0, 0);
         AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 528, 415, 100, 28,
             *target, ID_INFO_CLOSE);
@@ -11456,7 +11469,7 @@ static void ShowInformationWindow(bool help) {
             *target = nullptr;
             return;
         }
-        SetWindowSubclass(license, AboutLicenseSubclassProc, ABOUT_LICENSE_SUBCLASS_ID, 0);
+        SetWindowSubclass(license, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0);
         SetWindowSubclass(product, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(website, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(link, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
@@ -12152,6 +12165,30 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             if (window == hSettings) {
                 return MAKELRESULT(ID_SAVE, DC_HASDEFID);
             }
+            if (window == hHelp || window == hAbout) {
+                return MAKELRESULT(ID_INFO_CLOSE, DC_HASDEFID);
+            }
+            break;
+        case WM_ACTIVATE:
+            if ((window == hHelp || window == hAbout) && LOWORD(wParam) == WA_INACTIVE) {
+                HWND focused = GetFocus();
+                if (IsChild(window, focused)) {
+                    HWND& storedFocus = window == hHelp ? hHelpFocusedControl : hAboutFocusedControl;
+                    storedFocus = focused;
+                }
+            }
+            break;
+        case WM_SETFOCUS:
+            if (window == hHelp || window == hAbout) {
+                HWND focused = window == hHelp ? hHelpFocusedControl : hAboutFocusedControl;
+                if (!IsChild(window, focused) || !IsWindowVisible(focused) || !IsWindowEnabled(focused)) {
+                    focused = GetDlgItem(window, ID_INFO_CLOSE);
+                }
+                if (focused != nullptr) {
+                    SetFocus(focused);
+                }
+                return 0;
+            }
             break;
         case WM_SYSCOMMAND:
             if ((wParam & 0xFFF0) == SC_MINIMIZE) {
@@ -12435,7 +12472,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 return 0;
             }
             if (window == hHelp || window == hAbout) {
-                if (id == ID_INFO_CLOSE) {
+                if (id == ID_INFO_CLOSE || id == IDCANCEL) {
                     SendMessageW(window, WM_CLOSE, 0, 0);
                 }
                 return 0;
@@ -12751,10 +12788,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_KEYDOWN:
-            if ((window == hHelp || window == hAbout) && wParam == VK_ESCAPE) {
-                SendMessageW(window, WM_CLOSE, 0, 0);
-                return 0;
-            }
             if (widget != nullptr) {
                 if (wParam == VK_ESCAPE) {
                     if (widget->alarmActive || widget->audioStopEvent != nullptr) {
@@ -12779,6 +12812,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 SaveFormPosition(hHelp, &helpX, &helpY);
                 DestroyWindow(hHelp);
                 hHelp = nullptr;
+                hHelpFocusedControl = nullptr;
                 SaveAllSettings();
                 return 0;
             }
@@ -12790,6 +12824,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 }
                 DestroyWindow(hAbout);
                 hAbout = nullptr;
+                hAboutFocusedControl = nullptr;
                 SaveAllSettings();
                 return 0;
             }
@@ -12910,6 +12945,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
         if (message.message == WM_MOUSEWHEEL && ScrollSettingsTabHeaders(message.wParam, message.lParam)) {
             continue;
         }
+        HWND focusedWindow = GetAncestor(GetFocus(), GA_ROOT);
+        if (hHelp != nullptr && focusedWindow == hHelp && IsDialogMessageW(hHelp, &message)) {
+            continue;
+        }
+        if (hAbout != nullptr && focusedWindow == hAbout && IsDialogMessageW(hAbout, &message)) {
+            continue;
+        }
         Widget* inputWidget = WidgetFromInputWindow(message.hwnd);
         if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
                 && message.wParam == VK_ESCAPE
@@ -12990,12 +13032,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
             }
         }
         if (hSettings != nullptr && IsDialogMessageW(hSettings, &message)) {
-            continue;
-        }
-        if (hHelp != nullptr && IsDialogMessageW(hHelp, &message)) {
-            continue;
-        }
-        if (hAbout != nullptr && IsDialogMessageW(hAbout, &message)) {
             continue;
         }
         TranslateMessage(&message);
