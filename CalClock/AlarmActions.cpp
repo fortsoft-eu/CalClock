@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.5.3.2
  */
 
 #define NOMINMAX
@@ -136,10 +136,10 @@ static bool WaitForAudioStop(HANDLE stopEvent, DWORD milliseconds) {
         return true;
     }
     if (result == WAIT_OBJECT_0 + 1) {
-        MSG message = {};
-        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&message);
-            DispatchMessageW(&message);
+        MSG msg = {};
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
         }
     }
     return false;

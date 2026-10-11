@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.3.1
+ * Last modified for version 1.5.3.2
  */
 
 #define NOMINMAX
@@ -89,6 +89,7 @@ typedef HRESULT(WINAPI* DWriteCreateFactoryProc)(DWRITE_FACTORY_TYPE factoryType
     IUnknown** factory);
 
 /// Window layout and font dialog types
+
 /// Selects whether the shared font dialog exposes face and style only or also permits size changes.
 enum FontDialogMode {
     FONT_DIALOG_FACE_AND_STYLE,
@@ -397,6 +398,7 @@ HFONT hAboutFont = nullptr;
 /// Windows and tooltips
 HWND hController = nullptr;
 HWND hSettings = nullptr;
+HWND hSettingsDefaultButton = nullptr;
 HWND hHelp = nullptr;
 HWND hHelpFocusedControl = nullptr;
 HWND hAbout = nullptr;
@@ -656,33 +658,38 @@ std::vector<HWND> timeSignalControls;
 
 /// Dispatches controller, widget, settings-page, and information-window messages.
 /// Coordinates painting, input, timers, background-worker results, settings actions, and orderly application shutdown.
-static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
+
+/// Keeps the settings default button in step with focus and prevents clicks on covered controls.
+/// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
+static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Integrates the primary native clock with widget dragging, face-only second-hand toggling, context menus, and
 /// identification painting.
-static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK AnalogChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
-/// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling a
-/// second hand.
-static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+/// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling
+/// a second hand.
+static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Preserves native calendar navigation while distinguishing title clicks from widget drags.
 /// Applies the widget locale to native processing and handles context menus and identification feedback.
-static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
 /// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
 /// Treats double-clicks as button presses and removes the subclass on destruction.
-static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
 /// On associated buttons, transfers focus to the widget list before handling the shortcut.
-static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Tracks mouse capture on the volume slider to control preview playback and stops it during subclass destruction.
-static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Serializes selected widgets to the application's registered clipboard format, transferring memory ownership only on
@@ -4317,7 +4324,12 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     wchar_t dateText[128] = {};
     GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText,
         ARRAYSIZE(dateText), nullptr);
-    RECT dateRect = { PANEL_SIDE_PADDING, 7, client.right - PANEL_SIDE_PADDING, 34 };
+    RECT dateRect = {
+        PANEL_SIDE_PADDING,
+        7,
+        client.right - PANEL_SIDE_PADDING,
+        34
+    };
     UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, dateRect);
     std::wstring zoneName = widget->config.showUtc ? L"UTC" : widget->config.timeZoneKey;
     if (!widget->config.showUtc) {
@@ -4340,24 +4352,24 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
 
 /// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
 /// Treats double-clicks as button presses and removes the subclass on destruction.
-static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_SETCURSOR) {
+    if (msg == WM_SETCURSOR) {
         SetCursor(LoadCursorW(nullptr, IDC_HAND));
         return TRUE;
     }
     HWND parent = GetParent(window);
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
-    if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
+    if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) {
         SetFocus(window);
-        if (message == WM_LBUTTONDBLCLK) {
+        if (msg == WM_LBUTTONDBLCLK) {
             return DefSubclassProc(window, WM_LBUTTONDOWN, wParam, lParam);
         }
     }
     if (widget != nullptr) {
         bool* hot = window == widget->panelDateLink ? &widget->panelDateHot : &widget->panelTimeZoneHot;
-        if (message == WM_MOUSEMOVE && !*hot) {
+        if (msg == WM_MOUSEMOVE && !*hot) {
             *hot = true;
             TRACKMOUSEEVENT tracking = {
                 sizeof(tracking),
@@ -4367,23 +4379,25 @@ static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT message, W
             };
             TrackMouseEvent(&tracking);
             InvalidateRect(window, nullptr, FALSE);
-        } else if (message == WM_MOUSELEAVE) {
+        } else if (msg == WM_MOUSELEAVE) {
             *hot = false;
             InvalidateRect(window, nullptr, FALSE);
         }
     }
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, PanelLinkButtonSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
-/// Creates the panel's owner-drawn date and time-zone buttons, assigns their fonts, and installs the date tooltip.
+/// Creates sibling-clipped date and time-zone links below the panel's other controls, assigns their fonts,
+/// and installs the date tooltip.
 static void CreatePanelLinks(Widget* widget) {
     if (widget->config.type != WIDGET_PANEL) {
         return;
     }
-    widget->panelDateLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
+    widget->panelDateLink = CreateWindowExW(0, L"BUTTON", L"",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW,
         0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_DATE_LINK), hInstance, nullptr);
     if (widget->panelDateLink == nullptr) {
         return;
@@ -4391,7 +4405,8 @@ static void CreatePanelLinks(Widget* widget) {
     SetWindowSubclass(widget->panelDateLink, PanelLinkButtonSubclassProc, ID_PANEL_DATE_LINK, 0);
     ApplyWidgetTheme(widget->panelDateLink, widget->config);
     ApplyPanelLinkFont(widget->panelDateLink, widget->config.panelTopFont, widget->config.fontAntialiasing, &widget->panelDateFont);
-    widget->panelTimeZoneLink = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
+    widget->panelTimeZoneLink = CreateWindowExW(0, L"BUTTON", L"",
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW,
         0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_TIME_ZONE_LINK), hInstance, nullptr);
     if (widget->panelTimeZoneLink == nullptr) {
         return;
@@ -4400,9 +4415,9 @@ static void CreatePanelLinks(Widget* widget) {
     ApplyWidgetTheme(widget->panelTimeZoneLink, widget->config);
     ApplyPanelLinkFont(widget->panelTimeZoneLink, widget->config.panelBottomFont,
         widget->config.fontAntialiasing, &widget->panelTimeZoneFont);
-    SetWindowPos(widget->panelDateLink, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    SetWindowPos(widget->calendarChild, widget->panelDateLink, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    SetWindowPos(widget->panelTimeZoneLink, widget->calendarChild, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(widget->calendarChild, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(widget->panelDateLink, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(widget->panelTimeZoneLink, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SYSTEMTIME displayed = {};
     GetDisplayedTime(widget->config, &displayed);
     UpdatePanelLinks(widget, displayed);
@@ -4425,7 +4440,25 @@ static void CreatePanelLinks(Widget* widget) {
     }
 }
 
-/// Paints the panel background, clock captions, times, weekdays, links, and alarm or identification feedback.
+/// Excludes visible child controls from the drawing region shared by all panel clock captions, times, and weekdays.
+static void ExcludePanelControlsFromText(HWND window, HDC dc) {
+    for (HWND control = GetWindow(window, GW_CHILD); control != nullptr; control = GetWindow(control, GW_HWNDNEXT)) {
+        bool visible = GetWindowLongPtrW(control, GWL_STYLE) & WS_VISIBLE;
+        if (!visible) {
+            continue;
+        }
+        RECT bounds = {};
+        bool boundsAvailable = GetWindowRect(control, &bounds) != FALSE;
+        if (!boundsAvailable) {
+            continue;
+        }
+        MapWindowPoints(HWND_DESKTOP, window, reinterpret_cast<POINT*>(&bounds), 2);
+        ExcludeClipRect(dc, bounds.left, bounds.top, bounds.right, bounds.bottom);
+    }
+}
+
+/// Paints the panel background and text, clipping all clock captions, times, and weekdays beneath its child controls.
+/// Draws alarm or identification feedback after restoring the original drawing region.
 static void PaintPanelWidget(Widget* widget, HDC dc) {
     if (widget == nullptr) {
         return;
@@ -4440,6 +4473,11 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
     SYSTEMTIME time = {};
     GetDisplayedTime(widget->config, &time);
     UpdatePanelLinks(widget, time);
+    int savedDC = SaveDC(dc);
+    if (savedDC == 0) {
+        return;
+    }
+    ExcludePanelControlsFromText(widget->window, dc);
     HFONT timeFont = CreatePanelFont(widget->config.panelTimeFont, widget->config.fontAntialiasing);
     HFONT nameFont = CreatePanelFont(widget->config.panelTopFont, widget->config.fontAntialiasing);
     PanelLayout layout = CalculatePanelLayout(widget->config);
@@ -4463,6 +4501,7 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
                 RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
         }
     }
+    RestoreDC(dc, savedDC);
     DeleteObject(nameFont);
     DeleteObject(timeFont);
     bool identifyFrame = widget->identifyActive && widget->identifyPhase;
@@ -4898,8 +4937,8 @@ static bool UpdateFullscreenCursor(bool mouseActivity = false, bool forceCursor 
 
 /// Updates fullscreen cursor activity from mouse and lifecycle messages and handles applicable client-area cursor
 /// requests.
-static bool HandleFullscreenCursorMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch (message) {
+static bool HandleFullscreenCursorMessage(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
         case WM_SETCURSOR:
             if (LOWORD(lParam) == HTCLIENT) {
                 return UpdateFullscreenCursor(false, true);
@@ -5534,24 +5573,24 @@ static void DestroyWidgetWindows() {
 }
 
 /// Paints a fullscreen blackout window and participates in shared pointer-idle handling.
-static LRESULT CALLBACK BlackoutWindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
-    if (HandleFullscreenCursorMessage(window, message, wParam, lParam)) {
+static LRESULT CALLBACK BlackoutWindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (HandleFullscreenCursorMessage(window, msg, wParam, lParam)) {
         return TRUE;
     }
-    if (message == WM_ERASEBKGND) {
+    if (msg == WM_ERASEBKGND) {
         RECT rect = {};
         GetClientRect(window, &rect);
         FillRect(reinterpret_cast<HDC>(wParam), &rect, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
         return 1;
     }
-    if (message == WM_PAINT) {
+    if (msg == WM_PAINT) {
         PAINTSTRUCT paint = {};
         HDC dc = BeginPaint(window, &paint);
         FillRect(dc, &paint.rcPaint, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
         EndPaint(window, &paint);
         return 0;
     }
-    return DefWindowProcW(window, message, wParam, lParam);
+    return DefWindowProcW(window, msg, wParam, lParam);
 }
 
 /// Reconciles fullscreen clocks, settings previews, and blackout windows with current monitor and visibility settings.
@@ -6102,22 +6141,22 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
 /// Handles Alt+0 through Alt+3 on analog and calendar-with-clock widgets using their existing size commands.
 /// Accepts top-row and numeric-keypad digits with either Num Lock state, distinguishing dedicated navigation keys.
 /// Ignores key repeats and leaves other widgets and modified key combinations to their usual handlers.
-static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& message) {
+static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& msg) {
     if (widget == nullptr
             || widget->config.type != WIDGET_ANALOG && widget->config.type != WIDGET_PANEL
-            || message.message != WM_SYSKEYDOWN
-            || (message.lParam & 1LL << 29) == 0
+            || msg.message != WM_SYSKEYDOWN
+            || (msg.lParam & 1LL << 29) == 0
             || GetKeyState(VK_CONTROL) < 0
             || GetKeyState(VK_SHIFT) < 0) {
         return false;
     }
     int sizeIndex = -1;
-    if (message.wParam >= L'0' && message.wParam <= L'3') {
-        sizeIndex = static_cast<int>(message.wParam - L'0');
-    } else if (message.wParam >= VK_NUMPAD0 && message.wParam <= VK_NUMPAD3) {
-        sizeIndex = static_cast<int>(message.wParam - VK_NUMPAD0);
-    } else if ((message.lParam & 1LL << 24) == 0) {
-        switch (message.wParam) {
+    if (msg.wParam >= L'0' && msg.wParam <= L'3') {
+        sizeIndex = static_cast<int>(msg.wParam - L'0');
+    } else if (msg.wParam >= VK_NUMPAD0 && msg.wParam <= VK_NUMPAD3) {
+        sizeIndex = static_cast<int>(msg.wParam - VK_NUMPAD0);
+    } else if ((msg.lParam & 1LL << 24) == 0) {
+        switch (msg.wParam) {
             case VK_INSERT:
                 sizeIndex = 0;
                 break;
@@ -6135,7 +6174,7 @@ static bool HandleWidgetSizeShortcut(Widget* widget, const MSG& message) {
     if (sizeIndex < 0) {
         return false;
     }
-    if ((message.lParam & 1LL << 30) == 0) {
+    if ((msg.lParam & 1LL << 30) == 0) {
         int command = ID_MENU_SIZE_104 + sizeIndex;
         HandleWidgetMenuCommand(widget, command);
     }
@@ -6741,74 +6780,123 @@ static bool IsSettingsControlPointCovered(HWND control, POINT point) {
     return false;
 }
 
-/// Prevents mouse clicks and captured releases from activating controls covered by higher siblings.
+/// Makes the focused settings push button the current default, restoring Save for other focus targets.
+/// Updates only the previous and new default buttons when their roles change.
+static void UpdateSettingsDefaultButton(HWND focused) {
+    HWND button = GetDlgItem(hSettings, ID_SAVE);
+    if (hSettingsDefaultButton == nullptr) {
+        hSettingsDefaultButton = button;
+    }
+    if (IsChild(hSettings, focused) && IsWindowVisible(focused) && IsWindowEnabled(focused)) {
+        LRESULT dialogCode = SendMessageW(focused, WM_GETDLGCODE, 0, 0);
+        bool pushButton = (dialogCode & (DLGC_DEFPUSHBUTTON | DLGC_UNDEFPUSHBUTTON)) != 0;
+        if (pushButton) {
+            button = focused;
+        }
+    }
+    if (button == hSettingsDefaultButton) {
+        return;
+    }
+    if (hSettingsDefaultButton != nullptr && IsWindow(hSettingsDefaultButton)) {
+        SendMessageW(hSettingsDefaultButton, BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
+    }
+    hSettingsDefaultButton = button;
+    if (button != nullptr) {
+        SendMessageW(button, BM_SETSTYLE, BS_DEFPUSHBUTTON, TRUE);
+    }
+}
+
+/// Temporarily bypasses covered-control mouse guards while a native programmatic button click is processed.
+static LRESULT ClickSettingsControl(HWND window, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
+        DWORD_PTR referenceData) {
+    SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, 1);
+    LRESULT result = DefSubclassProc(window, BM_CLICK, wParam, lParam);
+    DWORD_PTR currentData = 0;
+    if (GetWindowSubclass(window, SettingsControlSubclassProc, subclassId, &currentData)) {
+        SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, referenceData);
+    }
+    return result;
+}
+
+/// Makes a covered settings control transparent to hit testing and preserves native handling elsewhere.
+static LRESULT HitTestSettingsControl(HWND window, WPARAM wParam, LPARAM lParam) {
+    POINT point = {
+        GET_X_LPARAM(lParam),
+        GET_Y_LPARAM(lParam)
+    };
+    if (IsSettingsControlPointCovered(window, point)) {
+        return HTTRANSPARENT;
+    }
+    return DefSubclassProc(window, WM_NCHITTEST, wParam, lParam);
+}
+
+/// Suppresses mouse presses covered by a higher sibling while preserving programmatic and native input.
+static LRESULT HandleSettingsControlPress(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, DWORD_PTR referenceData) {
+    if (referenceData != 0) {
+        return DefSubclassProc(window, msg, wParam, lParam);
+    }
+    POINT point = {
+        GET_X_LPARAM(lParam),
+        GET_Y_LPARAM(lParam)
+    };
+    ClientToScreen(window, &point);
+    if (IsSettingsControlPointCovered(window, point)) {
+        return 0;
+    }
+    return DefSubclassProc(window, msg, wParam, lParam);
+}
+
+/// Prevents captured checkbox movement and releases over higher siblings from activating covered controls.
+static LRESULT HandleSettingsControlPointer(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        DWORD_PTR referenceData) {
+    if (referenceData != 0) {
+        return DefSubclassProc(window, msg, wParam, lParam);
+    }
+    if (GetSettingsControlLayer(window) == SETTINGS_CONTROL_CHECKBOX) {
+        POINT point = {
+            GET_X_LPARAM(lParam),
+            GET_Y_LPARAM(lParam)
+        };
+        ClientToScreen(window, &point);
+        if (IsSettingsControlPointCovered(window, point)) {
+            if (msg == WM_LBUTTONUP) {
+                SendMessageW(window, BM_SETSTATE, FALSE, 0);
+            }
+            return DefSubclassProc(window, msg, wParam, MAKELPARAM(-1, -1));
+        }
+    }
+    return DefSubclassProc(window, msg, wParam, lParam);
+}
+
+/// Keeps the settings default button in step with focus and prevents clicks on covered controls.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
-static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
-    switch (message) {
-        case BM_CLICK:
-        {
-            SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, 1);
-            LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-            DWORD_PTR currentData = 0;
-            if (GetWindowSubclass(window, SettingsControlSubclassProc, subclassId, &currentData)) {
-                SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, referenceData);
-            }
-            return result;
-        }
-        case WM_NCHITTEST:
-        {
-            POINT point = {
-                GET_X_LPARAM(lParam),
-                GET_Y_LPARAM(lParam)
-            };
-            if (IsSettingsControlPointCovered(window, point)) {
-                return HTTRANSPARENT;
-            }
+    switch (msg) {
+        case WM_SETFOCUS:
+            UpdateSettingsDefaultButton(window);
             break;
-        }
+        case WM_KILLFOCUS:
+            UpdateSettingsDefaultButton(reinterpret_cast<HWND>(wParam));
+            break;
+        case BM_CLICK:
+            return ClickSettingsControl(window, wParam, lParam, subclassId, referenceData);
+        case WM_NCHITTEST:
+            return HitTestSettingsControl(window, wParam, lParam);
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
-        {
-            if (referenceData != 0) {
-                break;
-            }
-            POINT point = {
-                GET_X_LPARAM(lParam),
-                GET_Y_LPARAM(lParam)
-            };
-            ClientToScreen(window, &point);
-            if (IsSettingsControlPointCovered(window, point)) {
-                return 0;
-            }
-            break;
-        }
+            return HandleSettingsControlPress(window, msg, wParam, lParam, referenceData);
         case WM_MOUSEMOVE:
         case WM_LBUTTONUP:
-        {
-            if (referenceData != 0) {
-                break;
-            }
-            if (GetSettingsControlLayer(window) == SETTINGS_CONTROL_CHECKBOX) {
-                POINT point = {
-                    GET_X_LPARAM(lParam),
-                    GET_Y_LPARAM(lParam)
-                };
-                ClientToScreen(window, &point);
-                if (IsSettingsControlPointCovered(window, point)) {
-                    if (message == WM_LBUTTONUP) {
-                        SendMessageW(window, BM_SETSTATE, FALSE, 0);
-                    }
-                    return DefSubclassProc(window, message, wParam, MAKELPARAM(-1, -1));
-                }
-            }
-            break;
-        }
+            return HandleSettingsControlPointer(window, msg, wParam, lParam, referenceData);
         case WM_NCDESTROY:
+            if (window == hSettingsDefaultButton) {
+                hSettingsDefaultButton = nullptr;
+            }
             RemoveWindowSubclass(window, SettingsControlSubclassProc, subclassId);
             break;
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Extends labels and checkboxes to the common right edge, enables sibling clipping, and enforces their Z order.
@@ -6835,13 +6923,17 @@ static void UpdateSettingsTextControlLayout(HWND parent) {
             }
             SetControlPosition(control, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
         }
-        controls.push_back(PositionedControl{ control, rect });
+        controls.push_back(PositionedControl{
+            control,
+            rect
+        });
     }
     std::stable_sort(controls.begin(), controls.end(), SettingsControlIsAbove);
     HWND previous = nullptr;
     for (const PositionedControl& control : controls) {
         if (GetWindow(control.window, GW_HWNDPREV) != previous) {
-            SetWindowPos(control.window, previous, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+            SetWindowPos(control.window, previous, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOCOPYBITS);
         }
         previous = control.window;
     }
@@ -6849,12 +6941,12 @@ static void UpdateSettingsTextControlLayout(HWND parent) {
 
 /// Handles list selection and widget keyboard commands, including copy, paste, removal, and duplication.
 /// On associated buttons, transfers focus to the widget list before handling the shortcut.
-static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
     bool widgetCommands = subclassId == ID_LIST_WIDGETS || subclassId == ID_REMOVE || subclassId == ID_DUPLICATE;
     HWND list = widgetCommands ? hWidgetList : window;
-    if (message == WM_KEYDOWN && widgetCommands && GetFocus() == window) {
+    if (msg == WM_KEYDOWN && widgetCommands && GetFocus() == window) {
         bool controlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
         bool clipboardShortcut = controlPressed && (wParam == L'A' || wParam == L'C' || wParam == L'V');
         bool listShortcut = clipboardShortcut || wParam == VK_DELETE || wParam == VK_INSERT;
@@ -6862,13 +6954,13 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
             SetFocus(list);
         }
     }
-    if (message == WM_KEYDOWN && wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+    if (msg == WM_KEYDOWN && wParam == L'A' && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
         SendMessageW(list, LB_SETSEL, TRUE, -1);
         SendMessageW(GetParent(list), WM_COMMAND, MAKEWPARAM(GetDlgCtrlID(list), LBN_SELCHANGE),
             reinterpret_cast<LPARAM>(list));
         return 0;
     }
-    if (message == WM_KEYDOWN && widgetCommands && GetFocus() == list && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+    if (msg == WM_KEYDOWN && widgetCommands && GetFocus() == list && (GetKeyState(VK_CONTROL) & 0x8000) != 0) {
         if (wParam == L'C') {
             CopySelectedWidgetsToClipboard();
             return 0;
@@ -6878,11 +6970,11 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
             return 0;
         }
     }
-    if (message == WM_KEYDOWN && wParam == VK_DELETE && widgetCommands) {
+    if (msg == WM_KEYDOWN && wParam == VK_DELETE && widgetCommands) {
         SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_REMOVE, BN_CLICKED), 0);
         return 0;
     }
-    if (message == WM_KEYDOWN && wParam == VK_INSERT && widgetCommands) {
+    if (msg == WM_KEYDOWN && wParam == VK_INSERT && widgetCommands) {
         int count = static_cast<int>(SendMessageW(list, LB_GETCOUNT, 0, 0));
         int caretIndex = static_cast<int>(SendMessageW(list, LB_GETCARETINDEX, 0, 0));
         if (caretIndex >= 0 && caretIndex < count) {
@@ -6894,10 +6986,10 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT message, WPARAM
         }
         return 0;
     }
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, WidgetListSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Changes a checkbox's checked state only when it differs from the requested state.
@@ -7171,39 +7263,42 @@ static bool IsSettingsPageWindow(HWND window) {
         || window == hApplicationPage;
 }
 
+/// Draws the wrapped time-signal description over its settings page texture and preserves the supplied DC state.
+static INT_PTR DrawSettingsPageItem(LPARAM lParam) {
+    DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+    if (item == nullptr || item->CtlID != ID_TIME_SIGNAL_NOTE) {
+        return FALSE;
+    }
+    int savedState = SaveDC(item->hDC);
+    DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
+    SetBkMode(item->hDC, TRANSPARENT);
+    SetTextColor(item->hDC,
+        GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
+    if (font != nullptr) {
+        SelectObject(item->hDC, font);
+    }
+    std::wstring text = GetControlText(item->hwndItem);
+    RECT textRect = item->rcItem;
+    DrawWordWrappedText(item->hDC, text, textRect);
+    RestoreDC(item->hDC, savedState);
+    return TRUE;
+}
+
 /// Uses the native tab texture for a dialog page and forwards settings commands, sliders, and scrolling.
 /// Draws the wrapped signal description over the dialog background and releases child layout properties on destruction.
-static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch (message) {
+static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
         case WM_INITDIALOG:
             EnableThemeDialogTexture(window, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
             return TRUE;
         case WM_COMMAND:
         case WM_HSCROLL:
         case WM_MOUSEWHEEL:
-            SendMessageW(hSettings, message, wParam, lParam);
+            SendMessageW(hSettings, msg, wParam, lParam);
             return TRUE;
         case WM_DRAWITEM:
-        {
-            DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
-            if (item == nullptr || item->CtlID != ID_TIME_SIGNAL_NOTE) {
-                return FALSE;
-            }
-            int savedState = SaveDC(item->hDC);
-            DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
-            SetBkMode(item->hDC, TRANSPARENT);
-            SetTextColor(item->hDC,
-                GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
-            HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
-            if (font != nullptr) {
-                SelectObject(item->hDC, font);
-            }
-            std::wstring text = GetControlText(item->hwndItem);
-            RECT textRect = item->rcItem;
-            DrawWordWrappedText(item->hDC, text, textRect);
-            RestoreDC(item->hDC, savedState);
-            return TRUE;
-        }
+            return DrawSettingsPageItem(lParam);
         case WM_DESTROY:
             for (HWND control = GetWindow(window, GW_CHILD);
                     control != nullptr;
@@ -7367,31 +7462,31 @@ static void UpdateTimeSignalVolumePreview() {
 }
 
 /// Tracks mouse capture on the volume slider to control preview playback and stops it during subclass destruction.
-static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK TimeSignalVolumeSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) {
-        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+    if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) {
+        LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
         if (IsWindowEnabled(window) && GetCapture() == window) {
             timeSignalVolumeDragging = true;
             UpdateTimeSignalVolumePreview();
         }
         return result;
     }
-    if (message == WM_LBUTTONUP
-            || message == WM_CAPTURECHANGED
-            || message == WM_CANCELMODE
-            || message == WM_ENABLE && wParam == FALSE
-            || message == WM_SHOWWINDOW && wParam == FALSE) {
+    if (msg == WM_LBUTTONUP
+            || msg == WM_CAPTURECHANGED
+            || msg == WM_CANCELMODE
+            || msg == WM_ENABLE && wParam == FALSE
+            || msg == WM_SHOWWINDOW && wParam == FALSE) {
         timeSignalVolumeDragging = false;
         UpdateTimeSignalVolumePreview();
     }
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         timeSignalVolumeDragging = false;
         StopTimeSignalVolumePreview();
         RemoveWindowSubclass(window, TimeSignalVolumeSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Enables generator volume controls only when applicable, updates the decibel label, and refreshes preview state.
@@ -8298,9 +8393,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
 
 /// Adjusts a dropdown's pending position and size to the monitor work area before it becomes visible.
 /// Removes its subclass when the native list window is destroyed.
-static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
-    if (message == WM_WINDOWPOSCHANGING) {
+    if (msg == WM_WINDOWPOSCHANGING) {
         WINDOWPOS* position = reinterpret_cast<WINDOWPOS*>(lParam);
         HWND combo = reinterpret_cast<HWND>(referenceData);
         HMONITOR monitor = MonitorFromWindow(combo, MONITOR_DEFAULTTONEAREST);
@@ -8337,10 +8432,10 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT message, 
                 }
             }
         }
-    } else if (message == WM_NCDESTROY) {
+    } else if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, ComboBoxDropDownSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Refreshes time-zone captions and current UTC offsets only when changed, retaining selection by stored zone index.
@@ -8725,9 +8820,9 @@ static bool SaveControlsToDraft(bool showErrors) {
 
 /// Displays the localized widget-limit notice and returns focus to the widget list after dismissal.
 static void ShowWidgetLimitMessage() {
-    wchar_t message[256] = {};
-    swprintf_s(message, WIDGET_LIMIT_MESSAGES[appLanguage], MAX_WIDGET_COUNT);
-    MessageBoxW(hSettings, message, T(TXT_SETTINGS), MB_OK | MB_ICONINFORMATION);
+    wchar_t msg[256] = {};
+    swprintf_s(msg, WIDGET_LIMIT_MESSAGES[appLanguage], MAX_WIDGET_COUNT);
+    MessageBoxW(hSettings, msg, T(TXT_SETTINGS), MB_OK | MB_ICONINFORMATION);
     SetFocus(hWidgetList);
 }
 
@@ -9562,7 +9657,10 @@ static void ApplySettingsDraft() {
                     int previewWidth = rect.right - rect.left;
                     int previewHeight = rect.bottom - rect.top;
                     GetFullscreenPreviewDimensions(settingsDraft[draftIndex], &previewWidth, &previewHeight);
-                    POINT position = { rect.left, rect.top };
+                    POINT position = {
+                        rect.left,
+                        rect.top
+                    };
                     GetPositionPreservingWorkAreaAttachment(current->window, previewWidth, previewHeight, &position);
                     settingsDraft[draftIndex].previewX = position.x;
                     settingsDraft[draftIndex].previewY = position.y;
@@ -9570,7 +9668,10 @@ static void ApplySettingsDraft() {
                     int newWidth = 0;
                     int newHeight = 0;
                     GetWidgetDimensions(settingsDraft[draftIndex], &newWidth, &newHeight);
-                    POINT position = { rect.left, rect.top };
+                    POINT position = {
+                        rect.left,
+                        rect.top
+                    };
                     bool horizontalAttachment = false;
                     GetPositionPreservingWorkAreaAttachment(current->window, newWidth, newHeight, &position,
                         &horizontalAttachment);
@@ -9920,15 +10021,15 @@ static void SetFontDialogControlVisibility(HWND dialog, FontDialogMode mode) {
 }
 
 /// Customizes the native font dialog's control visibility, compact layout, and background painting.
-static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT message, WPARAM, LPARAM parameter) {
-    if (message == WM_PAINT) {
+static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT msg, WPARAM, LPARAM parameter) {
+    if (msg == WM_PAINT) {
         PAINTSTRUCT paint = {};
         HDC dc = BeginPaint(dialog, &paint);
         FillRect(dc, &paint.rcPaint, GetSysColorBrush(COLOR_3DFACE));
         EndPaint(dialog, &paint);
         return 1;
     }
-    if (message != WM_INITDIALOG) {
+    if (msg != WM_INITDIALOG) {
         return 0;
     }
     const CHOOSEFONTW* choice = reinterpret_cast<const CHOOSEFONTW*>(parameter);
@@ -10790,6 +10891,7 @@ static void CloseSettingsWindow() {
         SaveAllSettings();
     }
     hSettings = nullptr;
+    hSettingsDefaultButton = nullptr;
     hWidgetList = nullptr;
     hTabs = nullptr;
     hGeneralPage = nullptr;
@@ -11163,17 +11265,17 @@ static void ShowAboutContextMenu(HWND source, LPARAM location) {
 }
 
 /// Adds the About context menu to product and website controls and removes the subclass on destruction.
-static LRESULT CALLBACK AboutControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK AboutControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_CONTEXTMENU) {
+    if (msg == WM_CONTEXTMENU) {
         ShowAboutContextMenu(window, lParam);
         return 0;
     }
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, AboutControlSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Measures unwrapped license text in the edit's current font and toggles the horizontal scrollbar only when needed.
@@ -11207,27 +11309,27 @@ static void UpdateAboutLicenseScrollBar(HWND window) {
 /// Lets the information window handle Enter, Escape and Tab from its read-only text field.
 /// Updates the About license horizontal scrollbar after native content or layout changes and removes the subclass
 /// on destruction.
-static LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
-    if (message == WM_GETDLGCODE) {
-        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+    if (msg == WM_GETDLGCODE) {
+        LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
         if (wParam == VK_RETURN || wParam == VK_ESCAPE || wParam == VK_TAB) {
             result &= ~DLGC_WANTALLKEYS;
         }
         return result;
     }
     bool updateLicenseScroll = GetParent(window) == hAbout
-        && (message == WM_SIZE || message == WM_SETFONT || message == WM_SETTEXT || message == WM_THEMECHANGED);
+        && (msg == WM_SIZE || msg == WM_SETFONT || msg == WM_SETTEXT || msg == WM_THEMECHANGED);
     if (updateLicenseScroll) {
-        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+        LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
         UpdateAboutLicenseScrollBar(window);
         return result;
     }
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, InformationTextSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, message, wParam, lParam);
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Updates open Help and About windows for the application language and recalculates their layouts.
@@ -11868,15 +11970,15 @@ static void DrawIdentificationOutline(HWND window, bool ellipse) {
 
 /// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling a
 /// second hand.
-static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     HWND parent = GetParent(window);
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     int index = static_cast<int>(referenceData);
-    if (message == WM_NCDESTROY) {
+    if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, AdditionalAnalogChildProc, subclassId);
     } else if (widget != nullptr && index >= 0 && index < ADDITIONAL_CLOCK_COUNT) {
-        if (message == WM_ERASEBKGND) {
+        if (msg == WM_ERASEBKGND) {
             RECT client = {};
             GetClientRect(window, &client);
             HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
@@ -11884,9 +11986,12 @@ static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPA
             DeleteObject(background);
             return 1;
         }
-        if (message == WM_RBUTTONUP || message == WM_CONTEXTMENU) {
-            POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-            if (message == WM_RBUTTONUP) {
+        if (msg == WM_RBUTTONUP || msg == WM_CONTEXTMENU) {
+            POINT point = {
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam)
+            };
+            if (msg == WM_RBUTTONUP) {
                 ClientToScreen(window, &point);
             } else if (point.x == -1 && point.y == -1) {
                 RECT rect = {};
@@ -11896,17 +12001,20 @@ static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT message, WPA
             ShowAdditionalClockContextMenu(widget, index, point);
             return 0;
         }
-        if (message == WM_LBUTTONDBLCLK) {
+        if (msg == WM_LBUTTONDBLCLK) {
             return 0;
         }
-        if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP || message == WM_MOUSEMOVE) {
-            POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+        if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONUP || msg == WM_MOUSEMOVE) {
+            POINT point = {
+                GET_X_LPARAM(lParam),
+                GET_Y_LPARAM(lParam)
+            };
             MapWindowPoints(window, parent, &point, 1);
-            return SendMessageW(parent, message, wParam, MAKELPARAM(point.x, point.y));
+            return SendMessageW(parent, msg, wParam, MAKELPARAM(point.x, point.y));
         }
     }
-    LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-    if (message == WM_THEMECHANGED && widget != nullptr && index >= 0 && index < ADDITIONAL_CLOCK_COUNT) {
+    LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
+    if (msg == WM_THEMECHANGED && widget != nullptr && index >= 0 && index < ADDITIONAL_CLOCK_COUNT) {
         ConfigureAnalogClockControl(window,
             NormalizeAnalogClockSize(widget->config.additionalClocks[index].size), false);
     }
@@ -11920,7 +12028,10 @@ static bool IsPanelAnalogDoubleClick(Widget* widget, LPARAM lParam) {
         return false;
     }
     ULONGLONG tick = GetTickCount64();
-    POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+    POINT point = {
+        GET_X_LPARAM(lParam),
+        GET_Y_LPARAM(lParam)
+    };
     bool doubleClick = widget->lastAnalogClickTick != 0
         && tick - widget->lastAnalogClickTick <= GetDoubleClickTime()
         && std::abs(point.x - widget->lastAnalogClickPoint.x) <= GetSystemMetrics(SM_CXDOUBLECLK) / 2
@@ -11936,11 +12047,11 @@ static bool IsPanelAnalogDoubleClick(Widget* widget, LPARAM lParam) {
 
 /// Integrates the primary native clock with widget dragging, face-only second-hand toggling, context menus, and
 /// identification painting.
-static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK AnalogChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     HWND parent = GetParent(window);
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     if (widget != nullptr) {
-        if (message == WM_ERASEBKGND && widget->config.type == WIDGET_PANEL) {
+        if (msg == WM_ERASEBKGND && widget->config.type == WIDGET_PANEL) {
             RECT client = {};
             GetClientRect(window, &client);
             HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
@@ -11948,53 +12059,56 @@ static LRESULT CALLBACK AnalogChildProc(HWND window, UINT message, WPARAM wParam
             DeleteObject(background);
             return 1;
         }
-        if (message == WM_LBUTTONDOWN && IsPanelAnalogDoubleClick(widget, lParam)) {
-            message = WM_LBUTTONDBLCLK;
+        if (msg == WM_LBUTTONDOWN && IsPanelAnalogDoubleClick(widget, lParam)) {
+            msg = WM_LBUTTONDBLCLK;
         }
-        if (message == WM_LBUTTONDBLCLK) {
+        if (msg == WM_LBUTTONDBLCLK) {
             widget->lastAnalogClickTick = 0;
         }
-        if (message == WM_LBUTTONDOWN
-                || message == WM_LBUTTONUP
-                || message == WM_MOUSEMOVE
-                || message == WM_LBUTTONDBLCLK
-                || message == WM_RBUTTONUP
-                || message == WM_CONTEXTMENU) {
-            if (message != WM_CONTEXTMENU) {
-                POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+        if (msg == WM_LBUTTONDOWN
+                || msg == WM_LBUTTONUP
+                || msg == WM_MOUSEMOVE
+                || msg == WM_LBUTTONDBLCLK
+                || msg == WM_RBUTTONUP
+                || msg == WM_CONTEXTMENU) {
+            if (msg != WM_CONTEXTMENU) {
+                POINT point = {
+                    GET_X_LPARAM(lParam),
+                    GET_Y_LPARAM(lParam)
+                };
                 MapWindowPoints(window, parent, &point, 1);
                 lParam = MAKELPARAM(point.x, point.y);
             }
-            return SendMessageW(parent, message, wParam, lParam);
+            return SendMessageW(parent, msg, wParam, lParam);
         }
         if (widget->analogProc != nullptr) {
-            LRESULT result = CallWindowProcW(widget->analogProc, window, message, wParam, lParam);
-            if (message == WM_THEMECHANGED) {
+            LRESULT result = CallWindowProcW(widget->analogProc, window, msg, wParam, lParam);
+            if (msg == WM_THEMECHANGED) {
                 bool showAnalogSeconds = widget->config.showSeconds && AnalogClockSupportsSeconds(widget->config.size);
                 ConfigureAnalogClockControl(window, widget->config.size, showAnalogSeconds);
             }
             return result;
         }
     }
-    return DefWindowProcW(window, message, wParam, lParam);
+    return DefWindowProcW(window, msg, wParam, lParam);
 }
 
 /// Preserves native calendar navigation while distinguishing title clicks from widget drags.
 /// Applies the widget locale to native processing and handles context menus and identification feedback.
-static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     HWND parent = GetParent(window);
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     if (widget != nullptr) {
-        if (message == WM_RBUTTONUP || message == WM_CONTEXTMENU) {
-            return SendMessageW(parent, message, wParam, lParam);
+        if (msg == WM_RBUTTONUP || msg == WM_CONTEXTMENU) {
+            return SendMessageW(parent, msg, wParam, lParam);
         }
-        if (message == WM_CAPTURECHANGED || message == WM_CANCELMODE) {
+        if (msg == WM_CAPTURECHANGED || msg == WM_CANCELMODE) {
             widget->calendarTitlePressed = false;
-            if (message == WM_CANCELMODE && GetCapture() == window) {
+            if (msg == WM_CANCELMODE && GetCapture() == window) {
                 ReleaseCapture();
             }
         }
-        if (message == WM_MOUSEMOVE && widget->calendarTitlePressed) {
+        if (msg == WM_MOUSEMOVE && widget->calendarTitlePressed) {
             POINT cursor = {};
             GetCursorPos(&cursor);
             int distanceX = abs(cursor.x - widget->calendarTitlePressScreen.x);
@@ -12014,7 +12128,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
             }
             return 0;
         }
-        if (message == WM_LBUTTONUP && widget->calendarTitlePressed) {
+        if (msg == WM_LBUTTONUP && widget->calendarTitlePressed) {
             widget->calendarTitlePressed = false;
             ReleaseCapture();
             if (widget->calendarProc != nullptr) {
@@ -12025,7 +12139,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
             }
             return 0;
         }
-        if ((message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) && widget->config.type == WIDGET_CALENDAR) {
+        if ((msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) && widget->config.type == WIDGET_CALENDAR) {
             MCHITTESTINFO hit = {};
             hit.cbSize = sizeof(hit);
             hit.pt.x = GET_X_LPARAM(lParam);
@@ -12042,22 +12156,22 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT message, WPARAM wPar
             }
             bool draggableArea = hit.uHit == MCHT_NOWHERE || hit.uHit == MCHT_CALENDARBK;
             if (draggableArea) {
-                return SendMessageW(parent, message, wParam, lParam);
+                return SendMessageW(parent, msg, wParam, lParam);
             }
         }
         if (widget->calendarProc != nullptr) {
             CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
-            LRESULT result = CallWindowProcW(widget->calendarProc, window, message, wParam, lParam);
-            if ((message == WM_THEMECHANGED || message == WM_SETTINGCHANGE) && widget->calendarFont != nullptr) {
+            LRESULT result = CallWindowProcW(widget->calendarProc, window, msg, wParam, lParam);
+            if ((msg == WM_THEMECHANGED || msg == WM_SETTINGCHANGE) && widget->calendarFont != nullptr) {
                 SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(widget->calendarFont), TRUE);
             }
-            if (message == WM_PAINT && widget->config.type == WIDGET_CALENDAR && widget->identifyActive && widget->identifyPhase) {
+            if (msg == WM_PAINT && widget->config.type == WIDGET_CALENDAR && widget->identifyActive && widget->identifyPhase) {
                 DrawIdentificationOutline(window, false);
             }
             return result;
         }
     }
-    return DefWindowProcW(window, message, wParam, lParam);
+    return DefWindowProcW(window, msg, wParam, lParam);
 }
 
 /// Selects the widget's displayed current date, optionally preserving the calendar's month, year, or decade view.
@@ -12133,11 +12247,124 @@ static void PaintConfiguredNativeFrame(HWND window, COLORREF color) {
     ReleaseDC(window, dc);
 }
 
+/// Draws owner-drawn calendar and time-zone links with their hover and focus appearance, restoring the DC state.
+/// Passes unrelated owner-draw requests to the native window procedure.
+static LRESULT DrawWidgetItem(HWND window, Widget* widget, WPARAM wParam, LPARAM lParam) {
+    DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+    bool panelLink = widget != nullptr
+        && item != nullptr
+        && (item->hwndItem == widget->panelDateLink || item->hwndItem == widget->panelTimeZoneLink);
+    if (panelLink) {
+        int savedState = SaveDC(item->hDC);
+        bool dateLink = item->hwndItem == widget->panelDateLink;
+        HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
+        FillRect(item->hDC, &item->rcItem, background);
+        DeleteObject(background);
+        const FontSelection& selection = dateLink ? widget->config.panelTopFont : widget->config.panelBottomFont;
+        bool hot = dateLink ? widget->panelDateHot : widget->panelTimeZoneHot;
+        bool focused = GetFocus() == item->hwndItem;
+        HFONT font = dateLink ? widget->panelDateFont : widget->panelTimeZoneFont;
+        HFONT hotFont = nullptr;
+        if ((hot || focused) && !selection.underline) {
+            FontSelection hotSelection = selection;
+            hotSelection.underline = true;
+            hotFont = CreatePanelFont(hotSelection, widget->config.fontAntialiasing);
+            if (hotFont != nullptr) {
+                font = hotFont;
+            }
+        }
+        if (font != nullptr) {
+            SelectObject(item->hDC, font);
+        }
+        SetBkMode(item->hDC, TRANSPARENT);
+        SetTextColor(item->hDC, RGB(0, 83, 184));
+        std::wstring text = GetControlText(item->hwndItem);
+        RECT textRect = item->rcItem;
+        DrawTextW(item->hDC, text.c_str(), static_cast<int>(text.size()), &textRect,
+            DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+        if (focused) {
+            RECT focusRect = item->rcItem;
+            InflateRect(&focusRect, -1, -1);
+            DrawPanelLinkFocusRect(item->hDC, focusRect);
+        }
+        if (hotFont != nullptr) {
+            DeleteObject(hotFont);
+        }
+        RestoreDC(item->hDC, savedState);
+        return TRUE;
+    }
+    return DefWindowProcW(window, WM_DRAWITEM, wParam, lParam);
+}
+
+/// Dispatches settings, information-window, panel-link, and controller commands to their existing actions.
+/// Preserves native handling for commands that do not belong to these windows.
+static LRESULT HandleWindowCommand(HWND window, Widget* widget, WPARAM wParam, LPARAM lParam) {
+    int id = LOWORD(wParam);
+    int notification = HIWORD(wParam);
+    if (window == hSettings) {
+        if (notification == CBN_DROPDOWN) {
+            HWND control = reinterpret_cast<HWND>(lParam);
+            wchar_t className[32] = {};
+            GetClassNameW(control, className, ARRAYSIZE(className));
+            if (_wcsicmp(className, WC_COMBOBOXW) == 0) {
+                UpdateComboBoxDropDownWidth(control);
+                return 0;
+            }
+        }
+        HandleSettingsCommand(id, notification);
+        UpdateSettingsApplyButton();
+        return 0;
+    }
+    if (window == hHelp || window == hAbout) {
+        if (id == ID_INFO_CLOSE || id == IDCANCEL) {
+            SendMessageW(window, WM_CLOSE, 0, 0);
+        }
+        return 0;
+    }
+    if (widget != nullptr
+            && id == ID_PANEL_DATE_LINK
+            && notification == BN_CLICKED
+            && reinterpret_cast<HWND>(lParam) == widget->panelDateLink) {
+        SelectCalendarToday(widget);
+        return 0;
+    }
+    if (widget != nullptr
+            && id == ID_PANEL_TIME_ZONE_LINK
+            && notification == BN_CLICKED
+            && reinterpret_cast<HWND>(lParam) == widget->panelTimeZoneLink) {
+        OpenDateTimeControlPanel(widget->window);
+        return 0;
+    }
+    if (window == hController) {
+        if (id == ID_MENU_SETTINGS) {
+            ShowSettingsWindow();
+        } else if (id == ID_MENU_SHOW_ALL) {
+            SetAllVisible(true);
+        } else if (id == ID_MENU_HIDE_ALL) {
+            SetAllVisible(false);
+        } else if (id == ID_MENU_ARRANGE_WIDGETS) {
+            ArrangeVisibleWidgets(nullptr);
+        } else if (id == ID_MENU_STOP_ALARM) {
+            StopAllAlarms();
+        } else if (id == ID_MENU_MUTE) {
+            ToggleAllWidgetSounds();
+        } else if (id == ID_MENU_HELP) {
+            ShowInformationWindow(true);
+        } else if (id == ID_MENU_ABOUT) {
+            ShowInformationWindow(false);
+        } else if (id == ID_MENU_EXIT) {
+            DestroyWindow(hController);
+        }
+        return 0;
+    }
+    return DefWindowProcW(window, WM_COMMAND, wParam, lParam);
+}
+
 /// Dispatches controller, widget, settings-page, and information-window messages.
 /// Coordinates painting, input, timers, background-worker results, settings actions, and orderly application shutdown.
-static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(window, GWLP_USERDATA));
-    if (message == WM_NCCREATE) {
+    if (msg == WM_NCCREATE) {
         CREATESTRUCTW* create = reinterpret_cast<CREATESTRUCTW*>(lParam);
         if (create->lpCreateParams != nullptr) {
             widget = static_cast<Widget*>(create->lpCreateParams);
@@ -12145,25 +12372,29 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         }
     }
     if (widget != nullptr && widget->config.type == WIDGET_FULLSCREEN || window == hFullscreenCursorWindow) {
-        if (HandleFullscreenCursorMessage(window, message, wParam, lParam)) {
+        if (HandleFullscreenCursorMessage(window, msg, wParam, lParam)) {
             return TRUE;
         }
     }
-    if (message == taskbarCreatedMessage && window == hController) {
+    if (msg == taskbarCreatedMessage && window == hController) {
         AddTrayIcon();
         return 0;
     }
-    switch (message) {
+    switch (msg) {
         case WM_NCPAINT:
             if (widget != nullptr && UsesConfigurableNativeFrame(widget)) {
-                LRESULT result = DefWindowProcW(window, message, wParam, lParam);
+                LRESULT result = DefWindowProcW(window, msg, wParam, lParam);
                 PaintConfiguredNativeFrame(window, widget->config.borderColor);
                 return result;
             }
             break;
         case DM_GETDEFID:
             if (window == hSettings) {
-                return MAKELRESULT(ID_SAVE, DC_HASDEFID);
+                int defaultId = ID_SAVE;
+                if (hSettingsDefaultButton != nullptr) {
+                    defaultId = GetDlgCtrlID(hSettingsDefaultButton);
+                }
+                return MAKELRESULT(defaultId, DC_HASDEFID);
             }
             if (window == hHelp || window == hAbout) {
                 return MAKELRESULT(ID_INFO_CLOSE, DC_HASDEFID);
@@ -12324,52 +12555,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_DRAWITEM:
-        {
-            DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
-            bool panelLink = widget != nullptr
-                && item != nullptr
-                && (item->hwndItem == widget->panelDateLink || item->hwndItem == widget->panelTimeZoneLink);
-            if (panelLink) {
-                int savedState = SaveDC(item->hDC);
-                bool dateLink = item->hwndItem == widget->panelDateLink;
-                HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
-                FillRect(item->hDC, &item->rcItem, background);
-                DeleteObject(background);
-                const FontSelection& selection = dateLink ? widget->config.panelTopFont : widget->config.panelBottomFont;
-                bool hot = dateLink ? widget->panelDateHot : widget->panelTimeZoneHot;
-                bool focused = GetFocus() == item->hwndItem;
-                HFONT font = dateLink ? widget->panelDateFont : widget->panelTimeZoneFont;
-                HFONT hotFont = nullptr;
-                if ((hot || focused) && !selection.underline) {
-                    FontSelection hotSelection = selection;
-                    hotSelection.underline = true;
-                    hotFont = CreatePanelFont(hotSelection, widget->config.fontAntialiasing);
-                    if (hotFont != nullptr) {
-                        font = hotFont;
-                    }
-                }
-                if (font != nullptr) {
-                    SelectObject(item->hDC, font);
-                }
-                SetBkMode(item->hDC, TRANSPARENT);
-                SetTextColor(item->hDC, RGB(0, 83, 184));
-                std::wstring text = GetControlText(item->hwndItem);
-                RECT textRect = item->rcItem;
-                DrawTextW(item->hDC, text.c_str(), static_cast<int>(text.size()), &textRect,
-                    DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-                if (focused) {
-                    RECT focusRect = item->rcItem;
-                    InflateRect(&focusRect, -1, -1);
-                    DrawPanelLinkFocusRect(item->hDC, focusRect);
-                }
-                if (hotFont != nullptr) {
-                    DeleteObject(hotFont);
-                }
-                RestoreDC(item->hDC, savedState);
-                return TRUE;
-            }
-            break;
-        }
+            return DrawWidgetItem(window, widget, wParam, lParam);
         case WM_ERASEBKGND:
             if (widget != nullptr) {
                 bool requiresBackground = widget->config.type == WIDGET_PANEL
@@ -12454,67 +12640,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_COMMAND:
-        {
-            int id = LOWORD(wParam);
-            int notification = HIWORD(wParam);
-            if (window == hSettings) {
-                if (notification == CBN_DROPDOWN) {
-                    HWND control = reinterpret_cast<HWND>(lParam);
-                    wchar_t className[32] = {};
-                    GetClassNameW(control, className, ARRAYSIZE(className));
-                    if (_wcsicmp(className, WC_COMBOBOXW) == 0) {
-                        UpdateComboBoxDropDownWidth(control);
-                        return 0;
-                    }
-                }
-                HandleSettingsCommand(id, notification);
-                UpdateSettingsApplyButton();
-                return 0;
-            }
-            if (window == hHelp || window == hAbout) {
-                if (id == ID_INFO_CLOSE || id == IDCANCEL) {
-                    SendMessageW(window, WM_CLOSE, 0, 0);
-                }
-                return 0;
-            }
-            if (widget != nullptr
-                    && id == ID_PANEL_DATE_LINK
-                    && notification == BN_CLICKED
-                    && reinterpret_cast<HWND>(lParam) == widget->panelDateLink) {
-                SelectCalendarToday(widget);
-                return 0;
-            }
-            if (widget != nullptr
-                    && id == ID_PANEL_TIME_ZONE_LINK
-                    && notification == BN_CLICKED
-                    && reinterpret_cast<HWND>(lParam) == widget->panelTimeZoneLink) {
-                OpenDateTimeControlPanel(widget->window);
-                return 0;
-            }
-            if (window == hController) {
-                if (id == ID_MENU_SETTINGS) {
-                    ShowSettingsWindow();
-                } else if (id == ID_MENU_SHOW_ALL) {
-                    SetAllVisible(true);
-                } else if (id == ID_MENU_HIDE_ALL) {
-                    SetAllVisible(false);
-                } else if (id == ID_MENU_ARRANGE_WIDGETS) {
-                    ArrangeVisibleWidgets(nullptr);
-                } else if (id == ID_MENU_STOP_ALARM) {
-                    StopAllAlarms();
-                } else if (id == ID_MENU_MUTE) {
-                    ToggleAllWidgetSounds();
-                } else if (id == ID_MENU_HELP) {
-                    ShowInformationWindow(true);
-                } else if (id == ID_MENU_ABOUT) {
-                    ShowInformationWindow(false);
-                } else if (id == ID_MENU_EXIT) {
-                    DestroyWindow(hController);
-                }
-                return 0;
-            }
-            break;
-        }
+            return HandleWindowCommand(window, widget, wParam, lParam);
         case WM_NOTIFY:
             if (window == hAbout
                     && hAboutTooltip != nullptr
@@ -12724,9 +12850,14 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 widget->lastAnalogClickTick = 0;
                 POINT cursor = {};
                 GetCursorPos(&cursor);
-                POINT position = { cursor.x - widget->dragOffset.x, cursor.y - widget->dragOffset.y };
+                POINT position = {
+                    cursor.x - widget->dragOffset.x,
+                    cursor.y - widget->dragOffset.y
+                };
                 RECT rect = {};
-                MONITORINFO monitorInfo = { sizeof(monitorInfo) };
+                MONITORINFO monitorInfo = {
+                    sizeof(monitorInfo)
+                };
                 HMONITOR monitor = MonitorFromPoint(cursor, MONITOR_DEFAULTTONEAREST);
                 if (snapWidgetsToWorkArea && GetWindowRect(window, &rect) && GetMonitorInfoW(monitor, &monitorInfo)) {
                     position = SnapWidgetPositionToWorkArea(rect, monitorInfo.rcWork, position, WORK_AREA_SNAP_DISTANCE);
@@ -12770,7 +12901,10 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                     return 0;
                 }
                 MapWindowPoints(nullptr, window, reinterpret_cast<POINT*>(&clockRect), 2);
-                POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+                POINT point = {
+                    GET_X_LPARAM(lParam),
+                    GET_Y_LPARAM(lParam)
+                };
                 if (!PtInRect(&clockRect, point)) {
                     return 0;
                 }
@@ -12851,7 +12985,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             break;
     }
-    return DefWindowProcW(window, message, wParam, lParam);
+    return DefWindowProcW(window, msg, wParam, lParam);
 }
 
 /// Enforces one application instance, initializes services and windows, and runs the message loop with custom keyboard
@@ -12940,48 +13074,48 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     ScheduleWidgetRefresh();
     SaveAllSettings();
     StartNtpSynchronization(true);
-    MSG message = {};
-    while (GetMessageW(&message, nullptr, 0, 0) > 0) {
-        if (message.message == WM_MOUSEWHEEL && ScrollSettingsTabHeaders(message.wParam, message.lParam)) {
+    MSG msg = {};
+    while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
+        if (msg.message == WM_MOUSEWHEEL && ScrollSettingsTabHeaders(msg.wParam, msg.lParam)) {
             continue;
         }
         HWND focusedWindow = GetAncestor(GetFocus(), GA_ROOT);
-        if (hHelp != nullptr && focusedWindow == hHelp && IsDialogMessageW(hHelp, &message)) {
+        if (hHelp != nullptr && focusedWindow == hHelp && IsDialogMessageW(hHelp, &msg)) {
             continue;
         }
-        if (hAbout != nullptr && focusedWindow == hAbout && IsDialogMessageW(hAbout, &message)) {
+        if (hAbout != nullptr && focusedWindow == hAbout && IsDialogMessageW(hAbout, &msg)) {
             continue;
         }
-        Widget* inputWidget = WidgetFromInputWindow(message.hwnd);
-        if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
-                && message.wParam == VK_ESCAPE
+        Widget* inputWidget = WidgetFromInputWindow(msg.hwnd);
+        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
+                && msg.wParam == VK_ESCAPE
                 && inputWidget != nullptr
                 && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
             StopWidgetAlarm(inputWidget);
             continue;
         }
-        if ((message.message == WM_KEYDOWN || message.message == WM_SYSKEYDOWN)
-                && message.wParam == VK_ESCAPE
+        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
+                && msg.wParam == VK_ESCAPE
                 && HideFullscreenWidgetsFromEscape()) {
             continue;
         }
-        if (message.message == WM_KEYDOWN
-                && message.wParam == L'M'
-                && (message.lParam & 1LL << 30) == 0
+        if (msg.message == WM_KEYDOWN
+                && msg.wParam == L'M'
+                && (msg.lParam & 1LL << 30) == 0
                 && inputWidget != nullptr) {
             ToggleAllWidgetSounds();
             continue;
         }
-        if (HandleWidgetSizeShortcut(inputWidget, message)) {
+        if (HandleWidgetSizeShortcut(inputWidget, msg)) {
             continue;
         }
         if (inputWidget != nullptr
                 && inputWidget->config.type == WIDGET_PANEL
-                && IsDialogMessageW(inputWidget->window, &message)) {
+                && IsDialogMessageW(inputWidget->window, &msg)) {
             continue;
         }
-        if (message.message == WM_KEYDOWN
-                && message.wParam == VK_TAB
+        if (msg.message == WM_KEYDOWN
+                && msg.wParam == VK_TAB
                 && GetKeyState(VK_CONTROL) >= 0
                 && hTabs != nullptr) {
             HWND focused = GetFocus();
@@ -13031,11 +13165,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
                 continue;
             }
         }
-        if (hSettings != nullptr && IsDialogMessageW(hSettings, &message)) {
+        if (hSettings != nullptr && IsDialogMessageW(hSettings, &msg)) {
             continue;
         }
-        TranslateMessage(&message);
-        DispatchMessageW(&message);
+        TranslateMessage(&msg);
+        DispatchMessageW(&msg);
     }
     ShutdownAnalogClockHost();
     if (hUiFont != nullptr) {
@@ -13053,5 +13187,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     if (winsockReady && ntpThreadFinished) {
         WSACleanup();
     }
-    return static_cast<int>(message.wParam);
+    return static_cast<int>(msg.wParam);
 }

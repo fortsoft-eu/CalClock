@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.3.1
+ * Last modified for version 1.5.3.2
  */
 
 #include "SelectionEdit.h"
@@ -258,6 +258,35 @@ static bool BeginSelection(HWND window, SelectionState& state, POINT point) {
     return true;
 }
 
+/// Handles a mouse press using system click tolerance and preserves native modifier, word, and line gestures.
+static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+    EndSelection(window, state);
+    if (wParam & (MK_SHIFT | MK_CONTROL)) {
+        state.clickCount = 0;
+        return DefSubclassProc(window, msg, wParam, lParam);
+    }
+    SetFocus(window);
+    const POINT point = POINT{
+        GET_X_LPARAM(lParam),
+        GET_Y_LPARAM(lParam)
+    };
+    const ULONGLONG time = GetTickCount64();
+    if (!ContinuesClickSequence(state, point, time)) {
+        state.clickCount = 1;
+    } else if (state.clickCount == 2) {
+        state.clickCount = 3;
+    } else {
+        state.clickCount = 2;
+    }
+    state.clickPoint = point;
+    state.clickTime = time;
+    if (state.clickCount >= 2 && BeginSelection(window, state, point)) {
+        return 0;
+    }
+    state.unit = SelectionUnit::Native;
+    return DefSubclassProc(window, WM_LBUTTONDOWN, wParam, lParam);
+}
+
 /// Adds system-sized repeated clicks and anchored selection while preserving native ordinary and modifier gestures.
 static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
         DWORD_PTR referenceData) {
@@ -265,33 +294,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
     switch (msg) {
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
-        {
-            EndSelection(window, state);
-            if (wParam & (MK_SHIFT | MK_CONTROL)) {
-                state.clickCount = 0;
-                return DefSubclassProc(window, msg, wParam, lParam);
-            }
-            SetFocus(window);
-            const POINT point = POINT{
-                GET_X_LPARAM(lParam),
-                GET_Y_LPARAM(lParam)
-            };
-            const ULONGLONG time = GetTickCount64();
-            if (!ContinuesClickSequence(state, point, time)) {
-                state.clickCount = 1;
-            } else if (state.clickCount == 2) {
-                state.clickCount = 3;
-            } else {
-                state.clickCount = 2;
-            }
-            state.clickPoint = point;
-            state.clickTime = time;
-            if (state.clickCount >= 2 && BeginSelection(window, state, point)) {
-                return 0;
-            }
-            state.unit = SelectionUnit::Native;
-            return DefSubclassProc(window, WM_LBUTTONDOWN, wParam, lParam);
-        }
+            return HandleSelectionPress(window, msg, wParam, lParam, state);
         case WM_MOUSEMOVE:
             if (state.unit == SelectionUnit::Word || state.unit == SelectionUnit::Line) {
                 if (wParam & MK_LBUTTON) {
