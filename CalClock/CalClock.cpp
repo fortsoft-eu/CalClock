@@ -743,6 +743,9 @@ static void CloseSettingsWindow();
 /// Creates draft snapshots and fullscreen previews when opening a new form.
 static void ShowSettingsWindow(int widgetId = -1);
 
+/// Creates or removes this application's per-user Windows startup entry and reports registry-operation success.
+static bool SetStartWithWindowsEnabled(bool enabled);
+
 /// Hides inactive pages before revealing the selected page, updates its state and mnemonics, and ends inapplicable
 /// previews.
 static void ShowSettingsTab(int tab);
@@ -1598,21 +1601,23 @@ static std::wstring StartWithWindowsCommand() {
     return L"\"" + std::wstring(executable, length) + L"\"";
 }
 
-/// Checks whether the per-user startup entry matches this executable's quoted path.
-static bool IsStartWithWindowsEnabled() {
+/// Returns whether Windows startup targets this executable, removing a stale or invalid application entry.
+static bool LoadStartWithWindowsSetting() {
     const wchar_t startupPath[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
     const wchar_t startupValue[] = L"CalClock";
     std::wstring expected = StartWithWindowsCommand();
     if (expected.empty()) {
+        SetStartWithWindowsEnabled(false);
         return false;
     }
     wchar_t actual[MAX_PATH * 2] = {};
     DWORD size = sizeof(actual);
-    if (RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ, nullptr, actual, &size) !=
-            ERROR_SUCCESS) {
-        return false;
+    LSTATUS result = RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ, nullptr, actual, &size);
+    bool matches = result == ERROR_SUCCESS && _wcsicmp(actual, expected.c_str()) == 0;
+    if (!matches) {
+        SetStartWithWindowsEnabled(false);
     }
-    return _wcsicmp(actual, expected.c_str()) == 0;
+    return matches;
 }
 
 /// Creates or removes this application's per-user Windows startup entry and reports registry-operation success.
@@ -1647,11 +1652,11 @@ static bool SetStartWithWindowsEnabled(bool enabled) {
     return written == ERROR_SUCCESS;
 }
 
-/// Loads language and startup defaults, time zones, and persisted XML or registry settings.
-/// Creates an initial analog widget if no stored settings can be loaded.
+/// Loads language, time zones, and persisted XML or registry settings.
+/// Removes a stale Windows startup entry and creates an initial analog widget if no stored settings can be loaded.
 static void LoadAllSettings() {
     SelectSystemLanguage();
-    startWithWindows = IsStartWithWindowsEnabled();
+    startWithWindows = false;
     ntpPreset = NTP_PRESET_AUTO;
     ntpServers = NtpServersForPreset(ntpPreset);
     LoadTimeZones();
@@ -1660,13 +1665,16 @@ static void LoadAllSettings() {
     SettingsSnapshot snapshot = {};
     if (storageUsesXml && ReadSettingsXml(xmlPath, appLanguage, CreateStoredWidgetDefaults, &snapshot)) {
         ApplySettingsSnapshot(snapshot);
+        startWithWindows = LoadStartWithWindowsSetting();
         return;
     }
     SettingsSnapshot defaults = CaptureSettingsSnapshot();
     if (ReadRegistrySettings(defaults, CreateStoredWidgetDefaults, &snapshot)) {
         ApplySettingsSnapshot(snapshot);
+        startWithWindows = LoadStartWithWindowsSetting();
         return;
     }
+    SetStartWithWindowsEnabled(false);
     std::unique_ptr<Widget> widget(new Widget());
     widget->config = DefaultConfig(WIDGET_ANALOG, 0);
     widgets.push_back(std::move(widget));
