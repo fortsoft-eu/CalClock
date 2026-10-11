@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.1
+ * Last modified for version 1.5.4.0
  */
 
 #define NOMINMAX
@@ -238,7 +238,10 @@ POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work,
     if (verticalAttachment != nullptr) {
         *verticalAttachment = top || bottom;
     }
-    POINT position = { widgetRect.left, widgetRect.top };
+    POINT position = {
+        widgetRect.left,
+        widgetRect.top
+    };
     if (left) {
         position.x = work.left;
     } else if (right) {

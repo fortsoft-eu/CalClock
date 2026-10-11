@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.4.0
  */
 
 #pragma once
@@ -34,6 +34,8 @@ extern const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT];
 extern const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT];
 extern const wchar_t* WIDGET_LIMIT_MESSAGES[LANG_COUNT];
 extern const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT];
+extern const wchar_t* XML_FILE_TYPE_LABELS[LANG_COUNT];
+extern const wchar_t* CSV_FILE_TYPE_LABELS[LANG_COUNT];
 extern const wchar_t* LANGUAGE_LOCALES[LANG_COUNT];
 extern const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT];
 extern const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT];
@@ -87,6 +89,10 @@ extern const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT];
 extern const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT];
 extern const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT];
 extern const wchar_t* NTP_SYNC_LABELS[LANG_COUNT];
+extern const wchar_t* NTP_LOG_COLUMN_LABELS[LANG_COUNT][3];
+extern const wchar_t* NTP_LOG_STATUS_LABELS[LANG_COUNT][2];
+extern const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT];
+extern const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT];
 extern const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT];
 extern const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT];
 extern const wchar_t* NTP_STATUS_WAITING[LANG_COUNT];

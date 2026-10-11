@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.4.0
  */
 
 #define NOMINMAX
@@ -315,7 +315,13 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
     std::vector<NtpSample> samples;
     for (size_t index = 0; index < servers.size() && !parameters->stopRequested->load(); index++) {
         NtpSample sample = {};
-        if (QueryNtpServer(servers[index], parameters->stopRequested, &sample)) {
+        bool success = QueryNtpServer(servers[index], parameters->stopRequested, &sample);
+        result->logEntries.push_back(NtpQueryLogEntry{
+            CurrentFileTimeValue(),
+            servers[index],
+            success
+        });
+        if (success) {
             samples.push_back(sample);
         }
     }

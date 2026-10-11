@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.4.0
  */
 
 #pragma once
@@ -334,6 +334,7 @@ struct SettingsSnapshot {
     bool useNtpTime = true;
     int ntpPreset = NTP_PRESET_AUTO;
     std::wstring ntpServers;
+    std::wstring fileDialogDirectory;
     int settingsX = CW_USEDEFAULT;
     int settingsY = CW_USEDEFAULT;
     int settingsTab = 0;

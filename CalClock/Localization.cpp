@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.5.4.0
  */
 
 #include "Localization.h"
@@ -975,6 +975,46 @@ const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT] = {
     L" - kopi",
     L" - afrit",
     L" - kopya"
+};
+
+const wchar_t* XML_FILE_TYPE_LABELS[LANG_COUNT] = {
+    L"Rozšiřitelný značkovací jazyk (*.xml)",
+    L"Extensible Markup Language (*.xml)",
+    L"Erweiterbare Auszeichnungssprache (*.xml)",
+    L"Langage de balisage extensible (*.xml)",
+    L"Lenguaje de marcado extensible (*.xml)",
+    L"Linguaggio di marcatura estensibile (*.xml)",
+    L"Rozszerzalny język znaczników (*.xml)",
+    L"Rozšíriteľný značkovací jazyk (*.xml)",
+    L"Extensible Markup Language (*.xml)",
+    L"Extensible Markup Language (*.xml)",
+    L"Linguagem de marcação extensível (*.xml)",
+    L"Utvidbart markeringsspråk (*.xml)",
+    L"Utökningsbart märkspråk (*.xml)",
+    L"Laajennettava merkintäkieli (*.xml)",
+    L"Udvideligt opmærkningssprog (*.xml)",
+    L"Útvíkkanlegt ívafsmál (*.xml)",
+    L"Genişletilebilir işaretleme dili (*.xml)"
+};
+
+const wchar_t* CSV_FILE_TYPE_LABELS[LANG_COUNT] = {
+    L"Čárkami oddělené hodnoty (*.csv)",
+    L"Comma Separated Values (*.csv)",
+    L"Durch Kommas getrennte Werte (*.csv)",
+    L"Valeurs séparées par des virgules (*.csv)",
+    L"Valores separados por comas (*.csv)",
+    L"Valori separati da virgole (*.csv)",
+    L"Wartości rozdzielane przecinkami (*.csv)",
+    L"Hodnoty oddelené čiarkami (*.csv)",
+    L"Comma Separated Values (*.csv)",
+    L"Comma Separated Values (*.csv)",
+    L"Valores separados por vírgulas (*.csv)",
+    L"Kommaseparerte verdier (*.csv)",
+    L"Kommaseparerade värden (*.csv)",
+    L"Pilkuilla erotetut arvot (*.csv)",
+    L"Kommaseparerede værdier (*.csv)",
+    L"Gildi aðskilin með kommum (*.csv)",
+    L"Virgülle ayrılmış değerler (*.csv)"
 };
 
 const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT] = {
@@ -2259,6 +2299,173 @@ const wchar_t* NTP_SYNC_LABELS[LANG_COUNT] = {
     L"&Synkroniser nu",
     L"&Samstilla núna",
     L"Şimdi &eşitle"
+};
+
+const wchar_t* NTP_LOG_COLUMN_LABELS[LANG_COUNT][3] = {
+    {
+        L"Datum a čas",
+        L"Server NTP",
+        L"Stav"
+    }, {
+        L"Date and time",
+        L"NTP server",
+        L"Status"
+    }, {
+        L"Datum und Uhrzeit",
+        L"NTP-Server",
+        L"Status"
+    }, {
+        L"Date et heure",
+        L"Serveur NTP",
+        L"État"
+    }, {
+        L"Fecha y hora",
+        L"Servidor NTP",
+        L"Estado"
+    }, {
+        L"Data e ora",
+        L"Server NTP",
+        L"Stato"
+    }, {
+        L"Data i godzina",
+        L"Serwer NTP",
+        L"Stan"
+    }, {
+        L"Dátum a čas",
+        L"Server NTP",
+        L"Stav"
+    }, {
+        L"Date and time",
+        L"NTP server",
+        L"Status"
+    }, {
+        L"Date and time",
+        L"NTP server",
+        L"Status"
+    }, {
+        L"Data e hora",
+        L"Servidor NTP",
+        L"Estado"
+    }, {
+        L"Dato og klokkeslett",
+        L"NTP-server",
+        L"Status"
+    }, {
+        L"Datum och tid",
+        L"NTP-server",
+        L"Status"
+    }, {
+        L"Päivämäärä ja aika",
+        L"NTP-palvelin",
+        L"Tila"
+    }, {
+        L"Dato og klokkeslæt",
+        L"NTP-server",
+        L"Status"
+    }, {
+        L"Dagsetning og tími",
+        L"NTP-þjónn",
+        L"Staða"
+    }, {
+        L"Tarih ve saat",
+        L"NTP sunucusu",
+        L"Durum"
+    }
+};
+
+const wchar_t* NTP_LOG_STATUS_LABELS[LANG_COUNT][2] = {
+    {
+        L"Neúspěch",
+        L"Úspěch"
+    }, {
+        L"Failed",
+        L"Successful"
+    }, {
+        L"Fehlgeschlagen",
+        L"Erfolgreich"
+    }, {
+        L"Échec",
+        L"Réussite"
+    }, {
+        L"Fallo",
+        L"Éxito"
+    }, {
+        L"Errore",
+        L"Riuscita"
+    }, {
+        L"Niepowodzenie",
+        L"Powodzenie"
+    }, {
+        L"Neúspech",
+        L"Úspech"
+    }, {
+        L"Failed",
+        L"Successful"
+    }, {
+        L"Failed",
+        L"Successful"
+    }, {
+        L"Falha",
+        L"Sucesso"
+    }, {
+        L"Mislykket",
+        L"Vellykket"
+    }, {
+        L"Misslyckades",
+        L"Lyckades"
+    }, {
+        L"Epäonnistui",
+        L"Onnistui"
+    }, {
+        L"Mislykkedes",
+        L"Lykkedes"
+    }, {
+        L"Mistókst",
+        L"Tókst"
+    }, {
+        L"Başarısız",
+        L"Başarılı"
+    }
+};
+
+const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT] = {
+    L"Uložit log",
+    L"Save log",
+    L"Protokoll speichern",
+    L"Enregistrer le journal",
+    L"Guardar registro",
+    L"Salva registro",
+    L"Zapisz dziennik",
+    L"Uložiť log",
+    L"Save log",
+    L"Save log",
+    L"Salvar registro",
+    L"Lagre logg",
+    L"Spara logg",
+    L"Tallenna loki",
+    L"Gem log",
+    L"Vista annál",
+    L"Günlüğü kaydet"
+};
+
+const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT] = {
+    L"Log se nepodařilo uložit.",
+    L"The log could not be saved.",
+    L"Das Protokoll konnte nicht gespeichert werden.",
+    L"Impossible d’enregistrer le journal.",
+    L"No se pudo guardar el registro.",
+    L"Impossibile salvare il registro.",
+    L"Nie można zapisać dziennika.",
+    L"Log sa nepodarilo uložiť.",
+    L"The log could not be saved.",
+    L"The log could not be saved.",
+    L"Não foi possível salvar o registro.",
+    L"Loggen kunne ikke lagres.",
+    L"Loggen kunde inte sparas.",
+    L"Lokia ei voitu tallentaa.",
+    L"Loggen kunne ikke gemmes.",
+    L"Ekki tókst að vista annálinn.",
+    L"Günlük kaydedilemedi."
 };
 
 const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT] = {

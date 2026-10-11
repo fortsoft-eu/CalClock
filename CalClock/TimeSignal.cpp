@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.2
+ * Last modified for version 1.5.4.0
  */
 
 #define NOMINMAX
@@ -482,7 +482,10 @@ static std::vector<TimeSignalTone> PlanTimeSignalIntervals(ULONGLONG now) {
 /// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
 /// Tracks completed time to avoid replaying already rendered portions.
 static DWORD WINAPI TimeSignalThreadProc(void*) {
-    HANDLE events[] = { hTimeSignalStopEvent, hTimeSignalWakeEvent };
+    HANDLE events[] = {
+        hTimeSignalStopEvent,
+        hTimeSignalWakeEvent
+    };
     ULONGLONG playedUntil = 0;
     while (WaitForSingleObject(hTimeSignalStopEvent, 0) != WAIT_OBJECT_0) {
         ULONGLONG now = CurrentFileTimeValue();

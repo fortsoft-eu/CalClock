@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.4.0
  */
 
 #define NOMINMAX
@@ -276,6 +276,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlTextAttribute(writer, L"ntpServers", snapshot.ntpServers);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlTextAttribute(writer, L"fileDialogDirectory", snapshot.fileDialogDirectory);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"settingsX", snapshot.settingsX);
@@ -1044,6 +1047,7 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             if (ReadXmlAttribute(reader, L"ntpServers", &text) && text.size() <= 1024) {
                 loaded.ntpServers = text;
             }
+            ReadXmlAttribute(reader, L"fileDialogDirectory", &loaded.fileDialogDirectory);
             if (ReadXmlNumberAttribute(reader, L"settingsX", &number) && number >= INT_MIN && number <= INT_MAX) {
                 loaded.settingsX = static_cast<int>(number);
             }
@@ -1574,6 +1578,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         loaded.ntpPreset = static_cast<int>(value);
     }
     ReadString(root, L"NtpServers", &loaded.ntpServers);
+    ReadString(root, L"FileDialogDirectory", &loaded.fileDialogDirectory);
     if (ReadDword(root, L"SettingsX", &value)) {
         loaded.settingsX = static_cast<int>(value);
     }
@@ -1697,6 +1702,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"UseNtpTime", snapshot.useNtpTime);
     WriteDword(root, L"NtpPreset", snapshot.ntpPreset);
     WriteString(root, L"NtpServers", snapshot.ntpServers);
+    WriteString(root, L"FileDialogDirectory", snapshot.fileDialogDirectory);
     WriteDword(root, L"SettingsX", snapshot.settingsX);
     WriteDword(root, L"SettingsY", snapshot.settingsY);
     WriteDword(root, L"SettingsTab", snapshot.settingsTab);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.5.4.0
  */
 
 #pragma once
@@ -29,13 +29,22 @@
 #include "CalClockTypes.h"
 #include <atomic>
 #include <string>
+#include <vector>
 
-/// Carries an NTP query generation, success state, selected server, and clock offset back to the UI thread.
+/// Records a server query's completion time in UTC FILETIME ticks, server name, and success state.
+struct NtpQueryLogEntry {
+    ULONGLONG completedTime = 0;
+    std::wstring server;
+    bool success = false;
+};
+
+/// Carries an NTP query generation, combined clock offset, selected server, and individual query records to the UI thread.
 struct NtpThreadResult {
     bool success = false;
     LONGLONG offset100Nanoseconds = 0;
     std::wstring server;
     ULONG generation = 0;
+    std::vector<NtpQueryLogEntry> logEntries;
 };
 
 /// Returns the preset's server list, resolving the automatic preset from the user's region.

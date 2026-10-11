@@ -127,7 +127,7 @@ XML storage can be enabled in Settings. It uses:
 
 After XML storage is written successfully, CalClock removes its application state from the registry. Switching back to registry storage analogously removes the automatic XML settings file and empty CalClock directories. Importing an XML file immediately loads and saves its settings to the currently selected storage backend without changing the storage type. The mute state is stored independently for each sound-capable widget. Start with Windows is stored as the `CalClock` value under the current user's standard Windows `Run` registry key.
 
-## Building
+## Building and packaging
 
 Requirements:
 
@@ -141,6 +141,8 @@ Release\CalClock.exe
 ```
 
 Only the Win32/x86 configuration is supported. The project intentionally does not provide an x64 configuration because its integration with the Windows clock control requires x86 compatibility.
+
+Run `.\PackageRelease.ps1` after building to create `CalClock-<version>-win32.zip`. The version is read from `Release\CalClock.exe`. The archive contains `CalClock.exe` and `license.txt` directly in its root. Optional signing parameters are supplied only at run time, for example: `.\PackageRelease.ps1 -SignerName "Certificate name" -SignToolPath "C:\Path\To\signtool.exe" -TimestampServer "https://timestamp.example"`. An existing valid Authenticode signature is verified and never replaced. Previous CalClock ZIP packages are removed at the beginning of every run; signing or verification failures stop packaging.
 
 ## License
 
