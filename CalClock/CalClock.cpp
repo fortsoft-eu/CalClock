@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.5.4.1
  */
 
 #define NOMINMAX
@@ -76,7 +76,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
-/// Function pointer types
+ /// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
@@ -224,6 +224,7 @@ static const int PANEL_SIDE_PADDING = 12;
 const int SETTINGS_HORIZONTAL_SCALE_DENOMINATOR = 5;
 const int SETTINGS_HORIZONTAL_SCALE_NUMERATOR = 6;
 const int SETTINGS_PAGE_CONTENT_RIGHT = 418;
+const int SETTINGS_TRACKBAR_HEIGHT = 34;
 const int SETTINGS_WIDGET_LIST_RIGHT = 312;
 const int SETTINGS_WINDOW_HEIGHT = 521;
 const int SETTINGS_WINDOW_WIDTH = 778;
@@ -571,6 +572,7 @@ bool displayRefreshPending = false;
 static bool fullscreenCursorHidden = false;
 bool ntpHasSynchronized = false;
 bool ntpLastQueryFailed = false;
+static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
 bool settingsAppearancePreviewActive = false;
 bool settingsAppFontItalic = false;
@@ -670,8 +672,11 @@ std::vector<HWND> timeSignalControls;
 
 /// Forward declarations
 
-/// Fits NTP log columns to their contents and headings in the current control font.
-static void UpdateNtpLogColumnWidths();
+/// Fits NTP log columns on first display, reserving each heading's sort-arrow space.
+static void InitializeNtpLogColumnWidths();
+
+/// Scrolls the NTP log to its last displayed row using its current native layout.
+static void ScrollNtpLogToBottom();
 
 /// Selects or reverses NTP log sorting after a column-heading click.
 static void SortNtpLogByColumn(int column);
@@ -3275,7 +3280,8 @@ static void UpdateSettingsControlMetrics() {
     }
     AlignSettingsButtons();
     UpdateNtpLabelHeights();
-    UpdateNtpLogColumnWidths();
+    ntpLogColumnsInitialized = false;
+    InitializeNtpLogColumnWidths();
 }
 
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and requests
@@ -7898,9 +7904,10 @@ static void ApplyNtpLogSort() {
     }
 }
 
-/// Fits NTP log columns to their contents and headings in the current control font.
-static void UpdateNtpLogColumnWidths() {
-    if (hNtpLogList == nullptr) {
+/// Fits NTP log columns on first display, reserving each heading's sort-arrow space.
+static void InitializeNtpLogColumnWidths() {
+    bool timePageVisible = hTimePage != nullptr && (GetWindowLongPtrW(hTimePage, GWL_STYLE) & WS_VISIBLE) != 0;
+    if (ntpLogColumnsInitialized || hNtpLogList == nullptr || !timePageVisible) {
         return;
     }
     HWND header = ListView_GetHeader(hNtpLogList);
@@ -7914,13 +7921,18 @@ static void UpdateNtpLogColumnWidths() {
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(header, WM_GETFONT, 0, 0));
     HGDIOBJ previousFont = font == nullptr ? nullptr : SelectObject(dc, font);
     for (int column = 0; column < 3; column++) {
-        const wchar_t* caption = NTP_LOG_COLUMN_LABELS[appLanguage][column];
+        wchar_t caption[256] = {};
+        HDITEMW item = {};
+        item.mask = HDI_TEXT;
+        item.pszText = caption;
+        item.cchTextMax = static_cast<int>(ARRAYSIZE(caption));
+        if (!Header_GetItem(header, column, &item)) {
+            continue;
+        }
         SIZE extent = {};
         GetTextExtentPoint32W(dc, caption, static_cast<int>(wcslen(caption)), &extent);
-        int headerWidth = static_cast<int>(extent.cx) + 2 * GetSystemMetrics(SM_CXEDGE) + 8;
-        if (column == ntpLogSortColumn) {
-            headerWidth += GetSystemMetrics(SM_CXVSCROLL);
-        }
+        int headerWidth = static_cast<int>(extent.cx) + 2 * GetSystemMetrics(SM_CXEDGE) + 8
+            + GetSystemMetrics(SM_CXVSCROLL);
         ListView_SetColumnWidth(hNtpLogList, column, LVSCW_AUTOSIZE);
         int contentWidth = ListView_GetColumnWidth(hNtpLogList, column);
         ListView_SetColumnWidth(hNtpLogList, column, std::max(headerWidth, contentWidth));
@@ -7929,6 +7941,19 @@ static void UpdateNtpLogColumnWidths() {
         SelectObject(dc, previousFont);
     }
     ReleaseDC(header, dc);
+    ntpLogColumnsInitialized = true;
+    ScrollNtpLogToBottom();
+}
+
+/// Scrolls the NTP log to its last displayed row using its current native layout.
+static void ScrollNtpLogToBottom() {
+    if (hNtpLogList == nullptr) {
+        return;
+    }
+    int lastRow = ListView_GetItemCount(hNtpLogList) - 1;
+    if (lastRow >= 0) {
+        ListView_EnsureVisible(hNtpLogList, lastRow, FALSE);
+    }
 }
 
 /// Selects or reverses NTP log sorting after a column-heading click.
@@ -7944,7 +7969,6 @@ static void SortNtpLogByColumn(int column) {
     }
     WindowRedrawScope redraw(hNtpLogList);
     ApplyNtpLogSort();
-    UpdateNtpLogColumnWidths();
 }
 
 /// Updates both NTP labels for two lines in their current fonts without moving or resizing the log or export button.
@@ -7989,7 +8013,8 @@ static void UpdateNtpLabelHeights() {
     }
 }
 
-/// Selects all NTP log rows with Ctrl+A and releases the log handle and subclass on destruction.
+/// Selects all NTP log rows with Ctrl+A, restores bottom scrolling after native layout or redraw changes, and releases
+/// the log handle and subclass on destruction.
 static LRESULT CALLBACK NtpLogSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
@@ -8004,7 +8029,16 @@ static LRESULT CALLBACK NtpLogSubclassProc(HWND window, UINT msg, WPARAM wParam,
         }
         RemoveWindowSubclass(window, NtpLogSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, msg, wParam, lParam);
+    LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
+    bool layoutChanged = msg == WM_SIZE
+        || msg == WM_SETFONT
+        || msg == WM_THEMECHANGED
+        || msg == WM_SETREDRAW && wParam != FALSE
+        || msg == WM_SHOWWINDOW && wParam != FALSE;
+    if (layoutChanged) {
+        ScrollNtpLogToBottom();
+    }
+    return result;
 }
 
 /// Populates the NTP list headings and restores all records collected since application startup.
@@ -8012,6 +8046,7 @@ static void InitializeNtpLog() {
     if (hNtpLogList == nullptr) {
         return;
     }
+    ntpLogColumnsInitialized = false;
     ListView_SetExtendedListViewStyle(hNtpLogList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
     LVCOLUMNW column = {};
     column.mask = LVCF_TEXT | LVCF_SUBITEM;
@@ -8025,6 +8060,7 @@ static void InitializeNtpLog() {
     }
     ApplyNtpLogSort();
     SetWindowSubclass(hNtpLogList, NtpLogSubclassProc, ID_NTP_LOG, 0);
+    ScrollNtpLogToBottom();
 }
 
 /// Retains completed server queries, appends them in the selected order, and scrolls to the last displayed row.
@@ -8039,11 +8075,7 @@ static void AppendNtpSynchronizationLog(const std::vector<NtpQueryLogEntry>& ent
         InsertNtpLogEntry(ntpSynchronizationLog[index], index);
     }
     ApplyNtpLogSort();
-    UpdateNtpLogColumnWidths();
-    int lastRow = ListView_GetItemCount(hNtpLogList) - 1;
-    if (lastRow >= 0) {
-        ListView_EnsureVisible(hNtpLogList, lastRow, FALSE);
-    }
+    ScrollNtpLogToBottom();
 }
 
 /// Updates NTP option availability and the localized synchronization status for the selected time source.
@@ -8114,6 +8146,10 @@ static void ShowSettingsTab(int tab) {
     if (activePage != nullptr && (GetWindowLongPtrW(activePage, GWL_STYLE) & WS_VISIBLE) == 0) {
         SetWindowPos(activePage, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         SetControlVisible(activePage, true);
+    }
+    if (activePage == hTimePage) {
+        InitializeNtpLogColumnWidths();
+        ScrollNtpLogToBottom();
     }
 }
 
@@ -8694,7 +8730,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     if (updateLayout) {
         int opacityTop = hasSize ? 38 : 4;
         SetSettingsControlPosition(hOpacityLabel, 8, opacityTop + 7, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
-        SetSettingsControlPosition(hOpacityTrackBar, 121, opacityTop, 250, 32);
+        SetSettingsControlPosition(hOpacityTrackBar, 121, opacityTop, 250, SETTINGS_TRACKBAR_HEIGHT);
         SetSettingsControlPosition(hOpacityValue, 246, opacityTop + 7, SETTINGS_PAGE_CONTENT_RIGHT - 246, 22);
         if (hasTextFont) {
             int fontX = panel ? 238 : 52;
@@ -8751,7 +8787,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
                 borderTop = 238;
             }
             SetSettingsControlPosition(hBorderLabel, 8, borderTop + 8, SETTINGS_PAGE_CONTENT_RIGHT - 8, 22);
-            SetSettingsControlPosition(hBorderTrackBar, 121, borderTop, 111, 32);
+            SetSettingsControlPosition(hBorderTrackBar, 121, borderTop, 111, SETTINGS_TRACKBAR_HEIGHT);
             SetSettingsControlPosition(hBorderColorButton, 238, borderTop + 2, 178, 27);
         }
         if (hWidgetDisableThemesCheck != nullptr
@@ -11013,16 +11049,16 @@ static bool CreateSettingsControls() {
         SendMessageW(hSizeCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(sizeLabel.c_str()));
     }
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-        hAdditionalSizeCombos[index] = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST, 239 + index * 91,
-            8, 87, 180, hAppearancePage, ID_ADDITIONAL_SIZE_BASE + index, &appearanceControls);
+        hAdditionalSizeCombos[index] = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
+            239 + index * 91, 8, 87, 180, hAppearancePage, ID_ADDITIONAL_SIZE_BASE + index, &appearanceControls);
         for (int item = 0; item < sizeCount; item++) {
             std::wstring label = std::to_wstring(sizes[item]) + L" px";
             SendMessageW(hAdditionalSizeCombos[index], CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(label.c_str()));
         }
     }
     hOpacityLabel = AddStatic(hAppearancePage, TXT_OPACITY, 8, 11, 22, &appearanceControls);
-    hOpacityTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS, 121, 4, 250, 32,
-        hAppearancePage, ID_OPACITY, &appearanceControls);
+    hOpacityTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
+        121, 4, 250, SETTINGS_TRACKBAR_HEIGHT, hAppearancePage, ID_OPACITY, &appearanceControls);
     SendMessageW(hOpacityTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX));
     SendMessageW(hOpacityTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hOpacityTrackBar, TBM_SETLINESIZE, 0, 1);
@@ -11030,8 +11066,8 @@ static bool CreateSettingsControls() {
     hOpacityValue = AddControl(0, L"STATIC", L"", SS_RIGHT | WS_CLIPSIBLINGS, 246, 11,
         SETTINGS_PAGE_CONTENT_RIGHT - 246, 22, hAppearancePage, 0, &appearanceControls);
     hFontSizeLabel = AddStatic(hAppearancePage, TXT_FONT_SIZE, 8, 45, 22, &appearanceControls);
-    hFontSizeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS, 121, 38, 250, 32,
-        hAppearancePage, ID_FONT_SIZE, &appearanceControls);
+    hFontSizeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
+        121, 38, 250, SETTINGS_TRACKBAR_HEIGHT, hAppearancePage, ID_FONT_SIZE, &appearanceControls);
     SendMessageW(hFontSizeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(DIGITAL_FONT_SIZE_MIN, DIGITAL_FONT_SIZE_MAX));
     SendMessageW(hFontSizeTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hFontSizeTrackBar, TBM_SETLINESIZE, 0, 1);
@@ -11057,7 +11093,7 @@ static bool CreateSettingsControls() {
     hPaddingLabel = AddUnderlayStatic(hAppearancePage, PADDING_LABELS[appLanguage], WS_VISIBLE, 8, 169, 22,
         &appearanceControls);
     hPaddingTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
-        121, 162, 250, 32, hAppearancePage, ID_PADDING, &appearanceControls);
+        121, 162, 250, SETTINGS_TRACKBAR_HEIGHT, hAppearancePage, ID_PADDING, &appearanceControls);
     SendMessageW(hPaddingTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_PADDING_MAX));
     SendMessageW(hPaddingTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hPaddingTrackBar, TBM_SETLINESIZE, 0, 1);
@@ -11067,7 +11103,7 @@ static bool CreateSettingsControls() {
     hBorderWidthLabel = AddUnderlayStatic(hAppearancePage, BORDER_WIDTH_LABELS[appLanguage], WS_VISIBLE,
         8, 201, 22, &appearanceControls);
     hBorderWidthTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
-        121, 194, 250, 32, hAppearancePage, ID_BORDER_WIDTH, &appearanceControls);
+        121, 194, 250, SETTINGS_TRACKBAR_HEIGHT, hAppearancePage, ID_BORDER_WIDTH, &appearanceControls);
     SendMessageW(hBorderWidthTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_BORDER_WIDTH_MAX));
     SendMessageW(hBorderWidthTrackBar, TBM_SETTICFREQ, 1, 0);
     SendMessageW(hBorderWidthTrackBar, TBM_SETLINESIZE, 0, 1);
@@ -11077,7 +11113,7 @@ static bool CreateSettingsControls() {
     hBorderLabel = AddUnderlayStatic(hAppearancePage, BORDER_LABELS[appLanguage], WS_VISIBLE,
         8, 233, 22, &appearanceControls);
     hBorderTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
-        121, 226, 111, 32, hAppearancePage, ID_BORDER, &appearanceControls);
+        121, 226, 111, SETTINGS_TRACKBAR_HEIGHT, hAppearancePage, ID_BORDER, &appearanceControls);
     SendMessageW(hBorderTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, 3));
     SendMessageW(hBorderTrackBar, TBM_SETTICFREQ, 1, 0);
     SendMessageW(hBorderTrackBar, TBM_SETLINESIZE, 0, 1);
@@ -11145,8 +11181,8 @@ static bool CreateSettingsControls() {
     y += 34;
     hAlarmVolumeLabel = AddUnderlayStatic(hAlarmPage, ALARM_VOLUME_LABELS[appLanguage], WS_VISIBLE,
         left, y + 7, 22, &alarmControls);
-    hAlarmVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, y, 174, 32,
-        hAlarmPage, ID_ALARM_VOLUME, &alarmControls);
+    hAlarmVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, y, 174,
+        SETTINGS_TRACKBAR_HEIGHT, hAlarmPage, ID_ALARM_VOLUME, &alarmControls);
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
         TIME_SIGNAL_VOLUME_SLIDER_MAX));
     for (int decibels = -54; decibels < 0; decibels += 6) {
@@ -11250,8 +11286,8 @@ static bool CreateSettingsControls() {
         hApplicationPage, ID_TIME_SIGNAL_TEST, &applicationControls);
     hTimeSignalVolumeLabel = AddUnderlayStatic(hApplicationPage, TIME_SIGNAL_VOLUME_LABELS[appLanguage], WS_VISIBLE,
         8, 151, 22, &applicationControls);
-    hTimeSignalVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, 144, 174, 32,
-        hApplicationPage, ID_TIME_SIGNAL_VOLUME, &applicationControls);
+    hTimeSignalVolumeTrackBar = AddControl(0, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ, 174, 144, 174,
+        SETTINGS_TRACKBAR_HEIGHT, hApplicationPage, ID_TIME_SIGNAL_VOLUME, &applicationControls);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
         TIME_SIGNAL_VOLUME_SLIDER_MAX));
     for (int decibels = -54; decibels < 0; decibels += 6) {
