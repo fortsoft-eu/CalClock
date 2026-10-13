@@ -8,7 +8,7 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 
 - Up to 32 independently configured widgets
 - Per-widget language, time zone, time offset, visibility, and always-on-top state
-- Analog clocks based on the Windows `ClockWndMain` control, with platform-detected sizes and second-hand support
+- Analog clocks with selectable face sizes and an optional second hand
 - Configurable digital clocks with fonts, colors, opacity, padding, borders, an optional leading zero, and an optional transparent background
 - Native Windows calendars with selectable dates, four border styles, configurable border color, week numbers, first-day settings, and 33 clipboard formats
 - Calendar-and-clock panels with up to two additional named clocks in independent time zones, separate clock-face sizes, four border styles, configurable border color, UTC text, a leading-zero option, and separate fonts for each text row
@@ -51,15 +51,14 @@ On first launch, CalClock selects the application language from the Windows user
 - Open Settings from a widget's context menu to select that widget immediately.
 - Use `Ctrl` or `Shift` for multiple selection in the widget list, `Ctrl+A` to select all, and `Del` to remove the selected widgets. `Insert` toggles the current item and moves the list cursor to the next row, as in Total Commander.
 - All widget-list shortcuts also work while the Remove or Duplicate button has focus. Using a shortcut on either button moves focus to the widget list and performs the action. Use `Ctrl+C` to copy selected widgets and `Ctrl+V` to append copies in list order. Copies include all widget settings and receive a name suffix in the application language. The Duplicate button performs the same duplication directly. Up to 32 widgets are allowed. If there is not enough room for all copies, those that fit are added in list order and a notification appears for the remaining copies.
-- Use `Ctrl+A` or triple-click in a text field to select all its text.
 
-When several widgets are selected, their General, Appearance, Alarm, and Signal controls are disabled, while the global Time and Application tabs remain available. Settings remembers the last open tab and the last widget type added. On a small work area, the Settings window provides horizontal or vertical scrolling as required.
+Settings remembers the last open tab and the last widget type added.
 
 Calendar dates can be copied using 33 formats covering local, sortable, day-first, month-first, textual, and weekday forms. Every mask is available in every interface language. The default local short format follows the widget language, and textual month and weekday names also use that language. Format entries show the mask and a live example.
 
 A calendar-and-clock panel can show up to two additional clocks. Enable each clock on the General tab and choose its name and time zone. Named zones follow their own daylight saving rules; fixed UTC offsets remain fixed. When additional clocks are enabled, each clock shows its local day of the week below its time. The three size lists on the Appearance tab control the main clock, Clock 1, and Clock 2 in that order. Right-click an additional clock face to choose its size. Additional clocks always omit seconds and share the widget's language, time format, fonts, and time offset. Adding, removing, or resizing clocks keeps the widget attached to the same work-area edges.
 
-In a calendar-and-clock panel, the upper date is a link that returns the calendar to today, while the lower time-zone text opens the classic Windows Date and Time settings. Both links can be reached with `Tab`, show a focus rectangle, and can be activated from the keyboard. The native calendar remains fully interactive but omits its redundant Today row in this combined layout.
+In a calendar-and-clock panel, the upper date is a link that returns the calendar to today, while the lower time-zone text opens the classic Windows Date and Time settings.
 
 The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-overlapping grid while preserving their approximate manual layout. The widget whose menu invoked the command remains in place; the notification-area command arranges each monitor independently. Monitor clocks are excluded.
 
@@ -69,15 +68,15 @@ For standalone calendars, **Today row** in the widget menu or on the Appearance 
 
 Appearance changes are previewed immediately on the selected widget. `Cancel` restores unapplied appearance changes, while `Default appearance` restores the defaults for that widget type.
 
-Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border color; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Font dialogs show only the choices used by their target and omit the unused preview and effects; application and calendar UI fonts omit size, while digital and panel text fonts include it. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
+Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border color; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. A native calendar accepts a custom font only when visual styles are disabled for it or for the application.
 
-Application language, UI font, font smoothing, visual styles, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Applying a new application language immediately rebuilds the open Settings window in that language. Font antialiasing offers **ClearType**, **GDI**, and **None**. On the Appearance tab, font antialiasing and the option to disable themes occupy the same position for every widget type, with **Default appearance** below them.
+Application language, UI font, font smoothing, visual styles, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
 The **Audio volume** slider on the Alarm tab controls internally played audio files separately for each widget and shows the level in dB. The default is **−18 dB**, which preserves the file’s original level (**100%**). Moving the slider to the right amplifies the audio; the **0 dB** maximum is approximately **794%** of the original amplitude. The leftmost position is **−∞ dB** (silence). Changes take effect during the audio test. The slider is disabled for files opened in an external application. Amplification applies to decoded audio, including WAV, MP3, WMA, AAC, M4A, and FLAC when supported by Windows. Legacy playback for files that cannot be decoded, such as MIDI, is limited to 100%.
 
 The alarm weekday controls follow the first day of the week used by the selected application culture. Stored alarm days retain their meaning when the application language changes. Enabling an alarm from a widget menu when no weekday is selected opens that widget's Alarm tab instead of enabling an alarm that cannot run.
 
-The default digital-clock border width is zero. **Leading zero** offers **Show** (the default), **Keep space**, and **No space**. **Keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Floating digital clocks align time to the left and keep a fixed size as time advances. Monitor clocks center a fixed time area sized for the selected font and format, including space for two hour digits. Changing time does not recenter or resize the text. The AM/PM or UTC row stays centered independently. Monitor clocks default to white text on a black background.
+**Leading zero** offers **Show** (the default), **Keep space**, and **No space**. **Keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Monitor clocks default to white text on a black background.
 
 ## Time and alarms
 
@@ -93,23 +92,27 @@ The offset is useful in broadcast studios, for example, to compensate for transm
 
 CalClock can use either the Windows system time or an application-local correction obtained from NTP servers. This selection is global for all widgets. Synchronization never changes the Windows clock. If an NTP connection is lost after a successful synchronization, the last known correction remains active in process memory. Changing servers also retains the current valid correction until a new response is obtained.
 
+The Time tab records NTP server queries since the application started. Each entry contains the date and local computer time, server, and status. OK identifies a valid reply, with θ showing its offset from Windows system time. ERR gives the failure reason and any error code. The final entry in a query group also shows the combined offset Θ when usable measurements are available.
+
+Offsets are displayed in milliseconds with four decimal places. A positive value means the server clock is ahead of Windows; a negative value means it is behind. The combined offset Θ reflects the accepted measurements and is also shown in the synchronization status.
+
+Save log exports the records to CSV, including offsets and failure details. Records are not retained between application sessions; save them before exiting if you want to keep them.
+
 Clock widgets support alarms on individually selected weekdays; all seven days are enabled by default. An alarm makes its hidden widget visible and brings it in front of other windows without permanently changing its always-on-top setting. WAV, MP3, WMA, MIDI, AAC, M4A, and FLAC files are recognized for internal playback once or continuously; actual decoding support is provided by the multimedia components installed in Windows. Other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL. Independently of these actions, an alarm may use the six-pip time signal whose first short pip sounds five seconds before the configured alarm time.
 
-Run a file or command enables its field, Browse button, Test button, and looping option. Test and looping additionally require a nonblank field, but a running test can always be stopped. The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
+The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
 
 The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The 20-minute interval signals at :00, :20, and :40 according to that displayed time. The signal follows the **Greenwich Time Signal (GTS)** pattern: five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured; if any of their schedules meet at the same instant, CalClock plays only one shared sequence. Fractional widget offsets are respected, and overlapping widget, alarm, and test tones play continuously until the last overlap ends.
 
-**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and **System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. The slider follows a decibel scale, with −18 dB at the midpoint. The built-in generator starts and ends tones at a zero crossing, including when a test is stopped. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved. Holding the volume slider also plays a preview until the mouse is released, unless the button test is running. Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and so on. The preview and simultaneous widget or alarm time signals share a single tone. Only the volume slider is disabled for **System beep**. The sound choice is available only when the system supports both options.
+**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and **System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved. Holding the volume slider also plays a preview until the mouse is released, unless the button test is running. Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and so on. The preview and simultaneous widget or alarm time signals share a single tone. Only the volume slider is disabled for **System beep**. The sound choice is available only when the system supports both options.
 
 Alarm and time-signal enablement can also be toggled in each sound-capable widget's context menu. The alarm item shows its time and, unless all days are selected, its active weekdays. The checked Mute command affects its widget and is reflected by Muted on the General tab. A standalone Calendar has no alarm, time signal, or mute state, so these commands and settings are omitted or disabled for it. The notification-area command is named Mute all; pressing `M` on any widget performs the same global toggle. Global unmute restores only the widgets muted by the preceding global action. Internal audio continues silently and resumes when unmuted. A pip already in progress may finish, while subsequent pips are skipped until sound is enabled again. Non-audio commands and remote scripts are unaffected.
 
 ## Settings and menus
 
-`Save` applies changes and closes Settings, `Apply` applies them while keeping Settings open, and `Cancel` discards changes not yet applied, including live appearance previews. Enter activates `Save`; Esc activates `Cancel`.
-
 Each widget menu contains the commands applicable to that type—visibility, always-on-top state, seconds, analog size, or date-copy format—followed by `Arrange in a grid`, Settings, Help, About, and Exit. The notification-area menu lists every widget with its ordinal number, then provides Show all, Hide all, and Mute all. The separately grouped `Arrange in a grid` command follows before the application commands.
 
-Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. CalClock ensures that at least one widget is visible after startup. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. The notification icon is registered again automatically if Windows Explorer restarts. If the system `ClockWndMain` control does not support a second hand at the selected size, the Seconds command is disabled while the stored preference is retained for another supported size.
+Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. CalClock ensures that at least one widget is visible after startup. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. The notification icon is registered again automatically if Windows Explorer restarts.
 
 ## Settings storage
 
@@ -125,7 +128,7 @@ XML storage can be enabled in Settings. It uses:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-After XML storage is written successfully, CalClock removes its application state from the registry. Switching back to registry storage analogously removes the automatic XML settings file and empty CalClock directories. Importing an XML file immediately loads and saves its settings to the currently selected storage backend without changing the storage type. The mute state is stored independently for each sound-capable widget. Start with Windows is stored as the `CalClock` value under the current user's standard Windows `Run` registry key.
+Importing an XML file immediately loads and saves its settings to the currently selected storage backend without changing the storage type. The mute state is stored independently for each sound-capable widget.
 
 ## Building and packaging
 
@@ -134,7 +137,7 @@ Requirements:
 - Microsoft Visual Studio with the MSVC v145 toolset
 - Windows SDK
 
-Open `CalClock.slnx`, select `Release | Win32`, and build the solution. The executable is created as:
+Open `CalClock.slnx`, select `Release | x86`, and build the solution. The executable is created as:
 
 ```text
 Release\CalClock.exe

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.2
+ * Last modified for version 1.5.5.0
  */
 
 #define NOMINMAX
@@ -7622,6 +7622,46 @@ static std::wstring FormatNtpLogTime(ULONGLONG timestamp) {
     return text;
 }
 
+/// Formats an NTP offset in milliseconds without losing its 100-nanosecond resolution.
+static std::wstring FormatNtpLogOffset(LONGLONG offset100Nanoseconds) {
+    bool negative = offset100Nanoseconds < 0;
+    ULONGLONG magnitude = negative
+        ? 0ULL - static_cast<ULONGLONG>(offset100Nanoseconds)
+        : static_cast<ULONGLONG>(offset100Nanoseconds);
+    wchar_t separator[8] = L".";
+    int separatorLength =
+        GetLocaleInfoEx(LANGUAGE_LOCALES[appLanguage], LOCALE_SDECIMAL, separator, ARRAYSIZE(separator));
+    if (separatorLength == 0) {
+        separator[0] = L'.';
+        separator[1] = L'\0';
+    }
+    wchar_t text[64] = {};
+    swprintf_s(text, L"%ls%llu%ls%04llu ms", negative ? L"−" : L"+", magnitude / 10000, separator, magnitude % 10000);
+    return text;
+}
+
+/// Formats query status with its offset or failure reason and the combined offset on a group's final query record.
+static std::wstring FormatNtpLogStatus(const NtpQueryLogEntry& entry) {
+    std::wstring status;
+    if (entry.success) {
+        status = L"OK: ";
+        status += L"θ = ";
+        status += FormatNtpLogOffset(entry.offset100Nanoseconds);
+    } else {
+        status = L"ERR: ";
+        int errorIndex = std::clamp(static_cast<int>(entry.error), 0, 3);
+        status += NTP_LOG_ERROR_LABELS[appLanguage][errorIndex];
+        if (entry.errorCode != 0) {
+            status += L" (" + std::to_wstring(entry.errorCode) + L")";
+        }
+    }
+    if (entry.hasCombinedOffset) {
+        status += L"; Θ = ";
+        status += FormatNtpLogOffset(entry.combinedOffset100Nanoseconds);
+    }
+    return status;
+}
+
 /// Quotes a CSV field and doubles embedded quotation marks, preserving commas and line breaks.
 static std::wstring QuoteCsvField(const std::wstring& text) {
     std::wstring field = L"\"";
@@ -7650,7 +7690,7 @@ static std::wstring NtpLogCsvText() {
         csv += L',';
         csv += QuoteCsvField(entry.server);
         csv += L',';
-        csv += QuoteCsvField(NTP_LOG_STATUS_LABELS[appLanguage][entry.success ? 1 : 0]);
+        csv += QuoteCsvField(FormatNtpLogStatus(entry));
         csv += L"\r\n";
     }
     return csv;
@@ -7830,7 +7870,7 @@ static void SaveNtpLog() {
     }
 }
 
-/// Inserts one synchronization record using the current application language for its status.
+/// Inserts one synchronization record with localized measurement, failure, and group-result details.
 static void InsertNtpLogEntry(const NtpQueryLogEntry& entry, size_t logIndex) {
     std::wstring timestamp = FormatNtpLogTime(entry.completedTime);
     LVITEMW item = {};
@@ -7843,8 +7883,8 @@ static void InsertNtpLogEntry(const NtpQueryLogEntry& entry, size_t logIndex) {
         return;
     }
     ListView_SetItemText(hNtpLogList, row, 1, const_cast<wchar_t*>(entry.server.c_str()));
-    ListView_SetItemText(hNtpLogList, row, 2,
-        const_cast<wchar_t*>(NTP_LOG_STATUS_LABELS[appLanguage][entry.success ? 1 : 0]));
+    std::wstring status = FormatNtpLogStatus(entry);
+    ListView_SetItemText(hNtpLogList, row, 2, status.data());
 }
 
 /// Compares stable history indices by the chosen NTP log column, retaining insertion order for equal values.
@@ -7867,9 +7907,9 @@ static int CALLBACK CompareNtpLogEntries(LPARAM left, LPARAM right, LPARAM sortD
     } else if (ntpLogSortColumn == 1) {
         comparison = _wcsicmp(leftEntry.server.c_str(), rightEntry.server.c_str());
     } else if (ntpLogSortColumn == 2) {
-        const wchar_t* leftStatus = NTP_LOG_STATUS_LABELS[appLanguage][leftEntry.success ? 1 : 0];
-        const wchar_t* rightStatus = NTP_LOG_STATUS_LABELS[appLanguage][rightEntry.success ? 1 : 0];
-        comparison = wcscmp(leftStatus, rightStatus);
+        std::wstring leftStatus = FormatNtpLogStatus(leftEntry);
+        std::wstring rightStatus = FormatNtpLogStatus(rightEntry);
+        comparison = wcscmp(leftStatus.c_str(), rightStatus.c_str());
     }
     if (comparison != 0) {
         return ntpLogSortAscending ? comparison : -comparison;
@@ -8102,13 +8142,15 @@ static void UpdateNtpSettingsControls() {
     } else if (ntpQueryRunning) {
         status = NTP_STATUS_WAITING[appLanguage];
     } else if (ntpTimeValid && ntpLastQueryFailed) {
-        LONGLONG offsetMilliseconds = ntpOffset100Nanoseconds.load() / 10000;
+        LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
         status = NTP_STATUS_RETAINED[appLanguage];
-        status += L" " + ntpActiveServer + L" (" + FormatOffset(offsetMilliseconds) + L")";
+        status += L" " + ntpActiveServer + L" (Θ = "
+            + FormatNtpLogOffset(offset100Nanoseconds) + L")";
     } else if (ntpTimeValid) {
-        LONGLONG offsetMilliseconds = ntpOffset100Nanoseconds.load() / 10000;
+        LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
         status = NTP_STATUS_SYNCHRONIZED[appLanguage];
-        status += L" " + ntpActiveServer + L" (" + FormatOffset(offsetMilliseconds) + L")";
+        status += L" " + ntpActiveServer + L" (Θ = "
+            + FormatNtpLogOffset(offset100Nanoseconds) + L")";
     } else if (lastNtpAttemptTick != 0) {
         status = NTP_STATUS_FAILED[appLanguage];
     } else {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.5.5.0
  */
 
 #define NOMINMAX
@@ -222,14 +222,18 @@ static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverLi
 }
 
 /// Queries a server's UDP endpoints, validates NTP replies, and retains the successful sample with the least delay.
-/// Checks the cancellation flag between attempts and returns false if no valid sample is received.
-static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRequested, NtpSample* bestSample) {
+/// Checks cancellation between attempts and records the last failure if no valid sample is received.
+static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRequested, NtpSample* bestSample,
+        NtpQueryLogEntry* logEntry) {
     ADDRINFOW hints = {};
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_protocol = IPPROTO_UDP;
     PADDRINFOW addresses = nullptr;
-    if (GetAddrInfoW(server.c_str(), L"123", &hints, &addresses) != 0) {
+    int addressResult = GetAddrInfoW(server.c_str(), L"123", &hints, &addresses);
+    if (addressResult != 0) {
+        logEntry->error = NtpQueryError::NameResolution;
+        logEntry->errorCode = addressResult;
         return false;
     }
     bool success = false;
@@ -237,26 +241,43 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
         for (PADDRINFOW address = addresses; address != nullptr && !stopRequested->load(); address = address->ai_next) {
             SOCKET socketHandle = socket(address->ai_family, address->ai_socktype, address->ai_protocol);
             if (socketHandle == INVALID_SOCKET) {
+                logEntry->error = NtpQueryError::Network;
+                logEntry->errorCode = WSAGetLastError();
                 continue;
             }
             DWORD timeout = 1200;
             setsockopt(socketHandle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
             setsockopt(socketHandle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
-            bool connected = connect(socketHandle, address->ai_addr,
-                static_cast<int>(address->ai_addrlen)) != SOCKET_ERROR;
+            int connectionResult = connect(socketHandle, address->ai_addr, static_cast<int>(address->ai_addrlen));
+            if (connectionResult == SOCKET_ERROR) {
+                logEntry->error = NtpQueryError::Network;
+                logEntry->errorCode = WSAGetLastError();
+                closesocket(socketHandle);
+                continue;
+            }
             BYTE request[48] = {};
             request[0] = 0x23;
             ULONGLONG t1 = CurrentFileTimeValue();
             WriteNtpTimestamp(request + 40, t1);
-            int sent = connected
-                ? send(socketHandle, reinterpret_cast<const char*>(request), sizeof(request), 0)
-                : SOCKET_ERROR;
+            int sent = send(socketHandle, reinterpret_cast<const char*>(request), sizeof(request), 0);
+            if (sent != sizeof(request)) {
+                logEntry->error = NtpQueryError::Network;
+                logEntry->errorCode = sent == SOCKET_ERROR ? WSAGetLastError() : 0;
+                closesocket(socketHandle);
+                continue;
+            }
             BYTE response[48] = {};
-            int received = sent == sizeof(request)
-                ? recv(socketHandle, reinterpret_cast<char*>(response), sizeof(response), 0)
-                : SOCKET_ERROR;
+            int received = recv(socketHandle, reinterpret_cast<char*>(response), sizeof(response), 0);
+            int receiveError = received == SOCKET_ERROR ? WSAGetLastError() : 0;
             ULONGLONG t4 = CurrentFileTimeValue();
             closesocket(socketHandle);
+            if (received == SOCKET_ERROR) {
+                logEntry->error = receiveError == WSAETIMEDOUT ? NtpQueryError::Timeout : NtpQueryError::Network;
+                logEntry->errorCode = receiveError;
+                continue;
+            }
+            logEntry->error = NtpQueryError::InvalidResponse;
+            logEntry->errorCode = 0;
             if (received < static_cast<int>(sizeof(response))) {
                 continue;
             }
@@ -315,15 +336,15 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
     std::vector<NtpSample> samples;
     for (size_t index = 0; index < servers.size() && !parameters->stopRequested->load(); index++) {
         NtpSample sample = {};
-        bool success = QueryNtpServer(servers[index], parameters->stopRequested, &sample);
-        result->logEntries.push_back(NtpQueryLogEntry{
-            CurrentFileTimeValue(),
-            servers[index],
-            success
-        });
-        if (success) {
+        NtpQueryLogEntry entry = {};
+        entry.server = servers[index];
+        entry.success = QueryNtpServer(servers[index], parameters->stopRequested, &sample, &entry);
+        entry.completedTime = CurrentFileTimeValue();
+        if (entry.success) {
+            entry.offset100Nanoseconds = sample.offset100Nanoseconds;
             samples.push_back(sample);
         }
+        result->logEntries.push_back(entry);
     }
     if (!samples.empty()) {
         std::vector<LONGLONG> sortedOffsets;
@@ -368,6 +389,11 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         }
         result->server = samples[bestIndex].server;
         result->success = true;
+    }
+    if (result->success && !result->logEntries.empty()) {
+        NtpQueryLogEntry& lastEntry = result->logEntries.back();
+        lastEntry.hasCombinedOffset = true;
+        lastEntry.combinedOffset100Nanoseconds = result->offset100Nanoseconds;
     }
     if (parameters->stopRequested->load()) {
         *parameters->queryRunning = false;

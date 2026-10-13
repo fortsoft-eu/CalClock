@@ -8,7 +8,7 @@ CalClock är ett nativt Win32/x86-program för Windows Vista och senare som visa
 
 - Upp till 32 widgetar med oberoende inställningar
 - Eget språk, tidszon, tidsförskjutning, synlighet och läge alltid överst för varje widget
-- Analoga klockor baserade på Windows-kontrollen `ClockWndMain`, med automatisk identifiering av tillgängliga storlekar och stöd för sekundvisare
+- Analoga klockor med valbar urtavlestorlek och valfri sekundvisare
 - Digitala klockor med teckensnitt, färger, opacitet, inre marginaler, ramar, valfri inledande nolla och genomskinlig bakgrund
 - Inbyggda Windows-kalendrar med datumval, fyra ramstilar, justerbar ramfärg, veckonummer, val av första veckodag och 33 kopieringsformat
 - Kalender- och klockpaneler med upp till två extra namngivna klockor i egna tidszoner, separata urtavlestorlekar, fyra ramstilar, justerbar färg, UTC-text, inledande nolla och eget teckensnitt för varje textrad
@@ -51,15 +51,14 @@ Vid första starten väljer CalClock språk efter Windows visningsspråk och anv
 - Öppna Inställningar från en widgets snabbmeny för att välja den direkt.
 - Använd `Ctrl` eller `Shift` för flerval, `Ctrl+A` för att välja alla och `Del` för att ta bort valda. `Insert` växlar markeringen för aktuell post och flyttar listmarkören till nästa rad, som i Total Commander.
 - Alla listans kortkommandon fungerar även när Ta bort eller Duplicera har fokus. Kortkommandot flyttar fokus till listan och utför åtgärden. `Ctrl+C` kopierar valda widgetar och `Ctrl+V` lägger kopiorna sist i listordning. Kopiorna innehåller alla inställningar och får ett namntillägg på programspråket. Duplicera utför samma åtgärd direkt. Högst 32 widgetar tillåts. Om alla kopior inte får plats läggs de som ryms till i ordning och ett meddelande visas för resten.
-- `Ctrl+A` eller trippelklick i ett textfält markerar all text.
 
-När flera widgetar är valda inaktiveras deras kontroller på Allmänt, Utseende, Alarm och Signal; de globala flikarna Tid och Program är fortfarande tillgängliga. Inställningar kommer ihåg senast öppna flik och senast tillagda widgettyp. På en liten arbetsyta får fönstret vågrät eller lodrät rullning efter behov.
+Inställningar kommer ihåg senast öppna flik och senast tillagda widgettyp.
 
 Kalenderdatum kan kopieras i 33 format: lokala, sorterbara, med dag eller månad först, textbaserade och med veckodag. Alla masker finns på alla gränssnittsspråk. Det korta lokala standardformatet följer widgetens språk, liksom månads- och veckodagsnamn. Posterna visar masken och ett aktuellt exempel.
 
 En kalenderpanel kan visa upp till två extra klockor. Aktivera varje klocka på Allmänt och välj namn och tidszon. Namngivna zoner följer sina egna sommartidsregler; fasta UTC-förskjutningar förblir fasta. När extra klockor är aktiva visar varje klocka sin lokala veckodag under tiden. De tre storlekslistorna på Utseende styr huvudklockan, Klocka 1 och Klocka 2 i den ordningen. Högerklicka en extra urtavla för att välja storlek. Extra klockor utelämnar alltid sekunder och delar widgetens språk, tidsformat, teckensnitt och tidsförskjutning. När klockor läggs till, tas bort eller ändrar storlek bevaras fästningen vid samma kanter på arbetsytan.
 
-I panelen är datumet överst en länk som återför kalendern till idag. Tidszonstexten nederst öppnar de klassiska inställningarna för Datum och tid i Windows. Båda länkarna nås med `Tab`, visar en fokusrektangel och kan aktiveras med tangentbordet. Den inbyggda kalendern är fortfarande helt interaktiv men utelämnar den överflödiga Idag-raden i den kombinerade layouten.
+I panelen är datumet överst en länk som återför kalendern till idag. Tidszonstexten nederst öppnar de klassiska inställningarna för Datum och tid i Windows.
 
 `Ordna i rutnät` placerar synliga skrivbordswidgetar i ett stabilt rutnät utan överlappning och bevarar ungefär den manuella placeringen. Widgeten vars meny startade kommandot stannar på plats; kommandot i meddelandefältet ordnar varje skärm oberoende. Skärmklockor undantas.
 
@@ -69,15 +68,15 @@ För fristående kalendrar styr **Idag-rad** i menyn eller på Utseende den nede
 
 Utseendeändringar förhandsvisas direkt på vald widget. `Avbryt` återställer ändringar som inte verkställts; `Standardutseende` återställer värdena för widgettypen.
 
-Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Teckensnittsdialoger visar endast användbara val och utelämnar oanvänd förhandsvisning och effekter. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. En inbyggd kalender använder eget teckensnitt bara när visuella format är avstängda för kalendern eller hela programmet.
+Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. En inbyggd kalender använder eget teckensnitt bara när visuella format är avstängda för kalendern eller hela programmet.
 
-Programspråk, gränssnittsteckensnitt, utjämning, visuella format, lagring, Windows-start och kantfästning är globala och ställs in på Program. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Ett nytt programspråk återskapar omedelbart det öppna Inställningar-fönstret på det språket. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**. På Utseende har utjämning och avstängning av teman samma position för alla typer, med **Standardutseende** under.
+Programspråk, gränssnittsteckensnitt, utjämning, visuella format, lagring, Windows-start och kantfästning är globala och ställs in på Program. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
 Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per widget och visar nivån i dB. Standardvärdet **−18 dB** bevarar filens ursprungliga nivå (**100%**). Åt höger förstärks ljudet; maximum **0 dB** motsvarar cirka **794%** av ursprunglig amplitud. Längst till vänster är **−∞ dB** (tystnad). Ändringar gäller under ljudtestet. Reglaget är avstängt för filer som öppnas i externa program. Förstärkning gäller avkodat ljud, inklusive WAV, MP3, WMA, AAC, M4A och FLAC när Windows stöder dem. Äldre uppspelning av filer som inte kan avkodas, exempelvis MIDI, är begränsad till 100%.
 
 Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dagar behåller sin innebörd när språket ändras. Om ett alarm utan valda veckodagar aktiveras från menyn öppnas dess Alarm-flik i stället för att aktivera ett alarm som inte kan ljuda.
 
-Standardrambredden för digitala klockor är noll. **Inledande nolla** erbjuder **Visa** (standard), **Behåll utrymme** och **Utan utrymme**. **Behåll utrymme** döljer nollan men reserverar dess verkliga bredd i valt teckensnitt, så att övriga siffror står still även med proportionella teckensnitt. Fristående digitala klockor vänsterjusterar tiden och behåller fast storlek medan tiden går. Skärmklockor centrerar ett fast tidsområde anpassat till teckensnitt och format, med plats för två timsiffror. Tidsändringar centrerar eller skalar inte om texten. AM/PM- eller UTC-raden centreras oberoende. Skärmklockor använder vit text på svart bakgrund som standard.
+**Inledande nolla** erbjuder **Visa** (standard), **Behåll utrymme** och **Utan utrymme**. **Behåll utrymme** döljer nollan men reserverar dess verkliga bredd i valt teckensnitt, så att övriga siffror står still även med proportionella teckensnitt. Skärmklockor använder vit text på svart bakgrund som standard.
 
 ## Tid och alarm
 
@@ -93,23 +92,27 @@ Förskjutningen är användbar exempelvis i sändningsstudior för att kompenser
 
 CalClock kan använda Windows-systemtid eller en programlokal korrigering från NTP-servrar. Valet är globalt för alla widgetar. Synkronisering ändrar aldrig Windows-klockan. Om NTP-kontakten förloras efter en lyckad synkronisering ligger senaste korrigering kvar aktiv i processminnet. Serverbyte behåller också giltig korrigering tills ett nytt svar tas emot.
 
+Fliken Tid registrerar NTP-serverförfrågningar sedan programmet startades. Varje post innehåller datum och datorns lokala tid, server och status. OK anger ett giltigt svar och θ dess tidsavvikelse från Windows-systemtiden. ERR anger felorsaken och en eventuell felkod. Den sista posten i en grupp förfrågningar visar även den beräknade tidsavvikelsen Θ när användbara mätningar finns.
+
+Tidsavvikelser visas i millisekunder med fyra decimaler. Ett positivt värde betyder att serverklockan går före Windows; ett negativt värde betyder att den går efter. Θ tar hänsyn till de godkända mätningarna och visas även i synkroniseringsstatusen.
+
+Spara logg exporterar posterna till CSV, inklusive tidsavvikelser och feldetaljer. Poster sparas inte mellan programstarter; spara dem innan du avslutar om du vill behålla dem.
+
 Klockwidgetar har alarm för individuellt valda veckodagar; alla sju är aktiva som standard. Ett alarm visar sin dolda widget och för den framför andra fönster utan att permanent ändra alltid överst. WAV, MP3, WMA, MIDI, AAC, M4A och FLAC identifieras för intern engångs- eller upprepad uppspelning; faktisk avkodning beror på installerade Windows-mediekomponenter. Andra filer och kommandon skickas asynkront till Windows. Ett alarm kan även anropa en HTTP- eller HTTPS-adress. Oberoende av detta kan det använda sex-toners tidssignalen, vars första korta ton ljuder fem sekunder före alarmtiden.
 
-Kör fil eller kommando aktiverar fältet, Bläddra, Test och upprepning. Test och upprepning kräver också ett icke-tomt fält, men ett pågående test kan alltid stoppas. Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrskriptadress asynkront. Om alarmets tidssignal valts spelas också hela sekvensen med sex toner; Stoppa test avslutar internt ljud och signalens förhandsvisning.
+Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrskriptadress asynkront. Om alarmets tidssignal valts spelas också hela sekvensen med sex toner; Stoppa test avslutar internt ljud och signalens förhandsvisning.
 
 Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. 20-minutersintervallet ljuder vid :00, :20 och :40. Mönstret är **Greenwich Time Signal (GTS)**: fem korta toner markerar de sista fem sekunderna och en längre den exakta gränsen. Tidszoner, UTC, förskjutningar och aktuell NTP-korrigering beaktas. Alarmets signal och Signal-fliken är oberoende; sammanfaller tiderna spelar CalClock en gemensam sekvens. Även förskjutningar med delar av sekunder beaktas, och överlappande widget-, alarm- och testtoner fortsätter oavbrutet tills sista överlappningen slutar.
 
-**Tidssignalens ljud** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Tidssignalens volym** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Decibelskalan har −18 dB i mitten. Generatorn startar och avslutar toner vid nollgenomgång, även när ett test stoppas. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Tidssignalens ljud** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. Förhandsvisning och samtidiga widget- eller alarmsignaler delar en enda ton. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
+**Tidssignalens ljud** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Tidssignalens volym** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Tidssignalens ljud** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. Förhandsvisning och samtidiga widget- eller alarmsignaler delar en enda ton. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
 
 Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender har inget alarm, tidssignal eller tyst läge; dessa kommandon utelämnas eller inaktiveras. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 
 ## Inställningar och menyer
 
-`Spara` verkställer ändringar och stänger Inställningar; `Verkställ` gör det utan att stänga; `Avbryt` kastar ändringar som inte verkställts, inklusive förhandsvisning av utseendet. Enter aktiverar `Spara`, Esc `Avbryt`.
-
 Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller datumkopieringsformat — följt av `Ordna i rutnät`, Inställningar, Hjälp, Om och Avsluta. Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat grupperade `Ordna i rutnät` följer före programkommandona.
 
-Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om. Om `ClockWndMain` inte stöder sekundvisare vid vald storlek inaktiveras Sekunder, men det sparade valet behålls för en annan kompatibel storlek.
+Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om.
 
 ## Lagring av inställningar
 
@@ -125,7 +128,7 @@ XML-lagring kan aktiveras i Inställningar och använder:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Efter lyckad XML-skrivning tar CalClock bort sitt programtillstånd från registret. Byte tillbaka tar på motsvarande sätt bort den automatiska XML-filen och tomma CalClock-mappar. XML-import läser och sparar inställningarna direkt i vald lagring utan att ändra lagringstyp. Tyst läge sparas per widget med ljud. Start med Windows sparas som värdet `CalClock` i den vanliga Windows-nyckeln `Run` för aktuell användare.
+XML-import läser och sparar inställningarna direkt i vald lagring utan att ändra lagringstyp. Tyst läge sparas per widget med ljud.
 
 ## Bygga programmet
 
@@ -134,7 +137,7 @@ Krav:
 - Microsoft Visual Studio med verktygsuppsättningen MSVC v145
 - Windows SDK
 
-Öppna `CalClock.slnx`, välj `Release | Win32` och bygg lösningen. Programfilen skapas som:
+Öppna `CalClock.slnx`, välj `Release | x86` och bygg lösningen. Programfilen skapas som:
 
 ```text
 Release\CalClock.exe

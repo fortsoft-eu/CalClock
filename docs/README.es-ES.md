@@ -8,7 +8,7 @@ CalClock es una aplicación nativa Win32/x86 para Windows Vista y versiones post
 
 - Hasta 32 widgets configurables de forma independiente
 - Idioma, zona horaria, desfase, visibilidad y opción de mantener siempre encima por widget
-- Relojes analógicos basados en el control `ClockWndMain` de Windows, con detección de tamaños compatibles y soporte de segundero
+- Relojes analógicos con tamaño de esfera seleccionable y segundero opcional
 - Relojes digitales con fuentes, colores, opacidad, márgenes interiores, bordes, cero inicial opcional y fondo transparente opcional
 - Calendarios nativos de Windows con selección de fechas, cuatro estilos de borde, color de borde configurable, números de semana, elección del primer día y 33 formatos de copia
 - Paneles de calendario y reloj con hasta dos relojes adicionales con nombre y zonas independientes, tamaños de esfera separados, cuatro estilos de borde, color configurable, texto UTC, cero inicial y una fuente distinta por línea de texto
@@ -51,15 +51,14 @@ Al iniciarse por primera vez, CalClock elige el idioma de la interfaz de Windows
 - Abrir Configuración desde el menú de un widget lo selecciona inmediatamente.
 - Use `Ctrl` o `Shift` para seleccionar varios elementos, `Ctrl+A` para seleccionarlos todos y `Del` para eliminar los seleccionados. `Insert` alterna la selección del elemento actual y avanza el cursor de la lista a la siguiente fila, como en Total Commander.
 - Todos los atajos de la lista funcionan también con el foco en Quitar o Duplicar. El primer atajo traslada el foco a la lista y ejecuta la acción. `Ctrl+C` copia los widgets seleccionados y `Ctrl+V` añade sus copias al final en el orden de la lista. Las copias conservan todos los ajustes y reciben un sufijo en el idioma de la aplicación. Duplicar realiza directamente la misma operación. Se permiten hasta 32 widgets. Si no caben todas las copias, se añaden las que caben en orden y se muestra un aviso sobre las restantes.
-- `Ctrl+A` o un triple clic en un campo de texto selecciona todo su contenido.
 
-Al seleccionar varios widgets, sus controles de General, Apariencia, Alarma y Señal quedan desactivados; las pestañas globales Hora y Aplicación siguen disponibles. Configuración recuerda la última pestaña abierta y el último tipo de widget añadido. Si el área de trabajo es pequeña, la ventana permite desplazamiento horizontal o vertical según sea necesario.
+Configuración recuerda la última pestaña abierta y el último tipo de widget añadido.
 
 Las fechas del calendario se pueden copiar en 33 formatos locales, ordenables, con día o mes primero, textuales y con día de la semana. Todas las máscaras están disponibles en cualquier idioma de interfaz. El formato corto local predeterminado sigue el idioma del widget, al igual que los nombres de meses y días. Las entradas muestran la máscara y un ejemplo actualizado.
 
 Un panel de calendario con reloj puede mostrar hasta dos relojes adicionales. Active cada uno en General y elija su nombre y zona horaria. Las zonas con nombre siguen sus propias reglas de horario de verano; los desfases UTC fijos permanecen constantes. Cuando están activos, cada reloj muestra su día local debajo de la hora. Las tres listas de tamaño de Apariencia controlan, en orden, el reloj principal, Reloj 1 y Reloj 2. Un clic derecho en una esfera adicional permite elegir su tamaño. Los relojes adicionales siempre omiten los segundos y comparten idioma, formato horario, fuentes y desfase con el widget. Añadir, quitar o redimensionar relojes mantiene el widget fijado a los mismos bordes del área de trabajo.
 
-En este panel, la fecha superior es un enlace que devuelve el calendario a hoy; el texto inferior de zona horaria abre la configuración clásica de Fecha y hora de Windows. Ambos enlaces se alcanzan con `Tab`, muestran un rectángulo de foco y se activan con el teclado. El calendario nativo sigue siendo interactivo, pero omite la fila Hoy, redundante en esta disposición.
+En este panel, la fecha superior es un enlace que devuelve el calendario a hoy; el texto inferior de zona horaria abre la configuración clásica de Fecha y hora de Windows.
 
 `Alinear en cuadrícula` ajusta los widgets de escritorio visibles a una cuadrícula estable sin solapamientos, conservando aproximadamente su disposición manual. El widget desde cuyo menú se invoca permanece en su sitio; el comando del área de notificación organiza cada monitor de forma independiente. Se excluyen los relojes de monitor.
 
@@ -69,15 +68,15 @@ Para calendarios independientes, **Fila Hoy** en el menú o en Apariencia contro
 
 Los cambios de apariencia se previsualizan inmediatamente en el widget seleccionado. `Cancelar` restaura los cambios no aplicados; `Apariencia predeterminada` recupera los valores de ese tipo de widget.
 
-Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El borde simple permite configurar el color; el ancho se puede ajustar cuando el widget lo admite. Los relojes digitales transparentes ofrecen los mismos estilos que los opacos. Los diálogos de fuente muestran solo opciones aplicables y omiten vista previa y efectos no utilizados. Las fuentes de aplicación y calendario no incluyen tamaño; las digitales y de texto del panel sí. Un calendario nativo acepta una fuente personalizada únicamente si sus estilos visuales, o los de toda la aplicación, están desactivados.
+Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El borde simple permite configurar el color; el ancho se puede ajustar cuando el widget lo admite. Los relojes digitales transparentes ofrecen los mismos estilos que los opacos. Las fuentes de aplicación y calendario no incluyen tamaño; las digitales y de texto del panel sí. Un calendario nativo acepta una fuente personalizada únicamente si sus estilos visuales, o los de toda la aplicación, están desactivados.
 
-El idioma de la aplicación, fuente de interfaz, suavizado, estilos visuales, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. Al aplicar otro idioma, la ventana Configuración abierta se recrea inmediatamente en él. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**. En Apariencia, el suavizado y la desactivación de temas ocupan la misma posición en todos los tipos, con **Apariencia predeterminada** debajo.
+El idioma de la aplicación, fuente de interfaz, suavizado, estilos visuales, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**.
 
 El control **Volumen de audio** de Alarma regula los archivos reproducidos internamente por widget y muestra el nivel en dB. El valor predeterminado **−18 dB** conserva el nivel original (**100%**). Moverlo a la derecha amplifica el audio; el máximo **0 dB** equivale aproximadamente al **794%** de la amplitud original. El extremo izquierdo es **−∞ dB** (silencio). Los cambios actúan durante la prueba de audio. El control está desactivado para archivos abiertos en aplicaciones externas. La amplificación se aplica al audio decodificado, incluidos WAV, MP3, WMA, AAC, M4A y FLAC cuando Windows los admite. La reproducción heredada de archivos no decodificables, como MIDI, está limitada al 100%.
 
 Los controles de días de alarma respetan el primer día de semana de la cultura elegida para la aplicación. Los días guardados conservan su significado al cambiar el idioma. Activar desde el menú una alarma sin días seleccionados abre la pestaña Alarma del widget en lugar de activar una alarma que no puede sonar.
 
-El ancho de borde predeterminado del reloj digital es cero. **Cero inicial** ofrece **Mostrar** (predeterminado), **Reservar espacio** y **Sin espacio**. **Reservar espacio** oculta el cero y reserva su ancho real en la fuente elegida, manteniendo los demás dígitos en posición incluso con fuentes proporcionales. Los relojes digitales flotantes alinean a la izquierda y mantienen un tamaño fijo al avanzar el tiempo. Los relojes de monitor centran un área horaria fija dimensionada para la fuente y formato, con espacio para dos dígitos de hora. Los cambios de hora no vuelven a centrar ni redimensionar el texto. La línea AM/PM o UTC se centra independientemente. Los relojes de monitor usan por defecto texto blanco sobre fondo negro.
+**Cero inicial** ofrece **Mostrar** (predeterminado), **Reservar espacio** y **Sin espacio**. **Reservar espacio** oculta el cero y reserva su ancho real en la fuente elegida, manteniendo los demás dígitos en posición incluso con fuentes proporcionales. Los relojes de monitor usan por defecto texto blanco sobre fondo negro.
 
 ## Hora y alarmas
 
@@ -93,23 +92,27 @@ El desfase resulta útil, por ejemplo, en estudios de radiodifusión para compen
 
 CalClock puede usar la hora del sistema Windows o una corrección interna obtenida de servidores NTP. La elección es global para todos los widgets. La sincronización nunca modifica el reloj Windows. Si se pierde la conexión NTP tras una sincronización correcta, la última corrección permanece activa en la memoria del proceso. Cambiar de servidores también conserva la corrección válida hasta recibir otra respuesta.
 
+La pestaña Hora registra las consultas a servidores NTP desde el inicio de la aplicación. Cada entrada contiene la fecha y hora local del equipo, el servidor y el estado. OK identifica una respuesta válida y θ su desfase respecto a la hora del sistema Windows. ERR indica el motivo del fallo y, si existe, su código. La última entrada de cada grupo de consultas también muestra el desfase calculado Θ cuando hay mediciones utilizables.
+
+Los desfases se muestran en milisegundos con cuatro decimales. Un valor positivo indica que el reloj del servidor está adelantado respecto a Windows; uno negativo indica que está atrasado. Θ refleja las mediciones aceptadas y también aparece en el estado de sincronización.
+
+Guardar registro exporta las entradas a CSV, incluidos los desfases y los detalles de los errores. Las entradas no se conservan entre sesiones; guárdelas antes de salir si desea conservarlas.
+
 Los widgets de reloj admiten alarmas en días seleccionados individualmente; los siete días están activos por defecto. Una alarma hace visible su widget oculto y lo coloca delante de otras ventanas sin modificar permanentemente su opción de estar siempre encima. WAV, MP3, WMA, MIDI, AAC, M4A y FLAC se reconocen para reproducción interna única o repetida; la compatibilidad real depende de los componentes multimedia instalados en Windows. Los demás archivos y comandos se pasan a Windows de forma asíncrona. Una alarma también puede llamar a una URL HTTP o HTTPS. Independientemente de estas acciones, puede usar la señal de seis pitidos, cuyo primer pitido corto suena cinco segundos antes de la hora configurada.
 
-Ejecutar archivo o comando activa su campo, Examinar, Prueba y repetición. Prueba y repetición requieren además un campo no vacío, pero siempre se puede detener una prueba en curso. Prueba muestra la indicación visual y prueba asíncronamente el archivo, comando, audio y URL del script remoto. Si está seleccionada la señal horaria de alarma, reproduce también la secuencia completa de seis pitidos; Detener prueba termina el audio interno y la vista previa de señal.
+Prueba muestra la indicación visual y prueba asíncronamente el archivo, comando, audio y URL del script remoto. Si está seleccionada la señal horaria de alarma, reproduce también la secuencia completa de seis pitidos; Detener prueba termina el audio interno y la vista previa de señal.
 
 La pestaña Señal incluye la casilla Señal horaria activa y botones de opción para intervalos de 1, 5, 10, 15, 20, 30 o 60 minutos según la hora mostrada por el widget. La señal está inicialmente desactivada y el intervalo seleccionado es de una hora. Desactivar y activar Señal en el menú del widget conserva el intervalo. El menú muestra la hora de la alarma y el intervalo de la señal entre paréntesis. El intervalo de 20 minutos señala :00, :20 y :40 de esa hora. El patrón es el **Greenwich Time Signal (GTS)**: cinco pitidos cortos marcan los últimos cinco segundos y uno más largo el límite exacto. Se respetan zona, UTC, desfases y corrección NTP actual. La señal de alarma y la pestaña Señal se configuran por separado; si sus horarios coinciden, CalClock reproduce una única secuencia compartida. Se respetan desfases fraccionarios, y los tonos superpuestos de widgets, alarmas y pruebas suenan continuamente hasta el fin del último solapamiento.
 
-**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o **Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor predeterminado es **−18 dB**. La escala es en decibelios, con −18 dB en el punto medio. El generador inicia y termina los tonos en un cruce por cero, también al detener una prueba. El pitido actual termina normalmente; uno largo puede tardar hasta medio segundo. **Prueba**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05, :10, etc. La prueba y las señales simultáneas comparten un único tono. Con **Pitido del sistema** solo se desactiva el volumen. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
+**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o **Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor predeterminado es **−18 dB**. El pitido actual termina normalmente; uno largo puede tardar hasta medio segundo. **Prueba**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05, :10, etc. La prueba y las señales simultáneas comparten un único tono. Con **Pitido del sistema** solo se desactiva el volumen. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
 
 La alarma y señal también se activan desde el menú contextual de cada widget con sonido. La entrada de alarma muestra su hora y, si no están seleccionados todos, sus días activos. Silenciado afecta al widget y coincide con la opción de General. Un Calendario independiente no tiene alarma, señal ni estado silenciado; estos comandos se omiten o desactivan. El comando del área de notificación es Silenciar todo; `M` sobre cualquier widget hace lo mismo. Desactivar la sordina global solo restaura los widgets silenciados por la acción global anterior. El audio interno continúa en silencio y vuelve a oírse al reactivarlo. Un pitido iniciado puede terminar; los siguientes se omiten hasta habilitar el sonido. Los comandos no sonoros y los scripts remotos no se ven afectados.
 
 ## Configuración y menús
 
-`Guardar` aplica los cambios y cierra Configuración; `Aplicar` los aplica manteniéndola abierta; `Cancelar` descarta los cambios sin aplicar, incluida la vista previa de apariencia. Intro activa `Guardar`; Esc activa `Cancelar`.
-
 Cada menú contiene los comandos pertinentes al tipo —visibilidad, siempre encima, segundos, tamaño analógico o formato de fecha copiada— y luego `Alinear en cuadrícula`, Configuración, Ayuda, Acerca de y Salir. El menú de notificación enumera los widgets con su número y ofrece Mostrar todo, Ocultar todo y Silenciar todo. `Alinear en cuadrícula` aparece en un grupo separado antes de los comandos de la aplicación.
 
-Mostrar o restaurar widgets los sitúa delante de otras ventanas sin cambiar su opción de estar siempre encima. CalClock garantiza al menos un widget visible al inicio. Un segundo lanzamiento activa la instancia existente y restaura los widgets ocultados más recientemente si ninguno está visible. El icono de notificación se registra de nuevo automáticamente al reiniciar el Explorador Windows. Si `ClockWndMain` no admite segundero en el tamaño seleccionado, Segundos se desactiva, pero la preferencia se conserva para otro tamaño compatible.
+Mostrar o restaurar widgets los sitúa delante de otras ventanas sin cambiar su opción de estar siempre encima. CalClock garantiza al menos un widget visible al inicio. Un segundo lanzamiento activa la instancia existente y restaura los widgets ocultados más recientemente si ninguno está visible. El icono de notificación se registra de nuevo automáticamente al reiniciar el Explorador Windows.
 
 ## Almacenamiento de ajustes
 
@@ -125,7 +128,7 @@ El almacenamiento XML se activa en Configuración y utiliza:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Tras guardar correctamente en XML, CalClock elimina su estado del Registro. Al volver al Registro elimina del mismo modo el XML automático y los directorios CalClock vacíos. Importar un XML carga y guarda inmediatamente sus ajustes en el almacenamiento elegido sin cambiar el tipo. El silencio se guarda por cada widget con sonido. El inicio con Windows se guarda como valor `CalClock` en la clave estándar `Run` del usuario actual.
+Importar un XML carga y guarda inmediatamente sus ajustes en el almacenamiento elegido sin cambiar el tipo. El silencio se guarda por cada widget con sonido.
 
 ## Compilación
 
@@ -134,7 +137,7 @@ Requisitos:
 - Microsoft Visual Studio con el conjunto de herramientas MSVC v145
 - Windows SDK
 
-Abra `CalClock.slnx`, seleccione `Release | Win32` y compile la solución. El ejecutable se crea como:
+Abra `CalClock.slnx`, seleccione `Release | x86` y compile la solución. El ejecutable se crea como:
 
 ```text
 Release\CalClock.exe

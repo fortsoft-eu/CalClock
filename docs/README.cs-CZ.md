@@ -8,7 +8,7 @@ CalClock je nativní aplikace Win32/x86 pro Windows Vista a novější, která n
 
 - Až 32 samostatně nastavitelných widgetů
 - Vlastní jazyk, časové pásmo, časový offset, viditelnost a stav vždy navrchu pro každý widget
-- Ručičkové hodiny využívající ovládací prvek Windows `ClockWndMain`, s automaticky zjištěnými podporovanými velikostmi a podporou sekundové ručičky
+- Ručičkové hodiny s volitelnou velikostí ciferníku a sekundovou ručičkou
 - Nastavitelné digitální hodiny s volbou písma, barev, neprůhlednosti, odsazení, rámečku, úvodní nuly a průhledného pozadí
 - Nativní kalendáře Windows s výběrem data, čtyřmi styly rámečku, nastavitelnou barvou rámečku, čísly týdnů, volbou prvního dne týdne a 33 formáty kopírování data
 - Kalendáře s hodinami a až dvěma dalšími pojmenovanými hodinami v samostatných časových pásmech, samostatnými velikostmi ciferníků, čtyřmi styly rámečku, nastavitelnou barvou rámečku, textem UTC, volbou úvodní nuly a samostatným písmem pro každý textový řádek
@@ -51,15 +51,14 @@ Při prvním spuštění CalClock vybere jazyk aplikace podle jazyka uživatelsk
 - Otevřením Nastavení z kontextové nabídky widgetu tento widget ihned vyberete.
 - Pomocí `Ctrl` nebo `Shift` vyberete více widgetů v seznamu, `Ctrl+A` vybere všechny a `Del` odstraní vybrané. `Insert` přepne výběr aktuální položky a posune kurzor seznamu na další řádek jako v Total Commanderu.
 - Všechny zkratky seznamu widgetů fungují také při fokusu na tlačítku Odebrat nebo Duplikovat. Zkratka na některém z těchto tlačítek přesune fokus do seznamu a provede příslušnou akci. Pomocí `Ctrl+C` zkopírujete vybrané widgety a `Ctrl+V` připojí jejich kopie na konec v pořadí seznamu. Kopie obsahují všechna nastavení widgetů a dostanou příponu názvu v jazyce aplikace. Tlačítko Duplikovat provede stejnou duplikaci přímo. Lze mít nejvýše 32 widgetů. Pokud se všechny kopie nevejdou, přidají se v pořadí seznamu jen ty, které se vejdou, a na zbývající upozorní zpráva.
-- `Ctrl+A` nebo trojklik v textovém poli vybere celý jeho text.
 
-Při výběru více widgetů jsou jejich ovládací prvky na kartách Obecné, Vzhled, Budík a Znamení neaktivní, zatímco globální karty Čas a Aplikace zůstávají dostupné. Nastavení si pamatuje naposledy otevřenou kartu i typ naposledy přidaného widgetu. Na malé pracovní ploše umožňuje okno Nastavení podle potřeby vodorovné nebo svislé posouvání.
+Nastavení si pamatuje naposledy otevřenou kartu i typ naposledy přidaného widgetu.
 
 Data z kalendáře lze kopírovat ve 33 formátech zahrnujících místní zápis, řaditelný zápis, den nebo měsíc na začátku, slovní zápis a den v týdnu. Každá maska je dostupná v každém jazyce rozhraní. Výchozí místní krátký formát se řídí jazykem widgetu; stejný jazyk používají i slovní názvy měsíců a dnů v týdnu. Položky formátů zobrazují masku a aktuální příklad.
 
 Kalendář s hodinami může zobrazit až dvoje další hodiny. Každé zapněte na kartě Obecné a zvolte jejich název a časové pásmo. Pojmenovaná pásma se řídí vlastními pravidly letního času; pevné offsety UTC se nemění. Pokud jsou další hodiny zapnuté, pod časem každých hodin se zobrazuje jejich místní den v týdnu. Tři seznamy velikostí na kartě Vzhled ovládají postupně hlavní hodiny, Hodiny 1 a Hodiny 2. Velikost dalších hodin lze vybrat pravým tlačítkem na jejich ciferníku. Další hodiny vždy vynechávají sekundy a sdílejí jazyk, formát času, písma a časový offset widgetu. Přidávání, odebírání a změna velikosti hodin zachovávají přichycení widgetu ke stejným okrajům pracovní plochy.
 
-V kalendáři s hodinami je horní datum odkazem, který vrací kalendář na dnešek, zatímco dolní text časového pásma otevírá klasické nastavení data a času Windows. Oba odkazy lze vybrat klávesou `Tab`, zobrazují obdélník fokusu a lze je aktivovat z klávesnice. Nativní kalendář zůstává plně interaktivní, ale v tomto kombinovaném rozložení vynechává nadbytečný řádek Dnes.
+V kalendáři s hodinami je horní datum odkazem, který vrací kalendář na dnešek, zatímco dolní text časového pásma otevírá klasické nastavení data a času Windows.
 
 Příkaz `Zarovnat do mřížky` přichytí viditelné widgety na ploše do stabilní nepřekrývající se mřížky a přibližně zachová jejich ruční rozmístění. Widget, z jehož nabídky byl příkaz vyvolán, zůstává na místě; příkaz z oznamovací oblasti zarovnává každý monitor samostatně. Hodiny na monitoru jsou vynechány.
 
@@ -69,15 +68,15 @@ U samostatných kalendářů volba **Řádek Dnes** v nabídce widgetu nebo na k
 
 Změny vzhledu se okamžitě zobrazují na vybraném widgetu. `Zrušit` vrátí nepoužité změny vzhledu, zatímco `Výchozí vzhled` obnoví výchozí hodnoty pro příslušný typ widgetu.
 
-Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly rámečku. Jednoduchý rámeček má také nastavitelnou barvu; nastavení šířky rámečku je dostupné tam, kde je vybraný widget podporuje. Průhledné digitální hodiny nabízejí stejné styly jako neprůhledné. Dialogy písem zobrazují pouze volby použitelné pro daný účel a vynechávají nevyužitý náhled a efekty; u písma aplikace a kalendáře nenabízejí velikost, u digitálních hodin a textů panelu ano. Nativní kalendář přijímá vlastní písmo pouze při vypnutých motivech pro daný kalendář nebo celou aplikaci.
+Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly rámečku. Jednoduchý rámeček má také nastavitelnou barvu; nastavení šířky rámečku je dostupné tam, kde je vybraný widget podporuje. Průhledné digitální hodiny nabízejí stejné styly jako neprůhledné. Nativní kalendář přijímá vlastní písmo pouze při vypnutých motivech pro daný kalendář nebo celou aplikaci.
 
-Jazyk aplikace, písmo rozhraní, vyhlazování písma, motivy, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Použití nového jazyka aplikace okamžitě znovu vytvoří otevřené okno Nastavení v tomto jazyce. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**. Na kartě Vzhled jsou vyhlazování písma a zákaz motivů u všech typů widgetů na stejném místě a pod nimi je **Výchozí vzhled**.
+Jazyk aplikace, písmo rozhraní, vyhlazování písma, motivy, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
 Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvukové soubory samostatně pro každý widget a zobrazuje úroveň v dB. Výchozí hodnota **−18 dB** zachovává původní úroveň souboru (**100%**). Posun doprava zvuk zesiluje; maximum **0 dB** odpovídá přibližně **794%** původní amplitudy. Levá krajní poloha je **−∞ dB** (ticho). Změny se projevují i během testu zvuku. Pro soubory otevírané v externí aplikaci je jezdec neaktivní. Zesílení se vztahuje na dekódovaný zvuk včetně WAV, MP3, WMA, AAC, M4A a FLAC, pokud je Windows podporují. Starší způsob přehrávání souborů, které nelze dekódovat, například MIDI, je omezen na 100%.
 
 Ovládací prvky dnů budíku respektují první den týdne používaný zvolenou kulturou aplikace. Uložené dny budíku si při změně jazyka aplikace zachovávají význam. Zapnutí budíku z nabídky widgetu bez vybraného dne v týdnu otevře kartu Budík příslušného widgetu, místo aby zapnulo budík, který nemůže zaznít.
 
-Výchozí šířka rámečku digitálních hodin je nula. **Úvodní nula** nabízí **Zobrazit** (výchozí), **Ponechat místo** a **Bez místa**. Volba **Ponechat místo** skryje nulu a rezervuje její skutečnou šířku ve zvoleném písmu, takže ostatní číslice drží pozice i při proporcionálním písmu. Plovoucí digitální hodiny zarovnávají čas vlevo a při běhu času si zachovávají pevnou velikost. Hodiny na monitoru centrují pevnou oblast času dimenzovanou podle zvoleného písma a formátu včetně místa pro dvě číslice hodin. Změna času text znovu necentruje ani nemění jeho velikost. Řádek AM/PM nebo UTC se centruje samostatně. Výchozí vzhled hodin na monitoru je bílý text na černém pozadí.
+**Úvodní nula** nabízí **Zobrazit** (výchozí), **Ponechat místo** a **Bez místa**. Volba **Ponechat místo** skryje nulu a rezervuje její skutečnou šířku ve zvoleném písmu, takže ostatní číslice drží pozice i při proporcionálním písmu. Výchozí vzhled hodin na monitoru je bílý text na černém pozadí.
 
 ## Čas a budíky
 
@@ -93,23 +92,27 @@ Offset je vhodný například v rozhlasovém či televizním studiu ke kompenzac
 
 CalClock může používat systémový čas Windows nebo korekci získanou ze serverů NTP a platnou pouze v aplikaci. Volba je globální pro všechny widgety. Synchronizace nikdy nemění hodiny Windows. Při ztrátě připojení NTP po úspěšné synchronizaci zůstává poslední známá korekce aktivní v paměti procesu. Také změna serverů zachovává aktuální platnou korekci do získání nové odpovědi.
 
+Na kartě Čas je záznam dotazů na servery NTP od spuštění aplikace. Každý záznam obsahuje datum a místní čas počítače, server a stav. OK označuje platnou odpověď a θ její odchylku vůči systémovému času Windows. ERR uvádí důvod neúspěchu a případný chybový kód. Poslední záznam skupiny obsahuje také výslednou odchylku Θ, pokud se podařilo získat použitelná měření.
+
+Odchylky se zobrazují v milisekundách se čtyřmi desetinnými místy. Kladná hodnota znamená, že čas serveru je vůči Windows napřed; záporná, že je pozadu. Výsledná odchylka Θ zohledňuje přijatá měření a je uvedena také ve stavu synchronizace.
+
+Uložit log uloží záznamy do CSV včetně odchylek a důvodů chyb. Záznamy se mezi spuštěními neuchovávají; chcete-li je zachovat, uložte je před ukončením aplikace.
+
 Hodinové widgety podporují budíky pro samostatně vybrané dny v týdnu; ve výchozím stavu je zapnuto všech sedm dnů. Budík zobrazí svůj skrytý widget a přenese jej před ostatní okna, aniž by trvale změnil jeho nastavení vždy navrchu. Soubory WAV, MP3, WMA, MIDI, AAC, M4A a FLAC jsou rozpoznávány pro interní jednorázové nebo opakované přehrávání; skutečnou podporu dekódování poskytují multimediální součásti nainstalované ve Windows. Ostatní soubory a příkazy se předávají Windows asynchronně. Budík může také zavolat adresu HTTP nebo HTTPS. Nezávisle na těchto akcích může budík používat šestipípové časové znamení, jehož první krátké pípnutí zazní pět sekund před nastaveným časem budíku.
 
-Volba Spustit soubor nebo příkaz aktivuje své pole, tlačítka Procházet a Test a volbu opakování. Test a opakování navíc vyžadují neprázdné pole, běžící test však lze zastavit vždy. Tlačítko Test u budíku zobrazí náhled vizuální signalizace a asynchronně otestuje nastavený soubor, příkaz, zvuk i adresu vzdáleného skriptu. Je-li zvoleno časové znamení budíku, Test přehraje také celou šestipípovou sekvenci; Zastavit test ukončí interní zvuk a náhled znamení.
+Tlačítko Test u budíku zobrazí náhled vizuální signalizace a asynchronně otestuje nastavený soubor, příkaz, zvuk i adresu vzdáleného skriptu. Je-li zvoleno časové znamení budíku, Test přehraje také celou šestipípovou sekvenci; Zastavit test ukončí interní zvuk a náhled znamení.
 
 Na kartě Znamení je zatržítko Časové znamení aktivní a přepínače intervalů 1, 5, 10, 15, 20, 30 nebo 60 minut podle času zobrazovaného widgetem. Znamení je zpočátku vypnuté a je zvolen hodinový interval. Vypnutí a zapnutí příkazem Signál v menu widgetu interval zachovává. Menu zobrazuje čas budíku a interval znamení v závorkách. Interval 20 minut znamená :00, :20 a :40 podle tohoto času. Znamení odpovídá **Greenwich Time Signal (GTS)**: pět krátkých pípnutí označuje posledních pět sekund a delší pípnutí přesnou hranici intervalu. Zohledňují se časová pásma, režim UTC, offsety i aktuální korekce NTP. Znamení budíku a karta Znamení zůstávají nezávisle nastavitelné; pokud se jejich termíny setkají ve stejném okamžiku, CalClock přehraje jedinou společnou sekvenci. Zohledňují se i zlomkové offsety widgetů a překrývající se tóny widgetů, budíků a testů znějí souvisle do konce posledního překryvu.
 
-**Zvuk časového znamení** na kartě Aplikace nabízí **Vlastní generátor** (výchozí) a **Systémové pípání**. Volba platí pro časová znamení všech widgetů včetně znamení budíků a ukládá se do globálního nastavení. U **Vlastního generátoru** zobrazuje jezdec **Hlasitost časového znamení** úroveň v dB pro celou aplikaci. Pravá krajní poloha je **0 dB**, maximální nezkreslená amplituda sinusovky; ticho je **−∞ dB**. Výchozí hlasitost je **−18 dB**. Jezdec používá decibelovou stupnici s −18 dB uprostřed. Vlastní generátor začíná i ukončuje tóny v průchodu nulou, včetně zastavení testu. Zastavení testu nechá aktuální pípnutí doznít; dlouhé pípnutí může končit až půl sekundy. Tlačítko **Test** vedle **Zvuku časového znamení** zapne souvislý náhled, **Zastavit test** jej ukončí. Testovat lze **Systémové pípání** i **Vlastní generátor**; stav testu se neukládá. Držení jezdce hlasitosti také spouští náhled do uvolnění myši, pokud neběží test zapnutý tlačítkem. Přehrávání začíná v následující celé sekundě, s krátkými tóny každou sekundu a dlouhým v :00, :05, :10 atd. Náhled a současná znamení widgetů či budíků sdílejí jediný tón. U **Systémového pípání** je neaktivní pouze jezdec hlasitosti. Volba zvuku je dostupná jen tehdy, podporuje-li systém obě možnosti.
+**Zvuk časového znamení** na kartě Aplikace nabízí **Vlastní generátor** (výchozí) a **Systémové pípání**. Volba platí pro časová znamení všech widgetů včetně znamení budíků a ukládá se do globálního nastavení. U **Vlastního generátoru** zobrazuje jezdec **Hlasitost časového znamení** úroveň v dB pro celou aplikaci. Pravá krajní poloha je **0 dB**, maximální nezkreslená amplituda sinusovky; ticho je **−∞ dB**. Výchozí hlasitost je **−18 dB**. Zastavení testu nechá aktuální pípnutí doznít; dlouhé pípnutí může končit až půl sekundy. Tlačítko **Test** vedle **Zvuku časového znamení** zapne souvislý náhled, **Zastavit test** jej ukončí. Testovat lze **Systémové pípání** i **Vlastní generátor**; stav testu se neukládá. Držení jezdce hlasitosti také spouští náhled do uvolnění myši, pokud neběží test zapnutý tlačítkem. Přehrávání začíná v následující celé sekundě, s krátkými tóny každou sekundu a dlouhým v :00, :05, :10 atd. Náhled a současná znamení widgetů či budíků sdílejí jediný tón. U **Systémového pípání** je neaktivní pouze jezdec hlasitosti. Volba zvuku je dostupná jen tehdy, podporuje-li systém obě možnosti.
 
 Budík i časové znamení lze zapínat také v kontextové nabídce každého widgetu podporujícího zvuk. Položka budíku zobrazuje jeho čas a, nejsou-li zvoleny všechny dny, také aktivní dny v týdnu. Zaškrtnutý příkaz Ztlumeno ovlivňuje svůj widget a odpovídá volbě Ztlumeno na kartě Obecné. Samostatný Kalendář nemá budík, znamení ani stav ztlumení, proto jsou tyto příkazy a nastavení vynechány nebo neaktivní. Příkaz v oznamovací oblasti se jmenuje Ztlumit vše; `M` na libovolném widgetu provede stejné globální přepnutí. Globální zrušení ztlumení obnoví pouze widgety ztlumené předchozí globální akcí. Interní zvuk pokračuje tiše a po zrušení ztlumení je opět slyšitelný. Již probíhající pípnutí může doznít, další se vynechávají do opětovného povolení zvuku. Příkazy nesouvisející se zvukem a vzdálené skripty nejsou ovlivněny.
 
 ## Nastavení a nabídky
 
-`Uložit` použije změny a zavře Nastavení, `Použít` je použije a ponechá okno otevřené a `Zrušit` zahodí dosud nepoužité změny včetně průběžného náhledu vzhledu. Enter aktivuje `Uložit`, Esc aktivuje `Zrušit`.
-
 Nabídka každého widgetu obsahuje příkazy pro daný typ — viditelnost, vždy navrchu, sekundy, velikost ručičkových hodin nebo formát kopírování data — a dále `Zarovnat do mřížky`, Nastavení, Nápovědu, O programu a Konec. Nabídka oznamovací oblasti uvádí všechny widgety s pořadovými čísly a dále Zobrazit vše, Skrýt vše a Ztlumit vše. Samostatně oddělené `Zarovnat do mřížky` následuje před příkazy aplikace.
 
-Zobrazení nebo obnovení widgetů je přenese před ostatní okna, aniž by změnilo jejich nastavení vždy navrchu. CalClock zajišťuje, že je po spuštění viditelný alespoň jeden widget. Druhé spuštění aktivuje již běžící instanci CalClocku a, není-li nic viditelné, obnoví naposledy skryté widgety. Po restartu Průzkumníka Windows se ikona v oznamovací oblasti automaticky znovu zaregistruje. Pokud systémový `ClockWndMain` nepodporuje při vybrané velikosti sekundovou ručičku, příkaz Sekundy je neaktivní a uložená volba se zachová pro jinou podporovanou velikost.
+Zobrazení nebo obnovení widgetů je přenese před ostatní okna, aniž by změnilo jejich nastavení vždy navrchu. CalClock zajišťuje, že je po spuštění viditelný alespoň jeden widget. Druhé spuštění aktivuje již běžící instanci CalClocku a, není-li nic viditelné, obnoví naposledy skryté widgety. Po restartu Průzkumníka Windows se ikona v oznamovací oblasti automaticky znovu zaregistruje.
 
 ## Ukládání nastavení
 
@@ -125,7 +128,7 @@ Ukládání do XML lze zapnout v Nastavení. Používá:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Po úspěšném zápisu do XML CalClock odstraní svůj stav z registru. Přepnutí zpět do registru obdobně odstraní automatický soubor XML a prázdné adresáře CalClocku. Import XML okamžitě načte a uloží jeho nastavení do právě zvoleného úložiště, aniž by změnil typ ukládání. Ztlumení se ukládá samostatně pro každý widget podporující zvuk. Spouštění s Windows se ukládá jako hodnota `CalClock` do standardního klíče Windows `Run` aktuálního uživatele.
+Import XML okamžitě načte a uloží jeho nastavení do právě zvoleného úložiště, aniž by změnil typ ukládání. Ztlumení se ukládá samostatně pro každý widget podporující zvuk.
 
 ## Sestavení
 
@@ -134,7 +137,7 @@ Požadavky:
 - Microsoft Visual Studio se sadou nástrojů MSVC v145
 - Windows SDK
 
-Otevřete `CalClock.slnx`, vyberte `Release | Win32` a sestavte řešení. Spustitelný soubor vznikne jako:
+Otevřete `CalClock.slnx`, vyberte `Release | x86` a sestavte řešení. Spustitelný soubor vznikne jako:
 
 ```text
 Release\CalClock.exe

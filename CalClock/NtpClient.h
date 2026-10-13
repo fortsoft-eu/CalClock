@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.5.5.0
  */
 
 #pragma once
@@ -31,20 +31,33 @@
 #include <string>
 #include <vector>
 
-/// Records a server query's completion time in UTC FILETIME ticks, server name, and success state.
+/// Identifies why a server query failed to produce a valid NTP sample.
+enum class NtpQueryError {
+    InvalidResponse,
+    NameResolution,
+    Network,
+    Timeout
+};
+
+/// Records a server query's completion time, measured offset, failure details, and optional combined group offset.
 struct NtpQueryLogEntry {
-    ULONGLONG completedTime = 0;
-    std::wstring server;
+    bool hasCombinedOffset = false;
     bool success = false;
+    int errorCode = 0;
+    LONGLONG combinedOffset100Nanoseconds = 0;
+    LONGLONG offset100Nanoseconds = 0;
+    ULONGLONG completedTime = 0;
+    NtpQueryError error = NtpQueryError::InvalidResponse;
+    std::wstring server;
 };
 
 /// Carries an NTP query generation, combined clock offset, selected server, and individual query records to the UI thread.
 struct NtpThreadResult {
     bool success = false;
     LONGLONG offset100Nanoseconds = 0;
-    std::wstring server;
     ULONG generation = 0;
     std::vector<NtpQueryLogEntry> logEntries;
+    std::wstring server;
 };
 
 /// Returns the preset's server list, resolving the automatic preset from the user's region.

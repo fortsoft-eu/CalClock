@@ -8,7 +8,7 @@ CalClock to natywna aplikacja Win32/x86 dla Windows Vista i nowszych wersji, wy�
 
 - Do 32 niezależnie konfigurowanych widżetów
 - Osobny język, strefa czasowa, przesunięcie czasu, widoczność i tryb zawsze na wierzchu dla każdego widżetu
-- Zegary analogowe oparte na kontrolce Windows `ClockWndMain`, z wykrywaniem dostępnych rozmiarów i obsługą wskazówki sekundowej
+- Zegary analogowe z wyborem rozmiaru tarczy i opcjonalnym sekundnikiem
 - Zegary cyfrowe z ustawieniami czcionek, kolorów, nieprzezroczystości, odstępów wewnętrznych, ramek, opcjonalnego zera wiodącego i przezroczystego tła
 - Natywne kalendarze Windows z wyborem daty, czterema stylami ramki, konfigurowalnym kolorem ramki, numerami tygodni, pierwszym dniem tygodnia i 33 formatami kopiowania
 - Panele kalendarza z zegarem i maksymalnie dwoma dodatkowymi nazwanymi zegarami w osobnych strefach, niezależnymi rozmiarami tarcz, czterema stylami ramki, kolorem ramki, tekstem UTC, zerem wiodącym i osobną czcionką każdego wiersza tekstu
@@ -51,15 +51,14 @@ Przy pierwszym uruchomieniu CalClock wybiera język interfejsu Windows, a jeśli
 - Otwarcie Ustawień z menu widżetu natychmiast go wybiera.
 - `Ctrl` lub `Shift` umożliwia wybór wielu pozycji, `Ctrl+A` wybiera wszystkie, a `Del` usuwa wybrane. `Insert` przełącza zaznaczenie bieżącej pozycji i przesuwa kursor listy do następnego wiersza, jak w Total Commanderze.
 - Wszystkie skróty listy działają również przy fokusie na Usuń lub Duplikuj. Skrót przenosi fokus na listę i wykonuje akcję. `Ctrl+C` kopiuje wybrane widżety, a `Ctrl+V` dołącza kopie na końcu w kolejności listy. Kopie zawierają wszystkie ustawienia i otrzymują przyrostek nazwy w języku aplikacji. Duplikuj wykonuje tę samą operację bezpośrednio. Limit wynosi 32 widżety. Jeśli nie zmieszczą się wszystkie kopie, dodawane są kolejno te, które się mieszczą, a o pozostałych informuje komunikat.
-- `Ctrl+A` lub potrójne kliknięcie pola tekstowego zaznacza cały tekst.
 
-Przy wyborze wielu widżetów ich kontrolki na kartach Ogólne, Wygląd, Alarm i Sygnał są nieaktywne; globalne karty Czas i Aplikacja pozostają dostępne. Ustawienia pamiętają ostatnio otwartą kartę i ostatnio dodany typ widżetu. Na małym obszarze roboczym okno udostępnia w razie potrzeby przewijanie poziome lub pionowe.
+Ustawienia pamiętają ostatnio otwartą kartę i ostatnio dodany typ widżetu.
 
 Daty można kopiować w 33 formatach: lokalnych, sortowalnych, z dniem lub miesiącem na początku, tekstowych i z dniem tygodnia. Każda maska jest dostępna we wszystkich językach. Domyślny krótki format lokalny zależy od języka widżetu, podobnie jak nazwy miesięcy i dni. Pozycje pokazują maskę i aktualny przykład.
 
 Panel kalendarza z zegarem może wyświetlać dwa dodatkowe zegary. Włącz każdy na karcie Ogólne i wybierz nazwę oraz strefę. Nazwane strefy przestrzegają własnych reguł czasu letniego; stałe przesunięcia UTC nie zmieniają się. Gdy dodatkowe zegary są aktywne, każdy zegar pokazuje lokalny dzień tygodnia pod godziną. Trzy listy rozmiarów na karcie Wygląd sterują kolejno zegarem głównym, Zegarem 1 i Zegarem 2. Prawy przycisk na dodatkowej tarczy pozwala wybrać jej rozmiar. Dodatkowe zegary zawsze pomijają sekundy i dzielą język, format, czcionki oraz przesunięcie widżetu. Dodawanie, usuwanie i zmiana rozmiarów zachowują przywiązanie do tych samych krawędzi obszaru roboczego.
 
-W panelu górna data jest łączem przywracającym kalendarz do dzisiaj; dolny tekst strefy otwiera klasyczne ustawienia Daty i godziny Windows. Oba łącza są dostępne przez `Tab`, pokazują prostokąt fokusu i można je aktywować klawiaturą. Natywny kalendarz pozostaje w pełni interaktywny, ale pomija zbędny w tym układzie wiersz Dzisiaj.
+W panelu górna data jest łączem przywracającym kalendarz do dzisiaj; dolny tekst strefy otwiera klasyczne ustawienia Daty i godziny Windows.
 
 `Wyrównaj do siatki` rozmieszcza widoczne widżety pulpitu w stabilnej siatce bez nakładania, w przybliżeniu zachowując układ ręczny. Widżet, z którego menu uruchomiono polecenie, pozostaje na miejscu; polecenie z obszaru powiadomień układa każdy monitor niezależnie. Zegary na monitorze są wykluczone.
 
@@ -69,15 +68,15 @@ Dla samodzielnych kalendarzy **Wiersz Dzisiaj** w menu lub na karcie Wygląd kon
 
 Zmiany wyglądu są natychmiast widoczne na wybranym widżecie. `Anuluj` przywraca niezastosowane zmiany; `Wygląd domyślny` przywraca wartości danego typu.
 
-Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ramka ma konfigurowalny kolor; ustawienie szerokości jest dostępne tam, gdzie widżet je obsługuje. Przezroczyste zegary cyfrowe oferują te same style co nieprzezroczyste. Okna czcionek pokazują tylko używane opcje, bez niepotrzebnego podglądu i efektów. Czcionki aplikacji i kalendarza nie mają wyboru rozmiaru; cyfrowe i teksty panelu mają. Natywny kalendarz akceptuje własną czcionkę tylko przy wyłączonych stylach wizualnych kalendarza lub całej aplikacji.
+Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ramka ma konfigurowalny kolor; ustawienie szerokości jest dostępne tam, gdzie widżet je obsługuje. Przezroczyste zegary cyfrowe oferują te same style co nieprzezroczyste. Czcionki aplikacji i kalendarza nie mają wyboru rozmiaru; cyfrowe i teksty panelu mają. Natywny kalendarz akceptuje własną czcionkę tylko przy wyłączonych stylach wizualnych kalendarza lub całej aplikacji.
 
-Język aplikacji, czcionka interfejsu, wygładzanie, style wizualne, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Zastosowanie nowego języka od razu odtwarza otwarte Ustawienia w tym języku. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**. Na karcie Wygląd wygładzanie i wyłączenie motywów znajdują się w tym samym miejscu dla wszystkich typów, z **Wyglądem domyślnym** poniżej.
+Język aplikacji, czcionka interfejsu, wygładzanie, style wizualne, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
 Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzane pliki osobno dla każdego widżetu i pokazuje poziom w dB. Domyślne **−18 dB** zachowuje poziom oryginalnego pliku (**100%**). Przesunięcie w prawo wzmacnia dźwięk; maksimum **0 dB** odpowiada około **794%** pierwotnej amplitudy. Skrajnie lewa pozycja to **−∞ dB** (cisza). Zmiany działają podczas testu. Dla plików otwieranych w zewnętrznej aplikacji suwak jest nieaktywny. Wzmocnienie dotyczy dekodowanego audio, w tym WAV, MP3, WMA, AAC, M4A i FLAC, jeśli Windows je obsługuje. Starszy sposób odtwarzania plików, których nie można dekodować, np. MIDI, jest ograniczony do 100%.
 
 Dni alarmu uwzględniają pierwszy dzień tygodnia wybranej kultury aplikacji. Zapisane dni zachowują znaczenie przy zmianie języka. Włączenie alarmu z menu bez wybranych dni otwiera kartę Alarm widżetu, zamiast włączać alarm, który nie może zabrzmieć.
 
-Domyślna szerokość ramki zegara cyfrowego wynosi zero. **Zero wiodące** oferuje **Pokaż** (domyślnie), **Zachowaj miejsce** i **Bez miejsca**. **Zachowaj miejsce** ukrywa zero, rezerwując jego rzeczywistą szerokość w danej czcionce. Pozostałe cyfry zachowują pozycje również przy czcionce proporcjonalnej. Zegary cyfrowe na pulpicie wyrównują czas do lewej i zachowują stały rozmiar podczas jego upływu. Zegary na monitorze centrują stały obszar czasu dopasowany do czcionki i formatu, z miejscem na dwie cyfry godziny. Zmiana czasu nie centruje ani nie skaluje tekstu ponownie. Wiersz AM/PM lub UTC jest centrowany niezależnie. Domyślnie zegary na monitorze mają biały tekst na czarnym tle.
+**Zero wiodące** oferuje **Pokaż** (domyślnie), **Zachowaj miejsce** i **Bez miejsca**. **Zachowaj miejsce** ukrywa zero, rezerwując jego rzeczywistą szerokość w danej czcionce. Pozostałe cyfry zachowują pozycje również przy czcionce proporcjonalnej. Domyślnie zegary na monitorze mają biały tekst na czarnym tle.
 
 ## Czas i alarmy
 
@@ -93,23 +92,27 @@ Przesunięcie przydaje się np. w studiu nadawczym do kompensacji opóźnienia t
 
 CalClock może używać czasu systemowego Windows albo korekty wewnętrznej z serwerów NTP. Wybór jest globalny dla wszystkich widżetów. Synchronizacja nigdy nie zmienia zegara Windows. Po utracie NTP po udanej synchronizacji ostatnia korekta pozostaje aktywna w pamięci procesu. Zmiana serwerów również zachowuje ważną korektę do otrzymania nowej odpowiedzi.
 
+Karta Czas rejestruje zapytania do serwerów NTP od uruchomienia aplikacji. Każdy wpis zawiera datę i lokalny czas komputera, serwer oraz stan. OK oznacza prawidłową odpowiedź, a θ jej odchylenie od czasu systemowego Windows. ERR podaje przyczynę niepowodzenia i ewentualny kod błędu. Ostatni wpis grupy zapytań zawiera również obliczone odchylenie Θ, jeśli dostępne są użyteczne pomiary.
+
+Odchylenia są wyświetlane w milisekundach z czterema miejscami po przecinku. Wartość dodatnia oznacza, że zegar serwera wyprzedza Windows; ujemna oznacza, że jest opóźniony. Θ uwzględnia zaakceptowane pomiary i jest również widoczne w stanie synchronizacji.
+
+Zapisz dziennik eksportuje wpisy do CSV wraz z odchyleniami i szczegółami błędów. Wpisy nie są zachowywane między uruchomieniami; zapisz je przed zamknięciem aplikacji, jeśli chcesz je zachować.
+
 Widżety zegarów obsługują alarmy w wybrane dni; domyślnie aktywne są wszystkie siedem. Alarm pokazuje swój ukryty widżet i przenosi go przed inne okna, nie zmieniając trwale trybu zawsze na wierzchu. WAV, MP3, WMA, MIDI, AAC, M4A i FLAC są rozpoznawane do wewnętrznego odtwarzania raz lub w pętli; rzeczywiste dekodowanie zależy od zainstalowanych składników multimedialnych Windows. Inne pliki i polecenia przekazywane są do Windows asynchronicznie. Alarm może też wywołać adres HTTP lub HTTPS. Niezależnie może używać sześciotonowego sygnału czasu, którego pierwszy krótki ton rozlega się pięć sekund przed ustawioną godziną.
 
-Uruchom plik lub polecenie aktywuje pole, Przeglądaj, Test i powtarzanie. Test i powtarzanie wymagają dodatkowo niepustego pola, ale działający test zawsze można zatrzymać. Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Jeśli wybrano sygnał czasu alarmu, odtwarza także pełną sekwencję sześciu tonów; Zatrzymaj test kończy wewnętrzne audio i podgląd sygnału.
+Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Jeśli wybrano sygnał czasu alarmu, odtwarza także pełną sekwencję sześciu tonów; Zatrzymaj test kończy wewnętrzne audio i podgląd sygnału.
 
 Karta Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, 20, 30 lub 60 minut według czasu wyświetlanego przez widżet. Początkowo sygnał jest wyłączony i wybrany jest odstęp jednej godziny. Wyłączenie i włączenie opcji Sygnał w menu widżetu zachowuje odstęp. Menu pokazuje godzinę alarmu i odstęp sygnału w nawiasach. Interwał 20 minut oznacza :00, :20 i :40 tego czasu. Wzorem jest **Greenwich Time Signal (GTS)**: pięć krótkich tonów wyznacza ostatnie pięć sekund, a dłuższy dokładną granicę. Uwzględniane są strefy, UTC, przesunięcia i bieżąca korekta NTP. Sygnał alarmu i karta Sygnał pozostają niezależne; gdy terminy się pokrywają, CalClock odtwarza jedną wspólną sekwencję. Uwzględniane są ułamkowe przesunięcia, a nakładające się tony widżetów, alarmów i testów brzmią nieprzerwanie do końca ostatniego nałożenia.
 
-**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Skala decybelowa ma −18 dB pośrodku. Generator zaczyna i kończy tony w przejściu przez zero, także przy zatrzymaniu testu. Bieżący ton może się zakończyć; długi może trwać jeszcze do pół sekundy. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Podgląd i jednoczesne sygnały widżetów lub alarmów dzielą jeden ton. Przy **Sygnale systemowym** nieaktywny jest tylko suwak głośności. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
+**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Bieżący ton może się zakończyć; długi może trwać jeszcze do pół sekundy. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Podgląd i jednoczesne sygnały widżetów lub alarmów dzielą jeden ton. Przy **Sygnale systemowym** nieaktywny jest tylko suwak głośności. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
 
 Alarm i sygnał można także przełączać w menu widżetu obsługującego dźwięk. Pozycja alarmu pokazuje godzinę oraz aktywne dni, jeśli nie wybrano wszystkich. Zaznaczone Wycisz dotyczy widżetu i odpowiada polu na karcie Ogólne. Samodzielny Kalendarz nie ma alarmu, sygnału ani wyciszenia, więc te polecenia są pomijane lub nieaktywne. W obszarze powiadomień polecenie nazywa się Wycisz wszystko; `M` na dowolnym widżecie wykonuje tę samą globalną zmianę. Globalne przywrócenie dźwięku dotyczy tylko widżetów wyciszonych poprzednią akcją globalną. Wewnętrzne audio trwa bezgłośnie i staje się słyszalne po wyłączeniu wyciszenia. Rozpoczęty ton może się skończyć; następne są pomijane do włączenia dźwięku. Polecenia niedźwiękowe i zdalne skrypty pozostają bez zmian.
 
 ## Ustawienia i menu
 
-`Zapisz` stosuje zmiany i zamyka Ustawienia, `Zastosuj` stosuje je bez zamykania, a `Anuluj` odrzuca niezastosowane zmiany wraz z podglądem wyglądu. Enter uruchamia `Zapisz`, Esc `Anuluj`.
-
 Każde menu widżetu zawiera polecenia właściwe dla typu — widoczność, zawsze na wierzchu, sekundy, rozmiar analogowy lub format kopiowanej daty — a potem `Wyrównaj do siatki`, Ustawienia, Pomoc, Informacje i Zakończ. Menu powiadomień wymienia widżety z numerami, a następnie Pokaż wszystko, Ukryj wszystko i Wycisz wszystko. Oddzielona pozycja `Wyrównaj do siatki` poprzedza polecenia aplikacji.
 
-Pokazanie lub przywrócenie widżetów przenosi je przed inne okna bez zmiany stanu zawsze na wierzchu. CalClock zapewnia co najmniej jeden widoczny widżet po starcie. Drugie uruchomienie aktywuje istniejącą instancję i przywraca ostatnio ukryte widżety, jeśli żaden nie jest widoczny. Po restarcie Eksploratora Windows ikona powiadomień rejestruje się automatycznie ponownie. Jeśli `ClockWndMain` nie obsługuje sekundnika w danym rozmiarze, Sekundy są nieaktywne, ale wybór pozostaje zapisany dla innego obsługiwanego rozmiaru.
+Pokazanie lub przywrócenie widżetów przenosi je przed inne okna bez zmiany stanu zawsze na wierzchu. CalClock zapewnia co najmniej jeden widoczny widżet po starcie. Drugie uruchomienie aktywuje istniejącą instancję i przywraca ostatnio ukryte widżety, jeśli żaden nie jest widoczny. Po restarcie Eksploratora Windows ikona powiadomień rejestruje się automatycznie ponownie.
 
 ## Zapis ustawień
 
@@ -125,7 +128,7 @@ Zapis XML można włączyć w Ustawieniach. Używa on:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Po udanym zapisie XML CalClock usuwa swój stan z rejestru. Powrót do rejestru analogicznie usuwa automatyczny XML i puste katalogi CalClock. Import XML natychmiast ładuje i zapisuje ustawienia w wybranym magazynie, nie zmieniając typu zapisu. Wyciszenie zapisuje się oddzielnie dla każdego widżetu z dźwiękiem. Start z Windows jest zapisywany jako wartość `CalClock` w standardowym kluczu `Run` bieżącego użytkownika.
+Import XML natychmiast ładuje i zapisuje ustawienia w wybranym magazynie, nie zmieniając typu zapisu. Wyciszenie zapisuje się oddzielnie dla każdego widżetu z dźwiękiem.
 
 ## Kompilacja
 
@@ -134,7 +137,7 @@ Wymagania:
 - Microsoft Visual Studio z zestawem narzędzi MSVC v145
 - Windows SDK
 
-Otwórz `CalClock.slnx`, wybierz `Release | Win32` i skompiluj rozwiązanie. Plik wykonywalny powstaje jako:
+Otwórz `CalClock.slnx`, wybierz `Release | x86` i skompiluj rozwiązanie. Plik wykonywalny powstaje jako:
 
 ```text
 Release\CalClock.exe

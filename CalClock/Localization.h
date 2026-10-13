@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.5.5.0
  */
 
 #pragma once
@@ -90,7 +90,7 @@ extern const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT];
 extern const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT];
 extern const wchar_t* NTP_SYNC_LABELS[LANG_COUNT];
 extern const wchar_t* NTP_LOG_COLUMN_LABELS[LANG_COUNT][3];
-extern const wchar_t* NTP_LOG_STATUS_LABELS[LANG_COUNT][2];
+extern const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4];
 extern const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT];
 extern const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT];
 extern const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT];
