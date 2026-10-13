@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.0
+ * Last modified for version 1.5.4.2
  */
 
 #pragma once
+
 #include <windows.h>
 
 /// Installs system click tolerance and anchored word and logical-line selection.

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.1
+ * Last modified for version 1.5.4.2
  */
 
 #define NOMINMAX
@@ -76,7 +76,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
 
- /// Function pointer types
+/// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
@@ -8007,7 +8007,7 @@ static void UpdateNtpLabelHeights() {
         if (label == hTimeGlobalNote) {
             RECT client = {};
             GetClientRect(hTimePage, &client);
-            top = client.bottom - 8 - height;
+            top = client.bottom - 12 - height;
         }
         SetControlPosition(label, bounds.left, top, bounds.right - bounds.left, height);
     }
@@ -11175,9 +11175,9 @@ static bool CreateSettingsControls() {
         SETTINGS_PAGE_CONTENT_RIGHT - 88, y - 3, 88, 27, hAlarmPage, ID_BROWSE, &alarmControls);
     y += 32;
     hTestCommandButton = AddControl(0, L"BUTTON", TEST_COMMAND_LABELS[appLanguage], WS_TABSTOP,
-        left, y - 2, 102, 27, hAlarmPage, ID_TEST_COMMAND, &alarmControls);
+        left, y, 102, 27, hAlarmPage, ID_TEST_COMMAND, &alarmControls);
     hLoopAudioCheck = AddControl(0, L"BUTTON", Mnemonic(TXT_LOOP_AUDIO).c_str(), WS_TABSTOP | BS_AUTOCHECKBOX,
-        left + 110, y, 260, 24, hAlarmPage, ID_LOOP_AUDIO, &alarmControls);
+        left + 110, y + 2, 260, 24, hAlarmPage, ID_LOOP_AUDIO, &alarmControls);
     y += 34;
     hAlarmVolumeLabel = AddUnderlayStatic(hAlarmPage, ALARM_VOLUME_LABELS[appLanguage], WS_VISIBLE,
         left, y + 7, 22, &alarmControls);
@@ -11218,37 +11218,37 @@ static bool CreateSettingsControls() {
     HWND timeSignalNote = AddControl(0, L"STATIC", TIME_SIGNAL_NOTE[appLanguage], WS_GROUP | SS_OWNERDRAW,
         left, y + 12, 364, pageHeight - y - 20, hTimeSignalPage, ID_TIME_SIGNAL_NOTE);
     timeSignalControls.push_back(timeSignalNote);
-    AddUnderlayStatic(hTimePage, TIME_SOURCE_LABELS[appLanguage], WS_VISIBLE, 8, 16, 22, &timeControls);
+    AddUnderlayStatic(hTimePage, TIME_SOURCE_LABELS[appLanguage], WS_VISIBLE, 8, 12, 22, &timeControls);
     hTimeSourceCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
-        SETTINGS_PAGE_CONTENT_RIGHT - 240, 12, 240, 180, hTimePage, ID_TIME_SOURCE, &timeControls);
+        SETTINGS_PAGE_CONTENT_RIGHT - 240, 8, 240, 180, hTimePage, ID_TIME_SOURCE, &timeControls);
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(SYSTEM_TIME_LABELS[appLanguage]));
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_TIME_LABELS[appLanguage]));
     SendMessageW(hTimeSourceCombo, CB_SETCURSEL, useNtpTime ? 1 : 0, 0);
-    hNtpPresetLabel = AddUnderlayStatic(hTimePage, NTP_PRESET_FIELD_LABELS[appLanguage], WS_VISIBLE, 8, 50, 22,
+    hNtpPresetLabel = AddUnderlayStatic(hTimePage, NTP_PRESET_FIELD_LABELS[appLanguage], WS_VISIBLE, 8, 44, 22,
         &timeControls);
     hNtpPresetCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST,
-        SETTINGS_PAGE_CONTENT_RIGHT - 240, 46, 240, 220, hTimePage, ID_NTP_PRESET, &timeControls);
+        SETTINGS_PAGE_CONTENT_RIGHT - 240, 40, 240, 220, hTimePage, ID_NTP_PRESET, &timeControls);
     for (int preset = 0; preset < NTP_PRESET_COUNT; preset++) {
         SendMessageW(hNtpPresetCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_PRESET_LABELS[appLanguage][preset]));
     }
     SendMessageW(hNtpPresetCombo, CB_SETCURSEL, ntpPreset, 0);
     hNtpServersLabel = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", NTP_SERVERS_LABELS[appLanguage],
-        WS_CHILD | WS_VISIBLE, 8, 82, 364, 22, hTimePage, nullptr, hInstance, nullptr);
+        WS_CHILD | WS_VISIBLE, 8, 76, 364, 22, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hNtpServersLabel);
     hNtpServersEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", ntpServers.c_str(), WS_TABSTOP | ES_AUTOHSCROLL,
-        8, 106, SETTINGS_PAGE_CONTENT_RIGHT - 8, 24, hTimePage, ID_NTP_SERVERS, &timeControls);
-    hNtpSyncButton = AddControl(0, L"BUTTON", NTP_SYNC_LABELS[appLanguage], WS_TABSTOP, 8, 140, 180, 27, hTimePage,
+        8, 99, SETTINGS_PAGE_CONTENT_RIGHT - 8, 24, hTimePage, ID_NTP_SERVERS, &timeControls);
+    hNtpSyncButton = AddControl(0, L"BUTTON", NTP_SYNC_LABELS[appLanguage], WS_TABSTOP, 8, 131, 180, 27, hTimePage,
         ID_NTP_SYNC, &timeControls);
     hNtpStatus = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_LEFT,
-        8, 178, SETTINGS_PAGE_CONTENT_RIGHT - 8, 42, hTimePage, nullptr, hInstance, nullptr);
+        8, 160, SETTINGS_PAGE_CONTENT_RIGHT - 8, 42, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hNtpStatus);
     hNtpLogList = AddControl(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"", WS_TABSTOP | LVS_REPORT | LVS_SHOWSELALWAYS,
-        8, 214, SETTINGS_PAGE_CONTENT_RIGHT - 8, pageHeight - 291, hTimePage, ID_NTP_LOG, &timeControls);
+        8, 205, SETTINGS_PAGE_CONTENT_RIGHT - 8, pageHeight - 291, hTimePage, ID_NTP_LOG, &timeControls);
     InitializeNtpLog();
     hNtpSaveLogButton = AddControl(0, L"BUTTON", NTP_SAVE_LOG_LABELS[appLanguage], WS_TABSTOP,
-        SETTINGS_PAGE_CONTENT_RIGHT - 180, pageHeight - 73, 180, 27, hTimePage, ID_NTP_SAVE_LOG, &timeControls);
+        SETTINGS_PAGE_CONTENT_RIGHT - 180, pageHeight - 82, 180, 27, hTimePage, ID_NTP_SAVE_LOG, &timeControls);
     hTimeGlobalNote = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", TIME_GLOBAL_NOTE[appLanguage],
-        WS_CHILD | WS_VISIBLE | SS_LEFT, 8, pageHeight - 50, 364, 42, hTimePage, nullptr, hInstance, nullptr);
+        WS_CHILD | WS_VISIBLE | SS_LEFT, 8, pageHeight - 54, 364, 42, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hTimeGlobalNote);
     UpdateNtpSettingsControls();
     hAppFontLabel = AddUnderlayStatic(hApplicationPage, APPLICATION_FONT_LABELS[appLanguage], WS_VISIBLE,
