@@ -183,9 +183,11 @@ struct CalendarSizeEntry {
     SIZE size;
 };
 
-/// Contains the panel's client size and rectangles for its calendar, clock faces, captions, times, days, and footer.
+/// Contains the panel's client size and rectangles for its header, calendar, clock faces, captions, times, days,
+/// and footer.
 struct PanelLayout {
     SIZE clientSize = {};
+    RECT header = {};
     RECT calendar = {};
     RECT clocks[ADDITIONAL_CLOCK_COUNT + 1] = {};
     RECT names[ADDITIONAL_CLOCK_COUNT] = {};
@@ -774,8 +776,8 @@ static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT msg, WPARAM 
 /// Applies the widget locale to native processing and handles context menus and identification feedback.
 static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
-/// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
-/// Treats double-clicks as button presses and removes the subclass on destruction.
+/// Keeps native panel-link input while presenting its text through the panel's shared buffer.
+/// Supports printing, hover, focus and double-clicks without requesting paints from inside parent painting.
 static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
 
@@ -2695,6 +2697,7 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
     PanelLayout layout;
     SIZE calendarSize = GetCalendarSize(config, true);
     bool additional = HasAdditionalClocks(config);
+    int headerHeight = 27;
     int lineHeight = 25;
     int nameHeight = 24;
     int timeTextHeight = 21;
@@ -2732,6 +2735,7 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
         TEXTMETRICW metrics = {};
         if (GetTextMetricsW(dc, &metrics)) {
             nameHeight = std::max(nameHeight, static_cast<int>(metrics.tmHeight) + 4);
+            headerHeight = std::max(headerHeight, static_cast<int>(metrics.tmHeight) + 4);
         }
         SelectObject(dc, oldFont);
     }
@@ -2765,14 +2769,15 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
         groupHeight += lineHeight;
     }
     int contentHeight = std::max(static_cast<int>(calendarSize.cy), groupHeight);
-    int calendarTop = 35 + (contentHeight - calendarSize.cy) / 2 + PANEL_CALENDAR_OFFSET_Y;
+    int contentTop = 7 + headerHeight + 1;
+    int calendarTop = contentTop + (contentHeight - calendarSize.cy) / 2 + PANEL_CALENDAR_OFFSET_Y;
     layout.calendar = RECT{
         PANEL_SIDE_PADDING,
         calendarTop,
         PANEL_SIDE_PADDING + calendarSize.cx,
         calendarTop + calendarSize.cy
     };
-    int clockBottom = 35 + (contentHeight - groupHeight) / 2 + clockHeight;
+    int clockBottom = contentTop + (contentHeight - groupHeight) / 2 + clockHeight;
     int left = layout.calendar.right + 12;
     for (int index = 0; index <= ADDITIONAL_CLOCK_COUNT; index++) {
         if (index > 0 && !config.additionalClocks[index - 1].enabled) {
@@ -2814,7 +2819,8 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
         left += width + 12;
     }
     layout.clientSize.cx = left - 12 + PANEL_SIDE_PADDING;
-    int footerTop = 35 + contentHeight + 4;
+    layout.header = RECT{ PANEL_SIDE_PADDING, 7, layout.clientSize.cx - PANEL_SIDE_PADDING, contentTop - 1 };
+    int footerTop = contentTop + contentHeight + 4;
     if (additional) {
         int rowGap = lineHeight - timeTextHeight - 2;
         int dayTextBottom = layout.days[0].top + (lineHeight - timeTextHeight) / 2 + timeTextHeight;
@@ -4990,6 +4996,16 @@ static void RenderCustomWidget(Widget* widget) {
     ReleaseDC(nullptr, screen);
 }
 
+/// Requests one parent-buffer update for a panel link without invalidating native siblings.
+static void InvalidatePanelLink(HWND link) {
+    HWND parent = GetParent(link);
+    RECT bounds = {};
+    if (parent != nullptr && GetWindowRect(link, &bounds)) {
+        MapWindowPoints(nullptr, parent, reinterpret_cast<POINT*>(&bounds), 2);
+        RedrawWindow(parent, &bounds, nullptr, RDW_INVALIDATE | RDW_NOCHILDREN);
+    }
+}
+
 /// Replaces a panel link's GDI font and deletes its previous owned font after successful creation.
 static void ApplyPanelLinkFont(HWND link, const FontSelection& selection, int fontAntialiasing, HFONT* currentFont) {
     if (link == nullptr || currentFont == nullptr) {
@@ -5024,7 +5040,15 @@ static void UpdatePanelLinkButton(HWND link, HFONT font, const std::wstring& tex
     int height = std::min(textSize.cy + 4, bounds.bottom - bounds.top);
     int x = bounds.left + (bounds.right - bounds.left - width) / 2;
     int y = bounds.top + (bounds.bottom - bounds.top - height) / 2;
-    SetWindowPos(link, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+    RECT current = {};
+    GetWindowRect(link, &current);
+    MapWindowPoints(nullptr, GetParent(link), reinterpret_cast<POINT*>(&current), 2);
+    if (current.left != x
+            || current.top != y
+            || current.right - current.left != width
+            || current.bottom - current.top != height) {
+        SetWindowPos(link, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+    }
 }
 
 /// Draws a dotted focus rectangle using the system window-text color.
@@ -5042,18 +5066,90 @@ static void DrawPanelLinkFocusRect(HDC dc, const RECT& rect) {
     }
 }
 
+/// Draws a panel link's text, hover underline and focus cue into the shared frame or a print DC.
+static void DrawPanelLink(Widget* widget, HWND link, HDC dc, const RECT& bounds) {
+    int savedState = SaveDC(dc);
+    if (savedState == 0) {
+        return;
+    }
+    bool dateLink = link == widget->panelDateLink;
+    HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
+    FillRect(dc, &bounds, background);
+    DeleteObject(background);
+    const FontSelection& selection = dateLink ? widget->config.panelTopFont : widget->config.panelBottomFont;
+    bool hot = dateLink ? widget->panelDateHot : widget->panelTimeZoneHot;
+    bool focused = GetFocus() == link;
+    HFONT font = dateLink ? widget->panelDateFont : widget->panelTimeZoneFont;
+    HFONT hotFont = nullptr;
+    if ((hot || focused) && !selection.underline) {
+        FontSelection hotSelection = selection;
+        hotSelection.underline = true;
+        hotFont = CreatePanelFont(hotSelection, widget->config.fontAntialiasing);
+        if (hotFont != nullptr) {
+            font = hotFont;
+        }
+    }
+    if (font != nullptr) {
+        SelectObject(dc, font);
+    }
+    SetBkMode(dc, TRANSPARENT);
+    SetTextColor(dc, RGB(0, 83, 184));
+    std::wstring text = GetControlText(link);
+    RECT textRect = bounds;
+    DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &textRect,
+        DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    if (focused) {
+        RECT focusRect = bounds;
+        InflateRect(&focusRect, -1, -1);
+        DrawPanelLinkFocusRect(dc, focusRect);
+    }
+    RestoreDC(dc, savedState);
+    if (hotFont != nullptr) {
+        DeleteObject(hotFont);
+    }
+}
+
+/// Draws both links into the complete panel bitmap before any of their pixels are presented.
+static void DrawPanelLinks(Widget* widget, HDC dc) {
+    const HWND links[] = { widget->panelDateLink, widget->panelTimeZoneLink };
+    for (HWND link : links) {
+        RECT bounds = {};
+        if (link != nullptr && IsWindowVisible(link) && GetWindowRect(link, &bounds)) {
+            MapWindowPoints(nullptr, widget->window, reinterpret_cast<POINT*>(&bounds), 2);
+            DrawPanelLink(widget, link, dc, bounds);
+        }
+    }
+}
+
+/// Copies completed link pixels from the panel bitmap while retaining native child clipping on the parent.
+static void PresentPanelLinks(Widget* widget, HDC buffer) {
+    const HWND links[] = { widget->panelDateLink, widget->panelTimeZoneLink };
+    for (HWND link : links) {
+        RECT bounds = {};
+        if (link != nullptr && IsWindowVisible(link) && GetWindowRect(link, &bounds)) {
+            MapWindowPoints(nullptr, widget->window, reinterpret_cast<POINT*>(&bounds), 2);
+            HDC target = GetDC(link);
+            if (target != nullptr) {
+                if (BitBlt(target, 0, 0, bounds.right - bounds.left, bounds.bottom - bounds.top,
+                    buffer, bounds.left, bounds.top, SRCCOPY)) {
+                    ValidateRect(link, nullptr);
+                }
+                ReleaseDC(link, target);
+            }
+        }
+    }
+}
+
 /// Updates the panel's date and time-zone links using its displayed date, configured zone, and offset.
 static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     if (widget == nullptr) {
         return;
     }
-    RECT client = {};
-    GetClientRect(widget->window, &client);
+    PanelLayout layout = CalculatePanelLayout(widget->config);
     wchar_t dateText[128] = {};
     GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText,
         ARRAYSIZE(dateText), nullptr);
-    RECT dateRect = { PANEL_SIDE_PADDING, 7, client.right - PANEL_SIDE_PADDING, 34 };
-    UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, dateRect);
+    UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, layout.header);
     std::wstring zoneName = widget->config.showUtc ? L"UTC" : widget->config.timeZoneKey;
     if (!widget->config.showUtc) {
         for (size_t index = 0; index < timeZones.size(); index++) {
@@ -5069,12 +5165,11 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     if (widget->config.offsetMilliseconds != 0) {
         zoneText += L"  (" + FormatOffset(widget->config.offsetMilliseconds) + L")";
     }
-    PanelLayout layout = CalculatePanelLayout(widget->config);
     UpdatePanelLinkButton(widget->panelTimeZoneLink, widget->panelTimeZoneFont, zoneText, layout.footer);
 }
 
-/// Handles panel-link pointer feedback, focus on clicks, and hover highlighting.
-/// Treats double-clicks as button presses and removes the subclass on destruction.
+/// Keeps native panel-link input while presenting its text through the panel's shared buffer.
+/// Supports printing, hover, focus and double-clicks without requesting paints from inside parent painting.
 static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
@@ -5091,20 +5186,36 @@ static LRESULT CALLBACK PanelLinkButtonSubclassProc(HWND window, UINT msg, WPARA
         }
     }
     if (widget != nullptr) {
+        if (msg == WM_ERASEBKGND) {
+            return 1;
+        }
+        if (msg == WM_PAINT) {
+            PAINTSTRUCT paint = {};
+            BeginPaint(window, &paint);
+            EndPaint(window, &paint);
+            InvalidatePanelLink(window);
+            return 0;
+        }
+        if (msg == WM_PRINTCLIENT || msg == WM_PRINT) {
+            bool skipPrint = msg == WM_PRINT && ((lParam & PRF_CLIENT) == 0
+                || (lParam & PRF_CHECKVISIBLE) != 0 && !IsWindowVisible(window));
+            if (skipPrint) {
+                return 0;
+            }
+            RECT bounds = {};
+            GetClientRect(window, &bounds);
+            DrawPanelLink(widget, window, reinterpret_cast<HDC>(wParam), bounds);
+            return 0;
+        }
         bool* hot = window == widget->panelDateLink ? &widget->panelDateHot : &widget->panelTimeZoneHot;
         if (msg == WM_MOUSEMOVE && !*hot) {
             *hot = true;
-            TRACKMOUSEEVENT tracking = {
-                sizeof(tracking),
-                TME_LEAVE,
-                window,
-                0
-            };
+            TRACKMOUSEEVENT tracking = { sizeof(tracking), TME_LEAVE, window, 0 };
             TrackMouseEvent(&tracking);
-            InvalidateRect(window, nullptr, FALSE);
+            InvalidatePanelLink(window);
         } else if (msg == WM_MOUSELEAVE) {
             *hot = false;
-            InvalidateRect(window, nullptr, FALSE);
+            InvalidatePanelLink(window);
         }
     }
     if (msg == WM_NCDESTROY) {
@@ -5120,8 +5231,8 @@ static void CreatePanelLinks(Widget* widget) {
         return;
     }
     widget->panelDateLink = CreateWindowExW(0, L"BUTTON", L"",
-        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW,
-        0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_DATE_LINK), hInstance, nullptr);
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW, 0, 0, 0, 0, widget->window,
+            reinterpret_cast<HMENU>(ID_PANEL_DATE_LINK), hInstance, nullptr);
     if (widget->panelDateLink == nullptr) {
         return;
     }
@@ -5129,8 +5240,8 @@ static void CreatePanelLinks(Widget* widget) {
     ApplyWidgetTheme(widget->panelDateLink, widget->config);
     ApplyPanelLinkFont(widget->panelDateLink, widget->config.panelTopFont, widget->config.fontAntialiasing, &widget->panelDateFont);
     widget->panelTimeZoneLink = CreateWindowExW(0, L"BUTTON", L"",
-        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW,
-        0, 0, 0, 0, widget->window, reinterpret_cast<HMENU>(ID_PANEL_TIME_ZONE_LINK), hInstance, nullptr);
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPSIBLINGS | BS_OWNERDRAW, 0, 0, 0, 0, widget->window,
+            reinterpret_cast<HMENU>(ID_PANEL_TIME_ZONE_LINK), hInstance, nullptr);
     if (widget->panelTimeZoneLink == nullptr) {
         return;
     }
@@ -5195,7 +5306,6 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
     DeleteObject(background);
     SYSTEMTIME time = {};
     GetDisplayedTime(widget->config, &time);
-    UpdatePanelLinks(widget, time);
     int savedDC = SaveDC(dc);
     if (savedDC == 0) {
         return;
@@ -5227,6 +5337,7 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
     RestoreDC(dc, savedDC);
     DeleteObject(nameFont);
     DeleteObject(timeFont);
+    DrawPanelLinks(widget, dc);
     bool identifyFrame = widget->identifyActive && widget->identifyPhase;
     bool alarmFrame = widget->alarmActive && widget->flashPhase;
     if (identifyFrame || alarmFrame) {
@@ -5275,6 +5386,9 @@ static void PaintWidgetBuffered(Widget* widget, HWND window, HDC target, bool pa
         PaintOpaqueDigitalWidget(widget, window, buffer);
     }
     BitBlt(target, 0, 0, width, height, buffer, 0, 0, SRCCOPY);
+    if (panel) {
+        PresentPanelLinks(widget, buffer);
+    }
     SelectObject(buffer, oldBitmap);
     DeleteObject(bitmap);
     DeleteDC(buffer);
@@ -5295,6 +5409,7 @@ static void RenderWidget(Widget* widget) {
         UpdateAnalogTime(widget);
         SYSTEMTIME displayed = {};
         GetDisplayedTime(widget->config, &displayed);
+        UpdatePanelLinks(widget, displayed);
         int dateKey = displayed.wYear * 10000 + displayed.wMonth * 100 + displayed.wDay;
         if (!widget->rendered || widget->lastPanelDateKey != dateKey || widget->alarmActive) {
             widget->lastPanelDateKey = dateKey;
@@ -7962,6 +8077,17 @@ static LRESULT UpdateSettingsTextControlState(HWND window, UINT msg, WPARAM wPar
     return DefSubclassProc(window, msg, wParam, lParam);
 }
 
+/// Supplies native disabled colors when a ComboBoxEx's inner combo requests its text-field brush.
+static LRESULT GetSettingsComboControlBrush(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (GetSettingsComboBox(window) != window && !IsWindowEnabled(window)) {
+        HDC dc = reinterpret_cast<HDC>(wParam);
+        SetTextColor(dc, GetSysColor(COLOR_GRAYTEXT));
+        SetBkColor(dc, GetSysColor(COLOR_BTNFACE));
+        return reinterpret_cast<LRESULT>(GetSysColorBrush(COLOR_BTNFACE));
+    }
+    return DefSubclassProc(window, msg, wParam, lParam);
+}
+
 /// Keeps the settings default button in step with focus and prevents clicks on covered controls.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
 static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
@@ -7978,6 +8104,9 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         }
     }
     switch (msg) {
+        case WM_CTLCOLORSTATIC:
+        case WM_CTLCOLOREDIT:
+            return GetSettingsComboControlBrush(window, msg, wParam, lParam);
         case CB_ADDSTRING:
         case CB_INSERTSTRING:
             return InsertSettingsComboString(window, msg, wParam, lParam);
@@ -11073,16 +11202,30 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
     return WidgetConfigurationsEqual(normalized, right);
 }
 
-/// Builds a replacement panel before releasing the old window, transferring runtime alarm and identification state.
-/// Returns false if the replacement window cannot be created.
+/// Prepares a complete native panel outside the desktop, then moves it into place and hides the old panel in one batch.
+/// Preserves native client dimensions, calendar selection, alarm and identification state; returns false on failure.
 static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration) {
     Widget replacement;
     replacement.config = configuration;
+    bool visible = IsWindowVisible(widget->window) != FALSE;
     bool activate = GetActiveWindow() == widget->window;
-    CreateWidgetWindow(&replacement, activate);
+    replacement.config.visible = false;
+    CreateWidgetWindow(&replacement);
     if (replacement.window == nullptr) {
         return false;
     }
+    LONG_PTR extendedStyle = GetWindowLongPtrW(replacement.window, GWL_EXSTYLE);
+    if ((extendedStyle & WS_EX_LAYERED) == 0) {
+        SetWindowLongPtrW(replacement.window, GWL_EXSTYLE, extendedStyle | WS_EX_LAYERED);
+    }
+    SetLayeredWindowAttributes(replacement.window, 0, static_cast<BYTE>(configuration.opacity * 255 / 100), LWA_ALPHA);
+    RECT prepared = {};
+    GetWindowRect(replacement.window, &prepared);
+    int preparedX = GetSystemMetrics(SM_XVIRTUALSCREEN) - (prepared.right - prepared.left);
+    int preparedY = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    SetWindowPos(replacement.window, nullptr, preparedX, preparedY, 0, 0,
+        SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    replacement.config.visible = true;
     replacement.alarmActive = widget->alarmActive;
     replacement.flashPhase = widget->flashPhase;
     replacement.lastAlarmDate = widget->lastAlarmDate;
@@ -11099,13 +11242,42 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
     replacement.identifyRestoreNotTopmost = widget->identifyRestoreNotTopmost;
     replacement.identifyEndTick = widget->identifyEndTick;
     replacement.copyTooltipText = widget->copyTooltipText;
+    SYSTEMTIME selected = {};
+    if (MonthCal_GetCurSel(widget->calendarChild, &selected)) {
+        MonthCal_SetCurSel(replacement.calendarChild, &selected);
+    }
+    MonthCal_SetCurrentView(replacement.calendarChild, MonthCal_GetCurrentView(widget->calendarChild));
+    replacement.rendered = false;
+    RenderWidget(&replacement);
+    RedrawWindow(replacement.window, nullptr, nullptr,
+        RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN | RDW_NOERASE);
+    GdiFlush();
+    replacement.config.visible = configuration.visible;
+    HDWP positions = BeginDeferWindowPos(2);
+    if (positions != nullptr) {
+        UINT flags = SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
+        flags |= visible ? SWP_SHOWWINDOW : SWP_HIDEWINDOW;
+        positions = DeferWindowPos(positions, replacement.window, widget->window, replacement.config.x,
+            replacement.config.y, 0, 0, flags);
+        if (positions != nullptr) {
+            positions = DeferWindowPos(positions, widget->window, nullptr, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_HIDEWINDOW);
+        }
+    }
+    if (positions == nullptr || !EndDeferWindowPos(positions)) {
+        replacement.audioStopEvent = nullptr;
+        replacement.audioMuteEvent = nullptr;
+        replacement.alarmActive = false;
+        DestroyWidgetWindow(&replacement);
+        return false;
+    }
     Widget previous = std::move(*widget);
     *widget = std::move(replacement);
     SetWindowLongPtrW(widget->window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(widget));
     SetWindowLongPtrW(previous.window, GWLP_USERDATA, 0);
-    widget->rendered = false;
-    RenderWidget(widget);
-    RedrawWindow(widget->window, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
+    if (activate) {
+        SetActiveWindow(widget->window);
+    }
     if (previous.copyTooltip != nullptr && IsWindow(previous.copyTooltip)) {
         DestroyWindow(previous.copyTooltip);
     }
@@ -11265,6 +11437,7 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
     bool panelFontChanged = !FontSelectionsEqual(widget->config.panelTopFont, appearance.panelTopFont)
         || !FontSelectionsEqual(widget->config.panelTimeFont, appearance.panelTimeFont)
         || !FontSelectionsEqual(widget->config.panelBottomFont, appearance.panelBottomFont);
+    bool opacityChanged = widget->config.opacity != appearance.opacity;
     bool borderStyleChanged = widget->config.borderStyle != appearance.borderStyle;
     bool borderColorChanged = widget->config.borderColor != appearance.borderColor;
     bool digitalFrameChanged = digital && borderStyleChanged;
@@ -11352,7 +11525,7 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
             ApplyWidgetTheme(widget->panelDateTooltip, widget->config);
         }
     }
-    if (widget->config.type == WIDGET_PANEL || widget->config.type == WIDGET_CALENDAR) {
+    if (widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL && opacityChanged) {
         LONG_PTR extendedStyle = GetWindowLongPtrW(widget->window, GWL_EXSTYLE);
         if ((extendedStyle & WS_EX_LAYERED) == 0) {
             SetWindowLongPtrW(widget->window, GWL_EXSTYLE, extendedStyle | WS_EX_LAYERED);
@@ -14114,7 +14287,10 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, 
             if ((msg == WM_THEMECHANGED || msg == WM_SETTINGCHANGE) && widget->calendarFont != nullptr) {
                 SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(widget->calendarFont), TRUE);
             }
-            if (msg == WM_PAINT && widget->config.type == WIDGET_CALENDAR && widget->identifyActive && widget->identifyPhase) {
+            if (msg == WM_PAINT
+                    && widget->config.type == WIDGET_CALENDAR
+                    && widget->identifyActive
+                    && widget->identifyPhase) {
                 DrawIdentificationOutline(window, false);
             }
             return result;
@@ -14196,7 +14372,7 @@ static void PaintConfiguredNativeFrame(HWND window, COLORREF color) {
     ReleaseDC(window, dc);
 }
 
-/// Draws owner-drawn calendar and time-zone links with their hover and focus appearance, restoring the DC state.
+/// Requests a shared-buffer update for native panel-link state changes.
 /// Passes unrelated owner-draw requests to the native window procedure.
 static LRESULT DrawWidgetItem(HWND window, Widget* widget, WPARAM wParam, LPARAM lParam) {
     DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
@@ -14207,42 +14383,7 @@ static LRESULT DrawWidgetItem(HWND window, Widget* widget, WPARAM wParam, LPARAM
         && item != nullptr
         && (item->hwndItem == widget->panelDateLink || item->hwndItem == widget->panelTimeZoneLink);
     if (panelLink) {
-        int savedState = SaveDC(item->hDC);
-        bool dateLink = item->hwndItem == widget->panelDateLink;
-        HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
-        FillRect(item->hDC, &item->rcItem, background);
-        DeleteObject(background);
-        const FontSelection& selection = dateLink ? widget->config.panelTopFont : widget->config.panelBottomFont;
-        bool hot = dateLink ? widget->panelDateHot : widget->panelTimeZoneHot;
-        bool focused = GetFocus() == item->hwndItem;
-        HFONT font = dateLink ? widget->panelDateFont : widget->panelTimeZoneFont;
-        HFONT hotFont = nullptr;
-        if ((hot || focused) && !selection.underline) {
-            FontSelection hotSelection = selection;
-            hotSelection.underline = true;
-            hotFont = CreatePanelFont(hotSelection, widget->config.fontAntialiasing);
-            if (hotFont != nullptr) {
-                font = hotFont;
-            }
-        }
-        if (font != nullptr) {
-            SelectObject(item->hDC, font);
-        }
-        SetBkMode(item->hDC, TRANSPARENT);
-        SetTextColor(item->hDC, RGB(0, 83, 184));
-        std::wstring text = GetControlText(item->hwndItem);
-        RECT textRect = item->rcItem;
-        DrawTextW(item->hDC, text.c_str(), static_cast<int>(text.size()), &textRect,
-            DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-        if (focused) {
-            RECT focusRect = item->rcItem;
-            InflateRect(&focusRect, -1, -1);
-            DrawPanelLinkFocusRect(item->hDC, focusRect);
-        }
-        if (hotFont != nullptr) {
-            DeleteObject(hotFont);
-        }
-        RestoreDC(item->hDC, savedState);
+        InvalidatePanelLink(item->hwndItem);
         return TRUE;
     }
     return DefWindowProcW(window, WM_DRAWITEM, wParam, lParam);

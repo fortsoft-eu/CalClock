@@ -62,6 +62,7 @@ struct AppearanceTransitionFrame {
     bool loading;
 };
 
+static HHOOK panelClockTimeHook = nullptr;
 static HHOOK settingsCloseDialogHook = nullptr;
 static HHOOK widgetSelectionPaintHook = nullptr;
 static HHOOK appearanceTransitionHook = nullptr;
@@ -91,6 +92,7 @@ static bool capturingAppearanceTransition = false;
 static ULONGLONG appearanceTransitionBeforeHash = 0;
 static SettingsSnapshot testSavedSettings;
 static FieldImage appearanceTransitionFirstChange;
+static std::vector<HWND> panelClockTimeWindows;
 static std::vector<WidgetSelectionControl> widgetSelectionControls;
 static std::vector<HWND> widgetSelectionRevealedControls;
 static std::vector<AppearanceTransitionFrame> appearanceTransitionFrames;
@@ -527,6 +529,22 @@ static void SaveFieldComparison(const wchar_t* name, const std::vector<FieldImag
     CloseHandle(file);
 }
 
+/// Creates an ordinary native combo with an empty text field as an independent disabled-background reference.
+static HWND CreateDisabledComboReference(HWND control, HFONT font, bool classic) {
+    RECT bounds = FieldBounds(control);
+    HWND reference = CreateWindowExW(0, WC_COMBOBOXW, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST,
+        700, 350, bounds.right - bounds.left, 220, hSettings, nullptr, hInstance, nullptr);
+    SendMessageW(reference, WM_SETFONT, reinterpret_cast<WPARAM>(font), FALSE);
+    SetWindowTheme(reference, classic ? L"" : nullptr, classic ? L"" : nullptr);
+    RECT natural = FieldBounds(reference);
+    LRESULT selectedHeight = SendMessageW(reference, CB_GETITEMHEIGHT, static_cast<WPARAM>(-1), 0);
+    LONG chrome = natural.bottom - natural.top - static_cast<LONG>(selectedHeight);
+    SendMessageW(reference, CB_SETITEMHEIGHT, static_cast<WPARAM>(-1),
+        static_cast<LPARAM>(bounds.bottom) - bounds.top - chrome);
+    EnableWindow(reference, FALSE);
+    return reference;
+}
+
 /// Creates an unmodified system ComboBoxEx with the same font, theme, and closed-field dimensions as the tested control.
 static HWND CreateNativeComboReference(HWND control, HFONT font, bool classic) {
     RECT bounds = FieldBounds(control);
@@ -577,6 +595,7 @@ static void CheckFieldBackgrounds(HWND edit, HWND combo, HFONT font, bool classi
             SetWindowTextW(control, L"");
             SendMessageW(control, EM_SETCUEBANNER, FALSE, reinterpret_cast<LPARAM>(L""));
         }
+        HWND disabledReference = isCombo ? CreateDisabledComboReference(control, font, classic) : nullptr;
         for (int state = 0; state < (isCombo ? 2 : 3); state++) {
             bool enabled = state != 1;
             EnableWindow(control, enabled);
@@ -586,7 +605,8 @@ static void CheckFieldBackgrounds(HWND edit, HWND combo, HFONT font, bool classi
                 SendMessageW(reference, EM_SETREADONLY, state == 2, 0);
             }
             FieldImage actual = ReadFieldImage(control);
-            FieldImage native = ReadFieldImage(reference);
+            HWND expected = isCombo && !enabled ? disabledReference : reference;
+            FieldImage native = ReadFieldImage(expected);
             bool matches = actual.width == native.width && actual.height == native.height;
             if (isCombo) {
                 for (size_t pixel = 0; matches && pixel < actual.pixels.size(); pixel++) {
@@ -616,6 +636,9 @@ static void CheckFieldBackgrounds(HWND edit, HWND combo, HFONT font, bool classi
         EnableWindow(control, TRUE);
         if (!isCombo) {
             SendMessageW(control, EM_SETREADONLY, FALSE, 0);
+        }
+        if (disabledReference != nullptr) {
+            DestroyWindow(disabledReference);
         }
         DestroyWindow(reference);
     }
@@ -736,6 +759,11 @@ static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
         } else if (state == 5) {
             SendMessageW(combo, CB_SHOWDROPDOWN, TRUE, 0);
         }
+        HWND disabledReference = nullptr;
+        if (state == 4) {
+            disabledReference = CreateDisabledComboReference(combo, font, classic);
+            SendMessageW(combo, CB_SETCURSEL, static_cast<WPARAM>(-1), 0);
+        }
         FieldImage actual = ReadWindowSurface(combo);
         if (state == 2) {
             SetFocus(reference);
@@ -746,7 +774,7 @@ static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
             SendMessageW(combo, CB_SHOWDROPDOWN, FALSE, 0);
             SendMessageW(reference, CB_SHOWDROPDOWN, TRUE, 0);
         }
-        FieldImage native = ReadWindowSurface(reference);
+        FieldImage native = ReadWindowSurface(disabledReference != nullptr ? disabledReference : reference);
         bool matches = actual.width == native.width && actual.height == native.height;
         for (size_t pixel = 0; matches && pixel < actual.pixels.size(); pixel++) {
             matches = (actual.pixels[pixel] & 0xFFFFFF) == (native.pixels[pixel] & 0xFFFFFF);
@@ -759,6 +787,10 @@ static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
         }
         images.push_back(actual);
         images.push_back(native);
+        if (disabledReference != nullptr) {
+            DestroyWindow(disabledReference);
+            SendMessageW(combo, CB_SETCURSEL, 0, 0);
+        }
         SendMessageW(reference, CB_SHOWDROPDOWN, FALSE, 0);
     }
     LOGFONTW description = {};
@@ -2693,6 +2725,151 @@ static void TestUnsavedSettingsClose() {
     TestUnsavedSettingsXml();
 }
 
+/// Observes native time delivery during frame previews without altering the clock's own message handling.
+static LRESULT CALLBACK ObservePanelClockTime(int code, WPARAM wParam, LPARAM lParam) {
+    if (code >= 0) {
+        const CWPSTRUCT* event = reinterpret_cast<const CWPSTRUCT*>(lParam);
+        if (event->message == WM_USER + 1 && event->lParam != 0) {
+            wchar_t name[64] = {};
+            GetClassNameW(event->hwnd, name, ARRAYSIZE(name));
+            if (wcscmp(name, L"ClockWndMain") == 0) {
+                panelClockTimeWindows.push_back(event->hwnd);
+            }
+        }
+    }
+    return CallNextHookEx(panelClockTimeHook, code, wParam, lParam);
+}
+
+/// Verifies that every panel row uses its chosen font's full height and restores the original size after a font change.
+/// Exercises live previews and all native frames with and without additional clocks and control themes.
+static void TestPanelFontSizing() {
+    Check(RegisterApplicationTestWindowClass() != 0, "panel font test window class registered");
+    panelClockTimeHook = SetWindowsHookExW(WH_CALLWNDPROC, ObservePanelClockTime, nullptr, GetCurrentThreadId());
+    Check(panelClockTimeHook != nullptr, "native clock time observer installed");
+    bool originalThemes = themesDisabled;
+    bool originalSnap = snapWidgetsToWorkArea;
+    snapWidgetsToWorkArea = false;
+    const bool states[] = { false, true };
+    const int sizes[] = { 90, 180 };
+    for (bool classic : states) {
+        themesDisabled = classic;
+        for (bool additional : states) {
+            Widget widget;
+            widget.config = CreateStoredWidgetDefaults(WIDGET_PANEL, 8100, LANG_CS, FONT_ANTIALIAS_CLEARTYPE);
+            widget.config.visible = true;
+            widget.config.x = 100;
+            widget.config.y = 100;
+            widget.config.panelTopFont.face = L"Segoe UI";
+            widget.config.panelTimeFont.face = L"Segoe UI";
+            widget.config.panelBottomFont.face = L"Segoe UI";
+            for (AdditionalClockConfig& clock : widget.config.additionalClocks) {
+                clock.enabled = additional;
+            }
+            CreateWidgetWindow(&widget);
+            Check(widget.window != nullptr, "live panel font test window created");
+            DispatchSettingsPaints();
+            RECT initial = {};
+            GetClientRect(widget.window, &initial);
+            RECT initialClock = FieldBounds(widget.analogChild);
+            RECT initialCalendar = FieldBounds(widget.calendarChild);
+            WidgetConfig original = widget.config;
+            for (int row = 0; row < 3; row++) {
+                for (int size : sizes) {
+                    WidgetConfig appearance = original;
+                    FontSelection* fonts[] = {
+                        &appearance.panelTopFont,
+                        &appearance.panelTimeFont,
+                        &appearance.panelBottomFont
+                    };
+                    fonts[row]->face = L"Cambria Math";
+                    fonts[row]->dialogSize = size;
+                    HFONT font = CreatePanelFont(*fonts[row], appearance.fontAntialiasing);
+                    HDC dc = GetDC(nullptr);
+                    HGDIOBJ previous = SelectObject(dc, font);
+                    TEXTMETRICW metrics = {};
+                    Check(GetTextMetricsW(dc, &metrics) != FALSE, "selected panel font metrics measured");
+                    SelectObject(dc, previous);
+                    ReleaseDC(nullptr, dc);
+                    DeleteObject(font);
+                    ApplyWidgetAppearancePreview(&widget, appearance, false);
+                    DispatchSettingsPaints();
+                    RECT tall = {};
+                    GetClientRect(widget.window, &tall);
+                    Check(tall.bottom > initial.bottom,
+                        "each individual tall panel font increases the live client height");
+                    PanelLayout layout = CalculatePanelLayout(widget.config);
+                    RECT text = row == 1 ? layout.times[0]
+                        : FieldBounds(row == 0 ? widget.panelDateLink : widget.panelTimeZoneLink);
+                    Check(text.bottom - text.top >= metrics.tmHeight + 4,
+                        "the selected panel row retains its full native font height and padding");
+                    SYSTEMTIME selected = {};
+                    MonthCal_GetCurSel(widget.calendarChild, &selected);
+                    selected.wYear = 2031;
+                    selected.wMonth = 6;
+                    selected.wDay = 17;
+                    MonthCal_SetCurSel(widget.calendarChild, &selected);
+                    for (int border = 0; border < DIGITAL_BORDER_STYLE_COUNT; border++) {
+                        panelClockTimeWindows.clear();
+                        appearance.borderStyle = border;
+                        ApplyWidgetAppearancePreview(&widget, appearance, false);
+                        DispatchSettingsPaints();
+                        const HWND clocks[] = {
+                            widget.analogChild,
+                            widget.additionalAnalogChildren[0],
+                            widget.additionalAnalogChildren[1]
+                        };
+                        for (HWND clock : clocks) {
+                            if (clock != nullptr) {
+                                Check(std::find(panelClockTimeWindows.begin(), panelClockTimeWindows.end(), clock)
+                                    != panelClockTimeWindows.end(),
+                                    "every current native clock receives the widget time during its frame update");
+                            }
+                        }
+                        Check((GetWindowLongPtrW(widget.window, GWL_EXSTYLE) & WS_EX_COMPOSITED) == 0,
+                            "panel frame updates leave no persistent composited control subtree");
+                        SYSTEMTIME currentSelection = {};
+                        MonthCal_GetCurSel(widget.calendarChild, &currentSelection);
+                        Check(selected.wYear == currentSelection.wYear
+                            && selected.wMonth == currentSelection.wMonth
+                            && selected.wDay == currentSelection.wDay,
+                            "panel frame changes preserve the selected calendar date");
+                        RECT client = {};
+                        GetClientRect(widget.window, &client);
+                        Check(client.right == tall.right && client.bottom == tall.bottom,
+                            "frame changes preserve the complete font-dependent panel client size");
+                        RECT clock = FieldBounds(widget.analogChild);
+                        RECT calendar = FieldBounds(widget.calendarChild);
+                        Check(clock.right - clock.left == initialClock.right - initialClock.left
+                            && clock.bottom - clock.top == initialClock.bottom - initialClock.top
+                            && calendar.right - calendar.left == initialCalendar.right - initialCalendar.left
+                            && calendar.bottom - calendar.top == initialCalendar.bottom - initialCalendar.top,
+                            "panel text and frame changes preserve the native clock and calendar sizes");
+                    }
+                    if (size == sizes[0]) {
+                        std::wstring name = L"PanelFont-" + std::to_wstring(classic) + L"-"
+                            + std::to_wstring(additional) + L"-" + std::to_wstring(row) + L".bmp";
+                        SaveFieldComparison(name.c_str(),
+                            std::vector<FieldImage>{ ReadWindowSurface(widget.window, false) }, 1);
+                    }
+                    ApplyWidgetAppearancePreview(&widget, original, false);
+                    DispatchSettingsPaints();
+                    RECT restored = {};
+                    GetClientRect(widget.window, &restored);
+                    Check(restored.right == initial.right && restored.bottom == initial.bottom,
+                        "restoring a panel row font restores the original live client size");
+                }
+            }
+            DestroyWidgetWindow(&widget);
+        }
+    }
+    UnhookWindowsHookEx(panelClockTimeHook);
+    panelClockTimeHook = nullptr;
+    themesDisabled = originalThemes;
+    snapWidgetsToWorkArea = originalSnap;
+    ShutdownAnalogClockHost();
+    Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "panel font test window class unregistered");
+}
+
 /// Runs native rendering checks in the application's Common Controls manifest on the isolated test desktop.
 static int RunSettingsLayoutTests() {
     hInstance = GetModuleHandleW(nullptr);
@@ -2733,6 +2910,7 @@ static int RunSettingsLayoutTests() {
     TestDisplayedReports();
     TestAppearanceTransitionFrames();
     TestWidgetSelectionRedraw();
+    TestPanelFontSizing();
     ResetUiFont();
     std::printf("Settings layout: %d checks, %d failures\n", checks, failures);
     return failures == 0 ? 0 : 1;
@@ -2773,7 +2951,7 @@ int main(int argc, char** argv) {
     PROCESS_INFORMATION process = {};
     int result = 2;
     if (CreateProcessW(executable, command.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW,
-            nullptr, nullptr, &startup, &process)) {
+        nullptr, nullptr, &startup, &process)) {
         WaitForSingleObject(process.hProcess, INFINITE);
         DWORD exitCode = 2;
         GetExitCodeProcess(process.hProcess, &exitCode);
