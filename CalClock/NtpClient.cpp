@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.5.0
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -29,6 +29,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "NtpClient.h"
+#include "ClockTime.h"
 #include <windows.h>
 #include <algorithm>
 #include <cmath>
@@ -38,8 +39,6 @@
 #include <vector>
 
 #pragma comment(lib, "Ws2_32.lib")
-
-using GetPreciseTimeProc = VOID(WINAPI*)(LPFILETIME fileTime);
 
 /// Passes server names, notification details, and borrowed cancellation and activity flags to the NTP worker.
 struct NtpThreadParameters {
@@ -51,9 +50,9 @@ struct NtpThreadParameters {
     std::atomic<bool>* queryRunning = nullptr;
 };
 
-/// Stores a validated server sample's clock offset and network delay in 100-nanosecond units.
+/// Stores a validated server sample's correction to the continuous clock and network delay in 100-nanosecond units.
 struct NtpSample {
-    LONGLONG offset100Nanoseconds = 0;
+    LONGLONG clockOffset100Nanoseconds = 0;
     LONGLONG delay100Nanoseconds = 0;
     std::wstring server;
 };
@@ -70,51 +69,11 @@ static int AutomaticNtpPreset() {
         return NTP_PRESET_CESNET;
     }
     const wchar_t* europeanCountries[] = {
-        L"AL",
-        L"AD",
-        L"AT",
-        L"BY",
-        L"BE",
-        L"BA",
-        L"BG",
-        L"HR",
-        L"CY",
-        L"DK",
-        L"EE",
-        L"FI",
-        L"FR",
-        L"DE",
-        L"GR",
-        L"HU",
-        L"IS",
-        L"IE",
-        L"IT",
-        L"XK",
-        L"LV",
-        L"LI",
-        L"LT",
-        L"LU",
-        L"MT",
-        L"MD",
-        L"MC",
-        L"ME",
-        L"NL",
-        L"MK",
-        L"NO",
-        L"PL",
-        L"PT",
-        L"RO",
-        L"RU",
-        L"SM",
-        L"RS",
-        L"SI",
-        L"ES",
-        L"SE",
-        L"CH",
-        L"TR",
-        L"UA",
-        L"GB",
-        L"VA"
+        L"AL", L"AD", L"AT", L"BY", L"BE", L"BA", L"BG", L"HR", L"CY",
+        L"DK", L"EE", L"FI", L"FR", L"DE", L"GR", L"HU", L"IS", L"IE",
+        L"IT", L"XK", L"LV", L"LI", L"LT", L"LU", L"MT", L"MD", L"MC",
+        L"ME", L"NL", L"MK", L"NO", L"PL", L"PT", L"RO", L"RU", L"SM",
+        L"RS", L"SI", L"ES", L"SE", L"CH", L"TR", L"UA", L"GB", L"VA"
     };
     for (const wchar_t* europeanCountry : europeanCountries) {
         if (_wcsicmp(country, europeanCountry) == 0) {
@@ -138,27 +97,10 @@ std::wstring NtpServersForPreset(int preset) {
         return L"ptbtime1.ptb.de; ptbtime2.ptb.de; ptbtime3.ptb.de; ptbtime4.ptb.de";
     }
     if (selected == NTP_PRESET_GLOBAL) {
-        return L"1.ntp.ubuntu.com; 2.ntp.ubuntu.com; 3.ntp.ubuntu.com; 4.ntp.ubuntu.com; 0.pool.ntp.org; 1.pool.ntp.org; 2.pool.ntp.org; 3.pool.ntp.org";
+        return L"1.ntp.ubuntu.com; 2.ntp.ubuntu.com; 3.ntp.ubuntu.com; 4.ntp.ubuntu.com;"
+            L" 0.pool.ntp.org; 1.pool.ntp.org; 2.pool.ntp.org; 3.pool.ntp.org";
     }
     return std::wstring();
-}
-
-/// Returns current UTC as Windows FILETIME ticks, using the precise system clock when available.
-ULONGLONG CurrentFileTimeValue() {
-    FILETIME fileTime = {};
-    static HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
-    static GetPreciseTimeProc getPreciseTime = kernel == nullptr
-        ? nullptr
-        : reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
-    if (getPreciseTime != nullptr) {
-        getPreciseTime(&fileTime);
-    } else {
-        GetSystemTimeAsFileTime(&fileTime);
-    }
-    ULARGE_INTEGER value = {};
-    value.LowPart = fileTime.dwLowDateTime;
-    value.HighPart = fileTime.dwHighDateTime;
-    return value.QuadPart;
 }
 
 /// Encodes a FILETIME timestamp into an eight-byte, network-order NTP timestamp.
@@ -259,6 +201,7 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             request[0] = 0x23;
             ULONGLONG t1 = CurrentFileTimeValue();
             WriteNtpTimestamp(request + 40, t1);
+            ULONGLONG sentTime = MonotonicFileTimeValue();
             int sent = send(socketHandle, reinterpret_cast<const char*>(request), sizeof(request), 0);
             if (sent != sizeof(request)) {
                 logEntry->error = NtpQueryError::Network;
@@ -269,7 +212,8 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             BYTE response[48] = {};
             int received = recv(socketHandle, reinterpret_cast<char*>(response), sizeof(response), 0);
             int receiveError = received == SOCKET_ERROR ? WSAGetLastError() : 0;
-            ULONGLONG t4 = CurrentFileTimeValue();
+            ULONGLONG receivedTime = MonotonicFileTimeValue();
+            ULONGLONG systemReceivedTime = CurrentFileTimeValue();
             closesocket(socketHandle);
             if (received == SOCKET_ERROR) {
                 logEntry->error = receiveError == WSAETIMEDOUT ? NtpQueryError::Timeout : NtpQueryError::Network;
@@ -297,23 +241,23 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             if (invalidResponse) {
                 continue;
             }
-            ULONGLONG t2 = ReadNtpTimestamp(response + 32, t4);
-            ULONGLONG t3 = ReadNtpTimestamp(response + 40, t4);
+            ULONGLONG t2 = ReadNtpTimestamp(response + 32, t1);
+            ULONGLONG t3 = ReadNtpTimestamp(response + 40, t1);
             if (t3 < t2) {
                 continue;
             }
-            LONGLONG networkDelay = static_cast<LONGLONG>(t4 - t1) - static_cast<LONGLONG>(t3 - t2);
+            LONGLONG networkDelay = static_cast<LONGLONG>(receivedTime - sentTime) - static_cast<LONGLONG>(t3 - t2);
             if (networkDelay < 0 || networkDelay > 10LL * 10000000LL) {
                 continue;
             }
-            LONGLONG firstLeg = static_cast<LONGLONG>(t2) - static_cast<LONGLONG>(t1);
-            LONGLONG secondLeg = static_cast<LONGLONG>(t3) - static_cast<LONGLONG>(t4);
+            LONGLONG synchronizedTime = static_cast<LONGLONG>(t3) + networkDelay / 2;
             NtpSample sample = {};
-            sample.offset100Nanoseconds = (firstLeg + secondLeg) / 2;
+            sample.clockOffset100Nanoseconds = synchronizedTime - static_cast<LONGLONG>(receivedTime);
             sample.delay100Nanoseconds = networkDelay;
             sample.server = server;
             if (!success || sample.delay100Nanoseconds < bestSample->delay100Nanoseconds) {
                 *bestSample = sample;
+                logEntry->offset100Nanoseconds = synchronizedTime - static_cast<LONGLONG>(systemReceivedTime);
             }
             success = true;
             break;
@@ -341,7 +285,6 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         entry.success = QueryNtpServer(servers[index], parameters->stopRequested, &sample, &entry);
         entry.completedTime = CurrentFileTimeValue();
         if (entry.success) {
-            entry.offset100Nanoseconds = sample.offset100Nanoseconds;
             samples.push_back(sample);
         }
         result->logEntries.push_back(entry);
@@ -350,7 +293,7 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         std::vector<LONGLONG> sortedOffsets;
         size_t fastestIndex = 0;
         for (size_t index = 0; index < samples.size(); index++) {
-            sortedOffsets.push_back(samples[index].offset100Nanoseconds);
+            sortedOffsets.push_back(samples[index].clockOffset100Nanoseconds);
             if (samples[index].delay100Nanoseconds < samples[fastestIndex].delay100Nanoseconds) {
                 fastestIndex = index;
             }
@@ -367,14 +310,14 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         size_t bestIndex = 0;
         bool acceptedAny = false;
         for (size_t index = 0; index < samples.size(); index++) {
-            long double difference = std::fabs(static_cast<long double>(samples[index].offset100Nanoseconds)
+            long double difference = std::fabs(static_cast<long double>(samples[index].clockOffset100Nanoseconds)
                 - static_cast<long double>(medianOffset));
             if (difference > rejectionLimit) {
                 continue;
             }
             LONGLONG weightedDelay = std::max(10000LL, samples[index].delay100Nanoseconds);
             long double weight = 1.0L / static_cast<long double>(weightedDelay);
-            weightedOffset += static_cast<long double>(samples[index].offset100Nanoseconds) * weight;
+            weightedOffset += static_cast<long double>(samples[index].clockOffset100Nanoseconds) * weight;
             totalWeight += weight;
             if (!acceptedAny || samples[index].delay100Nanoseconds < samples[bestIndex].delay100Nanoseconds) {
                 bestIndex = index;
@@ -383,10 +326,13 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         }
         if (!acceptedAny) {
             bestIndex = fastestIndex;
-            result->offset100Nanoseconds = samples[bestIndex].offset100Nanoseconds;
+            result->clockOffset100Nanoseconds = samples[bestIndex].clockOffset100Nanoseconds;
         } else {
-            result->offset100Nanoseconds = static_cast<LONGLONG>(std::llround(weightedOffset / totalWeight));
+            result->clockOffset100Nanoseconds = static_cast<LONGLONG>(std::llround(weightedOffset / totalWeight));
         }
+        ULONGLONG now = MonotonicFileTimeValue();
+        result->offset100Nanoseconds = static_cast<LONGLONG>(now) + result->clockOffset100Nanoseconds
+            - static_cast<LONGLONG>(CurrentFileTimeValue());
         result->server = samples[bestIndex].server;
         result->success = true;
     }
@@ -400,7 +346,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         return 0;
     }
     if (parameters->notifyWindow != nullptr
-        && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0, reinterpret_cast<LPARAM>(result.get()))) {
+        && PostMessageW(parameters->notifyWindow, parameters->notifyMessage, 0,
+            reinterpret_cast<LPARAM>(result.get()))) {
         result.release();
     } else {
         *parameters->queryRunning = false;
@@ -413,9 +360,8 @@ bool HasNtpServers(const std::wstring& serverList) {
     return !ParseNtpServerList(serverList).empty();
 }
 
-/// Starts an NTP worker and returns its thread handle, or null on failure.
-/// The caller owns the handle and must keep both atomic flags alive until the worker exits; the receiver owns posted
-/// results.
+/// Starts an NTP worker and returns its thread handle, or null on failure. The caller owns the handle and must
+/// keep both atomic flags alive until the worker exits; the receiver owns posted results.
 HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage,
     std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning) {
     if (stopRequested == nullptr || queryRunning == nullptr) {

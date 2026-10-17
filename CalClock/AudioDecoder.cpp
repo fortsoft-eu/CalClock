@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -185,8 +185,8 @@ HRESULT AudioDecoder::Restart(const std::wstring& path) {
         result = replacement->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), TRUE);
     }
     if (SUCCEEDED(result)) {
-        result = replacement->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr,
-            type.Get());
+        result =
+            replacement->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
     }
     if (SUCCEEDED(result)) {
         reader = replacement;

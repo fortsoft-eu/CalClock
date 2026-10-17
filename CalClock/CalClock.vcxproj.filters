@@ -36,16 +36,25 @@
     <ClCompile Include="CalClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ClockTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DateFormats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Localization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MonitorInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="NtpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SelectionEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SettingsStorage.cpp">
@@ -89,6 +98,9 @@
     <ClInclude Include="CalendarLocaleScope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClockTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DateFormats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -101,10 +113,16 @@
     <ClInclude Include="Localization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MonitorInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="NtpClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectionEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SettingsStorage.h">

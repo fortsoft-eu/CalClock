@@ -1,6 +1,6 @@
-﻿# CalClock
+# CalClock
 
-[Čeština](README.cs-CZ.md) · [English (US)](../README.md) · [Deutsch](README.de-DE.md) · [Français](README.fr-FR.md) · [Español](README.es-ES.md) · [Italiano](README.it-IT.md) · [Polski](README.pl-PL.md) · [Slovenčina](README.sk-SK.md) · [English (UK)](README.en-GB.md) · [English (Australia)](README.en-AU.md) · [Português](README.pt-PT.md) · [Norsk](README.nb-NO.md) · [Svenska](README.sv-SE.md) · [Suomi](README.fi-FI.md) · **Dansk** · [Íslenska](README.is-IS.md) · [Türkçe](README.tr-TR.md)
+[Čeština](README.cs-CZ.md) · [English (US)](../README.md) · [Deutsch](README.de-DE.md) · [Français](README.fr-FR.md) · [Español](README.es-ES.md) · [Italiano](README.it-IT.md) · [Polski](README.pl-PL.md) · [Slovenčina](README.sk-SK.md) · [English (UK)](README.en-GB.md) · [English (Australia)](README.en-AU.md) · [Português](README.pt-PT.md) · [Norsk (bokmål)](README.nb-NO.md) · [Svenska](README.sv-SE.md) · [Suomi](README.fi-FI.md) · **Dansk** · [Íslenska](README.is-IS.md) · [Türkçe](README.tr-TR.md) · [Eesti](README.et-EE.md) · [Gaeilge](README.ga-IE.md) · [Lietuvių](README.lt-LT.md) · [Latviešu](README.lv-LV.md) · [Magyar](README.hu-HU.md) · [Malti](README.mt-MT.md) · [Nederlands](README.nl-NL.md) · [Română](README.ro-RO.md) · [Ελληνικά](README.el-GR.md) · [Bosanski](README.bs-Latn-BA.md) · [Hrvatski](README.hr-HR.md) · [Slovenščina](README.sl-SI.md) · [Crnogorski](README.cnr-Latn-ME.md) · [Беларуская](README.be-BY.md) · [Български](README.bg-BG.md) · [Македонски](README.mk-MK.md) · [Српски](README.sr-Cyrl-RS.md) · [Українська](README.uk-UA.md) · [Русский](README.ru-RU.md)
 
 CalClock er et Win32/x86-program til Windows Vista og nyere, som viser frit placerbare ure og kalendere med uafhængige indstillinger på Windows-skrivebordet. Det kører i meddelelsesområdet og kræver ikke et permanent kontrolvindue.
 
@@ -24,7 +24,7 @@ CalClock er et Win32/x86-program til Windows Vista og nyere, som viser frit plac
 - Identifikation af widgets og stabil placering i et gitter uden overlapning
 - Øjeblikkelig forhåndsvisning af udseende med annullering og standardudseende for hver widget
 - Skrifttyper til program og widgets, visuelle typografier og ClearType, GDI eller ingen skriftudjævning
-- Brugerflader på tjekkisk, amerikansk, britisk og australsk engelsk, tysk, fransk, spansk, italiensk, portugisisk, polsk, slovakisk, dansk, finsk, islandsk, norsk, svensk og tyrkisk
+- Brugerflade på 36 sprogvarianter med særskilt sprogvalg for programmet og hver widget
 
 ## Widgettyper
 
@@ -49,8 +49,10 @@ Ved første start vælger CalClock sprog efter Windows’ visningssprog og bruge
 - Tryk `Alt+0`, `Alt+1`, `Alt+2` eller `Alt+3` på Analogt ur eller Kalender med ur for at vælge hovedurskivens størrelse, fra mindst til størst.
 - Dobbeltklik på en widget i Indstillinger for om nødvendigt at vise den, markere `Synlig` og kort identificere den på skrivebordet.
 - Åbning af Indstillinger fra en widgets genvejsmenu vælger straks den pågældende widget.
-- Brug `Ctrl` eller `Shift` til flervalg, `Ctrl+A` til at vælge alle og `Del` til at fjerne de valgte. `Insert` skifter markeringen af det aktuelle element og flytter listemarkøren til næste række, som i Total Commander.
-- Alle listens genveje virker også, når Fjern eller Dupliker har fokus. Genvejen flytter fokus til listen og udfører handlingen. `Ctrl+C` kopierer valgte widgets, og `Ctrl+V` føjer kopierne til sidst i listens rækkefølge. Kopierne indeholder alle indstillinger og får en navnetilføjelse på programsproget. Dupliker udfører samme handling direkte. Der tillades højst 32 widgets. Hvis alle kopier ikke kan være der, tilføjes dem, der er plads til, i rækkefølge, og der vises en besked om resten.
+- Delete fjerner markerede widgets. `Insert` skifter markeringen af det aktuelle element og flytter listemarkøren én række ned.
+- `Ctrl+C` kopierer valgte widgets, og `Ctrl+V` føjer kopierne til sidst i listens rækkefølge. Kopierne indeholder alle indstillinger og får en navnetilføjelse på programsproget. Dupliker udfører samme handling direkte. Der tillades højst 32 widgets. Hvis alle kopier ikke kan være der, tilføjes dem, der er plads til, i rækkefølge, og der vises en besked om resten.
+
+Når indstillingerne åbnes fra ikonet i meddelelsesområdet, vælges den sidst valgte widget igen.
 
 Indstillinger husker den sidst åbne fane og den sidst tilføjede widgettype.
 
@@ -64,15 +66,15 @@ I panelet er datoen øverst et link, som fører kalenderen til i dag. Tidszonete
 
 ## Udseende
 
-For selvstændige kalendere styrer **I dag-række** i menuen eller på Udseende den nederste række. Den er markeret som standard; fjern markeringen for at skjule rækken og gøre kalenderen mindre. Valget gemmes pr. widget. **Gå til i dag** forbliver tilgængeligt og vender tilbage til månedsvisningen. Når datoen skifter efter widgetens tid, vælger kalenderen automatisk i dag og bevarer sin aktuelle visning.
+For selvstændige kalendere styrer **Rækken I dag** i menuen eller på Udseende den nederste række. Den er markeret som standard; fjern markeringen for at skjule rækken og gøre kalenderen mindre. Valget gemmes pr. widget. **Gå til i dag** forbliver tilgængeligt og vender tilbage til månedsvisningen. Når datoen skifter efter widgetens tid, vælger kalenderen automatisk i dag og bevarer sin aktuelle visning.
 
-Udseendeændringer vises straks på den valgte widget. `Annuller` gendanner ændringer, der ikke er anvendt; `Standardudseende` gendanner standarderne for widgettypen.
+Udseendeændringer vises straks på den valgte widget. `Annuller` kasserer ændringer, der ikke er anvendt; `Standardudseende` gendanner standarderne for widgettypen.
 
 Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har justerbar farve; rammebredde kan ændres, hvor widgeten understøtter det. Gennemsigtige digitale ure tilbyder samme stile som uigennemsigtige. Program- og kalenderskrifter har intet størrelsesvalg, mens digitale ure og paneltekster har. En indbygget kalender bruger kun en egen skrifttype, når visuelle typografier er slået fra for kalenderen eller hele programmet.
 
 Programsprog, brugerfladeskrift, udjævning, visuelle typografier, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for hver widget og viser niveauet i dB. Standardværdien **−18 dB** bevarer filens oprindelige niveau (**100%**). Mod højre forstærkes lyden; maksimum **0 dB** svarer til cirka **794%** af oprindelig amplitude. Yderst til venstre er **−∞ dB** (stilhed). Ændringer virker under lydtesten. Skyderen deaktiveres for filer, der åbnes i eksterne programmer. Forstærkning gælder afkodet lyd, herunder WAV, MP3, WMA, AAC, M4A og FLAC, når Windows understøtter dem. Ældre afspilning af filer, der ikke kan afkodes, eksempelvis MIDI, er begrænset til 100%.
+Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for hver widget og viser niveauet i dB. Standardværdien **−18 dB** bevarer filens oprindelige niveau (**100%**). Mod højre forstærkes lyden; maksimum **0 dB** svarer til cirka **794%** af oprindelig amplitude. Yderst til venstre er **−∞ dB** (stilhed). Ændringer virker under lydtesten. Forstærkning gælder afkodet lyd, herunder WAV, MP3, WMA, AAC, M4A og FLAC, når Windows understøtter dem. Ældre afspilning af filer, der ikke kan afkodes, eksempelvis MIDI, er begrænset til 100%.
 
 Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage bevarer deres betydning ved sprogskift. Aktivering fra menuen uden valgte ugedage åbner widgetens Alarm-fane i stedet for at aktivere en alarm, der ikke kan ringe.
 
@@ -82,7 +84,7 @@ Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage b
 
 Digitale ure, kalenderpaneler og skærmure tilbyder **Efter sprog**, **12 timer** og **24 timer** under **Tidsformat** på Generelt. **Efter sprog** er standard: amerikansk og australsk engelsk bruger eksempelvis 12 timer, britisk engelsk 24. Et manuelt valg bevares, når widgetsproget ændres. Skilletegn og AM/PM-markører følger kulturen; kulturer uden egne markører bruger **AM/PM** i 12-timerstilstand.
 
-**AM/PM** er markeret som standard. Fjernes markeringen, skjules markøren uden at ændre 12-timerscyklussen. Valget er deaktiveret i 24-timerstilstand og for widgets uden digital tid. Skærmure viser markøren på en særskilt linje under tiden, som UTC. **UTC bruger altid 24 timer**; cyklus og AM/PM er deaktiveret ved UTC, men værdierne gemmes til tilbagevenden til lokal tid. Valget for foranstillet nul bestemmer fortsat, om det vises, skjules med reserveret plads eller udelades.
+**AM/PM** er markeret som standard. Fjernes markeringen, skjules markøren uden at ændre 12-timerscyklussen. Skærmure viser markøren på en særskilt linje under tiden, som UTC. UTC bruger altid 24-timersformat. Valget for foranstillet nul bestemmer fortsat, om det vises, skjules med reserveret plads eller udelades.
 
 Navngivne tidszoner viser stedets civile tid og følger automatisk dets sommertidsregler. Forskydningen ved navnet gælder den aktuelle dato og opdateres, når listen åbnes. Særskilte **UTC**-punkter tilbyder faste forskydninger fra **UTC−12:00** til **UTC+14:00** i trin på 15 minutter uden sommertid. Vælg lokal zone, en anden navngiven zone eller fast UTC-forskydning uafhængigt for hver widget.
 
@@ -90,7 +92,9 @@ Hver widget kan bruge en vilkårlig Windows-tidszone og en forskydning med forte
 
 Forskydning er nyttig i eksempelvis radiostudier til at kompensere for forsinkelsen i transmissionsvejen. Ved at stille studiets ur foran med den målte forsinkelse når tidssignalet lytterne på det tilsigtede tidspunkt.
 
-CalClock kan bruge Windows-systemtid eller en programlokal korrektion fra NTP-servere. Valget gælder alle widgets. Synkronisering ændrer aldrig Windows-uret. Hvis NTP-forbindelsen mistes efter en vellykket synkronisering, forbliver den seneste korrektion aktiv i proceshukommelsen. Serverskift bevarer også gyldig korrektion, indtil et nyt svar modtages.
+Fanen Tid vælger Windows-tid eller NTP-servere for hele programmet. NTP korrigerer kun CalClock og ændrer aldrig Windows. NTP er standard; det automatiske sæt vælger servere efter område og filtrerer målinger efter forsinkelse og afvigelser.
+
+Efter synkronisering går CalClock-uret videre uafhængigt af senere ændringer af systemtiden i Windows. Hvis forbindelsen afbrydes, eller serverne ændres, fortsætter uret fra den seneste gyldige synkronisering, indtil et nyt svar modtages; denne tilstand bevares, indtil programmet lukkes.
 
 Fanen Tid registrerer NTP-serverforespørgsler siden programmets start. Hver post indeholder dato og computerens lokale tid, server og status. OK angiver et gyldigt svar, og θ viser tidsafvigelsen fra Windows-systemtiden. ERR angiver fejlårsagen og en eventuel fejlkode. Den sidste post i en forespørgselsgruppe viser også den beregnede tidsafvigelse Θ, når brugbare målinger er tilgængelige.
 
@@ -104,9 +108,9 @@ Test viser den visuelle markering og afprøver fil, kommando, lyd og fjernscript
 
 Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. eller 60. minut efter widgetens viste tid. 20-minuttersintervallet lyder ved :00, :20 og :40. Mønstret er **Greenwich Time Signal (GTS)**: fem korte bip markerer de sidste fem sekunder og et længere den nøjagtige grænse. Tidszoner, UTC, forskydninger og aktuel NTP-korrektion respekteres. Alarmens signal og Signal-fanen indstilles uafhængigt; falder tiderne sammen, spiller CalClock én fælles sekvens. Brøkdele af sekunder i forskydningen respekteres, og overlappende widget-, alarm- og testtoner fortsætter uafbrudt til den sidste overlapning slutter.
 
-**Tidssignalets lyd** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Tidssignalets lydstyrke** niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude; stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et igangværende bip får lov at afslutte; et langt bip kan tage op til et halvt sekund. **Test** ved **Tidssignalets lyd** starter en kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Forhåndsvisning og samtidige widget- eller alarmsignaler deler én tone. For **Systembip** deaktiveres kun lydstyrkeskyderen. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
+**Lyd for tidssignal** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Lydstyrke for tidssignal** niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude; stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et igangværende bip får lov at afslutte; et langt bip kan tage op til et halvt sekund. **Test** ved **Lyd for tidssignal** starter en kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Forhåndsvisning og samtidige widget- eller alarmsignaler deler én tone. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
 
-Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender har hverken alarm, tidssignal eller lydløs-tilstand, så disse kommandoer udelades eller deaktiveres. I meddelelsesområdet hedder kommandoen Slå al lyd fra; `M` på en widget udfører samme globale skift. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
+Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. I meddelelsesområdet hedder kommandoen Slå al lyd fra; `M` på en widget udfører samme globale skift. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
 
 ## Indstillinger og menuer
 
@@ -127,6 +131,8 @@ XML-lagring kan aktiveres i Indstillinger og bruger:
 ```text
 %AppData%\FortSoft\CalClock\settings.xml
 ```
+
+Brugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske udseende, eller når temaer er slået fra for programmet eller widgeten.
 
 XML-import indlæser og gemmer straks indstillingerne i den valgte lagring uden at skifte type. Lydløs-tilstanden gemmes pr. widget med lyd.
 

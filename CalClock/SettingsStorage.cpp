@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "SettingsStorage.h"
+#include "Localization.h"
 #include <windows.h>
 #include <algorithm>
 #include <climits>
@@ -49,6 +50,19 @@
 
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
+
+/// Reports whether the remembered settings selection still names a widget in the stored collection.
+static bool HasStoredSettingsWidget(const SettingsSnapshot& snapshot) {
+    if (snapshot.settingsWidgetId <= 0) {
+        return false;
+    }
+    for (const WidgetConfig& widget : snapshot.widgets) {
+        if (widget.id == snapshot.settingsWidgetId) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /// Reads a complete REG_DWORD value, leaving the destination unchanged on failure.
 static bool ReadDword(HKEY key, const wchar_t* name, DWORD* value) {
@@ -254,6 +268,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlNumberAttribute(writer, L"snapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
     }
     if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"warnOnUnsavedChanges", snapshot.warnOnUnsavedChanges);
+    }
+    if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"fontAntialiasing", snapshot.fontAntialiasing);
     }
     if (SUCCEEDED(result)) {
@@ -288,6 +305,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"settingsTab", snapshot.settingsTab);
+    }
+    if (SUCCEEDED(result) && HasStoredSettingsWidget(snapshot)) {
+        result = WriteXmlNumberAttribute(writer, L"settingsWidgetId", snapshot.settingsWidgetId);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"lastAddedWidgetType", snapshot.lastAddedWidgetType);
@@ -733,6 +753,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         }
         if (ReadXmlAttribute(reader, (prefix + L"Name").c_str(), &text)) {
             clock.name = text;
+        } else {
+            clock.name = DefaultAdditionalClockName(config->language, index);
         }
         if (ReadXmlAttribute(reader, (prefix + L"TimeZoneKey").c_str(), &text)) {
             clock.timeZoneKey = text;
@@ -1018,6 +1040,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
                 loaded.snapWidgetsToWorkArea = number != 0;
             }
+            if (ReadXmlNumberAttribute(reader, L"warnOnUnsavedChanges", &number)) {
+                loaded.warnOnUnsavedChanges = number != 0;
+            }
             if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number)
                     && number >= 0
                     && number < FONT_ANTIALIAS_COUNT) {
@@ -1056,6 +1081,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             }
             if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < SETTINGS_TAB_COUNT) {
                 loaded.settingsTab = static_cast<int>(number);
+            }
+            if (ReadXmlNumberAttribute(reader, L"settingsWidgetId", &number) && number > 0 && number <= INT_MAX) {
+                loaded.settingsWidgetId = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"lastAddedWidgetType", &number)
                     && number >= 0
@@ -1102,8 +1130,9 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, Widg
         return false;
     }
     WIN32_FILE_ATTRIBUTE_DATA fileData = {};
-    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard,
-        &fileData) || fileData.nFileSizeHigh != 0 || fileData.nFileSizeLow > 4 * 1024 * 1024) {
+    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fileData)
+            || fileData.nFileSizeHigh != 0
+            || fileData.nFileSizeLow > 4 * 1024 * 1024) {
         return false;
     }
     IStream* stream = nullptr;
@@ -1170,7 +1199,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         if (ReadDword(key, (prefix + L"Enabled").c_str(), &value)) {
             clock.enabled = value != 0;
         }
-        ReadString(key, (prefix + L"Name").c_str(), &clock.name);
+        if (!ReadString(key, (prefix + L"Name").c_str(), &clock.name)) {
+            clock.name = DefaultAdditionalClockName(config->language, index);
+        }
         ReadString(key, (prefix + L"TimeZoneKey").c_str(), &clock.timeZoneKey);
         if (ReadDword(key, (prefix + L"Size").c_str(), &value)) {
             clock.size = static_cast<int>(std::clamp<DWORD>(value, 48, 256));
@@ -1529,8 +1560,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         return false;
     }
     HKEY root = nullptr;
-    if (RegOpenKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &root) !=
-            ERROR_SUCCESS) {
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, REGISTRY_PATH, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &root)
+            != ERROR_SUCCESS) {
         return false;
     }
     SettingsSnapshot loaded = defaults;
@@ -1553,6 +1584,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     }
     if (ReadDword(root, L"SnapWidgetsToWorkArea", &value)) {
         loaded.snapWidgetsToWorkArea = value != 0;
+    }
+    if (ReadDword(root, L"WarnOnUnsavedChanges", &value)) {
+        loaded.warnOnUnsavedChanges = value != 0;
     }
     if (ReadDword(root, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
         loaded.fontAntialiasing = static_cast<int>(value);
@@ -1588,6 +1622,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"SettingsTab", &value) && value < SETTINGS_TAB_COUNT) {
         loaded.settingsTab = static_cast<int>(value);
     }
+    if (ReadDword(root, L"SettingsWidgetId", &value) && value > 0 && value <= INT_MAX) {
+        loaded.settingsWidgetId = static_cast<int>(value);
+    }
     if (ReadDword(root, L"LastAddedWidgetType", &value) && value < WIDGET_TYPE_COUNT) {
         loaded.lastAddedWidgetType = static_cast<WidgetType>(value);
     }
@@ -1613,8 +1650,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
             swprintf_s(subkey, L"%u", index);
             HKEY item = nullptr;
             if (RegOpenKeyExW(collection, subkey, 0, KEY_QUERY_VALUE, &item) == ERROR_SUCCESS) {
-                WidgetConfig config = createDefaults(WIDGET_ANALOG, static_cast<int>(index), loaded.language,
-                    loaded.fontAntialiasing);
+                WidgetConfig config =
+                    createDefaults(WIDGET_ANALOG, static_cast<int>(index), loaded.language, loaded.fontAntialiasing);
                 ReadWidgetConfig(item, &config);
                 loaded.widgets.push_back(config);
                 RegCloseKey(item);
@@ -1694,6 +1731,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"GeneratedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
     WriteTimeSignalVolume(root, snapshot.timeSignalVolume);
     WriteDword(root, L"SnapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
+    WriteDword(root, L"WarnOnUnsavedChanges", snapshot.warnOnUnsavedChanges);
     WriteDword(root, L"FontAntialiasing", snapshot.fontAntialiasing);
     WriteString(root, L"FontFace", snapshot.fontFace);
     WriteDword(root, L"FontDialogSize", snapshot.fontDialogSize);
@@ -1706,6 +1744,11 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"SettingsX", snapshot.settingsX);
     WriteDword(root, L"SettingsY", snapshot.settingsY);
     WriteDword(root, L"SettingsTab", snapshot.settingsTab);
+    if (HasStoredSettingsWidget(snapshot)) {
+        WriteDword(root, L"SettingsWidgetId", snapshot.settingsWidgetId);
+    } else {
+        RegDeleteValueW(root, L"SettingsWidgetId");
+    }
     WriteDword(root, L"LastAddedWidgetType", snapshot.lastAddedWidgetType);
     WriteDword(root, L"HelpX", snapshot.helpX);
     WriteDword(root, L"HelpY", snapshot.helpY);
@@ -1722,8 +1765,8 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
             wchar_t subkey[24] = {};
             swprintf_s(subkey, L"%zu", index);
             HKEY item = nullptr;
-            if (RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &item, &disposition) ==
-                    ERROR_SUCCESS) {
+            if (RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &item, &disposition)
+                    == ERROR_SUCCESS) {
                 WriteWidgetConfig(item, snapshot.widgets[index]);
                 RegCloseKey(item);
             } else {

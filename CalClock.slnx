@@ -2,5 +2,17 @@
   <Configurations>
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CalClock\CalClock.vcxproj" Id="569ec152-362b-4cdb-8225-369bd391f076" />
+  <Folder Name="/CalClock/">
+    <Project Path="CalClock\CalClock.vcxproj" Id="569ec152-362b-4cdb-8225-369bd391f076" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="PackageRelease.ps1" />
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests\ClockTimeTests.cpp" />
+    <File Path="tests\RunClockTests.ps1" />
+    <File Path="tests\TimeSourceTests.cpp" />
+    <File Path="tests\SettingsLayoutTests.cpp" />
+    <File Path="tests\RunSettingsLayoutTests.ps1" />
+  </Folder>
 </Solution>

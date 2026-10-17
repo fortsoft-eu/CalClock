@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -44,12 +44,7 @@ static LONG Height(const RECT& rect) {
 
 /// Returns a rectangle with the original size and the supplied top-left coordinates.
 static RECT At(const RECT& original, LONG x, LONG y) {
-    return {
-        x,
-        y,
-        x + Width(original),
-        y + Height(original)
-    };
+    return { x, y, x + Width(original), y + Height(original) };
 }
 
 /// Returns the rectangle's horizontal center using integer pixel coordinates.
@@ -168,10 +163,9 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
             continue;
         }
         RECT placement = {};
-        if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, WIDGET_GAP, &placement)) {
-            if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0, &placement)) {
-                return false;
-            }
+        if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, WIDGET_GAP, &placement)
+                || !FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0, &placement)) {
+            return false;
         }
         result[index].rect = placement;
         placed.push_back(placement);
@@ -238,10 +232,7 @@ POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work,
     if (verticalAttachment != nullptr) {
         *verticalAttachment = top || bottom;
     }
-    POINT position = {
-        widgetRect.left,
-        widgetRect.top
-    };
+    POINT position = { widgetRect.left, widgetRect.top };
     if (left) {
         position.x = work.left;
     } else if (right) {

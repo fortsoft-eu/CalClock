@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.6.0.0
  */
 
 #pragma once
@@ -29,15 +29,15 @@
 #include "CalClockTypes.h"
 #include <windows.h>
 
-/// Maps the next displayed interval boundary to system FILETIME ticks, preserving fractional widget offsets.
+/// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget offsets.
 /// Returns false for a disabled or invalid interval or a null output pointer.
-bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, TimeSignalMode mode,
-    ULONGLONG* targetSystemFileTime);
+bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
+    ULONGLONG* targetTimelineFileTime);
 
-/// Maps the next occurrence of an alarm's displayed hour and minute to system FILETIME ticks.
+/// Maps the next occurrence of an alarm's displayed hour and minute to continuous FILETIME ticks.
 /// Selects the following day when that time has already been reached; rejects invalid inputs.
-bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG systemFileTime, int alarmHour,
-    int alarmMinute, ULONGLONG* targetSystemFileTime);
+bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, int alarmHour,
+    int alarmMinute, ULONGLONG* targetTimelineFileTime);
 
 /// Caches whether the Windows version requires generated audio instead of system Beep output.
 bool IsTimeSignalGeneratorRequired();
@@ -49,13 +49,13 @@ double TimeSignalVolumeDecibels(double volume);
 /// Converts generator decibels to the interpolated stored volume scale, limiting positive levels to full scale.
 double TimeSignalVolumeFromDecibels(double decibels);
 
-/// Schedules a six-pip sequence whose final pip starts at targetSystemFileTime in system FILETIME ticks.
+/// Schedules a six-pip sequence whose final pip starts at targetTimelineFileTime in continuous FILETIME ticks.
 /// Deduplicates identical targets and starts the worker as needed; returns false for invalid notification data or
 /// startup failure.
-bool StartTimeSignalPlayback(ULONGLONG targetSystemFileTime, bool muted, bool generatedTone, double volume,
+bool StartTimeSignalPlayback(ULONGLONG targetTimelineFileTime, bool muted, bool generatedTone, double volume,
     HWND notifyWindow, UINT notifyMessage);
 
-/// Starts or updates a preview merged with scheduled pips, beginning on the next whole system second.
+/// Starts or updates a preview merged with scheduled pips, beginning on the next whole continuous-clock second.
 /// Uses a long pip every fifth second and returns false if the playback worker cannot start.
 bool StartTimeSignalVolumePreview(bool generatedTone, double volume);
 

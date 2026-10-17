@@ -1,6 +1,6 @@
-﻿# CalClock
+# CalClock
 
-[Čeština](README.cs-CZ.md) · [English (US)](../README.md) · [Deutsch](README.de-DE.md) · [Français](README.fr-FR.md) · [Español](README.es-ES.md) · [Italiano](README.it-IT.md) · [Polski](README.pl-PL.md) · [Slovenčina](README.sk-SK.md) · [English (UK)](README.en-GB.md) · [English (Australia)](README.en-AU.md) · [Português](README.pt-PT.md) · [Norsk](README.nb-NO.md) · **Svenska** · [Suomi](README.fi-FI.md) · [Dansk](README.da-DK.md) · [Íslenska](README.is-IS.md) · [Türkçe](README.tr-TR.md)
+[Čeština](README.cs-CZ.md) · [English (US)](../README.md) · [Deutsch](README.de-DE.md) · [Français](README.fr-FR.md) · [Español](README.es-ES.md) · [Italiano](README.it-IT.md) · [Polski](README.pl-PL.md) · [Slovenčina](README.sk-SK.md) · [English (UK)](README.en-GB.md) · [English (Australia)](README.en-AU.md) · [Português](README.pt-PT.md) · [Norsk (bokmål)](README.nb-NO.md) · **Svenska** · [Suomi](README.fi-FI.md) · [Dansk](README.da-DK.md) · [Íslenska](README.is-IS.md) · [Türkçe](README.tr-TR.md) · [Eesti](README.et-EE.md) · [Gaeilge](README.ga-IE.md) · [Lietuvių](README.lt-LT.md) · [Latviešu](README.lv-LV.md) · [Magyar](README.hu-HU.md) · [Malti](README.mt-MT.md) · [Nederlands](README.nl-NL.md) · [Română](README.ro-RO.md) · [Ελληνικά](README.el-GR.md) · [Bosanski](README.bs-Latn-BA.md) · [Hrvatski](README.hr-HR.md) · [Slovenščina](README.sl-SI.md) · [Crnogorski](README.cnr-Latn-ME.md) · [Беларуская](README.be-BY.md) · [Български](README.bg-BG.md) · [Македонски](README.mk-MK.md) · [Српски](README.sr-Cyrl-RS.md) · [Українська](README.uk-UA.md) · [Русский](README.ru-RU.md)
 
 CalClock är ett nativt Win32/x86-program för Windows Vista och senare som visar fritt placerbara klockor och kalendrar med oberoende inställningar på Windows-skrivbordet. Det körs i meddelandefältet och kräver inget permanent kontrollfönster.
 
@@ -24,7 +24,7 @@ CalClock är ett nativt Win32/x86-program för Windows Vista och senare som visa
 - Identifiering av widgetar och stabil placering i ett rutnät utan överlappning
 - Direkt förhandsvisning av utseendet med möjlighet att avbryta och återställa standardutseendet per widget
 - Teckensnitt för program och widgetar, visuella format och ClearType, GDI eller ingen teckensnittsutjämning
-- Gränssnitt på tjeckiska, amerikansk, brittisk och australisk engelska, tyska, franska, spanska, italienska, portugisiska, polska, slovakiska, danska, finska, isländska, norska, svenska och turkiska
+- Gränssnitt på 36 språkvarianter, med separat språkval för programmet och varje widget
 
 ## Widgettyper
 
@@ -49,8 +49,10 @@ Vid första starten väljer CalClock språk efter Windows visningsspråk och anv
 - Tryck `Alt+0`, `Alt+1`, `Alt+2` eller `Alt+3` på Analog klocka eller Kalender med klocka för att välja huvudurtavlans storlek, från minst till störst.
 - Dubbelklicka en widget i Inställningar för att visa den vid behov, markera `Synlig` och kort identifiera den på skrivbordet.
 - Öppna Inställningar från en widgets snabbmeny för att välja den direkt.
-- Använd `Ctrl` eller `Shift` för flerval, `Ctrl+A` för att välja alla och `Del` för att ta bort valda. `Insert` växlar markeringen för aktuell post och flyttar listmarkören till nästa rad, som i Total Commander.
-- Alla listans kortkommandon fungerar även när Ta bort eller Duplicera har fokus. Kortkommandot flyttar fokus till listan och utför åtgärden. `Ctrl+C` kopierar valda widgetar och `Ctrl+V` lägger kopiorna sist i listordning. Kopiorna innehåller alla inställningar och får ett namntillägg på programspråket. Duplicera utför samma åtgärd direkt. Högst 32 widgetar tillåts. Om alla kopior inte får plats läggs de som ryms till i ordning och ett meddelande visas för resten.
+- Delete tar bort markerade widgetar. `Insert` växlar markeringen av den aktuella posten och flyttar listmarkören en rad ned.
+- `Ctrl+C` kopierar valda widgetar och `Ctrl+V` lägger kopiorna sist i listordning. Kopiorna innehåller alla inställningar och får ett namntillägg på programspråket. Duplicera utför samma åtgärd direkt. Högst 32 widgetar tillåts. Om alla kopior inte får plats läggs de som ryms till i ordning och ett meddelande visas för resten.
+
+När inställningarna öppnas från ikonen i meddelandefältet visas inställningarna för den senast valda widgeten.
 
 Inställningar kommer ihåg senast öppna flik och senast tillagda widgettyp.
 
@@ -64,11 +66,11 @@ I panelen är datumet överst en länk som återför kalendern till idag. Tidszo
 
 ## Utseende
 
-För fristående kalendrar styr **Idag-rad** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till idag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
+För fristående kalendrar styr **Idag-rad** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
 
-Utseendeändringar förhandsvisas direkt på vald widget. `Avbryt` återställer ändringar som inte verkställts; `Standardutseende` återställer värdena för widgettypen.
+Utseendeändringar förhandsvisas direkt på vald widget. `Avbryt` tar bort ändringar som inte har verkställts; `Standardutseende` återställer värdena för widgettypen.
 
-Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. En inbyggd kalender använder eget teckensnitt bara när visuella format är avstängda för kalendern eller hela programmet.
+Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. Egna kalenderteckensnitt stöds med Windows klassiska utseende eller när teman är avstängda för programmet eller widgeten.
 
 Programspråk, gränssnittsteckensnitt, utjämning, visuella format, lagring, Windows-start och kantfästning är globala och ställs in på Program. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
@@ -82,7 +84,7 @@ Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dag
 
 Digitala klockor, kalenderpaneler och skärmklockor erbjuder **Enligt språk**, **12 timmar** och **24 timmar** under **Tidsformat** på Allmänt. **Enligt språk** är standard: amerikansk och australisk engelska använder exempelvis 12 timmar, brittisk engelska 24. Ett manuellt val behålls när widgetspråket ändras. Avgränsare och AM/PM-markörer följer kulturen; kulturer utan egna markörer använder **AM/PM** i 12-timmarsläge.
 
-**AM/PM** är markerat som standard. Avmarkering döljer markören utan att ändra 12-timmarscykeln. Valet är inaktiverat i 24-timmarsläge och för widgetar utan digital tid. Skärmklockor visar markören på en egen rad under tiden, som UTC. **UTC använder alltid 24 timmar**; cykel och AM/PM är inaktiverade vid UTC, men värdena sparas för återgång till lokal tid. Valet för inledande nolla avgör fortfarande om den visas, döljs med reserverad plats eller utelämnas.
+**AM/PM** är markerat som standard. Avmarkering döljer markören utan att ändra 12-timmarscykeln. Skärmklockor visar markören på en egen rad under tiden, som UTC. UTC använder alltid 24-timmarsformat. Valet för inledande nolla avgör fortfarande om den visas, döljs med reserverad plats eller utelämnas.
 
 Namngivna tidszoner visar ortens civila tid och följer automatiskt dess sommartidsregler. Förskjutningen bredvid namnet gäller aktuellt datum och uppdateras när listan öppnas. Separata **UTC**-poster erbjuder fasta förskjutningar från **UTC−12:00** till **UTC+14:00** i steg om 15 minuter utan sommartid. Välj lokal zon, valfri annan namngiven zon eller fast UTC-förskjutning oberoende för varje widget.
 
@@ -90,7 +92,9 @@ Varje widget kan använda valfri Windows-tidszon och en förskjutning med tecken
 
 Förskjutningen är användbar exempelvis i sändningsstudior för att kompensera för överföringskedjans fördröjning. Om studioklockan ställs fram med den uppmätta fördröjningen når tidssignalen lyssnarna vid avsedd tidpunkt.
 
-CalClock kan använda Windows-systemtid eller en programlokal korrigering från NTP-servrar. Valet är globalt för alla widgetar. Synkronisering ändrar aldrig Windows-klockan. Om NTP-kontakten förloras efter en lyckad synkronisering ligger senaste korrigering kvar aktiv i processminnet. Serverbyte behåller också giltig korrigering tills ett nytt svar tas emot.
+Fliken Tid väljer Windows-tid eller NTP-servrar för hela programmet. NTP korrigerar bara CalClock och ändrar aldrig Windows. NTP är standard; den automatiska uppsättningen väljer servrar efter region och filtrerar mätningar efter fördröjning och avvikelse.
+
+Efter synkronisering går CalClock-klockan vidare oberoende av senare ändringar av systemtiden i Windows. Om anslutningen bryts eller servrarna ändras fortsätter klockan från den senaste giltiga synkroniseringen tills ett nytt svar kommer; detta tillstånd behålls tills programmet stängs.
 
 Fliken Tid registrerar NTP-serverförfrågningar sedan programmet startades. Varje post innehåller datum och datorns lokala tid, server och status. OK anger ett giltigt svar och θ dess tidsavvikelse från Windows-systemtiden. ERR anger felorsaken och en eventuell felkod. Den sista posten i en grupp förfrågningar visar även den beräknade tidsavvikelsen Θ när användbara mätningar finns.
 
@@ -104,9 +108,9 @@ Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrsk
 
 Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. 20-minutersintervallet ljuder vid :00, :20 och :40. Mönstret är **Greenwich Time Signal (GTS)**: fem korta toner markerar de sista fem sekunderna och en längre den exakta gränsen. Tidszoner, UTC, förskjutningar och aktuell NTP-korrigering beaktas. Alarmets signal och Signal-fliken är oberoende; sammanfaller tiderna spelar CalClock en gemensam sekvens. Även förskjutningar med delar av sekunder beaktas, och överlappande widget-, alarm- och testtoner fortsätter oavbrutet tills sista överlappningen slutar.
 
-**Tidssignalens ljud** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Tidssignalens volym** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Tidssignalens ljud** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. Förhandsvisning och samtidiga widget- eller alarmsignaler delar en enda ton. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
+**Ljud för tidssignal** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Volym för tidssignal** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Ljud för tidssignal** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. Förhandsvisning och samtidiga widget- eller alarmsignaler delar en enda ton. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
 
-Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender har inget alarm, tidssignal eller tyst läge; dessa kommandon utelämnas eller inaktiveras. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
+Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 
 ## Inställningar och menyer
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.3.2
+ * Last modified for version 1.6.0.0
  */
 
 #include "SelectionEdit.h"
@@ -266,10 +266,7 @@ static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM
         return DefSubclassProc(window, msg, wParam, lParam);
     }
     SetFocus(window);
-    const POINT point = POINT{
-        GET_X_LPARAM(lParam),
-        GET_Y_LPARAM(lParam)
-    };
+    const POINT point = POINT{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     const ULONGLONG time = GetTickCount64();
     if (!ContinuesClickSequence(state, point, time)) {
         state.clickCount = 1;
@@ -298,10 +295,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
         case WM_MOUSEMOVE:
             if (state.unit == SelectionUnit::Word || state.unit == SelectionUnit::Line) {
                 if (wParam & MK_LBUTTON) {
-                    UpdateSelection(window, state, POINT{
-                        GET_X_LPARAM(lParam),
-                        GET_Y_LPARAM(lParam)
-                    }, true);
+                    UpdateSelection(window, state, POINT{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, true);
                 } else {
                     state.clickCount = 0;
                     EndSelection(window, state);
@@ -311,10 +305,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
             break;
         case WM_LBUTTONUP:
             if (state.unit == SelectionUnit::Word || state.unit == SelectionUnit::Line) {
-                UpdateSelection(window, state, POINT{
-                    GET_X_LPARAM(lParam),
-                    GET_Y_LPARAM(lParam)
-                }, false);
+                UpdateSelection(window, state, POINT{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, false);
                 EndSelection(window, state);
                 return 0;
             }

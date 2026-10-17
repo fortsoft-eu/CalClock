@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.5.0
+ * Last modified for version 1.6.0.0
  */
 
 #pragma once
@@ -40,6 +40,7 @@ extern const wchar_t* LANGUAGE_LOCALES[LANG_COUNT];
 extern const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT];
 extern const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT];
 extern const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT];
+extern const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4];
 extern const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* DATE_COPY_LABELS[LANG_COUNT];
 extern const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT];
@@ -50,7 +51,11 @@ extern const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT];
 extern const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT];
 extern const wchar_t* UTC_TEXT_LABELS[LANG_COUNT];
 extern const wchar_t* MONITOR_LABELS[LANG_COUNT];
+extern const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT];
+extern const wchar_t* MONITOR_PRIMARY_LABELS[LANG_COUNT];
+extern const wchar_t* MONITOR_DEPTH_FORMATS[LANG_COUNT][2];
 extern const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT];
+extern const wchar_t* FONT_LABELS[LANG_COUNT];
 extern const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT];
 extern const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT];
@@ -115,6 +120,8 @@ extern const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT];
 extern const wchar_t* XML_STORAGE_LABELS[LANG_COUNT];
 extern const wchar_t* START_WITH_WINDOWS_LABELS[LANG_COUNT];
 extern const wchar_t* SNAP_TO_WORK_AREA_LABELS[LANG_COUNT];
+extern const wchar_t* WARN_UNSAVED_CHANGES_LABELS[LANG_COUNT];
+extern const wchar_t* UNSAVED_SETTINGS_PROMPTS[LANG_COUNT];
 extern const wchar_t* MUTE_LABELS[LANG_COUNT];
 extern const wchar_t* MUTE_ALL_LABELS[LANG_COUNT];
 extern const wchar_t* MUTED_LABELS[LANG_COUNT];
@@ -137,3 +144,8 @@ extern const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT];
 extern const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_URL_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT];
+
+/// Returns the localized initial text for a newly created additional clock.
+std::wstring DefaultAdditionalClockName(AppLanguage language, int index);
+
+void InitializeLanguageLocales();

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.6.0.0
  */
 
 #pragma once
@@ -48,6 +48,9 @@ COLORREF ReadAnalogClockBackground(HWND control);
 /// Renders the native clock into the supplied DC over a packed RGB background, restoring private background state
 /// afterward.
 bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background);
+
+/// Returns the native face's hand pivot within its square control, excluding any asymmetric shadow.
+POINT GetAnalogClockFaceCenter(int size);
 
 /// Returns the number of supported native sizes and copies at most capacity entries into sizes when provided.
 /// Returns zero if the native clock implementation cannot be loaded.

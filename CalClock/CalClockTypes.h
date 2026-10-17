@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.4.0
+ * Last modified for version 1.6.0.0
  */
 
 #pragma once
@@ -51,6 +51,7 @@ const int FULLSCREEN_PADDING_MAX = 400;
 const int DIGITAL_BORDER_WIDTH_MAX = 200;
 const unsigned int ALARM_DAYS_ALL = 0x7F;
 const int SETTINGS_TAB_COUNT = 6;
+const int MONITOR_COLUMN_COUNT = 8;
 
 /// Identifies the supported widget kinds and indexes their localized names.
 enum WidgetType {
@@ -97,8 +98,8 @@ enum FontAntialiasing {
 
 /// Indexes supported application and widget languages and their associated locale tables.
 enum AppLanguage {
-    LANG_CZ,
-    LANG_EN,
+    LANG_CS,
+    LANG_EN_US,
     LANG_DE,
     LANG_FR,
     LANG_ES,
@@ -108,12 +109,31 @@ enum AppLanguage {
     LANG_EN_GB,
     LANG_EN_AU,
     LANG_PT,
-    LANG_NO,
+    LANG_NB,
     LANG_SV,
     LANG_FI,
     LANG_DA,
     LANG_IS,
     LANG_TR,
+    LANG_ET,
+    LANG_GA,
+    LANG_LT,
+    LANG_LV,
+    LANG_HU,
+    LANG_MT,
+    LANG_NL,
+    LANG_RO,
+    LANG_EL,
+    LANG_BS,
+    LANG_HR,
+    LANG_SL,
+    LANG_CNR,
+    LANG_BE,
+    LANG_BG,
+    LANG_MK,
+    LANG_SR,
+    LANG_UK,
+    LANG_RU,
     LANG_COUNT
 };
 
@@ -262,7 +282,7 @@ struct WidgetConfig {
     bool showSeconds = false;
     bool showUtc = false;
     bool showUtcText = false;
-    AppLanguage language = LANG_CZ;
+    AppLanguage language = LANG_CS;
     std::wstring timeZoneKey;
     std::wstring monitorDevices;
     bool blackoutOtherMonitors = true;
@@ -321,9 +341,10 @@ struct WidgetConfig {
 
 /// Captures persistent application settings, information-window positions, and the ordered widget configurations.
 struct SettingsSnapshot {
-    AppLanguage language = LANG_EN;
+    AppLanguage language = LANG_EN_US;
     bool themesDisabled = false;
     bool snapWidgetsToWorkArea = true;
+    bool warnOnUnsavedChanges = true;
     bool generatedTimeSignal = true;
     double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
     int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
@@ -338,6 +359,7 @@ struct SettingsSnapshot {
     int settingsX = CW_USEDEFAULT;
     int settingsY = CW_USEDEFAULT;
     int settingsTab = 0;
+    int settingsWidgetId = -1;
     WidgetType lastAddedWidgetType = WIDGET_ANALOG;
     int helpX = CW_USEDEFAULT;
     int helpY = CW_USEDEFAULT;

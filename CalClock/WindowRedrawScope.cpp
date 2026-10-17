@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.0.0
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -36,10 +36,20 @@ WindowRedrawScope::WindowRedrawScope(HWND target) {
     }
 }
 
-/// Reenables redraw if the target still exists and invalidates its frame and child controls.
+/// Reenables redraw and refreshes the target and its children.
+/// Holds the composited target's DC only while painting so its completed subtree is presented together.
 WindowRedrawScope::~WindowRedrawScope() {
     if (window != nullptr && IsWindow(window)) {
         SendMessageW(window, WM_SETREDRAW, TRUE, 0);
-        RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+        UINT flags = RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN;
+        HDC dc = nullptr;
+        if ((GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_COMPOSITED) != 0) {
+            dc = GetDC(window);
+            flags |= RDW_UPDATENOW;
+        }
+        RedrawWindow(window, nullptr, nullptr, flags);
+        if (dc != nullptr) {
+            ReleaseDC(window, dc);
+        }
     }
 }

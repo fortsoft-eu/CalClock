@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.3.2
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -80,16 +80,7 @@ const CLSID AUDIO_SAMPLE_GRABBER = {
     0xC1F400A0,
     0x3F08,
     0x11D3,
-    {
-        0x9F,
-        0x0B,
-        0x00,
-        0x60,
-        0x08,
-        0x03,
-        0x9E,
-        0x37
-    }
+    { 0x9F, 0x0B, 0x00, 0x60, 0x08, 0x03, 0x9E, 0x37 }
 };
 
 /// Recognizes supported audio filename extensions case-insensitively without opening the file.

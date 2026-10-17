@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.5.0
+ * Last modified for version 1.6.0.0
  */
 
 #pragma once
@@ -51,9 +51,10 @@ struct NtpQueryLogEntry {
     std::wstring server;
 };
 
-/// Carries an NTP query generation, combined clock offset, selected server, and individual query records to the UI thread.
+/// Carries the NTP correction to the continuous clock, the measured system offset, and individual query records.
 struct NtpThreadResult {
     bool success = false;
+    LONGLONG clockOffset100Nanoseconds = 0;
     LONGLONG offset100Nanoseconds = 0;
     ULONG generation = 0;
     std::vector<NtpQueryLogEntry> logEntries;
@@ -66,9 +67,6 @@ std::wstring NtpServersForPreset(int preset);
 
 /// Reports whether the server list contains at least one accepted server name.
 bool HasNtpServers(const std::wstring& serverList);
-
-/// Returns current UTC as Windows FILETIME ticks, using the precise system clock when available.
-ULONGLONG CurrentFileTimeValue();
 
 /// Starts an NTP worker and returns its thread handle, or null on failure. The caller owns the handle and
 /// must keep both atomic flags alive until the worker exits; the receiver owns posted results.

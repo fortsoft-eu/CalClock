@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.6.0.0
  */
 
 #define NOMINMAX
@@ -76,11 +76,11 @@ static bool ParseTimeZoneOffset(const std::wstring& name, LONG* minutes) {
     LONG fraction = 0;
     if (index != name.size()) {
         if (name[index] != L':'
-            || index + 3 != name.size()
-            || name[index + 1] < L'0'
-            || name[index + 1] > L'5'
-            || name[index + 2] < L'0'
-            || name[index + 2] > L'9') {
+                || index + 3 != name.size()
+                || name[index + 1] < L'0'
+                || name[index + 1] > L'5'
+                || name[index + 2] < L'0'
+                || name[index + 2] > L'9') {
             return false;
         }
         fraction = (name[index + 1] - L'0') * 10 + name[index + 2] - L'0';
@@ -216,7 +216,7 @@ static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source,
 static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     HKEY root = nullptr;
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones", 0, KEY_READ,
-        &root) != ERROR_SUCCESS) {
+            &root) != ERROR_SUCCESS) {
         return;
     }
     for (DWORD index = 0;; index++) {
@@ -237,8 +237,8 @@ static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATI
         RegistryTimeZoneInformation registryInformation = {};
         DWORD type = 0;
         DWORD bytes = sizeof(registryInformation);
-        LSTATUS informationStatus = RegQueryValueExW(key, L"TZI", nullptr, &type,
-            reinterpret_cast<BYTE*>(&registryInformation), &bytes);
+        LSTATUS informationStatus =
+            RegQueryValueExW(key, L"TZI", nullptr, &type, reinterpret_cast<BYTE*>(&registryInformation), &bytes);
         if (informationStatus == ERROR_SUCCESS && type == REG_BINARY && bytes == sizeof(registryInformation)) {
             DYNAMIC_TIME_ZONE_INFORMATION zone = {};
             zone.Bias = registryInformation.bias;
@@ -313,8 +313,8 @@ std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, cons
         ULARGE_INTEGER localTicks = {};
         localTicks.LowPart = localFileTime.dwLowDateTime;
         localTicks.HighPart = localFileTime.dwHighDateTime;
-        offsetMinutes = (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart))
-            / 600000000;
+        offsetMinutes =
+            (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart)) / 600000000;
     }
     std::wstring offset = FormatTimeZoneOffset(offsetMinutes);
     if (name.empty()) {
@@ -335,8 +335,8 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
     }
     HKEY key = nullptr;
     wchar_t keyName[128] = {};
-    LSTATUS result = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation",
-        0, KEY_READ, &key);
+    LSTATUS result =
+        RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key);
     if (result == ERROR_SUCCESS) {
         ReadRegistryString(key, L"TimeZoneKeyName", keyName, ARRAYSIZE(keyName));
         RegCloseKey(key);
