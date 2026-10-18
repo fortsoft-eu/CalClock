@@ -40,6 +40,7 @@
 #include "Localization.h"
 #include "MonitorInfo.h"
 #include "NtpClient.h"
+#include "PersistWindowState.h"
 #include "SelectionEdit.h"
 #include "SettingsStorage.h"
 #include "SettingsEdit.h"
@@ -306,6 +307,7 @@ const int ID_INFO_CLOSE = IDOK;
 const int ID_INFO_ICON = 3200;
 const int ID_INFO_LINK = 3203;
 const int ID_INFO_PRODUCT = 3201;
+const int ID_INFO_SIZE_GRIP = 3204;
 const int ID_INFO_TEXT = 3051;
 const int ID_INFO_WEBSITE = 3202;
 
@@ -616,6 +618,11 @@ NOTIFYICONDATAW trayIcon = {};
 static InformationWindowLayout helpWindowLayout;
 static InformationWindowLayout aboutWindowLayout;
 
+/// Persistent form placement
+static PersistWindowState settingsWindowState;
+static PersistWindowState helpWindowState;
+static PersistWindowState aboutWindowState;
+
 /// Mouse interaction positions
 static POINT fullscreenCursorPosition = {};
 
@@ -656,13 +663,9 @@ bool warnOnUnsavedChanges = true;
 bool winsockReady = false;
 
 /// Numeric settings and positions
-int aboutX = CW_USEDEFAULT;
-int aboutY = CW_USEDEFAULT;
 int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
 int appFontDialogSize = 90;
 int appFontWeight = FW_NORMAL;
-int helpX = CW_USEDEFAULT;
-int helpY = CW_USEDEFAULT;
 int nextWidgetId = 1;
 int ntpPreset = NTP_PRESET_AUTO;
 static int monitorSortColumn = -1;
@@ -676,8 +679,6 @@ int settingsContentWidth = 0;
 int settingsTab = 0;
 int settingsVisualPreviewWidgetId = -1;
 int settingsWidgetId = -1;
-int settingsX = CW_USEDEFAULT;
-int settingsY = CW_USEDEFAULT;
 double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 std::shared_ptr<std::atomic<int>> settingsPreviewVolume;
 
@@ -810,9 +811,6 @@ static void RenderWidget(Widget* widget);
 /// Captures current settings and saves them to the selected XML or registry backend.
 /// Removes registry settings after a successful switch to XML storage.
 static void SaveAllSettings();
-
-/// Captures the form's screen position, using and translating its normal placement when minimized.
-static void SaveFormPosition(HWND window, int* x, int* y);
 
 /// Temporarily substitutes committed widget configurations while saving, then restores the active appearance previews.
 static void SaveSettingsWithoutAppearancePreviews();
@@ -1653,20 +1651,14 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.ntpPreset = ntpPreset;
     snapshot.ntpServers = ntpServers;
     snapshot.fileDialogDirectory = fileDialogDirectory;
-    snapshot.settingsX = settingsX;
-    snapshot.settingsY = settingsY;
+    snapshot.settingsWindowState = settingsWindowState.Save();
     snapshot.settingsTab = settingsTab;
     if (FindWidgetById(settingsWidgetId) != nullptr) {
         snapshot.settingsWidgetId = settingsWidgetId;
     }
     snapshot.lastAddedWidgetType = lastAddedWidgetType;
-    snapshot.helpX = helpX;
-    snapshot.helpY = helpY;
-    snapshot.aboutX = aboutX;
-    snapshot.aboutY = aboutY;
-    SaveFormPosition(hSettings, &snapshot.settingsX, &snapshot.settingsY);
-    SaveFormPosition(hHelp, &snapshot.helpX, &snapshot.helpY);
-    SaveFormPosition(hAbout, &snapshot.aboutX, &snapshot.aboutY);
+    snapshot.helpWindowState = helpWindowState.Save();
+    snapshot.aboutWindowState = aboutWindowState.Save();
     for (size_t index = 0; index < widgets.size(); index++) {
         snapshot.widgets.push_back(widgets[index]->config);
     }
@@ -1701,16 +1693,13 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     ntpLastQueryFailed = false;
     lastNtpAttemptTick = 0;
     nextNtpAttemptTick = 0;
-    settingsX = snapshot.settingsX;
-    settingsY = snapshot.settingsY;
+    settingsWindowState.Load(snapshot.settingsWindowState);
     settingsTab = std::clamp(snapshot.settingsTab, 0, SETTINGS_TAB_COUNT - 1);
     settingsWidgetId = snapshot.settingsWidgetId;
     lastAddedWidgetType =
         static_cast<WidgetType>(std::clamp(static_cast<int>(snapshot.lastAddedWidgetType), 0, WIDGET_TYPE_COUNT - 1));
-    helpX = snapshot.helpX;
-    helpY = snapshot.helpY;
-    aboutX = snapshot.aboutX;
-    aboutY = snapshot.aboutY;
+    helpWindowState.Load(snapshot.helpWindowState);
+    aboutWindowState.Load(snapshot.aboutWindowState);
     lastHiddenWidgetIds.clear();
     widgets.clear();
     nextWidgetId = 1;
@@ -3004,37 +2993,6 @@ static void ClampFormPosition(int* x, int* y, int width, int height) {
     int workBottom = static_cast<int>(information.rcWork.bottom);
     *x = std::clamp(*x, workLeft, std::max(workLeft, workRight - width));
     *y = std::clamp(*y, workTop, std::max(workTop, workBottom - height));
-}
-
-/// Captures the form's screen position, using and translating its normal placement when minimized.
-static void SaveFormPosition(HWND window, int* x, int* y) {
-    if (window == nullptr) {
-        return;
-    }
-    RECT rect = {};
-    if (IsIconic(window)) {
-        WINDOWPLACEMENT placement = {};
-        placement.length = sizeof(placement);
-        if (!GetWindowPlacement(window, &placement)) {
-            return;
-        }
-        rect = placement.rcNormalPosition;
-        bool toolWindow = GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_TOOLWINDOW;
-        if (!toolWindow) {
-            HMONITOR monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
-            MONITORINFO information = {};
-            information.cbSize = sizeof(information);
-            if (!GetMonitorInfoW(monitor, &information)) {
-                return;
-            }
-            OffsetRect(&rect, information.rcWork.left - information.rcMonitor.left,
-                information.rcWork.top - information.rcMonitor.top);
-        }
-    } else if (!GetWindowRect(window, &rect)) {
-        return;
-    }
-    *x = rect.left;
-    *y = rect.top;
 }
 
 /// Returns the Windows message-font face, falling back to the stock GUI font or an empty string.
@@ -7557,6 +7515,9 @@ static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* widt
     AdjustWindowRectEx(&frame, baseStyle, FALSE, extendedStyle);
     settingsContentWidth = desiredWidth - (frame.right - frame.left);
     settingsContentHeight = desiredHeight - (frame.bottom - frame.top);
+    const PersistWindowStateData& placement = settingsWindowState.GetState();
+    int settingsX = placement.x;
+    int settingsY = placement.y;
     RECT desired = { settingsX, settingsY, settingsX + desiredWidth, settingsY + desiredHeight };
     HMONITOR monitor = settingsX == CW_USEDEFAULT || settingsY == CW_USEDEFAULT
         ? MonitorFromPoint(POINT{}, MONITOR_DEFAULTTOPRIMARY)
@@ -8543,23 +8504,26 @@ static void SetButtonColor(HWND button, COLORREF color) {
     }
 }
 
-/// Draws descriptive text within the supplied bounds using measured word wrapping and the current font's line height.
-static void DrawWordWrappedText(HDC dc, const std::wstring& text, const RECT& bounds, UINT prefix = DT_NOPREFIX) {
+/// Draws or measures descriptive text using the same word wrapping and current font's line height.
+static int DrawWordWrappedText(HDC dc, const std::wstring& text, const RECT& bounds, UINT prefix = DT_NOPREFIX) {
     TEXTMETRICW metrics = {};
     if (!GetTextMetricsW(dc, &metrics)) {
-        return;
+        return 0;
     }
     UiTextLine layout = GetUiTextLine(dc, text);
     int lineHeight = std::max(1L, layout.ascent + layout.descent + layout.gap);
+    bool measure = (prefix & DT_CALCRECT) != 0;
     int saved = SaveDC(dc);
-    IntersectClipRect(dc, bounds.left, bounds.top, bounds.right, bounds.bottom);
+    if (!measure) {
+        IntersectClipRect(dc, bounds.left, bounds.top, bounds.right, bounds.bottom);
+    }
     int maximumWidth = bounds.right - bounds.left;
     int y = bounds.top;
     size_t position = 0;
     std::wstring line;
-    while (position < text.size() && y < bounds.bottom) {
+    while (position < text.size() && (measure || y < bounds.bottom)) {
         if (text[position] == L'\r' || text[position] == L'\n') {
-            if (!line.empty()) {
+            if (!measure && !line.empty()) {
                 RECT lineRect = {
                     bounds.left,
                     y + layout.ascent - metrics.tmAscent,
@@ -8567,8 +8531,8 @@ static void DrawWordWrappedText(HDC dc, const std::wstring& text, const RECT& bo
                     y + layout.ascent + metrics.tmDescent
                 };
                 DrawTextW(dc, line.c_str(), -1, &lineRect, DT_LEFT | DT_TOP | DT_SINGLELINE | prefix);
-                line.clear();
             }
+            line.clear();
             wchar_t newline = text[position++];
             if (position < text.size() && newline == L'\r' && text[position] == L'\n') {
                 position++;
@@ -8592,6 +8556,23 @@ static void DrawWordWrappedText(HDC dc, const std::wstring& text, const RECT& bo
         std::wstring measured = prefix & DT_NOPREFIX ? candidate : RemoveCaptionMnemonic(candidate);
         GetTextExtentPoint32W(dc, measured.c_str(), static_cast<int>(measured.size()), &extent);
         if (!line.empty() && extent.cx > maximumWidth) {
+            if (!measure) {
+                RECT lineRect = {
+                    bounds.left,
+                    y + layout.ascent - metrics.tmAscent,
+                    bounds.right,
+                    y + layout.ascent + metrics.tmDescent
+                };
+                DrawTextW(dc, line.c_str(), -1, &lineRect, DT_LEFT | DT_TOP | DT_SINGLELINE | prefix);
+            }
+            y += lineHeight;
+            line = word;
+        } else {
+            line = candidate;
+        }
+    }
+    if (!line.empty() && (measure || y < bounds.bottom)) {
+        if (!measure) {
             RECT lineRect = {
                 bounds.left,
                 y + layout.ascent - metrics.tmAscent,
@@ -8599,22 +8580,11 @@ static void DrawWordWrappedText(HDC dc, const std::wstring& text, const RECT& bo
                 y + layout.ascent + metrics.tmDescent
             };
             DrawTextW(dc, line.c_str(), -1, &lineRect, DT_LEFT | DT_TOP | DT_SINGLELINE | prefix);
-            y += lineHeight;
-            line = word;
-        } else {
-            line = candidate;
         }
-    }
-    if (!line.empty() && y < bounds.bottom) {
-        RECT lineRect = {
-            bounds.left,
-            y + layout.ascent - metrics.tmAscent,
-            bounds.right,
-            y + layout.ascent + metrics.tmDescent
-        };
-        DrawTextW(dc, line.c_str(), -1, &lineRect, DT_LEFT | DT_TOP | DT_SINGLELINE | prefix);
+        y += lineHeight;
     }
     RestoreDC(dc, saved);
+    return y - bounds.top;
 }
 
 /// Assigns nonconflicting mnemonics to eligible visible child captions using the shared set of already assigned keys.
@@ -8760,19 +8730,8 @@ static bool DrawNtpLogItem(const DRAWITEMSTRUCT* item) {
     return true;
 }
 
-/// Draws descriptive settings text over its page texture, retaining mnemonic cues and the supplied DC state.
-static INT_PTR DrawSettingsPageItem(LPARAM lParam) {
-    DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
-    if (DrawSettingsListItem(item) || DrawNtpLogItem(item)) {
-        return TRUE;
-    }
-    if (item == nullptr
-        || item->CtlID != ID_TIME_SIGNAL_NOTE
-            && item->hwndItem != hNtpServersLabel
-            && item->hwndItem != hNtpStatus
-            && item->hwndItem != hTimeGlobalNote) {
-        return FALSE;
-    }
+/// Draws a wrapped label over its parent background using the selected font and native text colors.
+static INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item) {
     int savedState = SaveDC(item->hDC);
     DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
     SetBkMode(item->hDC, TRANSPARENT);
@@ -8790,6 +8749,22 @@ static INT_PTR DrawSettingsPageItem(LPARAM lParam) {
     DrawWordWrappedText(item->hDC, text, textRect, prefix);
     RestoreDC(item->hDC, savedState);
     return TRUE;
+}
+
+/// Draws descriptive settings text over its page texture, retaining mnemonic cues and the supplied DC state.
+static INT_PTR DrawSettingsPageItem(LPARAM lParam) {
+    DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+    if (DrawSettingsListItem(item) || DrawNtpLogItem(item)) {
+        return TRUE;
+    }
+    if (item == nullptr
+        || item->CtlID != ID_TIME_SIGNAL_NOTE
+            && item->hwndItem != hNtpServersLabel
+            && item->hwndItem != hNtpStatus
+            && item->hwndItem != hTimeGlobalNote) {
+        return FALSE;
+    }
+    return DrawWrappedTextItem(item);
 }
 
 /// Returns native dialog notification results for report sorting and monitor checkbox changes.
@@ -13164,7 +13139,6 @@ static void CloseSettingsWindow() {
                 && FindWidgetById(settingsDraft[selectedDraftIndex].id) != nullptr) {
             settingsWidgetId = settingsDraft[selectedDraftIndex].id;
         }
-        SaveFormPosition(hSettings, &settingsX, &settingsY);
         DestroyWindow(hSettings);
         SaveAllSettings();
     }
@@ -13305,8 +13279,9 @@ static void ImportSettings() {
     ShowSettingsWindow();
 }
 
-/// Opens or activates the non-topmost settings form, selecting an explicit widget or restoring the last closed selection.
-/// Creates draft snapshots and fullscreen previews when opening a new form; a missing widget falls back to the first.
+/// Opens or activates the non-topmost settings form, selecting an explicit widget or restoring the last closed
+/// selection. Creates draft snapshots and fullscreen previews when opening a new form; a missing widget falls back
+/// to the first.
 static void ShowSettingsWindow(int widgetId) {
     if (hSettings != nullptr && IsWindow(hSettings)) {
         if (!IsWindowEnabled(hSettings)) {
@@ -13317,7 +13292,7 @@ static void ShowSettingsWindow(int widgetId) {
             return;
         }
         SelectDraftWidgetById(widgetId);
-        SetForegroundWindowEx(hSettings);
+        settingsWindowState.BringToFront();
         return;
     }
     settingsDraft.clear();
@@ -13349,7 +13324,9 @@ static void ShowSettingsWindow(int widgetId) {
     int settingsWidth = 0;
     int settingsHeight = 0;
     GetSettingsWindowLayout(extendedStyle, &style, &settingsWidth, &settingsHeight);
-    ClampFormPosition(&settingsX, &settingsY, settingsWidth, settingsHeight);
+    const PersistWindowStateData& placement = settingsWindowState.GetState();
+    int settingsX = placement.x;
+    int settingsY = placement.y;
     hSettings = CreateWindowExW(extendedStyle, CLASS_NAME, T(TXT_SETTINGS), style, settingsX, settingsY,
         settingsWidth, settingsHeight, nullptr, nullptr, hInstance, nullptr);
     if (hSettings == nullptr) {
@@ -13367,8 +13344,11 @@ static void ShowSettingsWindow(int widgetId) {
         ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
     }
     UpdateSettingsApplyButton();
-    ShowWindow(hSettings, SW_SHOW);
-    SetForegroundWindowEx(hSettings);
+    if (!settingsWindowState.Attach(hSettings)) {
+        CloseSettingsWindow();
+        return;
+    }
+    settingsWindowState.Show();
     SetActiveWindow(hSettings);
     SetFocus(hAddType);
 }
@@ -13684,13 +13664,12 @@ static int InformationLabelHeight(HWND control, int width) {
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
     HGDIOBJ oldFont = font == nullptr ? nullptr : SelectObject(dc, font);
     RECT bounds = { 0, 0, std::max(1, width), 0 };
-    UINT flags = DT_CALCRECT | DT_WORDBREAK | DT_NOPREFIX | DT_EXPANDTABS;
-    DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &bounds, flags);
+    int height = DrawWordWrappedText(dc, text, bounds, DT_CALCRECT | DT_NOPREFIX);
     if (oldFont != nullptr) {
         SelectObject(dc, oldFont);
     }
     ReleaseDC(control, dc);
-    return bounds.bottom - bounds.top;
+    return height;
 }
 
 /// Anchors Help or About controls to the client area, measures wrapped product text, and preserves right and bottom
@@ -13732,37 +13711,31 @@ static void LayoutInformationWindow(HWND window) {
     }
     int textHeight = buttonY - buttonGap - textTop;
     PlaceInformationControl(window, ID_INFO_TEXT, layout.text.left, textTop, textWidth, textHeight);
-    PlaceInformationControl(window, ID_INFO_CLOSE, buttonX, buttonY, buttonWidth, buttonHeight);
-    InvalidateRect(window, nullptr, TRUE);
-}
-
-/// Constrains an information window's size and position to its monitor work area, then recomputes the child layout.
-static void FitInformationWindowToWorkArea(HWND window) {
-    if (window == nullptr || !IsWindow(window) || IsIconic(window)) {
-        return;
+    SetWindowPos(GetDlgItem(window, ID_INFO_CLOSE), HWND_TOP, buttonX, buttonY, buttonWidth, buttonHeight,
+        SWP_NOACTIVATE);
+    if (window == hHelp) {
+        int gripWidth = GetSystemMetrics(SM_CXVSCROLL);
+        int gripHeight = GetSystemMetrics(SM_CYHSCROLL);
+        UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
+        if (IsZoomed(window)) {
+            flags |= SWP_HIDEWINDOW;
+        } else {
+            flags |= SWP_SHOWWINDOW;
+        }
+        SetWindowPos(GetDlgItem(window, ID_INFO_SIZE_GRIP), nullptr, client.right - gripWidth,
+            client.bottom - gripHeight, gripWidth, gripHeight, flags);
     }
-    MONITORINFO monitor = {};
-    monitor.cbSize = sizeof(monitor);
-    if (!GetMonitorInfoW(MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST), &monitor)) {
-        return;
+    if (window == hAbout) {
+        InvalidateRect(window, nullptr, TRUE);
     }
-    RECT rect = {};
-    GetWindowRect(window, &rect);
-    int width = std::min(rect.right - rect.left, monitor.rcWork.right - monitor.rcWork.left);
-    int height = std::min(rect.bottom - rect.top, monitor.rcWork.bottom - monitor.rcWork.top);
-    int x = std::clamp(static_cast<int>(rect.left), static_cast<int>(monitor.rcWork.left),
-        static_cast<int>(monitor.rcWork.right) - width);
-    int y = std::clamp(static_cast<int>(rect.top), static_cast<int>(monitor.rcWork.top),
-        static_cast<int>(monitor.rcWork.bottom) - height);
-    SetWindowPos(window, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
-    LayoutInformationWindow(window);
 }
 
 /// Creates or activates Help or About with localized content, saved placement, minimization, and work-area-aware layout.
 static void ShowInformationWindow(bool help) {
     HWND* target = help ? &hHelp : &hAbout;
+    PersistWindowState& placement = help ? helpWindowState : aboutWindowState;
     if (*target != nullptr && IsWindow(*target)) {
-        SetForegroundWindowEx(*target);
+        placement.BringToFront();
         return;
     }
     if (help) {
@@ -13770,8 +13743,7 @@ static void ShowInformationWindow(bool help) {
     } else {
         aboutWindowLayout = {};
     }
-    int* x = help ? &helpX : &aboutX;
-    int* y = help ? &helpY : &aboutY;
+    const PersistWindowStateData& savedPlacement = placement.GetState();
     int aboutExtraLineHeight = 0;
     if (!help) {
         if (hAboutFont == nullptr) {
@@ -13792,9 +13764,12 @@ static void ShowInformationWindow(bool help) {
     int height = help ? 500 : ABOUT_WINDOW_HEIGHT + aboutExtraLineHeight;
     DWORD extendedStyle = help ? 0 : WS_EX_DLGMODALFRAME;
     std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
-    ClampFormPosition(x, y, width, height);
-    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU
-        | WS_MINIMIZEBOX, *x, *y, width, height, nullptr, nullptr, hInstance, nullptr);
+    DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+    if (help) {
+        style |= WS_MAXIMIZEBOX | WS_THICKFRAME | WS_CLIPCHILDREN;
+    }
+    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), style, savedPlacement.x, savedPlacement.y,
+        width, height, nullptr, nullptr, hInstance, nullptr);
     if (*target == nullptr) {
         return;
     }
@@ -13810,9 +13785,9 @@ static void ShowInformationWindow(bool help) {
         + HELP_TIME_APPENDIX[appLanguage]
         + HELP_FULLSCREEN_APPENDIX[appLanguage];
     if (help) {
-        DWORD textStyle = WS_TABSTOP | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
-        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle, 18, 18, 610, 385,
-            *target, ID_INFO_TEXT);
+        DWORD textStyle = WS_TABSTOP | WS_VSCROLL | WS_CLIPSIBLINGS | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
+        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle, 18, 18, 610, 385, *target,
+            ID_INFO_TEXT);
         if (text == nullptr) {
             DestroyWindow(*target);
             *target = nullptr;
@@ -13822,6 +13797,13 @@ static void ShowInformationWindow(bool help) {
         SendMessageW(text, EM_SETSEL, 0, 0);
         AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 528, 415, 100,
             UI_BUTTON_HEIGHT, *target, ID_INFO_CLOSE);
+        HWND grip = AddControl(0, L"SCROLLBAR", L"", SBS_SIZEGRIP | SBS_SIZEBOXBOTTOMRIGHTALIGN | WS_CLIPSIBLINGS,
+            0, 0, GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL), *target, ID_INFO_SIZE_GRIP);
+        if (grip == nullptr) {
+            DestroyWindow(*target);
+            *target = nullptr;
+            return;
+        }
     } else {
         std::wstring productText = BuildAboutProductText();
         std::wstring linkText = BuildAboutLinkText();
@@ -13829,14 +13811,14 @@ static void ShowInformationWindow(bool help) {
         HICON applicationIcon = static_cast<HICON>(LoadImageW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), IMAGE_ICON,
             32, 32, LR_SHARED));
         SendMessageW(icon, STM_SETICON, reinterpret_cast<WPARAM>(applicationIcon), 0);
-        HWND product = AddControl(0, L"STATIC", productText.c_str(), SS_LEFT | SS_NOPREFIX | SS_NOTIFY,
-            62, 12, 456, 126, *target, ID_INFO_PRODUCT);
-        HWND website = AddControl(0, L"STATIC", ABOUT_WEBSITE_LABELS[appLanguage], SS_LEFT | SS_NOPREFIX | SS_NOTIFY,
-            62, 145, 88, 20, *target, ID_INFO_WEBSITE);
-        HWND link = AddControl(0, WC_LINK, linkText.c_str(), WS_TABSTOP, 150, 145, 368, 22, *target, ID_INFO_LINK);
-        DWORD licenseStyle =
-            WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
-        HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), licenseStyle,
+        HWND product = AddControl(0, L"STATIC", productText.c_str(),
+            SS_OWNERDRAW | SS_NOPREFIX | SS_NOTIFY | WS_CLIPSIBLINGS, 62, 12, 456, 126, *target, ID_INFO_PRODUCT);
+        HWND website = AddControl(0, L"STATIC", ABOUT_WEBSITE_LABELS[appLanguage],
+            SS_LEFT | SS_NOPREFIX | SS_NOTIFY | WS_CLIPSIBLINGS, 62, 145, 88, 20, *target, ID_INFO_WEBSITE);
+        HWND link = AddControl(0, WC_LINK, linkText.c_str(), WS_TABSTOP | WS_CLIPSIBLINGS, 150, 145, 368, 22,
+            *target, ID_INFO_LINK);
+        HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), WS_TABSTOP | WS_HSCROLL
+            | WS_VSCROLL | WS_CLIPSIBLINGS | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL,
             18, 177, 500, 256 + aboutExtraLineHeight, *target, ID_INFO_TEXT);
         if (license == nullptr) {
             DestroyWindow(*target);
@@ -13855,9 +13837,13 @@ static void ShowInformationWindow(bool help) {
     }
     ApplyUiStyle(*target);
     InitializeInformationWindowLayout(*target, help);
-    FitInformationWindowToWorkArea(*target);
-    ShowWindow(*target, SW_SHOW);
-    SetForegroundWindowEx(*target);
+    if (!placement.Attach(*target)) {
+        DestroyWindow(*target);
+        *target = nullptr;
+        return;
+    }
+    LayoutInformationWindow(*target);
+    placement.Show();
 }
 
 /// Dispatches settings notifications and actions, validating edits and coordinating selection, previews, duplication,
@@ -14612,12 +14598,15 @@ static void PaintConfiguredNativeFrame(HWND window, COLORREF color) {
     ReleaseDC(window, dc);
 }
 
-/// Requests a shared-buffer update for native panel-link state changes.
+/// Draws the wrapped About product label and requests shared-buffer updates for native panel-link state changes.
 /// Passes unrelated owner-draw requests to the native window procedure.
 static LRESULT DrawWidgetItem(HWND window, Widget* widget, WPARAM wParam, LPARAM lParam) {
     DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
     if (window == hSettings && DrawSettingsListItem(item)) {
         return TRUE;
+    }
+    if (window == hAbout && item != nullptr && item->CtlID == ID_INFO_PRODUCT) {
+        return DrawWrappedTextItem(item);
     }
     bool panelLink = widget != nullptr
         && item != nullptr
@@ -14799,15 +14788,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             break;
-        case WM_SYSCOMMAND:
-            if ((wParam & 0xFFF0) == SC_MINIMIZE) {
-                if (window == hHelp) {
-                    SaveFormPosition(window, &helpX, &helpY);
-                } else if (window == hAbout) {
-                    SaveFormPosition(window, &aboutX, &aboutY);
-                }
-            }
-            break;
         case WM_SIZE:
             if ((window == hHelp || window == hAbout) && wParam != SIZE_MINIMIZED) {
                 LayoutInformationWindow(window);
@@ -14818,14 +14798,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             if (window == hSettings) {
                 PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
             }
-            if (window == hHelp || window == hAbout) {
-                FitInformationWindowToWorkArea(window);
-            }
             break;
         case WM_DISPLAYCHANGE:
-            if (window == hHelp || window == hAbout) {
-                FitInformationWindowToWorkArea(window);
-            }
             if (!displayRefreshPending) {
                 displayRefreshPending = true;
                 PostMessageW(hController, WM_REFRESH_DISPLAYS, 0, 0);
@@ -15111,7 +15085,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                     RefreshFullscreenPresentation();
                 }
                 if (hSettings != nullptr) {
-                    SetForegroundWindowEx(hSettings);
+                    settingsWindowState.BringToFront();
                 } else {
                     for (size_t index = 0; index < widgets.size(); index++) {
                         if (widgets[index]->config.visible) {
@@ -15327,7 +15301,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             if (window == hHelp) {
-                SaveFormPosition(hHelp, &helpX, &helpY);
                 DestroyWindow(hHelp);
                 hHelp = nullptr;
                 hHelpFocusedControl = nullptr;
@@ -15335,7 +15308,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             if (window == hAbout) {
-                SaveFormPosition(hAbout, &aboutX, &aboutY);
                 if (hAboutTooltip != nullptr) {
                     DestroyWindow(hAboutTooltip);
                     hAboutTooltip = nullptr;

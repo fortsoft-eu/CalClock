@@ -87,6 +87,7 @@
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="MonitorInfo.cpp" />
     <ClCompile Include="NtpClient.cpp" />
+    <ClCompile Include="PersistWindowState.cpp" />
     <ClCompile Include="SelectionEdit.cpp" />
     <ClCompile Include="SettingsEdit.cpp" />
     <ClCompile Include="SettingsStorage.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Localization.h" />
     <ClInclude Include="MonitorInfo.h" />
     <ClInclude Include="NtpClient.h" />
+    <ClInclude Include="PersistWindowState.h" />
     <ClInclude Include="SelectionEdit.h" />
     <ClInclude Include="SettingsEdit.h" />
     <ClInclude Include="SettingsStorage.h" />

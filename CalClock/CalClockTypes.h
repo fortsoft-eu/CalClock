@@ -27,6 +27,7 @@
 #pragma once
 
 #include <windows.h>
+#include "PersistWindowState.h"
 #include <string>
 #include <vector>
 
@@ -339,7 +340,7 @@ struct WidgetConfig {
     std::wstring remoteScriptUrl;
 };
 
-/// Captures persistent application settings, information-window positions, and the ordered widget configurations.
+/// Captures persistent application settings, form placement, and the ordered widget configurations.
 struct SettingsSnapshot {
     AppLanguage language = LANG_EN_US;
     bool themesDisabled = false;
@@ -356,15 +357,12 @@ struct SettingsSnapshot {
     int ntpPreset = NTP_PRESET_AUTO;
     std::wstring ntpServers;
     std::wstring fileDialogDirectory;
-    int settingsX = CW_USEDEFAULT;
-    int settingsY = CW_USEDEFAULT;
+    PersistWindowStateData settingsWindowState;
     int settingsTab = 0;
     int settingsWidgetId = -1;
     WidgetType lastAddedWidgetType = WIDGET_ANALOG;
-    int helpX = CW_USEDEFAULT;
-    int helpY = CW_USEDEFAULT;
-    int aboutX = CW_USEDEFAULT;
-    int aboutY = CW_USEDEFAULT;
+    PersistWindowStateData helpWindowState;
+    PersistWindowStateData aboutWindowState;
     std::vector<WidgetConfig> widgets;
 };
 

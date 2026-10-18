@@ -51,6 +51,9 @@
     <ClCompile Include="NtpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PersistWindowState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SelectionEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NtpClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PersistWindowState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectionEdit.h">

@@ -298,10 +298,10 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlTextAttribute(writer, L"fileDialogDirectory", snapshot.fileDialogDirectory);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"settingsX", snapshot.settingsX);
+        result = WriteXmlNumberAttribute(writer, L"settingsX", snapshot.settingsWindowState.x);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"settingsY", snapshot.settingsY);
+        result = WriteXmlNumberAttribute(writer, L"settingsY", snapshot.settingsWindowState.y);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"settingsTab", snapshot.settingsTab);
@@ -313,16 +313,25 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlNumberAttribute(writer, L"lastAddedWidgetType", snapshot.lastAddedWidgetType);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"helpX", snapshot.helpX);
+        result = WriteXmlNumberAttribute(writer, L"helpX", snapshot.helpWindowState.x);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"helpY", snapshot.helpY);
+        result = WriteXmlNumberAttribute(writer, L"helpY", snapshot.helpWindowState.y);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"aboutX", snapshot.aboutX);
+        result = WriteXmlNumberAttribute(writer, L"helpWidth", snapshot.helpWindowState.width);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"aboutY", snapshot.aboutY);
+        result = WriteXmlNumberAttribute(writer, L"helpHeight", snapshot.helpWindowState.height);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"helpMaximized", snapshot.helpWindowState.maximized);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"aboutX", snapshot.aboutWindowState.x);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"aboutY", snapshot.aboutWindowState.y);
     }
     if (SUCCEEDED(result)) {
         result = writer->WriteStartElement(nullptr, L"Widgets", nullptr);
@@ -1074,10 +1083,10 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
             }
             ReadXmlAttribute(reader, L"fileDialogDirectory", &loaded.fileDialogDirectory);
             if (ReadXmlNumberAttribute(reader, L"settingsX", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.settingsX = static_cast<int>(number);
+                loaded.settingsWindowState.x = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"settingsY", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.settingsY = static_cast<int>(number);
+                loaded.settingsWindowState.y = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"settingsTab", &number) && number >= 0 && number < SETTINGS_TAB_COUNT) {
                 loaded.settingsTab = static_cast<int>(number);
@@ -1091,16 +1100,25 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage, 
                 loaded.lastAddedWidgetType = static_cast<WidgetType>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"helpX", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.helpX = static_cast<int>(number);
+                loaded.helpWindowState.x = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"helpY", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.helpY = static_cast<int>(number);
+                loaded.helpWindowState.y = static_cast<int>(number);
+            }
+            if (ReadXmlNumberAttribute(reader, L"helpWidth", &number) && number > 0 && number <= INT_MAX) {
+                loaded.helpWindowState.width = static_cast<int>(number);
+            }
+            if (ReadXmlNumberAttribute(reader, L"helpHeight", &number) && number > 0 && number <= INT_MAX) {
+                loaded.helpWindowState.height = static_cast<int>(number);
+            }
+            if (ReadXmlNumberAttribute(reader, L"helpMaximized", &number)) {
+                loaded.helpWindowState.maximized = number != 0;
             }
             if (ReadXmlNumberAttribute(reader, L"aboutX", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.aboutX = static_cast<int>(number);
+                loaded.aboutWindowState.x = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"aboutY", &number) && number >= INT_MIN && number <= INT_MAX) {
-                loaded.aboutY = static_cast<int>(number);
+                loaded.aboutWindowState.y = static_cast<int>(number);
             }
         } else if (element == L"Widget" && rootFound) {
             if (loaded.widgets.size() >= MAX_WIDGET_COUNT) {
@@ -1614,10 +1632,10 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     ReadString(root, L"NtpServers", &loaded.ntpServers);
     ReadString(root, L"FileDialogDirectory", &loaded.fileDialogDirectory);
     if (ReadDword(root, L"SettingsX", &value)) {
-        loaded.settingsX = static_cast<int>(value);
+        loaded.settingsWindowState.x = static_cast<int>(value);
     }
     if (ReadDword(root, L"SettingsY", &value)) {
-        loaded.settingsY = static_cast<int>(value);
+        loaded.settingsWindowState.y = static_cast<int>(value);
     }
     if (ReadDword(root, L"SettingsTab", &value) && value < SETTINGS_TAB_COUNT) {
         loaded.settingsTab = static_cast<int>(value);
@@ -1629,16 +1647,25 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
         loaded.lastAddedWidgetType = static_cast<WidgetType>(value);
     }
     if (ReadDword(root, L"HelpX", &value)) {
-        loaded.helpX = static_cast<int>(value);
+        loaded.helpWindowState.x = static_cast<int>(value);
     }
     if (ReadDword(root, L"HelpY", &value)) {
-        loaded.helpY = static_cast<int>(value);
+        loaded.helpWindowState.y = static_cast<int>(value);
+    }
+    if (ReadDword(root, L"HelpWidth", &value) && value > 0 && value <= INT_MAX) {
+        loaded.helpWindowState.width = static_cast<int>(value);
+    }
+    if (ReadDword(root, L"HelpHeight", &value) && value > 0 && value <= INT_MAX) {
+        loaded.helpWindowState.height = static_cast<int>(value);
+    }
+    if (ReadDword(root, L"HelpMaximized", &value)) {
+        loaded.helpWindowState.maximized = value != 0;
     }
     if (ReadDword(root, L"AboutX", &value)) {
-        loaded.aboutX = static_cast<int>(value);
+        loaded.aboutWindowState.x = static_cast<int>(value);
     }
     if (ReadDword(root, L"AboutY", &value)) {
-        loaded.aboutY = static_cast<int>(value);
+        loaded.aboutWindowState.y = static_cast<int>(value);
     }
     HKEY collection = nullptr;
     DWORD count = 0;
@@ -1741,8 +1768,8 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"NtpPreset", snapshot.ntpPreset);
     WriteString(root, L"NtpServers", snapshot.ntpServers);
     WriteString(root, L"FileDialogDirectory", snapshot.fileDialogDirectory);
-    WriteDword(root, L"SettingsX", snapshot.settingsX);
-    WriteDword(root, L"SettingsY", snapshot.settingsY);
+    WriteDword(root, L"SettingsX", snapshot.settingsWindowState.x);
+    WriteDword(root, L"SettingsY", snapshot.settingsWindowState.y);
     WriteDword(root, L"SettingsTab", snapshot.settingsTab);
     if (HasStoredSettingsWidget(snapshot)) {
         WriteDword(root, L"SettingsWidgetId", snapshot.settingsWidgetId);
@@ -1750,10 +1777,13 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
         RegDeleteValueW(root, L"SettingsWidgetId");
     }
     WriteDword(root, L"LastAddedWidgetType", snapshot.lastAddedWidgetType);
-    WriteDword(root, L"HelpX", snapshot.helpX);
-    WriteDword(root, L"HelpY", snapshot.helpY);
-    WriteDword(root, L"AboutX", snapshot.aboutX);
-    WriteDword(root, L"AboutY", snapshot.aboutY);
+    WriteDword(root, L"HelpX", snapshot.helpWindowState.x);
+    WriteDword(root, L"HelpY", snapshot.helpWindowState.y);
+    WriteDword(root, L"HelpWidth", snapshot.helpWindowState.width);
+    WriteDword(root, L"HelpHeight", snapshot.helpWindowState.height);
+    WriteDword(root, L"HelpMaximized", snapshot.helpWindowState.maximized);
+    WriteDword(root, L"AboutX", snapshot.aboutWindowState.x);
+    WriteDword(root, L"AboutY", snapshot.aboutWindowState.y);
     bool written = false;
     HKEY collection = nullptr;
     REGSAM collectionAccess = KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_CREATE_SUB_KEY | KEY_ENUMERATE_SUB_KEYS | DELETE;
