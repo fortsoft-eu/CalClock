@@ -293,10 +293,12 @@ const int ID_MENU_SHOW_ALL = 1020;
 const int ID_MENU_SIZE_104 = 1010;
 const int ID_MENU_SIZE_198 = 1013;
 const int ID_MENU_STOP_ALARM = 1005;
+const int ID_MENU_SUNDAY_FIRST = 1016;
 const int ID_MENU_TIME_SIGNAL_ENABLED = 1007;
 const int ID_MENU_TODAY = 1009;
 const int ID_MENU_TOPMOST = 1003;
 const int ID_MENU_VISIBLE = 1002;
+const int ID_MENU_WEEK_NUMBERS = 1015;
 const int ID_MENU_WIDGET_BASE = 2000;
 
 /// Information window control identifiers
@@ -3895,9 +3897,9 @@ static void LayoutSettingsTextAppearanceRows() {
         if (GetWindowRect(hBorderColorButton, &border)) {
             OffsetSettingsControl(hBorderColorButton, first.top + 2 * spacing - border.top);
         }
-        AlignSettingsControl(hShowTodayCheck, hWidgetDisableThemesCheck, -spacing + 2);
-        AlignSettingsSundayFirst(hShowTodayCheck, -spacing + 2);
+        AlignSettingsSundayFirst(hWidgetDisableThemesCheck, -spacing + 2);
         AlignSettingsControl(hWeekNumbersCheck, hSundayFirstCheck, -spacing + 2);
+        AlignSettingsControl(hShowTodayCheck, hWeekNumbersCheck, -spacing + 2);
         return;
     }
     if (type == WIDGET_DIGITAL) {
@@ -6913,9 +6915,18 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         ApplyWidgetZOrder(widget, !widget->config.topMost);
         SynchronizeOpenSettings(widget, command);
         SaveAllSettings();
-    } else if (command == ID_MENU_SHOW_TODAY && widget->config.type == WIDGET_CALENDAR) {
+    } else if ((widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL)
+            && (command == ID_MENU_WEEK_NUMBERS || command == ID_MENU_SUNDAY_FIRST || command == ID_MENU_SHOW_TODAY)) {
         recreateConfiguration = widget->config;
-        recreateConfiguration.showToday = !recreateConfiguration.showToday;
+        if (command == ID_MENU_WEEK_NUMBERS) {
+            recreateConfiguration.weekNumbers = !recreateConfiguration.weekNumbers;
+        } else if (command == ID_MENU_SUNDAY_FIRST) {
+            recreateConfiguration.sundayFirst = !recreateConfiguration.sundayFirst;
+        } else if (widget->config.type == WIDGET_CALENDAR) {
+            recreateConfiguration.showToday = !recreateConfiguration.showToday;
+        } else {
+            return;
+        }
         recreate = true;
     } else if (command == ID_MENU_TODAY) {
         SelectCalendarToday(widget);
@@ -7065,8 +7076,6 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     }
     if (widget->config.type == WIDGET_CALENDAR) {
         AppendMenuCommand(menu, MF_STRING, ID_MENU_TODAY, PANEL_TODAY_TOOLTIP[widget->config.language], &menuMnemonics);
-        AppendMenuCommand(menu, MF_STRING | (widget->config.showToday ? MF_CHECKED : 0),
-            ID_MENU_SHOW_TODAY, SHOW_TODAY_LABELS[widget->config.language], &menuMnemonics);
     }
     if (widget->config.type != WIDGET_CALENDAR) {
         bool secondsAvailable = widget->config.type != WIDGET_ANALOG || AnalogClockSupportsSeconds(widget->config.size);
@@ -7075,6 +7084,33 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
             secondsFlags |= MF_GRAYED;
         }
         AppendMenuCommand(menu, secondsFlags, ID_MENU_SECONDS, WT(widget, TXT_SECONDS), &menuMnemonics);
+    }
+    if (widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL) {
+        HMENU dateMenu = CreatePopupMenu();
+        std::vector<wchar_t> dateMenuMnemonics;
+        SYSTEMTIME selectedDate = {};
+        if (widget->calendarChild == nullptr || !MonthCal_GetCurSel(widget->calendarChild, &selectedDate)) {
+            GetDisplayedTime(widget->config, &selectedDate);
+        }
+        for (int index = 0; index < DATE_FORMAT_COUNT; index++) {
+            if (DateFormatStartsGroup(index)) {
+                AppendMenuW(dateMenu, MF_SEPARATOR, 0, nullptr);
+            }
+            std::wstring label = DateFormatCaption(widget->config, selectedDate, index);
+            AppendMenuCommand(dateMenu, MF_STRING | (widget->config.dateCopyFormat == index ? MF_CHECKED : 0),
+                ID_MENU_DATE_FORMAT_BASE + index, label.c_str(), &dateMenuMnemonics);
+        }
+        AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
+        if (widget->config.type == WIDGET_CALENDAR) {
+            AppendMenuCommand(menu, MF_STRING | (widget->config.showToday ? MF_CHECKED : 0),
+                ID_MENU_SHOW_TODAY, SHOW_TODAY_LABELS[widget->config.language], &menuMnemonics);
+        }
+        AppendMenuCommand(menu, MF_STRING | (widget->config.weekNumbers ? MF_CHECKED : 0),
+            ID_MENU_WEEK_NUMBERS, WT(widget, TXT_WEEK_NUMBERS), &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.sundayFirst ? MF_CHECKED : 0),
+            ID_MENU_SUNDAY_FIRST, WT(widget, TXT_SUNDAY_FIRST), &menuMnemonics);
+        AppendMenuCommand(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(dateMenu),
+            DATE_COPY_LABELS[widget->config.language], &menuMnemonics);
     }
     if (WidgetSupportsSound(widget->config.type)) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -7098,25 +7134,6 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
             AppendMenuCommand(menu, MF_STRING | (widget->config.size == sizes[index] ? MF_CHECKED : 0),
                 ID_MENU_SIZE_104 + index, label.c_str(), &menuMnemonics);
         }
-    }
-    if (widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL) {
-        HMENU dateMenu = CreatePopupMenu();
-        std::vector<wchar_t> dateMenuMnemonics;
-        SYSTEMTIME selectedDate = {};
-        if (widget->calendarChild == nullptr || !MonthCal_GetCurSel(widget->calendarChild, &selectedDate)) {
-            GetDisplayedTime(widget->config, &selectedDate);
-        }
-        for (int index = 0; index < DATE_FORMAT_COUNT; index++) {
-            if (DateFormatStartsGroup(index)) {
-                AppendMenuW(dateMenu, MF_SEPARATOR, 0, nullptr);
-            }
-            std::wstring label = DateFormatCaption(widget->config, selectedDate, index);
-            AppendMenuCommand(dateMenu, MF_STRING | (widget->config.dateCopyFormat == index ? MF_CHECKED : 0),
-                ID_MENU_DATE_FORMAT_BASE + index, label.c_str(), &dateMenuMnemonics);
-        }
-        AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
-        AppendMenuCommand(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(dateMenu),
-            DATE_COPY_LABELS[widget->config.language], &menuMnemonics);
     }
     if (widget->alarmActive) {
         AppendMenuCommand(menu, MF_STRING, ID_MENU_STOP_ALARM, WT(widget, TXT_STOP_ALARM), &menuMnemonics);
@@ -10283,7 +10300,9 @@ static void ReadAppearanceControls(WidgetConfig& config) {
     if (config.type == WIDGET_DIGITAL) {
         config.fontDialogSize = config.fontSize * 10;
     }
-    config.fontAntialiasing = SelectedFontAntialiasing(hWidgetAntialiasCombo, config.fontAntialiasing);
+    if (config.type != WIDGET_CALENDAR || IsWindowEnabled(hWidgetAntialiasCombo)) {
+        config.fontAntialiasing = SelectedFontAntialiasing(hWidgetAntialiasCombo, config.fontAntialiasing);
+    }
     int maximumPadding = config.type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
     config.padding = std::clamp(static_cast<int>(SendMessageW(hPaddingTrackBar, TBM_GETPOS, 0, 0)), 0,
         maximumPadding);
@@ -10433,6 +10452,14 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         ? settingsDraft[selectedDraftIndex].disableThemes
         : GetCheck(hWidgetDisableThemesCheck);
     bool calendarFontEnabled = globalThemesDisabled || widgetThemesDisabled || !AreVisualStylesActive();
+    bool fontAntialiasingEnabled = type != WIDGET_CALENDAR || calendarFontEnabled;
+    if (type == WIDGET_CALENDAR) {
+        if (!calendarFontEnabled) {
+            SelectFontAntialiasing(hWidgetAntialiasCombo, FONT_ANTIALIAS_CLEARTYPE);
+        } else if (!IsWindowEnabled(hWidgetAntialiasCombo)) {
+            SelectFontAntialiasing(hWidgetAntialiasCombo, settingsDraft[selectedDraftIndex].fontAntialiasing);
+        }
+    }
     bool supportsAlarm = WidgetSupportsSound(type);
     bool runCommand = supportsAlarm && GetCheck(hRunCommandCheck);
     std::wstring commandText = GetControlText(hCommandEdit);
@@ -10491,6 +10518,8 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         { hBorderWidthTrackBar, !fullscreen },
         { hFontLabel, digital || calendarFontEnabled },
         { hFontButton, digital || calendarFontEnabled },
+        { hWidgetAntialiasLabel, fontAntialiasingEnabled },
+        { hWidgetAntialiasCombo, fontAntialiasingEnabled },
         { hSecondsCheck, supportsSeconds },
         { hTimeFormatCombo, (digital || panel) && !WidgetUsesUtcTime(timeConfiguration) },
         { hShowAmPmCheck, supportsAmPm },
@@ -10549,6 +10578,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
             }
             SetControlEnabled(control, enabled);
         }
+    }
+    if (calendar) {
+        UpdateFontDescription(settingsDraft[selectedDraftIndex]);
     }
     if (updateLayout) {
         AlignSettingsControls();
@@ -12073,6 +12105,10 @@ static void CopyWidgetMenuSetting(WidgetConfig* target, const WidgetConfig& sour
         target->alarmEnabled = source.alarmEnabled;
     } else if (command == ID_MENU_TIME_SIGNAL_ENABLED) {
         target->timeSignalEnabled = source.timeSignalEnabled;
+    } else if (command == ID_MENU_WEEK_NUMBERS) {
+        target->weekNumbers = source.weekNumbers;
+    } else if (command == ID_MENU_SUNDAY_FIRST) {
+        target->sundayFirst = source.sundayFirst;
     } else if (command == ID_MENU_SHOW_TODAY) {
         target->showToday = source.showToday;
     } else if (command >= ID_MENU_DATE_FORMAT_BASE && command < ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT) {
@@ -12126,6 +12162,10 @@ static void SynchronizeOpenSettings(const Widget* widget, int command) {
         } else if (command == ID_MENU_TIME_SIGNAL_ENABLED) {
             SetCheck(hTimeSignalEnabledCheck, configuration.timeSignalEnabled);
             UpdateSettingControlAvailability();
+        } else if (command == ID_MENU_WEEK_NUMBERS) {
+            SetCheck(hWeekNumbersCheck, configuration.weekNumbers);
+        } else if (command == ID_MENU_SUNDAY_FIRST) {
+            SetCheck(hSundayFirstCheck, configuration.sundayFirst);
         } else if (command == ID_MENU_SHOW_TODAY) {
             SetCheck(hShowTodayCheck, configuration.showToday);
         } else if (command >= ID_MENU_DATE_FORMAT_BASE && command < ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT) {
@@ -12179,7 +12219,11 @@ static void UpdateFontDescription(const WidgetConfig& config) {
         ? CALENDAR_FONT_LABELS[appLanguage]
         : FONT_LABELS[appLanguage]);
     if (hFontButton != nullptr) {
-        std::wstring caption = config.fontFace + L"…";
+        std::wstring caption = config.fontFace;
+        if ((config.type == WIDGET_CALENDAR || config.type == WIDGET_PANEL) && !IsWindowEnabled(hFontButton)) {
+            caption = SYSTEM_DEFAULT_FONT_LABELS[appLanguage];
+        }
+        caption += L"…";
         SetControlCaption(hFontButton, caption.c_str());
     }
     if (hPanelTopFontButton != nullptr) {
