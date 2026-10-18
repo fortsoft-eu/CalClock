@@ -78,7 +78,7 @@ Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for 
 
 Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage bevarer deres betydning ved sprogskift. Aktivering fra menuen uden valgte ugedage åbner widgetens Alarm-fane i stedet for at aktivere en alarm, der ikke kan ringe.
 
-**Foranstillet nul** tilbyder **Vis** (standard), **Bevar plads** og **Uden plads**. **Bevar plads** skjuler nullet, men reserverer dets faktiske bredde i den valgte skrifttype, så øvrige cifre bevarer positionen, også med proportionale skrifttyper. Skærmure bruger som standard hvid tekst på sort baggrund.
+**Foranstillet nul** tilbyder **Ja** (standard), **Nej, bevar plads** og **Nej, uden plads**. **Nej, bevar plads** skjuler nullet, men reserverer dets faktiske bredde i den valgte skrifttype, så øvrige cifre bevarer positionen, også med proportionale skrifttyper. Skærmure bruger som standard hvid tekst på sort baggrund.
 
 ## Tid og alarmer
 

@@ -44,7 +44,7 @@ Il-bidliet fid-dehra jidhru minnufih fil-previżjoni. Ikkanċella jarmi l-bidlie
 
 Is-settings jistgħu jiġu esportati f’XML. L-importazzjoni tgħabbi u tissejvja s-settings minnufih fil-ħażna magħżula mingħajr ma tbiddel it-tip tagħha. L-XML awtomatiku huwa %AppData%\FortSoft\CalClock\settings.xml. Il-kitba tal-XML tneħħi ċ-ċavetta HKCU\SOFTWARE\FortSoft\CalClock; il-ħażna fir-reġistru tneħħi l-XML awtomatiku.
 
-Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri Uri (default), Żomm l-ispazju u Bla spazju. Żomm l-ispazju jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
+Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
 
 ## Settings u menus
 

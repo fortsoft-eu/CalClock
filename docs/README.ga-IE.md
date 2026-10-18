@@ -44,7 +44,7 @@ Feictear athruithe cuma sa réamhamharc láithreach. Caitheann Cealaigh athruith
 
 Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompórtáil XML na socruithe láithreach sa stóras roghnaithe gan a chineál a athrú. Is é %AppData%\FortSoft\CalClock\settings.xml an XML uathoibríoch. Tar éis XML a scríobh, baintear HKCU\SOFTWARE\FortSoft\CalClock; baineann stóráil sa chlárlann an XML uathoibríoch.
 
-Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh Taispeáin (réamhshocrú), Coinnigh an spás agus Gan spás. Folaíonn Coinnigh an spás an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
+Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
 ## Socruithe agus roghchláir
 

@@ -78,7 +78,7 @@ Der Regler **Audiolautstärke** auf Wecker steuert intern abgespielte Audiodatei
 
 Die Wochentagsauswahl des Weckers folgt dem Wochenanfang der gewählten Anwendungskultur. Gespeicherte Weckertage behalten beim Sprachwechsel ihre Bedeutung. Wird ein Wecker ohne ausgewählte Wochentage über das Widget-Menü aktiviert, öffnet sich dessen Registerkarte Wecker, statt einen nicht ausführbaren Wecker einzuschalten.
 
-**Führende Null** bietet **Anzeigen** (Standard), **Platz freihalten** und **Ohne Platz**. **Platz freihalten** verbirgt die Null, reserviert aber ihre tatsächliche Breite in der gewählten Schrift. So bleiben die übrigen Ziffern auch bei proportionalen Schriften an ihrem Platz. Monitoruhren verwenden standardmäßig weiße Schrift auf schwarzem Hintergrund.
+**Führende Null** bietet **Ja** (Standard), **Nein, Platz freihalten** und **Nein, ohne Platz**. **Nein, Platz freihalten** verbirgt die Null, reserviert aber ihre tatsächliche Breite in der gewählten Schrift. So bleiben die übrigen Ziffern auch bei proportionalen Schriften an ihrem Platz. Monitoruhren verwenden standardmäßig weiße Schrift auf schwarzem Hintergrund.
 
 ## Zeit und Wecker
 

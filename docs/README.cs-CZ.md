@@ -78,7 +78,7 @@ Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvuk
 
 Ovládací prvky dnů budíku respektují první den týdne používaný zvolenou kulturou aplikace. Uložené dny budíku si při změně jazyka aplikace zachovávají význam. Zapnutí budíku z nabídky widgetu bez vybraného dne v týdnu otevře kartu Budík příslušného widgetu, místo aby zapnulo budík, který nemůže zaznít.
 
-**Úvodní nula** nabízí **Zobrazit** (výchozí), **S místem** a **Bez místa**. Volba **S místem** skryje nulu a rezervuje její skutečnou šířku ve zvoleném písmu, takže ostatní číslice drží pozice i při proporcionálním písmu. Výchozí vzhled hodin na monitoru je bílý text na černém pozadí.
+**Úvodní nula** nabízí **Ano** (výchozí), **Ne, ponechat místo** a **Ne, bez místa**. Volba **Ne, ponechat místo** skryje nulu a rezervuje její skutečnou šířku ve zvoleném písmu, takže ostatní číslice drží pozice i při proporcionálním písmu. Výchozí vzhled hodin na monitoru je bílý text na černém pozadí.
 
 ## Čas a budíky
 

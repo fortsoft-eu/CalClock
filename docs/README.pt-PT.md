@@ -78,7 +78,7 @@ O controlo **Volume do áudio** em Alarme regula os ficheiros reproduzidos inter
 
 Os dias do alarme seguem o primeiro dia da semana da cultura escolhida para a aplicação. Os dias guardados conservam o significado ao mudar o idioma. Ativar pelo menu um alarme sem dias selecionados abre o respetivo separador Alarme em vez de ativar um alarme que não pode tocar.
 
-**Zero à esquerda** oferece **Mostrar** (predefinido), **Reservar espaço** e **Sem espaço**. **Reservar espaço** oculta o zero mantendo a sua largura real no tipo de letra escolhido, para que os restantes algarismos não se movam mesmo com tipos proporcionais. Os relógios no monitor usam texto branco sobre fundo preto por predefinição.
+**Zero à esquerda** oferece **Sim** (predefinido), **Não, reservar espaço** e **Não, sem espaço**. **Não, reservar espaço** oculta o zero mantendo a sua largura real no tipo de letra escolhido, para que os restantes algarismos não se movam mesmo com tipos proporcionais. Os relógios no monitor usam texto branco sobre fundo preto por predefinição.
 
 ## Hora e alarmes
 

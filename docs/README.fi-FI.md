@@ -78,7 +78,7 @@ Herätyksen **Äänenvoimakkuus**-liukusäädin säätää sisäisesti toistetta
 
 Herätyksen viikonpäivät seuraavat sovelluksen valitun kulttuurin ensimmäistä viikonpäivää. Tallennetut päivät säilyttävät merkityksensä kieltä vaihdettaessa. Jos herätys otetaan käyttöön valikosta ilman valittuja päiviä, avataan kyseisen pienoisohjelman Herätys-välilehti sen sijaan, että käyttöön tulisi herätys, joka ei voi soida.
 
-**Etunolla** tarjoaa **Näytä** (oletus), **Varaa tila** ja **Ilman tilaa**. **Varaa tila** piilottaa nollan mutta varaa sen todellisen leveyden valitussa fontissa, joten muut numerot pysyvät paikoillaan myös suhteellisella fontilla. Näyttökellon oletuksena on valkoinen teksti mustalla taustalla.
+**Etunolla** tarjoaa **Kyllä** (oletus), **Ei, varaa tila** ja **Ei, ilman tilaa**. **Ei, varaa tila** piilottaa nollan mutta varaa sen todellisen leveyden valitussa fontissa, joten muut numerot pysyvät paikoillaan myös suhteellisella fontilla. Näyttökellon oletuksena on valkoinen teksti mustalla taustalla.
 
 ## Aika ja herätykset
 

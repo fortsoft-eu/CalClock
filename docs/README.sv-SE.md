@@ -78,7 +78,7 @@ Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per w
 
 Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dagar behåller sin innebörd när språket ändras. Om ett alarm utan valda veckodagar aktiveras från menyn öppnas dess Alarm-flik i stället för att aktivera ett alarm som inte kan ljuda.
 
-**Inledande nolla** erbjuder **Visa** (standard), **Behåll utrymme** och **Utan utrymme**. **Behåll utrymme** döljer nollan men reserverar dess verkliga bredd i valt teckensnitt, så att övriga siffror står still även med proportionella teckensnitt. Skärmklockor använder vit text på svart bakgrund som standard.
+**Inledande nolla** erbjuder **Ja** (standard), **Nej, behåll utrymme** och **Nej, utan utrymme**. **Nej, behåll utrymme** döljer nollan men reserverar dess verkliga bredd i valt teckensnitt, så att övriga siffror står still även med proportionella teckensnitt. Skärmklockor använder vit text på svart bakgrund som standard.
 
 ## Tid och alarm
 

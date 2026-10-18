@@ -78,7 +78,7 @@ Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzan
 
 Dni alarmu uwzględniają pierwszy dzień tygodnia wybranej kultury aplikacji. Zapisane dni zachowują znaczenie przy zmianie języka. Włączenie alarmu z menu bez wybranych dni otwiera kartę Alarm widżetu, zamiast włączać alarm, który nie może zabrzmieć.
 
-**Zero wiodące** oferuje **Pokaż** (domyślnie), **Zachowaj miejsce** i **Bez miejsca**. **Zachowaj miejsce** ukrywa zero, rezerwując jego rzeczywistą szerokość w danej czcionce. Pozostałe cyfry zachowują pozycje również przy czcionce proporcjonalnej. Domyślnie zegary na monitorze mają biały tekst na czarnym tle.
+**Zero wiodące** oferuje **Tak** (domyślnie), **Nie, zachowaj miejsce** i **Nie, bez miejsca**. **Nie, zachowaj miejsce** ukrywa zero, rezerwując jego rzeczywistą szerokość w danej czcionce. Pozostałe cyfry zachowują pozycje również przy czcionce proporcjonalnej. Domyślnie zegary na monitorze mają biały tekst na czarnym tle.
 
 ## Czas i alarmy
 

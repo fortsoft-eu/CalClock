@@ -44,7 +44,7 @@ Modificările de aspect se văd imediat în previzualizare. Anulare respinge mod
 
 Setările pot fi exportate în XML. Importul încarcă și salvează imediat setările în stocarea aleasă fără a-i schimba tipul. XML-ul automat este %AppData%\FortSoft\CalClock\settings.xml. Scrierea XML elimină cheia HKCU\SOFTWARE\FortSoft\CalClock; stocarea în registry elimină XML-ul automat.
 
-Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă Afișare (implicit), Păstrare spațiu și Fără spațiu. Păstrare spațiu ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
+Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
 ## Setări și meniuri
 

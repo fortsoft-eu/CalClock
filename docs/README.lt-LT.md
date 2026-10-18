@@ -44,7 +44,7 @@ Išvaizdos pakeitimai iškart matomi peržiūroje. Atšaukti atmeta nepritaikytu
 
 Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parametrus į pasirinktą saugyklą nekeisdamas jos tipo. Automatinis XML yra %AppData%\FortSoft\CalClock\settings.xml. Įrašius XML pašalinamas HKCU\SOFTWARE\FortSoft\CalClock raktas; įrašymas į registrą pašalina automatinį XML.
 
-Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo Rodyti (numatyta), Palikti vietą ir Be vietos. Palikti vietą slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
+Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
 ## Parametrai ir meniu
 

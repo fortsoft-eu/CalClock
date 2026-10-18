@@ -78,7 +78,7 @@ The **Audio volume** slider on the Alarm tab controls internally played audio fi
 
 The alarm weekday controls follow the first day of the week used by the selected application culture. Stored alarm days retain their meaning when the application language changes. Enabling an alarm from a widget menu when no weekday is selected opens that widget's Alarm tab instead of enabling an alarm that cannot run.
 
-**Leading zero** offers **Show** (the default), **Keep space**, and **No space**. **Keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Monitor clocks default to white text on a black background.
+**Leading zero** offers **Yes** (the default), **No, keep space**, and **No, without space**. **No, keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Monitor clocks default to white text on a black background.
 
 ## Time and alarms
 

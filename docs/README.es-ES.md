@@ -78,7 +78,7 @@ El control **Volumen de audio** de Alarma regula los archivos reproducidos inter
 
 Los controles de días de alarma respetan el primer día de semana de la cultura elegida para la aplicación. Los días guardados conservan su significado al cambiar el idioma. Activar desde el menú una alarma sin días seleccionados abre la pestaña Alarma del widget en lugar de activar una alarma que no puede sonar.
 
-**Cero inicial** ofrece **Mostrar** (predeterminado), **Reservar espacio** y **Sin espacio**. **Reservar espacio** oculta el cero y reserva su ancho real en la fuente elegida, manteniendo los demás dígitos en posición incluso con fuentes proporcionales. Los relojes de monitor usan por defecto texto blanco sobre fondo negro.
+**Cero inicial** ofrece **Sí** (predeterminado), **No, reservar espacio** y **No, sin espacio**. **No, reservar espacio** oculta el cero y reserva su ancho real en la fuente elegida, manteniendo los demás dígitos en posición incluso con fuentes proporcionales. Los relojes de monitor usan por defecto texto blanco sobre fondo negro.
 
 ## Hora y alarmas
 

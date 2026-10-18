@@ -44,7 +44,7 @@ Izskata izmaiņas uzreiz redzamas priekšskatījumā. Atcelt atmet nelietotās i
 
 Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēlētajā krātuvē, nemainot tās tipu. Automātiskais XML ir %AppData%\FortSoft\CalClock\settings.xml. XML ierakstīšana noņem HKCU\SOFTWARE\FortSoft\CalClock atslēgu; saglabāšana reģistrā noņem automātisko XML.
 
-Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā Rādīt (noklusējums), Saglabāt vietu un Bez vietas. Saglabāt vietu slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
+Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
 ## Iestatījumi un izvēlnes
 

@@ -78,7 +78,7 @@ Jazdec **Hlasitosť zvuku** na karte Budík ovláda interne prehrávané súbory
 
 Dni budíka rešpektujú prvý deň týždňa zvolenej kultúry aplikácie. Uložené dni si pri zmene jazyka zachovávajú význam. Zapnutie budíka z ponuky bez vybraného dňa otvorí príslušnú kartu Budík namiesto zapnutia budíka, ktorý nemôže zaznieť.
 
-**Úvodná nula** ponúka **Zobraziť** (predvolené), **S miestom** a **Bez miesta**. **S miestom** skryje nulu a rezervuje jej skutočnú šírku v zvolenom písme, takže ostatné číslice držia pozície aj pri proporcionálnom písme. Predvolene majú hodiny na monitore biely text na čiernom pozadí.
+**Úvodná nula** ponúka **Áno** (predvolené), **Nie, ponechať miesto** a **Nie, bez miesta**. **Nie, ponechať miesto** skryje nulu a rezervuje jej skutočnú šírku v zvolenom písme, takže ostatné číslice držia pozície aj pri proporcionálnom písme. Predvolene majú hodiny na monitore biely text na čiernom pozadí.
 
 ## Čas a budíky
 

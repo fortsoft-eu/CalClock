@@ -78,7 +78,7 @@ Il cursore **Volume audio** in Sveglia controlla i file riprodotti internamente 
 
 I giorni della sveglia seguono il primo giorno della settimana della cultura selezionata per l’applicazione. I giorni salvati mantengono il significato dopo un cambio di lingua. Attivare dal menu una sveglia senza giorni selezionati apre la relativa scheda Sveglia invece di abilitare una sveglia che non può suonare.
 
-**Zero iniziale** offre **Mostra** (predefinito), **Riserva spazio** e **Senza spazio**. **Riserva spazio** nasconde lo zero riservandone la larghezza reale nel carattere scelto; le altre cifre mantengono così la posizione anche con caratteri proporzionali. Gli orologi su monitor usano testo bianco su sfondo nero per impostazione predefinita.
+**Zero iniziale** offre **Sì** (predefinito), **No, riserva spazio** e **No, senza spazio**. **No, riserva spazio** nasconde lo zero riservandone la larghezza reale nel carattere scelto; le altre cifre mantengono così la posizione anche con caratteri proporzionali. Gli orologi su monitor usano testo bianco su sfondo nero per impostazione predefinita.
 
 ## Ora e sveglie
 

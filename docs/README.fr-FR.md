@@ -78,7 +78,7 @@ Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en inte
 
 Les jours d’alarme suivent le premier jour de semaine de la culture sélectionnée pour l’application. Les jours enregistrés gardent leur signification après un changement de langue. Activer une alarme par le menu sans aucun jour sélectionné ouvre l’onglet Alarme correspondant au lieu d’activer une alarme incapable de se déclencher.
 
-**Zéro initial** propose **Afficher** (par défaut), **Garder la place** et **Sans espace**. **Garder la place** masque le zéro en conservant sa largeur réelle dans la police choisie ; les autres chiffres gardent ainsi leur position même en police proportionnelle. Les horloges sur moniteur affichent par défaut du texte blanc sur fond noir.
+**Zéro initial** propose **Oui** (par défaut), **Non, garder l’espace** et **Non, sans espace**. **Non, garder l’espace** masque le zéro en conservant sa largeur réelle dans la police choisie ; les autres chiffres gardent ainsi leur position même en police proportionnelle. Les horloges sur moniteur affichent par défaut du texte blanc sur fond noir.
 
 ## Heure et alarmes
 

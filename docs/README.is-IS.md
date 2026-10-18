@@ -78,7 +78,7 @@ Sleðinn **Hljóðstyrkur** á Vekjari stjórnar innri spilun hljóðskráa fyri
 
 Vikudagar vekjarans fylgja fyrsta vikudegi valinnar menningarstillingar forritsins. Vistaðir dagar halda merkingu sinni þegar tungumál breytist. Ef vekjari er virkjaður úr valmynd án valinna vikudaga opnast Vekjari-flipinn í stað þess að virkja vekjara sem getur ekki hringt.
 
-**Upphafsnúll** býður **Sýna** (sjálfgefið), **Halda plássi** og **Án pláss**. **Halda plássi** felur núllið en tekur frá raunverulega breidd þess í völdu letri, svo að aðrir tölustafir haldi stöðu sinni líka í misbreiðu letri. Skjáklukkur nota sjálfgefið hvítan texta á svörtum bakgrunni.
+**Upphafsnúll** býður **Já** (sjálfgefið), **Nei, halda plássi** og **Nei, án pláss**. **Nei, halda plássi** felur núllið en tekur frá raunverulega breidd þess í völdu letri, svo að aðrir tölustafir haldi stöðu sinni líka í misbreiðu letri. Skjáklukkur nota sjálfgefið hvítan texta á svörtum bakgrunni.
 
 ## Tími og vekjarar
 

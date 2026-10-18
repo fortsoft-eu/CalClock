@@ -44,7 +44,7 @@ A megjelenés változásai azonnal láthatók az előnézetben. A Mégse elveti 
 
 A beállítások XML-be exportálhatók. Az importálás azonnal betölti és a kijelölt tárolóba menti őket, a tárolótípus megváltoztatása nélkül. Az automatikus XML helye %AppData%\FortSoft\CalClock\settings.xml. Az XML írása törli a HKCU\SOFTWARE\FortSoft\CalClock kulcsot; a beállításjegyzékbe mentés törli az automatikus XML-t.
 
-A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: Megjelenítés (alapértelmezett), Hely megtartása és Hely nélkül. A Hely megtartása elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
+A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
 
 ## Beállítások és menük
 

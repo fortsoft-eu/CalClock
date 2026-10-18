@@ -246,6 +246,8 @@ const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
 static const int PANEL_CALENDAR_OFFSET_Y = -4;
 static const int PANEL_SIDE_PADDING = 12;
 const int ABOUT_ICON_SIZE = 32;
+const int ABOUT_LARGE_ICON_SIZE = 48;
+const int ABOUT_LARGE_ICON_DPI = 130;
 const int ABOUT_WEB_GAP_DLU = 8;
 const int ALARM_DAY_COUNT = 7;
 const int SETTINGS_ADDITIONAL_WIDTH = 100;
@@ -13878,11 +13880,18 @@ static void ShowInformationWindow(bool help) {
         std::wstring linkText = BuildAboutLinkText();
         SetWindowTextW(*target, BuildAboutTitle().c_str());
         HWND icon = GetDlgItem(*target, ID_INFO_ICON);
+        int iconSize = ABOUT_ICON_SIZE;
+        HDC screen = GetDC(*target);
+        if (screen != nullptr) {
+            if (GetDeviceCaps(screen, LOGPIXELSY) >= ABOUT_LARGE_ICON_DPI) {
+                iconSize = ABOUT_LARGE_ICON_SIZE;
+            }
+            ReleaseDC(*target, screen);
+        }
         HICON applicationIcon = static_cast<HICON>(LoadImageW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), IMAGE_ICON,
-            ABOUT_ICON_SIZE, ABOUT_ICON_SIZE, LR_SHARED));
+            iconSize, iconSize, LR_SHARED));
         SendMessageW(icon, STM_SETICON, reinterpret_cast<WPARAM>(applicationIcon), 0);
-        SetWindowPos(icon, nullptr, 0, 0, ABOUT_ICON_SIZE, ABOUT_ICON_SIZE,
-            SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(icon, nullptr, 0, 0, iconSize, iconSize, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
         HWND product = GetDlgItem(*target, ID_INFO_PRODUCT);
         HWND website = GetDlgItem(*target, ID_INFO_WEBSITE);
         HWND link = GetDlgItem(*target, ID_INFO_LINK);

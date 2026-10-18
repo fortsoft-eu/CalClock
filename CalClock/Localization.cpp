@@ -3985,42 +3985,42 @@ const wchar_t* TIME_FORMAT_MODE_LABELS[LANG_COUNT][TIME_FORMAT_COUNT] = {
 };
 
 const wchar_t* LEADING_ZERO_MODE_LABELS[LANG_COUNT][LEADING_ZERO_MODE_COUNT] = {
-    { L"Zobrazit", L"S místem", L"Bez místa" },
-    { L"Show", L"Keep space", L"No space" },
-    { L"Anzeigen", L"Platz freihalten", L"Ohne Platz" },
-    { L"Afficher", L"Garder la place", L"Sans espace" },
-    { L"Mostrar", L"Reservar espacio", L"Sin espacio" },
-    { L"Mostra", L"Riserva spazio", L"Senza spazio" },
-    { L"Pokaż", L"Zachowaj miejsce", L"Bez miejsca" },
-    { L"Zobraziť", L"S miestom", L"Bez miesta" },
-    { L"Show", L"Keep space", L"No space" },
-    { L"Show", L"Keep space", L"No space" },
-    { L"Mostrar", L"Reservar espaço", L"Sem espaço" },
-    { L"Vis", L"Behold plass", L"Uten plass" },
-    { L"Visa", L"Behåll utrymme", L"Utan utrymme" },
-    { L"Näytä", L"Varaa tila", L"Ilman tilaa" },
-    { L"Vis", L"Bevar plads", L"Uden plads" },
-    { L"Sýna", L"Halda plássi", L"Án pláss" },
-    { L"Göster", L"Yer ayır", L"Yer ayırma" },
-    { L"Kuva", L"Säilita ruum", L"Ilma ruumita" },
-    { L"Taispeáin", L"Coinnigh an spás", L"Gan spás" },
-    { L"Rodyti", L"Palikti vietą", L"Be vietos" },
-    { L"Rādīt", L"Saglabāt vietu", L"Bez vietas" },
-    { L"Megjelenítés", L"Hely megtartása", L"Hely nélkül" },
-    { L"Uri", L"Żomm l-ispazju", L"Bla spazju" },
-    { L"Weergeven", L"Ruimte behouden", L"Zonder ruimte" },
-    { L"Afișare", L"Păstrare spațiu", L"Fără spațiu" },
-    { L"Εμφάνιση", L"Διατήρηση χώρου", L"Χωρίς χώρο" },
-    { L"Prikaži", L"Zadrži razmak", L"Bez razmaka" },
-    { L"Prikaži", L"Zadrži razmak", L"Bez razmaka" },
-    { L"Pokaži", L"Ohrani prostor", L"Brez prostora" },
-    { L"Prikaži", L"Zadrži razmak", L"Bez razmaka" },
-    { L"Паказваць", L"Пакідаць месца", L"Без месца" },
-    { L"Показвай", L"Запази мястото", L"Без място" },
-    { L"Прикажувај", L"Зачувај место", L"Без место" },
-    { L"Прикажи", L"Задржи размак", L"Без размака" },
-    { L"Показувати", L"Залишати місце", L"Без місця" },
-    { L"Показывать", L"Оставлять место", L"Без места" }
+    { L"Ano", L"Ne, ponechat místo", L"Ne, bez místa" },
+    { L"Yes", L"No, keep space", L"No, without space" },
+    { L"Ja", L"Nein, Platz freihalten", L"Nein, ohne Platz" },
+    { L"Oui", L"Non, garder l’espace", L"Non, sans espace" },
+    { L"Sí", L"No, reservar espacio", L"No, sin espacio" },
+    { L"Sì", L"No, riserva spazio", L"No, senza spazio" },
+    { L"Tak", L"Nie, zachowaj miejsce", L"Nie, bez miejsca" },
+    { L"Áno", L"Nie, ponechať miesto", L"Nie, bez miesta" },
+    { L"Yes", L"No, keep space", L"No, without space" },
+    { L"Yes", L"No, keep space", L"No, without space" },
+    { L"Sim", L"Não, reservar espaço", L"Não, sem espaço" },
+    { L"Ja", L"Nei, behold plass", L"Nei, uten plass" },
+    { L"Ja", L"Nej, behåll utrymme", L"Nej, utan utrymme" },
+    { L"Kyllä", L"Ei, varaa tila", L"Ei, ilman tilaa" },
+    { L"Ja", L"Nej, bevar plads", L"Nej, uden plads" },
+    { L"Já", L"Nei, halda plássi", L"Nei, án pláss" },
+    { L"Evet", L"Hayır, yer ayır", L"Hayır, boşluksuz" },
+    { L"Jah", L"Ei, säilita ruum", L"Ei, ilma ruumita" },
+    { L"Tá", L"Níl, coinnigh an spás", L"Níl, gan spás" },
+    { L"Taip", L"Ne, palikti vietą", L"Ne, be vietos" },
+    { L"Jā", L"Nē, saglabāt vietu", L"Nē, bez vietas" },
+    { L"Igen", L"Nem, hely megtartása", L"Nem, hely nélkül" },
+    { L"Iva", L"Le, żomm l-ispazju", L"Le, bla spazju" },
+    { L"Ja", L"Nee, ruimte behouden", L"Nee, zonder ruimte" },
+    { L"Da", L"Nu, păstrează spațiul", L"Nu, fără spațiu" },
+    { L"Ναι", L"Όχι, διατήρηση χώρου", L"Όχι, χωρίς χώρο" },
+    { L"Da", L"Ne, zadrži razmak", L"Ne, bez razmaka" },
+    { L"Da", L"Ne, zadrži razmak", L"Ne, bez razmaka" },
+    { L"Da", L"Ne, ohrani prostor", L"Ne, brez prostora" },
+    { L"Da", L"Ne, zadrži razmak", L"Ne, bez razmaka" },
+    { L"Так", L"Не, пакідаць месца", L"Не, без месца" },
+    { L"Да", L"Не, запази мястото", L"Не, без място" },
+    { L"Да", L"Не, зачувај место", L"Не, без место" },
+    { L"Да", L"Не, задржи размак", L"Не, без размака" },
+    { L"Так", L"Ні, залишати місце", L"Ні, без місця" },
+    { L"Да", L"Нет, оставить место", L"Нет, без места" }
 };
 
 const wchar_t* TIME_SIGNAL_SOUND_LABELS[LANG_COUNT] = {
@@ -8792,7 +8792,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Po úspěšném zápisu XML se odstraní větev "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock; při ukládání do registru se automatické XML "
     L"odstraní.\r\n\r\nVyhlazování písma nabízí ClearType, GDI a Žádné.\r\n\r\nÚvodní nula nabízí "
-    L"Zobrazit (výchozí), S místem a Bez místa. Volba S místem skryje nulu a rezervuje její šířku "
+    L"„Ano“ (výchozí), „Ne, ponechat místo“ a „Ne, bez místa“. Volba „Ne, ponechat místo“ skryje "
+    L"nulu a rezervuje její šířku "
     L"ve zvoleném písmu; ostatní číslice zůstanou na stejných místech i u proporcionálního písma. "
     L"Hodiny na monitoru zůstávají zarovnané na střed včetně rezervovaného místa. Řádek UTC si "
     L"zachovává vlastní zarovnání na střed.",
@@ -8809,7 +8810,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
     L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
-    L"Show (default), Keep space, and No space. Keep space hides the zero while reserving its "
+    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
+    L"while reserving its "
     L"width in the selected font; the other digits keep their positions even with proportional "
     L"fonts. Monitor clocks remain centered, including the reserved space. The UTC row keeps its "
     L"own center alignment.",
@@ -8826,8 +8828,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"ändern. Automatisches XML liegt in %AppData%\\FortSoft\\CalClock\\settings.xml; "
     L"XML-Speicherung entfernt HKCU\\SOFTWARE\\FortSoft\\CalClock, Registrierungsspeicherung "
     L"entfernt das automatische XML.\r\n\r\nFür die Schriftglättung stehen ClearType, GDI und "
-    L"Keine zur Auswahl.\r\n\r\nFührende Null bietet Anzeigen (Standard), Platz freihalten und "
-    L"Ohne Platz. Platz freihalten blendet die Null aus und reserviert ihre Breite in der "
+    L"Keine zur Auswahl.\r\n\r\nFührende Null bietet „Ja“ (Standard), „Nein, Platz freihalten“ und "
+    L"„Nein, ohne Platz“. „Nein, Platz freihalten“ blendet die Null aus und reserviert ihre Breite "
+    L"in der "
     L"gewählten Schrift; andere Ziffern bleiben auch bei proportionalen Schriften an derselben "
     L"Position. Monitoruhren bleiben mit dem reservierten Platz zentriert, die UTC-Zeile bleibt "
     L"separat zentriert.",
@@ -8844,8 +8847,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"le stockage sélectionné, sans changer son type. Le XML automatique est "
     L"%AppData%\\FortSoft\\CalClock\\settings.xml ; son écriture retire "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock, tandis que le registre retire ce XML.\r\n\r\nLe lissage "
-    L"des polices propose ClearType, GDI et Aucun.\r\n\r\nLe zéro initial propose Afficher (par "
-    L"défaut), Garder la place et Sans espace. Garder la place masque le zéro en réservant sa "
+    L"des polices propose ClearType, GDI et Aucun.\r\n\r\nLe zéro initial propose « Oui » (par "
+    L"défaut), « Non, garder l’espace » et « Non, sans espace ». « Non, garder l’espace » masque le"
+    L" zéro en réservant sa "
     L"largeur dans la police choisie ; les autres chiffres gardent leur position, même avec une "
     L"police proportionnelle. Les horloges de moniteur restent centrées, espace réservé compris. "
     L"La ligne UTC reste centrée séparément.",
@@ -8862,8 +8866,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"sin cambiar su tipo. El XML automático es %AppData%\\FortSoft\\CalClock\\settings.xml; al "
     L"escribirlo se elimina HKCU\\SOFTWARE\\FortSoft\\CalClock y al usar el registro se elimina "
     L"el XML automático.\r\n\r\nEl suavizado de fuente ofrece ClearType, GDI y Ninguno.\r\n\r\nEl "
-    L"cero inicial ofrece Mostrar (predeterminado), Reservar espacio y Sin espacio. Reservar "
-    L"espacio oculta el cero y conserva su anchura en la fuente elegida; los demás dígitos "
+    L"cero inicial ofrece «Sí» (predeterminado), «No, reservar espacio» y «No, sin espacio». «No, "
+    L"reservar espacio» oculta el cero y conserva su anchura en la fuente elegida; los demás "
+    L"dígitos "
     L"mantienen su posición incluso con fuentes proporcionales. Los relojes de monitor permanecen "
     L"centrados, incluido el espacio reservado. La línea UTC mantiene su propio centrado.",
     L"\r\n\r\nASPETTO E ARCHIVIAZIONE\r\nLe modifiche all’aspetto sono mostrate subito "
@@ -8879,7 +8884,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"automatico è %AppData%\\FortSoft\\CalClock\\settings.xml; scriverlo rimuove "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock, mentre il registro rimuove l’XML "
     L"automatico.\r\n\r\nL’antialiasing del carattere offre ClearType, GDI e Nessuno.\r\n\r\nLo "
-    L"zero iniziale offre Mostra (predefinito), Riserva spazio e Senza spazio. Riserva spazio "
+    L"zero iniziale offre «Sì» (predefinito), «No, riserva spazio» e «No, senza spazio». «No, "
+    L"riserva spazio» "
     L"nasconde lo zero riservandone la larghezza nel carattere scelto; le altre cifre mantengono "
     L"la posizione anche con caratteri proporzionali. Gli orologi sul monitor restano centrati, "
     L"incluso lo spazio riservato. La riga UTC mantiene il proprio allineamento centrale.",
@@ -8895,7 +8901,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml; zapis XML usuwa "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock, a zapis w rejestrze usuwa automatyczny "
     L"XML.\r\n\r\nWygładzanie czcionki oferuje ClearType, GDI i Brak.\r\n\r\nZero wiodące oferuje "
-    L"Pokaż (domyślnie), Zachowaj miejsce i Bez miejsca. Zachowaj miejsce ukrywa zero, rezerwując "
+    L"„Tak” (domyślnie), „Nie, zachowaj miejsce” i „Nie, bez miejsca”. „Nie, zachowaj miejsce” "
+    L"ukrywa zero, rezerwując "
     L"jego szerokość w wybranej czcionce; pozostałe cyfry zachowują położenie także w czcionkach "
     L"proporcjonalnych. Zegary na monitorze pozostają wyśrodkowane wraz z zarezerwowanym "
     L"miejscem. Wiersz UTC pozostaje osobno wyśrodkowany.",
@@ -8911,7 +8918,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml; zápis XML odstráni "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické "
     L"XML.\r\n\r\nVyhladzovanie písma ponúka ClearType, GDI a Žiadne.\r\n\r\nÚvodná nula ponúka "
-    L"Zobraziť (predvolené), S miestom a Bez miesta. Voľba S miestom skryje nulu a rezervuje jej "
+    L"„Áno“ (predvolené), „Nie, ponechať miesto“ a „Nie, bez miesta“. Voľba „Nie, ponechať miesto“ "
+    L"skryje nulu a rezervuje jej "
     L"šírku vo zvolenom písme; ostatné číslice zostanú na rovnakých miestach aj pri "
     L"proporcionálnom písme. Hodiny na monitore zostávajú zarovnané na stred vrátane "
     L"rezervovaného miesta. Riadok UTC si zachováva vlastné zarovnanie na stred.",
@@ -8928,7 +8936,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
     L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
-    L"Show (default), Keep space, and No space. Keep space hides the zero while reserving its "
+    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
+    L"while reserving its "
     L"width in the selected font; the other digits keep their positions even with proportional "
     L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
     L"own centre alignment.",
@@ -8945,7 +8954,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
     L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
-    L"Show (default), Keep space, and No space. Keep space hides the zero while reserving its "
+    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
+    L"while reserving its "
     L"width in the selected font; the other digits keep their positions even with proportional "
     L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
     L"own centre alignment.",
@@ -8956,8 +8966,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"de armazenamento remove apenas os dados CalClock anteriores. As definições podem ser "
     L"exportadas para XML. A importação XML carrega e guarda imediatamente as definições no "
     L"armazenamento selecionado, sem alterar o seu tipo.\r\n\r\nA suavização do tipo de letra "
-    L"oferece ClearType, GDI e Nenhuma.\r\n\r\nO zero inicial oferece Mostrar (predefinido), "
-    L"Reservar espaço e Sem espaço. Reservar espaço oculta o zero e reserva a sua largura no tipo "
+    L"oferece ClearType, GDI e Nenhuma.\r\n\r\nO zero inicial oferece «Sim» (predefinido), «Não, "
+    L"reservar espaço» e «Não, sem espaço». «Não, reservar espaço» oculta o zero e reserva a sua "
+    L"largura no tipo "
     L"de letra escolhido; os outros algarismos mantêm a posição mesmo com letras proporcionais. "
     L"Os relógios no monitor permanecem centrados, incluindo o espaço reservado. A linha UTC "
     L"mantém o seu próprio alinhamento ao centro.\r\n\r\nOs tipos de letra personalizados do "
@@ -8970,7 +8981,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"bare tidligere CalClock-data. Innstillinger kan eksporteres til XML. XML-import laster inn "
     L"og lagrer innstillingene umiddelbart i valgt lagring uten å endre "
     L"lagringstypen.\r\n\r\nSkriftutjevning tilbyr ClearType, GDI og Ingen.\r\n\r\nInnledende "
-    L"null tilbyr Vis (standard), Behold plass og Uten plass. Behold plass skjuler nullen og "
+    L"null tilbyr «Ja» (standard), «Nei, behold plass» og «Nei, uten plass». «Nei, behold plass» "
+    L"skjuler nullen og "
     L"reserverer bredden i valgt skrift; andre sifre beholder plasseringen også med proporsjonale "
     L"skrifter. Monitorklokker forblir sentrert, inkludert reservert plass. UTC-linjen beholder "
     L"sin egen sentrering.\r\n\r\nEgendefinerte kalenderskrifter støttes med klassisk "
@@ -8982,8 +8994,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"bort tidigare CalClock-data. Inställningar kan exporteras till XML. XML-import läser in och "
     L"sparar inställningarna direkt i vald lagring utan att ändra "
     L"lagringstypen.\r\n\r\nTeckensnittsutjämning erbjuder ClearType, GDI och "
-    L"Ingen.\r\n\r\nInledande nolla erbjuder Visa (standard), Behåll utrymme och Utan utrymme. "
-    L"Behåll utrymme döljer nollan och reserverar dess bredd i valt teckensnitt; övriga siffror "
+    L"Ingen.\r\n\r\nInledande nolla erbjuder ”Ja” (standard), ”Nej, behåll utrymme” och ”Nej, utan "
+    L"utrymme”. ”Nej, behåll utrymme” döljer nollan och reserverar dess bredd i valt teckensnitt; "
+    L"övriga siffror "
     L"behåller sina positioner även med proportionella teckensnitt. Bildskärmsklockor förblir "
     L"centrerade, inklusive reserverat utrymme. UTC-raden behåller sin egen "
     L"centrering.\r\n\r\nEgna kalenderteckensnitt stöds med Windows klassiska utseende eller när "
@@ -8995,7 +9008,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"Tallennustavan vaihto poistaa vain aiemmat CalClock-tiedot. Asetukset voi viedä "
     L"XML-tiedostoon. XML-tuonti lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan "
     L"muuttamatta tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja "
-    L"Ei mitään.\r\n\r\nEtunolla tarjoaa Näytä (oletus), Varaa tila ja Ilman tilaa. Varaa tila "
+    L"Ei mitään.\r\n\r\nEtunolla tarjoaa ”Kyllä” (oletus), ”Ei, varaa tila” ja ”Ei, ilman tilaa”. "
+    L"”Ei, varaa tila” "
     L"piilottaa nollan mutta varaa sen leveyden valitussa fontissa; muut numerot säilyttävät "
     L"paikkansa myös suhteellisilla fonteilla. Näyttökellot pysyvät keskitettyinä varattu tila "
     L"mukaan lukien. UTC-rivi säilyttää oman keskityksensä.\r\n\r\nKalenterin mukautettuja "
@@ -9007,8 +9021,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"fælles kanttyper; farven på den enkle kant kan vælges. Skift af lager fjerner kun tidligere "
     L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
     L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning "
-    L"tilbyder ClearType, GDI og Ingen.\r\n\r\nForanstillet nul tilbyder Vis (standard), Bevar "
-    L"plads og Uden plads. Bevar plads skjuler nullet og reserverer dets bredde i den valgte "
+    L"tilbyder ClearType, GDI og Ingen.\r\n\r\nForanstillet nul tilbyder »Ja« (standard), »Nej, "
+    L"bevar plads« og »Nej, uden plads«. »Nej, bevar plads« skjuler nullet og reserverer dets "
+    L"bredde i den valgte "
     L"skrifttype; øvrige cifre beholder deres placering også med proportionale skrifttyper. "
     L"Skærmure forbliver centrerede inklusive reserveret plads. UTC-linjen bevarer sin egen "
     L"centrering.\r\n\r\nBrugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske "
@@ -9020,7 +9035,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"fjarlægja aðeins eldri CalClock-gögn. Hægt er að flytja stillingar út sem XML. "
     L"Innflutningur XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta "
     L"gerð hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nNúll fremst "
-    L"býður upp á Sýna (sjálfgefið), Halda plássi og Án pláss. Halda plássi felur núllið en tekur "
+    L"býður upp á „Já“ (sjálfgefið), „Nei, halda plássi“ og „Nei, án pláss“. „Nei, halda plássi“ "
+    L"felur núllið en tekur "
     L"frá breidd þess í völdu letri; aðrir tölustafir halda stöðu sinni jafnvel með misbreiðu "
     L"letri. Skjáklukkur haldast miðjaðar með fráteknu plássi. UTC-línan heldur eigin "
     L"miðjun.\r\n\r\nNota má sérsniðið letur í dagatali með hefðbundnu útliti Windows eða þegar "
@@ -9031,8 +9047,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"seçilebilir. Depolamayı değiştirmek yalnızca önceki CalClock verilerini kaldırır. Ayarlar "
     L"XML olarak dışa aktarılabilir. XML içe aktarma, depolama türünü değiştirmeden ayarları "
     L"hemen yükler ve seçili depolamaya kaydeder.\r\n\r\nYazı tipi kenar yumuşatma seçenekleri "
-    L"ClearType, GDI ve Yok şeklindedir.\r\n\r\nBaştaki sıfır için Göster (varsayılan), Yer ayır "
-    L"ve Yer ayırma seçenekleri vardır. Yer ayır, sıfırı gizleyip seçilen yazı tipindeki "
+    L"ClearType, GDI ve Yok şeklindedir.\r\n\r\nBaştaki sıfır için “Evet” (varsayılan), “Hayır, yer"
+    L" ayır” ve “Hayır, boşluksuz” seçenekleri vardır. “Hayır, yer ayır”, sıfırı gizleyip seçilen "
+    L"yazı tipindeki "
     L"genişliğini korur; diğer rakamlar orantılı yazı tiplerinde bile konumlarını korur. Monitör "
     L"saatleri ayrılan alan dâhil ortalanır. UTC satırı kendi orta hizalamasını "
     L"korur.\r\n\r\nÖzel takvim yazı tipleri, Windows klasik görünümünde veya uygulama ya da araç "
@@ -9049,7 +9066,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"tüüpi muutmata. Automaatne XML asub failis %AppData%\\FortSoft\\CalClock\\settings.xml. "
     L"XML-i kirjutamine eemaldab võtme HKCU\\SOFTWARE\\FortSoft\\CalClock; registrisse "
     L"salvestamine eemaldab automaatse XML-i.\r\n\r\nFondi silumine pakub ClearType, GDI ja "
-    L"Puudub. Algusnull pakub Kuva (vaikimisi), Säilita ruum ja Ilma ruumita. Säilita ruum peidab "
+    L"Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, "
+    L"säilita ruum“ peidab "
     L"nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha "
     L"ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. "
     L"UTC-real on oma keskjoondus.",
@@ -9067,8 +9085,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml an XML uathoibríoch. Tar éis XML a scríobh, "
     L"baintear HKCU\\SOFTWARE\\FortSoft\\CalClock; baineann stóráil sa chlárlann an XML "
     L"uathoibríoch.\r\n\r\nTugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. "
-    L"Tugann Nialas tosaigh Taispeáin (réamhshocrú), Coinnigh an spás agus Gan spás. Folaíonn "
-    L"Coinnigh an spás an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití "
+    L"Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. "
+    L"Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; "
+    L"fanann digití "
     L"eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an "
     L"spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.",
     L"\r\n\r\nIšvaizda ir saugojimas\r\nIšvaizdos pakeitimai iškart matomi peržiūroje. Atšaukti "
@@ -9083,8 +9102,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"XML. Importas iškart įkelia ir įrašo parametrus į pasirinktą saugyklą nekeisdamas jos tipo. "
     L"Automatinis XML yra %AppData%\\FortSoft\\CalClock\\settings.xml. Įrašius XML pašalinamas "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock raktas; įrašymas į registrą pašalina automatinį "
-    L"XML.\r\n\r\nŠrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo Rodyti "
-    L"(numatyta), Palikti vietą ir Be vietos. Palikti vietą slepia nulį, bet rezervuoja jo plotį "
+    L"XML.\r\n\r\nŠrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ "
+    L"(numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet "
+    L"rezervuoja jo plotį "
     L"pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano "
     L"laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.",
     L"\r\n\r\nIzskats un glabāšana\r\nIzskata izmaiņas uzreiz redzamas priekšskatījumā. Atcelt "
@@ -9099,8 +9119,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"izvēlētajā krātuvē, nemainot tās tipu. Automātiskais XML ir "
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. XML ierakstīšana noņem "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock atslēgu; saglabāšana reģistrā noņem automātisko "
-    L"XML.\r\n\r\nFonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā Rādīt "
-    L"(noklusējums), Saglabāt vietu un Bez vietas. Saglabāt vietu slēpj nulli, rezervējot tās "
+    L"XML.\r\n\r\nFonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” "
+    L"(noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, "
+    L"rezervējot tās "
     L"platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna "
     L"pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.",
     L"\r\n\r\nMegjelenés és tárolás\r\nA megjelenés változásai azonnal láthatók az előnézetben. A "
@@ -9117,8 +9138,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Az XML írása törli a "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock kulcsot; a beállításjegyzékbe mentés törli az "
     L"automatikus XML-t.\r\n\r\nA Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető "
-    L"nulla választásai: Megjelenítés (alapértelmezett), Hely megtartása és Hely nélkül. A Hely "
-    L"megtartása elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos "
+    L"nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A "
+    L"„Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy "
+    L"arányos "
     L"betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe "
     L"veszi. Az UTC-sor külön igazodik középre.",
     L"\r\n\r\nDehra u ħażna\r\nIl-bidliet fid-dehra jidhru minnufih fil-previżjoni. Ikkanċella "
@@ -9135,7 +9157,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Il-kitba tal-XML tneħħi ċ-ċavetta "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock; il-ħażna fir-reġistru tneħħi l-XML "
     L"awtomatiku.\r\n\r\nAnti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu "
-    L"joffri Uri (default), Żomm l-ispazju u Bla spazju. Żomm l-ispazju jaħbi ż-żero iżda "
+    L"joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi "
+    L"ż-żero iżda "
     L"jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts "
     L"proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. "
     L"Ir-ringiela UTC tiġi ċċentrata separatament.",
@@ -9153,7 +9176,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"Automatische XML staat in %AppData%\\FortSoft\\CalClock\\settings.xml. Na XML-opslag wordt "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock verwijderd; opslag in het register verwijdert de "
     L"automatische XML.\r\n\r\nLettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul "
-    L"biedt Weergeven (standaard), Ruimte behouden en Zonder ruimte. Ruimte behouden verbergt de "
+    L"biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte "
+    L"behouden” verbergt de "
     L"nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun "
     L"positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die "
     L"ruimte. De UTC-rij heeft een eigen centrering.",
@@ -9169,8 +9193,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"XML. Importul încarcă și salvează imediat setările în stocarea aleasă fără a-i schimba "
     L"tipul. XML-ul automat este %AppData%\\FortSoft\\CalClock\\settings.xml. Scrierea XML "
     L"elimină cheia HKCU\\SOFTWARE\\FortSoft\\CalClock; stocarea în registry elimină XML-ul "
-    L"automat.\r\n\r\nNetezire font oferă ClearType, GDI și Fără. Zero inițial oferă Afișare "
-    L"(implicit), Păstrare spațiu și Fără spațiu. Păstrare spațiu ascunde zero, rezervând lățimea "
+    L"automat.\r\n\r\nNetezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” "
+    L"(implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde "
+    L"zero, rezervând lățimea "
     L"lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile "
     L"pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.",
     L"\r\n\r\nΕμφάνιση και αποθήκευση\r\nΟι αλλαγές εμφάνισης φαίνονται αμέσως στην "
@@ -9187,7 +9212,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"αυτόματο XML είναι %AppData%\\FortSoft\\CalClock\\settings.xml. Η εγγραφή XML αφαιρεί το "
     L"κλειδί HKCU\\SOFTWARE\\FortSoft\\CalClock· η αποθήκευση στο μητρώο αφαιρεί το αυτόματο "
     L"XML.\r\n\r\nΗ Εξομάλυνση γραμματοσειράς προσφέρει ClearType, GDI και Καμία. Το Αρχικό "
-    L"μηδενικό προσφέρει Εμφάνιση (προεπιλογή), Διατήρηση χώρου και Χωρίς χώρο. Η Διατήρηση χώρου "
+    L"μηδενικό προσφέρει «Ναι» (προεπιλογή), «Όχι, διατήρηση χώρου» και «Όχι, χωρίς χώρο». Η "
+    L"επιλογή «Όχι, διατήρηση χώρου» "
     L"κρύβει το μηδενικό αλλά δεσμεύει το πλάτος του στην επιλεγμένη γραμματοσειρά· τα άλλα ψηφία "
     L"μένουν στη θέση τους και με αναλογικές γραμματοσειρές. Το κεντράρισμα των ρολογιών οθόνης "
     L"περιλαμβάνει τον δεσμευμένο χώρο. Η γραμμή UTC κεντράρεται χωριστά.",
@@ -9203,7 +9229,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"Automatska XML datoteka je %AppData%\\FortSoft\\CalClock\\settings.xml. Nakon zapisivanja "
     L"XML-a uklanja se ključ HKCU\\SOFTWARE\\FortSoft\\CalClock; čuvanje u registar uklanja "
     L"automatsku XML datoteku.\r\n\r\nIzglađivanje fonta nudi ClearType, GDI i Nema. Početna nula "
-    L"nudi Prikaži (podrazumijevano), Zadrži razmak i Bez razmaka. Zadrži razmak skriva nulu, ali "
+    L"nudi „Da“ (podrazumijevano), „Ne, zadrži razmak“ i „Ne, bez razmaka“. „Ne, zadrži razmak“ "
+    L"skriva nulu, ali "
     L"rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
     L"proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani "
     L"razmak. Red UTC ima vlastito centriranje.",
@@ -9218,8 +9245,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"i sprema postavke u odabrano spremište bez promjene njegove vrste. Automatska XML datoteka "
     L"je %AppData%\\FortSoft\\CalClock\\settings.xml. Nakon zapisivanja XML-a uklanja se ključ "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock; spremanje u registar uklanja automatsku XML "
-    L"datoteku.\r\n\r\nIzglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi Prikaži "
-    L"(zadano), Zadrži razmak i Bez razmaka. Zadrži razmak skriva nulu, ali rezervira njezinu "
+    L"datoteku.\r\n\r\nIzglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da” "
+    L"(zadano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali "
+    L"rezervira njezinu "
     L"širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih "
     L"fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. Redak UTC ima "
     L"vlastito centriranje.",
@@ -9235,7 +9263,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"spremenil njeno vrsto. Samodejni XML je %AppData%\\FortSoft\\CalClock\\settings.xml. Zapis "
     L"XML odstrani ključ HKCU\\SOFTWARE\\FortSoft\\CalClock; shranjevanje v register odstrani "
     L"samodejni XML.\r\n\r\nGlajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja "
-    L"Pokaži (privzeto), Ohrani prostor in Brez prostora. Ohrani prostor skrije ničlo in "
+    L"»Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije "
+    L"ničlo in "
     L"rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri "
     L"proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem "
     L"rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.",
@@ -9251,7 +9280,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"bez promjene njegove vrste. Automatski XML je %AppData%\\FortSoft\\CalClock\\settings.xml. "
     L"Po zapisivanju XML-a uklanja se ključ HKCU\\SOFTWARE\\FortSoft\\CalClock; čuvanje u "
     L"registru uklanja automatski XML.\r\n\r\nUmekšavanje fonta nudi ClearType, GDI i Nema. "
-    L"Vodeća nula nudi Prikaži (podrazumijevano), Zadrži razmak i Bez razmaka. Zadrži razmak "
+    L"Vodeća nula nudi „Da” (podrazumijevano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži"
+    L" razmak” "
     L"skriva nulu, ali čuva njenu širinu u izabranom fontu; ostale cifre zadržavaju položaje i "
     L"kod proporcionalnih fontova. Satovi na monitoru ostaju centrirani sa uračunatim razmakom. "
     L"Red UTC ima sopstveno centriranje.",
@@ -9268,7 +9298,7 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Пасля запісу XML ключ "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock выдаляецца; захоўванне ў рэестры выдаляе аўтаматычны "
     L"XML.\r\n\r\nЗгладжванне шрыфту прапануе ClearType, GDI і «Няма». «Пачатковы нуль» мае "
-    L"варыянты «Паказваць» (прадвызначаны), «Пакідаць месца» і «Без месца». «Пакідаць месца» "
+    L"варыянты «Так» (прадвызначаны), «Не, пакідаць месца» і «Не, без месца». «Не, пакідаць месца» "
     L"хавае нуль, але рэзервуе яго шырыню ў выбраным шрыфце; астатнія лічбы захоўваюць пазіцыі і "
     L"ў прапарцыянальных шрыфтах. Гадзіннікі на маніторы застаюцца па цэнтры з улікам "
     L"зарэзерваванага месца. Радок UTC мае асобнае цэнтраванне.",
@@ -9285,7 +9315,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"сменя типа му. Автоматичният XML е %AppData%\\FortSoft\\CalClock\\settings.xml. След запис "
     L"на XML ключът HKCU\\SOFTWARE\\FortSoft\\CalClock се премахва; записът в регистъра премахва "
     L"автоматичния XML.\r\n\r\nИзглаждането предлага ClearType, GDI и „Няма“. „Водеща нула“ "
-    L"предлага „Показвай“ (по подразбиране), „Запази мястото“ и „Без място“. „Запази мястото“ "
+    L"предлага „Да“ (по подразбиране), „Не, запази мястото“ и „Не, без място“. „Не, запази мястото“"
+    L" "
     L"скрива нулата, но запазва ширината ѝ в избрания шрифт; другите цифри остават на място дори "
     L"при пропорционални шрифтове. Часовниците на монитор остават центрирани с включено запазено "
     L"място. Редът UTC има отделно центриране.",
@@ -9302,8 +9333,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"го менува неговиот вид. Автоматскиот XML е %AppData%\\FortSoft\\CalClock\\settings.xml. По "
     L"запишување XML се отстранува клучот HKCU\\SOFTWARE\\FortSoft\\CalClock; чувањето во "
     L"регистарот го отстранува автоматскиот XML.\r\n\r\nИзмазнувањето на фонтот нуди ClearType, "
-    L"GDI и „Нема“. „Водечка нула“ нуди „Прикажувај“ (стандардно), „Зачувај место“ и „Без место“. "
-    L"„Зачувај место“ ја крие нулата, но ја задржува нејзината ширина во избраниот фонт; другите "
+    L"GDI и „Нема“. „Водечка нула“ нуди „Да“ (стандардно), „Не, зачувај место“ и „Не, без место“. "
+    L"„Не, зачувај место“ ја крие нулата, но ја задржува нејзината ширина во избраниот фонт; "
+    L"другите "
     L"цифри остануваат на место и кај пропорционални фонтови. Часовниците на монитор остануваат "
     L"центрирани со вклучено резервирано место. Редот UTC има свое центрирање.",
     L"\r\n\r\nИзглед и чување\r\nПромене изгледа одмах се виде у прегледу. Откажи одбацује "
@@ -9317,8 +9349,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"одмах учитава и чува подешавања у изабраном складишту без промене његове врсте. Аутоматски "
     L"XML је %AppData%\\FortSoft\\CalClock\\settings.xml. По записивању XML-а уклања се кључ "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock; чување у регистру уклања аутоматски "
-    L"XML.\r\n\r\nУмекшавање фонта нуди ClearType, GDI и Нема. Водећа нула нуди Прикажи "
-    L"(подразумевано), Задржи размак и Без размака. Задржи размак скрива нулу, али чува њену "
+    L"XML.\r\n\r\nУмекшавање фонта нуди ClearType, GDI и Нема. Водећа нула нуди „Да“ "
+    L"(подразумевано), „Не, задржи размак“ и „Не, без размака“. „Не, задржи размак“ скрива нулу, "
+    L"али чува њену "
     L"ширину у изабраном фонту; остале цифре задржавају положаје и код пропорционалних фонтова. "
     L"Сатови на монитору остају центрирани са урачунатим размаком. Ред UTC има сопствено "
     L"центрирање.",
@@ -9335,8 +9368,8 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Після запису XML розділ "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock видаляється; вибір зберігання в реєстрі видаляє "
     L"автоматичний файл XML.\r\n\r\nДля згладжування шрифту доступні ClearType, GDI та "
-    L"«Немає».\r\n\r\nПараметр «Початковий нуль» має значення «Показувати» (типове), «Залишати "
-    L"місце» та «Без місця». «Залишати місце» приховує нуль, але резервує його ширину у вибраному "
+    L"«Немає».\r\n\r\nПараметр «Початковий нуль» має значення «Так» (типове), «Ні, залишати місце» "
+    L"та «Ні, без місця». «Ні, залишати місце» приховує нуль, але резервує його ширину у вибраному "
     L"шрифті; решта цифр залишається на місці навіть у пропорційних шрифтах. Годинники на "
     L"моніторі зберігають центрування з урахуванням зарезервованого місця. Рядок UTC має власне "
     L"центрування.",
@@ -9353,8 +9386,9 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. После записи XML раздел "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock удаляется; выбор хранения в реестре удаляет "
     L"автоматический файл XML.\r\n\r\nДля сглаживания шрифта доступны ClearType, GDI и "
-    L"«Нет».\r\n\r\nПараметр «Ведущий ноль» имеет значения «Показывать» (по умолчанию), «Оставлять "
-    L"место» и «Без места». «Оставлять место» скрывает ноль, но резервирует его ширину в выбранном "
+    L"«Нет».\r\n\r\nПараметр «Ведущий ноль» имеет значения «Да» (по умолчанию), «Нет, оставить "
+    L"место» и «Нет, без места». «Нет, оставить место» скрывает ноль, но резервирует его ширину в "
+    L"выбранном "
     L"шрифте; остальные цифры остаются на месте даже в пропорциональных шрифтах. Часы на мониторе "
     L"сохраняют центрирование с учётом зарезервированного места. Строка UTC имеет собственное "
     L"центрирование."

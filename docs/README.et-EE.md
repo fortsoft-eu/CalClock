@@ -44,7 +44,7 @@ Ilme muutused on kohe eelvaates näha. Loobu hülgab rakendamata muudatused ja V
 
 Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praegusesse salvestuskohta selle tüüpi muutmata. Automaatne XML asub failis %AppData%\FortSoft\CalClock\settings.xml. XML-i kirjutamine eemaldab võtme HKCU\SOFTWARE\FortSoft\CalClock; registrisse salvestamine eemaldab automaatse XML-i.
 
-Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub Kuva (vaikimisi), Säilita ruum ja Ilma ruumita. Säilita ruum peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
+Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
 ## Sätted ja menüüd
 

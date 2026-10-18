@@ -78,7 +78,7 @@ Programspråk, grensesnittskrift, skriftutjevning, visuelle stiler, lagring, Win
 
 Alarmens ukedager følger første ukedag i valgt programkultur. Lagrede dager beholder betydningen ved språkbytte. Aktivering fra widgetmenyen uten valgte ukedager åpner widgetens Alarm-fane i stedet for å aktivere en alarm som ikke kan ringe.
 
-**Innledende null** tilbyr **Vis** (standard), **Behold plass** og **Uten plass**. **Behold plass** skjuler nullen og reserverer den faktiske bredden i valgt skrift, slik at øvrige sifre beholder plasseringen også med proporsjonale skrifter. Skjermklokker bruker hvit tekst på svart bakgrunn som standard.
+**Innledende null** tilbyr **Ja** (standard), **Nei, behold plass** og **Nei, uten plass**. **Nei, behold plass** skjuler nullen og reserverer den faktiske bredden i valgt skrift, slik at øvrige sifre beholder plasseringen også med proporsjonale skrifter. Skjermklokker bruker hvit tekst på svart bakgrunn som standard.
 
 ## Tid og alarmer
 

@@ -44,7 +44,7 @@ Wijzigingen in de vormgeving verschijnen direct in het voorbeeld. Annuleren verw
 
 Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart de instellingen direct in de gekozen opslag zonder het opslagtype te veranderen. Automatische XML staat in %AppData%\FortSoft\CalClock\settings.xml. Na XML-opslag wordt HKCU\SOFTWARE\FortSoft\CalClock verwijderd; opslag in het register verwijdert de automatische XML.
 
-Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt Weergeven (standaard), Ruimte behouden en Zonder ruimte. Ruimte behouden verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
+Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
 ## Instellingen en menu’s
 

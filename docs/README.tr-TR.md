@@ -78,7 +78,7 @@ Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her ara
 
 Alarmın gün denetimleri seçilen uygulama kültürünün ilk hafta gününü izler. Kaydedilmiş günler dil değişince anlamlarını korur. Hiç gün seçilmeden menüden alarm açmak, çalamayacak bir alarmı etkinleştirmek yerine aracın Alarm sekmesini açar.
 
-**Baştaki sıfır**, **Göster** (varsayılan), **Yer ayır** ve **Yer ayırma** seçeneklerini sunar. **Yer ayır**, sıfırı gizler ama seçili yazı tipindeki gerçek genişliğini korur; diğer rakamlar orantılı yazı tiplerinde bile yerinde kalır. Monitör saatleri varsayılan olarak siyah zemin üzerinde beyaz metin kullanır.
+**Baştaki sıfır**, **Evet** (varsayılan), **Hayır, yer ayır** ve **Hayır, boşluksuz** seçeneklerini sunar. **Hayır, yer ayır**, sıfırı gizler ama seçili yazı tipindeki gerçek genişliğini korur; diğer rakamlar orantılı yazı tiplerinde bile yerinde kalır. Monitör saatleri varsayılan olarak siyah zemin üzerinde beyaz metin kullanır.
 
 ## Saat ve alarmlar
 
