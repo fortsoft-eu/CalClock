@@ -199,8 +199,9 @@ struct PanelLayout {
     RECT footer = {};
 };
 
-/// Stores initial About or Help control rectangles for later resizing and wrapped-label layout.
+/// Stores the initial client size and About or Help control rectangles for subsequent layout.
 struct InformationWindowLayout {
+    SIZE client = {};
     RECT text = {};
     RECT close = {};
     RECT product = {};
@@ -241,12 +242,12 @@ const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
 const UINT_PTR SETTINGS_REPORT_HEADER_SUBCLASS_ID = 0xCC07;
 
 /// Layout, appearance and alarm constants
-const int ABOUT_WINDOW_HEIGHT = 528;
-const int ABOUT_WINDOW_WIDTH = 550;
-const int ALARM_DAY_COUNT = 7;
 const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
 static const int PANEL_CALENDAR_OFFSET_Y = -4;
 static const int PANEL_SIDE_PADDING = 12;
+const int ABOUT_ICON_SIZE = 32;
+const int ABOUT_WEB_GAP_DLU = 8;
+const int ALARM_DAY_COUNT = 7;
 const int SETTINGS_ADDITIONAL_WIDTH = 100;
 const int SETTINGS_ALARM_DAY_SPACING = 83;
 const int SETTINGS_APPEARANCE_ROW_GAP = 4;
@@ -301,15 +302,6 @@ const int ID_MENU_TOPMOST = 1003;
 const int ID_MENU_VISIBLE = 1002;
 const int ID_MENU_WEEK_NUMBERS = 1015;
 const int ID_MENU_WIDGET_BASE = 2000;
-
-/// Information window control identifiers
-const int ID_INFO_CLOSE = IDOK;
-const int ID_INFO_ICON = 3200;
-const int ID_INFO_LINK = 3203;
-const int ID_INFO_PRODUCT = 3201;
-const int ID_INFO_SIZE_GRIP = 3204;
-const int ID_INFO_TEXT = 3051;
-const int ID_INFO_WEBSITE = 3202;
 
 /// Settings control identifiers
 const int ID_ADD = 3003;
@@ -462,9 +454,7 @@ HWND hController = nullptr;
 HWND hSettings = nullptr;
 HWND hSettingsDefaultButton = nullptr;
 HWND hHelp = nullptr;
-HWND hHelpFocusedControl = nullptr;
 HWND hAbout = nullptr;
-HWND hAboutFocusedControl = nullptr;
 HWND hAboutTooltip = nullptr;
 
 /// Settings pages and widget list
@@ -663,14 +653,14 @@ bool warnOnUnsavedChanges = true;
 bool winsockReady = false;
 
 /// Numeric settings and positions
+static int monitorSortColumn = -1;
+static int ntpLogSortColumn = -1;
+static int settingsComboInitialSelection = CB_ERR;
 int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
 int appFontDialogSize = 90;
 int appFontWeight = FW_NORMAL;
 int nextWidgetId = 1;
 int ntpPreset = NTP_PRESET_AUTO;
-static int monitorSortColumn = -1;
-static int ntpLogSortColumn = -1;
-static int settingsComboInitialSelection = CB_ERR;
 int selectedDraftIndex = 0;
 int settingsAppFontDialogSize = 90;
 int settingsAppFontWeight = FW_NORMAL;
@@ -846,7 +836,7 @@ static void RefreshInformationWindows();
 
 /// Anchors Help or About controls to the client area, measures wrapped product text, and preserves right and bottom
 /// spacing.
-static void LayoutInformationWindow(HWND window);
+static void LayoutInformationWindow(HWND window, bool resizeAbout = false);
 
 /// Returns the Windows message-font face, falling back to the stock GUI font or an empty string.
 static std::wstring GetSystemMessageFontFace();
@@ -4024,7 +4014,7 @@ static void ApplyUiStyle(HWND window) {
         UpdateSettingsControlMetrics();
     }
     if (window == hHelp || window == hAbout) {
-        LayoutInformationWindow(window);
+        LayoutInformationWindow(window, true);
     }
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
@@ -13616,7 +13606,7 @@ static void RefreshInformationWindows() {
         SetDlgItemTextW(hAbout, ID_INFO_WEBSITE, ABOUT_WEBSITE_LABELS[appLanguage]);
         SetDlgItemTextW(hAbout, ID_INFO_LINK, linkText.c_str());
         SetDlgItemTextW(hAbout, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());
-        LayoutInformationWindow(hAbout);
+        LayoutInformationWindow(hAbout, true);
         if (hAboutTooltip != nullptr) {
             SendMessageW(hAboutTooltip, TTM_UPDATE, 0, 0);
         }
@@ -13634,6 +13624,9 @@ static RECT InformationControlRect(HWND window, int id) {
 /// Captures initial Help or About control rectangles for subsequent anchored layout calculations.
 static void InitializeInformationWindowLayout(HWND window, bool help) {
     InformationWindowLayout& layout = help ? helpWindowLayout : aboutWindowLayout;
+    RECT client = {};
+    GetClientRect(window, &client);
+    layout.client = SIZE{ client.right, client.bottom };
     layout.text = InformationControlRect(window, ID_INFO_TEXT);
     layout.close = InformationControlRect(window, ID_INFO_CLOSE);
     if (!help) {
@@ -13672,62 +13665,165 @@ static int InformationLabelHeight(HWND control, int width) {
     return height;
 }
 
-/// Anchors Help or About controls to the client area, measures wrapped product text, and preserves right and bottom
-/// spacing.
-static void LayoutInformationWindow(HWND window) {
+/// Measures unwrapped information text using the control's current font.
+static SIZE InformationTextSize(HWND control) {
+    SIZE size = {};
+    HDC dc = GetDC(control);
+    if (dc != nullptr) {
+        HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
+        HGDIOBJ previous = font == nullptr ? nullptr : SelectObject(dc, font);
+        std::wstring text = GetControlText(control);
+        GetTextExtentPoint32W(dc, text.c_str(), static_cast<int>(text.size()), &size);
+        if (previous != nullptr) {
+            SelectObject(dc, previous);
+        }
+        ReleaseDC(control, dc);
+    }
+    return size;
+}
+
+/// Fits the About dialog to its native dialog-unit layout, wrapped description, and single-line website row.
+/// Keeps the default dialog height and gives the remaining space above Close to the license text.
+static void LayoutAboutWindow(HWND window, bool resize) {
+    const InformationWindowLayout& layout = aboutWindowLayout;
+    HWND website = GetDlgItem(window, ID_INFO_WEBSITE);
+    HWND link = GetDlgItem(window, ID_INFO_LINK);
+    SIZE websiteSize = InformationTextSize(website);
+    SIZE linkSize = {};
+    SendMessageW(link, LM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&linkSize));
+    RECT spacing = { 0, 0, 4, ABOUT_WEB_GAP_DLU };
+    MapDialogRect(window, &spacing);
+    int margin = layout.text.left;
+    int rightMargin = layout.client.cx - layout.text.right;
+    int bottomMargin = layout.client.cy - layout.close.bottom;
+    int buttonWidth = layout.close.right - layout.close.left;
+    int buttonHeight = layout.close.bottom - layout.close.top;
+    int productGap = spacing.bottom;
+    int textGap = layout.text.top - std::max(layout.website.bottom, layout.link.bottom);
+    int buttonGap = layout.close.top - layout.text.bottom;
+    RECT client = {};
+    GetClientRect(window, &client);
+    if (resize) {
+        client.right =
+            std::max(layout.client.cx, layout.website.left + websiteSize.cx + spacing.right + linkSize.cx + rightMargin);
+        RECT frame = {};
+        DWORD style = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_STYLE));
+        DWORD extendedStyle = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_EXSTYLE));
+        AdjustWindowRectEx(&frame, style, FALSE, extendedStyle);
+        MONITORINFO monitor = { sizeof(monitor) };
+        GetMonitorInfoW(MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST), &monitor);
+        client.right = std::min(client.right, monitor.rcWork.right - monitor.rcWork.left - frame.right + frame.left);
+        client.bottom =
+            std::min(layout.client.cy, monitor.rcWork.bottom - monitor.rcWork.top - frame.bottom + frame.top);
+        RECT bounds = {};
+        GetWindowRect(window, &bounds);
+        int width = client.right + frame.right - frame.left;
+        int height = client.bottom + frame.bottom - frame.top;
+        if (width != bounds.right - bounds.left || height != bounds.bottom - bounds.top) {
+            SetWindowPos(window, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        GetClientRect(window, &client);
+    }
+    int right = client.right - rightMargin;
+    int productWidth = right - layout.product.left;
+    int productHeight = InformationLabelHeight(GetDlgItem(window, ID_INFO_PRODUCT), productWidth);
+    int websiteY = layout.product.top + productHeight + productGap;
+    int linkX = layout.website.left + websiteSize.cx + spacing.right;
+    PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth,
+        productHeight);
+    PlaceInformationControl(window, ID_INFO_WEBSITE, layout.website.left, websiteY, websiteSize.cx, websiteSize.cy);
+    PlaceInformationControl(window, ID_INFO_LINK, linkX, websiteY, right - linkX, linkSize.cy);
+    AlignSettingsControl(link, website);
+    RECT websiteBounds = InformationControlRect(window, ID_INFO_WEBSITE);
+    RECT linkBounds = InformationControlRect(window, ID_INFO_LINK);
+    int textTop = std::max(websiteBounds.bottom, linkBounds.bottom) + textGap;
+    int buttonY = client.bottom - bottomMargin - buttonHeight;
+    PlaceInformationControl(window, ID_INFO_TEXT, margin, textTop, right - margin, buttonY - buttonGap - textTop);
+    SetWindowPos(GetDlgItem(window, ID_INFO_CLOSE), HWND_TOP, right - buttonWidth, buttonY, buttonWidth, buttonHeight,
+        SWP_NOACTIVATE);
+    InvalidateRect(window, nullptr, TRUE);
+}
+
+/// Anchors Help controls to the client area or updates the About dialog using its native dialog-unit dimensions.
+static void LayoutInformationWindow(HWND window, bool resizeAbout) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
     if (!layout.initialized || IsIconic(window)) {
         return;
     }
+    if (window == hAbout) {
+        LayoutAboutWindow(window, resizeAbout);
+        return;
+    }
     RECT client = {};
     GetClientRect(window, &client);
-    int margin = layout.text.left;
-    int right = client.right - margin;
+    int right = client.right - layout.client.cx + layout.text.right;
     int buttonWidth = layout.close.right - layout.close.left;
     int buttonHeight = layout.close.bottom - layout.close.top;
-    int buttonX = right - buttonWidth;
-    int buttonY = client.bottom - margin - buttonHeight;
-    int textTop = layout.text.top;
-    int textWidth = right - layout.text.left;
+    int buttonX = client.right - layout.client.cx + layout.close.left;
+    int buttonY = client.bottom - layout.client.cy + layout.close.top;
     int buttonGap = layout.close.top - layout.text.bottom;
-    if (window == hAbout) {
-        HWND product = GetDlgItem(window, ID_INFO_PRODUCT);
-        int productWidth = right - layout.product.left;
-        int measuredHeight = InformationLabelHeight(product, productWidth);
-        int productHeight = std::max(static_cast<int>(layout.product.bottom - layout.product.top), measuredHeight);
-        int productGap = layout.website.top - layout.product.bottom;
-        int websiteY = layout.product.top + productHeight + productGap;
-        int websiteWidth = layout.website.right - layout.website.left;
-        int websiteHeight = layout.website.bottom - layout.website.top;
-        int linkWidth = right - layout.link.left;
-        int linkHeight = layout.link.bottom - layout.link.top;
-        int rowHeight = std::max(websiteHeight, linkHeight);
-        int textGap = layout.text.top - std::max(layout.website.bottom, layout.link.bottom);
-        textTop = websiteY + rowHeight + textGap;
-        PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth,
-            productHeight);
-        PlaceInformationControl(window, ID_INFO_WEBSITE, layout.website.left, websiteY, websiteWidth, websiteHeight);
-        PlaceInformationControl(window, ID_INFO_LINK, layout.link.left, websiteY, linkWidth, linkHeight);
-    }
-    int textHeight = buttonY - buttonGap - textTop;
-    PlaceInformationControl(window, ID_INFO_TEXT, layout.text.left, textTop, textWidth, textHeight);
+    int textHeight = buttonY - buttonGap - layout.text.top;
+    PlaceInformationControl(window, ID_INFO_TEXT, layout.text.left, layout.text.top, right - layout.text.left,
+        textHeight);
     SetWindowPos(GetDlgItem(window, ID_INFO_CLOSE), HWND_TOP, buttonX, buttonY, buttonWidth, buttonHeight,
         SWP_NOACTIVATE);
-    if (window == hHelp) {
-        int gripWidth = GetSystemMetrics(SM_CXVSCROLL);
-        int gripHeight = GetSystemMetrics(SM_CYHSCROLL);
-        UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
-        if (IsZoomed(window)) {
-            flags |= SWP_HIDEWINDOW;
-        } else {
-            flags |= SWP_SHOWWINDOW;
+    int gripWidth = GetSystemMetrics(SM_CXVSCROLL);
+    int gripHeight = GetSystemMetrics(SM_CYHSCROLL);
+    UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
+    if (IsZoomed(window)) {
+        flags |= SWP_HIDEWINDOW;
+    } else {
+        flags |= SWP_SHOWWINDOW;
+    }
+    SetWindowPos(GetDlgItem(window, ID_INFO_SIZE_GRIP), nullptr, client.right - gripWidth, client.bottom - gripHeight,
+        gripWidth, gripHeight, flags);
+}
+
+/// Leaves native dialog navigation to Windows and forwards the existing information-window actions and notifications.
+static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    if (message == WM_CLOSE
+            || message == WM_COMMAND && (LOWORD(wParam) == ID_INFO_CLOSE || LOWORD(wParam) == IDCANCEL)
+            || message == WM_SIZE && wParam != SIZE_MINIMIZED) {
+        WindowProc(window, message, wParam, lParam);
+        return TRUE;
+    }
+    if (message == WM_DRAWITEM && wParam == ID_INFO_PRODUCT) {
+        return WindowProc(window, message, wParam, lParam);
+    }
+    if (message == WM_NOTIFY) {
+        NMHDR* notification = reinterpret_cast<NMHDR*>(lParam);
+        bool tooltip = notification->hwndFrom == hAboutTooltip && notification->code == TTN_GETDISPINFOW;
+        bool website = notification->idFrom == ID_INFO_LINK
+            && (notification->code == NM_CLICK || notification->code == NM_RETURN);
+        if (tooltip || website) {
+            SetWindowLongPtrW(window, DWLP_MSGRESULT, WindowProc(window, message, wParam, lParam));
+            return TRUE;
         }
-        SetWindowPos(GetDlgItem(window, ID_INFO_SIZE_GRIP), nullptr, client.right - gripWidth,
-            client.bottom - gripHeight, gripWidth, gripHeight, flags);
     }
-    if (window == hAbout) {
-        InvalidateRect(window, nullptr, TRUE);
+    if (message == WM_THEMECHANGED || message == WM_SETTINGCHANGE) {
+        LayoutInformationWindow(window, true);
     }
+    return FALSE;
+}
+
+/// Obtains native CW_USEDEFAULT placement from an invisible overlapped window and moves the hidden dialog there.
+static bool PositionInformationWindowByWindowsDefault(HWND window) {
+    RECT bounds = {};
+    if (!GetWindowRect(window, &bounds)) {
+        return false;
+    }
+    HWND positionWindow = CreateWindowExW(0, L"STATIC", L"", WS_OVERLAPPED, CW_USEDEFAULT, CW_USEDEFAULT,
+        bounds.right - bounds.left, bounds.bottom - bounds.top, nullptr, nullptr, hInstance, nullptr);
+    if (positionWindow == nullptr) {
+        return false;
+    }
+    bool positioned = GetWindowRect(positionWindow, &bounds) != FALSE;
+    DestroyWindow(positionWindow);
+    if (!positioned) {
+        return false;
+    }
+    return SetWindowPos(window, nullptr, bounds.left, bounds.top, 0, 0,
+        SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE) != FALSE;
 }
 
 /// Creates or activates Help or About with localized content, saved placement, minimization, and work-area-aware layout.
@@ -13743,34 +13839,17 @@ static void ShowInformationWindow(bool help) {
     } else {
         aboutWindowLayout = {};
     }
-    const PersistWindowStateData& savedPlacement = placement.GetState();
-    int aboutExtraLineHeight = 0;
-    if (!help) {
-        if (hAboutFont == nullptr) {
-            hAboutFont = CreateAboutFont();
-        }
-        HDC dc = GetDC(nullptr);
-        if (dc != nullptr) {
-            HGDIOBJ oldFont = SelectObject(dc, hAboutFont != nullptr ? hAboutFont : hUiFont);
-            TEXTMETRICW metrics = {};
-            if (GetTextMetricsW(dc, &metrics)) {
-                aboutExtraLineHeight = metrics.tmHeight;
-            }
-            SelectObject(dc, oldFont);
-            ReleaseDC(nullptr, dc);
-        }
+    if (!help && hAboutFont == nullptr) {
+        hAboutFont = CreateAboutFont();
     }
-    int width = help ? 660 : ABOUT_WINDOW_WIDTH;
-    int height = help ? 500 : ABOUT_WINDOW_HEIGHT + aboutExtraLineHeight;
-    DWORD extendedStyle = help ? 0 : WS_EX_DLGMODALFRAME;
-    std::wstring title = help ? T(TXT_HELP) : BuildAboutTitle();
-    DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-    if (help) {
-        style |= WS_MAXIMIZEBOX | WS_THICKFRAME | WS_CLIPCHILDREN;
-    }
-    *target = CreateWindowExW(extendedStyle, CLASS_NAME, title.c_str(), style, savedPlacement.x, savedPlacement.y,
-        width, height, nullptr, nullptr, hInstance, nullptr);
+    int resource = help ? IDD_HELP : IDD_ABOUT;
+    *target = CreateDialogParamW(hInstance, MAKEINTRESOURCEW(resource), nullptr, InformationDialogProc, 0);
     if (*target == nullptr) {
+        return;
+    }
+    if (!InstallSelectionEditHandler(GetDlgItem(*target, ID_INFO_TEXT))) {
+        DestroyWindow(*target);
+        *target = nullptr;
         return;
     }
     std::wstring helpBody = std::wstring(HELP_TEXT[appLanguage])
@@ -13784,65 +13863,54 @@ static void ShowInformationWindow(bool help) {
         + HELP_TIME_FORMAT_APPENDIX[appLanguage]
         + HELP_TIME_APPENDIX[appLanguage]
         + HELP_FULLSCREEN_APPENDIX[appLanguage];
+    HICON windowIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK));
+    SendMessageW(*target, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(windowIcon));
+    SendMessageW(*target, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(windowIcon));
+    SetDlgItemTextW(*target, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());
     if (help) {
-        DWORD textStyle = WS_TABSTOP | WS_VSCROLL | WS_CLIPSIBLINGS | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL;
-        HWND text = AddControl(WS_EX_CLIENTEDGE, L"EDIT", helpBody.c_str(), textStyle, 18, 18, 610, 385, *target,
-            ID_INFO_TEXT);
-        if (text == nullptr) {
-            DestroyWindow(*target);
-            *target = nullptr;
-            return;
-        }
+        SetWindowTextW(*target, T(TXT_HELP));
+        HWND text = GetDlgItem(*target, ID_INFO_TEXT);
+        SetWindowTextW(text, helpBody.c_str());
         SetWindowSubclass(text, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0);
         SendMessageW(text, EM_SETSEL, 0, 0);
-        AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON, 528, 415, 100,
-            UI_BUTTON_HEIGHT, *target, ID_INFO_CLOSE);
-        HWND grip = AddControl(0, L"SCROLLBAR", L"", SBS_SIZEGRIP | SBS_SIZEBOXBOTTOMRIGHTALIGN | WS_CLIPSIBLINGS,
-            0, 0, GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL), *target, ID_INFO_SIZE_GRIP);
-        if (grip == nullptr) {
-            DestroyWindow(*target);
-            *target = nullptr;
-            return;
-        }
     } else {
         std::wstring productText = BuildAboutProductText();
         std::wstring linkText = BuildAboutLinkText();
-        HWND icon = AddControl(0, L"STATIC", L"", SS_ICON, 18, 18, 32, 32, *target, ID_INFO_ICON);
+        SetWindowTextW(*target, BuildAboutTitle().c_str());
+        HWND icon = GetDlgItem(*target, ID_INFO_ICON);
         HICON applicationIcon = static_cast<HICON>(LoadImageW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), IMAGE_ICON,
-            32, 32, LR_SHARED));
+            ABOUT_ICON_SIZE, ABOUT_ICON_SIZE, LR_SHARED));
         SendMessageW(icon, STM_SETICON, reinterpret_cast<WPARAM>(applicationIcon), 0);
-        HWND product = AddControl(0, L"STATIC", productText.c_str(),
-            SS_OWNERDRAW | SS_NOPREFIX | SS_NOTIFY | WS_CLIPSIBLINGS, 62, 12, 456, 126, *target, ID_INFO_PRODUCT);
-        HWND website = AddControl(0, L"STATIC", ABOUT_WEBSITE_LABELS[appLanguage],
-            SS_LEFT | SS_NOPREFIX | SS_NOTIFY | WS_CLIPSIBLINGS, 62, 145, 88, 20, *target, ID_INFO_WEBSITE);
-        HWND link = AddControl(0, WC_LINK, linkText.c_str(), WS_TABSTOP | WS_CLIPSIBLINGS, 150, 145, 368, 22,
-            *target, ID_INFO_LINK);
-        HWND license = AddControl(WS_EX_CLIENTEDGE, L"EDIT", LoadLicenseText().c_str(), WS_TABSTOP | WS_HSCROLL
-            | WS_VSCROLL | WS_CLIPSIBLINGS | ES_MULTILINE | ES_READONLY | ES_AUTOHSCROLL | ES_AUTOVSCROLL,
-            18, 177, 500, 256 + aboutExtraLineHeight, *target, ID_INFO_TEXT);
-        if (license == nullptr) {
-            DestroyWindow(*target);
-            *target = nullptr;
-            return;
-        }
+        SetWindowPos(icon, nullptr, 0, 0, ABOUT_ICON_SIZE, ABOUT_ICON_SIZE,
+            SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+        HWND product = GetDlgItem(*target, ID_INFO_PRODUCT);
+        HWND website = GetDlgItem(*target, ID_INFO_WEBSITE);
+        HWND link = GetDlgItem(*target, ID_INFO_LINK);
+        HWND license = GetDlgItem(*target, ID_INFO_TEXT);
+        SetWindowTextW(product, productText.c_str());
+        SetWindowTextW(website, ABOUT_WEBSITE_LABELS[appLanguage]);
+        SetWindowTextW(link, linkText.c_str());
+        SetWindowTextW(license, LoadLicenseText().c_str());
         SetWindowSubclass(license, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0);
         SetWindowSubclass(product, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(website, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         SetWindowSubclass(link, AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0);
         hAboutTooltip = CreateControlTooltip(*target, link, LPSTR_TEXTCALLBACKW);
         SendMessageW(license, EM_SETSEL, 0, 0);
-        HWND close = AddControl(0, L"BUTTON", Mnemonic(TXT_CLOSE).c_str(), WS_TABSTOP | BS_DEFPUSHBUTTON,
-            418, 445 + aboutExtraLineHeight, 100, UI_BUTTON_HEIGHT, *target, ID_INFO_CLOSE);
-        SetFocus(close);
     }
     ApplyUiStyle(*target);
     InitializeInformationWindowLayout(*target, help);
-    if (!placement.Attach(*target)) {
+    LayoutInformationWindow(*target, true);
+    const PersistWindowStateData& savedPlacement = placement.GetState();
+    bool defaultPosition = savedPlacement.x == CW_USEDEFAULT || savedPlacement.y == CW_USEDEFAULT;
+    if (defaultPosition && !PositionInformationWindowByWindowsDefault(*target) || !placement.Attach(*target)) {
         DestroyWindow(*target);
         *target = nullptr;
         return;
     }
     LayoutInformationWindow(*target);
+    int focusId = help ? ID_INFO_TEXT : ID_INFO_CLOSE;
+    SetFocus(GetDlgItem(*target, focusId));
     placement.Show();
 }
 
@@ -14763,30 +14831,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 }
                 return MAKELRESULT(defaultId, DC_HASDEFID);
             }
-            if (window == hHelp || window == hAbout) {
-                return MAKELRESULT(ID_INFO_CLOSE, DC_HASDEFID);
-            }
-            break;
-        case WM_ACTIVATE:
-            if ((window == hHelp || window == hAbout) && LOWORD(wParam) == WA_INACTIVE) {
-                HWND focused = GetFocus();
-                if (IsChild(window, focused)) {
-                    HWND& storedFocus = window == hHelp ? hHelpFocusedControl : hAboutFocusedControl;
-                    storedFocus = focused;
-                }
-            }
-            break;
-        case WM_SETFOCUS:
-            if (window == hHelp || window == hAbout) {
-                HWND focused = window == hHelp ? hHelpFocusedControl : hAboutFocusedControl;
-                if (!IsChild(window, focused) || !IsWindowVisible(focused) || !IsWindowEnabled(focused)) {
-                    focused = GetDlgItem(window, ID_INFO_CLOSE);
-                }
-                if (focused != nullptr) {
-                    SetFocus(focused);
-                }
-                return 0;
-            }
             break;
         case WM_SIZE:
             if ((window == hHelp || window == hAbout) && wParam != SIZE_MINIMIZED) {
@@ -15303,7 +15347,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             if (window == hHelp) {
                 DestroyWindow(hHelp);
                 hHelp = nullptr;
-                hHelpFocusedControl = nullptr;
                 SaveAllSettings();
                 return 0;
             }
@@ -15314,7 +15357,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 }
                 DestroyWindow(hAbout);
                 hAbout = nullptr;
-                hAboutFocusedControl = nullptr;
                 SaveAllSettings();
                 return 0;
             }
