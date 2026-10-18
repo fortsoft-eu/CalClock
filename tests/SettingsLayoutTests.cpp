@@ -62,6 +62,15 @@ struct AppearanceTransitionFrame {
     bool loading;
 };
 
+static const SYSTEMTIME panelPaintingTimes[] = {
+    { 2026, 10, 6, 17, 0, 0, 0, 0 },
+    { 2026, 10, 6, 17, 3, 15, 30, 0 },
+    { 2026, 10, 6, 17, 6, 30, 15, 0 },
+    { 2026, 10, 6, 17, 9, 45, 45, 0 },
+    { 2026, 10, 6, 17, 17, 42, 5, 0 },
+    { 2026, 10, 6, 17, 23, 59, 59, 0 }
+};
+
 static HHOOK panelClockTimeHook = nullptr;
 static HHOOK settingsCloseDialogHook = nullptr;
 static HHOOK widgetSelectionPaintHook = nullptr;
@@ -327,7 +336,8 @@ static void CheckApplicationRowSpacing() {
     AlignSettingsControls();
     for (const PositionedControl& placement : placements) {
         RECT bounds = FieldBounds(placement.window);
-        Check(EqualRect(&bounds, &placement.rect), "right fields realign to fixed left anchors without moving other Application controls");
+        Check(EqualRect(&bounds, &placement.rect),
+            "right fields realign to fixed left anchors without moving other Application controls");
     }
 }
 
@@ -460,7 +470,8 @@ static FieldImage ReadWindowSurface(HWND window, bool repaint = true) {
         ReleaseDC(window, source);
     }
     GdiFlush();
-    image.pixels.assign(static_cast<DWORD*>(bits), static_cast<DWORD*>(bits) + static_cast<size_t>(image.width) * image.height);
+    image.pixels.assign(static_cast<DWORD*>(bits), static_cast<DWORD*>(bits) +
+        static_cast<size_t>(image.width) * image.height);
     SelectObject(dc, previous);
     DeleteObject(bitmap);
     DeleteDC(dc);
@@ -707,19 +718,106 @@ static void CheckComboDropDownAppearance(HWND combo, HFONT font, bool classic) {
             GetObjectW(font, sizeof(description), &description);
             if (!matches) {
                 std::printf("  dropdown font=%ls classic=%d count=%d selection=%d actual=%dx%d native=%dx%d\n",
-                    description.lfFaceName, classic, count, selection, actual.width, actual.height, native.width, native.height);
+                    description.lfFaceName, classic, count, selection, actual.width, actual.height, native.width,
+                    native.height);
             }
             wchar_t name[160] = {};
-            swprintf_s(name, L"SettingsDropDown-%ls-%d-%d-%d-actual.bmp", description.lfFaceName, classic, count, selection);
+            swprintf_s(name, L"SettingsDropDown-%ls-%d-%d-%d-actual.bmp", description.lfFaceName, classic, count,
+                selection);
             SaveFieldComparison(name, std::vector<FieldImage>{ actual }, 1);
-            swprintf_s(name, L"SettingsDropDown-%ls-%d-%d-%d-native.bmp", description.lfFaceName, classic, count, selection);
+            swprintf_s(name, L"SettingsDropDown-%ls-%d-%d-%d-native.bmp", description.lfFaceName, classic, count,
+                selection);
             SaveFieldComparison(name, std::vector<FieldImage>{ native }, 1);
         }
     }
     DestroyWindow(reference);
 }
 
-/// Compares complete native combo surfaces, including text, through hover, focus, blur, disable and dropdown opening.
+/// Checks populated disabled fields against an ordinary native combo's full background and the enabled field's glyph
+/// positions.
+static void CheckDisabledComboSelection(HWND combo, HFONT font, bool classic) {
+    HWND native = CreateNativeComboReference(combo, font, classic);
+    HWND background = CreateDisabledComboReference(combo, font, classic);
+    const HWND fields[] = { combo, native };
+    for (HWND field : fields) {
+        COMBOBOXEXITEMW item = {};
+        item.mask = CBEIF_TEXT;
+        item.iItem = -1;
+        item.pszText = const_cast<wchar_t*>(L"Agyp   Agyp");
+        SendMessageW(field, CB_RESETCONTENT, 0, 0);
+        SendMessageW(field, CBEM_INSERTITEMW, 0, reinterpret_cast<LPARAM>(&item));
+        SendMessageW(field, CB_SETCURSEL, 0, 0);
+        SendMessageW(GetSettingsComboBox(field), WM_MOUSELEAVE, 0, 0);
+    }
+    SetFocus(hSettings);
+    FieldImage glyphs = ReadWindowSurface(combo);
+    SendMessageW(combo, CB_SETCURSEL, static_cast<WPARAM>(-1), 0);
+    FieldImage empty = ReadWindowSurface(combo);
+    SendMessageW(combo, CB_SETCURSEL, 0, 0);
+    EnableWindow(combo, FALSE);
+    FieldImage actual = ReadWindowSurface(combo);
+    FieldImage expected = ReadWindowSurface(background);
+    bool matches = actual.width == expected.width
+        && actual.height == expected.height
+        && actual.width == glyphs.width
+        && actual.height == glyphs.height;
+    COLORREF gray = GetSysColor(COLOR_GRAYTEXT);
+    DWORD foreground = RGB(GetBValue(gray), GetGValue(gray), GetRValue(gray));
+    bool disabledColor = true;
+    RECT nativeInk = { INT_MAX, INT_MAX, -1, -1 };
+    RECT actualInk = nativeInk;
+    for (int y = 0;
+            y < actual.height
+            && actual.width == expected.width
+            && actual.height == expected.height
+            && actual.width == glyphs.width
+            && actual.height == glyphs.height;
+            y++) {
+        for (int x = 0; x < actual.width; x++) {
+            size_t pixel = static_cast<size_t>(y) * actual.width + x;
+            bool glyph = (glyphs.pixels[pixel] & 0xFFFFFF) != (empty.pixels[pixel] & 0xFFFFFF);
+            bool ink = (actual.pixels[pixel] & 0xFFFFFF) != (expected.pixels[pixel] & 0xFFFFFF);
+            if (glyph) {
+                nativeInk.left = std::min(nativeInk.left, static_cast<LONG>(x));
+                nativeInk.top = std::min(nativeInk.top, static_cast<LONG>(y));
+                nativeInk.right = std::max(nativeInk.right, static_cast<LONG>(x));
+                nativeInk.bottom = std::max(nativeInk.bottom, static_cast<LONG>(y));
+            } else if (ink) {
+                matches = false;
+            }
+            if (ink) {
+                for (int shift = 0; shift < 24; shift += 8) {
+                    DWORD value = actual.pixels[pixel] >> shift & 0xFF;
+                    DWORD surface = expected.pixels[pixel] >> shift & 0xFF;
+                    DWORD text = foreground >> shift & 0xFF;
+                    disabledColor &= value >= std::min(text, surface) && value <= std::max(text, surface);
+                }
+                actualInk.left = std::min(actualInk.left, static_cast<LONG>(x));
+                actualInk.top = std::min(actualInk.top, static_cast<LONG>(y));
+                actualInk.right = std::max(actualInk.right, static_cast<LONG>(x));
+                actualInk.bottom = std::max(actualInk.bottom, static_cast<LONG>(y));
+            }
+        }
+    }
+    bool textMatches = nativeInk.right >= nativeInk.left && EqualRect(&nativeInk, &actualInk);
+    Check(matches, "populated disabled combo preserves every native background pixel outside native glyphs");
+    Check(textMatches, "disabled combo text retains the enabled field font and glyph positions");
+    Check(disabledColor, "disabled combo glyphs use the system disabled text color");
+    if (!matches || !textMatches || !disabledColor) {
+        LOGFONTW description = {};
+        GetObjectW(font, sizeof(description), &description);
+        std::printf("  disabled combo font=%ls classic=%d background=%d text=%d\n", description.lfFaceName, classic,
+            matches, textMatches);
+        const std::vector<FieldImage> images = { actual, expected, glyphs, empty };
+        SaveFieldComparison(L"SettingsDisabledCombo-failure.bmp", images);
+    }
+    EnableWindow(combo, TRUE);
+    DestroyWindow(background);
+    DestroyWindow(native);
+}
+
+/// Compares native combo chrome through hover, focus, blur, disable, and dropdown opening.
+/// Selected text is checked separately against row baselines and the enabled/disabled centering contract.
 static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
     HWND reference = CreateNativeComboReference(combo, font, classic);
     SendMessageW(combo, CB_RESETCONTENT, 0, 0);
@@ -776,10 +874,25 @@ static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
         }
         FieldImage native = ReadWindowSurface(disabledReference != nullptr ? disabledReference : reference);
         bool matches = actual.width == native.width && actual.height == native.height;
-        for (size_t pixel = 0; matches && pixel < actual.pixels.size(); pixel++) {
-            matches = (actual.pixels[pixel] & 0xFFFFFF) == (native.pixels[pixel] & 0xFFFFFF);
+        COMBOBOXINFO information = { sizeof(information) };
+        GetComboBoxInfo(GetSettingsComboBox(combo), &information);
+        RECT frame = FieldBounds(combo);
+        RECT inner = FieldBounds(GetSettingsComboBox(combo));
+        RECT selection = information.rcItem;
+        OffsetRect(&selection, inner.left - frame.left, inner.top - frame.top);
+        for (int y = 0; matches && y < actual.height; y++) {
+            for (int x = 0; matches && x < actual.width; x++) {
+                if (state == 4
+                    || x < selection.left
+                    || x >= selection.right
+                    || y < selection.top
+                    || y >= selection.bottom) {
+                    size_t pixel = static_cast<size_t>(y) * actual.width + x;
+                    matches = (actual.pixels[pixel] & 0xFFFFFF) == (native.pixels[pixel] & 0xFFFFFF);
+                }
+            }
         }
-        Check(matches, "complete combo surface and text match unmodified Windows Common Controls in every input state");
+        Check(matches, "combo frame, arrow, and outer focus states match unmodified Windows Common Controls");
         if (!matches) {
             std::printf("  combo appearance state=%d classic=%d\n", state, classic);
             const std::vector<FieldImage> comparison = { actual, native };
@@ -806,8 +919,8 @@ static void CheckComboAppearance(HWND combo, HFONT font, bool classic) {
 /// Verifies real native edit borders through hover, focus, blur, disable, and read-only transitions with both themes.
 static void CheckEditBorders(HWND edit, HFONT font, bool classic, bool saveImages) {
     RECT bounds = FieldBounds(edit);
-    HWND reference = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
-        700, 350, bounds.right - bounds.left, bounds.bottom - bounds.top, hSettings, nullptr, hInstance, nullptr);
+    HWND reference = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 700, 350,
+        bounds.right - bounds.left, bounds.bottom - bounds.top, hSettings, nullptr, hInstance, nullptr);
     SendMessageW(reference, WM_SETFONT, reinterpret_cast<WPARAM>(font), FALSE);
     SetWindowTheme(reference, classic ? L"" : nullptr, classic ? L"" : nullptr);
     std::vector<FieldImage> images;
@@ -846,10 +959,7 @@ static void CheckEditBorders(HWND edit, HFONT font, bool classic, bool saveImage
         Check(SameFieldBorder(actual, printed, reference), "printed edit border matches its actual window surface");
         if (!matches) {
             std::printf("  edit border state=%d classic=%d\n", state, classic);
-            const std::vector<FieldImage> comparison = {
-                actual,
-                native
-            };
+            const std::vector<FieldImage> comparison = { actual, native };
             SaveFieldComparison(L"SettingsEditBorders-failure.bmp", comparison);
         }
         images.push_back(actual);
@@ -983,11 +1093,15 @@ static void TestFields() {
                         CheckComboAppearance(combo, font, classic);
                         CheckComboDropDownAppearance(combo, font, classic);
                     }
+                    CheckDisabledComboSelection(combo, font, classic);
                     CheckEditBorders(edit, font, classic,
                         (wcscmp(face, L"Segoe UI") == 0 || wcscmp(face, L"Cambria Math") == 0)
-                            && weight == FW_NORMAL && !italic);
+                            && weight == FW_NORMAL
+                            && !italic);
                     if ((wcscmp(face, L"Segoe UI") == 0 || wcscmp(face, L"Cambria Math") == 0)
-                            && weight == FW_NORMAL && !italic && !classic) {
+                            && weight == FW_NORMAL
+                            && !italic
+                            && !classic) {
                         SaveRenderedFields(edit, combo, face);
                     }
                     COMBOBOXINFO info = { sizeof(info) };
@@ -1089,7 +1203,8 @@ static void TestAdditionalClockNames() {
     Check(DeleteFileW(path.c_str()) != FALSE, "temporary settings snapshot removed");
 }
 
-/// Verifies that a complete descriptive text fits by rendering an unrestricted-height reference with the same font and width.
+/// Verifies that a complete descriptive text fits by rendering an unrestricted-height reference with the same font
+/// and width.
 static void CheckWrappedTextFits(HWND control) {
     RECT bounds = {};
     GetClientRect(control, &bounds);
@@ -1149,13 +1264,41 @@ static bool IsCheckboxContentVisible(HWND control) {
             contentPixels++;
             LONG pageX = bounds.left + x;
             LONG pageY = bounds.top + y;
-            if (pageX < 0 || pageX >= page.width || pageY < 0 || pageY >= page.height
+            if (pageX < 0
+                    || pageX >= page.width
+                    || pageY < 0
+                    || pageY >= page.height
                     || (page.pixels[static_cast<size_t>(pageY) * page.width + pageX] & 0xFFFFFF) != pixel) {
                 return false;
             }
         }
     }
     return contentPixels > 0;
+}
+
+/// Checks the three Size fields against their actual row label in both enabled states without moving their frames.
+static void CheckPanelSizeComboBaselines() {
+    TextInk label = ReadInk(hSizeLabel, false);
+    const HWND controls[] = { hSizeCombo, hAdditionalSizeCombos[0], hAdditionalSizeCombos[1] };
+    for (HWND combo : controls) {
+        bool enabled = IsWindowEnabled(combo) != FALSE;
+        RECT before = FieldBounds(combo);
+        EnableWindow(combo, TRUE);
+        TextInk active = ReadInk(combo, true);
+        EnableWindow(combo, FALSE);
+        TextInk inactive = ReadInk(combo, true);
+        RECT after = FieldBounds(combo);
+        Check(active.pixels > 0
+            && inactive.pixels > 0
+            && label.pixels > 0
+            && active.top == inactive.top
+            && active.bottom == inactive.bottom,
+            "Size text remains at the identical vertical position when enabled or disabled");
+        Check(active.bottom == label.bottom && inactive.bottom == label.bottom,
+            "all three Size combos share the rendered label baseline in both enabled states");
+        Check(EqualRect(&before, &after), "enabling a Size combo never moves its frame");
+        EnableWindow(combo, enabled);
+    }
 }
 
 /// Verifies every settings row and native tab order after changing fonts and widget layout in the complete form.
@@ -1337,6 +1480,9 @@ static void TestCompleteSettings() {
                         Check((GetWindowLongPtrW(hMonitorList, GWL_STYLE) & LVS_OWNERDRAWFIXED) == 0,
                             "every monitor font and theme layout retains native row painting");
                     } else if (tab == 1) {
+                        if (type == WIDGET_PANEL) {
+                            CheckPanelSizeComboBaselines();
+                        }
                         CheckBaseline(ReadInk(hOpacityLabel, false), hOpacityValue,
                             "opacity value shares its row's text baseline");
                     } else if (tab == 3) {
@@ -1446,7 +1592,8 @@ static void TestApplicationRowFonts() {
                     MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&value), 2);
                     Check(slider.top - initialSlider.top == value.top - initialValue.top,
                         "volume slider follows its value's baseline adjustment through font and theme changes");
-                    Check(slider.left == initialSlider.left && slider.right == initialSlider.right
+                    Check(slider.left == initialSlider.left
+                        && slider.right == initialSlider.right
                         && slider.bottom - slider.top == initialSlider.bottom - initialSlider.top,
                         "volume slider baseline adjustment preserves its horizontal position and size");
                     sliderMoved = sliderMoved || slider.top != initialSlider.top;
@@ -1478,7 +1625,9 @@ static void CheckApplicationSliderClipping(bool requireUpperOverlap, bool requir
     int overlaps = 0;
     int protectedOverlaps = 0;
     int upperLabels = 0;
-    for (HWND control = GetWindow(hApplicationPage, GW_CHILD); control != nullptr; control = GetWindow(control, GW_HWNDNEXT)) {
+    for (HWND control = GetWindow(hApplicationPage, GW_CHILD);
+            control != nullptr;
+            control = GetWindow(control, GW_HWNDNEXT)) {
         if (control == hTimeSignalVolumeTrackBar || !IsWindowVisible(control)) {
             continue;
         }
@@ -1649,10 +1798,7 @@ static void TestFirstNtpLogBatch() {
         }
         NtpQueryLogEntry later = group.back();
         later.server += L".another-later-long-server-name.test";
-        const std::vector<NtpQueryLogEntry> laterGroup = {
-            later
-        };
-        AppendNtpSynchronizationLog(laterGroup);
+        AppendNtpSynchronizationLog(std::vector<NtpQueryLogEntry>{ later });
         for (int column = 0; column < 3; column++) {
             Check(ListView_GetColumnWidth(hNtpLogList, column) == manualWidths[column],
                 "later NTP groups retain manually resized column widths");
@@ -1945,8 +2091,9 @@ static void CreateSettingsCloseTestForm(bool warningEnabled, bool nativeWindow =
         height = settingsContentHeight;
         style = WS_POPUP;
     }
-    hSettings = CreateWindowExW(extendedStyle, nativeWindow ? CLASS_NAME : L"CalClock.SettingsLayoutTest", T(TXT_SETTINGS),
-        style, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+    const wchar_t* className = nativeWindow ? CLASS_NAME : L"CalClock.SettingsLayoutTest";
+    hSettings = CreateWindowExW(extendedStyle, className, T(TXT_SETTINGS), style, 0, 0, width, height, nullptr, nullptr,
+        hInstance, nullptr);
     if (!nativeWindow) {
         SetLayeredWindowAttributes(hSettings, 0, 255, LWA_ALPHA);
     }
@@ -1957,6 +2104,108 @@ static void CreateSettingsCloseTestForm(bool warningEnabled, bool nativeWindow =
         "new settings-close form has no pending changes and inactive Apply");
 }
 
+/// Exercises actual native dropdown keyboard and mouse notifications without sending input to the user's desktop.
+static void CheckSettingsComboCommit(HWND combo) {
+    HWND inner = GetSettingsComboBox(combo);
+    HWND apply = GetDlgItem(hSettings, ID_APPLY);
+    int original = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    int count = static_cast<int>(SendMessageW(combo, CB_GETCOUNT, 0, 0));
+    Check(original >= 0 && count > 1, "combo commit fixture has multiple items and a current selection");
+    if (original < 0 || count < 2) {
+        return;
+    }
+    UINT next = original + 1 < count ? VK_DOWN : VK_UP;
+    UINT previous = next == VK_DOWN ? VK_UP : VK_DOWN;
+    SendMessageW(combo, CB_SHOWDROPDOWN, TRUE, 0);
+    SendMessageW(inner, WM_KEYDOWN, next, 0);
+    Check(SendMessageW(combo, CB_GETCURSEL, 0, 0) != original, "native dropdown navigation changes its highlighted item");
+    UpdateSettingsApplyButton();
+    Check(!IsWindowEnabled(apply), "browsing an open dropdown never activates Apply");
+    SendMessageW(inner, WM_KEYDOWN, VK_ESCAPE, 0);
+    Check(hSettingsOpenCombo == nullptr
+        && SendMessageW(combo, CB_GETCURSEL, 0, 0) == original
+        && !IsWindowEnabled(apply)
+        && !HasPendingSettingsChanges(),
+        "Escape restores the original selection without a pending change");
+    SendMessageW(combo, CB_SHOWDROPDOWN, TRUE, 0);
+    SendMessageW(inner, WM_KEYDOWN, next, 0);
+    SendMessageW(inner, WM_KEYDOWN, previous, 0);
+    SendMessageW(inner, WM_KEYDOWN, VK_RETURN, 0);
+    Check(!IsWindowEnabled(apply) && !HasPendingSettingsChanges(),
+        "confirming the original item after browsing does not create a change");
+    SendMessageW(combo, CB_SHOWDROPDOWN, TRUE, 0);
+    COMBOBOXINFO information = { sizeof(information) };
+    GetComboBoxInfo(inner, &information);
+    int chosen = next == VK_DOWN ? original + 1 : original - 1;
+    RECT item = {};
+    SendMessageW(information.hwndList, LB_GETITEMRECT, chosen, reinterpret_cast<LPARAM>(&item));
+    LPARAM point = MAKELPARAM(item.left + 4, item.top + (item.bottom - item.top) / 2);
+    SendMessageW(information.hwndList, WM_LBUTTONDOWN, MK_LBUTTON, point);
+    Check(!IsWindowEnabled(apply), "mouse selection does not activate Apply before native acceptance and closeup");
+    SendMessageW(information.hwndList, WM_LBUTTONUP, 0, point);
+    Check(!SendMessageW(combo, CB_GETDROPPEDSTATE, 0, 0)
+        && hSettingsOpenCombo == nullptr
+        && SendMessageW(combo, CB_GETCURSEL, 0, 0) == chosen
+        && IsWindowEnabled(apply),
+        "a mouse-confirmed choice activates Apply after the dropdown closes");
+    SendMessageW(combo, CB_SHOWDROPDOWN, TRUE, 0);
+    SendMessageW(inner, WM_KEYDOWN, previous, 0);
+    SendMessageW(inner, WM_KEYDOWN, VK_ESCAPE, 0);
+    Check(IsWindowEnabled(apply) && SendMessageW(combo, CB_GETCURSEL, 0, 0) == chosen,
+        "cancelling later navigation preserves an already committed pending change");
+}
+
+/// Verifies shared dropdown commit handling, dependent controls, closed-list keys, and closure without false save
+/// prompts.
+static void TestSettingsComboCommit() {
+    bool originalWarning = warnOnUnsavedChanges;
+    bool originalNtp = useNtpTime;
+    bool originalThemes = themesDisabled;
+    settingsCloseDialogHook = SetWindowsHookExW(WH_CBT, SettingsCloseDialogHook, nullptr, GetCurrentThreadId());
+    Check(settingsCloseDialogHook != nullptr, "combo close-warning observer installed");
+    testSettingsDialogResponse = IDCANCEL;
+    const bool states[] = { false, true };
+    for (bool classic : states) {
+        themesDisabled = classic;
+        for (int field = 0; field < 3; field++) {
+            CreateSettingsCloseTestForm(true, true);
+            int tab = field == 0 ? 4 : 5;
+            TabCtrl_SetCurSel(hTabs, tab);
+            ShowSettingsTab(tab);
+            HWND combo = field == 0 ? hTimeSourceCombo : field == 1 ? hLanguageCombo : hAppAntialiasCombo;
+            CheckSettingsComboCommit(combo);
+            CloseSettingsWindow();
+            Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "combo commit form class unregistered");
+        }
+    }
+    CreateSettingsCloseTestForm(true, true);
+    TabCtrl_SetCurSel(hTabs, 4);
+    ShowSettingsTab(4);
+    SendMessageW(hTimeSourceCombo, CB_SHOWDROPDOWN, TRUE, 0);
+    SendMessageW(GetSettingsComboBox(hTimeSourceCombo), WM_KEYDOWN, VK_DOWN, 0);
+    Check(!IsWindowEnabled(hNtpPresetCombo), "dropdown navigation leaves dependent controls unchanged");
+    int questions = testSettingsSaveQuestions;
+    RequestCloseSettingsWindow();
+    Check(hSettings == nullptr && testSettingsSaveQuestions == questions,
+        "closing while browsing an uncommitted dropdown never asks to save");
+    CloseSettingsWindow();
+    Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "uncommitted combo closure form class unregistered");
+    CreateSettingsCloseTestForm(true, true);
+    TabCtrl_SetCurSel(hTabs, 4);
+    ShowSettingsTab(4);
+    SendMessageW(GetSettingsComboBox(hTimeSourceCombo), WM_KEYDOWN, VK_DOWN, 0);
+    Check(IsWindowEnabled(GetDlgItem(hSettings, ID_APPLY)) && IsWindowEnabled(hNtpPresetCombo),
+        "arrow-key selection in a closed combo commits immediately and updates dependent controls");
+    CloseSettingsWindow();
+    Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "closed combo keyboard form class unregistered");
+    Check(UnhookWindowsHookEx(settingsCloseDialogHook) != FALSE, "combo close-warning observer removed");
+    settingsCloseDialogHook = nullptr;
+    themesDisabled = originalThemes;
+    warnOnUnsavedChanges = originalWarning;
+    useNtpTime = originalNtp;
+    ResetUiFont();
+}
+
 /// Checks actual foreground pixels before and after a background label or checkbox paints during widget selection.
 static LRESULT CALLBACK ObserveSettingsTextPaint(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR) {
@@ -1964,7 +2213,9 @@ static LRESULT CALLBACK ObserveSettingsTextPaint(HWND window, UINT message, WPAR
     if (observingWidgetSelection && message == WM_PAINT && wParam == 0) {
         RECT bounds = FieldBounds(window);
         bool above = true;
-        for (HWND sibling = GetWindow(GetParent(window), GW_CHILD); sibling != nullptr; sibling = GetWindow(sibling, GW_HWNDNEXT)) {
+        for (HWND sibling = GetWindow(GetParent(window), GW_CHILD);
+                sibling != nullptr;
+                sibling = GetWindow(sibling, GW_HWNDNEXT)) {
             if (sibling == window) {
                 above = false;
                 continue;
@@ -2019,7 +2270,8 @@ static LRESULT CALLBACK WidgetSelectionPaintHook(int code, WPARAM wParam, LPARAM
                 widgetSelectionExposedTextPaints++;
             }
         }
-        if (message->message == WM_SHOWWINDOW && IsSettingsPageWindow(GetParent(message->hwnd))
+        if (message->message == WM_SHOWWINDOW
+                && IsSettingsPageWindow(GetParent(message->hwnd))
                 && IsWindowVisible(GetParent(message->hwnd))) {
             widgetSelectionVisibilityEvents++;
             if (message->wParam != 0) {
@@ -2138,7 +2390,8 @@ static FieldImage ExtractDisplayedControl(HWND control, const FieldImage& form) 
     FieldImage result = { bounds.right - bounds.left, bounds.bottom - bounds.top, {} };
     for (int y = 0; y < result.height; y++) {
         size_t start = static_cast<size_t>(bounds.top - root.top + y) * form.width + bounds.left - root.left;
-        result.pixels.insert(result.pixels.end(), form.pixels.begin() + start, form.pixels.begin() + start + result.width);
+        result.pixels.insert(result.pixels.end(), form.pixels.begin() + start, form.pixels.begin() + start
+            + result.width);
     }
     return result;
 }
@@ -2162,10 +2415,17 @@ static FieldImage ReadDisplayedAppearance() {
 static LRESULT CALLBACK ObserveAppearanceTransition(int code, WPARAM wParam, LPARAM lParam) {
     if (code >= 0 && observingAppearanceTransition && !capturingAppearanceTransition) {
         const CWPRETSTRUCT* event = reinterpret_cast<const CWPRETSTRUCT*>(lParam);
-        if ((event->hwnd == hAppearancePage || IsChild(hAppearancePage, event->hwnd))
-                && (event->message == WM_PAINT || event->message == WM_ERASEBKGND || event->message == WM_NCPAINT
-                    || event->message == WM_WINDOWPOSCHANGED || event->message == WM_ENABLE
-                    || event->message == WM_SETTEXT || event->message == WM_SHOWWINDOW || event->message == WM_SETREDRAW)) {
+        const bool appearanceWindow = event->hwnd == hAppearancePage
+            || IsChild(hAppearancePage, event->hwnd);
+        const bool observedMessage = event->message == WM_PAINT
+            || event->message == WM_ERASEBKGND
+            || event->message == WM_NCPAINT
+            || event->message == WM_WINDOWPOSCHANGED
+            || event->message == WM_ENABLE
+            || event->message == WM_SETTEXT
+            || event->message == WM_SHOWWINDOW
+            || event->message == WM_SETREDRAW;
+        if (appearanceWindow && observedMessage) {
             capturingAppearanceTransition = true;
             FieldImage frame = ReadDisplayedAppearance();
             ULONGLONG hash = AppearanceFrameHash(frame);
@@ -2339,7 +2599,8 @@ static void TestAppearanceTransitionFrames() {
     LoadDraftIntoControls();
     TabCtrl_SetCurSel(hTabs, 1);
     ShowSettingsTab(1);
-    appearanceTransitionHook = SetWindowsHookExW(WH_CALLWNDPROCRET, ObserveAppearanceTransition, nullptr, GetCurrentThreadId());
+    appearanceTransitionHook =
+        SetWindowsHookExW(WH_CALLWNDPROCRET, ObserveAppearanceTransition, nullptr, GetCurrentThreadId());
     Check(appearanceTransitionHook != nullptr, "Appearance intermediate-frame observer installed");
     const wchar_t* faces[] = { L"Segoe UI", L"Cambria Math" };
     const bool classicStates[] = { false, true };
@@ -2352,7 +2613,8 @@ static void TestAppearanceTransitionFrames() {
             for (int source = 0; source < WIDGET_TYPE_COUNT; source++) {
                 for (int target = 0; target < WIDGET_TYPE_COUNT; target++) {
                     SelectOnlyWidgetIndex(source, false);
-                    SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE), reinterpret_cast<LPARAM>(hWidgetList));
+                    SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE),
+                        reinterpret_cast<LPARAM>(hWidgetList));
                     DispatchSettingsPaints();
                     SelectOnlyWidgetIndex(target, false);
                     DispatchSettingsPaints();
@@ -2361,7 +2623,8 @@ static void TestAppearanceTransitionFrames() {
                     appearanceTransitionFrames.clear();
                     appearanceTransitionFirstChange = FieldImage{};
                     observingAppearanceTransition = true;
-                    SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE), reinterpret_cast<LPARAM>(hWidgetList));
+                    SendMessageW(hSettings, WM_COMMAND, MAKEWPARAM(ID_LIST_WIDGETS, LBN_SELCHANGE),
+                        reinterpret_cast<LPARAM>(hWidgetList));
                     DispatchSettingsPaints();
                     observingAppearanceTransition = false;
                     FieldImage after = ReadDisplayedAppearance();
@@ -2386,7 +2649,8 @@ static void TestAppearanceTransitionFrames() {
                             source, target, face, classic);
                         wchar_t name[180] = {};
                         swprintf_s(name, L"AppearanceTransition-%ls-%d-%d-%d.bmp", face, classic, source, target);
-                        SaveFieldComparison(name, std::vector<FieldImage>{ before, appearanceTransitionFirstChange, after }, 3);
+                        const std::vector<FieldImage> images = { before, appearanceTransitionFirstChange, after };
+                        SaveFieldComparison(name, images, 3);
                     }
                     CheckDisplayedSettingsText(ReadWindowSurface(hSettings, false), source);
                 }
@@ -2413,8 +2677,8 @@ static void TestWidgetSelectionRedraw() {
     bool originalWarning = warnOnUnsavedChanges;
     CreateSettingsCloseTestForm(false);
     for (int type = 0; type < WIDGET_TYPE_COUNT; type++) {
-        WidgetConfig config = CreateStoredWidgetDefaults(static_cast<WidgetType>(type), type + 1, LANG_CS,
-            FONT_ANTIALIAS_CLEARTYPE);
+        WidgetConfig config =
+            CreateStoredWidgetDefaults(static_cast<WidgetType>(type), type + 1, LANG_CS, FONT_ANTIALIAS_CLEARTYPE);
         config.name = L"Selection " + std::to_wstring(type);
         settingsDraft.push_back(config);
     }
@@ -2866,8 +3130,105 @@ static void TestPanelFontSizing() {
     panelClockTimeHook = nullptr;
     themesDisabled = originalThemes;
     snapWidgetsToWorkArea = originalSnap;
-    ShutdownAnalogClockHost();
     Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "panel font test window class unregistered");
+}
+
+/// Compares the entire face against an unmodified native ClockWndMain control.
+static void CheckNativePanelClockSurface(HWND actualClock, HWND referenceClock) {
+    FieldImage actual = ReadWindowSurface(actualClock, false);
+    FieldImage reference = ReadWindowSurface(referenceClock, false);
+    int different = 0;
+    Check(actual.width == reference.width && actual.height == reference.height, "native reference size matches");
+    if (actual.width != reference.width || actual.height != reference.height) {
+        return;
+    }
+    Check(!reference.pixels.empty() && std::any_of(reference.pixels.begin(), reference.pixels.end(),
+        [&reference](DWORD pixel) { return (pixel & 0xFFFFFF) != (reference.pixels[0] & 0xFFFFFF); }),
+        "native reference contains a painted clock face");
+    for (size_t pixel = 0; pixel < actual.pixels.size(); pixel++) {
+        if ((actual.pixels[pixel] & 0xFFFFFF) != (reference.pixels[pixel] & 0xFFFFFF)) {
+            different++;
+        }
+    }
+    if (different != 0) {
+        SaveFieldComparison(L"ClockPainting-native-failure.bmp", std::vector<FieldImage>{ actual, reference });
+    }
+    Check(different == 0, "the complete face matches the unmodified native control without hand trails or stale "
+        "background");
+}
+
+/// Exercises initial paint and repeated time changes at every supported native clock size on an isolated desktop.
+static void TestNativePanelClockPainting() {
+    bool originalThemes = themesDisabled;
+    Check(RegisterApplicationTestWindowClass() != 0, "clock erasure test window class registered");
+    int sizes[8] = {};
+    int count = GetSupportedAnalogClockSizes(sizes, ARRAYSIZE(sizes));
+    Check(count > 0, "native clock sizes are available for erasure comparison");
+    const bool states[] = { false, true };
+    for (bool classic : states) {
+        themesDisabled = classic;
+        for (int index = 0; index < count; index++) {
+            Widget actual;
+            Widget reference;
+            actual.config = CreateStoredWidgetDefaults(WIDGET_PANEL, 8100, LANG_CS, FONT_ANTIALIAS_CLEARTYPE);
+            actual.config.visible = false;
+            actual.config.x = 100;
+            actual.config.y = 100;
+            actual.config.opacity = 99;
+            actual.config.size = sizes[index];
+            for (AdditionalClockConfig& additional : actual.config.additionalClocks) {
+                additional.enabled = true;
+                additional.size = sizes[index];
+            }
+            reference.config = actual.config;
+            CreateWidgetWindow(&actual);
+            CreateWidgetWindow(&reference);
+            Check(SetWindowLongPtrW(reference.analogChild, GWLP_WNDPROC,
+                reinterpret_cast<LONG_PTR>(reference.analogProc)) == reinterpret_cast<LONG_PTR>(AnalogChildProc),
+                "primary reference restores the unmodified native clock procedure");
+            for (int clock = 0; clock < ADDITIONAL_CLOCK_COUNT; clock++) {
+                Check(RemoveWindowSubclass(reference.additionalAnalogChildren[clock], AdditionalAnalogChildProc,
+                    static_cast<UINT_PTR>(clock) + 1) != FALSE,
+                    "additional reference restores the unmodified native clock procedure");
+            }
+            const HWND actualClocks[] = {
+                actual.analogChild,
+                actual.additionalAnalogChildren[0],
+                actual.additionalAnalogChildren[1]
+            };
+            const HWND referenceClocks[] = {
+                reference.analogChild, reference.additionalAnalogChildren[0],
+                reference.additionalAnalogChildren[1]
+            };
+            actual.config.visible = true;
+            reference.config.visible = true;
+            ShowWindow(actual.window, SW_SHOWNOACTIVATE);
+            ShowWindow(reference.window, SW_SHOWNOACTIVATE);
+            RenderWidget(&actual);
+            RenderWidget(&reference);
+            for (int repeat = 0; repeat < 3; repeat++) {
+                for (const SYSTEMTIME& time : panelPaintingTimes) {
+                    for (size_t clock = 0; clock < ARRAYSIZE(actualClocks); clock++) {
+                        SetAnalogClockTime(actualClocks[clock], time);
+                        SetAnalogClockTime(referenceClocks[clock], time);
+                        RedrawWindow(actualClocks[clock], nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
+                        RedrawWindow(referenceClocks[clock], nullptr, nullptr,
+                            RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
+                        CheckNativePanelClockSurface(actualClocks[clock], referenceClocks[clock]);
+                        HDC target = GetDC(actualClocks[clock]);
+                        Check(target != nullptr, "clock erasure target is available");
+                        SendMessageW(actualClocks[clock], WM_ERASEBKGND, reinterpret_cast<WPARAM>(target), 0);
+                        ReleaseDC(actualClocks[clock], target);
+                        CheckNativePanelClockSurface(actualClocks[clock], referenceClocks[clock]);
+                    }
+                }
+            }
+            DestroyWidgetWindow(&actual);
+            DestroyWidgetWindow(&reference);
+        }
+    }
+    themesDisabled = originalThemes;
+    Check(UnregisterClassW(CLASS_NAME, hInstance) != FALSE, "native clock painting test window class unregistered");
 }
 
 /// Runs native rendering checks in the application's Common Controls manifest on the isolated test desktop.
@@ -2906,11 +3267,14 @@ static int RunSettingsLayoutTests() {
     TestMonitorReport();
     DestroyWindow(hSettings);
     hSettings = nullptr;
+    TestSettingsComboCommit();
     TestUnsavedSettingsClose();
     TestDisplayedReports();
     TestAppearanceTransitionFrames();
     TestWidgetSelectionRedraw();
     TestPanelFontSizing();
+    TestNativePanelClockPainting();
+    ShutdownAnalogClockHost();
     ResetUiFont();
     std::printf("Settings layout: %d checks, %d failures\n", checks, failures);
     return failures == 0 ? 0 : 1;
@@ -2963,7 +3327,8 @@ int main(int argc, char** argv) {
     }
     input = OpenInputDesktop(0, FALSE, DESKTOP_READOBJECTS);
     wchar_t finalInput[256] = {};
-    if (input == nullptr || !GetUserObjectInformationW(input, UOI_NAME, finalInput, sizeof(finalInput), &needed)
+    if (input == nullptr
+            || !GetUserObjectInformationW(input, UOI_NAME, finalInput, sizeof(finalInput), &needed)
             || wcscmp(originalInput, finalInput) != 0) {
         std::printf("Input desktop identity check failed.\n");
         result = 1;

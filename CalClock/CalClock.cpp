@@ -61,6 +61,7 @@
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
+#include <dwmapi.h>
 #include <memory>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -78,6 +79,7 @@
 #pragma comment(lib, "UxTheme.lib")
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Version.lib")
+#pragma comment(lib, "Dwmapi.lib")
 
 /// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
@@ -462,6 +464,7 @@ HWND hAboutFocusedControl = nullptr;
 HWND hAboutTooltip = nullptr;
 
 /// Settings pages and widget list
+static HWND hSettingsOpenCombo = nullptr;
 HWND hWidgetList = nullptr;
 HWND hAddType = nullptr;
 HWND hTabs = nullptr;
@@ -621,15 +624,16 @@ AppLanguage appLanguage = LANG_EN_US;
 WidgetType lastAddedWidgetType = WIDGET_ANALOG;
 
 /// State flags
-bool appFontItalic = false;
-bool displayRefreshPending = false;
 static bool fullscreenCursorHidden = false;
 static bool monitorColumnsInitialized = false;
 static bool monitorSortAscending = true;
-bool ntpHasSynchronized = false;
-bool ntpLastQueryFailed = false;
 static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
+static bool settingsComboAccepted = false;
+bool appFontItalic = false;
+bool displayRefreshPending = false;
+bool ntpHasSynchronized = false;
+bool ntpLastQueryFailed = false;
 bool settingsAppearancePreviewActive = false;
 bool settingsAppFontItalic = false;
 bool settingsApplicationFontPreviewActive = false;
@@ -661,6 +665,7 @@ int nextWidgetId = 1;
 int ntpPreset = NTP_PRESET_AUTO;
 static int monitorSortColumn = -1;
 static int ntpLogSortColumn = -1;
+static int settingsComboInitialSelection = CB_ERR;
 int selectedDraftIndex = 0;
 int settingsAppFontDialogSize = 90;
 int settingsAppFontWeight = FW_NORMAL;
@@ -3534,20 +3539,66 @@ static bool AreVisualStylesActive() {
     return IsThemeActive() && IsAppThemed();
 }
 
-/// Uses a native thin preview border with visual styles and a native sunken edge with classic appearance.
-static void UpdateSettingsColorPreviewStyle(HWND preview) {
-    LONG_PTR currentStyle = GetWindowLongPtrW(preview, GWL_STYLE);
-    LONG_PTR currentExtended = GetWindowLongPtrW(preview, GWL_EXSTYLE);
-    bool classic = themesDisabled || !AreVisualStylesActive();
-    LONG_PTR desiredStyle = classic ? currentStyle & ~WS_BORDER : currentStyle | WS_BORDER;
-    LONG_PTR desiredExtended = classic ? currentExtended | WS_EX_CLIENTEDGE : currentExtended & ~WS_EX_CLIENTEDGE;
-    if (currentStyle != desiredStyle || currentExtended != desiredExtended) {
-        SetWindowLongPtrW(preview, GWL_STYLE, desiredStyle);
-        SetWindowLongPtrW(preview, GWL_EXSTYLE, desiredExtended);
-        SetWindowPos(preview, nullptr, 0, 0, 0, 0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        RedrawWindow(preview, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME);
+/// Draws the native button theme in window or client coordinates, clipped to the requested preview area.
+/// Uses the associated button's enabled state and leaves classic rendering to the native static control.
+static bool DrawSettingsColorPreviewTheme(HWND preview, HDC dc, bool nonClient) {
+    HWND button = reinterpret_cast<HWND>(GetPropW(preview, SETTINGS_COLOR_BUTTON_PROPERTY));
+    WINDOWINFO information = { sizeof(information) };
+    if (button == nullptr || dc == nullptr || themesDisabled || !AreVisualStylesActive()
+            || !GetWindowInfo(preview, &information)) {
+        return false;
     }
+    HTHEME theme = OpenThemeData(button, L"Button");
+    if (theme == nullptr) {
+        return false;
+    }
+    const RECT& origin = nonClient ? information.rcWindow : information.rcClient;
+    RECT bounds = information.rcWindow;
+    RECT client = information.rcClient;
+    OffsetRect(&bounds, -origin.left, -origin.top);
+    OffsetRect(&client, -origin.left, -origin.top);
+    int saved = SaveDC(dc);
+    bool drawn = false;
+    if (saved != 0) {
+        if (nonClient) {
+            ExcludeClipRect(dc, client.left, client.top, client.right, client.bottom);
+        } else {
+            IntersectClipRect(dc, client.left, client.top, client.right, client.bottom);
+        }
+        int state = IsWindowEnabled(button) ? PBS_NORMAL : PBS_DISABLED;
+        if (IsThemeBackgroundPartiallyTransparent(theme, BP_PUSHBUTTON, state)) {
+            DrawThemeParentBackground(preview, dc, &bounds);
+        }
+        drawn = SUCCEEDED(DrawThemeBackground(theme, dc, BP_PUSHBUTTON, state, &bounds, nullptr));
+        RestoreDC(dc, saved);
+    }
+    CloseThemeData(theme);
+    return drawn;
+}
+
+/// Applies the native button border to themed previews, including printed images, and refreshes state changes.
+static LRESULT CALLBACK SettingsColorPreviewSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
+    UNREFERENCED_PARAMETER(referenceData);
+    if (msg == WM_NCPAINT) {
+        HDC dc = GetWindowDC(window);
+        bool drawn = DrawSettingsColorPreviewTheme(window, dc, true);
+        if (dc != nullptr) {
+            ReleaseDC(window, dc);
+        }
+        if (drawn) {
+            return 0;
+        }
+    } else if (msg == WM_NCDESTROY) {
+        RemoveWindowSubclass(window, SettingsColorPreviewSubclassProc, subclassId);
+    }
+    LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
+    if (msg == WM_PRINT && (lParam & PRF_NONCLIENT) != 0) {
+        DrawSettingsColorPreviewTheme(window, reinterpret_cast<HDC>(wParam), true);
+    } else if (msg == WM_ENABLE || msg == WM_THEMECHANGED || msg == WM_SYSCOLORCHANGE) {
+        RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME);
+    }
+    return result;
 }
 
 /// Recalculates settings tabs, list rows, labels, combos, and edits without restricting descriptive notes.
@@ -3562,9 +3613,7 @@ static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM) {
     }
     wchar_t className[32] = {};
     GetClassNameW(control, className, ARRAYSIZE(className));
-    if (GetPropW(control, SETTINGS_COLOR_BUTTON_PROPERTY) != nullptr) {
-        UpdateSettingsColorPreviewStyle(control);
-    } else if (control == hTabs) {
+    if (control == hTabs) {
         UpdateSettingsTabLayout();
     } else if (control == hNtpLogList || control == hMonitorList) {
         UpdateSettingsReportMetrics(control);
@@ -7368,7 +7417,9 @@ static void AddSettingsColorPreview(HWND button) {
             0, 0, UI_BUTTON_HEIGHT, UI_BUTTON_HEIGHT, GetParent(button), 0);
         if (preview != nullptr
                 && (!SetPropW(button, SETTINGS_COLOR_PREVIEW_PROPERTY, preview)
-                    || !SetPropW(preview, SETTINGS_COLOR_BUTTON_PROPERTY, button))) {
+                    || !SetPropW(preview, SETTINGS_COLOR_BUTTON_PROPERTY, button)
+                    || !SetWindowSubclass(preview, SettingsColorPreviewSubclassProc,
+                        SETTINGS_CONTROL_SUBCLASS_ID, 0))) {
             RemovePropW(button, SETTINGS_COLOR_PREVIEW_PROPERTY);
             DestroyWindow(preview);
             preview = nullptr;
@@ -7407,7 +7458,8 @@ static int ScaleSettingsHorizontal(int value) {
     return MulDiv(value, SETTINGS_HORIZONTAL_SCALE_NUMERATOR, SETTINGS_HORIZONTAL_SCALE_DENOMINATOR);
 }
 
-/// Adds the settings width increase after horizontal scaling, preserving fixed fields, row gaps, and checkbox proportions.
+/// Adds the settings width increase after horizontal scaling, preserving fixed fields, row gaps, and checkbox
+/// proportions.
 static void ExpandSettingsControlHorizontally(HWND control, int* x, int* width) {
     HWND frame = SettingsEdit::GetFrame(control);
     HWND parent = GetParent(frame);
@@ -7918,13 +7970,14 @@ static void UpdateApplicationControlWidths() {
     RECT sound = {};
     RECT soundDrop = {};
     RECT test = {};
-    if (!GetWindowRect(GetDlgItem(hSettings, ID_SAVE), &save)
-            || !GetWindowRect(GetDlgItem(hSettings, ID_CANCEL), &cancel)
-            || !GetWindowRect(hAppFontButton, &font)
-            || !GetWindowRect(hAppFontDefaultButton, &defaultFont)
-            || !GetWindowRect(hTimeSignalSoundCombo, &sound)
-            || !GetWindowRect(hTimeSignalTestButton, &test)
-            || SendMessageW(hTimeSignalSoundCombo, CB_GETDROPPEDCONTROLRECT, 0, reinterpret_cast<LPARAM>(&soundDrop)) == 0) {
+    const bool rectanglesUnavailable = !GetWindowRect(GetDlgItem(hSettings, ID_SAVE), &save)
+        || !GetWindowRect(GetDlgItem(hSettings, ID_CANCEL), &cancel)
+        || !GetWindowRect(hAppFontButton, &font)
+        || !GetWindowRect(hAppFontDefaultButton, &defaultFont)
+        || !GetWindowRect(hTimeSignalSoundCombo, &sound)
+        || !GetWindowRect(hTimeSignalTestButton, &test)
+        || SendMessageW(hTimeSignalSoundCombo, CB_GETDROPPEDCONTROLRECT, 0, reinterpret_cast<LPARAM>(&soundDrop)) == 0;
+    if (rectanglesUnavailable) {
         return;
     }
     LONG gap = cancel.left - save.right;
@@ -8088,6 +8141,61 @@ static LRESULT GetSettingsComboControlBrush(HWND window, UINT msg, WPARAM wParam
     return DefSubclassProc(window, msg, wParam, lParam);
 }
 
+/// Draws enabled and disabled selected-item text with identical font metrics and native content bounds.
+/// Keeps the native field background and classic selection colors; leaves frame, arrow, and dropdown drawing intact.
+static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lParam) {
+    DRAWITEMSTRUCT* item = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+    if (item == nullptr || GetSettingsComboBox(window) == window || item->CtlType != ODT_COMBOBOX
+            || (item->itemState & ODS_COMBOBOXEDIT) == 0
+            || item->itemID == static_cast<UINT>(-1)) {
+        return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+    }
+    LRESULT length = SendMessageW(item->hwndItem, CB_GETLBTEXTLEN, item->itemID, 0);
+    if (length == CB_ERR) {
+        return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+    }
+    std::wstring text(static_cast<size_t>(length) + 1, L'\0');
+    SendMessageW(item->hwndItem, CB_GETLBTEXT, item->itemID, reinterpret_cast<LPARAM>(text.data()));
+    int saved = SaveDC(item->hDC);
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
+    if (font != nullptr) {
+        SelectObject(item->hDC, font);
+    }
+    bool disabled = (item->itemState & ODS_DISABLED) != 0;
+    bool themed = !themesDisabled && AreVisualStylesActive();
+    bool selected = !disabled && (item->itemState & ODS_SELECTED) != 0 && !themed;
+    if (selected) {
+        RECT selection = item->rcItem;
+        selection.left += GetSystemMetrics(SM_CXBORDER);
+        selection.right -= GetSystemMetrics(SM_CXBORDER);
+        FillRect(item->hDC, &selection, GetSysColorBrush(COLOR_HIGHLIGHT));
+        SetBkColor(item->hDC, GetSysColor(COLOR_HIGHLIGHT));
+    }
+    int textColor;
+    if (disabled) {
+        textColor = COLOR_GRAYTEXT;
+    } else if (selected) {
+        textColor = COLOR_HIGHLIGHTTEXT;
+    } else {
+        textColor = COLOR_WINDOWTEXT;
+    }
+    SetTextColor(item->hDC, GetSysColor(textColor));
+    SetBkMode(item->hDC, selected ? OPAQUE : TRANSPARENT);
+    RECT content = item->rcItem;
+    DrawTextW(item->hDC, text.data(), static_cast<int>(length), &content,
+        DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+    RestoreDC(item->hDC, saved);
+    if ((item->itemState & ODS_FOCUS) != 0 && (item->itemState & ODS_NOFOCUSRECT) == 0) {
+        RECT focus = item->rcItem;
+        focus.left += GetSystemMetrics(SM_CXBORDER);
+        if (!themed) {
+            focus.right -= GetSystemMetrics(SM_CXBORDER);
+        }
+        DrawFocusRect(item->hDC, &focus);
+    }
+    return TRUE;
+}
+
 /// Keeps the settings default button in step with focus and prevents clicks on covered controls.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
 static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
@@ -8107,6 +8215,8 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         case WM_CTLCOLORSTATIC:
         case WM_CTLCOLOREDIT:
             return GetSettingsComboControlBrush(window, msg, wParam, lParam);
+        case WM_DRAWITEM:
+            return DrawSettingsComboSelection(window, wParam, lParam);
         case CB_ADDSTRING:
         case CB_INSERTSTRING:
             return InsertSettingsComboString(window, msg, wParam, lParam);
@@ -8130,6 +8240,11 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         case WM_THEMECHANGED:
             return HandleSettingsControlMetricsChange(window, msg, wParam, lParam);
         case WM_NCDESTROY:
+            if (window == hSettingsOpenCombo) {
+                hSettingsOpenCombo = nullptr;
+                settingsComboInitialSelection = CB_ERR;
+                settingsComboAccepted = false;
+            }
             RemovePropW(window, SETTINGS_FIELD_LABEL_PROPERTY);
             RemovePropW(window, SETTINGS_COLOR_PREVIEW_PROPERTY);
             RemovePropW(window, SETTINGS_COLOR_BUTTON_PROPERTY);
@@ -8675,13 +8790,19 @@ static INT_PTR HandleSettingsPageNotification(HWND window, LPARAM lParam) {
     return FALSE;
 }
 
-/// Supplies the selected color for a native empty static with the border chosen by the current UI theme.
+/// Supplies the selected color or the native disabled button background for an empty color preview.
 static INT_PTR GetSettingsColorPreviewBrush(HWND preview, HDC dc) {
     HWND button = reinterpret_cast<HWND>(GetPropW(preview, SETTINGS_COLOR_BUTTON_PROPERTY));
     if (button == nullptr) {
         return FALSE;
     }
     COLORREF color = static_cast<COLORREF>(GetWindowLongPtrW(button, GWLP_USERDATA));
+    if (!IsWindowEnabled(button)) {
+        if (DrawSettingsColorPreviewTheme(preview, dc, false)) {
+            return reinterpret_cast<INT_PTR>(GetStockObject(NULL_BRUSH));
+        }
+        color = GetSysColor(COLOR_BTNFACE);
+    }
     SetBkColor(dc, color);
     SetDCBrushColor(dc, color);
     return reinterpret_cast<INT_PTR>(GetStockObject(DC_BRUSH));
@@ -11160,7 +11281,8 @@ static bool HasPendingSettingsChanges() {
 
 /// Reenables Apply when pending changes exist; disabling is reserved for a successful explicit Apply action.
 static void UpdateSettingsApplyButton() {
-    if (hSettings == nullptr || updatingSettingsControls || !IsWindowEnabled(hSettings)) {
+    if (hSettings == nullptr || updatingSettingsControls || hSettingsOpenCombo != nullptr
+            || !IsWindowEnabled(hSettings)) {
         return;
     }
     HWND button = GetDlgItem(hSettings, ID_APPLY);
@@ -11203,6 +11325,7 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
 }
 
 /// Prepares a complete native panel outside the desktop, then moves it into place and hides the old panel in one batch.
+/// Synchronizes the prepared surface with desktop composition before the swap.
 /// Preserves native client dimensions, calendar selection, alarm and identification state; returns false on failure.
 static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration) {
     Widget replacement;
@@ -11252,6 +11375,7 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
     RedrawWindow(replacement.window, nullptr, nullptr,
         RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN | RDW_NOERASE);
     GdiFlush();
+    DwmFlush();
     replacement.config.visible = configuration.visible;
     HDWP positions = BeginDeferWindowPos(2);
     if (positions != nullptr) {
@@ -12977,6 +13101,9 @@ static void RebuildSettingsControls() {
 /// Stops tests, restores uncommitted previews, remembers the form position, tab and widget, and destroys settings
 /// controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow() {
+    hSettingsOpenCombo = nullptr;
+    settingsComboInitialSelection = CB_ERR;
+    settingsComboAccepted = false;
     timeSignalVolumeDragging = false;
     settingsTimeSignalTestActive = false;
     StopTimeSignalVolumePreview();
@@ -12988,7 +13115,8 @@ static void CloseSettingsWindow() {
             settingsTab = std::clamp(TabCtrl_GetCurSel(hTabs), 0, SETTINGS_TAB_COUNT - 1);
         }
         settingsWidgetId = -1;
-        if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+        if (selectedDraftIndex >= 0
+                && selectedDraftIndex < static_cast<int>(settingsDraft.size())
                 && FindWidgetById(settingsDraft[selectedDraftIndex].id) != nullptr) {
             settingsWidgetId = settingsDraft[selectedDraftIndex].id;
         }
@@ -14053,6 +14181,9 @@ static void RequestCloseSettingsWindow() {
     if (hSettings == nullptr || !IsWindowEnabled(hSettings)) {
         return;
     }
+    if (hSettingsOpenCombo != nullptr) {
+        SendMessageW(hSettingsOpenCombo, CB_SHOWDROPDOWN, FALSE, 0);
+    }
     UpdateSettingsApplyButton();
     HWND applyButton = GetDlgItem(hSettings, ID_APPLY);
     if (warnOnUnsavedChanges && IsWindowEnabled(applyButton)) {
@@ -14102,6 +14233,37 @@ static void DrawIdentificationOutline(HWND window, bool ellipse) {
     ReleaseDC(window, dc);
 }
 
+/// Prepares an opaque native clock face in a compatible bitmap before erasing the visible child background.
+/// Keeps the native paint path and falls back to the original background brush if buffering is unavailable.
+static LRESULT ErasePanelAnalogBackground(HWND window, const Widget* widget, HDC target) {
+    RECT client = {};
+    GetClientRect(window, &client);
+    COLORREF color = PanelBackgroundColor(widget);
+    HDC memory = CreateCompatibleDC(target);
+    HBITMAP bitmap = CreateCompatibleBitmap(target, client.right, client.bottom);
+    bool rendered = false;
+    if (memory != nullptr && bitmap != nullptr) {
+        HGDIOBJ previous = SelectObject(memory, bitmap);
+        if (previous != nullptr && previous != HGDI_ERROR) {
+            rendered = RenderAnalogClock(window, memory, LayeredOpaquePixel(color))
+                && BitBlt(target, 0, 0, client.right, client.bottom, memory, 0, 0, SRCCOPY) != FALSE;
+            SelectObject(memory, previous);
+        }
+    }
+    if (bitmap != nullptr) {
+        DeleteObject(bitmap);
+    }
+    if (memory != nullptr) {
+        DeleteDC(memory);
+    }
+    if (!rendered) {
+        HBRUSH background = CreateSolidBrush(color);
+        FillRect(target, &client, background);
+        DeleteObject(background);
+    }
+    return 1;
+}
+
 /// Handles an additional clock's size menu, panel dragging, background painting, and theme updates without enabling
 /// a second hand.
 static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
@@ -14113,12 +14275,7 @@ static LRESULT CALLBACK AdditionalAnalogChildProc(HWND window, UINT msg, WPARAM 
         RemoveWindowSubclass(window, AdditionalAnalogChildProc, subclassId);
     } else if (widget != nullptr && index >= 0 && index < ADDITIONAL_CLOCK_COUNT) {
         if (msg == WM_ERASEBKGND) {
-            RECT client = {};
-            GetClientRect(window, &client);
-            HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
-            FillRect(reinterpret_cast<HDC>(wParam), &client, background);
-            DeleteObject(background);
-            return 1;
+            return ErasePanelAnalogBackground(window, widget, reinterpret_cast<HDC>(wParam));
         }
         if (msg == WM_RBUTTONUP || msg == WM_CONTEXTMENU) {
             POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
@@ -14177,12 +14334,7 @@ static LRESULT CALLBACK AnalogChildProc(HWND window, UINT msg, WPARAM wParam, LP
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(parent, GWLP_USERDATA));
     if (widget != nullptr) {
         if (msg == WM_ERASEBKGND && widget->config.type == WIDGET_PANEL) {
-            RECT client = {};
-            GetClientRect(window, &client);
-            HBRUSH background = CreateSolidBrush(PanelBackgroundColor(widget));
-            FillRect(reinterpret_cast<HDC>(wParam), &client, background);
-            DeleteObject(background);
-            return 1;
+            return ErasePanelAnalogBackground(window, widget, reinterpret_cast<HDC>(wParam));
         }
         if (msg == WM_LBUTTONDOWN && IsPanelAnalogDoubleClick(widget, lParam)) {
             msg = WM_LBUTTONDBLCLK;
@@ -14213,6 +14365,37 @@ static LRESULT CALLBACK AnalogChildProc(HWND window, UINT msg, WPARAM wParam, LP
         }
     }
     return DefWindowProcW(window, msg, wParam, lParam);
+}
+
+/// Prepares the complete native calendar in a compatible bitmap for background erasure and client painting.
+static void PaintPanelCalendarBuffered(HWND window, const Widget* widget, HDC target) {
+    if (target == nullptr) {
+        return;
+    }
+    RECT client = {};
+    GetClientRect(window, &client);
+    HDC memory = CreateCompatibleDC(target);
+    HBITMAP bitmap = CreateCompatibleBitmap(target, client.right, client.bottom);
+    HGDIOBJ previous = nullptr;
+    HDC drawing = target;
+    if (memory != nullptr && bitmap != nullptr) {
+        previous = SelectObject(memory, bitmap);
+        if (previous != nullptr && previous != HGDI_ERROR) {
+            drawing = memory;
+        }
+    }
+    CallWindowProcW(widget->calendarProc, window, WM_ERASEBKGND, reinterpret_cast<WPARAM>(drawing), 0);
+    CallWindowProcW(widget->calendarProc, window, WM_PRINTCLIENT, reinterpret_cast<WPARAM>(drawing), PRF_CLIENT);
+    if (memory != nullptr && previous != nullptr && previous != HGDI_ERROR) {
+        BitBlt(target, 0, 0, client.right, client.bottom, memory, 0, 0, SRCCOPY);
+        SelectObject(memory, previous);
+    }
+    if (bitmap != nullptr) {
+        DeleteObject(bitmap);
+    }
+    if (memory != nullptr) {
+        DeleteDC(memory);
+    }
 }
 
 /// Preserves native calendar navigation while distinguishing title clicks from widget drags.
@@ -14283,6 +14466,19 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, 
         }
         if (widget->calendarProc != nullptr) {
             CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
+            if (widget->config.type == WIDGET_PANEL) {
+                if (msg == WM_ERASEBKGND) {
+                    PaintPanelCalendarBuffered(window, widget, reinterpret_cast<HDC>(wParam));
+                    return 1;
+                }
+                if (msg == WM_PAINT && wParam == 0) {
+                    PAINTSTRUCT paint = {};
+                    HDC target = BeginPaint(window, &paint);
+                    PaintPanelCalendarBuffered(window, widget, target);
+                    EndPaint(window, &paint);
+                    return 0;
+                }
+            }
             LRESULT result = CallWindowProcW(widget->calendarProc, window, msg, wParam, lParam);
             if ((msg == WM_THEMECHANGED || msg == WM_SETTINGCHANGE) && widget->calendarFont != nullptr) {
                 SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(widget->calendarFont), TRUE);
@@ -14389,24 +14585,65 @@ static LRESULT DrawWidgetItem(HWND window, Widget* widget, WPARAM wParam, LPARAM
     return DefWindowProcW(window, WM_DRAWITEM, wParam, lParam);
 }
 
+/// Defers dropdown navigation until the list closes, restores cancelled selections, and ignores unchanged choices.
+/// Leaves ordinary keyboard selection changes in closed combos on their existing notification path.
+static bool HandleSettingsComboNotification(HWND control, int* notification) {
+    if (control == nullptr) {
+        return false;
+    }
+    HWND parent = GetParent(control);
+    if (GetSettingsComboBox(parent) == control) {
+        control = parent;
+    }
+    wchar_t className[32] = {};
+    GetClassNameW(control, className, ARRAYSIZE(className));
+    if (_wcsicmp(className, WC_COMBOBOXW) != 0 && _wcsicmp(className, WC_COMBOBOXEXW) != 0) {
+        return false;
+    }
+    if (*notification == CBN_DROPDOWN) {
+        hSettingsOpenCombo = control;
+        settingsComboInitialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
+        settingsComboAccepted = false;
+        UpdateComboBoxDropDownWidth(control);
+        return true;
+    }
+    if (control != hSettingsOpenCombo) {
+        return false;
+    }
+    if (*notification == CBN_SELENDOK) {
+        settingsComboAccepted = true;
+        return true;
+    }
+    if (*notification == CBN_SELENDCANCEL) {
+        settingsComboAccepted = false;
+        return true;
+    }
+    if (*notification == CBN_SELCHANGE) {
+        return true;
+    }
+    if (*notification == CBN_CLOSEUP) {
+        bool changed = settingsComboAccepted
+            && SendMessageW(control, CB_GETCURSEL, 0, 0) != settingsComboInitialSelection;
+        if (!settingsComboAccepted) {
+            SetComboSelection(control, settingsComboInitialSelection);
+        }
+        hSettingsOpenCombo = nullptr;
+        settingsComboInitialSelection = CB_ERR;
+        settingsComboAccepted = false;
+        *notification = CBN_SELCHANGE;
+        return !changed;
+    }
+    return false;
+}
+
 /// Dispatches settings, information-window, panel-link, and controller commands to their existing actions.
 /// Preserves native handling for commands that do not belong to these windows.
 static LRESULT HandleWindowCommand(HWND window, Widget* widget, WPARAM wParam, LPARAM lParam) {
     int id = LOWORD(wParam);
     int notification = HIWORD(wParam);
     if (window == hSettings) {
-        if (notification == CBN_DROPDOWN) {
-            HWND control = reinterpret_cast<HWND>(lParam);
-            HWND parent = GetParent(control);
-            if (GetSettingsComboBox(parent) == control) {
-                control = parent;
-            }
-            wchar_t className[32] = {};
-            GetClassNameW(control, className, ARRAYSIZE(className));
-            if (_wcsicmp(className, WC_COMBOBOXW) == 0 || _wcsicmp(className, WC_COMBOBOXEXW) == 0) {
-                UpdateComboBoxDropDownWidth(control);
-                return 0;
-            }
+        if (HandleSettingsComboNotification(reinterpret_cast<HWND>(lParam), &notification)) {
+            return 0;
         }
         HandleSettingsCommand(id, notification);
         UpdateSettingsApplyButton();
@@ -14670,29 +14907,31 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             }
             break;
         case WM_PAINT:
-            if (widget != nullptr && widget->config.type == WIDGET_CALENDAR) {
-                PAINTSTRUCT paint = {};
-                HDC dc = BeginPaint(window, &paint);
-                RECT frameRect = {};
-                GetClientRect(window, &frameRect);
-                FillRect(dc, &frameRect, GetSysColorBrush(COLOR_WINDOW));
-                EndPaint(window, &paint);
-                return 0;
-            }
-            if (widget != nullptr && (widget->config.type == WIDGET_DIGITAL && !widget->config.transparentBackground
-                || widget->config.type == WIDGET_FULLSCREEN)) {
-                PAINTSTRUCT paint = {};
-                HDC dc = BeginPaint(window, &paint);
-                PaintWidgetBuffered(widget, window, dc, false);
-                EndPaint(window, &paint);
-                return 0;
-            }
-            if (widget != nullptr && widget->config.type == WIDGET_PANEL) {
-                PAINTSTRUCT paint = {};
-                HDC dc = BeginPaint(window, &paint);
-                PaintWidgetBuffered(widget, window, dc, true);
-                EndPaint(window, &paint);
-                return 0;
+            if (widget != nullptr) {
+                if (widget->config.type == WIDGET_CALENDAR) {
+                    PAINTSTRUCT paint = {};
+                    HDC dc = BeginPaint(window, &paint);
+                    RECT frameRect = {};
+                    GetClientRect(window, &frameRect);
+                    FillRect(dc, &frameRect, GetSysColorBrush(COLOR_WINDOW));
+                    EndPaint(window, &paint);
+                    return 0;
+                }
+                if (widget->config.type == WIDGET_DIGITAL && !widget->config.transparentBackground
+                        || widget->config.type == WIDGET_FULLSCREEN) {
+                    PAINTSTRUCT paint = {};
+                    HDC dc = BeginPaint(window, &paint);
+                    PaintWidgetBuffered(widget, window, dc, false);
+                    EndPaint(window, &paint);
+                    return 0;
+                }
+                if (widget->config.type == WIDGET_PANEL) {
+                    PAINTSTRUCT paint = {};
+                    HDC dc = BeginPaint(window, &paint);
+                    PaintWidgetBuffered(widget, window, dc, true);
+                    EndPaint(window, &paint);
+                    return 0;
+                }
             }
             break;
         case WM_HSCROLL:
@@ -14744,36 +14983,36 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
         case WM_COMMAND:
             return HandleWindowCommand(window, widget, wParam, lParam);
         case WM_NOTIFY:
-            if (window == hAbout
-                    && hAboutTooltip != nullptr
-                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == hAboutTooltip
-                    && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
-                NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
-                information->lpszText = const_cast<wchar_t*>(ABOUT_VISIT_TOOLTIP[appLanguage]);
-                return 0;
+            if (window == hAbout) {
+                if (hAboutTooltip != nullptr
+                        && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == hAboutTooltip
+                        && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
+                    NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
+                    information->lpszText = const_cast<wchar_t*>(ABOUT_VISIT_TOOLTIP[appLanguage]);
+                    return 0;
+                }
+                if (reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_INFO_LINK
+                        && (reinterpret_cast<NMHDR*>(lParam)->code == NM_CLICK
+                            || reinterpret_cast<NMHDR*>(lParam)->code == NM_RETURN)) {
+                    ShellExecuteW(hAbout, L"open", ABOUT_WEBSITE_URL, nullptr, nullptr, SW_SHOWNORMAL);
+                    return 0;
+                }
             }
-            if (window == hAbout
-                    && reinterpret_cast<NMHDR*>(lParam)->idFrom == ID_INFO_LINK
-                    && (reinterpret_cast<NMHDR*>(lParam)->code == NM_CLICK
-                        || reinterpret_cast<NMHDR*>(lParam)->code == NM_RETURN)) {
-                ShellExecuteW(hAbout, L"open", ABOUT_WEBSITE_URL, nullptr, nullptr, SW_SHOWNORMAL);
-                return 0;
-            }
-            if (widget != nullptr
-                    && widget->panelDateTooltip != nullptr
-                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->panelDateTooltip
-                    && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
-                NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
-                information->lpszText = const_cast<wchar_t*>(PANEL_TODAY_TOOLTIP[widget->config.language]);
-                return 0;
-            }
-            if (widget != nullptr
-                    && widget->calendarChild != nullptr
-                    && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->calendarChild
-                    && reinterpret_cast<NMHDR*>(lParam)->code == MCN_SELECT) {
-                NMSELCHANGE* selection = reinterpret_cast<NMSELCHANGE*>(lParam);
-                CopyWidgetDate(widget, selection->stSelStart);
-                return 0;
+            if (widget != nullptr) {
+                if (widget->panelDateTooltip != nullptr
+                        && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->panelDateTooltip
+                        && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
+                    NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
+                    information->lpszText = const_cast<wchar_t*>(PANEL_TODAY_TOOLTIP[widget->config.language]);
+                    return 0;
+                }
+                if (widget->calendarChild != nullptr
+                        && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->calendarChild
+                        && reinterpret_cast<NMHDR*>(lParam)->code == MCN_SELECT) {
+                    NMSELCHANGE* selection = reinterpret_cast<NMSELCHANGE*>(lParam);
+                    CopyWidgetDate(widget, selection->stSelStart);
+                    return 0;
+                }
             }
             if (window == hSettings
                     && hTabs != nullptr

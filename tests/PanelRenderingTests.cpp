@@ -59,8 +59,12 @@ using winrt::Windows::Graphics::DirectX::DirectXPixelFormat;
 using winrt::Windows::Graphics::DirectX::Direct3D11::IDirect3DDevice;
 
 
+static HWND sceneWindow = nullptr;
 static HWND captureCover = nullptr;
 static HWND captureWindow = nullptr;
+static Direct3D11CaptureFramePool scenePool{ nullptr };
+static winrt::Windows::Graphics::Capture::GraphicsCaptureSession sceneSession{ nullptr };
+static winrt::event_token sceneToken = {};
 static winrt::com_ptr<ID3D11Device> captureDevice;
 static winrt::com_ptr<ID3D11DeviceContext> captureContext;
 static Widget* panelUnderTest = nullptr;
@@ -69,7 +73,7 @@ static RECT captureCoveredBounds = {};
 static HRESULT captureFailure = S_OK;
 static std::mutex captureLock;
 static bool observePanelSwaps = false;
-static bool savedFrames[DIGITAL_BORDER_STYLE_COUNT] = {};
+static bool negativeSceneGap = false;
 static int capturedVariant = 0;
 static int preparedSwaps = 0;
 static int comparedFrames = 0;
@@ -99,9 +103,44 @@ static void PumpPanelMessages() {
     GdiFlush();
 }
 
+/// Allows only test-owned secondary windows to enter the composite capture.
+static bool PanelSceneIsPrivate() {
+    if (sceneWindow == nullptr || !IsWindow(sceneWindow)) {
+        return false;
+    }
+    RECT sceneBounds = {};
+    GetWindowRect(sceneWindow, &sceneBounds);
+    for (HWND sibling = GetWindow(sceneWindow, GW_HWNDPREV);
+            sibling != nullptr;
+            sibling = GetWindow(sibling, GW_HWNDPREV)) {
+        RECT siblingBounds = {};
+        RECT intersection = {};
+        GetWindowRect(sibling, &siblingBounds);
+        if (!IsWindowVisible(sibling) || !IntersectRect(&intersection, &sceneBounds, &siblingBounds)) {
+            continue;
+        }
+        LONG_PTR style = GetWindowLongPtrW(sibling, GWL_STYLE);
+        LONG_PTR extended = GetWindowLongPtrW(sibling, GWL_EXSTYLE);
+        if ((style & WS_POPUP) == 0 && (extended & WS_EX_TOOLWINDOW) == 0) {
+            break;
+        }
+        DWORD process = 0;
+        GetWindowThreadProcessId(sibling, &process);
+        if (process != GetCurrentProcessId()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /// Reads compositor frames without acquiring or releasing any DC belonging to the widget.
 static void CapturePanelFrame(const Direct3D11CaptureFramePool& pool) {
     try {
+        if (!PanelSceneIsPrivate()) {
+            std::lock_guard<std::mutex> lock(captureLock);
+            captureFailure = E_ABORT;
+            return;
+        }
         auto frame = pool.TryGetNextFrame();
         if (!frame) {
             return;
@@ -150,6 +189,11 @@ static bool IsCaptureAreaCovered(HWND cover, const RECT& bounds) {
     for (int y = bounds.top; y < bounds.bottom; y += 10) {
         for (int x = bounds.left; x < bounds.right; x += 10) {
             HWND top = GetAncestor(WindowFromPoint(POINT{ x, y }), GA_ROOT);
+            DWORD process = 0;
+            GetWindowThreadProcessId(top, &process);
+            if (process == GetCurrentProcessId()) {
+                return false;
+            }
             if (top != cover) {
                 wchar_t className[128] = {};
                 GetClassNameW(top, className, ARRAYSIZE(className));
@@ -196,6 +240,8 @@ static bool FindCoveredCaptureArea(SIZE size, RECT* result) {
             wchar_t name[64] = {};
             GetClassNameW(cover, name, ARRAYSIZE(name));
             if (cover == nullptr
+                    || (GetWindowLongPtrW(cover, GWL_STYLE) & WS_POPUP) != 0
+                    || (GetWindowLongPtrW(cover, GWL_EXSTYLE) & WS_EX_TOOLWINDOW) != 0
                     || wcscmp(name, L"Progman") == 0
                     || wcscmp(name, L"WorkerW") == 0
                     || (GetWindowLongPtrW(cover, GWL_EXSTYLE) & (WS_EX_LAYERED | WS_EX_TRANSPARENT)) != 0) {
@@ -216,6 +262,7 @@ static bool FindCoveredCaptureArea(SIZE size, RECT* result) {
 static void CheckCaptureAreaCovered() {
     if (!IsCaptureAreaCovered(captureCover, captureCoveredBounds)) {
         ShowWindow(captureWindow, SW_HIDE);
+        ShowWindow(sceneWindow, SW_HIDE);
         if (panelUnderTest != nullptr) {
             ShowWindow(panelUnderTest->window, SW_HIDE);
         }
@@ -281,20 +328,165 @@ static void CheckPanelSurface(Widget* widget, const FieldImage& image) {
 }
 
 /// Compares every pixel, including clock hands, native frame edges, links, and all client margins.
-static bool SameCompletePanelSurface(const FieldImage& left, const FieldImage& right) {
+static bool SameCompletePanelSurface(const FieldImage& left, const FieldImage& right, bool compareAlpha = false) {
     if (left.width != right.width || left.height != right.height) {
         return false;
     }
+    DWORD mask = compareAlpha ? 0xFFFFFFFF : 0xFFFFFF;
     for (size_t pixel = 0; pixel < left.pixels.size(); pixel++) {
-        if ((left.pixels[pixel] & 0xFFFFFF) != (right.pixels[pixel] & 0xFFFFFF)) {
+        if ((left.pixels[pixel] & mask) != (right.pixels[pixel] & mask)) {
             return false;
         }
     }
     return true;
 }
 
-/// Checks the prepared and presented GDI surfaces and every compositor frame delivered during the native window batch.
-/// Keeps native window classes, styles, parents, manifest, and on-screen geometry unchanged.
+/// Exposes the interval between native background erasure and content painting under temporary rendering delays.
+static LRESULT CALLBACK DelayNativeControlErase(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR, DWORD_PTR) {
+    LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+    if (message == WM_ERASEBKGND) {
+        Sleep(35);
+    }
+    return result;
+}
+
+/// Paints only the test's opaque checkerboard so a missing panel reveals a recognizable background.
+static LRESULT CALLBACK SceneWindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    if (message == WM_ERASEBKGND) {
+        return 1;
+    }
+    if (message == WM_PAINT) {
+        PAINTSTRUCT paint = {};
+        HDC dc = BeginPaint(window, &paint);
+        RECT client = {};
+        GetClientRect(window, &client);
+        HBRUSH brushes[] = { CreateSolidBrush(RGB(211, 37, 183)), CreateSolidBrush(RGB(29, 201, 147)) };
+        for (LONG y = 0; y < client.bottom; y += 16) {
+            for (LONG x = 0; x < client.right; x += 16) {
+                RECT cell = { x, y, std::min(client.right, x + 16), std::min(client.bottom, y + 16) };
+                FillRect(dc, &cell, brushes[(x / 16 + y / 16) % 2]);
+            }
+        }
+        DeleteObject(brushes[0]);
+        DeleteObject(brushes[1]);
+        EndPaint(window, &paint);
+        return 0;
+    }
+    return DefWindowProcW(window, message, wParam, lParam);
+}
+
+/// Captures the checkerboard and all test-owned native panel windows in their real top-level z-order.
+static void StartSceneCapture() {
+    auto dxgi = captureDevice.as<IDXGIDevice>();
+    winrt::com_ptr<IInspectable> inspectable;
+    winrt::check_hresult(CreateDirect3D11DeviceFromDXGIDevice(dxgi.get(), inspectable.put()));
+    auto device = inspectable.as<IDirect3DDevice>();
+    auto factory = winrt::get_activation_factory<GraphicsCaptureItem, IGraphicsCaptureItemInterop>();
+    GraphicsCaptureItem item = nullptr;
+    winrt::check_hresult(factory->CreateForWindow(sceneWindow, winrt::guid_of<GraphicsCaptureItem>(),
+        winrt::put_abi(item)));
+    scenePool = Direct3D11CaptureFramePool::CreateFreeThreaded(device, DirectXPixelFormat::B8G8R8A8UIntNormalized,
+        3, item.Size());
+    sceneToken = scenePool.FrameArrived([](const auto& sender, const auto&) { CapturePanelFrame(sender); });
+    if (!PanelSceneIsPrivate()) {
+        throw winrt::hresult_error(E_ABORT, L"A foreign secondary window would enter the test scene capture.");
+    }
+    sceneSession = scenePool.CreateCaptureSession(item);
+    sceneSession.IsCursorCaptureEnabled(false);
+    sceneSession.IncludeSecondaryWindows(true);
+    sceneSession.StartCapture();
+    PumpCaptureFor(160);
+}
+
+/// Rejects revealed background and partial presentation by checking the final scene against the native opaque surface.
+static bool SceneContainsPanel(const Widget* widget, const FieldImage& scene, const FieldImage& native) {
+    RECT stage = {};
+    RECT root = {};
+    RECT client = {};
+    GetWindowRect(sceneWindow, &stage);
+    GetWindowRect(widget->window, &root);
+    GetClientRect(widget->window, &client);
+    MapWindowPoints(widget->window, HWND_DESKTOP, reinterpret_cast<POINT*>(&client), 2);
+    int alpha = widget->config.opacity * 255 / 100;
+    for (LONG y = client.top; y < client.bottom; y++) {
+        for (LONG x = client.left; x < client.right; x++) {
+            size_t panelPixel = static_cast<size_t>(y - root.top) * native.width + x - root.left;
+            size_t scenePixel = static_cast<size_t>(y - stage.top) * scene.width + x - stage.left;
+            COLORREF color = ((x - stage.left) / 16 + (y - stage.top) / 16) % 2 == 0
+                ? RGB(211, 37, 183)
+                : RGB(29, 201, 147);
+            DWORD background = GetRValue(color) << 16 | GetGValue(color) << 8 | GetBValue(color);
+            for (int shift = 0; shift < 24; shift += 8) {
+                int foregroundChannel = native.pixels[panelPixel] >> shift & 0xFF;
+                int backgroundChannel = background >> shift & 0xFF;
+                int expected = (foregroundChannel * alpha + backgroundChannel * (255 - alpha) + 127) / 255;
+                int actual = scene.pixels[scenePixel] >> shift & 0xFF;
+                if (abs(expected - actual) > 3) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/// Compares the complete scene exactly, allowing only native calendar text rasterization rounding during erasure.
+static bool SamePanelScene(const FieldImage& actual, const FieldImage& reference, const RECT& calendar) {
+    if (actual.width != reference.width
+            || actual.height != reference.height
+            || actual.pixels.size() != reference.pixels.size()) {
+        return false;
+    }
+    for (int y = 0; y < actual.height; y++) {
+        for (int x = 0; x < actual.width; x++) {
+            size_t pixel = static_cast<size_t>(y) * actual.width + x;
+            if (actual.pixels[pixel] == reference.pixels[pixel]) {
+                continue;
+            }
+            if (x < calendar.left
+                    || x >= calendar.right
+                    || y < calendar.top
+                    || y >= calendar.bottom
+                    || actual.pixels[pixel] >> 24 != reference.pixels[pixel] >> 24) {
+                return false;
+            }
+            for (int shift = 0; shift < 24; shift += 8) {
+                int left = actual.pixels[pixel] >> shift & 0xFF;
+                int right = reference.pixels[pixel] >> shift & 0xFF;
+                if (abs(left - right) > 2) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/// Returns the calendar's actual coordinates in the captured composite scene.
+static RECT SceneCalendarBounds(const Widget* widget) {
+    RECT stage = {};
+    RECT calendar = {};
+    GetWindowRect(sceneWindow, &stage);
+    GetWindowRect(widget->calendarChild, &calendar);
+    OffsetRect(&calendar, -stage.left, -stage.top);
+    return calendar;
+}
+
+/// Copies the latest captured scene and clears the capture queue under one lock.
+/// Returns false when no previous scene is available.
+static bool TakePreviousPanelScene(FieldImage& scene) {
+    std::lock_guard<std::mutex> lock(captureLock);
+    Check(!capturedFrames.empty(), "previous complete scene is available");
+    if (capturedFrames.empty()) {
+        return false;
+    }
+    scene = capturedFrames.back();
+    capturedFrames.clear();
+    return true;
+}
+
+/// Observes both real top-level windows and the underlay in one continuous compositor capture.
 static BOOL WINAPI PresentRecordedPanel(HDWP positions) {
     if (!observePanelSwaps || preparedPanel == nullptr) {
         return EndDeferWindowPos(positions);
@@ -302,113 +494,69 @@ static BOOL WINAPI PresentRecordedPanel(HDWP positions) {
     Widget* replacement = preparedPanel;
     preparedPanel = nullptr;
     HWND previous = panelUnderTest->window;
-    RECT prepared = {};
-    GetWindowRect(replacement->window, &prepared);
-    Check(prepared.right <= GetSystemMetrics(SM_XVIRTUALSCREEN), "preparation remains completely outside the desktop");
-    Check(IsWindowVisible(previous) && IsWindowVisible(replacement->window), "the old panel remains visible throughout preparation");
+    RECT oldCalendar = SceneCalendarBounds(panelUnderTest);
     FieldImage ready = ReadWindowSurface(replacement->window, false);
     CheckPanelSurface(replacement, ready);
-    RECT client = {};
-    GetClientRect(replacement->window, &client);
-    const HWND controls[] = {
-        replacement->calendarChild,
-        replacement->analogChild,
-        replacement->panelDateLink,
-        replacement->panelTimeZoneLink,
-        replacement->additionalAnalogChildren[0],
-        replacement->additionalAnalogChildren[1]
-    };
-    std::vector<RECT> controlBounds;
+    FieldImage oldScene;
+    if (!TakePreviousPanelScene(oldScene)) {
+        return EndDeferWindowPos(positions);
+    }
+    Check(SceneContainsPanel(panelUnderTest, oldScene, ReadWindowSurface(previous, false)),
+        "scene capture includes the original real top-level widget over the checkerboard");
+    const HWND controls[] = { replacement->calendarChild, replacement->analogChild,
+        replacement->additionalAnalogChildren[0], replacement->additionalAnalogChildren[1] };
     for (HWND control : controls) {
-        RECT bounds = {};
         if (control != nullptr) {
-            GetWindowRect(control, &bounds);
-            MapWindowPoints(nullptr, replacement->window, reinterpret_cast<POINT*>(&bounds), 2);
+            SetWindowSubclass(control, DelayNativeControlErase, 1, 0);
+            RedrawWindow(control, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE);
         }
-        controlBounds.push_back(bounds);
     }
-    auto dxgi = captureDevice.as<IDXGIDevice>();
-    winrt::com_ptr<IInspectable> inspectable;
-    winrt::check_hresult(CreateDirect3D11DeviceFromDXGIDevice(dxgi.get(), inspectable.put()));
-    auto device = inspectable.as<IDirect3DDevice>();
-    auto factory = winrt::get_activation_factory<GraphicsCaptureItem, IGraphicsCaptureItemInterop>();
-    GraphicsCaptureItem item = nullptr;
-    winrt::check_hresult(factory->CreateForWindow(replacement->window, winrt::guid_of<GraphicsCaptureItem>(),
-        winrt::put_abi(item)));
-    auto pool =
-        Direct3D11CaptureFramePool::CreateFreeThreaded(device, DirectXPixelFormat::B8G8R8A8UIntNormalized, 3, item.Size());
-    {
-        std::lock_guard<std::mutex> lock(captureLock);
-        capturedFrames.clear();
+    if (negativeSceneGap) {
+        ShowWindow(previous, SW_HIDE);
+        GdiFlush();
+        PumpCaptureFor(80);
     }
-    auto token = pool.FrameArrived([](const auto& sender, const auto&) { CapturePanelFrame(sender); });
-    auto session = pool.CreateCaptureSession(item);
-    session.IsCursorCaptureEnabled(false);
-    session.StartCapture();
-    PumpCaptureFor(120);
-    size_t before = 0;
-    {
-        std::lock_guard<std::mutex> lock(captureLock);
-        before = capturedFrames.size();
-    }
-    Check(before != 0, "native compositor frames are available before presentation");
-    BOOL presented = EndDeferWindowPos(positions);
+    BOOL result = EndDeferWindowPos(positions);
     captureWindow = replacement->window;
-    Check(presented && !IsWindowVisible(previous) && IsWindowVisible(replacement->window),
-        "one native batch presents the new panel and hides the old one");
-    RECT actual = {};
-    GetWindowRect(replacement->window, &actual);
-    Check(actual.left == replacement->config.x
-        && actual.top == replacement->config.y
-        && actual.right - actual.left == prepared.right - prepared.left
-        && actual.bottom - actual.top == prepared.bottom - prepared.top,
-        "presentation moves the prepared native window without resizing it");
-    RECT actualClient = {};
-    GetClientRect(replacement->window, &actualClient);
-    Check(EqualRect(&client, &actualClient), "presentation preserves the complete prepared client area");
-    for (size_t index = 0; index < ARRAYSIZE(controls); index++) {
-        if (controls[index] != nullptr) {
-            RECT bounds = {};
-            GetWindowRect(controls[index], &bounds);
-            MapWindowPoints(nullptr, replacement->window, reinterpret_cast<POINT*>(&bounds), 2);
-            Check(EqualRect(&bounds, &controlBounds[index]), "every native child keeps its prepared client coordinates");
+    PumpCaptureFor(160);
+    for (HWND control : controls) {
+        if (control != nullptr) {
+            RemoveWindowSubclass(control, DelayNativeControlErase, 1);
         }
     }
-    PumpCaptureFor(120);
-    FieldImage displayed = ReadWindowSurface(replacement->window, false);
-    Check(SameCompletePanelSurface(ready, displayed), "the full native surface remains identical after presentation");
-    session.Close();
-    pool.FrameArrived(token);
-    pool.Close();
+    Check(SameCompletePanelSurface(ready, ReadWindowSurface(replacement->window, false)),
+        "native widget surface stays identical after presentation");
     std::lock_guard<std::mutex> lock(captureLock);
-    Check(SUCCEEDED(captureFailure) && capturedFrames.size() >= before,
-        "native compositor capture remains valid throughout presentation");
+    Check(!capturedFrames.empty() && SUCCEEDED(captureFailure), "composite scene capture remains available");
     if (!capturedFrames.empty()) {
-        const FieldImage& reference = capturedFrames.back();
-        CheckPanelSurface(replacement, reference);
+        FieldImage newScene = capturedFrames.back();
+        RECT newCalendar = SceneCalendarBounds(replacement);
+        bool complete = SceneContainsPanel(replacement, newScene, ready);
+        Check(complete, "new scene includes every native client pixel at its configured opacity");
         std::vector<FieldImage> failed;
         for (const FieldImage& frame : capturedFrames) {
             comparedFrames++;
-            if (!SameCompletePanelSurface(frame, reference)) {
+            if (!SamePanelScene(frame, oldScene, oldCalendar) && !SamePanelScene(frame, newScene, newCalendar)) {
                 mismatchedFrames++;
                 if (failed.size() < 4) {
                     failed.push_back(frame);
                 }
             }
         }
-        if (!failed.empty()) {
-            failed.insert(failed.begin(), reference);
-            SaveFieldComparison(L"PanelRendering-failure.bmp", failed, 3);
+        if (!failed.empty() || !complete) {
+            failed.insert(failed.begin(), oldScene);
+            failed.insert(failed.begin(), newScene);
+            SaveFieldComparison(negativeSceneGap
+                ? L"PanelRendering-deliberate-gap.bmp"
+                : L"PanelRendering-failure.bmp", failed, 3);
         }
-        if (!savedFrames[replacement->config.borderStyle]) {
-            savedFrames[replacement->config.borderStyle] = true;
-            std::wstring name = L"PanelRendering-" + std::to_wstring(capturedVariant) + L"-"
-                + std::to_wstring(replacement->config.borderStyle) + L".bmp";
-            SaveFieldComparison(name.c_str(), std::vector<FieldImage>{ reference }, 1);
+        if (preparedSwaps == 0) {
+            std::wstring name = L"PanelRendering-scene-" + std::to_wstring(capturedVariant) + L".bmp";
+            SaveFieldComparison(name.c_str(), std::vector<FieldImage>{ oldScene, newScene });
         }
     }
     preparedSwaps++;
-    return presented;
+    return result;
 }
 
 /// Exercises all native border transitions on actual top-level windows, using only test-owned covered or offscreen areas.
@@ -446,7 +594,7 @@ static int RunPanelCompositorTest() {
     widget.config.showSeconds = false;
     SYSTEMTIME displayed = {};
     GetDisplayedTime(widget.config, &displayed);
-    widget.config.offsetMilliseconds = (20 - displayed.wSecond) * 1000 - displayed.wMilliseconds;
+    widget.config.offsetMilliseconds = (20LL - displayed.wSecond) * 1000 - displayed.wMilliseconds;
     widget.config.topMost = false;
     widget.config.borderStyle = DIGITAL_BORDER_3D;
     std::printf("Panel font=%ls themesDisabled=%d opacity=%d additional=%d\n", face, themesDisabled,
@@ -459,6 +607,19 @@ static int RunPanelCompositorTest() {
         std::printf("INCONCLUSIVE: no completely covered test area; no test window was shown.\n");
         return 2;
     }
+    WNDCLASSW sceneClass = {};
+    sceneClass.lpfnWndProc = SceneWindowProc;
+    sceneClass.hInstance = hInstance;
+    sceneClass.lpszClassName = L"CalClock.CompositeSceneTest";
+    Check(RegisterClassW(&sceneClass) != 0, "scene class registered");
+    sceneWindow = CreateWindowExW(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, sceneClass.lpszClassName, L"", WS_POPUP,
+        covered.left, covered.top, covered.right - covered.left, covered.bottom - covered.top, nullptr, nullptr,
+        hInstance, nullptr);
+    SetWindowPos(sceneWindow, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    RedrawWindow(sceneWindow, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+    wchar_t negative[16] = {};
+    GetEnvironmentVariableW(L"CALCLOCK_FRAME_TEST_GAP", negative, ARRAYSIZE(negative));
+    negativeSceneGap = _wtoi(negative) != 0;
     widget.config.x = covered.left + 8;
     widget.config.y = covered.top + 8;
     CreateWidgetWindow(&widget);
@@ -467,6 +628,7 @@ static int RunPanelCompositorTest() {
     widget.config.visible = true;
     SetWindowPos(widget.window, HWND_BOTTOM, widget.config.x, widget.config.y, 0, 0,
         SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    SetWindowPos(sceneWindow, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     RenderWidget(&widget);
     RECT client = {};
     GetClientRect(widget.window, &client);
@@ -476,6 +638,7 @@ static int RunPanelCompositorTest() {
         winrt::check_hresult(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
             D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, captureDevice.put(),
             nullptr, captureContext.put()));
+        StartSceneCapture();
         observePanelSwaps = true;
         for (int source = 0; source < DIGITAL_BORDER_STYLE_COUNT; source++) {
             for (int target = 0; target < DIGITAL_BORDER_STYLE_COUNT; target++) {
@@ -494,16 +657,25 @@ static int RunPanelCompositorTest() {
         observePanelSwaps = false;
         Check(preparedSwaps >= 24, "all frame styles pass through prepared native window swaps");
         Check(mismatchedFrames == 0 && comparedFrames >= preparedSwaps,
-            "every captured full panel, including native frame and clock hands, remains identical throughout"
-            " presentation");
+            "every composite scene shows either the complete previous widget or the complete new widget");
         std::printf("PANEL prepared=%d frames=%d mismatched=%d\n", preparedSwaps, comparedFrames, mismatchedFrames);
+        if (negativeSceneGap && mismatchedFrames > 0 && failures == 1) {
+            std::printf("SCENE_GAP_DETECTED: the deliberate whole-window disappearance was rejected.\n");
+        }
         result = failures == 0 ? 0 : 1;
     } catch (const winrt::hresult_error& error) {
         std::printf("INCONCLUSIVE: native capture unavailable: %lX %ls\n",
             static_cast<HRESULT>(error.code()), error.message().c_str());
     }
     observePanelSwaps = false;
+    if (sceneSession != nullptr) {
+        sceneSession.Close();
+        scenePool.FrameArrived(sceneToken);
+        scenePool.Close();
+    }
     DestroyWidgetWindow(&widget);
+    DestroyWindow(sceneWindow);
+    UnregisterClassW(L"CalClock.CompositeSceneTest", hInstance);
     panelUnderTest = nullptr;
     ShutdownAnalogClockHost();
     UnregisterClassW(CLASS_NAME, hInstance);

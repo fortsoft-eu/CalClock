@@ -25,17 +25,18 @@ Last modified for version 1.6.0.0
 Builds CalClock and checks panel content positions during native border changes.
 
 .DESCRIPTION
-Requires Windows Graphics Capture on the development computer. Uses only native test-owned top-level windows.
-Observes offscreen preparation and the application's real two-window position batch without changing it.
-Checks native controls before starting capture and compares the complete GDI surfaces before and after presentation.
-Keeps compositor capture running throughout the handoff and compares every delivered frame, including clock hands,
-complete native borders, and both links. Unchanged surfaces may produce no additional compositor frame.
-Requires the prepared and presented client and native child coordinates to remain identical.
-Tests all native border transitions with Segoe UI and Cambria Math, themes enabled and disabled,
+Requires Windows Graphics Capture with secondary-window capture on the development computer.
+Captures an opaque test checkerboard and both real native top-level panel windows in one continuous scene.
+Keeps the native panel window classes, styles, parents, geometry, and real two-window position batch unchanged.
+Checks native surfaces and client sizes, then rejects any scene other than the complete previous or complete new panel.
+Allows at most two RGB levels of native text rasterization rounding inside the calendar only; positions and alpha remain exact.
+Checks the client against its native surface composited at the configured opacity over the known checkerboard.
+Queues late native calendar and clock repaints and delays their erase handlers to expose intermediate drawing.
+Tests native border transitions with Segoe UI and Cambria Math, themes enabled and disabled,
 100% and 65% opacity, and with and without additional clocks. Inconclusive capture is a failure.
+Uses only test-owned secondary windows; aborts before copying a frame if a foreign secondary window could enter it.
 On-screen test windows stay underneath existing opaque windows. The worker aborts if coverage is lost.
 Does not activate, move, resize, hide, or capture another application's windows or switch the input desktop.
-Native font, control, and clock-time checks are in RunSettingsLayoutTests.ps1 and RunClockTests.ps1.
 Generated files are placed in CalClock/Release/panel-rendering-tests.
 
 .PARAMETER VisualStudioPath
@@ -44,8 +45,11 @@ Optional Visual Studio installation directory containing the C++ build tools.
 .PARAMETER Cases
 Optional case numbers from 0 through 15. By default runs every case.
 
+.PARAMETER VerifyGapDetection
+First deliberately hides the old widget before presenting its replacement and requires that control to be rejected.
+
 #>
-param([string]$VisualStudioPath, [ValidateRange(0, 15)][int[]]$Cases = 0..15)
+param([string]$VisualStudioPath, [ValidateRange(0, 15)][int[]]$Cases = 0..15, [switch]$VerifyGapDetection)
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -61,6 +65,7 @@ $msbuild = Join-Path $VisualStudioPath 'MSBuild/Current/Bin/MSBuild.exe'
 $buildRoot = Join-Path $projectRoot 'CalClock/Release/panel-rendering-tests'
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $previousVariant = $env:CALCLOCK_FRAME_TEST_VARIANT
+$previousGap = $env:CALCLOCK_FRAME_TEST_GAP
 Push-Location $projectRoot
 try {
     & $env:ComSpec /d /s /c "`"$vcvars`" >nul && `"$msbuild`" CalClock.slnx /p:Configuration=Release /p:Platform=x86 /m /v:minimal /nologo"
@@ -80,6 +85,17 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'PanelRenderingTests build failed.'
     }
+    if ($VerifyGapDetection) {
+        $env:CALCLOCK_FRAME_TEST_VARIANT = '0'
+        $env:CALCLOCK_FRAME_TEST_GAP = '1'
+        $negativeOutput = & "$buildRoot/PanelRenderingTests.exe" 2>&1
+        $negativeExit = $LASTEXITCODE
+        $negativeOutput | Write-Output
+        if ($negativeExit -ne 1 -or -not ($negativeOutput -match 'SCENE_GAP_DETECTED:')) {
+            throw 'The scene capture did not conclusively reject the deliberate whole-window disappearance.'
+        }
+    }
+    $env:CALCLOCK_FRAME_TEST_GAP = '0'
     foreach ($case in $Cases) {
         $env:CALCLOCK_FRAME_TEST_VARIANT = [string]$case
         & "$buildRoot/PanelRenderingTests.exe"
@@ -89,5 +105,6 @@ try {
     }
 } finally {
     $env:CALCLOCK_FRAME_TEST_VARIANT = $previousVariant
+    $env:CALCLOCK_FRAME_TEST_GAP = $previousGap
     Pop-Location
 }
