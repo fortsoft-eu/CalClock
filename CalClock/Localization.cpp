@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.1
+ * Last modified for version 1.6.1.0
  */
 
 #include "Localization.h"
@@ -103,6 +103,108 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Transparent background",
         L"Text color…",
         L"Background color…",
+        L"Week numbers",
+        L"Sunday first",
+        L"Alarm enabled",
+        L"Alarm time:",
+        L"Run a file or command",
+        L"Loop audio continuously",
+        L"Browse…",
+        L"Language:",
+        L"Disable themes",
+        L"Save",
+        L"Apply",
+        L"Cancel",
+        L"Show all",
+        L"Hide all",
+        L"Stop alarm",
+        L"Help",
+        L"About",
+        L"Exit",
+        L"Analog clock",
+        L"Digital clock",
+        L"Calendar",
+        L"Calendar with clock",
+        L"Enter the offset as [-]HH:mm:ss.ff.",
+        L"Enter a valid time from 0:00 to 23:59.",
+        L"Remove the selected widgets?",
+        L"At least one widget must remain.",
+        L"Close"
+    }, {
+        L"Clocks and calendars",
+        L"Settings",
+        L"Add",
+        L"Remove…",
+        L"Duplicate",
+        L"General",
+        L"Appearance",
+        L"Alarm",
+        L"Name:",
+        L"Type:",
+        L"Visible",
+        L"Always on top",
+        L"Seconds",
+        L"UTC time",
+        L"Time zone:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Size:",
+        L"Opacity:",
+        L"Font size:",
+        L"Leading zero:",
+        L"Transparent background",
+        L"Text colour…",
+        L"Background colour…",
+        L"Week numbers",
+        L"Sunday first",
+        L"Alarm enabled",
+        L"Alarm time:",
+        L"Run a file or command",
+        L"Loop audio continuously",
+        L"Browse…",
+        L"Language:",
+        L"Disable themes",
+        L"Save",
+        L"Apply",
+        L"Cancel",
+        L"Show all",
+        L"Hide all",
+        L"Stop alarm",
+        L"Help",
+        L"About",
+        L"Exit",
+        L"Analog clock",
+        L"Digital clock",
+        L"Calendar",
+        L"Calendar with clock",
+        L"Enter the offset as [-]HH:mm:ss.ff.",
+        L"Enter a valid time from 0:00 to 23:59.",
+        L"Remove the selected widgets?",
+        L"At least one widget must remain.",
+        L"Close"
+    }, {
+        L"Clocks and calendars",
+        L"Settings",
+        L"Add",
+        L"Remove…",
+        L"Duplicate",
+        L"General",
+        L"Appearance",
+        L"Alarm",
+        L"Name:",
+        L"Type:",
+        L"Visible",
+        L"Always on top",
+        L"Seconds",
+        L"UTC time",
+        L"Time zone:",
+        L"Offset [-]HH:mm:ss.ff:",
+        L"Size:",
+        L"Opacity:",
+        L"Font size:",
+        L"Leading zero:",
+        L"Transparent background",
+        L"Text colour…",
+        L"Background colour…",
         L"Week numbers",
         L"Sunday first",
         L"Alarm enabled",
@@ -335,6 +437,57 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Deve restare almeno un widget.",
         L"Chiudi"
     }, {
+        L"Relógios e calendários",
+        L"Definições",
+        L"Adicionar",
+        L"Remover…",
+        L"Duplicar",
+        L"Geral",
+        L"Aspeto",
+        L"Alarme",
+        L"Nome:",
+        L"Tipo:",
+        L"Visível",
+        L"Sempre no topo",
+        L"Segundos",
+        L"Hora UTC",
+        L"Fuso horário:",
+        L"Desvio [-]HH:mm:ss.ff:",
+        L"Tamanho:",
+        L"Opacidade:",
+        L"Tamanho da letra:",
+        L"Zero à esquerda:",
+        L"Fundo transparente",
+        L"Cor do texto…",
+        L"Cor de fundo…",
+        L"Números das semanas",
+        L"Domingo primeiro",
+        L"Alarme ativo",
+        L"Hora do alarme:",
+        L"Executar um ficheiro ou comando",
+        L"Repetir áudio continuamente",
+        L"Procurar…",
+        L"Idioma:",
+        L"Desativar temas",
+        L"Guardar",
+        L"Aplicar",
+        L"Cancelar",
+        L"Mostrar tudo",
+        L"Ocultar tudo",
+        L"Parar alarme",
+        L"Ajuda",
+        L"Acerca de",
+        L"Sair",
+        L"Relógio analógico",
+        L"Relógio digital",
+        L"Calendário",
+        L"Calendário com relógio",
+        L"Introduza o desvio como [-]HH:mm:ss.ff.",
+        L"Introduza uma hora válida entre 0:00 e 23:59.",
+        L"Remover os widgets selecionados?",
+        L"Tem de permanecer pelo menos um widget.",
+        L"Fechar"
+    }, {
         L"Zegary i kalendarze",
         L"Ustawienia",
         L"Dodaj",
@@ -437,158 +590,158 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Musí zostať aspoň jeden widget.",
         L"Zavrieť"
     }, {
-        L"Clocks and calendars",
-        L"Settings",
-        L"Add",
-        L"Remove…",
-        L"Duplicate",
-        L"General",
-        L"Appearance",
+        L"Ure og kalendere",
+        L"Indstillinger",
+        L"Tilføj",
+        L"Fjern…",
+        L"Dupliker",
+        L"Generelt",
+        L"Udseende",
         L"Alarm",
-        L"Name:",
+        L"Navn:",
         L"Type:",
-        L"Visible",
-        L"Always on top",
-        L"Seconds",
-        L"UTC time",
-        L"Time zone:",
-        L"Offset [-]HH:mm:ss.ff:",
-        L"Size:",
-        L"Opacity:",
-        L"Font size:",
-        L"Leading zero:",
-        L"Transparent background",
-        L"Text colour…",
-        L"Background colour…",
-        L"Week numbers",
-        L"Sunday first",
-        L"Alarm enabled",
-        L"Alarm time:",
-        L"Run a file or command",
-        L"Loop audio continuously",
-        L"Browse…",
-        L"Language:",
-        L"Disable themes",
-        L"Save",
-        L"Apply",
-        L"Cancel",
-        L"Show all",
-        L"Hide all",
+        L"Synlig",
+        L"Altid øverst",
+        L"Sekunder",
+        L"UTC-tid",
+        L"Tidszone:",
+        L"Forskydning [-]HH:mm:ss.ff:",
+        L"Størrelse:",
+        L"Uigennemsigtighed:",
+        L"Skriftstørrelse:",
+        L"Foranstillet nul:",
+        L"Gennemsigtig baggrund",
+        L"Tekstfarve…",
+        L"Baggrundsfarve…",
+        L"Ugenumre",
+        L"Søndag først",
+        L"Alarm aktiv",
+        L"Alarmtid:",
+        L"Kør en fil eller kommando",
+        L"Gentag lyd kontinuerligt",
+        L"Gennemse…",
+        L"Sprog:",
+        L"Deaktiver temaer",
+        L"Gem",
+        L"Anvend",
+        L"Annuller",
+        L"Vis alle",
+        L"Skjul alle",
         L"Stop alarm",
-        L"Help",
-        L"About",
-        L"Exit",
-        L"Analog clock",
-        L"Digital clock",
-        L"Calendar",
-        L"Calendar with clock",
-        L"Enter the offset as [-]HH:mm:ss.ff.",
-        L"Enter a valid time from 0:00 to 23:59.",
-        L"Remove the selected widgets?",
-        L"At least one widget must remain.",
-        L"Close"
+        L"Hjælp",
+        L"Om",
+        L"Afslut",
+        L"Analogt ur",
+        L"Digitalt ur",
+        L"Kalender",
+        L"Kalender med ur",
+        L"Angiv forskydningen som [-]HH:mm:ss.ff.",
+        L"Angiv et gyldigt tidspunkt fra 0:00 til 23:59.",
+        L"Fjern de valgte widgets?",
+        L"Mindst én widget skal bevares.",
+        L"Luk"
     }, {
-        L"Clocks and calendars",
-        L"Settings",
-        L"Add",
-        L"Remove…",
-        L"Duplicate",
-        L"General",
-        L"Appearance",
-        L"Alarm",
-        L"Name:",
-        L"Type:",
-        L"Visible",
-        L"Always on top",
-        L"Seconds",
-        L"UTC time",
-        L"Time zone:",
-        L"Offset [-]HH:mm:ss.ff:",
-        L"Size:",
-        L"Opacity:",
-        L"Font size:",
-        L"Leading zero:",
-        L"Transparent background",
-        L"Text colour…",
-        L"Background colour…",
-        L"Week numbers",
-        L"Sunday first",
-        L"Alarm enabled",
-        L"Alarm time:",
-        L"Run a file or command",
-        L"Loop audio continuously",
-        L"Browse…",
-        L"Language:",
-        L"Disable themes",
-        L"Save",
-        L"Apply",
-        L"Cancel",
-        L"Show all",
-        L"Hide all",
-        L"Stop alarm",
-        L"Help",
-        L"About",
-        L"Exit",
-        L"Analog clock",
-        L"Digital clock",
-        L"Calendar",
-        L"Calendar with clock",
-        L"Enter the offset as [-]HH:mm:ss.ff.",
-        L"Enter a valid time from 0:00 to 23:59.",
-        L"Remove the selected widgets?",
-        L"At least one widget must remain.",
-        L"Close"
+        L"Kellot ja kalenterit",
+        L"Asetukset",
+        L"Lisää",
+        L"Poista…",
+        L"Monista",
+        L"Yleiset",
+        L"Ulkoasu",
+        L"Herätys",
+        L"Nimi:",
+        L"Tyyppi:",
+        L"Näkyvissä",
+        L"Aina päällimmäisenä",
+        L"Sekunnit",
+        L"UTC-aika",
+        L"Aikavyöhyke:",
+        L"Poikkeama [-]HH:mm:ss.ff:",
+        L"Koko:",
+        L"Peittävyys:",
+        L"Fonttikoko:",
+        L"Etunolla:",
+        L"Läpinäkyvä tausta",
+        L"Tekstin väri…",
+        L"Taustaväri…",
+        L"Viikkonumerot",
+        L"Sunnuntai ensin",
+        L"Herätys käytössä",
+        L"Herätysaika:",
+        L"Suorita tiedosto tai komento",
+        L"Toista ääntä jatkuvasti",
+        L"Selaa…",
+        L"Kieli:",
+        L"Poista teemat käytöstä",
+        L"Tallenna",
+        L"Käytä",
+        L"Peruuta",
+        L"Näytä kaikki",
+        L"Piilota kaikki",
+        L"Pysäytä herätys",
+        L"Ohje",
+        L"Tietoja",
+        L"Lopeta",
+        L"Analoginen kello",
+        L"Digitaalinen kello",
+        L"Kalenteri",
+        L"Kalenteri ja kello",
+        L"Anna poikkeama muodossa [-]HH:mm:ss.ff.",
+        L"Anna kelvollinen aika väliltä 0:00–23:59.",
+        L"Poistetaanko valitut pienoisohjelmat?",
+        L"Vähintään yhden pienoisohjelman on jäätävä.",
+        L"Sulje"
     }, {
-        L"Relógios e calendários",
-        L"Definições",
-        L"Adicionar",
-        L"Remover…",
-        L"Duplicar",
-        L"Geral",
-        L"Aspeto",
-        L"Alarme",
-        L"Nome:",
-        L"Tipo:",
-        L"Visível",
-        L"Sempre no topo",
-        L"Segundos",
-        L"Hora UTC",
-        L"Fuso horário:",
-        L"Desvio [-]HH:mm:ss.ff:",
-        L"Tamanho:",
-        L"Opacidade:",
-        L"Tamanho da letra:",
-        L"Zero à esquerda:",
-        L"Fundo transparente",
-        L"Cor do texto…",
-        L"Cor de fundo…",
-        L"Números das semanas",
-        L"Domingo primeiro",
-        L"Alarme ativo",
-        L"Hora do alarme:",
-        L"Executar um ficheiro ou comando",
-        L"Repetir áudio continuamente",
-        L"Procurar…",
-        L"Idioma:",
-        L"Desativar temas",
-        L"Guardar",
-        L"Aplicar",
-        L"Cancelar",
-        L"Mostrar tudo",
-        L"Ocultar tudo",
-        L"Parar alarme",
-        L"Ajuda",
-        L"Acerca de",
-        L"Sair",
-        L"Relógio analógico",
-        L"Relógio digital",
-        L"Calendário",
-        L"Calendário com relógio",
-        L"Introduza o desvio como [-]HH:mm:ss.ff.",
-        L"Introduza uma hora válida entre 0:00 e 23:59.",
-        L"Remover os widgets selecionados?",
-        L"Tem de permanecer pelo menos um widget.",
-        L"Fechar"
+        L"Klukkur og dagatöl",
+        L"Stillingar",
+        L"Bæta við",
+        L"Fjarlægja…",
+        L"Afrita",
+        L"Almennt",
+        L"Útlit",
+        L"Vekjari",
+        L"Heiti:",
+        L"Tegund:",
+        L"Sýnilegt",
+        L"Alltaf efst",
+        L"Sekúndur",
+        L"UTC-tími",
+        L"Tímabelti:",
+        L"Hliðrun [-]HH:mm:ss.ff:",
+        L"Stærð:",
+        L"Ógegnsæi:",
+        L"Leturstærð:",
+        L"Núll fremst:",
+        L"Gegnsær bakgrunnur",
+        L"Textalitur…",
+        L"Bakgrunnslitur…",
+        L"Vikunúmer",
+        L"Sunnudagur fyrst",
+        L"Vekjari virkur",
+        L"Tími vekjara:",
+        L"Keyra skrá eða skipun",
+        L"Endurtaka hljóð stöðugt",
+        L"Velja…",
+        L"Tungumál:",
+        L"Slökkva á þemum",
+        L"Vista",
+        L"Nota",
+        L"Hætta við",
+        L"Sýna allt",
+        L"Fela allt",
+        L"Stöðva vekjara",
+        L"Hjálp",
+        L"Um",
+        L"Loka",
+        L"Skífuklukka",
+        L"Stafræn klukka",
+        L"Dagatal",
+        L"Dagatal með klukku",
+        L"Sláðu inn hliðrun sem [-]HH:mm:ss.ff.",
+        L"Sláðu inn gildan tíma frá 0:00 til 23:59.",
+        L"Fjarlægja valdar græjur?",
+        L"Að minnsta kosti ein græja verður að vera eftir.",
+        L"Loka"
     }, {
         L"Klokker og kalendere",
         L"Innstillinger",
@@ -691,159 +844,6 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
         L"Ta bort de markerade widgetarna?",
         L"Minst en widget måste finnas kvar.",
         L"Stäng"
-    }, {
-        L"Kellot ja kalenterit",
-        L"Asetukset",
-        L"Lisää",
-        L"Poista…",
-        L"Monista",
-        L"Yleiset",
-        L"Ulkoasu",
-        L"Herätys",
-        L"Nimi:",
-        L"Tyyppi:",
-        L"Näkyvissä",
-        L"Aina päällimmäisenä",
-        L"Sekunnit",
-        L"UTC-aika",
-        L"Aikavyöhyke:",
-        L"Poikkeama [-]HH:mm:ss.ff:",
-        L"Koko:",
-        L"Peittävyys:",
-        L"Fonttikoko:",
-        L"Etunolla:",
-        L"Läpinäkyvä tausta",
-        L"Tekstin väri…",
-        L"Taustaväri…",
-        L"Viikkonumerot",
-        L"Sunnuntai ensin",
-        L"Herätys käytössä",
-        L"Herätysaika:",
-        L"Suorita tiedosto tai komento",
-        L"Toista ääntä jatkuvasti",
-        L"Selaa…",
-        L"Kieli:",
-        L"Poista teemat käytöstä",
-        L"Tallenna",
-        L"Käytä",
-        L"Peruuta",
-        L"Näytä kaikki",
-        L"Piilota kaikki",
-        L"Pysäytä herätys",
-        L"Ohje",
-        L"Tietoja",
-        L"Lopeta",
-        L"Analoginen kello",
-        L"Digitaalinen kello",
-        L"Kalenteri",
-        L"Kalenteri ja kello",
-        L"Anna poikkeama muodossa [-]HH:mm:ss.ff.",
-        L"Anna kelvollinen aika väliltä 0:00–23:59.",
-        L"Poistetaanko valitut pienoisohjelmat?",
-        L"Vähintään yhden pienoisohjelman on jäätävä.",
-        L"Sulje"
-    }, {
-        L"Ure og kalendere",
-        L"Indstillinger",
-        L"Tilføj",
-        L"Fjern…",
-        L"Dupliker",
-        L"Generelt",
-        L"Udseende",
-        L"Alarm",
-        L"Navn:",
-        L"Type:",
-        L"Synlig",
-        L"Altid øverst",
-        L"Sekunder",
-        L"UTC-tid",
-        L"Tidszone:",
-        L"Forskydning [-]HH:mm:ss.ff:",
-        L"Størrelse:",
-        L"Uigennemsigtighed:",
-        L"Skriftstørrelse:",
-        L"Foranstillet nul:",
-        L"Gennemsigtig baggrund",
-        L"Tekstfarve…",
-        L"Baggrundsfarve…",
-        L"Ugenumre",
-        L"Søndag først",
-        L"Alarm aktiv",
-        L"Alarmtid:",
-        L"Kør en fil eller kommando",
-        L"Gentag lyd kontinuerligt",
-        L"Gennemse…",
-        L"Sprog:",
-        L"Deaktiver temaer",
-        L"Gem",
-        L"Anvend",
-        L"Annuller",
-        L"Vis alle",
-        L"Skjul alle",
-        L"Stop alarm",
-        L"Hjælp",
-        L"Om",
-        L"Afslut",
-        L"Analogt ur",
-        L"Digitalt ur",
-        L"Kalender",
-        L"Kalender med ur",
-        L"Angiv forskydningen som [-]HH:mm:ss.ff.",
-        L"Angiv et gyldigt tidspunkt fra 0:00 til 23:59.",
-        L"Fjern de valgte widgets?",
-        L"Mindst én widget skal bevares.",
-        L"Luk"
-    }, {
-        L"Klukkur og dagatöl",
-        L"Stillingar",
-        L"Bæta við",
-        L"Fjarlægja…",
-        L"Afrita",
-        L"Almennt",
-        L"Útlit",
-        L"Vekjari",
-        L"Heiti:",
-        L"Tegund:",
-        L"Sýnilegt",
-        L"Alltaf efst",
-        L"Sekúndur",
-        L"UTC-tími",
-        L"Tímabelti:",
-        L"Hliðrun [-]HH:mm:ss.ff:",
-        L"Stærð:",
-        L"Ógegnsæi:",
-        L"Leturstærð:",
-        L"Núll fremst:",
-        L"Gegnsær bakgrunnur",
-        L"Textalitur…",
-        L"Bakgrunnslitur…",
-        L"Vikunúmer",
-        L"Sunnudagur fyrst",
-        L"Vekjari virkur",
-        L"Tími vekjara:",
-        L"Keyra skrá eða skipun",
-        L"Endurtaka hljóð stöðugt",
-        L"Velja…",
-        L"Tungumál:",
-        L"Slökkva á þemum",
-        L"Vista",
-        L"Nota",
-        L"Hætta við",
-        L"Sýna allt",
-        L"Fela allt",
-        L"Stöðva vekjara",
-        L"Hjálp",
-        L"Um",
-        L"Loka",
-        L"Skífuklukka",
-        L"Stafræn klukka",
-        L"Dagatal",
-        L"Dagatal með klukku",
-        L"Sláðu inn hliðrun sem [-]HH:mm:ss.ff.",
-        L"Sláðu inn gildan tíma frá 0:00 til 23:59.",
-        L"Fjarlægja valdar græjur?",
-        L"Að minnsta kosti ein græja verður að vera eftir.",
-        L"Loka"
     }, {
         L"Saatler ve takvimler",
         L"Ayarlar",
@@ -1870,20 +1870,20 @@ const wchar_t* TEXT[LANG_COUNT][TXT_COUNT] = {
 const wchar_t* LANGUAGE_NAMES[LANG_COUNT] = {
     L"Čeština",
     L"English (US)",
+    L"English (UK)",
+    L"English (Australia)",
     L"Deutsch",
     L"Français",
     L"Español",
     L"Italiano",
+    L"Português",
     L"Polski",
     L"Slovenčina",
-    L"English (UK)",
-    L"English (Australia)",
-    L"Português",
+    L"Dansk",
+    L"Suomi",
+    L"Íslenska",
     L"Norsk (bokmål)",
     L"Svenska",
-    L"Suomi",
-    L"Dansk",
-    L"Íslenska",
     L"Türkçe",
     L"Eesti",
     L"Gaeilge",
@@ -1909,20 +1909,20 @@ const wchar_t* LANGUAGE_NAMES[LANG_COUNT] = {
 const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT] = {
     L"Hodiny na monitoru",
     L"Monitor clock",
+    L"Monitor clock",
+    L"Monitor clock",
     L"Monitoruhr",
     L"Horloge sur moniteur",
     L"Reloj de monitor",
     L"Orologio su monitor",
+    L"Relógio no monitor",
     L"Zegar na monitorze",
     L"Hodiny na monitore",
-    L"Monitor clock",
-    L"Monitor clock",
-    L"Relógio no monitor",
+    L"Skærmur",
+    L"Näyttökello",
+    L"Skjáklukka",
     L"Skjermklokke",
     L"Skärmklocka",
-    L"Näyttökello",
-    L"Skærmur",
-    L"Skjáklukka",
     L"Monitör saati",
     L"Ekraanikell",
     L"Clog scáileáin",
@@ -1948,20 +1948,20 @@ const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT] = {
 const wchar_t* WIDGET_LIMIT_MESSAGES[LANG_COUNT] = {
     L"Maximální počet widgetů je %d.",
     L"The maximum number of widgets is %d.",
+    L"The maximum number of widgets is %d.",
+    L"The maximum number of widgets is %d.",
     L"Die maximale Anzahl an Widgets beträgt %d.",
     L"Le nombre maximal de widgets est de %d.",
     L"El número máximo de widgets es %d.",
     L"Il numero massimo di widget è %d.",
+    L"O número máximo de widgets é %d.",
     L"Maksymalna liczba widżetów wynosi %d.",
     L"Maximálny počet widgetov je %d.",
-    L"The maximum number of widgets is %d.",
-    L"The maximum number of widgets is %d.",
-    L"O número máximo de widgets é %d.",
+    L"Det maksimale antal widgets er %d.",
+    L"Pienoisohjelmien enimmäismäärä on %d.",
+    L"Hámarksfjöldi græja er %d.",
     L"Maksimalt antall widgeter er %d.",
     L"Det maximala antalet widgetar är %d.",
-    L"Pienoisohjelmien enimmäismäärä on %d.",
-    L"Det maksimale antal widgets er %d.",
-    L"Hámarksfjöldi græja er %d.",
     L"En fazla %d araç kullanılabilir.",
     L"Vidinaid võib olla kuni %d.",
     L"Is é %d an líon uasta giuirléidí.",
@@ -1987,20 +1987,20 @@ const wchar_t* WIDGET_LIMIT_MESSAGES[LANG_COUNT] = {
 const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT] = {
     L" - kopie",
     L" - copy",
+    L" - copy",
+    L" - copy",
     L" - Kopie",
     L" - copie",
     L" - copia",
     L" - copia",
+    L" - cópia",
     L" - kopia",
     L" - kópia",
-    L" - copy",
-    L" - copy",
-    L" - cópia",
+    L" - kopi",
+    L" - kopio",
+    L" - afrit",
     L" - kopi",
     L" - kopia",
-    L" - kopio",
-    L" - kopi",
-    L" - afrit",
     L" - kopya",
     L" - koopia",
     L" - cóip",
@@ -2026,20 +2026,20 @@ const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT] = {
 const wchar_t* XML_FILE_TYPE_LABELS[LANG_COUNT] = {
     L"Rozšiřitelný značkovací jazyk (*.xml)",
     L"Extensible Markup Language (*.xml)",
+    L"Extensible Markup Language (*.xml)",
+    L"Extensible Markup Language (*.xml)",
     L"Erweiterbare Auszeichnungssprache (*.xml)",
     L"Langage de balisage extensible (*.xml)",
     L"Lenguaje de marcado extensible (*.xml)",
     L"Linguaggio di marcatura estensibile (*.xml)",
+    L"Linguagem de marcação extensível (*.xml)",
     L"Rozszerzalny język znaczników (*.xml)",
     L"Rozšíriteľný značkovací jazyk (*.xml)",
-    L"Extensible Markup Language (*.xml)",
-    L"Extensible Markup Language (*.xml)",
-    L"Linguagem de marcação extensível (*.xml)",
+    L"Udvideligt opmærkningssprog (*.xml)",
+    L"Laajennettava merkintäkieli (*.xml)",
+    L"Útvíkkanlegt ívafsmál (*.xml)",
     L"Utvidbart markeringsspråk (*.xml)",
     L"Utökningsbart märkspråk (*.xml)",
-    L"Laajennettava merkintäkieli (*.xml)",
-    L"Udvideligt opmærkningssprog (*.xml)",
-    L"Útvíkkanlegt ívafsmál (*.xml)",
     L"Genişletilebilir işaretleme dili (*.xml)",
     L"Laiendatav märgistuskeel (*.xml)",
     L"Teanga Mharcála Inbhreisithe (*.xml)",
@@ -2065,20 +2065,20 @@ const wchar_t* XML_FILE_TYPE_LABELS[LANG_COUNT] = {
 const wchar_t* CSV_FILE_TYPE_LABELS[LANG_COUNT] = {
     L"Čárkami oddělené hodnoty (*.csv)",
     L"Comma Separated Values (*.csv)",
+    L"Comma Separated Values (*.csv)",
+    L"Comma Separated Values (*.csv)",
     L"Durch Kommas getrennte Werte (*.csv)",
     L"Valeurs séparées par des virgules (*.csv)",
     L"Valores separados por comas (*.csv)",
     L"Valori separati da virgole (*.csv)",
+    L"Valores separados por vírgulas (*.csv)",
     L"Wartości rozdzielane przecinkami (*.csv)",
     L"Hodnoty oddelené čiarkami (*.csv)",
-    L"Comma Separated Values (*.csv)",
-    L"Comma Separated Values (*.csv)",
-    L"Valores separados por vírgulas (*.csv)",
+    L"Kommaseparerede værdier (*.csv)",
+    L"Pilkuilla erotetut arvot (*.csv)",
+    L"Gildi aðskilin með kommum (*.csv)",
     L"Kommaseparerte verdier (*.csv)",
     L"Kommaseparerade värden (*.csv)",
-    L"Pilkuilla erotetut arvot (*.csv)",
-    L"Kommaseparerede værdier (*.csv)",
-    L"Gildi aðskilin með kommum (*.csv)",
     L"Virgülle ayrılmış değerler (*.csv)",
     L"Komaga eraldatud väärtused (*.csv)",
     L"Luachanna scartha le camóga (*.csv)",
@@ -2108,6 +2108,12 @@ const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT] = {
     L"Audio and programs\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"All files\0*.*\0",
+    L"Audio and programs\0"
+    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
+    L"All files\0*.*\0",
+    L"Audio and programs\0"
+    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
+    L"All files\0*.*\0",
     L"Audio und Programme\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Alle Dateien\0*.*\0",
@@ -2120,36 +2126,30 @@ const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT] = {
     L"Audio e programmi\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Tutti i file\0*.*\0",
+    L"Áudio e programas\0"
+    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
+    L"Todos os ficheiros\0*.*\0",
     L"Dźwięk i programy\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Wszystkie pliki\0*.*\0",
     L"Zvuk a programy\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Všetky súbory\0*.*\0",
-    L"Audio and programs\0"
+    L"Lyd og programmer\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"All files\0*.*\0",
-    L"Audio and programs\0"
+    L"Alle filer\0*.*\0",
+    L"Ääni ja ohjelmat\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"All files\0*.*\0",
-    L"Áudio e programas\0"
+    L"Kaikki tiedostot\0*.*\0",
+    L"Hljóð og forrit\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"Todos os ficheiros\0*.*\0",
+    L"Allar skrár\0*.*\0",
     L"Lyd og programmer\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Alle filer\0*.*\0",
     L"Ljud och program\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Alla filer\0*.*\0",
-    L"Ääni ja ohjelmat\0"
-    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"Kaikki tiedostot\0*.*\0",
-    L"Lyd og programmer\0"
-    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"Alle filer\0*.*\0",
-    L"Hljóð og forrit\0"
-    L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
-    L"Allar skrár\0*.*\0",
     L"Ses ve programlar\0"
     L"*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\0"
     L"Tüm dosyalar\0*.*\0",
@@ -2215,20 +2215,20 @@ const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT] = {
 const wchar_t* LANGUAGE_LOCALES[LANG_COUNT] = {
     L"cs-CZ",
     L"en-US",
+    L"en-GB",
+    L"en-AU",
     L"de-DE",
     L"fr-FR",
     L"es-ES",
     L"it-IT",
+    L"pt-PT",
     L"pl-PL",
     L"sk-SK",
-    L"en-GB",
-    L"en-AU",
-    L"pt-PT",
+    L"da-DK",
+    L"fi-FI",
+    L"is-IS",
     L"nb-NO",
     L"sv-SE",
-    L"fi-FI",
-    L"da-DK",
-    L"is-IS",
     L"tr-TR",
     L"et-EE",
     L"ga-IE",
@@ -2254,20 +2254,20 @@ const wchar_t* LANGUAGE_LOCALES[LANG_COUNT] = {
 const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT] = {
     L"Jazyk widgetu:",
     L"Widget language:",
+    L"Widget language:",
+    L"Widget language:",
     L"Widget-Sprache:",
     L"Langue du widget :",
     L"Idioma del widget:",
     L"Lingua del widget:",
+    L"Idioma do widget:",
     L"Język widżetu:",
     L"Jazyk widgetu:",
-    L"Widget language:",
-    L"Widget language:",
-    L"Idioma do widget:",
-    L"Widgetspråk:",
-    L"Widgetspråk:",
-    L"Pienoisohjelman kieli:",
     L"Widgetsprog:",
+    L"Pienoisohjelman kieli:",
     L"Tungumál græju:",
+    L"Widgetspråk:",
+    L"Widgetspråk:",
     L"Araç dili:",
     L"Vidina keel:",
     L"Teanga na giuirléide:",
@@ -2293,20 +2293,20 @@ const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT] = {
 const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT] = {
     L"&Jazyk aplikace:",
     L"Application &language:",
+    L"Application &language:",
+    L"Application &language:",
     L"&Anwendungssprache:",
     L"&Langue de l’application :",
     L"&Idioma de la aplicación:",
     L"&Lingua applicazione:",
+    L"&Idioma da aplicação:",
     L"Język &aplikacji:",
     L"&Jazyk aplikácie:",
-    L"Application &language:",
-    L"Application &language:",
-    L"&Idioma da aplicação:",
-    L"Program&språk:",
-    L"Program&språk:",
-    L"Sovelluksen &kieli:",
     L"Program&sprog:",
+    L"Sovelluksen &kieli:",
     L"&Tungumál forrits:",
+    L"Program&språk:",
+    L"Program&språk:",
     L"Uygulama &dili:",
     L"Rakenduse &keel:",
     L"&Teanga an fheidhmchláir:",
@@ -2332,20 +2332,20 @@ const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT] = {
 const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT] = {
     L"&Písmo aplikace:",
     L"Application &font:",
+    L"Application &font:",
+    L"Application &font:",
     L"Anwendungs&schrift:",
     L"&Police de l’application :",
     L"&Fuente de la aplicación:",
     L"&Carattere applicazione:",
+    L"&Tipo de letra da aplicação:",
     L"&Czcionka aplikacji:",
     L"&Písmo aplikácie:",
-    L"Application &font:",
-    L"Application &font:",
-    L"&Tipo de letra da aplicação:",
+    L"Program&skrifttype:",
+    L"Sovelluksen &fontti:",
+    L"&Letur forrits:",
     L"Program&skrift:",
     L"Program&teckensnitt:",
-    L"Sovelluksen &fontti:",
-    L"Program&skrifttype:",
-    L"&Letur forrits:",
     L"Uygulama &yazı tipi:",
     L"Rakenduse &font:",
     L"&Cló an fheidhmchláir:",
@@ -2371,20 +2371,20 @@ const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4] = {
     { L"Tučné", L"Kurzíva", L"Podtržené", L"Přeškrtnuté" },
     { L"Bold", L"Italic", L"Underline", L"Strikeout" },
+    { L"Bold", L"Italic", L"Underline", L"Strikeout" },
+    { L"Bold", L"Italic", L"Underline", L"Strikeout" },
     { L"Fett", L"Kursiv", L"Unterstrichen", L"Durchgestrichen" },
     { L"Gras", L"Italique", L"Souligné", L"Barré" },
     { L"Negrita", L"Cursiva", L"Subrayado", L"Tachado" },
     { L"Grassetto", L"Corsivo", L"Sottolineato", L"Barrato" },
+    { L"Negrito", L"Itálico", L"Sublinhado", L"Rasurado" },
     { L"Pogrubienie", L"Kursywa", L"Podkreślenie", L"Przekreślenie" },
     { L"Tučné", L"Kurzíva", L"Podčiarknuté", L"Prečiarknuté" },
-    { L"Bold", L"Italic", L"Underline", L"Strikeout" },
-    { L"Bold", L"Italic", L"Underline", L"Strikeout" },
-    { L"Negrito", L"Itálico", L"Sublinhado", L"Rasurado" },
+    { L"Fed", L"Kursiv", L"Understreget", L"Gennemstreget" },
+    { L"Lihavoitu", L"Kursivoitu", L"Alleviivattu", L"Yliviivattu" },
+    { L"Feitletrað", L"Skáletrað", L"Undirstrikað", L"Yfirstrikað" },
     { L"Fet", L"Kursiv", L"Understreket", L"Gjennomstreket" },
     { L"Fet", L"Kursiv", L"Understruken", L"Genomstruken" },
-    { L"Lihavoitu", L"Kursivoitu", L"Alleviivattu", L"Yliviivattu" },
-    { L"Fed", L"Kursiv", L"Understreget", L"Gennemstreget" },
-    { L"Feitletrað", L"Skáletrað", L"Undirstrikað", L"Yfirstrikað" },
     { L"Kalın", L"İtalik", L"Altı çizili", L"Üstü çizili" },
     { L"Paks", L"Kursiiv", L"Allakriipsutus", L"Läbikriipsutus" },
     { L"Trom", L"Iodálach", L"Folíne", L"Líne tríd" },
@@ -2410,20 +2410,20 @@ const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4] = {
 const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT] = {
     L"Výchozí systémové",
     L"System default",
+    L"System default",
+    L"System default",
     L"Systemstandard",
     L"Valeur système",
     L"Predeterminada del sistema",
     L"Predefinito di sistema",
+    L"Predefinição do sistema",
     L"Domyślna systemowa",
     L"Predvolené systémové",
-    L"System default",
-    L"System default",
-    L"Predefinição do sistema",
-    L"Systemstandard",
     L"Systemstandard",
     L"Järjestelmän oletus",
-    L"Systemstandard",
     L"Sjálfgefið kerfisletur",
+    L"Systemstandard",
+    L"Systemstandard",
     L"Sistem varsayılanı",
     L"Süsteemi vaikefont",
     L"Réamhshocrú an chórais",
@@ -2449,20 +2449,20 @@ const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* DATE_COPY_LABELS[LANG_COUNT] = {
     L"&Formát kopírovaného data",
     L"Copied &date format",
+    L"Copied &date format",
+    L"Copied &date format",
     L"Format des kopierten &Datums",
     L"Format de date &copié",
     L"Formato de fecha &copiada",
     L"Formato data &copiata",
+    L"&Formato da data copiada",
     L"Format &kopiowanej daty",
     L"Formát &kopírovaného dátumu",
-    L"Copied &date format",
-    L"Copied &date format",
-    L"&Formato da data copiada",
+    L"Format for kopieret &dato",
+    L"Kopioidun &päivämäärän muoto",
+    L"Snið afritaðrar &dagsetningar",
     L"Format for kopiert &dato",
     L"Format för kopierat &datum",
-    L"Kopioidun &päivämäärän muoto",
-    L"Format for kopieret &dato",
-    L"Snið afritaðrar &dagsetningar",
     L"Kopyalanan &tarih biçimi",
     L"Kopeeritava &kuupäeva vorming",
     L"Formáid an &dáta cóipeáilte",
@@ -2488,20 +2488,20 @@ const wchar_t* DATE_COPY_LABELS[LANG_COUNT] = {
 const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT] = {
     L"Formát &kopírovaného data:",
     L"Copied &date format:",
+    L"Copied &date format:",
+    L"Copied &date format:",
     L"Format des kopierten &Datums:",
     L"Format de date &copié :",
     L"Formato de fecha &copiada:",
     L"Formato data &copiata:",
+    L"&Formato da data copiada:",
     L"Format &kopiowanej daty:",
     L"Formát &kopírovaného dátumu:",
-    L"Copied &date format:",
-    L"Copied &date format:",
-    L"&Formato da data copiada:",
+    L"Format for kopieret &dato:",
+    L"Kopioidun &päivämäärän muoto:",
+    L"Snið afritaðrar &dagsetningar:",
     L"Format for kopiert &dato:",
     L"Format för kopierat &datum:",
-    L"Kopioidun &päivämäärän muoto:",
-    L"Format for kopieret &dato:",
-    L"Snið afritaðrar &dagsetningar:",
     L"Kopyalanan &tarih biçimi:",
     L"Kopeeritava &kuupäeva vorming:",
     L"Formáid an &dáta cóipeáilte:",
@@ -2527,20 +2527,20 @@ const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT] = {
 const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT] = {
     L"Krátké datum",
     L"Short date",
+    L"Short date",
+    L"Short date",
     L"Kurzes Datum",
     L"Date courte",
     L"Fecha corta",
     L"Data breve",
+    L"Data abreviada",
     L"Data krótka",
     L"Krátky dátum",
-    L"Short date",
-    L"Short date",
-    L"Data abreviada",
+    L"Kort dato",
+    L"Lyhyt päivämäärä",
+    L"Stutt dagsetning",
     L"Kort dato",
     L"Kort datum",
-    L"Lyhyt päivämäärä",
-    L"Kort dato",
-    L"Stutt dagsetning",
     L"Kısa tarih",
     L"Lühike kuupäev",
     L"Dáta gearr",
@@ -2566,20 +2566,20 @@ const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT] = {
 const wchar_t* LOCAL_LONG_LABELS[LANG_COUNT] = {
     L"Dlouhé datum",
     L"Long date",
+    L"Long date",
+    L"Long date",
     L"Langes Datum",
     L"Date longue",
     L"Fecha larga",
     L"Data estesa",
+    L"Data por extenso",
     L"Data długa",
     L"Dlhý dátum",
-    L"Long date",
-    L"Long date",
-    L"Data por extenso",
+    L"Lang dato",
+    L"Pitkä päivämäärä",
+    L"Löng dagsetning",
     L"Lang dato",
     L"Långt datum",
-    L"Pitkä päivämäärä",
-    L"Lang dato",
-    L"Löng dagsetning",
     L"Uzun tarih",
     L"Pikk kuupäev",
     L"Dáta fada",
@@ -2605,20 +2605,20 @@ const wchar_t* LOCAL_LONG_LABELS[LANG_COUNT] = {
 const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT] = {
     L"&Zarovnat do mřížky",
     L"&Arrange in a grid",
+    L"&Arrange in a grid",
+    L"&Arrange in a grid",
     L"Im &Raster anordnen",
     L"&Aligner sur une grille",
     L"&Alinear en cuadrícula",
     L"&Disponi in griglia",
+    L"&Dispor numa grelha",
     L"&Ułóż w siatce",
     L"&Zarovnať do mriežky",
-    L"&Arrange in a grid",
-    L"&Arrange in a grid",
-    L"&Dispor numa grelha",
+    L"&Arranger i et gitter",
+    L"&Järjestä ruudukkoon",
+    L"&Raða á hnitanet",
     L"&Ordne i et rutenett",
     L"&Ordna i ett rutnät",
-    L"&Järjestä ruudukkoon",
-    L"&Arranger i et gitter",
-    L"&Raða á hnitanet",
     L"&Izgarada düzenle",
     L"&Paiguta ruudustikku",
     L"&Eagraigh in eangach",
@@ -2644,20 +2644,20 @@ const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT] = {
 const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT] = {
     L"&Zobrazit",
     L"&Show",
+    L"&Show",
+    L"&Show",
     L"&Anzeigen",
     L"&Afficher",
     L"&Mostrar",
     L"&Mostra",
+    L"&Mostrar",
     L"&Pokaż",
     L"&Zobraziť",
-    L"&Show",
-    L"&Show",
-    L"&Mostrar",
+    L"&Vis",
+    L"&Näytä",
+    L"&Sýna",
     L"&Vis",
     L"&Visa",
-    L"&Näytä",
-    L"&Vis",
-    L"&Sýna",
     L"&Göster",
     L"&Kuva",
     L"&Taispeáin",
@@ -2683,20 +2683,20 @@ const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT] = {
 const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT] = {
     L"&Skrýt",
     L"&Hide",
+    L"&Hide",
+    L"&Hide",
     L"A&usblenden",
     L"&Masquer",
     L"&Ocultar",
     L"&Nascondi",
+    L"&Ocultar",
     L"&Ukryj",
     L"&Skryť",
-    L"&Hide",
-    L"&Hide",
-    L"&Ocultar",
+    L"&Skjul",
+    L"&Piilota",
+    L"&Fela",
     L"&Skjul",
     L"&Dölj",
-    L"&Piilota",
-    L"&Skjul",
-    L"&Fela",
     L"&Gizle",
     L"&Peida",
     L"&Folaigh",
@@ -2722,20 +2722,20 @@ const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT] = {
 const wchar_t* UTC_TEXT_LABELS[LANG_COUNT] = {
     L"Zobrazit text &UTC",
     L"Show &UTC text",
+    L"Show &UTC text",
+    L"Show &UTC text",
     L"&UTC-Text anzeigen",
     L"Afficher le texte &UTC",
     L"Mostrar texto &UTC",
     L"Mostra testo &UTC",
+    L"Mostrar texto &UTC",
     L"Pokaż tekst &UTC",
     L"Zobraziť text &UTC",
-    L"Show &UTC text",
-    L"Show &UTC text",
-    L"Mostrar texto &UTC",
+    L"Vis &UTC-tekst",
+    L"Näytä &UTC-teksti",
+    L"Sýna &UTC-texta",
     L"Vis &UTC-tekst",
     L"Visa &UTC-text",
-    L"Näytä &UTC-teksti",
-    L"Vis &UTC-tekst",
-    L"Sýna &UTC-texta",
     L"&UTC metnini göster",
     L"Kuva &UTC tähis",
     L"Taispeáin téacs &UTC",
@@ -2761,20 +2761,20 @@ const wchar_t* UTC_TEXT_LABELS[LANG_COUNT] = {
 const wchar_t* MONITOR_LABELS[LANG_COUNT] = {
     L"&Monitory:",
     L"&Monitors:",
+    L"&Monitors:",
+    L"&Monitors:",
     L"&Monitore:",
     L"&Moniteurs :",
     L"&Monitores:",
     L"&Monitor:",
-    L"&Monitory:",
-    L"&Monitory:",
-    L"&Monitors:",
-    L"&Monitors:",
     L"&Monitores:",
+    L"&Monitory:",
+    L"&Monitory:",
+    L"&Skærme:",
+    L"&Näytöt:",
+    L"&Skjáir:",
     L"&Skjermer:",
     L"&Bildskärmar:",
-    L"&Näytöt:",
-    L"&Skærme:",
-    L"&Skjáir:",
     L"&Monitörler:",
     L"&Kuvarid:",
     L"&Monatóirí:",
@@ -2818,6 +2818,24 @@ const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT] = {
         L"Color space",
         L"Position"
     }, {
+        L"Display",
+        L"Monitor model",
+        L"Resolution",
+        L"Refresh rate",
+        L"Bit depth",
+        L"Colour format",
+        L"Colour space",
+        L"Position"
+    }, {
+        L"Display",
+        L"Monitor model",
+        L"Resolution",
+        L"Refresh rate",
+        L"Bit depth",
+        L"Colour format",
+        L"Colour space",
+        L"Position"
+    }, {
         L"Monitor",
         L"Monitormodell",
         L"Auflösung",
@@ -2855,6 +2873,15 @@ const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT] = {
         L"Posizione"
     }, {
         L"Monitor",
+        L"Modelo do monitor",
+        L"Resolução",
+        L"Taxa de atualização",
+        L"Profundidade de bits",
+        L"Formato de cor",
+        L"Espaço de cor",
+        L"Posição"
+    }, {
+        L"Monitor",
         L"Model monitora",
         L"Rozdzielczość",
         L"Częstotliwość odświeżania",
@@ -2872,32 +2899,32 @@ const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT] = {
         L"Farebný priestor",
         L"Poloha"
     }, {
-        L"Display",
-        L"Monitor model",
-        L"Resolution",
-        L"Refresh rate",
-        L"Bit depth",
-        L"Colour format",
-        L"Colour space",
-        L"Position"
+        L"Skærm",
+        L"Skærmmodel",
+        L"Opløsning",
+        L"Opdateringsfrekvens",
+        L"Bitdybde",
+        L"Farveformat",
+        L"Farverum",
+        L"Placering"
     }, {
-        L"Display",
-        L"Monitor model",
-        L"Resolution",
-        L"Refresh rate",
-        L"Bit depth",
-        L"Colour format",
-        L"Colour space",
-        L"Position"
+        L"Näyttö",
+        L"Näytön malli",
+        L"Tarkkuus",
+        L"Virkistystaajuus",
+        L"Bittisyvyys",
+        L"Värimuoto",
+        L"Väriavaruus",
+        L"Sijainti"
     }, {
-        L"Monitor",
-        L"Modelo do monitor",
-        L"Resolução",
-        L"Taxa de atualização",
-        L"Profundidade de bits",
-        L"Formato de cor",
-        L"Espaço de cor",
-        L"Posição"
+        L"Skjár",
+        L"Gerð skjás",
+        L"Upplausn",
+        L"Endurnýjunartíðni",
+        L"Bitadýpt",
+        L"Litasnið",
+        L"Litarými",
+        L"Staðsetning"
     }, {
         L"Skjerm",
         L"Skjermmodell",
@@ -2916,33 +2943,6 @@ const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT] = {
         L"Färgformat",
         L"Färgrymd",
         L"Position"
-    }, {
-        L"Näyttö",
-        L"Näytön malli",
-        L"Tarkkuus",
-        L"Virkistystaajuus",
-        L"Bittisyvyys",
-        L"Värimuoto",
-        L"Väriavaruus",
-        L"Sijainti"
-    }, {
-        L"Skærm",
-        L"Skærmmodel",
-        L"Opløsning",
-        L"Opdateringsfrekvens",
-        L"Bitdybde",
-        L"Farveformat",
-        L"Farverum",
-        L"Placering"
-    }, {
-        L"Skjár",
-        L"Gerð skjás",
-        L"Upplausn",
-        L"Endurnýjunartíðni",
-        L"Bitadýpt",
-        L"Litasnið",
-        L"Litarými",
-        L"Staðsetning"
     }, {
         L"Monitör",
         L"Monitör modeli",
@@ -3129,20 +3129,20 @@ const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT] = {
 const wchar_t* MONITOR_PRIMARY_LABELS[LANG_COUNT] = {
     L"hlavní",
     L"primary",
+    L"primary",
+    L"primary",
     L"primär",
     L"principal",
     L"principal",
     L"principale",
+    L"principal",
     L"główny",
     L"hlavný",
-    L"primary",
-    L"primary",
-    L"principal",
+    L"primær",
+    L"ensisijainen",
+    L"aðal",
     L"primær",
     L"primär",
-    L"ensisijainen",
-    L"primær",
-    L"aðal",
     L"birincil",
     L"peamine",
     L"príomhúil",
@@ -3168,20 +3168,20 @@ const wchar_t* MONITOR_PRIMARY_LABELS[LANG_COUNT] = {
 const wchar_t* MONITOR_DEPTH_FORMATS[LANG_COUNT][2] = {
     { L"%u bitů/kanál", L"%u bitů/pixel" },
     { L"%u bits/channel", L"%u bits/pixel" },
+    { L"%u bits/channel", L"%u bits/pixel" },
+    { L"%u bits/channel", L"%u bits/pixel" },
     { L"%u Bit/Kanal", L"%u Bit/Pixel" },
     { L"%u bits/canal", L"%u bits/pixel" },
     { L"%u bits/canal", L"%u bits/píxel" },
     { L"%u bit/canale", L"%u bit/pixel" },
+    { L"%u bits/canal", L"%u bits/píxel" },
     { L"%u bitów/kanał", L"%u bitów/piksel" },
     { L"%u bitov/kanál", L"%u bitov/pixel" },
-    { L"%u bits/channel", L"%u bits/pixel" },
-    { L"%u bits/channel", L"%u bits/pixel" },
-    { L"%u bits/canal", L"%u bits/píxel" },
+    { L"%u bit/kanal", L"%u bit/pixel" },
+    { L"%u bittiä/kanava", L"%u bittiä/pikseli" },
+    { L"%u bitar/rás", L"%u bitar/myndpunktur" },
     { L"%u bit/kanal", L"%u bit/piksel" },
     { L"%u bitar/kanal", L"%u bitar/pixel" },
-    { L"%u bittiä/kanava", L"%u bittiä/pikseli" },
-    { L"%u bit/kanal", L"%u bit/pixel" },
-    { L"%u bitar/rás", L"%u bitar/myndpunktur" },
     { L"%u bit/kanal", L"%u bit/piksel" },
     { L"%u bitti/kanal", L"%u bitti/piksel" },
     { L"%u giotán/cainéal", L"%u giotán/picteilín" },
@@ -3207,20 +3207,20 @@ const wchar_t* MONITOR_DEPTH_FORMATS[LANG_COUNT][2] = {
 const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT] = {
     L"Zatemnit &ostatní monitory",
     L"Black out &other monitors",
+    L"Black out &other monitors",
+    L"Black out &other monitors",
     L"&Andere Monitore abdunkeln",
     L"Assombrir les &autres moniteurs",
     L"Oscurecer &otros monitores",
     L"Oscura gli &altri monitor",
+    L"Escurecer os &outros monitores",
     L"Wygasz &pozostałe monitory",
     L"Stmaviť &ostatné monitory",
-    L"Black out &other monitors",
-    L"Black out &other monitors",
-    L"Escurecer os &outros monitores",
+    L"Mørklæg &andre skærme",
+    L"Pimennä &muut näytöt",
+    L"Myrkva &aðra skjái",
     L"Mørklegg &andre skjermer",
     L"Släck &andra bildskärmar",
-    L"Pimennä &muut näytöt",
-    L"Mørklæg &andre skærme",
-    L"Myrkva &aðra skjái",
     L"&Diğer monitörleri karart",
     L"Tumenda &muud kuvarid",
     L"Dorchaigh &monatóirí eile",
@@ -3246,20 +3246,20 @@ const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT] = {
 const wchar_t* FONT_LABELS[LANG_COUNT] = {
     L"&Písmo:",
     L"&Font:",
+    L"&Font:",
+    L"&Font:",
     L"&Schriftart:",
     L"&Police :",
     L"&Fuente:",
     L"&Carattere:",
+    L"&Tipo de letra:",
     L"&Czcionka:",
     L"&Písmo:",
-    L"&Font:",
-    L"&Font:",
-    L"&Tipo de letra:",
+    L"&Skrifttype:",
+    L"&Fontti:",
+    L"&Letur:",
     L"&Skrift:",
     L"&Teckensnitt:",
-    L"&Fontti:",
-    L"&Skrifttype:",
-    L"&Letur:",
     L"&Yazı tipi:",
     L"&Font:",
     L"&Cló:",
@@ -3285,20 +3285,20 @@ const wchar_t* FONT_LABELS[LANG_COUNT] = {
 const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT] = {
     L"Vybrat &písmo…",
     L"Choose &font…",
+    L"Choose &font…",
+    L"Choose &font…",
     L"&Schriftart wählen…",
     L"Choisir la &police…",
     L"Elegir &fuente…",
     L"Scegli &carattere…",
+    L"Escolher &tipo de letra…",
     L"Wybierz &czcionkę…",
     L"Vybrať &písmo…",
-    L"Choose &font…",
-    L"Choose &font…",
-    L"Escolher &tipo de letra…",
+    L"Vælg &skrifttype…",
+    L"Valitse &fontti…",
+    L"Velja &letur…",
     L"Velg &skrift…",
     L"Välj &teckensnitt…",
-    L"Valitse &fontti…",
-    L"Vælg &skrifttype…",
-    L"Velja &letur…",
     L"&Yazı tipi seç…",
     L"Vali &font…",
     L"Roghnaigh &cló…",
@@ -3324,20 +3324,20 @@ const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT] = {
 const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT] = {
     L"Písmo &kalendáře:",
     L"&Calendar font:",
+    L"&Calendar font:",
+    L"&Calendar font:",
     L"&Kalenderschrift:",
     L"Police du &calendrier :",
     L"Fuente del &calendario:",
     L"Carattere del &calendario:",
+    L"Tipo de letra do &calendário:",
     L"Czcionka &kalendarza:",
     L"Písmo &kalendára:",
-    L"&Calendar font:",
-    L"&Calendar font:",
-    L"Tipo de letra do &calendário:",
+    L"&Kalenderskrifttype:",
+    L"&Kalenterin fontti:",
+    L"Letur &dagatals:",
     L"&Kalenderskrift:",
     L"&Kalenderteckensnitt:",
-    L"&Kalenterin fontti:",
-    L"&Kalenderskrifttype:",
-    L"Letur &dagatals:",
     L"&Takvim yazı tipi:",
     L"&Kalendri font:",
     L"Cló an &fhéilire:",
@@ -3363,20 +3363,20 @@ const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT] = {
     L"Písmo &horního řádku:",
     L"&Top row font:",
+    L"&Top row font:",
+    L"&Top row font:",
     L"Schrift der &oberen Zeile:",
     L"Police de la ligne &supérieure :",
     L"Fuente de la línea &superior:",
     L"Carattere riga &superiore:",
+    L"Tipo de letra da linha &superior:",
     L"Czcionka &górnego wiersza:",
     L"Písmo &horného riadka:",
-    L"&Top row font:",
-    L"&Top row font:",
-    L"Tipo de letra da linha &superior:",
+    L"Skrifttype for &øverste linje:",
+    L"&Ylärivin fontti:",
+    L"Letur &efri línu:",
     L"Skrift for &øverste rad:",
     L"Teckensnitt för &översta raden:",
-    L"&Ylärivin fontti:",
-    L"Skrifttype for &øverste linje:",
-    L"Letur &efri línu:",
     L"&Üst satır yazı tipi:",
     L"&Ülemise rea font:",
     L"Cló na sraithe &uachtaraí:",
@@ -3402,20 +3402,20 @@ const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* SHOW_TODAY_LABELS[LANG_COUNT] = {
     L"Řádek Dnes",
     L"Today row",
+    L"Today row",
+    L"Today row",
     L"Heute-Zeile",
     L"Ligne Aujourd’hui",
     L"Fila Hoy",
     L"Riga Oggi",
+    L"Linha Hoje",
     L"Wiersz Dzisiaj",
     L"Riadok Dnes",
-    L"Today row",
-    L"Today row",
-    L"Linha Hoje",
+    L"Rækken I dag",
+    L"Tänään-rivi",
+    L"Línan Í dag",
     L"I dag-raden",
     L"Raden I dag",
-    L"Tänään-rivi",
-    L"Rækken I dag",
-    L"Línan Í dag",
     L"Bugün satırı",
     L"Tänase kuupäeva rida",
     L"Sraith an lae inniu",
@@ -3441,20 +3441,20 @@ const wchar_t* SHOW_TODAY_LABELS[LANG_COUNT] = {
 const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT] = {
     L"Přejít na dnešek",
     L"Go to Today",
+    L"Go to Today",
+    L"Go to Today",
     L"Zu heute wechseln",
     L"Aller à aujourd’hui",
     L"Ir a hoy",
     L"Vai a oggi",
+    L"Ir para hoje",
     L"Przejdź do dnia dzisiejszego",
     L"Prejsť na dnešný deň",
-    L"Go to Today",
-    L"Go to Today",
-    L"Ir para hoje",
+    L"Gå til i dag",
+    L"Siirry tähän päivään",
+    L"Fara á daginn í dag",
     L"Gå til i dag",
     L"Gå till i dag",
-    L"Siirry tähän päivään",
-    L"Gå til i dag",
-    L"Fara á daginn í dag",
     L"Bugüne git",
     L"Mine tänasele kuupäevale",
     L"Téigh go dtí an lá inniu",
@@ -3480,20 +3480,20 @@ const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT] = {
 const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT] = {
     L"Písmo č&asu:",
     L"&Time font:",
+    L"&Time font:",
+    L"&Time font:",
     L"Schrift der &Uhrzeit:",
     L"Police de l’&heure :",
     L"Fuente de la &hora:",
     L"Carattere dell’&ora:",
+    L"Tipo de letra da &hora:",
     L"Czcionka &czasu:",
     L"Písmo č&asu:",
-    L"&Time font:",
-    L"&Time font:",
-    L"Tipo de letra da &hora:",
+    L"Skrifttype for &tid:",
+    L"&Ajan fontti:",
+    L"Letur &tíma:",
     L"Skrift for &klokkeslett:",
     L"&Tidsteckensnitt:",
-    L"&Ajan fontti:",
-    L"Skrifttype for &tid:",
-    L"Letur &tíma:",
     L"&Saat yazı tipi:",
     L"&Kellaaja font:",
     L"Cló an &ama:",
@@ -3519,20 +3519,20 @@ const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT] = {
     L"Písmo &spodního řádku:",
     L"&Bottom row font:",
+    L"&Bottom row font:",
+    L"&Bottom row font:",
     L"Schrift der &unteren Zeile:",
     L"Police de la ligne &inférieure :",
     L"Fuente de la línea &inferior:",
     L"Carattere riga &inferiore:",
+    L"Tipo de letra da linha &inferior:",
     L"Czcionka &dolnego wiersza:",
     L"Písmo &spodného riadka:",
-    L"&Bottom row font:",
-    L"&Bottom row font:",
-    L"Tipo de letra da linha &inferior:",
+    L"Skrifttype for &nederste linje:",
+    L"&Alarivin fontti:",
+    L"Letur &neðri línu:",
     L"Skrift for &nederste rad:",
     L"Teckensnitt för &nedersta raden:",
-    L"&Alarivin fontti:",
-    L"Skrifttype for &nederste linje:",
-    L"Letur &neðri línu:",
     L"&Alt satır yazı tipi:",
     L"&Alumise rea font:",
     L"Cló na sraithe &íochtaraí:",
@@ -3558,20 +3558,20 @@ const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT] = {
     L"Vý&chozí",
     L"&Default",
+    L"&Default",
+    L"&Default",
     L"&Standard",
     L"Par &défaut",
     L"&Predeterminada",
     L"&Predefinito",
+    L"&Predefinição",
     L"&Domyślna",
     L"&Predvolené",
-    L"&Default",
-    L"&Default",
-    L"&Predefinição",
-    L"&Standard",
     L"&Standard",
     L"&Oletus",
-    L"&Standard",
     L"&Sjálfgefið",
+    L"&Standard",
+    L"&Standard",
     L"&Varsayılan",
     L"&Vaikesäte",
     L"&Réamhshocrú",
@@ -3597,20 +3597,20 @@ const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT] = {
 const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT] = {
     L"Barva &textu budíku…",
     L"Alarm &text color…",
+    L"Alarm &text colour…",
+    L"Alarm &text colour…",
     L"&Wecker-Textfarbe…",
     L"Couleur du &texte d’alarme…",
     L"Color del &texto de alarma…",
     L"Colore &testo sveglia…",
+    L"Cor do &texto do alarme…",
     L"Kolor &tekstu alarmu…",
     L"Farba &textu budíka…",
-    L"Alarm &text colour…",
-    L"Alarm &text colour…",
-    L"Cor do &texto do alarme…",
+    L"Alarmens &tekstfarve…",
+    L"Herätyksen &tekstiväri…",
+    L"&Textalitur vekjara…",
     L"Alarmens &tekstfarge…",
     L"Alarmets &textfärg…",
-    L"Herätyksen &tekstiväri…",
-    L"Alarmens &tekstfarve…",
-    L"&Textalitur vekjara…",
     L"Alarm &metin rengi…",
     L"Äratuse &teksti värv…",
     L"Dath &téacs an aláraim…",
@@ -3636,20 +3636,20 @@ const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT] = {
 const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT] = {
     L"Barva &pozadí budíku…",
     L"Alarm &background…",
+    L"Alarm &background…",
+    L"Alarm &background…",
     L"Wecker-&Hintergrund…",
     L"&Fond de l’alarme…",
     L"&Fondo de alarma…",
     L"&Sfondo sveglia…",
+    L"Cor de &fundo do alarme…",
     L"&Tło alarmu…",
     L"Farba &pozadia budíka…",
-    L"Alarm &background…",
-    L"Alarm &background…",
-    L"Cor de &fundo do alarme…",
+    L"Alarmens &baggrund…",
+    L"Herätyksen &tausta…",
+    L"&Bakgrunnslitur vekjara…",
     L"Alarmens &bakgrunn…",
     L"Alarmets &bakgrund…",
-    L"Herätyksen &tausta…",
-    L"Alarmens &baggrund…",
-    L"&Bakgrunnslitur vekjara…",
     L"Alarm &arka planı…",
     L"Äratuse &taustavärv…",
     L"&Cúlra an aláraim…",
@@ -3675,20 +3675,20 @@ const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT] = {
 const wchar_t* PADDING_LABELS[LANG_COUNT] = {
     L"&Odsazení:",
     L"&Padding:",
+    L"&Padding:",
+    L"&Padding:",
     L"&Innenabstand:",
     L"&Marge interne :",
     L"&Relleno:",
     L"&Margine:",
+    L"&Margem:",
     L"&Odstęp:",
     L"&Odsadenie:",
-    L"&Padding:",
-    L"&Padding:",
-    L"&Margem:",
+    L"&Luft:",
+    L"&Täyttö:",
+    L"&Bil:",
     L"&Luft:",
     L"&Utfyllnad:",
-    L"&Täyttö:",
-    L"&Luft:",
-    L"&Bil:",
     L"&Dolgu:",
     L"&Siseveeris:",
     L"&Spásáil inmheánach:",
@@ -3714,20 +3714,20 @@ const wchar_t* PADDING_LABELS[LANG_COUNT] = {
 const wchar_t* BORDER_LABELS[LANG_COUNT] = {
     L"&Styl rámečku:",
     L"&Border style:",
+    L"&Border style:",
+    L"&Border style:",
     L"&Rahmenstil:",
     L"Style de &bordure :",
     L"Estilo de &borde:",
     L"Stile &bordo:",
+    L"&Estilo da moldura:",
     L"Styl &ramki:",
     L"Štýl &rámčeka:",
-    L"&Border style:",
-    L"&Border style:",
-    L"&Estilo da moldura:",
+    L"&Rammestil:",
+    L"&Reunatyyli:",
+    L"&Rammastíll:",
     L"&Rammestil:",
     L"&Ramstil:",
-    L"&Reunatyyli:",
-    L"&Rammestil:",
-    L"&Rammastíll:",
     L"&Çerçeve stili:",
     L"&Äärise laad:",
     L"&Stíl na himlíne:",
@@ -3753,20 +3753,20 @@ const wchar_t* BORDER_LABELS[LANG_COUNT] = {
 const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT] = {
     L"Barva rámečku…",
     L"Border color…",
+    L"Border colour…",
+    L"Border colour…",
     L"Rahmenfarbe…",
     L"Couleur de bordure…",
     L"Color del borde…",
     L"Colore bordo…",
+    L"Cor da moldura…",
     L"Kolor ramki…",
     L"Farba rámčeka…",
-    L"Border colour…",
-    L"Border colour…",
-    L"Cor da moldura…",
+    L"Rammefarve…",
+    L"Reunuksen väri…",
+    L"Litur ramma…",
     L"Rammefarge…",
     L"Ramfärg…",
-    L"Reunuksen väri…",
-    L"Rammefarve…",
-    L"Litur ramma…",
     L"Çerçeve rengi…",
     L"Äärise värv…",
     L"Dath na himlíne…",
@@ -3792,20 +3792,20 @@ const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT] = {
 const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = {
     L"Šíř&ka rámečku:",
     L"Border &width:",
+    L"Border &width:",
+    L"Border &width:",
     L"Rahmen&breite:",
     L"É&paisseur :",
     L"&Ancho:",
     L"&Spessore:",
+    L"&Largura:",
     L"&Szerokość:",
     L"Šír&ka rám.:",
-    L"Border &width:",
-    L"Border &width:",
-    L"&Largura:",
+    L"Ramme&bredde:",
+    L"Reunan &leveys:",
+    L"&Breidd ramma:",
     L"Ramme&bredde:",
     L"Ram&bredd:",
-    L"Reunan &leveys:",
-    L"Ramme&bredde:",
-    L"&Breidd ramma:",
     L"Çerçeve &genişliği:",
     L"Äärise &laius:",
     L"&Leithead na himlíne:",
@@ -3831,20 +3831,20 @@ const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT] = {
 const wchar_t* ADDITIONAL_CLOCK_NAME_FORMATS[LANG_COUNT] = {
     L"Hodiny %d",
     L"Clock %d",
+    L"Clock %d",
+    L"Clock %d",
     L"Uhr %d",
     L"Horloge %d",
     L"Reloj %d",
     L"Orologio %d",
+    L"Relógio %d",
     L"Zegar %d",
     L"Hodiny %d",
-    L"Clock %d",
-    L"Clock %d",
-    L"Relógio %d",
+    L"Ur %d",
+    L"Kello %d",
+    L"Klukka %d",
     L"Klokke %d",
     L"Klocka %d",
-    L"Kello %d",
-    L"Ur %d",
-    L"Klukka %d",
     L"Saat %d",
     L"Kell %d",
     L"Clog %d",
@@ -3870,20 +3870,20 @@ const wchar_t* ADDITIONAL_CLOCK_NAME_FORMATS[LANG_COUNT] = {
 const wchar_t* ADDITIONAL_CLOCK_SHOW_FORMATS[LANG_COUNT] = {
     L"Zobrazit hodiny %d",
     L"Show clock %d",
+    L"Show clock %d",
+    L"Show clock %d",
     L"Uhr %d anzeigen",
     L"Afficher l’horloge %d",
     L"Mostrar reloj %d",
     L"Mostra orologio %d",
+    L"Mostrar relógio %d",
     L"Pokaż zegar %d",
     L"Zobraziť hodiny %d",
-    L"Show clock %d",
-    L"Show clock %d",
-    L"Mostrar relógio %d",
+    L"Vis ur %d",
+    L"Näytä kello %d",
+    L"Sýna klukku %d",
     L"Vis klokke %d",
     L"Visa klocka %d",
-    L"Näytä kello %d",
-    L"Vis ur %d",
-    L"Sýna klukku %d",
     L"Saat %d göster",
     L"Kuva kell %d",
     L"Taispeáin clog %d",
@@ -3909,20 +3909,20 @@ const wchar_t* ADDITIONAL_CLOCK_SHOW_FORMATS[LANG_COUNT] = {
 const wchar_t* TIME_FORMAT_LABELS[LANG_COUNT] = {
     L"Formát času:",
     L"Time format:",
+    L"Time format:",
+    L"Time format:",
     L"Zeitformat:",
     L"Format de l’heure :",
     L"Formato de hora:",
     L"Formato ora:",
+    L"Formato da hora:",
     L"Format czasu:",
     L"Formát času:",
-    L"Time format:",
-    L"Time format:",
-    L"Formato da hora:",
-    L"Tidsformat:",
     L"Tidsformat:",
     L"Aikamuoto:",
-    L"Tidsformat:",
     L"Tímasnið:",
+    L"Tidsformat:",
+    L"Tidsformat:",
     L"Saat biçimi:",
     L"Kellaajavorming:",
     L"Formáid ama:",
@@ -3948,20 +3948,20 @@ const wchar_t* TIME_FORMAT_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_FORMAT_MODE_LABELS[LANG_COUNT][TIME_FORMAT_COUNT] = {
     { L"Podle jazyka", L"12 hodin", L"24 hodin" },
     { L"Language default", L"12 hours", L"24 hours" },
+    { L"Language default", L"12 hours", L"24 hours" },
+    { L"Language default", L"12 hours", L"24 hours" },
     { L"Nach Sprache", L"12 Stunden", L"24 Stunden" },
     { L"Selon la langue", L"12 heures", L"24 heures" },
     { L"Según el idioma", L"12 horas", L"24 horas" },
     { L"Secondo la lingua", L"12 ore", L"24 ore" },
+    { L"Conforme o idioma", L"12 horas", L"24 horas" },
     { L"Według języka", L"12 godzin", L"24 godziny" },
     { L"Podľa jazyka", L"12 hodín", L"24 hodín" },
-    { L"Language default", L"12 hours", L"24 hours" },
-    { L"Language default", L"12 hours", L"24 hours" },
-    { L"Conforme o idioma", L"12 horas", L"24 horas" },
+    { L"Efter sprog", L"12 timer", L"24 timer" },
+    { L"Kielen mukaan", L"12 tuntia", L"24 tuntia" },
+    { L"Samkvæmt tungumáli", L"12 klukkustundir", L"24 klukkustundir" },
     { L"Etter språk", L"12 timer", L"24 timer" },
     { L"Enligt språk", L"12 timmar", L"24 timmar" },
-    { L"Kielen mukaan", L"12 tuntia", L"24 tuntia" },
-    { L"Efter sprog", L"12 timer", L"24 timer" },
-    { L"Samkvæmt tungumáli", L"12 klukkustundir", L"24 klukkustundir" },
     { L"Dile göre", L"12 saat", L"24 saat" },
     { L"Keele vaikesäte", L"12 tundi", L"24 tundi" },
     { L"De réir na teanga", L"12 uair", L"24 uair" },
@@ -3987,20 +3987,20 @@ const wchar_t* TIME_FORMAT_MODE_LABELS[LANG_COUNT][TIME_FORMAT_COUNT] = {
 const wchar_t* LEADING_ZERO_MODE_LABELS[LANG_COUNT][LEADING_ZERO_MODE_COUNT] = {
     { L"Ano", L"Ne, ponechat místo", L"Ne, bez místa" },
     { L"Yes", L"No, keep space", L"No, without space" },
+    { L"Yes", L"No, keep space", L"No, without space" },
+    { L"Yes", L"No, keep space", L"No, without space" },
     { L"Ja", L"Nein, Platz freihalten", L"Nein, ohne Platz" },
     { L"Oui", L"Non, garder l’espace", L"Non, sans espace" },
     { L"Sí", L"No, reservar espacio", L"No, sin espacio" },
     { L"Sì", L"No, riserva spazio", L"No, senza spazio" },
+    { L"Sim", L"Não, reservar espaço", L"Não, sem espaço" },
     { L"Tak", L"Nie, zachowaj miejsce", L"Nie, bez miejsca" },
     { L"Áno", L"Nie, ponechať miesto", L"Nie, bez miesta" },
-    { L"Yes", L"No, keep space", L"No, without space" },
-    { L"Yes", L"No, keep space", L"No, without space" },
-    { L"Sim", L"Não, reservar espaço", L"Não, sem espaço" },
+    { L"Ja", L"Nej, bevar plads", L"Nej, uden plads" },
+    { L"Kyllä", L"Ei, varaa tila", L"Ei, ilman tilaa" },
+    { L"Já", L"Nei, halda plássi", L"Nei, án pláss" },
     { L"Ja", L"Nei, behold plass", L"Nei, uten plass" },
     { L"Ja", L"Nej, behåll utrymme", L"Nej, utan utrymme" },
-    { L"Kyllä", L"Ei, varaa tila", L"Ei, ilman tilaa" },
-    { L"Ja", L"Nej, bevar plads", L"Nej, uden plads" },
-    { L"Já", L"Nei, halda plássi", L"Nei, án pláss" },
     { L"Evet", L"Hayır, yer ayır", L"Hayır, boşluksuz" },
     { L"Jah", L"Ei, säilita ruum", L"Ei, ilma ruumita" },
     { L"Tá", L"Níl, coinnigh an spás", L"Níl, gan spás" },
@@ -4026,20 +4026,20 @@ const wchar_t* LEADING_ZERO_MODE_LABELS[LANG_COUNT][LEADING_ZERO_MODE_COUNT] = {
 const wchar_t* TIME_SIGNAL_SOUND_LABELS[LANG_COUNT] = {
     L"Zvuk časového znamení:",
     L"Time signal sound:",
+    L"Time signal sound:",
+    L"Time signal sound:",
     L"Klang des Zeitzeichens:",
     L"Son du signal horaire :",
     L"Sonido de la señal horaria:",
     L"Suono del segnale orario:",
+    L"Som do sinal horário:",
     L"Dźwięk sygnału czasu:",
     L"Zvuk časového znamenia:",
-    L"Time signal sound:",
-    L"Time signal sound:",
-    L"Som do sinal horário:",
+    L"Lyd for tidssignal:",
+    L"Aikamerkin ääni:",
+    L"Hljóð tímamerkis:",
     L"Lyd for tidssignal:",
     L"Ljud för tidssignal:",
-    L"Aikamerkin ääni:",
-    L"Lyd for tidssignal:",
-    L"Hljóð tímamerkis:",
     L"Zaman sinyali sesi:",
     L"Ajasignaali heli:",
     L"Fuaim an chomhartha ama:",
@@ -4066,20 +4066,20 @@ const wchar_t* TIME_SIGNAL_SOUND_LABELS[LANG_COUNT] = {
 const wchar_t* ALARM_VOLUME_LABELS[LANG_COUNT] = {
     L"Hlasitost zvuku:",
     L"Audio volume:",
+    L"Audio volume:",
+    L"Audio volume:",
     L"Audiolautstärke:",
     L"Volume audio :",
     L"Volumen de audio:",
     L"Volume audio:",
+    L"Volume do áudio:",
     L"Głośność dźwięku:",
     L"Hlasitosť zvuku:",
-    L"Audio volume:",
-    L"Audio volume:",
-    L"Volume do áudio:",
+    L"Lydstyrke:",
+    L"Äänenvoimakkuus:",
+    L"Hljóðstyrkur:",
     L"Lydvolum:",
     L"Ljudvolym:",
-    L"Äänenvoimakkuus:",
-    L"Lydstyrke:",
-    L"Hljóðstyrkur:",
     L"Ses düzeyi:",
     L"Helitugevus:",
     L"Airde na fuaime:",
@@ -4105,20 +4105,20 @@ const wchar_t* ALARM_VOLUME_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_VOLUME_LABELS[LANG_COUNT] = {
     L"Hlasitost časového znamení:",
     L"Time signal volume:",
+    L"Time signal volume:",
+    L"Time signal volume:",
     L"Lautstärke des Zeitzeichens:",
     L"Volume du signal horaire :",
     L"Volumen de la señal horaria:",
     L"Volume del segnale orario:",
+    L"Volume do sinal horário:",
     L"Głośność sygnału czasu:",
     L"Hlasitosť časového znamenia:",
-    L"Time signal volume:",
-    L"Time signal volume:",
-    L"Volume do sinal horário:",
+    L"Lydstyrke for tidssignal:",
+    L"Aikamerkin äänenvoimakkuus:",
+    L"Hljóðstyrkur tímamerkis:",
     L"Volum for tidssignal:",
     L"Volym för tidssignal:",
-    L"Aikamerkin äänenvoimakkuus:",
-    L"Lydstyrke for tidssignal:",
-    L"Hljóðstyrkur tímamerkis:",
     L"Zaman sinyali ses düzeyi:",
     L"Ajasignaali helitugevus:",
     L"Airde an chomhartha ama:",
@@ -4144,20 +4144,20 @@ const wchar_t* TIME_SIGNAL_VOLUME_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_SYSTEM_SOUND_LABELS[LANG_COUNT] = {
     L"Systémové pípání",
     L"System beep",
+    L"System beep",
+    L"System beep",
     L"Systemsignalton",
     L"Bip système",
     L"Pitido del sistema",
     L"Segnale acustico di sistema",
+    L"Sinal sonoro do sistema",
     L"Sygnał systemowy",
     L"Systémové pípanie",
-    L"System beep",
-    L"System beep",
-    L"Sinal sonoro do sistema",
-    L"Systempip",
-    L"Systempip",
-    L"Järjestelmän äänimerkki",
     L"Systembip",
+    L"Järjestelmän äänimerkki",
     L"Kerfishljóð",
+    L"Systempip",
+    L"Systempip",
     L"Sistem bip sesi",
     L"Süsteemi helisignaal",
     L"Bíp an chórais",
@@ -4183,20 +4183,20 @@ const wchar_t* TIME_SIGNAL_SYSTEM_SOUND_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_GENERATED_SOUND_LABELS[LANG_COUNT] = {
     L"Vlastní generátor",
     L"Built-in generator",
+    L"Built-in generator",
+    L"Built-in generator",
     L"Interner Generator",
     L"Générateur intégré",
     L"Generador integrado",
     L"Generatore integrato",
+    L"Gerador integrado",
     L"Wbudowany generator",
     L"Vlastný generátor",
-    L"Built-in generator",
-    L"Built-in generator",
-    L"Gerador integrado",
+    L"Indbygget generator",
+    L"Sisäinen generaattori",
+    L"Innbyggður hljóðgjafi",
     L"Innebygd generator",
     L"Inbyggd generator",
-    L"Sisäinen generaattori",
-    L"Indbygget generator",
-    L"Innbyggður hljóðgjafi",
     L"Yerleşik üreteç",
     L"Sisseehitatud generaator",
     L"Gineadóir ionsuite",
@@ -4222,20 +4222,20 @@ const wchar_t* TIME_SIGNAL_GENERATED_SOUND_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT] = {
     L"Znamení",
     L"Signal",
+    L"Signal",
+    L"Signal",
     L"Zeitzeichen",
     L"Signal",
     L"Señal",
     L"Segnale",
+    L"Sinal",
     L"Sygnał",
     L"Znamenie",
     L"Signal",
-    L"Signal",
-    L"Sinal",
-    L"Signal",
-    L"Signal",
     L"Aikamerkki",
-    L"Signal",
     L"Tímamerki",
+    L"Signal",
+    L"Signal",
     L"Sinyal",
     L"Signaal",
     L"Comhartha",
@@ -4261,20 +4261,20 @@ const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT] = {
     L"&Signál",
     L"&Signal",
+    L"&Signal",
+    L"&Signal",
     L"&Zeitzeichen",
     L"&Signal",
     L"&Señal",
     L"&Segnale",
+    L"&Sinal",
     L"&Sygnał",
     L"&Signál",
     L"&Signal",
-    L"&Signal",
-    L"&Sinal",
-    L"&Signal",
-    L"&Signal",
     L"&Aikamerkki",
-    L"&Signal",
     L"&Tímamerki",
+    L"&Signal",
+    L"&Signal",
     L"&Sinyal",
     L"&Signaal",
     L"&Comhartha",
@@ -4300,20 +4300,20 @@ const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SIGNAL_ENABLED_LABELS[LANG_COUNT] = {
     L"Časové znamení &aktivní",
     L"Time signal &active",
+    L"Time signal &active",
+    L"Time signal &active",
     L"Zeitzeichen &aktiv",
     L"Signal horaire &actif",
     L"Señal horaria &activa",
     L"Segnale orario &attivo",
+    L"Sinal horário &ativo",
     L"Sygnał czasu &aktywny",
     L"Časové znamenie &aktívne",
-    L"Time signal &active",
-    L"Time signal &active",
-    L"Sinal horário &ativo",
+    L"Tidssignal &aktivt",
+    L"Aikamerkki &käytössä",
+    L"Tímamerki &virkt",
     L"Tidssignal &aktivt",
     L"Tidssignal &aktiv",
-    L"Aikamerkki &käytössä",
-    L"Tidssignal &aktivt",
-    L"Tímamerki &virkt",
     L"Zaman sinyali &etkin",
     L"Ajasignaal &lubatud",
     L"Comhartha ama &gníomhach",
@@ -4346,6 +4346,24 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každých 20 minut",
         L"Každou půlhodinu",
         L"Každou hodinu"
+    }, {
+        L"None",
+        L"Every minute",
+        L"Every 5 minutes",
+        L"Every 10 minutes",
+        L"Every quarter hour",
+        L"Every 20 minutes",
+        L"Every half hour",
+        L"Every hour"
+    }, {
+        L"None",
+        L"Every minute",
+        L"Every 5 minutes",
+        L"Every 10 minutes",
+        L"Every quarter hour",
+        L"Every 20 minutes",
+        L"Every half hour",
+        L"Every hour"
     }, {
         L"None",
         L"Every minute",
@@ -4392,6 +4410,15 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Ogni mezz’ora",
         L"Ogni ora"
     }, {
+        L"Nenhum",
+        L"A cada minuto",
+        L"A cada 5 minutos",
+        L"A cada 10 minutos",
+        L"A cada quarto de hora",
+        L"A cada 20 minutos",
+        L"A cada meia hora",
+        L"A cada hora"
+    }, {
         L"Brak",
         L"Co minutę",
         L"Co 5 minut",
@@ -4410,32 +4437,32 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Každú polhodinu",
         L"Každú hodinu"
     }, {
-        L"None",
-        L"Every minute",
-        L"Every 5 minutes",
-        L"Every 10 minutes",
-        L"Every quarter hour",
-        L"Every 20 minutes",
-        L"Every half hour",
-        L"Every hour"
+        L"Intet",
+        L"Hvert minut",
+        L"Hvert 5. minut",
+        L"Hvert 10. minut",
+        L"Hvert kvarter",
+        L"Hvert 20. minut",
+        L"Hver halve time",
+        L"Hver time"
     }, {
-        L"None",
-        L"Every minute",
-        L"Every 5 minutes",
-        L"Every 10 minutes",
-        L"Every quarter hour",
-        L"Every 20 minutes",
-        L"Every half hour",
-        L"Every hour"
+        L"Ei mitään",
+        L"Minuutin välein",
+        L"5 minuutin välein",
+        L"10 minuutin välein",
+        L"15 minuutin välein",
+        L"20 minuutin välein",
+        L"30 minuutin välein",
+        L"Tunnin välein"
     }, {
-        L"Nenhum",
-        L"A cada minuto",
-        L"A cada 5 minutos",
-        L"A cada 10 minutos",
-        L"A cada quarto de hora",
-        L"A cada 20 minutos",
-        L"A cada meia hora",
-        L"A cada hora"
+        L"Ekkert",
+        L"Á hverri mínútu",
+        L"Á 5 mínútna fresti",
+        L"Á 10 mínútna fresti",
+        L"Á stundarfjórðungs fresti",
+        L"Á 20 mínútna fresti",
+        L"Á hálftíma fresti",
+        L"Á klukkustundar fresti"
     }, {
         L"Ingen",
         L"Hvert minutt",
@@ -4454,33 +4481,6 @@ const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT] = {
         L"Var 20:e minut",
         L"Varje halvtimme",
         L"Varje timme"
-    }, {
-        L"Ei mitään",
-        L"Minuutin välein",
-        L"5 minuutin välein",
-        L"10 minuutin välein",
-        L"15 minuutin välein",
-        L"20 minuutin välein",
-        L"30 minuutin välein",
-        L"Tunnin välein"
-    }, {
-        L"Intet",
-        L"Hvert minut",
-        L"Hvert 5. minut",
-        L"Hvert 10. minut",
-        L"Hvert kvarter",
-        L"Hvert 20. minut",
-        L"Hver halve time",
-        L"Hver time"
-    }, {
-        L"Ekkert",
-        L"Á hverri mínútu",
-        L"Á 5 mínútna fresti",
-        L"Á 10 mínútna fresti",
-        L"Á stundarfjórðungs fresti",
-        L"Á 20 mínútna fresti",
-        L"Á hálftíma fresti",
-        L"Á klukkustundar fresti"
     }, {
         L"Yok",
         L"Her dakika",
@@ -4671,6 +4671,12 @@ const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT] = {
     L"Greenwich Time Signal (GTS): five short pips sound during the final five seconds and a long "
     L"pip exactly at the selected time boundary. Coincident signals from multiple widgets play "
     L"only once.",
+    L"Greenwich Time Signal (GTS): five short pips sound during the final five seconds and a long "
+    L"pip exactly at the selected time boundary. Coincident signals from multiple widgets play "
+    L"only once.",
+    L"Greenwich Time Signal (GTS): five short pips sound during the final five seconds and a long "
+    L"pip exactly at the selected time boundary. Coincident signals from multiple widgets play "
+    L"only once.",
     L"Greenwich Time Signal (GTS): fünf kurze Töne erklingen in den letzten fünf Sekunden und ein "
     L"langer Ton genau an der gewählten Zeitgrenze. Gleichzeitige Signale mehrerer Widgets werden "
     L"nur einmal wiedergegeben.",
@@ -4683,35 +4689,29 @@ const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT] = {
     L"Greenwich Time Signal (GTS): cinque segnali brevi suonano negli ultimi cinque secondi e uno "
     L"lungo esattamente al limite scelto. I segnali simultanei di più widget vengono riprodotti "
     L"una sola volta.",
+    L"Greenwich Time Signal (GTS): cinco sinais curtos soam nos últimos cinco segundos e um sinal "
+    L"longo exatamente no limite escolhido. Sinais coincidentes de vários widgets são "
+    L"reproduzidos apenas uma vez.",
     L"Greenwich Time Signal (GTS): pięć krótkich sygnałów rozlega się w ostatnich pięciu "
     L"sekundach, a długi dokładnie na wybranej granicy czasu. Zbieżne sygnały wielu widżetów są "
     L"odtwarzane tylko raz.",
     L"Greenwich Time Signal (GTS): päť krátkych tónov zaznie v posledných piatich sekundách a "
     L"dlhý tón presne na zvolenej časovej hranici. Súbežné znamenia viacerých widgetov sa "
     L"prehrajú iba raz.",
-    L"Greenwich Time Signal (GTS): five short pips sound during the final five seconds and a long "
-    L"pip exactly at the selected time boundary. Coincident signals from multiple widgets play "
-    L"only once.",
-    L"Greenwich Time Signal (GTS): five short pips sound during the final five seconds and a long "
-    L"pip exactly at the selected time boundary. Coincident signals from multiple widgets play "
-    L"only once.",
-    L"Greenwich Time Signal (GTS): cinco sinais curtos soam nos últimos cinco segundos e um sinal "
-    L"longo exatamente no limite escolhido. Sinais coincidentes de vários widgets são "
-    L"reproduzidos apenas uma vez.",
+    L"Greenwich Time Signal (GTS): fem korte bip lyder i de sidste fem sekunder og et langt bip "
+    L"præcis ved den valgte tidsgrænse. Samtidige signaler fra flere widgets afspilles kun én "
+    L"gang.",
+    L"Greenwich Time Signal (GTS): viisi lyhyttä äänimerkkiä kuuluu viimeisten viiden sekunnin "
+    L"aikana ja pitkä merkki täsmälleen valitulla aikarajalla. Samanaikaiset merkit toistetaan "
+    L"vain kerran.",
+    L"Greenwich Time Signal (GTS): fimm stutt píp hljóma síðustu fimm sekúndurnar og langt píp "
+    L"nákvæmlega á völdum tímamörkum. Samtímamerki frá mörgum græjum eru aðeins spiluð einu sinni.",
     L"Greenwich Time Signal (GTS): fem korte pip høres i de siste fem sekundene og et langt pip "
     L"nøyaktig på den valgte tidsgrensen. Samtidige signaler fra flere widgeter spilles bare én "
     L"gang.",
     L"Greenwich Time Signal (GTS): fem korta pip hörs under de sista fem sekunderna och ett långt "
     L"pip exakt vid den valda tidsgränsen. Samtidiga signaler från flera widgetar spelas bara en "
     L"gång.",
-    L"Greenwich Time Signal (GTS): viisi lyhyttä äänimerkkiä kuuluu viimeisten viiden sekunnin "
-    L"aikana ja pitkä merkki täsmälleen valitulla aikarajalla. Samanaikaiset merkit toistetaan "
-    L"vain kerran.",
-    L"Greenwich Time Signal (GTS): fem korte bip lyder i de sidste fem sekunder og et langt bip "
-    L"præcis ved den valgte tidsgrænse. Samtidige signaler fra flere widgets afspilles kun én "
-    L"gang.",
-    L"Greenwich Time Signal (GTS): fimm stutt píp hljóma síðustu fimm sekúndurnar og langt píp "
-    L"nákvæmlega á völdum tímamörkum. Samtímamerki frá mörgum græjum eru aðeins spiluð einu sinni.",
     L"Greenwich Time Signal (GTS): son beş saniyede beş kısa ses ve seçili zaman sınırında tam "
     L"olarak bir uzun ses çalar. Birden çok aracın çakışan sinyalleri yalnızca bir kez çalınır.",
     L"Greenwichi ajasignaal (GTS): viimasel viiel sekundil kõlab viis lühikest tooni ja valitud "
@@ -4772,20 +4772,20 @@ const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT] = {
 const wchar_t* TIME_TAB_LABELS[LANG_COUNT] = {
     L"Čas",
     L"Time",
+    L"Time",
+    L"Time",
     L"Zeit",
     L"Heure",
     L"Hora",
     L"Ora",
+    L"Hora",
     L"Czas",
     L"Čas",
-    L"Time",
-    L"Time",
-    L"Hora",
-    L"Tid",
     L"Tid",
     L"Aika",
-    L"Tid",
     L"Tími",
+    L"Tid",
+    L"Tid",
     L"Zaman",
     L"Aeg",
     L"Am",
@@ -4811,20 +4811,20 @@ const wchar_t* TIME_TAB_LABELS[LANG_COUNT] = {
 const wchar_t* TIME_SOURCE_LABELS[LANG_COUNT] = {
     L"&Zdroj času:",
     L"Time &source:",
+    L"Time &source:",
+    L"Time &source:",
     L"Zeit&quelle:",
     L"&Source de l’heure :",
     L"&Origen de hora:",
     L"&Origine ora:",
+    L"&Origem da hora:",
     L"Źródło &czasu:",
     L"&Zdroj času:",
-    L"Time &source:",
-    L"Time &source:",
-    L"&Origem da hora:",
+    L"Tids&kilde:",
+    L"Ajan &lähde:",
+    L"&Tímagjafi:",
     L"Tids&kilde:",
     L"Tids&källa:",
-    L"Ajan &lähde:",
-    L"Tids&kilde:",
-    L"&Tímagjafi:",
     L"Zaman &kaynağı:",
     L"Aja &allikas:",
     L"&Foinse ama:",
@@ -4850,20 +4850,20 @@ const wchar_t* TIME_SOURCE_LABELS[LANG_COUNT] = {
 const wchar_t* SYSTEM_TIME_LABELS[LANG_COUNT] = {
     L"Systémový čas Windows",
     L"Windows system time",
+    L"Windows system time",
+    L"Windows system time",
     L"Windows-Systemzeit",
     L"Heure système Windows",
     L"Hora del sistema Windows",
     L"Ora di sistema Windows",
+    L"Hora do sistema Windows",
     L"Czas systemowy Windows",
     L"Systémový čas Windows",
-    L"Windows system time",
-    L"Windows system time",
-    L"Hora do sistema Windows",
-    L"Systemtid i Windows",
-    L"Systemtid i Windows",
-    L"Windowsin järjestelmäaika",
     L"Windows-systemtid",
+    L"Windowsin järjestelmäaika",
     L"Kerfistími Windows",
+    L"Systemtid i Windows",
+    L"Systemtid i Windows",
     L"Windows sistem zamanı",
     L"Windowsi süsteemiaeg",
     L"Am córais Windows",
@@ -4889,20 +4889,20 @@ const wchar_t* SYSTEM_TIME_LABELS[LANG_COUNT] = {
 const wchar_t* NTP_TIME_LABELS[LANG_COUNT] = {
     L"Čas ze serverů NTP",
     L"Time from NTP servers",
+    L"Time from NTP servers",
+    L"Time from NTP servers",
     L"Zeit von NTP-Servern",
     L"Heure des serveurs NTP",
     L"Hora de servidores NTP",
     L"Ora dai server NTP",
+    L"Hora dos servidores NTP",
     L"Czas z serwerów NTP",
     L"Čas zo serverov NTP",
-    L"Time from NTP servers",
-    L"Time from NTP servers",
-    L"Hora dos servidores NTP",
+    L"Tid fra NTP-servere",
+    L"Aika NTP-palvelimilta",
+    L"Tími frá NTP-þjónum",
     L"Tid fra NTP-servere",
     L"Tid från NTP-servrar",
-    L"Aika NTP-palvelimilta",
-    L"Tid fra NTP-servere",
-    L"Tími frá NTP-þjónum",
     L"NTP sunucularından zaman",
     L"Aeg NTP-serveritest",
     L"Am ó fhreastalaithe NTP",
@@ -4928,20 +4928,20 @@ const wchar_t* NTP_TIME_LABELS[LANG_COUNT] = {
 const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT] = {
     L"&Servery NTP (oddělené středníkem):",
     L"&NTP servers (semicolon-separated):",
+    L"&NTP servers (semicolon-separated):",
+    L"&NTP servers (semicolon-separated):",
     L"&NTP-Server (durch Semikolon getrennt):",
     L"Serveurs &NTP (séparés par des points-virgules) :",
     L"Servidores &NTP (separados por punto y coma):",
     L"Server &NTP (separati da punto e virgola):",
+    L"Servidores &NTP (separados por ponto e vírgula):",
     L"Serwery &NTP (oddzielone średnikami):",
     L"Servery &NTP (oddelené bodkočiarkou):",
-    L"&NTP servers (semicolon-separated):",
-    L"&NTP servers (semicolon-separated):",
-    L"Servidores &NTP (separados por ponto e vírgula):",
+    L"&NTP-servere (adskilt med semikolon):",
+    L"&NTP-palvelimet (puolipistein eroteltuina):",
+    L"&NTP-þjónar (aðskildir með semíkommu):",
     L"&NTP-servere (atskilt med semikolon):",
     L"&NTP-servrar (avgränsade med semikolon):",
-    L"&NTP-palvelimet (puolipistein eroteltuina):",
-    L"&NTP-servere (adskilt med semikolon):",
-    L"&NTP-þjónar (aðskildir með semíkommu):",
     L"&NTP sunucuları (noktalı virgülle ayrılmış):",
     L"&NTP-serverid (eraldage semikooloniga):",
     L"&Freastalaithe NTP (scartha le leathstadanna):",
@@ -4967,20 +4967,20 @@ const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT] = {
 const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT] = {
     L"Výchozí &sada:",
     L"Default &set:",
+    L"Default &set:",
+    L"Default &set:",
     L"Standard&gruppe:",
     L"&Jeu par défaut :",
     L"Conjunto &predeterminado:",
     L"Gruppo &predefinito:",
+    L"Conjunto &predefinido:",
     L"&Zestaw domyślny:",
     L"Predvolená &sada:",
-    L"Default &set:",
-    L"Default &set:",
-    L"Conjunto &predefinido:",
+    L"Standard&sæt:",
+    L"Oletus&joukko:",
+    L"Sjálfgefið &safn:",
     L"Standard&sett:",
     L"Standard&uppsättning:",
-    L"Oletus&joukko:",
-    L"Standard&sæt:",
-    L"Sjálfgefið &safn:",
     L"Varsayılan &küme:",
     L"&Serverirühm:",
     L"&Tacar freastalaithe:",
@@ -5017,6 +5017,18 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
         L"Worldwide – Ubuntu / NTP Pool",
         L"Custom"
     }, {
+        L"Automatic by region",
+        L"Czechia and Slovakia – CESNET/NIC.CZ",
+        L"PTB – Germany and Europe",
+        L"Worldwide – Ubuntu / NTP Pool",
+        L"Custom"
+    }, {
+        L"Automatic by region",
+        L"Czechia and Slovakia – CESNET/NIC.CZ",
+        L"PTB – Germany and Europe",
+        L"Worldwide – Ubuntu / NTP Pool",
+        L"Custom"
+    }, {
         L"Automatisch nach Region",
         L"Tschechien und Slowakei – CESNET/NIC.CZ",
         L"PTB – Deutschland und Europa",
@@ -5041,6 +5053,12 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
         L"Tutto il mondo – Ubuntu / NTP Pool",
         L"Personalizzato"
     }, {
+        L"Automático por região",
+        L"Chéquia e Eslováquia – CESNET/NIC.CZ",
+        L"PTB – Alemanha e Europa",
+        L"Mundial – Ubuntu / NTP Pool",
+        L"Personalizado"
+    }, {
         L"Automatycznie według regionu",
         L"Czechy i Słowacja – CESNET/NIC.CZ",
         L"PTB – Niemcy i Europa",
@@ -5053,23 +5071,23 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
         L"Celý svet – Ubuntu / NTP Pool",
         L"Vlastné"
     }, {
-        L"Automatic by region",
-        L"Czechia and Slovakia – CESNET/NIC.CZ",
-        L"PTB – Germany and Europe",
-        L"Worldwide – Ubuntu / NTP Pool",
-        L"Custom"
+        L"Automatisk efter område",
+        L"Tjekkiet og Slovakiet – CESNET/NIC.CZ",
+        L"PTB – Tyskland og Europa",
+        L"Hele verden – Ubuntu / NTP Pool",
+        L"Brugerdefineret"
     }, {
-        L"Automatic by region",
-        L"Czechia and Slovakia – CESNET/NIC.CZ",
-        L"PTB – Germany and Europe",
-        L"Worldwide – Ubuntu / NTP Pool",
-        L"Custom"
+        L"Automaattinen alueen mukaan",
+        L"Tšekki ja Slovakia – CESNET/NIC.CZ",
+        L"PTB – Saksa ja Eurooppa",
+        L"Maailmanlaajuinen – Ubuntu / NTP Pool",
+        L"Mukautettu"
     }, {
-        L"Automático por região",
-        L"Chéquia e Eslováquia – CESNET/NIC.CZ",
-        L"PTB – Alemanha e Europa",
-        L"Mundial – Ubuntu / NTP Pool",
-        L"Personalizado"
+        L"Sjálfvirkt eftir svæði",
+        L"Tékkland og Slóvakía – CESNET/NIC.CZ",
+        L"PTB – Þýskaland og Evrópa",
+        L"Allur heimurinn – Ubuntu / NTP Pool",
+        L"Sérsniðið"
     }, {
         L"Automatisk etter region",
         L"Tsjekkia og Slovakia – CESNET/NIC.CZ",
@@ -5082,24 +5100,6 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
         L"PTB – Tyskland och Europa",
         L"Hela världen – Ubuntu / NTP Pool",
         L"Anpassad"
-    }, {
-        L"Automaattinen alueen mukaan",
-        L"Tšekki ja Slovakia – CESNET/NIC.CZ",
-        L"PTB – Saksa ja Eurooppa",
-        L"Maailmanlaajuinen – Ubuntu / NTP Pool",
-        L"Mukautettu"
-    }, {
-        L"Automatisk efter område",
-        L"Tjekkiet og Slovakiet – CESNET/NIC.CZ",
-        L"PTB – Tyskland og Europa",
-        L"Hele verden – Ubuntu / NTP Pool",
-        L"Brugerdefineret"
-    }, {
-        L"Sjálfvirkt eftir svæði",
-        L"Tékkland og Slóvakía – CESNET/NIC.CZ",
-        L"PTB – Þýskaland og Evrópa",
-        L"Allur heimurinn – Ubuntu / NTP Pool",
-        L"Sérsniðið"
     }, {
         L"Bölgeye göre otomatik",
         L"Çekya ve Slovakya – CESNET/NIC.CZ",
@@ -5226,20 +5226,20 @@ const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT] = {
 const wchar_t* NTP_SYNC_LABELS[LANG_COUNT] = {
     L"&Synchronizovat nyní",
     L"&Synchronize now",
+    L"&Synchronise now",
+    L"&Synchronise now",
     L"Jetzt &synchronisieren",
     L"&Synchroniser maintenant",
     L"&Sincronizar ahora",
     L"&Sincronizza ora",
+    L"&Sincronizar agora",
     L"&Synchronizuj teraz",
     L"&Synchronizovať teraz",
-    L"&Synchronise now",
-    L"&Synchronise now",
-    L"&Sincronizar agora",
+    L"&Synkroniser nu",
+    L"&Synkronoi nyt",
+    L"&Samstilla núna",
     L"&Synkroniser nå",
     L"&Synkronisera nu",
-    L"&Synkronoi nyt",
-    L"&Synkroniser nu",
-    L"&Samstilla núna",
     L"Şimdi &eşitle",
     L"&Sünkrooni kohe",
     L"&Sioncronaigh anois",
@@ -5265,20 +5265,20 @@ const wchar_t* NTP_SYNC_LABELS[LANG_COUNT] = {
 const wchar_t* NTP_LOG_COLUMN_LABELS[LANG_COUNT][3] = {
     { L"Datum a čas", L"Server NTP", L"Stav" },
     { L"Date and time", L"NTP server", L"Status" },
+    { L"Date and time", L"NTP server", L"Status" },
+    { L"Date and time", L"NTP server", L"Status" },
     { L"Datum und Uhrzeit", L"NTP-Server", L"Status" },
     { L"Date et heure", L"Serveur NTP", L"État" },
     { L"Fecha y hora", L"Servidor NTP", L"Estado" },
     { L"Data e ora", L"Server NTP", L"Stato" },
+    { L"Data e hora", L"Servidor NTP", L"Estado" },
     { L"Data i godzina", L"Serwer NTP", L"Stan" },
     { L"Dátum a čas", L"Server NTP", L"Stav" },
-    { L"Date and time", L"NTP server", L"Status" },
-    { L"Date and time", L"NTP server", L"Status" },
-    { L"Data e hora", L"Servidor NTP", L"Estado" },
+    { L"Dato og klokkeslæt", L"NTP-server", L"Status" },
+    { L"Päivämäärä ja aika", L"NTP-palvelin", L"Tila" },
+    { L"Dagsetning og tími", L"NTP-þjónn", L"Staða" },
     { L"Dato og klokkeslett", L"NTP-server", L"Status" },
     { L"Datum och tid", L"NTP-server", L"Status" },
-    { L"Päivämäärä ja aika", L"NTP-palvelin", L"Tila" },
-    { L"Dato og klokkeslæt", L"NTP-server", L"Status" },
-    { L"Dagsetning og tími", L"NTP-þjónn", L"Staða" },
     { L"Tarih ve saat", L"NTP sunucusu", L"Durum" },
     { L"Kuupäev ja kellaaeg", L"NTP-server", L"Olek" },
     { L"Dáta agus am", L"Freastalaí NTP", L"Stádas" },
@@ -5313,6 +5313,16 @@ const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4] = {
         L"Network error",
         L"Response timed out"
     }, {
+        L"Invalid NTP reply",
+        L"Server name resolution failed",
+        L"Network error",
+        L"Response timed out"
+    }, {
+        L"Invalid NTP reply",
+        L"Server name resolution failed",
+        L"Network error",
+        L"Response timed out"
+    }, {
         L"Ungültige NTP-Antwort",
         L"Servername konnte nicht aufgelöst werden",
         L"Netzwerkfehler",
@@ -5333,6 +5343,11 @@ const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4] = {
         L"Errore di rete",
         L"Tempo di attesa della risposta scaduto"
     }, {
+        L"Resposta NTP inválida",
+        L"Falha na resolução do nome do servidor",
+        L"Erro de rede",
+        L"Tempo de espera da resposta esgotado"
+    }, {
         L"Nieprawidłowa odpowiedź NTP",
         L"Nie udało się rozpoznać nazwy serwera",
         L"Błąd sieci",
@@ -5343,20 +5358,20 @@ const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4] = {
         L"Chyba siete",
         L"Vypršal časový limit odpovede"
     }, {
-        L"Invalid NTP reply",
-        L"Server name resolution failed",
-        L"Network error",
-        L"Response timed out"
+        L"Ugyldigt NTP-svar",
+        L"Servernavnet kunne ikke slås op",
+        L"Netværksfejl",
+        L"Tidsgrænsen for svar blev overskredet"
     }, {
-        L"Invalid NTP reply",
-        L"Server name resolution failed",
-        L"Network error",
-        L"Response timed out"
+        L"Virheellinen NTP-vastaus",
+        L"Palvelimen nimen selvitys epäonnistui",
+        L"Verkkovirhe",
+        L"Vastauksen aikakatkaisu"
     }, {
-        L"Resposta NTP inválida",
-        L"Falha na resolução do nome do servidor",
-        L"Erro de rede",
-        L"Tempo de espera da resposta esgotado"
+        L"Ógilt NTP-svar",
+        L"Ekki tókst að leysa nafn þjóns",
+        L"Netvilla",
+        L"Bið eftir svari rann út"
     }, {
         L"Ugyldig NTP-svar",
         L"Kunne ikke slå opp servernavnet",
@@ -5367,21 +5382,6 @@ const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4] = {
         L"Kunde inte slå upp servernamnet",
         L"Nätverksfel",
         L"Tidsgränsen för svar överskreds"
-    }, {
-        L"Virheellinen NTP-vastaus",
-        L"Palvelimen nimen selvitys epäonnistui",
-        L"Verkkovirhe",
-        L"Vastauksen aikakatkaisu"
-    }, {
-        L"Ugyldigt NTP-svar",
-        L"Servernavnet kunne ikke slås op",
-        L"Netværksfejl",
-        L"Tidsgrænsen for svar blev overskredet"
-    }, {
-        L"Ógilt NTP-svar",
-        L"Ekki tókst að leysa nafn þjóns",
-        L"Netvilla",
-        L"Bið eftir svari rann út"
     }, {
         L"Geçersiz NTP yanıtı",
         L"Sunucu adı çözümlenemedi",
@@ -5488,20 +5488,20 @@ const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4] = {
 const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT] = {
     L"Uložit log",
     L"Save log",
+    L"Save log",
+    L"Save log",
     L"Protokoll speichern",
     L"Enregistrer le journal",
     L"Guardar registro",
     L"Salva registro",
+    L"Guardar registo",
     L"Zapisz dziennik",
     L"Uložiť log",
-    L"Save log",
-    L"Save log",
-    L"Guardar registo",
+    L"Gem log",
+    L"Tallenna loki",
+    L"Vista annál",
     L"Lagre logg",
     L"Spara logg",
-    L"Tallenna loki",
-    L"Gem log",
-    L"Vista annál",
     L"Günlüğü kaydet",
     L"Salvesta logi",
     L"Sábháil an logchomhad",
@@ -5527,20 +5527,20 @@ const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT] = {
 const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT] = {
     L"Log se nepodařilo uložit.",
     L"The log could not be saved.",
+    L"The log could not be saved.",
+    L"The log could not be saved.",
     L"Das Protokoll konnte nicht gespeichert werden.",
     L"Impossible d’enregistrer le journal.",
     L"No se pudo guardar el registro.",
     L"Impossibile salvare il registro.",
+    L"Não foi possível guardar o registo.",
     L"Nie można zapisać dziennika.",
     L"Log sa nepodarilo uložiť.",
-    L"The log could not be saved.",
-    L"The log could not be saved.",
-    L"Não foi possível guardar o registo.",
+    L"Loggen kunne ikke gemmes.",
+    L"Lokia ei voitu tallentaa.",
+    L"Ekki tókst að vista annálinn.",
     L"Loggen kunne ikke lagres.",
     L"Loggen kunde inte sparas.",
-    L"Lokia ei voitu tallentaa.",
-    L"Loggen kunne ikke gemmes.",
-    L"Ekki tókst að vista annálinn.",
     L"Günlük kaydedilemedi.",
     L"Logi ei saanud salvestada.",
     L"Níorbh fhéidir an logchomhad a shábháil.",
@@ -5566,20 +5566,20 @@ const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT] = {
 const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT] = {
     L"Zdroj a synchronizace času platí globálně pro všechny widgety.",
     L"The time source and synchronization apply globally to all widgets.",
+    L"The time source and synchronisation apply globally to all widgets.",
+    L"The time source and synchronisation apply globally to all widgets.",
     L"Zeitquelle und Synchronisierung gelten global für alle Widgets.",
     L"La source et la synchronisation de l’heure s’appliquent globalement à tous les widgets.",
     L"La fuente y la sincronización de hora se aplican globalmente a todos los widgets.",
     L"L’origine e la sincronizzazione dell’ora si applicano globalmente a tutti i widget.",
+    L"A origem e a sincronização da hora aplicam-se globalmente a todos os widgets.",
     L"Źródło i synchronizacja czasu obowiązują globalnie dla wszystkich widżetów.",
     L"Zdroj a synchronizácia času platia globálne pre všetky widgety.",
-    L"The time source and synchronisation apply globally to all widgets.",
-    L"The time source and synchronisation apply globally to all widgets.",
-    L"A origem e a sincronização da hora aplicam-se globalmente a todos os widgets.",
+    L"Tidskilde og synkronisering gælder globalt for alle widgets.",
+    L"Aikalähde ja synkronointi koskevat kaikkia pienoisohjelmia.",
+    L"Tímagjafi og samstilling gilda fyrir allar græjur.",
     L"Tidskilde og synkronisering gjelder globalt for alle widgeter.",
     L"Tidskälla och synkronisering gäller globalt för alla widgetar.",
-    L"Aikalähde ja synkronointi koskevat kaikkia pienoisohjelmia.",
-    L"Tidskilde og synkronisering gælder globalt for alle widgets.",
-    L"Tímagjafi og samstilling gilda fyrir allar græjur.",
     L"Zaman kaynağı ve eşitleme tüm araçlara genel olarak uygulanır.",
     L"Aja allikas ja sünkroonimine kehtivad kõigile vidinatele.",
     L"Baineann an fhoinse ama agus an sioncronú le gach giuirléid.",
@@ -5605,20 +5605,20 @@ const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT] = {
 const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT] = {
     L"Používá se systémový čas; Windows se nemění.",
     L"System time is used; Windows is not changed.",
+    L"System time is used; Windows is not changed.",
+    L"System time is used; Windows is not changed.",
     L"Die Systemzeit wird verwendet; Windows wird nicht geändert.",
     L"L’heure système est utilisée ; Windows n’est pas modifié.",
     L"Se usa la hora del sistema; Windows no se modifica.",
     L"Viene usata l’ora di sistema; Windows non viene modificato.",
+    L"É utilizada a hora do sistema; o Windows não é alterado.",
     L"Używany jest czas systemowy; system Windows nie jest zmieniany.",
     L"Používa sa systémový čas; Windows sa nemení.",
-    L"System time is used; Windows is not changed.",
-    L"System time is used; Windows is not changed.",
-    L"É utilizada a hora do sistema; o Windows não é alterado.",
+    L"Systemtid bruges; Windows ændres ikke.",
+    L"Järjestelmäaikaa käytetään; Windowsia ei muuteta.",
+    L"Kerfistími er notaður; Windows er ekki breytt.",
     L"Systemtid brukes; Windows endres ikke.",
     L"Systemtid används; Windows ändras inte.",
-    L"Järjestelmäaikaa käytetään; Windowsia ei muuteta.",
-    L"Systemtid bruges; Windows ændres ikke.",
-    L"Kerfistími er notaður; Windows er ekki breytt.",
     L"Sistem zamanı kullanılıyor; Windows değiştirilmez.",
     L"Kasutatakse süsteemiaega; Windowsi kella ei muudeta.",
     L"Úsáidtear am an chórais; ní athraítear clog Windows.",
@@ -5644,20 +5644,20 @@ const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT] = {
 const wchar_t* NTP_STATUS_WAITING[LANG_COUNT] = {
     L"Čeká se na synchronizaci NTP…",
     L"Waiting for NTP synchronization…",
+    L"Waiting for NTP synchronisation…",
+    L"Waiting for NTP synchronisation…",
     L"NTP-Synchronisierung wird erwartet…",
     L"Synchronisation NTP en attente…",
     L"Esperando la sincronización NTP…",
     L"In attesa della sincronizzazione NTP…",
+    L"A aguardar a sincronização NTP…",
     L"Oczekiwanie na synchronizację NTP…",
     L"Čaká sa na synchronizáciu NTP…",
-    L"Waiting for NTP synchronisation…",
-    L"Waiting for NTP synchronisation…",
-    L"A aguardar a sincronização NTP…",
+    L"Venter på NTP-synkronisering…",
+    L"Odotetaan NTP-synkronointia…",
+    L"Bíður eftir NTP-samstillingu…",
     L"Venter på NTP-synkronisering…",
     L"Väntar på NTP-synkronisering…",
-    L"Odotetaan NTP-synkronointia…",
-    L"Venter på NTP-synkronisering…",
-    L"Bíður eftir NTP-samstillingu…",
     L"NTP eşitlemesi bekleniyor…",
     L"NTP-sünkroonimise ootel…",
     L"Ag fanacht le sioncronú NTP…",
@@ -5683,20 +5683,20 @@ const wchar_t* NTP_STATUS_WAITING[LANG_COUNT] = {
 const wchar_t* NTP_STATUS_FAILED[LANG_COUNT] = {
     L"Servery NTP nejsou dostupné; dočasně se používá systémový čas.",
     L"NTP servers are unavailable; system time is used temporarily.",
+    L"NTP servers are unavailable; system time is used temporarily.",
+    L"NTP servers are unavailable; system time is used temporarily.",
     L"NTP-Server sind nicht erreichbar; vorübergehend wird die Systemzeit verwendet.",
     L"Les serveurs NTP sont indisponibles ; l’heure système est utilisée temporairement.",
     L"Los servidores NTP no están disponibles; se usa temporalmente la hora del sistema.",
     L"I server NTP non sono disponibili; viene usata temporaneamente l’ora di sistema.",
+    L"Os servidores NTP estão indisponíveis; a hora do sistema é utilizada temporariamente.",
     L"Serwery NTP są niedostępne; tymczasowo używany jest czas systemowy.",
     L"Servery NTP nie sú dostupné; dočasne sa používa systémový čas.",
-    L"NTP servers are unavailable; system time is used temporarily.",
-    L"NTP servers are unavailable; system time is used temporarily.",
-    L"Os servidores NTP estão indisponíveis; a hora do sistema é utilizada temporariamente.",
+    L"NTP-serverne er ikke tilgængelige; systemtid bruges midlertidigt.",
+    L"NTP-palvelimia ei tavoiteta; järjestelmäaikaa käytetään tilapäisesti.",
+    L"NTP-þjónar eru ekki tiltækir; kerfistími er notaður tímabundið.",
     L"NTP-serverne er utilgjengelige; systemtid brukes midlertidig.",
     L"NTP-servrarna är inte tillgängliga; systemtid används tillfälligt.",
-    L"NTP-palvelimia ei tavoiteta; järjestelmäaikaa käytetään tilapäisesti.",
-    L"NTP-serverne er ikke tilgængelige; systemtid bruges midlertidigt.",
-    L"NTP-þjónar eru ekki tiltækir; kerfistími er notaður tímabundið.",
     L"NTP sunucuları kullanılamıyor; geçici olarak sistem zamanı kullanılıyor.",
     L"NTP-serverid pole saadaval; ajutiselt kasutatakse süsteemiaega.",
     L"Níl na freastalaithe NTP ar fáil; úsáidtear am an chórais go sealadach.",
@@ -5722,21 +5722,21 @@ const wchar_t* NTP_STATUS_FAILED[LANG_COUNT] = {
 const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT] = {
     L"Servery NTP nejsou dostupné; hodiny pokračují od poslední synchronizace:",
     L"NTP servers are unavailable; the clock continues from the last synchronization:",
+    L"NTP servers are unavailable; the clock continues from the last synchronisation:",
+    L"NTP servers are unavailable; the clock continues from the last synchronisation:",
     L"NTP-Server sind nicht erreichbar; die Uhr läuft ab der letzten Synchronisierung weiter:",
     L"Les serveurs NTP sont indisponibles ; l’horloge continue depuis la dernière synchronisation "
     L":",
     L"Los servidores NTP no están disponibles; el reloj continúa desde la última sincronización:",
     L"I server NTP non sono disponibili; l’orologio prosegue dall’ultima sincronizzazione:",
+    L"Os servidores NTP estão indisponíveis; o relógio continua desde a última sincronização:",
     L"Serwery NTP są niedostępne; zegar kontynuuje odmierzanie od ostatniej synchronizacji:",
     L"Servery NTP nie sú dostupné; hodiny pokračujú od poslednej synchronizácie:",
-    L"NTP servers are unavailable; the clock continues from the last synchronisation:",
-    L"NTP servers are unavailable; the clock continues from the last synchronisation:",
-    L"Os servidores NTP estão indisponíveis; o relógio continua desde a última sincronização:",
+    L"NTP-serverne er ikke tilgængelige; uret fortsætter fra den seneste synkronisering:",
+    L"NTP-palvelimia ei tavoiteta; kello jatkaa viimeisestä synkronoinnista:",
+    L"NTP-þjónar eru ekki tiltækir; klukkan heldur áfram frá síðustu samstillingu:",
     L"NTP-serverne er utilgjengelige; klokken fortsetter fra siste synkronisering:",
     L"NTP-servrarna är inte tillgängliga; klockan fortsätter från den senaste synkroniseringen:",
-    L"NTP-palvelimia ei tavoiteta; kello jatkaa viimeisestä synkronoinnista:",
-    L"NTP-serverne er ikke tilgængelige; uret fortsætter fra den seneste synkronisering:",
-    L"NTP-þjónar eru ekki tiltækir; klukkan heldur áfram frá síðustu samstillingu:",
     L"NTP sunucuları kullanılamıyor; saat son eşitlemeden itibaren ilerlemeye devam ediyor:",
     L"NTP-serverid pole saadaval; kell jätkab viimasest sünkroonimisest:",
     L"Níl na freastalaithe NTP ar fáil; leanann an clog ón sioncronú deireanach:",
@@ -5762,20 +5762,20 @@ const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT] = {
 const wchar_t* NTP_STATUS_SYNCHRONIZED[LANG_COUNT] = {
     L"Synchronizováno se serverem",
     L"Synchronized with",
+    L"Synchronised with",
+    L"Synchronised with",
     L"Synchronisiert mit",
     L"Synchronisé avec",
     L"Sincronizado con",
     L"Sincronizzato con",
+    L"Sincronizado com",
     L"Zsynchronizowano z",
     L"Synchronizované so serverom",
-    L"Synchronised with",
-    L"Synchronised with",
-    L"Sincronizado com",
+    L"Synkroniseret med",
+    L"Synkronoitu palvelimeen",
+    L"Samstillt við",
     L"Synkronisert med",
     L"Synkroniserad med",
-    L"Synkronoitu palvelimeen",
-    L"Synkroniseret med",
-    L"Samstillt við",
     L"Şununla eşitlendi",
     L"Sünkroonitud serveriga",
     L"Sioncronaithe le",
@@ -5801,20 +5801,20 @@ const wchar_t* NTP_STATUS_SYNCHRONIZED[LANG_COUNT] = {
 const wchar_t* ANTIALIASING_LABELS[LANG_COUNT] = {
     L"&Vyhlazování písma:",
     L"Font &antialiasing:",
+    L"Font &antialiasing:",
+    L"Font &antialiasing:",
     L"Schrift&glättung:",
     L"&Lissage des polices :",
     L"&Suavizado de fuente:",
     L"&Antialiasing carattere:",
+    L"&Suavização do tipo de letra:",
     L"&Wygładzanie czcionki:",
     L"&Vyhladzovanie písma:",
-    L"Font &antialiasing:",
-    L"Font &antialiasing:",
-    L"&Suavização do tipo de letra:",
+    L"Skrift&udjævning:",
+    L"Fontin &pehmennys:",
+    L"&Leturjöfnun:",
     L"Skrift&utjevning:",
     L"Teckensnitts&utjämning:",
-    L"Fontin &pehmennys:",
-    L"Skrift&udjævning:",
-    L"&Leturjöfnun:",
     L"Yazı tipi &kenar yumuşatma:",
     L"Fondi &silumine:",
     L"&Frithailiasáil cló:",
@@ -5840,20 +5840,20 @@ const wchar_t* ANTIALIASING_LABELS[LANG_COUNT] = {
 const wchar_t* ANTIALIASING_NAMES[LANG_COUNT][FONT_ANTIALIAS_COUNT] = {
     { L"GDI", L"ClearType", L"Žádné" },
     { L"GDI", L"ClearType", L"None" },
+    { L"GDI", L"ClearType", L"None" },
+    { L"GDI", L"ClearType", L"None" },
     { L"GDI", L"ClearType", L"Keine" },
     { L"GDI", L"ClearType", L"Aucun" },
     { L"GDI", L"ClearType", L"Ninguno" },
     { L"GDI", L"ClearType", L"Nessuno" },
+    { L"GDI", L"ClearType", L"Nenhuma" },
     { L"GDI", L"ClearType", L"Brak" },
     { L"GDI", L"ClearType", L"Žiadne" },
-    { L"GDI", L"ClearType", L"None" },
-    { L"GDI", L"ClearType", L"None" },
-    { L"GDI", L"ClearType", L"Nenhuma" },
-    { L"GDI", L"ClearType", L"Ingen" },
     { L"GDI", L"ClearType", L"Ingen" },
     { L"GDI", L"ClearType", L"Ei mitään" },
-    { L"GDI", L"ClearType", L"Ingen" },
     { L"GDI", L"ClearType", L"Engin" },
+    { L"GDI", L"ClearType", L"Ingen" },
+    { L"GDI", L"ClearType", L"Ingen" },
     { L"GDI", L"ClearType", L"Yok" },
     { L"GDI", L"ClearType", L"Puudub" },
     { L"GDI", L"ClearType", L"Gan frithailiasál" },
@@ -5879,20 +5879,20 @@ const wchar_t* ANTIALIASING_NAMES[LANG_COUNT][FONT_ANTIALIAS_COUNT] = {
 const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT] = {
     L"&Výchozí vzhled",
     L"&Default appearance",
+    L"&Default appearance",
+    L"&Default appearance",
     L"&Standarddarstellung",
     L"Apparence par &défaut",
     L"Aspecto &predeterminado",
     L"Aspetto &predefinito",
+    L"Aspeto &predefinido",
     L"Wygląd &domyślny",
     L"&Predvolený vzhľad",
-    L"&Default appearance",
-    L"&Default appearance",
-    L"Aspeto &predefinido",
-    L"&Standardutseende",
-    L"&Standardutseende",
-    L"&Oletusulkoasu",
     L"&Standardudseende",
+    L"&Oletusulkoasu",
     L"&Sjálfgefið útlit",
+    L"&Standardutseende",
+    L"&Standardutseende",
     L"&Varsayılan görünüm",
     L"&Vaikeilme",
     L"&Cuma réamhshocraithe",
@@ -5918,20 +5918,20 @@ const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT] = {
 const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT] = {
     L"V&yzkoušet",
     L"&Test",
+    L"&Test",
+    L"&Test",
     L"&Testen",
     L"&Tester",
     L"&Probar",
     L"&Prova",
+    L"&Testar",
     L"&Testuj",
     L"V&yskúšať",
     L"&Test",
-    L"&Test",
-    L"&Testar",
+    L"&Testaa",
+    L"&Prófa",
     L"&Test",
     L"&Testa",
-    L"&Testaa",
-    L"&Test",
-    L"&Prófa",
     L"&Test et",
     L"&Testi",
     L"&Tástáil",
@@ -5957,20 +5957,20 @@ const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT] = {
 const wchar_t* STOP_TEST_LABELS[LANG_COUNT] = {
     L"&Zastavit test",
     L"S&top test",
+    L"S&top test",
+    L"S&top test",
     L"Test &stoppen",
     L"&Arrêter le test",
     L"&Detener prueba",
     L"&Ferma prova",
+    L"&Parar teste",
     L"&Zatrzymaj test",
     L"&Zastaviť test",
-    L"S&top test",
-    L"S&top test",
-    L"&Parar teste",
+    L"&Stop test",
+    L"&Pysäytä testi",
+    L"&Stöðva prófun",
     L"&Stopp test",
     L"&Stoppa test",
-    L"&Pysäytä testi",
-    L"&Stop test",
-    L"&Stöðva prófun",
     L"Testi &durdur",
     L"&Peata test",
     L"&Stop an tástáil",
@@ -5996,20 +5996,20 @@ const wchar_t* STOP_TEST_LABELS[LANG_COUNT] = {
 const wchar_t* ALARM_TIME_SIGNAL_LABELS[LANG_COUNT] = {
     L"Pípat časové &znamení",
     L"Sound the time si&gnal",
+    L"Sound the time si&gnal",
+    L"Sound the time si&gnal",
     L"Akustisches &Zeitzeichen",
     L"Émettre le signal &horaire",
     L"Emitir la señal h&oraria",
     L"Emetti il segnale &orario",
+    L"Emitir o &sinal horário",
     L"Odtwarzaj sygnał &czasu",
     L"Pípať časové &znamenie",
-    L"Sound the time si&gnal",
-    L"Sound the time si&gnal",
-    L"Emitir o &sinal horário",
+    L"Afspil tids&signalet",
+    L"Toista aika&merkki",
+    L"Spila tíma&merki",
     L"Spill tids&signalet",
     L"Spela tids&signalen",
-    L"Toista aika&merkki",
-    L"Afspil tids&signalet",
-    L"Spila tíma&merki",
     L"Zaman &sinyalini çal",
     L"Esita &ajasignaal",
     L"Seinn an comhartha &ama",
@@ -6035,20 +6035,20 @@ const wchar_t* ALARM_TIME_SIGNAL_LABELS[LANG_COUNT] = {
 const wchar_t* REMOTE_SCRIPT_LABELS[LANG_COUNT] = {
     L"Zavolat &vzdálený skript",
     L"Call a &remote script",
+    L"Call a &remote script",
+    L"Call a &remote script",
     L"&Remote-Skript aufrufen",
     L"Appeler un script &distant",
     L"Llamar a un script &remoto",
     L"Chiama script &remoto",
+    L"Chamar um script &remoto",
     L"Wywołaj skrypt &zdalny",
     L"Zavolať &vzdialený skript",
-    L"Call a &remote script",
-    L"Call a &remote script",
-    L"Chamar um script &remoto",
+    L"Kald et &fjernscript",
+    L"Kutsu &etäkomentosarjaa",
+    L"Kalla á &fjarskriftu",
     L"Kall et &eksternt skript",
     L"Anropa ett &fjärrskript",
-    L"Kutsu &etäkomentosarjaa",
-    L"Kald et &fjernscript",
-    L"Kalla á &fjarskriftu",
     L"&Uzak betiği çağır",
     L"Käivita &kaugskript",
     L"Glaoigh ar &chianscript",
@@ -6075,19 +6075,19 @@ const wchar_t* REMOTE_SCRIPT_URL_LABELS[LANG_COUNT] = {
     L"Adresa URL:",
     L"URL:",
     L"URL:",
+    L"URL:",
+    L"URL:",
     L"URL :",
+    L"URL:",
     L"URL:",
     L"URL:",
     L"Adres URL:",
     L"Adresa URL:",
     L"URL:",
     L"URL:",
-    L"URL:",
-    L"URL:",
-    L"URL:",
-    L"URL:",
-    L"URL:",
     L"Vefslóð:",
+    L"URL:",
+    L"URL:",
     L"URL:",
     L"URL:",
     L"URL:",
@@ -6113,20 +6113,20 @@ const wchar_t* REMOTE_SCRIPT_URL_LABELS[LANG_COUNT] = {
 const wchar_t* INVALID_REMOTE_SCRIPT_URL[LANG_COUNT] = {
     L"Zadejte platnou adresu vzdáleného skriptu HTTP nebo HTTPS.",
     L"Enter a valid HTTP or HTTPS remote script URL.",
+    L"Enter a valid HTTP or HTTPS remote script URL.",
+    L"Enter a valid HTTP or HTTPS remote script URL.",
     L"Geben Sie eine gültige HTTP- oder HTTPS-Adresse des Remote-Skripts ein.",
     L"Entrez une adresse HTTP ou HTTPS valide pour le script distant.",
     L"Introduzca una dirección HTTP o HTTPS válida para el script remoto.",
     L"Immettere un indirizzo HTTP o HTTPS valido per lo script remoto.",
+    L"Introduza um URL HTTP ou HTTPS válido para o script remoto.",
     L"Wprowadź prawidłowy adres HTTP lub HTTPS zdalnego skryptu.",
     L"Zadajte platnú adresu HTTP alebo HTTPS vzdialeného skriptu.",
-    L"Enter a valid HTTP or HTTPS remote script URL.",
-    L"Enter a valid HTTP or HTTPS remote script URL.",
-    L"Introduza um URL HTTP ou HTTPS válido para o script remoto.",
+    L"Angiv en gyldig HTTP- eller HTTPS-adresse til fjernscriptet.",
+    L"Anna kelvollinen etäkomentosarjan HTTP- tai HTTPS-osoite.",
+    L"Sláðu inn gilda HTTP- eða HTTPS-vefslóð fjarskriftu.",
     L"Angi en gyldig HTTP- eller HTTPS-adresse til det eksterne skriptet.",
     L"Ange en giltig HTTP- eller HTTPS-adress till fjärrskriptet.",
-    L"Anna kelvollinen etäkomentosarjan HTTP- tai HTTPS-osoite.",
-    L"Angiv en gyldig HTTP- eller HTTPS-adresse til fjernscriptet.",
-    L"Sláðu inn gilda HTTP- eða HTTPS-vefslóð fjarskriftu.",
     L"Geçerli bir HTTP veya HTTPS uzak betik URL'si girin.",
     L"Sisestage sobiv kaugskripti HTTP- või HTTPS-aadress.",
     L"Iontráil URL bailí HTTP nó HTTPS don chianscript.",
@@ -6152,20 +6152,20 @@ const wchar_t* INVALID_REMOTE_SCRIPT_URL[LANG_COUNT] = {
 const wchar_t* IMPORT_SETTINGS_LABELS[LANG_COUNT] = {
     L"Importovat &XML…",
     L"Import &XML…",
+    L"Import &XML…",
+    L"Import &XML…",
     L"&XML importieren…",
     L"Importer &XML…",
     L"Importar &XML…",
     L"Importa &XML…",
+    L"Importar &XML…",
     L"Importuj &XML…",
     L"Importovať &XML…",
-    L"Import &XML…",
-    L"Import &XML…",
-    L"Importar &XML…",
+    L"Importer &XML…",
+    L"Tuo &XML…",
+    L"Flytja inn &XML…",
     L"Importer &XML…",
     L"Importera &XML…",
-    L"Tuo &XML…",
-    L"Importer &XML…",
-    L"Flytja inn &XML…",
     L"&XML içe aktar…",
     L"Impordi &XML…",
     L"Iompórtáil &XML…",
@@ -6191,20 +6191,20 @@ const wchar_t* IMPORT_SETTINGS_LABELS[LANG_COUNT] = {
 const wchar_t* EXPORT_SETTINGS_LABELS[LANG_COUNT] = {
     L"Exportovat X&ML…",
     L"Export X&ML…",
+    L"Export X&ML…",
+    L"Export X&ML…",
     L"XML &exportieren…",
     L"Exporter X&ML…",
     L"Exportar X&ML…",
     L"Esporta X&ML…",
+    L"Exportar X&ML…",
     L"Eksportuj X&ML…",
     L"Exportovať X&ML…",
-    L"Export X&ML…",
-    L"Export X&ML…",
-    L"Exportar X&ML…",
+    L"Eksporter X&ML…",
+    L"Vie X&ML…",
+    L"Flytja út X&ML…",
     L"Eksporter X&ML…",
     L"Exportera X&ML…",
-    L"Vie X&ML…",
-    L"Eksporter X&ML…",
-    L"Flytja út X&ML…",
     L"X&ML dışa aktar…",
     L"Ekspordi X&ML…",
     L"Easpórtáil X&ML…",
@@ -6230,20 +6230,20 @@ const wchar_t* EXPORT_SETTINGS_LABELS[LANG_COUNT] = {
 const wchar_t* INVALID_SETTINGS_FILE[LANG_COUNT] = {
     L"Soubor neobsahuje platné nastavení CalClock.",
     L"The file does not contain valid CalClock settings.",
+    L"The file does not contain valid CalClock settings.",
+    L"The file does not contain valid CalClock settings.",
     L"Die Datei enthält keine gültigen CalClock-Einstellungen.",
     L"Le fichier ne contient pas de paramètres CalClock valides.",
     L"El archivo no contiene una configuración válida de CalClock.",
     L"Il file non contiene impostazioni CalClock valide.",
+    L"O ficheiro não contém definições válidas do CalClock.",
     L"Plik nie zawiera prawidłowych ustawień CalClock.",
     L"Súbor neobsahuje platné nastavenia CalClock.",
-    L"The file does not contain valid CalClock settings.",
-    L"The file does not contain valid CalClock settings.",
-    L"O ficheiro não contém definições válidas do CalClock.",
+    L"Filen indeholder ikke gyldige CalClock-indstillinger.",
+    L"Tiedosto ei sisällä kelvollisia CalClock-asetuksia.",
+    L"Skráin inniheldur ekki gildar CalClock-stillingar.",
     L"Filen inneholder ikke gyldige CalClock-innstillinger.",
     L"Filen innehåller inte giltiga CalClock-inställningar.",
-    L"Tiedosto ei sisällä kelvollisia CalClock-asetuksia.",
-    L"Filen indeholder ikke gyldige CalClock-indstillinger.",
-    L"Skráin inniheldur ekki gildar CalClock-stillingar.",
     L"Dosya geçerli CalClock ayarları içermiyor.",
     L"Fail ei sisalda sobivaid CalClocki sätteid.",
     L"Níl socruithe bailí CalClock sa chomhad.",
@@ -6269,20 +6269,20 @@ const wchar_t* INVALID_SETTINGS_FILE[LANG_COUNT] = {
 const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT] = {
     L"Nastavení se nepodařilo exportovat.",
     L"Settings could not be exported.",
+    L"Settings could not be exported.",
+    L"Settings could not be exported.",
     L"Die Einstellungen konnten nicht exportiert werden.",
     L"Impossible d’exporter les paramètres.",
     L"No se pudo exportar la configuración.",
     L"Impossibile esportare le impostazioni.",
+    L"Não foi possível exportar as definições.",
     L"Nie udało się wyeksportować ustawień.",
     L"Nastavenia sa nepodarilo exportovať.",
-    L"Settings could not be exported.",
-    L"Settings could not be exported.",
-    L"Não foi possível exportar as definições.",
+    L"Indstillingerne kunne ikke eksporteres.",
+    L"Asetuksia ei voitu viedä.",
+    L"Ekki tókst að flytja stillingarnar út.",
     L"Innstillingene kunne ikke eksporteres.",
     L"Inställningarna kunde inte exporteras.",
-    L"Asetuksia ei voitu viedä.",
-    L"Indstillingerne kunne ikke eksporteres.",
-    L"Ekki tókst að flytja stillingarnar út.",
     L"Ayarlar dışa aktarılamadı.",
     L"Sätteid ei saanud eksportida.",
     L"Níorbh fhéidir na socruithe a easpórtáil.",
@@ -6308,20 +6308,20 @@ const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT] = {
 const wchar_t* XML_STORAGE_LABELS[LANG_COUNT] = {
     L"Nastavení ukládat do &XML",
     L"Save settings to &XML",
+    L"Save settings to &XML",
+    L"Save settings to &XML",
     L"Einstellungen in &XML speichern",
     L"Enregistrer les paramètres au format &XML",
     L"Guardar la configuración en &XML",
     L"Salva le impostazioni in &XML",
+    L"Guardar as definições em &XML",
     L"Zapisuj ustawienia w formacie &XML",
     L"Nastavenia ukladať do &XML",
-    L"Save settings to &XML",
-    L"Save settings to &XML",
-    L"Guardar as definições em &XML",
+    L"Gem indstillinger i &XML",
+    L"Tallenna asetukset &XML-muodossa",
+    L"Vista stillingar á &XML-sniði",
     L"Lagre innstillinger i &XML",
     L"Spara inställningar i &XML",
-    L"Tallenna asetukset &XML-muodossa",
-    L"Gem indstillinger i &XML",
-    L"Vista stillingar á &XML-sniði",
     L"Ayarları &XML biçiminde kaydet",
     L"Salvesta sätted &XML-vormingus",
     L"Sábháil socruithe in &XML",
@@ -6347,20 +6347,20 @@ const wchar_t* XML_STORAGE_LABELS[LANG_COUNT] = {
 const wchar_t* START_WITH_WINDOWS_LABELS[LANG_COUNT] = {
     L"Spouštět s &Windows",
     L"Start with &Windows",
+    L"Start with &Windows",
+    L"Start with &Windows",
     L"Mit &Windows starten",
     L"Démarrer avec &Windows",
     L"Iniciar con &Windows",
     L"Avvia con &Windows",
+    L"Iniciar com o &Windows",
     L"Uruchamiaj z &systemem Windows",
     L"Spúšťať s &Windows",
-    L"Start with &Windows",
-    L"Start with &Windows",
-    L"Iniciar com o &Windows",
+    L"Start med &Windows",
+    L"Käynnistä &Windowsin mukana",
+    L"Ræsa með &Windows",
     L"Start med &Windows",
     L"Starta med &Windows",
-    L"Käynnistä &Windowsin mukana",
-    L"Start med &Windows",
-    L"Ræsa með &Windows",
     L"&Windows ile başlat",
     L"Käivita koos &Windowsiga",
     L"Tosaigh le &Windows",
@@ -6386,20 +6386,20 @@ const wchar_t* START_WITH_WINDOWS_LABELS[LANG_COUNT] = {
 const wchar_t* MUTE_LABELS[LANG_COUNT] = {
     L"&Ztlumit",
     L"&Mute",
+    L"&Mute",
+    L"&Mute",
     L"&Stummschalten",
     L"Couper le &son",
     L"&Silenciar",
     L"Disattiva &audio",
+    L"&Silenciar",
     L"&Wycisz",
     L"&Stlmiť",
-    L"&Mute",
-    L"&Mute",
-    L"&Silenciar",
+    L"&Slå lyd fra",
+    L"&Mykistä",
+    L"&Þagga",
     L"&Demp",
     L"&Tysta",
-    L"&Mykistä",
-    L"&Slå lyd fra",
-    L"&Þagga",
     L"&Sessize al",
     L"&Vaigista",
     L"&Balbhaigh",
@@ -6425,20 +6425,20 @@ const wchar_t* MUTE_LABELS[LANG_COUNT] = {
 const wchar_t* MUTE_ALL_LABELS[LANG_COUNT] = {
     L"&Ztlumit vše",
     L"&Mute all",
+    L"&Mute all",
+    L"&Mute all",
     L"&Alles stummschalten",
     L"Couper &tous les sons",
     L"&Silenciar todo",
     L"Disattiva &tutto l'audio",
+    L"Silenciar &tudo",
     L"&Wycisz wszystko",
     L"&Stlmiť všetko",
-    L"&Mute all",
-    L"&Mute all",
-    L"Silenciar &tudo",
+    L"Slå al lyd &fra",
+    L"Mykistä &kaikki",
+    L"Þagga &allt",
     L"Demp &alle",
     L"Tysta &alla",
-    L"Mykistä &kaikki",
-    L"Slå al lyd &fra",
-    L"Þagga &allt",
     L"&Tümünü sessize al",
     L"Vaigista &kõik",
     L"Balbhaigh &uile",
@@ -6464,20 +6464,20 @@ const wchar_t* MUTE_ALL_LABELS[LANG_COUNT] = {
 const wchar_t* MUTED_LABELS[LANG_COUNT] = {
     L"Zt&lumeno",
     L"&Muted",
+    L"&Muted",
+    L"&Muted",
     L"Stummgesch&altet",
     L"Son &coupé",
     L"Si&lenciado",
     L"Audio &disattivato",
+    L"Si&lenciado",
     L"&Wyciszony",
     L"St&lmené",
-    L"&Muted",
-    L"&Muted",
-    L"Si&lenciado",
+    L"Lyd &fra",
+    L"&Mykistetty",
+    L"&Þaggað",
     L"De&mpet",
     L"&Tyst",
-    L"&Mykistetty",
-    L"Lyd &fra",
-    L"&Þaggað",
     L"Sessi&z",
     L"&Vaigistatud",
     L"&Balbhaithe",
@@ -6529,6 +6529,42 @@ const wchar_t* HELP_TEXT[LANG_COUNT] = {
     L"selectable sizes. Digital clocks support seconds, a leading zero, font, colors, opacity and "
     L"a transparent background. Calendars support week numbers and Sunday as the first day and "
     L"use the widget language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
+    L"application plays an audio file itself, once or continuously according to the loop option. "
+    L"Other files or commands are passed to Windows. Click the alarming clock face or display, "
+    L"choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
+    L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock face or digital display to "
+    L"toggle seconds, press F1 for Help, B for Settings, and Esc to hide a widget when no alarm "
+    L"is being stopped. Widget positions are saved after dragging, dialog positions when closed, "
+    L"and all settings in the selected storage. Starting the program again activates the running "
+    L"instance and keeps widgets at the nearest available point in the work area.",
+    L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
+    L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
+    L"notification icon to hide the currently visible widgets; when all are hidden, it restores "
+    L"only the widgets hidden most recently.\r\n\r\nWIDGETS AND SETTINGS\r\nSettings can add, "
+    L"remove and duplicate analog clocks, digital clocks, calendars, calendar-and-clock panels "
+    L"and monitor clocks. Each widget has its own visibility, always-on-top state, language, time "
+    L"zone and offset. Enter offsets as [-]HH:mm:ss.ff. Analog clocks and panel clocks have "
+    L"selectable sizes. Digital clocks support seconds, a leading zero, font, colours, opacity "
+    L"and a transparent background. Calendars support week numbers and Sunday as the first day "
+    L"and use the widget language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
+    L"application plays an audio file itself, once or continuously according to the loop option. "
+    L"Other files or commands are passed to Windows. Click the alarming clock face or display, "
+    L"choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
+    L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock face or digital display to "
+    L"toggle seconds, press F1 for Help, B for Settings, and Esc to hide a widget when no alarm "
+    L"is being stopped. Widget positions are saved after dragging, dialog positions when closed, "
+    L"and all settings in the selected storage. Starting the program again activates the running "
+    L"instance and keeps widgets at the nearest available point in the work area.",
+    L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
+    L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
+    L"notification icon to hide the currently visible widgets; when all are hidden, it restores "
+    L"only the widgets hidden most recently.\r\n\r\nWIDGETS AND SETTINGS\r\nSettings can add, "
+    L"remove and duplicate analog clocks, digital clocks, calendars, calendar-and-clock panels "
+    L"and monitor clocks. Each widget has its own visibility, always-on-top state, language, time "
+    L"zone and offset. Enter offsets as [-]HH:mm:ss.ff. Analog clocks and panel clocks have "
+    L"selectable sizes. Digital clocks support seconds, a leading zero, font, colours, opacity "
+    L"and a transparent background. Calendars support week numbers and Sunday as the first day "
+    L"and use the widget language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
     L"application plays an audio file itself, once or continuously according to the loop option. "
     L"Other files or commands are passed to Windows. Click the alarming clock face or display, "
     L"choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
@@ -6603,6 +6639,16 @@ const wchar_t* HELP_TEXT[LANG_COUNT] = {
     L"quadrante o sul display digitale commuta i secondi, F1 apre la guida e B le impostazioni. "
     L"Posizioni e impostazioni vengono salvate nell’archivio selezionato. Un nuovo avvio attiva "
     L"l’istanza esistente.",
+    L"CONTROLOS\r\nArraste um relógio ou painel com o botão esquerdo. Arraste um calendário "
+    L"autónomo pela área livre. O botão direito abre o menu do widget. Um clique esquerdo no "
+    L"ícone de notificação oculta os widgets visíveis ou repõe os ocultados mais "
+    L"recentemente.\r\n\r\nWIDGETS E DEFINIÇÕES\r\nPode adicionar, remover e duplicar relógios "
+    L"analógicos, digitais, calendários, painéis combinados e relógios de monitor. Cada widget "
+    L"tem visibilidade, posição no topo, idioma, fuso horário e desvio "
+    L"próprios.\r\n\r\nALARME\r\nRelógios e painéis podem ter um alarme. Clique no mostrador ou "
+    L"visor em alarme, escolha Parar alarme ou prima Esc para parar a indicação e o áudio "
+    L"interno.\r\n\r\nATALHOS\r\nUm duplo clique no mostrador ou visor digital alterna os "
+    L"segundos, F1 abre a Ajuda, B abre as Definições e Esc oculta o widget.",
     L"STEROWANIE\r\nPrzeciągnij zegar lub panel lewym przyciskiem. Samodzielny kalendarz "
     L"przeciąga się za wolne miejsce. Prawy przycisk na widżecie lub ikonie obszaru powiadomień "
     L"otwiera menu. Lewy przycisk na ikonie ukrywa widoczne widżety; gdy wszystkie są ukryte, "
@@ -6633,52 +6679,35 @@ const wchar_t* HELP_TEXT[LANG_COUNT] = {
     L"ciferník alebo digitálny displej prepne sekundy, F1 otvorí pomoc a B nastavenia. Polohy a "
     L"všetky nastavenia sa ukladajú do zvoleného úložiska. Ďalšie spustenie aktivuje existujúcu "
     L"inštanciu.",
-    L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
-    L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
-    L"notification icon to hide the currently visible widgets; when all are hidden, it restores "
-    L"only the widgets hidden most recently.\r\n\r\nWIDGETS AND SETTINGS\r\nSettings can add, "
-    L"remove and duplicate analog clocks, digital clocks, calendars, calendar-and-clock panels "
-    L"and monitor clocks. Each widget has its own visibility, always-on-top state, language, time "
-    L"zone and offset. Enter offsets as [-]HH:mm:ss.ff. Analog clocks and panel clocks have "
-    L"selectable sizes. Digital clocks support seconds, a leading zero, font, colours, opacity "
-    L"and a transparent background. Calendars support week numbers and Sunday as the first day "
-    L"and use the widget language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
-    L"application plays an audio file itself, once or continuously according to the loop option. "
-    L"Other files or commands are passed to Windows. Click the alarming clock face or display, "
-    L"choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
-    L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock face or digital display to "
-    L"toggle seconds, press F1 for Help, B for Settings, and Esc to hide a widget when no alarm "
-    L"is being stopped. Widget positions are saved after dragging, dialog positions when closed, "
-    L"and all settings in the selected storage. Starting the program again activates the running "
-    L"instance and keeps widgets at the nearest available point in the work area.",
-    L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
-    L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
-    L"notification icon to hide the currently visible widgets; when all are hidden, it restores "
-    L"only the widgets hidden most recently.\r\n\r\nWIDGETS AND SETTINGS\r\nSettings can add, "
-    L"remove and duplicate analog clocks, digital clocks, calendars, calendar-and-clock panels "
-    L"and monitor clocks. Each widget has its own visibility, always-on-top state, language, time "
-    L"zone and offset. Enter offsets as [-]HH:mm:ss.ff. Analog clocks and panel clocks have "
-    L"selectable sizes. Digital clocks support seconds, a leading zero, font, colours, opacity "
-    L"and a transparent background. Calendars support week numbers and Sunday as the first day "
-    L"and use the widget language.\r\n\r\nALARM\r\nClocks and panels can have an alarm. The "
-    L"application plays an audio file itself, once or continuously according to the loop option. "
-    L"Other files or commands are passed to Windows. Click the alarming clock face or display, "
-    L"choose Stop alarm, or press Esc to stop both the alarm indication and audio played by the "
-    L"application.\r\n\r\nSHORTCUTS AND SAVING\r\nDouble-click a clock face or digital display to "
-    L"toggle seconds, press F1 for Help, B for Settings, and Esc to hide a widget when no alarm "
-    L"is being stopped. Widget positions are saved after dragging, dialog positions when closed, "
-    L"and all settings in the selected storage. Starting the program again activates the running "
-    L"instance and keeps widgets at the nearest available point in the work area.",
-    L"CONTROLOS\r\nArraste um relógio ou painel com o botão esquerdo. Arraste um calendário "
-    L"autónomo pela área livre. O botão direito abre o menu do widget. Um clique esquerdo no "
-    L"ícone de notificação oculta os widgets visíveis ou repõe os ocultados mais "
-    L"recentemente.\r\n\r\nWIDGETS E DEFINIÇÕES\r\nPode adicionar, remover e duplicar relógios "
-    L"analógicos, digitais, calendários, painéis combinados e relógios de monitor. Cada widget "
-    L"tem visibilidade, posição no topo, idioma, fuso horário e desvio "
-    L"próprios.\r\n\r\nALARME\r\nRelógios e painéis podem ter um alarme. Clique no mostrador ou "
-    L"visor em alarme, escolha Parar alarme ou prima Esc para parar a indicação e o áudio "
-    L"interno.\r\n\r\nATALHOS\r\nUm duplo clique no mostrador ou visor digital alterna os "
-    L"segundos, F1 abre a Ajuda, B abre as Definições e Esc oculta o widget.",
+    L"BETJENING\r\nTræk et ur eller panel med venstre museknap. Træk en selvstændig kalender i "
+    L"det frie område. Højreklik åbner widgetmenuen. Et venstreklik på meddelelsesikonet skjuler "
+    L"synlige widgets eller gendanner de senest skjulte.\r\n\r\nWIDGETS OG INDSTILLINGER\r\nDu "
+    L"kan tilføje, fjerne og duplikere analoge ure, digitale ure, kalendere, kombinerede paneler "
+    L"og skærmure. Hver widget har egne indstillinger for synlighed, altid øverst, sprog, "
+    L"tidszone og forskydning.\r\n\r\nALARM\r\nUre og paneler kan have en alarm. Klik på den "
+    L"alarmerende urskive eller visning, vælg Stop alarm eller tryk Esc for at stoppe "
+    L"indikationen og intern lyd.\r\n\r\nGENVEJE\r\nDobbeltklik på urskiven eller den digitale "
+    L"visning skifter sekunder, F1 åbner Hjælp, B åbner Indstillinger og Esc skjuler widgeten.",
+    L"OHJAUS\r\nVedä kelloa tai paneelia hiiren vasemmalla painikkeella. Vedä erillistä "
+    L"kalenteria vapaalta alueelta. Napsauta hiiren kakkospainikkeella avataksesi pienoisohjelman "
+    L"valikon. Ilmoitusalueen kuvakkeen napsautus piilottaa näkyvät pienoisohjelmat tai palauttaa "
+    L"viimeksi piilotetut.\r\n\r\nPIENOISOHJELMAT JA ASETUKSET\r\nVoit lisätä, poistaa ja "
+    L"monistaa analogisia ja digitaalisia kelloja, kalentereita, yhdistelmäpaneeleita ja "
+    L"näyttökelloja. Jokaisella on omat näkyvyys-, päällimmäisyys-, kieli-, aikavyöhyke- ja "
+    L"poikkeama-asetukset.\r\n\r\nHERÄTYS\r\nKelloissa ja paneeleissa voi olla herätys. Pysäytä "
+    L"ilmaisin ja sisäinen ääni napsauttamalla hälyttävää näyttöä, valitsemalla Pysäytä herätys "
+    L"tai painamalla Esc.\r\n\r\nPIKANÄPPÄIMET\r\nKellotaulun tai digitaalisen näytön "
+    L"kaksoisnapsautus vaihtaa sekuntien näkyvyyttä, F1 avaa ohjeen, B asetukset ja Esc piilottaa "
+    L"pienoisohjelman.",
+    L"STJÓRNUN\r\nDragðu klukku eða spjald með vinstri músarhnappi. Dragðu sjálfstætt dagatal á "
+    L"auðu svæði. Hægrismellur opnar valmynd græju. Vinstrismellur á tilkynningatáknið felur "
+    L"sýnilegar græjur eða endurheimtir þær sem síðast voru faldar.\r\n\r\nGRÆJUR OG "
+    L"STILLINGAR\r\nHægt er að bæta við, fjarlægja og afrita skífuklukkur, stafrænar klukkur, "
+    L"dagatöl, samsett spjöld og skjáklukkur. Hver græja hefur eigið sýnileika-, efst-, "
+    L"tungumála-, tímabeltis- og hliðrunargildi.\r\n\r\nVEKJARI\r\nKlukkur og spjöld geta haft "
+    L"vekjara. Smelltu á skífuna eða skjáinn, veldu Stöðva vekjara eða ýttu á Esc til að stöðva "
+    L"merkingu og innra hljóð.\r\n\r\nFLÝTILEIÐIR\r\nTvísmellur á skífu eða stafrænan skjá "
+    L"skiptir um sýnileika sekúndna, F1 opnar Hjálp, B opnar Stillingar og Esc felur græjuna.",
     L"KONTROLLER\r\nDra en klokke eller et panel med venstre museknapp. Dra en frittstående "
     L"kalender i det ledige området. Høyreklikk åpner widgetmenyen. Et venstreklikk på "
     L"systemstatusikonet skjuler synlige widgeter eller gjenoppretter de sist "
@@ -6699,35 +6728,6 @@ const wchar_t* HELP_TEXT[LANG_COUNT] = {
     L"eller displayen som larmar, välj Stoppa alarm eller tryck Esc för att stoppa indikeringen "
     L"och internt ljud.\r\n\r\nGENVÄGAR\r\nDubbelklick på urtavlan eller den digitala displayen "
     L"växlar sekunder, F1 öppnar Hjälp, B öppnar Inställningar och Esc döljer widgeten.",
-    L"OHJAUS\r\nVedä kelloa tai paneelia hiiren vasemmalla painikkeella. Vedä erillistä "
-    L"kalenteria vapaalta alueelta. Napsauta hiiren kakkospainikkeella avataksesi pienoisohjelman "
-    L"valikon. Ilmoitusalueen kuvakkeen napsautus piilottaa näkyvät pienoisohjelmat tai palauttaa "
-    L"viimeksi piilotetut.\r\n\r\nPIENOISOHJELMAT JA ASETUKSET\r\nVoit lisätä, poistaa ja "
-    L"monistaa analogisia ja digitaalisia kelloja, kalentereita, yhdistelmäpaneeleita ja "
-    L"näyttökelloja. Jokaisella on omat näkyvyys-, päällimmäisyys-, kieli-, aikavyöhyke- ja "
-    L"poikkeama-asetukset.\r\n\r\nHERÄTYS\r\nKelloissa ja paneeleissa voi olla herätys. Pysäytä "
-    L"ilmaisin ja sisäinen ääni napsauttamalla hälyttävää näyttöä, valitsemalla Pysäytä herätys "
-    L"tai painamalla Esc.\r\n\r\nPIKANÄPPÄIMET\r\nKellotaulun tai digitaalisen näytön "
-    L"kaksoisnapsautus vaihtaa sekuntien näkyvyyttä, F1 avaa ohjeen, B asetukset ja Esc piilottaa "
-    L"pienoisohjelman.",
-    L"BETJENING\r\nTræk et ur eller panel med venstre museknap. Træk en selvstændig kalender i "
-    L"det frie område. Højreklik åbner widgetmenuen. Et venstreklik på meddelelsesikonet skjuler "
-    L"synlige widgets eller gendanner de senest skjulte.\r\n\r\nWIDGETS OG INDSTILLINGER\r\nDu "
-    L"kan tilføje, fjerne og duplikere analoge ure, digitale ure, kalendere, kombinerede paneler "
-    L"og skærmure. Hver widget har egne indstillinger for synlighed, altid øverst, sprog, "
-    L"tidszone og forskydning.\r\n\r\nALARM\r\nUre og paneler kan have en alarm. Klik på den "
-    L"alarmerende urskive eller visning, vælg Stop alarm eller tryk Esc for at stoppe "
-    L"indikationen og intern lyd.\r\n\r\nGENVEJE\r\nDobbeltklik på urskiven eller den digitale "
-    L"visning skifter sekunder, F1 åbner Hjælp, B åbner Indstillinger og Esc skjuler widgeten.",
-    L"STJÓRNUN\r\nDragðu klukku eða spjald með vinstri músarhnappi. Dragðu sjálfstætt dagatal á "
-    L"auðu svæði. Hægrismellur opnar valmynd græju. Vinstrismellur á tilkynningatáknið felur "
-    L"sýnilegar græjur eða endurheimtir þær sem síðast voru faldar.\r\n\r\nGRÆJUR OG "
-    L"STILLINGAR\r\nHægt er að bæta við, fjarlægja og afrita skífuklukkur, stafrænar klukkur, "
-    L"dagatöl, samsett spjöld og skjáklukkur. Hver græja hefur eigið sýnileika-, efst-, "
-    L"tungumála-, tímabeltis- og hliðrunargildi.\r\n\r\nVEKJARI\r\nKlukkur og spjöld geta haft "
-    L"vekjara. Smelltu á skífuna eða skjáinn, veldu Stöðva vekjara eða ýttu á Esc til að stöðva "
-    L"merkingu og innra hljóð.\r\n\r\nFLÝTILEIÐIR\r\nTvísmellur á skífu eða stafrænan skjá "
-    L"skiptir um sýnileika sekúndna, F1 opnar Hjálp, B opnar Stillingar og Esc felur græjuna.",
     L"DENETİMLER\r\nBir saati veya paneli sol fare düğmesiyle sürükleyin. Bağımsız takvimi boş "
     L"alanından sürükleyin. Sağ tıklama araç menüsünü açar. Bildirim simgesine sol tıklamak "
     L"görünür araçları gizler veya en son gizlenenleri geri getirir.\r\n\r\nARAÇLAR VE "
@@ -7147,6 +7147,52 @@ const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
     L"maximum is approximately 794%. The −∞ dB position is silence. Changes can also be heard "
     L"during a test. MIDI files and files played by a fallback player because they cannot be "
     L"decoded are limited to 100%.",
+    L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, "
+    L"space or another separator; the separator may also be omitted. One or two digits mean "
+    L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or "
+    L"7:30. The value is normalised to HH:mm after leaving the field. Offset entry starts from "
+    L"seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means "
+    L"01:23:45.00. With separators, two groups mean minutes and seconds, three mean hours, "
+    L"minutes and seconds, and a fourth group contains hundredths; a sign is accepted. The days "
+    L"below Alarm enabled select the weekdays on which the alarm runs; all days are selected by "
+    L"default. Their order follows the application culture, and changing the language does not "
+    L"change the stored weekdays. When triggered, the alarm shows a hidden widget and brings it "
+    L"in front without permanently changing Always on top. Sound the time signal starts its first "
+    L"short pip five seconds before the alarm. It is independent of the Signal tab, although "
+    L"coincident sequences are merged. Test flashes the selected clock face or panel frame and "
+    L"tests the file, command, audio, HTTP/HTTPS remote-script URL and, when selected, the "
+    L"complete time-signal sequence. Stopping the test stops its internal audio and signal "
+    L"preview; stopping the alarm stops its internal audio. Muting does not stop internal "
+    L"playback: it continues silently and becomes audible again after unmuting. Commands and "
+    L"remote scripts are unaffected.\r\n\r\nThe Audio volume slider on the Alarm tab sets the "
+    L"volume of internally played audio files for that widget. The default −18 dB preserves the "
+    L"original file level (100%). Moving the slider to the right amplifies the audio; the 0 dB "
+    L"maximum is approximately 794%. The −∞ dB position is silence. Changes can also be heard "
+    L"during a test. MIDI files and files played by a fallback player because they cannot be "
+    L"decoded are limited to 100%.",
+    L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, "
+    L"space or another separator; the separator may also be omitted. One or two digits mean "
+    L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or "
+    L"7:30. The value is normalised to HH:mm after leaving the field. Offset entry starts from "
+    L"seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means "
+    L"01:23:45.00. With separators, two groups mean minutes and seconds, three mean hours, "
+    L"minutes and seconds, and a fourth group contains hundredths; a sign is accepted. The days "
+    L"below Alarm enabled select the weekdays on which the alarm runs; all days are selected by "
+    L"default. Their order follows the application culture, and changing the language does not "
+    L"change the stored weekdays. When triggered, the alarm shows a hidden widget and brings it "
+    L"in front without permanently changing Always on top. Sound the time signal starts its first "
+    L"short pip five seconds before the alarm. It is independent of the Signal tab, although "
+    L"coincident sequences are merged. Test flashes the selected clock face or panel frame and "
+    L"tests the file, command, audio, HTTP/HTTPS remote-script URL and, when selected, the "
+    L"complete time-signal sequence. Stopping the test stops its internal audio and signal "
+    L"preview; stopping the alarm stops its internal audio. Muting does not stop internal "
+    L"playback: it continues silently and becomes audible again after unmuting. Commands and "
+    L"remote scripts are unaffected.\r\n\r\nThe Audio volume slider on the Alarm tab sets the "
+    L"volume of internally played audio files for that widget. The default −18 dB preserves the "
+    L"original file level (100%). Moving the slider to the right amplifies the audio; the 0 dB "
+    L"maximum is approximately 794%. The −∞ dB position is silence. Changes can also be heard "
+    L"during a test. MIDI files and files played by a fallback player because they cannot be "
+    L"decoded are limited to 100%.",
     L"\r\n\r\nZEITEINGABE UND WECKERAKTIONEN\r\nDie Weckzeit akzeptiert HH:mm mit Doppelpunkt, "
     L"Punkt, Leerzeichen oder einem anderen Trennzeichen; das Trennzeichen kann entfallen. Eine "
     L"oder zwei Ziffern bedeuten Stunden, drei oder vier Ziffern Stunden und Minuten, z. B. 7, "
@@ -7253,6 +7299,22 @@ const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
     L"di 0 dB equivale a circa il 794%. −∞ dB indica il silenzio. Le modifiche si sentono durante "
     L"la prova. I file MIDI e quelli riprodotti da un lettore alternativo perché non "
     L"decodificabili sono limitati al 100%.",
+    L"\r\n\r\nHORA E AÇÕES DO ALARME\r\nA hora aceita HH:mm com ou sem separador: 7, 12, 730, "
+    L"0730 ou 7:30. O desvio é lido da direita a partir dos segundos: 2 é 00:00:02.00, 230 é "
+    L"00:02:30.00 e 12345 é 01:23:45.00. Os dias definem quando o alarme funciona e todos vêm "
+    L"selecionados. A ordem segue a cultura da aplicação; mudar o idioma não altera os dias "
+    L"guardados. Ao disparar, mostra um widget oculto e leva-o à frente sem alterar "
+    L"permanentemente Sempre no topo. O sinal começa cinco segundos antes. Testar verifica de "
+    L"forma assíncrona a indicação, o áudio, o comando e o script remoto. Silenciar não para a "
+    L"reprodução interna; continua sem som e volta a ouvir-se depois. Comandos e scripts remotos "
+    L"não são afetados. Executar um ficheiro ou comando ativa o campo, Procurar, Testar e a "
+    L"repetição; Testar e repetir exigem também um valor não vazio, mas um teste em curso pode "
+    L"sempre ser parado.\r\n\r\nO controlo Volume do áudio no separador Alarme ajusta os "
+    L"ficheiros de áudio reproduzidos internamente para esse widget. O valor predefinido −18 dB "
+    L"mantém o nível original do ficheiro (100%). Deslocar o controlo para a direita amplifica o "
+    L"som; o máximo de 0 dB corresponde a cerca de 794%. −∞ dB é silêncio. As alterações ouvem-se "
+    L"durante o teste. Os ficheiros MIDI e os reproduzidos por um leitor alternativo por não ser "
+    L"possível descodificá-los estão limitados a 100%.",
     L"\r\n\r\nWPROWADZANIE CZASU I AKCJE ALARMU\r\nCzas alarmu przyjmuje HH:mm z dwukropkiem, "
     L"kropką, spacją lub innym separatorem; separator można pominąć. Jedna lub dwie cyfry "
     L"oznaczają godziny, trzy lub cztery godziny i minuty, np. 7, 12, 730, 0730 albo 7:30. Po "
@@ -7296,68 +7358,53 @@ const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
     L"zvuk zosilňuje; maximum 0 dB zodpovedá približne 794 %. Hodnota −∞ dB znamená úplné "
     L"stíšenie. Zmeny počuť aj počas testu. Súbory MIDI a súbory, ktoré nemožno dekódovať a "
     L"prehrávajú sa náhradným prehrávačom, možno nastaviť najviac na 100 %.",
-    L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, "
-    L"space or another separator; the separator may also be omitted. One or two digits mean "
-    L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or "
-    L"7:30. The value is normalised to HH:mm after leaving the field. Offset entry starts from "
-    L"seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means "
-    L"01:23:45.00. With separators, two groups mean minutes and seconds, three mean hours, "
-    L"minutes and seconds, and a fourth group contains hundredths; a sign is accepted. The days "
-    L"below Alarm enabled select the weekdays on which the alarm runs; all days are selected by "
-    L"default. Their order follows the application culture, and changing the language does not "
-    L"change the stored weekdays. When triggered, the alarm shows a hidden widget and brings it "
-    L"in front without permanently changing Always on top. Sound the time signal starts its first "
-    L"short pip five seconds before the alarm. It is independent of the Signal tab, although "
-    L"coincident sequences are merged. Test flashes the selected clock face or panel frame and "
-    L"tests the file, command, audio, HTTP/HTTPS remote-script URL and, when selected, the "
-    L"complete time-signal sequence. Stopping the test stops its internal audio and signal "
-    L"preview; stopping the alarm stops its internal audio. Muting does not stop internal "
-    L"playback: it continues silently and becomes audible again after unmuting. Commands and "
-    L"remote scripts are unaffected.\r\n\r\nThe Audio volume slider on the Alarm tab sets the "
-    L"volume of internally played audio files for that widget. The default −18 dB preserves the "
-    L"original file level (100%). Moving the slider to the right amplifies the audio; the 0 dB "
-    L"maximum is approximately 794%. The −∞ dB position is silence. Changes can also be heard "
-    L"during a test. MIDI files and files played by a fallback player because they cannot be "
-    L"decoded are limited to 100%.",
-    L"\r\n\r\nTIME ENTRY AND ALARM ACTIONS\r\nAlarm time accepts HH:mm with a colon, period, "
-    L"space or another separator; the separator may also be omitted. One or two digits mean "
-    L"hours, while three or four digits mean hours and minutes, for example 7, 12, 730, 0730 or "
-    L"7:30. The value is normalised to HH:mm after leaving the field. Offset entry starts from "
-    L"seconds on the right: 2 means 00:00:02.00, 230 and 0230 mean 00:02:30.00, and 12345 means "
-    L"01:23:45.00. With separators, two groups mean minutes and seconds, three mean hours, "
-    L"minutes and seconds, and a fourth group contains hundredths; a sign is accepted. The days "
-    L"below Alarm enabled select the weekdays on which the alarm runs; all days are selected by "
-    L"default. Their order follows the application culture, and changing the language does not "
-    L"change the stored weekdays. When triggered, the alarm shows a hidden widget and brings it "
-    L"in front without permanently changing Always on top. Sound the time signal starts its first "
-    L"short pip five seconds before the alarm. It is independent of the Signal tab, although "
-    L"coincident sequences are merged. Test flashes the selected clock face or panel frame and "
-    L"tests the file, command, audio, HTTP/HTTPS remote-script URL and, when selected, the "
-    L"complete time-signal sequence. Stopping the test stops its internal audio and signal "
-    L"preview; stopping the alarm stops its internal audio. Muting does not stop internal "
-    L"playback: it continues silently and becomes audible again after unmuting. Commands and "
-    L"remote scripts are unaffected.\r\n\r\nThe Audio volume slider on the Alarm tab sets the "
-    L"volume of internally played audio files for that widget. The default −18 dB preserves the "
-    L"original file level (100%). Moving the slider to the right amplifies the audio; the 0 dB "
-    L"maximum is approximately 794%. The −∞ dB position is silence. Changes can also be heard "
-    L"during a test. MIDI files and files played by a fallback player because they cannot be "
-    L"decoded are limited to 100%.",
-    L"\r\n\r\nHORA E AÇÕES DO ALARME\r\nA hora aceita HH:mm com ou sem separador: 7, 12, 730, "
-    L"0730 ou 7:30. O desvio é lido da direita a partir dos segundos: 2 é 00:00:02.00, 230 é "
-    L"00:02:30.00 e 12345 é 01:23:45.00. Os dias definem quando o alarme funciona e todos vêm "
-    L"selecionados. A ordem segue a cultura da aplicação; mudar o idioma não altera os dias "
-    L"guardados. Ao disparar, mostra um widget oculto e leva-o à frente sem alterar "
-    L"permanentemente Sempre no topo. O sinal começa cinco segundos antes. Testar verifica de "
-    L"forma assíncrona a indicação, o áudio, o comando e o script remoto. Silenciar não para a "
-    L"reprodução interna; continua sem som e volta a ouvir-se depois. Comandos e scripts remotos "
-    L"não são afetados. Executar um ficheiro ou comando ativa o campo, Procurar, Testar e a "
-    L"repetição; Testar e repetir exigem também um valor não vazio, mas um teste em curso pode "
-    L"sempre ser parado.\r\n\r\nO controlo Volume do áudio no separador Alarme ajusta os "
-    L"ficheiros de áudio reproduzidos internamente para esse widget. O valor predefinido −18 dB "
-    L"mantém o nível original do ficheiro (100%). Deslocar o controlo para a direita amplifica o "
-    L"som; o máximo de 0 dB corresponde a cerca de 794%. −∞ dB é silêncio. As alterações ouvem-se "
-    L"durante o teste. Os ficheiros MIDI e os reproduzidos por um leitor alternativo por não ser "
-    L"possível descodificá-los estão limitados a 100%.",
+    L"\r\n\r\nTIDSINDTASTNING OG ALARMHANDLINGER\r\nAlarmtid accepterer HH:mm med eller uden "
+    L"skilletegn: 7, 12, 730, 0730 eller 7:30. Forskydningen læses fra højre fra sekunderne: 2 er "
+    L"00:00:02.00, 230 er 00:02:30.00 og 12345 er 01:23:45.00. Dagene bestemmer hvornår alarmen "
+    L"kører, og alle er valgt som standard. Rækkefølgen følger programkulturen; et sprogskift "
+    L"ændrer ikke de gemte ugedage. Når alarmen udløses, vises en skjult widget og føres frem "
+    L"uden permanent at ændre Altid øverst. Tidssignalet starter fem sekunder før. Test afprøver "
+    L"indikationen, lyd, kommando og fjernscript asynkront. Dæmpning stopper ikke intern "
+    L"afspilning; den fortsætter lydløst og kan høres igen efter ophævelse. Kommandoer og "
+    L"fjernscripts påvirkes ikke. Kør en fil eller kommando aktiverer feltet, Gennemse, Test og "
+    L"gentagelse; Test og gentagelse kræver også en værdi, der ikke er tom, men en igangværende "
+    L"test kan altid stoppes.\r\n\r\nLydstyrke på fanen Alarm justerer internt afspillede "
+    L"lydfiler for widgetten. Standardværdien −18 dB bevarer filens oprindelige niveau (100 %). "
+    L"Mod højre forstærkes lyden; maksimum 0 dB svarer til cirka 794 %. −∞ dB er stilhed. "
+    L"Ændringer høres også under testen. MIDI-filer og filer, der afspilles med en alternativ "
+    L"afspiller, fordi de ikke kan afkodes, er begrænset til 100 %.",
+    L"\r\n\r\nAJAN SYÖTTÖ JA HERÄTYKSEN TOIMINNOT\r\nHerätysaika hyväksyy HH:mm-muodon "
+    L"erottimella tai ilman: 7, 12, 730, 0730 tai 7:30. Poikkeama luetaan oikealta sekunneista "
+    L"alkaen: 2 on 00:00:02.00, 230 on 00:02:30.00 ja 12345 on 01:23:45.00. Päivät määräävät "
+    L"milloin herätys toimii; kaikki ovat oletuksena valittuina. Järjestys seuraa sovelluksen "
+    L"kulttuuria, eikä kielen vaihto muuta tallennettuja viikonpäiviä. Hälytys näyttää piilotetun "
+    L"pienoisohjelman ja tuo sen eteen muuttamatta pysyvästi Aina päällimmäisenä -tilaa. "
+    L"Aikamerkki alkaa viisi sekuntia ennen. Testi tarkistaa ilmaisimen, äänen, komennon ja "
+    L"etäkomentosarjan asynkronisesti. Mykistys ei pysäytä sisäistä toistoa; se jatkuu "
+    L"äänettömänä ja kuuluu taas mykistyksen jälkeen. Komennot ja etäkomentosarjat eivät muutu. "
+    L"Suorita tiedosto tai komento ottaa käyttöön kentän, Selaa-, Testaa- ja toistovalinnat; "
+    L"Testaa ja toisto vaativat muun kuin tyhjän arvon, mutta käynnissä olevan testin voi aina "
+    L"pysäyttää.\r\n\r\nHerätys-välilehden Äänenvoimakkuus säätää pienoisohjelman sisäisesti "
+    L"toistettavien äänitiedostojen voimakkuutta. Oletusarvo −18 dB säilyttää tiedoston "
+    L"alkuperäisen tason (100 %). Oikealle siirtäminen vahvistaa ääntä; enimmäisarvo 0 dB vastaa "
+    L"noin 794 %:a. −∞ dB tarkoittaa hiljaisuutta. Muutokset kuuluvat myös testin aikana. "
+    L"MIDI-tiedostojen ja varasoittimella toistettavien tiedostojen, joita ei voi purkaa, "
+    L"enimmäistaso on 100 %.",
+    L"\r\n\r\nINNSLÁTTUR TÍMA OG AÐGERÐIR VEKJARA\r\nVekjaratími tekur við HH:mm með eða án "
+    L"skilmerkis: 7, 12, 730, 0730 eða 7:30. Hliðrun er lesin frá hægri frá sekúndum: 2 er "
+    L"00:00:02.00, 230 er 00:02:30.00 og 12345 er 01:23:45.00. Dagarnir ákvarða hvenær vekjarinn "
+    L"virkar og allir eru sjálfgefið valdir. Röðin fylgir menningu forritsins; tungumálaskipti "
+    L"breyta ekki vistuðum vikudögum. Þegar vekjari fer af stað sýnir hann falda græju og færir "
+    L"hana fremst án þess að breyta varanlega Alltaf efst. Tímamerkið hefst fimm sekúndum fyrr. "
+    L"Prófun kannar merkingu, hljóð, skipun og fjarskriftu ósamstillt. Þöggun stöðvar ekki innri "
+    L"spilun; hún heldur hljóðlaus áfram og heyrist aftur þegar þöggun er aflétt. Skipanir og "
+    L"fjarskriftur breytast ekki. Keyra skrá eða skipun virkjar reitinn, Velja, Prófa og "
+    L"endurtekningu; Prófa og endurtekning krefjast einnig gildis sem er ekki autt, en alltaf má "
+    L"stöðva prófun sem er í gangi.\r\n\r\nHljóðstyrkur á vekjaraflipanum stillir hljóðskrár sem "
+    L"forritið spilar fyrir græjuna. Sjálfgefið gildi −18 dB heldur upprunalegum styrk skrárinnar "
+    L"(100%). Til hægri magnast hljóðið; hámarkið 0 dB samsvarar um 794%. −∞ dB er þögn. "
+    L"Breytingar heyrast einnig meðan á prófun stendur. MIDI-skrár og skrár sem aukaspilari "
+    L"spilar vegna þess að ekki er hægt að afkóða þær takmarkast við 100%.",
     L"\r\n\r\nTIDSANGIVELSE OG ALARMHANDLINGER\r\nAlarmtid godtar HH:mm med eller uten "
     L"skilletegn: 7, 12, 730, 0730 eller 7:30. Forskyvningen leses fra høyre fra sekundene: 2 er "
     L"00:00:02.00, 230 er 00:02:30.00 og 12345 er 01:23:45.00. Dagene angir når alarmen kjører, "
@@ -7388,53 +7435,6 @@ const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT] = {
     L"%). Åt höger förstärks ljudet; maximum 0 dB motsvarar ungefär 794 %. −∞ dB är tystnad. "
     L"Ändringar hörs även under testet. MIDI-filer och filer som spelas upp med en reservspelare "
     L"eftersom de inte kan avkodas begränsas till 100 %.",
-    L"\r\n\r\nAJAN SYÖTTÖ JA HERÄTYKSEN TOIMINNOT\r\nHerätysaika hyväksyy HH:mm-muodon "
-    L"erottimella tai ilman: 7, 12, 730, 0730 tai 7:30. Poikkeama luetaan oikealta sekunneista "
-    L"alkaen: 2 on 00:00:02.00, 230 on 00:02:30.00 ja 12345 on 01:23:45.00. Päivät määräävät "
-    L"milloin herätys toimii; kaikki ovat oletuksena valittuina. Järjestys seuraa sovelluksen "
-    L"kulttuuria, eikä kielen vaihto muuta tallennettuja viikonpäiviä. Hälytys näyttää piilotetun "
-    L"pienoisohjelman ja tuo sen eteen muuttamatta pysyvästi Aina päällimmäisenä -tilaa. "
-    L"Aikamerkki alkaa viisi sekuntia ennen. Testi tarkistaa ilmaisimen, äänen, komennon ja "
-    L"etäkomentosarjan asynkronisesti. Mykistys ei pysäytä sisäistä toistoa; se jatkuu "
-    L"äänettömänä ja kuuluu taas mykistyksen jälkeen. Komennot ja etäkomentosarjat eivät muutu. "
-    L"Suorita tiedosto tai komento ottaa käyttöön kentän, Selaa-, Testaa- ja toistovalinnat; "
-    L"Testaa ja toisto vaativat muun kuin tyhjän arvon, mutta käynnissä olevan testin voi aina "
-    L"pysäyttää.\r\n\r\nHerätys-välilehden Äänenvoimakkuus säätää pienoisohjelman sisäisesti "
-    L"toistettavien äänitiedostojen voimakkuutta. Oletusarvo −18 dB säilyttää tiedoston "
-    L"alkuperäisen tason (100 %). Oikealle siirtäminen vahvistaa ääntä; enimmäisarvo 0 dB vastaa "
-    L"noin 794 %:a. −∞ dB tarkoittaa hiljaisuutta. Muutokset kuuluvat myös testin aikana. "
-    L"MIDI-tiedostojen ja varasoittimella toistettavien tiedostojen, joita ei voi purkaa, "
-    L"enimmäistaso on 100 %.",
-    L"\r\n\r\nTIDSINDTASTNING OG ALARMHANDLINGER\r\nAlarmtid accepterer HH:mm med eller uden "
-    L"skilletegn: 7, 12, 730, 0730 eller 7:30. Forskydningen læses fra højre fra sekunderne: 2 er "
-    L"00:00:02.00, 230 er 00:02:30.00 og 12345 er 01:23:45.00. Dagene bestemmer hvornår alarmen "
-    L"kører, og alle er valgt som standard. Rækkefølgen følger programkulturen; et sprogskift "
-    L"ændrer ikke de gemte ugedage. Når alarmen udløses, vises en skjult widget og føres frem "
-    L"uden permanent at ændre Altid øverst. Tidssignalet starter fem sekunder før. Test afprøver "
-    L"indikationen, lyd, kommando og fjernscript asynkront. Dæmpning stopper ikke intern "
-    L"afspilning; den fortsætter lydløst og kan høres igen efter ophævelse. Kommandoer og "
-    L"fjernscripts påvirkes ikke. Kør en fil eller kommando aktiverer feltet, Gennemse, Test og "
-    L"gentagelse; Test og gentagelse kræver også en værdi, der ikke er tom, men en igangværende "
-    L"test kan altid stoppes.\r\n\r\nLydstyrke på fanen Alarm justerer internt afspillede "
-    L"lydfiler for widgetten. Standardværdien −18 dB bevarer filens oprindelige niveau (100 %). "
-    L"Mod højre forstærkes lyden; maksimum 0 dB svarer til cirka 794 %. −∞ dB er stilhed. "
-    L"Ændringer høres også under testen. MIDI-filer og filer, der afspilles med en alternativ "
-    L"afspiller, fordi de ikke kan afkodes, er begrænset til 100 %.",
-    L"\r\n\r\nINNSLÁTTUR TÍMA OG AÐGERÐIR VEKJARA\r\nVekjaratími tekur við HH:mm með eða án "
-    L"skilmerkis: 7, 12, 730, 0730 eða 7:30. Hliðrun er lesin frá hægri frá sekúndum: 2 er "
-    L"00:00:02.00, 230 er 00:02:30.00 og 12345 er 01:23:45.00. Dagarnir ákvarða hvenær vekjarinn "
-    L"virkar og allir eru sjálfgefið valdir. Röðin fylgir menningu forritsins; tungumálaskipti "
-    L"breyta ekki vistuðum vikudögum. Þegar vekjari fer af stað sýnir hann falda græju og færir "
-    L"hana fremst án þess að breyta varanlega Alltaf efst. Tímamerkið hefst fimm sekúndum fyrr. "
-    L"Prófun kannar merkingu, hljóð, skipun og fjarskriftu ósamstillt. Þöggun stöðvar ekki innri "
-    L"spilun; hún heldur hljóðlaus áfram og heyrist aftur þegar þöggun er aflétt. Skipanir og "
-    L"fjarskriftur breytast ekki. Keyra skrá eða skipun virkjar reitinn, Velja, Prófa og "
-    L"endurtekningu; Prófa og endurtekning krefjast einnig gildis sem er ekki autt, en alltaf má "
-    L"stöðva prófun sem er í gangi.\r\n\r\nHljóðstyrkur á vekjaraflipanum stillir hljóðskrár sem "
-    L"forritið spilar fyrir græjuna. Sjálfgefið gildi −18 dB heldur upprunalegum styrk skrárinnar "
-    L"(100%). Til hægri magnast hljóðið; hámarkið 0 dB samsvarar um 794%. −∞ dB er þögn. "
-    L"Breytingar heyrast einnig meðan á prófun stendur. MIDI-skrár og skrár sem aukaspilari "
-    L"spilar vegna þess að ekki er hægt að afkóða þær takmarkast við 100%.",
     L"\r\n\r\nZAMAN GİRİŞİ VE ALARM EYLEMLERİ\r\nAlarm zamanı ayırıcıyla veya ayırıcı olmadan "
     L"HH:mm kabul eder: 7, 12, 730, 0730 ya da 7:30. Ofset sağdan saniyelerden başlayarak okunur: "
     L"2 değeri 00:00:02.00, 230 değeri 00:02:30.00 ve 12345 değeri 01:23:45.00 olur. Günler "
@@ -7892,6 +7892,34 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"are added in order until the limit is reached; a notification appears for the remaining "
     L"copies. Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock "
     L"widget to select the main clock face size, from smallest to largest.",
+    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nOpening Settings from the notification-area "
+    L"icon returns to the last selected widget. Settings remembers the last open tab, and Add "
+    L"remembers the last type actually added. Remove or Del removes all selected items when the "
+    L"changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible "
+    L"and identifies the widget briefly. Settings in a specific widget menu selects that widget "
+    L"in the list. Clicking a calendar day selects it and copies it to the clipboard; each "
+    L"calendar has its own format in Settings and its menu. Every pattern is available in every "
+    L"language, while textual formats use the widget language. The default Short date follows the "
+    L"widget language. Insert toggles the current item and moves the list cursor down one row. "
+    L"Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in "
+    L"the application language. Up to 32 widgets are allowed. When duplicating or pasting, copies "
+    L"are added in order until the limit is reached; a notification appears for the remaining "
+    L"copies. Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock "
+    L"widget to select the main clock face size, from smallest to largest.",
+    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nOpening Settings from the notification-area "
+    L"icon returns to the last selected widget. Settings remembers the last open tab, and Add "
+    L"remembers the last type actually added. Remove or Del removes all selected items when the "
+    L"changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible "
+    L"and identifies the widget briefly. Settings in a specific widget menu selects that widget "
+    L"in the list. Clicking a calendar day selects it and copies it to the clipboard; each "
+    L"calendar has its own format in Settings and its menu. Every pattern is available in every "
+    L"language, while textual formats use the widget language. The default Short date follows the "
+    L"widget language. Insert toggles the current item and moves the list cursor down one row. "
+    L"Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in "
+    L"the application language. Up to 32 widgets are allowed. When duplicating or pasting, copies "
+    L"are added in order until the limit is reached; a notification appears for the remaining "
+    L"copies. Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock "
+    L"widget to select the main clock face size, from smallest to largest.",
     L"\r\n\r\nAUSWAHL, TASTEN UND DATUMSKOPIE\r\nBeim Öffnen der Einstellungen über das "
     L"Infobereichsymbol werden die Einstellungen des zuletzt ausgewählten Widgets angezeigt. "
     L"Einstellungen merkt sich die zuletzt geöffnete Registerkarte, Hinzufügen den zuletzt "
@@ -7951,6 +7979,17 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"quelle rimanenti. Premere Alt+0, Alt+1, Alt+2 o Alt+3 nei widget Orologio analogico e "
     L"Calendario con orologio per scegliere la dimensione del quadrante principale, dalla più "
     L"piccola alla più grande.",
+    L"\r\n\r\nSELEÇÃO E DATA\r\nAo abrir as definições pelo ícone da área de notificação, é "
+    L"selecionado o último widget escolhido. Um clique direito e Definições seleciona o widget "
+    L"correspondente. Delete remove os widgets selecionados. Um duplo clique numa entrada torna o "
+    L"widget visível e realça-o brevemente. Num calendário, clicar num dia seleciona-o e copia-o "
+    L"no formato escolhido; todos os formatos estão disponíveis em todos os idiomas. Insert "
+    L"alterna a seleção do item atual e desloca o cursor da lista uma linha para baixo. Ctrl+C "
+    L"copia os widgets selecionados. Ctrl+V acrescenta cópias no fim pela ordem da lista, com um "
+    L"sufixo no idioma da aplicação. São permitidos até 32 widgets. Ao duplicar ou colar, as "
+    L"cópias são acrescentadas pela ordem até ao limite; é apresentado um aviso sobre as "
+    L"restantes. Prima Alt+0, Alt+1, Alt+2 ou Alt+3 nos widgets Relógio analógico e Calendário "
+    L"com relógio para escolher o tamanho do mostrador principal, do menor ao maior.",
     L"\r\n\r\nZAZNACZANIE, KLAWISZE I KOPIOWANIE DATY\r\nOtwarcie ustawień z ikony w obszarze "
     L"powiadomień przywraca ostatnio wybrany widżet. Ustawienia pamiętają ostatnio otwartą kartę, "
     L"a Dodaj ostatnio rzeczywiście dodany typ. Usuń lub Del usuwa wszystkie zaznaczone pozycje "
@@ -7977,45 +8016,38 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"poradí iba kópie, ktoré sa zmestia do limitu; na zostávajúce sa zobrazí upozornenie. Na "
     L"widgetoch Ručičkové hodiny a Kalendár s hodinami zvolíte pomocou Alt+0, Alt+1, Alt+2 alebo "
     L"Alt+3 veľkosť hlavného ciferníka od najmenšej po najväčšiu.",
-    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nOpening Settings from the notification-area "
-    L"icon returns to the last selected widget. Settings remembers the last open tab, and Add "
-    L"remembers the last type actually added. Remove or Del removes all selected items when the "
-    L"changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible "
-    L"and identifies the widget briefly. Settings in a specific widget menu selects that widget "
-    L"in the list. Clicking a calendar day selects it and copies it to the clipboard; each "
-    L"calendar has its own format in Settings and its menu. Every pattern is available in every "
-    L"language, while textual formats use the widget language. The default Short date follows the "
-    L"widget language. Insert toggles the current item and moves the list cursor down one row. "
-    L"Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in "
-    L"the application language. Up to 32 widgets are allowed. When duplicating or pasting, copies "
-    L"are added in order until the limit is reached; a notification appears for the remaining "
-    L"copies. Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock "
-    L"widget to select the main clock face size, from smallest to largest.",
-    L"\r\n\r\nSELECTION, KEYS AND DATE COPYING\r\nOpening Settings from the notification-area "
-    L"icon returns to the last selected widget. Settings remembers the last open tab, and Add "
-    L"remembers the last type actually added. Remove or Del removes all selected items when the "
-    L"changes are applied. Double-clicking an item makes a hidden widget visible, selects Visible "
-    L"and identifies the widget briefly. Settings in a specific widget menu selects that widget "
-    L"in the list. Clicking a calendar day selects it and copies it to the clipboard; each "
-    L"calendar has its own format in Settings and its menu. Every pattern is available in every "
-    L"language, while textual formats use the widget language. The default Short date follows the "
-    L"widget language. Insert toggles the current item and moves the list cursor down one row. "
-    L"Ctrl+C copies selected widgets. Ctrl+V appends copies in list order with a name suffix in "
-    L"the application language. Up to 32 widgets are allowed. When duplicating or pasting, copies "
-    L"are added in order until the limit is reached; a notification appears for the remaining "
-    L"copies. Press Alt+0, Alt+1, Alt+2, or Alt+3 on an Analog clock or Calendar with clock "
-    L"widget to select the main clock face size, from smallest to largest.",
-    L"\r\n\r\nSELEÇÃO E DATA\r\nAo abrir as definições pelo ícone da área de notificação, é "
-    L"selecionado o último widget escolhido. Um clique direito e Definições seleciona o widget "
-    L"correspondente. Delete remove os widgets selecionados. Um duplo clique numa entrada torna o "
-    L"widget visível e realça-o brevemente. Num calendário, clicar num dia seleciona-o e copia-o "
-    L"no formato escolhido; todos os formatos estão disponíveis em todos os idiomas. Insert "
-    L"alterna a seleção do item atual e desloca o cursor da lista uma linha para baixo. Ctrl+C "
-    L"copia os widgets selecionados. Ctrl+V acrescenta cópias no fim pela ordem da lista, com um "
-    L"sufixo no idioma da aplicação. São permitidos até 32 widgets. Ao duplicar ou colar, as "
-    L"cópias são acrescentadas pela ordem até ao limite; é apresentado um aviso sobre as "
-    L"restantes. Prima Alt+0, Alt+1, Alt+2 ou Alt+3 nos widgets Relógio analógico e Calendário "
-    L"com relógio para escolher o tamanho do mostrador principal, do menor ao maior.",
+    L"\r\n\r\nMARKERING OG DATO\r\nNår indstillingerne åbnes fra ikonet i meddelelsesområdet, "
+    L"vælges den sidst valgte widget igen. Højreklik og Indstillinger markerer den pågældende "
+    L"widget. Delete fjerner markerede widgets. Dobbeltklik på en post viser widgeten og "
+    L"fremhæver den kort. Klik på en kalenderdag for at vælge og kopiere den i det valgte format; "
+    L"alle formater findes på alle sprog. Insert skifter markeringen af det aktuelle element og "
+    L"flytter listemarkøren én række ned. Ctrl+C kopierer markerede widgets. Ctrl+V tilføjer "
+    L"kopier nederst i listens rækkefølge med et navnetillæg på programmets sprog. Der kan være "
+    L"op til 32 widgets. Ved duplikering eller indsættelse tilføjes kopier i rækkefølge indtil "
+    L"grænsen; en meddelelse vises for resten. Tryk Alt+0, Alt+1, Alt+2 eller Alt+3 på Analogt ur "
+    L"eller Kalender med ur for at vælge hovedurskivens størrelse, fra mindst til størst.",
+    L"\r\n\r\nVALINTA JA PÄIVÄMÄÄRÄ\r\nKun asetukset avataan ilmoitusalueen kuvakkeesta, viimeksi "
+    L"valittu pienoisohjelma valitaan uudelleen. Napsauta hiiren kakkospainikkeella ja valitse "
+    L"Asetukset valitaksesi kyseisen pienoisohjelman. Delete poistaa valitut pienoisohjelmat. "
+    L"Luettelon kaksoisnapsautus näyttää pienoisohjelman ja korostaa sen hetkeksi. "
+    L"Kalenteripäivän napsautus valitsee ja kopioi sen valitussa muodossa; kaikki muodot ovat "
+    L"käytettävissä kaikilla kielillä. Insert vaihtaa nykyisen kohteen valinnan ja siirtää "
+    L"luettelokohdistinta yhden rivin alaspäin. Ctrl+C kopioi valitut pienoisohjelmat. Ctrl+V "
+    L"lisää kopiot loppuun luettelon järjestyksessä ja liittää nimeen sovelluksen kielisen "
+    L"päätteen. Pienoisohjelmia voi olla enintään 32. Monistettaessa tai liitettäessä kopiot "
+    L"lisätään järjestyksessä rajaan asti; jäljelle jäävistä näytetään ilmoitus. Valitse "
+    L"pääkellotaulun koko pienimmästä suurimpaan näppäimillä Alt+0, Alt+1, Alt+2 tai Alt+3 "
+    L"Analoginen kello- tai Kalenteri ja kello -pienoisohjelmassa.",
+    L"\r\n\r\nVAL OG DAGSETNING\r\nÞegar stillingar eru opnaðar frá tákninu á tilkynningasvæðinu "
+    L"er síðast valda græjan valin aftur. Hægrismellur og Stillingar velja viðkomandi græju. "
+    L"Delete fjarlægir valdar græjur. Tvísmellur á færslu sýnir græjuna og auðkennir hana "
+    L"stuttlega. Smelltu á dag í dagatali til að velja og afrita hann á völdu sniði; öll snið eru "
+    L"tiltæk á öllum tungumálum. Insert víxlar vali núverandi færslu og færir listabendilinn eina "
+    L"línu niður. Ctrl+C afritar valdar græjur. Ctrl+V bætir afritum aftast í röð listans með "
+    L"viðskeyti á tungumáli forritsins. Að hámarki eru 32 græjur leyfðar. Við afritun eða límingu "
+    L"er afritum bætt við í röð þar til hámarkinu er náð; tilkynning birtist um þau sem eftir "
+    L"eru. Ýttu á Alt+0, Alt+1, Alt+2 eða Alt+3 á græjunum Vísaklukka og Dagatal með klukku til "
+    L"að velja stærð aðalskífunnar, frá minnstu til stærstu.",
     L"\r\n\r\nVALG OG DATO\r\nNår innstillingene åpnes fra ikonet i systemstatusfeltet, velges "
     L"den sist valgte widgeten igjen. Høyreklikk og Innstillinger velger den aktuelle widgeten. "
     L"Delete fjerner valgte widgeter. Dobbeltklikk på en oppføring gjør widgeten synlig og "
@@ -8038,38 +8070,6 @@ const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT] = {
     L"gränsen nås; ett meddelande visas för de återstående. Tryck Alt+0, Alt+1, Alt+2 eller Alt+3 "
     L"på Analog klocka eller Kalender med klocka för att välja huvudurtavlans storlek, från minst "
     L"till störst.",
-    L"\r\n\r\nVALINTA JA PÄIVÄMÄÄRÄ\r\nKun asetukset avataan ilmoitusalueen kuvakkeesta, viimeksi "
-    L"valittu pienoisohjelma valitaan uudelleen. Napsauta hiiren kakkospainikkeella ja valitse "
-    L"Asetukset valitaksesi kyseisen pienoisohjelman. Delete poistaa valitut pienoisohjelmat. "
-    L"Luettelon kaksoisnapsautus näyttää pienoisohjelman ja korostaa sen hetkeksi. "
-    L"Kalenteripäivän napsautus valitsee ja kopioi sen valitussa muodossa; kaikki muodot ovat "
-    L"käytettävissä kaikilla kielillä. Insert vaihtaa nykyisen kohteen valinnan ja siirtää "
-    L"luettelokohdistinta yhden rivin alaspäin. Ctrl+C kopioi valitut pienoisohjelmat. Ctrl+V "
-    L"lisää kopiot loppuun luettelon järjestyksessä ja liittää nimeen sovelluksen kielisen "
-    L"päätteen. Pienoisohjelmia voi olla enintään 32. Monistettaessa tai liitettäessä kopiot "
-    L"lisätään järjestyksessä rajaan asti; jäljelle jäävistä näytetään ilmoitus. Valitse "
-    L"pääkellotaulun koko pienimmästä suurimpaan näppäimillä Alt+0, Alt+1, Alt+2 tai Alt+3 "
-    L"Analoginen kello- tai Kalenteri ja kello -pienoisohjelmassa.",
-    L"\r\n\r\nMARKERING OG DATO\r\nNår indstillingerne åbnes fra ikonet i meddelelsesområdet, "
-    L"vælges den sidst valgte widget igen. Højreklik og Indstillinger markerer den pågældende "
-    L"widget. Delete fjerner markerede widgets. Dobbeltklik på en post viser widgeten og "
-    L"fremhæver den kort. Klik på en kalenderdag for at vælge og kopiere den i det valgte format; "
-    L"alle formater findes på alle sprog. Insert skifter markeringen af det aktuelle element og "
-    L"flytter listemarkøren én række ned. Ctrl+C kopierer markerede widgets. Ctrl+V tilføjer "
-    L"kopier nederst i listens rækkefølge med et navnetillæg på programmets sprog. Der kan være "
-    L"op til 32 widgets. Ved duplikering eller indsættelse tilføjes kopier i rækkefølge indtil "
-    L"grænsen; en meddelelse vises for resten. Tryk Alt+0, Alt+1, Alt+2 eller Alt+3 på Analogt ur "
-    L"eller Kalender med ur for at vælge hovedurskivens størrelse, fra mindst til størst.",
-    L"\r\n\r\nVAL OG DAGSETNING\r\nÞegar stillingar eru opnaðar frá tákninu á tilkynningasvæðinu "
-    L"er síðast valda græjan valin aftur. Hægrismellur og Stillingar velja viðkomandi græju. "
-    L"Delete fjarlægir valdar græjur. Tvísmellur á færslu sýnir græjuna og auðkennir hana "
-    L"stuttlega. Smelltu á dag í dagatali til að velja og afrita hann á völdu sniði; öll snið eru "
-    L"tiltæk á öllum tungumálum. Insert víxlar vali núverandi færslu og færir listabendilinn eina "
-    L"línu niður. Ctrl+C afritar valdar græjur. Ctrl+V bætir afritum aftast í röð listans með "
-    L"viðskeyti á tungumáli forritsins. Að hámarki eru 32 græjur leyfðar. Við afritun eða límingu "
-    L"er afritum bætt við í röð þar til hámarkinu er náð; tilkynning birtist um þau sem eftir "
-    L"eru. Ýttu á Alt+0, Alt+1, Alt+2 eða Alt+3 á græjunum Vísaklukka og Dagatal með klukku til "
-    L"að velja stærð aðalskífunnar, frá minnstu til stærstu.",
     L"\r\n\r\nSEÇİM VE TARİH\r\nAyarlar bildirim alanındaki simgeden açıldığında en son seçilen "
     L"araç yeniden seçilir. Sağ tıklayıp Ayarlar'ı seçmek ilgili aracı seçer. Delete seçili "
     L"araçları kaldırır. Listedeki bir öğeye çift tıklamak aracı görünür yapar ve kısa süre "
@@ -8369,6 +8369,30 @@ const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"calendar, show or hide the Today row on the Appearance tab or in the widget menu. Go to "
     L"Today selects today and returns to the month view. When the date changes according to the "
     L"widget’s time, today is selected automatically while the current calendar view is preserved.",
+    L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps "
+    L"widget centres to the nearest grid points and removes overlaps. A widget menu affects its "
+    L"monitor; the notification icon applies it to every monitor separately. Repeating the "
+    L"command keeps the layout stable. A Settings double-click identifies a widget with a fast "
+    L"light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the "
+    L"widget to the back. In a calendar-and-clock panel, the upper link returns the calendar to "
+    L"today and the lower link opens the classic Windows Date and Time settings. When edge "
+    L"snapping is enabled, a dragged widget within five pixels snaps to a work-area edge. When "
+    L"resized, it remains attached to the same edge or pair of edges.\r\n\r\nFor a standalone "
+    L"calendar, show or hide the Today row on the Appearance tab or in the widget menu. Go to "
+    L"Today selects today and returns to the month view. When the date changes according to the "
+    L"widget’s time, today is selected automatically while the current calendar view is preserved.",
+    L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps "
+    L"widget centres to the nearest grid points and removes overlaps. A widget menu affects its "
+    L"monitor; the notification icon applies it to every monitor separately. Repeating the "
+    L"command keeps the layout stable. A Settings double-click identifies a widget with a fast "
+    L"light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the "
+    L"widget to the back. In a calendar-and-clock panel, the upper link returns the calendar to "
+    L"today and the lower link opens the classic Windows Date and Time settings. When edge "
+    L"snapping is enabled, a dragged widget within five pixels snaps to a work-area edge. When "
+    L"resized, it remains attached to the same edge or pair of edges.\r\n\r\nFor a standalone "
+    L"calendar, show or hide the Today row on the Appearance tab or in the widget menu. Go to "
+    L"Today selects today and returns to the month view. When the date changes according to the "
+    L"widget’s time, today is selected automatically while the current calendar view is preserved.",
     L"\r\n\r\nWIDGET-ANORDNUNG\r\nIm Raster anordnen behält die ungefähre manuelle Anordnung bei, "
     L"richtet die Mittelpunkte am nächsten Rasterpunkt aus und beseitigt Überlappungen. Das "
     L"Widget-Menü wirkt auf seinen Monitor, das Symbol auf alle Monitore einzeln. Wiederholen "
@@ -8420,6 +8444,15 @@ const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"nel menu del widget. Vai a oggi seleziona la data corrente e torna alla vista mensile. "
     L"Quando cambia la data secondo l’ora del widget, viene selezionato automaticamente il giorno "
     L"corrente mantenendo il tipo di vista.",
+    L"\r\n\r\nDISPOSIÇÃO\r\nQuando o ajuste está ativado, os widgets prendem-se às margens da "
+    L"área de trabalho a cinco píxeis e permanecem presos ao redimensionar. Dispor numa grelha "
+    L"move os outros widgets para posições próximas sem sobreposição, mantendo o widget de "
+    L"referência no lugar. Os relógios de monitor são ignorados. No painel com calendário e "
+    L"relógio, a ligação superior volta a hoje e a inferior abre as definições clássicas de Data "
+    L"e Hora do Windows; ambas funcionam com rato e teclado.\r\n\r\nNum calendário autónomo, "
+    L"mostre ou oculte a linha Hoje em Aspeto ou no menu do widget. Ir para hoje seleciona a data "
+    L"atual e regressa à vista mensal. Quando a data muda segundo a hora do widget, o dia atual é "
+    L"selecionado automaticamente, mantendo o tipo de vista.",
     L"\r\n\r\nUKŁAD WIDŻETÓW\r\nUłóż w siatce zachowuje przybliżony układ ręczny, przyciąga "
     L"środki widżetów do najbliższych punktów siatki i usuwa nakładanie. Menu widżetu działa na "
     L"jego monitorze, a ikona na każdym monitorze osobno. Powtórzenie nie zmienia układu. "
@@ -8444,39 +8477,34 @@ const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"Vzhľad aj v ponuke widgetu. Prejsť na dnešný deň vyberie dnešný dátum a obnoví mesačné "
     L"zobrazenie. Pri zmene dňa podľa času widgetu sa dnešok vyberie automaticky, ale aktuálny "
     L"druh zobrazenia sa zachová.",
-    L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps "
-    L"widget centres to the nearest grid points and removes overlaps. A widget menu affects its "
-    L"monitor; the notification icon applies it to every monitor separately. Repeating the "
-    L"command keeps the layout stable. A Settings double-click identifies a widget with a fast "
-    L"light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the "
-    L"widget to the back. In a calendar-and-clock panel, the upper link returns the calendar to "
-    L"today and the lower link opens the classic Windows Date and Time settings. When edge "
-    L"snapping is enabled, a dragged widget within five pixels snaps to a work-area edge. When "
-    L"resized, it remains attached to the same edge or pair of edges.\r\n\r\nFor a standalone "
-    L"calendar, show or hide the Today row on the Appearance tab or in the widget menu. Go to "
-    L"Today selects today and returns to the month view. When the date changes according to the "
-    L"widget’s time, today is selected automatically while the current calendar view is preserved.",
-    L"\r\n\r\nWIDGET LAYOUT\r\nArrange in a grid preserves the approximate manual layout, snaps "
-    L"widget centres to the nearest grid points and removes overlaps. A widget menu affects its "
-    L"monitor; the notification icon applies it to every monitor separately. Repeating the "
-    L"command keeps the layout stable. A Settings double-click identifies a widget with a fast "
-    L"light-blue flash; an alarm flashes more slowly in red. Turning off Always on top sends the "
-    L"widget to the back. In a calendar-and-clock panel, the upper link returns the calendar to "
-    L"today and the lower link opens the classic Windows Date and Time settings. When edge "
-    L"snapping is enabled, a dragged widget within five pixels snaps to a work-area edge. When "
-    L"resized, it remains attached to the same edge or pair of edges.\r\n\r\nFor a standalone "
-    L"calendar, show or hide the Today row on the Appearance tab or in the widget menu. Go to "
-    L"Today selects today and returns to the month view. When the date changes according to the "
-    L"widget’s time, today is selected automatically while the current calendar view is preserved.",
-    L"\r\n\r\nDISPOSIÇÃO\r\nQuando o ajuste está ativado, os widgets prendem-se às margens da "
-    L"área de trabalho a cinco píxeis e permanecem presos ao redimensionar. Dispor numa grelha "
-    L"move os outros widgets para posições próximas sem sobreposição, mantendo o widget de "
-    L"referência no lugar. Os relógios de monitor são ignorados. No painel com calendário e "
-    L"relógio, a ligação superior volta a hoje e a inferior abre as definições clássicas de Data "
-    L"e Hora do Windows; ambas funcionam com rato e teclado.\r\n\r\nNum calendário autónomo, "
-    L"mostre ou oculte a linha Hoje em Aspeto ou no menu do widget. Ir para hoje seleciona a data "
-    L"atual e regressa à vista mensal. Quando a data muda segundo a hora do widget, o dia atual é "
-    L"selecionado automaticamente, mantendo o tipo de vista.",
+    L"\r\n\r\nPLACERING\r\nNår kantfastgørelse er slået til, fastgøres widgets til "
+    L"arbejdsområdets kanter inden for fem pixel og forbliver fastgjort ved størrelsesændring. "
+    L"Arranger i gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og "
+    L"lader referencewidgeten blive stående. Skærmure ignoreres. I kalender- og urpanelet går det "
+    L"øverste link til i dag, og det nederste åbner Windows' klassiske indstillinger for dato og "
+    L"klokkeslæt; begge virker med mus og tastatur.\r\n\r\nI en selvstændig kalender kan rækken I "
+    L"dag vises eller skjules på fanen Udseende eller i widgetmenuen. Gå til i dag vælger dags "
+    L"dato og månedsvisningen. Når datoen ændres efter widgetens tid, vælges dagens dato "
+    L"automatisk uden at ændre visningstypen.",
+    L"\r\n\r\nASETTELU\r\nKun reunakiinnitys on käytössä, pienoisohjelmat tarttuvat työalueen "
+    L"reunoihin viiden kuvapisteen etäisyydellä ja pysyvät kiinni koon muuttuessa. Järjestä "
+    L"ruudukkoon siirtää muut pienoisohjelmat läheisiin, päällekkäisyyksiä välttäviin paikkoihin "
+    L"ja pitää viiteohjelman paikallaan. Näyttökellot ohitetaan. Kalenteri- ja kellopaneelin "
+    L"ylälinkki palauttaa tämän päivän ja alalinkki avaa Windowsin perinteiset päivämäärä- ja "
+    L"aika-asetukset; molempia voi käyttää hiirellä ja näppäimistöllä.\r\n\r\nErillisen "
+    L"kalenterin Tänään-rivin voi näyttää tai piilottaa Ulkoasu-välilehdellä tai pienoisohjelman "
+    L"valikossa. Siirry tähän päivään valitsee nykyisen päivän ja kuukausinäkymän. Päivämäärän "
+    L"vaihtuessa pienoisohjelman ajan mukaan nykyinen päivä valitaan automaattisesti "
+    L"näkymätyyppiä muuttamatta.",
+    L"\r\n\r\nUPPRÖÐUN\r\nÞegar festing við brúnir er virk festast græjur við brúnir "
+    L"vinnusvæðisins innan fimm mynddíla og haldast fastar þegar stærð breytist. Raða á hnitanet "
+    L"færir aðrar græjur á nálæga staði án skörunar en heldur viðmiðunargræjunni kyrrri. "
+    L"Skjáklukkur eru hunsaðar. Í dagatals- og klukkuspjaldinu fer efri tengillinn á daginn í dag "
+    L"og sá neðri opnar hefðbundnar dagsetningar- og tímastillingar Windows; báðir virka með mús "
+    L"og lyklaborði.\r\n\r\nÍ sjálfstæðu dagatali má sýna eða fela Í dag-línuna á Útlit-flipanum "
+    L"eða í valmynd græjunnar. Fara á daginn í dag velur daginn í dag og mánaðarsýn. Þegar "
+    L"dagsetning breytist samkvæmt tíma græjunnar er dagurinn í dag valinn sjálfkrafa án þess að "
+    L"breyta gerð dagatalssýnar.",
     L"\r\n\r\nPLASSERING\r\nNår kantfesting er aktivert, festes widgeter til kanten av "
     L"arbeidsområdet innen fem piksler og forblir festet ved størrelsesendring. Ordne i et "
     L"rutenett flytter de andre widgetene til nærliggende plasser uten overlapping, mens "
@@ -8494,34 +8522,6 @@ const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT] = {
     L"mus och tangentbord.\r\n\r\nI en fristående kalender kan raden I dag visas eller döljas på "
     L"fliken Utseende eller i widgetmenyn. Gå till i dag väljer dagens datum och månadsvyn. När "
     L"datumet ändras enligt widgetens tid väljs dagens datum automatiskt utan att ändra vytypen.",
-    L"\r\n\r\nASETTELU\r\nKun reunakiinnitys on käytössä, pienoisohjelmat tarttuvat työalueen "
-    L"reunoihin viiden kuvapisteen etäisyydellä ja pysyvät kiinni koon muuttuessa. Järjestä "
-    L"ruudukkoon siirtää muut pienoisohjelmat läheisiin, päällekkäisyyksiä välttäviin paikkoihin "
-    L"ja pitää viiteohjelman paikallaan. Näyttökellot ohitetaan. Kalenteri- ja kellopaneelin "
-    L"ylälinkki palauttaa tämän päivän ja alalinkki avaa Windowsin perinteiset päivämäärä- ja "
-    L"aika-asetukset; molempia voi käyttää hiirellä ja näppäimistöllä.\r\n\r\nErillisen "
-    L"kalenterin Tänään-rivin voi näyttää tai piilottaa Ulkoasu-välilehdellä tai pienoisohjelman "
-    L"valikossa. Siirry tähän päivään valitsee nykyisen päivän ja kuukausinäkymän. Päivämäärän "
-    L"vaihtuessa pienoisohjelman ajan mukaan nykyinen päivä valitaan automaattisesti "
-    L"näkymätyyppiä muuttamatta.",
-    L"\r\n\r\nPLACERING\r\nNår kantfastgørelse er slået til, fastgøres widgets til "
-    L"arbejdsområdets kanter inden for fem pixel og forbliver fastgjort ved størrelsesændring. "
-    L"Arranger i gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og "
-    L"lader referencewidgeten blive stående. Skærmure ignoreres. I kalender- og urpanelet går det "
-    L"øverste link til i dag, og det nederste åbner Windows' klassiske indstillinger for dato og "
-    L"klokkeslæt; begge virker med mus og tastatur.\r\n\r\nI en selvstændig kalender kan rækken I "
-    L"dag vises eller skjules på fanen Udseende eller i widgetmenuen. Gå til i dag vælger dags "
-    L"dato og månedsvisningen. Når datoen ændres efter widgetens tid, vælges dagens dato "
-    L"automatisk uden at ændre visningstypen.",
-    L"\r\n\r\nUPPRÖÐUN\r\nÞegar festing við brúnir er virk festast græjur við brúnir "
-    L"vinnusvæðisins innan fimm mynddíla og haldast fastar þegar stærð breytist. Raða á hnitanet "
-    L"færir aðrar græjur á nálæga staði án skörunar en heldur viðmiðunargræjunni kyrrri. "
-    L"Skjáklukkur eru hunsaðar. Í dagatals- og klukkuspjaldinu fer efri tengillinn á daginn í dag "
-    L"og sá neðri opnar hefðbundnar dagsetningar- og tímastillingar Windows; báðir virka með mús "
-    L"og lyklaborði.\r\n\r\nÍ sjálfstæðu dagatali má sýna eða fela Í dag-línuna á Útlit-flipanum "
-    L"eða í valmynd græjunnar. Fara á daginn í dag velur daginn í dag og mánaðarsýn. Þegar "
-    L"dagsetning breytist samkvæmt tíma græjunnar er dagurinn í dag valinn sjálfkrafa án þess að "
-    L"breyta gerð dagatalssýnar.",
     L"\r\n\r\nDÜZEN\r\nKenar yapışması etkinleştirildiğinde araçlar çalışma alanının kenarlarına "
     L"beş piksel içinde yapışır ve boyut değişirken yapışık kalır. Izgarada düzenle, başvuru "
     L"aracını yerinde tutarak diğer araçları çakışmayan yakın konumlara taşır. Monitör saatleri "
@@ -8815,6 +8815,42 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"width in the selected font; the other digits keep their positions even with proportional "
     L"fonts. Monitor clocks remain centered, including the reserved space. The UTC row keeps its "
     L"own center alignment.",
+    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live "
+    L"preview; Cancel discards unapplied appearance changes and Default appearance restores the "
+    L"defaults for that widget type. Digital clocks provide font, smoothing, colours, opacity, "
+    L"padding, border width and a transparent background. Digital clocks, calendars and panels "
+    L"share four border styles; the single-line border has a selectable colour. The panel has "
+    L"separate fonts for its top row, time and bottom row, a leading zero and selectable "
+    L"clock-face sizes. Custom calendar fonts are supported with the Windows classic appearance "
+    L"or with visual styles turned off for the application or widget. Settings can be exported to "
+    L"XML. Importing XML immediately loads and saves the settings to the currently selected "
+    L"storage without changing the storage type. Automatic XML is "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
+    L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
+    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
+    L"while reserving its "
+    L"width in the selected font; the other digits keep their positions even with proportional "
+    L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
+    L"own centre alignment.",
+    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live "
+    L"preview; Cancel discards unapplied appearance changes and Default appearance restores the "
+    L"defaults for that widget type. Digital clocks provide font, smoothing, colours, opacity, "
+    L"padding, border width and a transparent background. Digital clocks, calendars and panels "
+    L"share four border styles; the single-line border has a selectable colour. The panel has "
+    L"separate fonts for its top row, time and bottom row, a leading zero and selectable "
+    L"clock-face sizes. Custom calendar fonts are supported with the Windows classic appearance "
+    L"or with visual styles turned off for the application or widget. Settings can be exported to "
+    L"XML. Importing XML immediately loads and saves the settings to the currently selected "
+    L"storage without changing the storage type. Automatic XML is "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
+    L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
+    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
+    L"while reserving its "
+    L"width in the selected font; the other digits keep their positions even with proportional "
+    L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
+    L"own centre alignment.",
     L"\r\n\r\nDARSTELLUNG UND SPEICHERUNG\r\nDarstellungsänderungen erscheinen sofort in der "
     L"Vorschau; Abbrechen verwirft noch nicht übernommene Änderungen, Standarddarstellung die "
     L"Vorgaben des Widget-Typs. Digitaluhren bieten Schrift, Glättung, Farben, Deckkraft, "
@@ -8889,6 +8925,21 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"nasconde lo zero riservandone la larghezza nel carattere scelto; le altre cifre mantengono "
     L"la posizione anche con caratteri proporzionali. Gli orologi sul monitor restano centrati, "
     L"incluso lo spazio riservato. La riga UTC mantiene il proprio allineamento centrale.",
+    L"\r\n\r\nARMAZENAMENTO\r\nAs definições são guardadas no registo em "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock ou num XML em "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Relógios digitais, calendários e painéis "
+    L"partilham quatro estilos de moldura; a cor da moldura simples pode ser escolhida. A mudança "
+    L"de armazenamento remove apenas os dados CalClock anteriores. As definições podem ser "
+    L"exportadas para XML. A importação XML carrega e guarda imediatamente as definições no "
+    L"armazenamento selecionado, sem alterar o seu tipo.\r\n\r\nA suavização do tipo de letra "
+    L"oferece ClearType, GDI e Nenhuma.\r\n\r\nO zero inicial oferece «Sim» (predefinido), «Não, "
+    L"reservar espaço» e «Não, sem espaço». «Não, reservar espaço» oculta o zero e reserva a sua "
+    L"largura no tipo "
+    L"de letra escolhido; os outros algarismos mantêm a posição mesmo com letras proporcionais. "
+    L"Os relógios no monitor permanecem centrados, incluindo o espaço reservado. A linha UTC "
+    L"mantém o seu próprio alinhamento ao centro.\r\n\r\nOs tipos de letra personalizados do "
+    L"calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para "
+    L"a aplicação ou o widget.",
     L"\r\n\r\nWYGLĄD I ZAPIS\r\nZmiany wyglądu są od razu widoczne w podglądzie; Anuluj odrzuca "
     L"niezastosowane zmiany, a Wygląd domyślny wartości danego typu widżetu. Zegary cyfrowe "
     L"oferują czcionkę, wygładzanie, kolory, krycie, odstęp, szerokość ramki i przezroczyste tło. "
@@ -8923,57 +8974,46 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"šírku vo zvolenom písme; ostatné číslice zostanú na rovnakých miestach aj pri "
     L"proporcionálnom písme. Hodiny na monitore zostávajú zarovnané na stred vrátane "
     L"rezervovaného miesta. Riadok UTC si zachováva vlastné zarovnanie na stred.",
-    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live "
-    L"preview; Cancel discards unapplied appearance changes and Default appearance restores the "
-    L"defaults for that widget type. Digital clocks provide font, smoothing, colours, opacity, "
-    L"padding, border width and a transparent background. Digital clocks, calendars and panels "
-    L"share four border styles; the single-line border has a selectable colour. The panel has "
-    L"separate fonts for its top row, time and bottom row, a leading zero and selectable "
-    L"clock-face sizes. Custom calendar fonts are supported with the Windows classic appearance "
-    L"or with visual styles turned off for the application or widget. Settings can be exported to "
-    L"XML. Importing XML immediately loads and saves the settings to the currently selected "
-    L"storage without changing the storage type. Automatic XML is "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
-    L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
-    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
-    L"while reserving its "
-    L"width in the selected font; the other digits keep their positions even with proportional "
-    L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
-    L"own centre alignment.",
-    L"\r\n\r\nAPPEARANCE AND STORAGE\r\nAppearance changes are shown immediately in a live "
-    L"preview; Cancel discards unapplied appearance changes and Default appearance restores the "
-    L"defaults for that widget type. Digital clocks provide font, smoothing, colours, opacity, "
-    L"padding, border width and a transparent background. Digital clocks, calendars and panels "
-    L"share four border styles; the single-line border has a selectable colour. The panel has "
-    L"separate fonts for its top row, time and bottom row, a leading zero and selectable "
-    L"clock-face sizes. Custom calendar fonts are supported with the Windows classic appearance "
-    L"or with visual styles turned off for the application or widget. Settings can be exported to "
-    L"XML. Importing XML immediately loads and saves the settings to the currently selected "
-    L"storage without changing the storage type. Automatic XML is "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
-    L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nLeading zero offers "
-    L"“Yes” (default), “No, keep space”, and “No, without space”. “No, keep space” hides the zero "
-    L"while reserving its "
-    L"width in the selected font; the other digits keep their positions even with proportional "
-    L"fonts. Monitor clocks remain centred, including the reserved space. The UTC row keeps its "
-    L"own centre alignment.",
-    L"\r\n\r\nARMAZENAMENTO\r\nAs definições são guardadas no registo em "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock ou num XML em "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Relógios digitais, calendários e painéis "
-    L"partilham quatro estilos de moldura; a cor da moldura simples pode ser escolhida. A mudança "
-    L"de armazenamento remove apenas os dados CalClock anteriores. As definições podem ser "
-    L"exportadas para XML. A importação XML carrega e guarda imediatamente as definições no "
-    L"armazenamento selecionado, sem alterar o seu tipo.\r\n\r\nA suavização do tipo de letra "
-    L"oferece ClearType, GDI e Nenhuma.\r\n\r\nO zero inicial oferece «Sim» (predefinido), «Não, "
-    L"reservar espaço» e «Não, sem espaço». «Não, reservar espaço» oculta o zero e reserva a sua "
-    L"largura no tipo "
-    L"de letra escolhido; os outros algarismos mantêm a posição mesmo com letras proporcionais. "
-    L"Os relógios no monitor permanecem centrados, incluindo o espaço reservado. A linha UTC "
-    L"mantém o seu próprio alinhamento ao centro.\r\n\r\nOs tipos de letra personalizados do "
-    L"calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para "
-    L"a aplicação ou o widget.",
+    L"\r\n\r\nLAGRING\r\nIndstillinger gemmes i registreringsdatabasen under "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Digitale ure, kalendere og paneler har fire "
+    L"fælles kanttyper; farven på den enkle kant kan vælges. Skift af lager fjerner kun tidligere "
+    L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
+    L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning "
+    L"tilbyder ClearType, GDI og Ingen.\r\n\r\nForanstillet nul tilbyder »Ja« (standard), »Nej, "
+    L"bevar plads« og »Nej, uden plads«. »Nej, bevar plads« skjuler nullet og reserverer dets "
+    L"bredde i den valgte "
+    L"skrifttype; øvrige cifre beholder deres placering også med proportionale skrifttyper. "
+    L"Skærmure forbliver centrerede inklusive reserveret plads. UTC-linjen bevarer sin egen "
+    L"centrering.\r\n\r\nBrugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske "
+    L"udseende, eller når temaer er slået fra for programmet eller widgeten.",
+    L"\r\n\r\nTALLENNUS\r\nAsetukset tallennetaan rekisteriin kohtaan "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock tai XML-tiedostoon kansiossa "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Digitaalikelloilla, kalentereilla ja "
+    L"paneeleilla on neljä yhteistä reunatyyliä; yksinkertaisen reunan väri voidaan valita. "
+    L"Tallennustavan vaihto poistaa vain aiemmat CalClock-tiedot. Asetukset voi viedä "
+    L"XML-tiedostoon. XML-tuonti lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan "
+    L"muuttamatta tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja "
+    L"Ei mitään.\r\n\r\nEtunolla tarjoaa ”Kyllä” (oletus), ”Ei, varaa tila” ja ”Ei, ilman tilaa”. "
+    L"”Ei, varaa tila” "
+    L"piilottaa nollan mutta varaa sen leveyden valitussa fontissa; muut numerot säilyttävät "
+    L"paikkansa myös suhteellisilla fonteilla. Näyttökellot pysyvät keskitettyinä varattu tila "
+    L"mukaan lukien. UTC-rivi säilyttää oman keskityksensä.\r\n\r\nKalenterin mukautettuja "
+    L"fontteja voi käyttää Windowsin perinteisessä ulkoasussa tai kun sovelluksen tai "
+    L"pienoisohjelman teemat on poistettu käytöstä.",
+    L"\r\n\r\nGEYMSLA\r\nStillingar eru vistaðar í skrásetningu undir "
+    L"HKCU\\SOFTWARE\\FortSoft\\CalClock eða sem XML í "
+    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Stafrænar klukkur, dagatöl og spjöld hafa "
+    L"fjórar sameiginlegar rammagerðir; velja má lit einfalda rammans. Skipti um geymslu "
+    L"fjarlægja aðeins eldri CalClock-gögn. Hægt er að flytja stillingar út sem XML. "
+    L"Innflutningur XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta "
+    L"gerð hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nNúll fremst "
+    L"býður upp á „Já“ (sjálfgefið), „Nei, halda plássi“ og „Nei, án pláss“. „Nei, halda plássi“ "
+    L"felur núllið en tekur "
+    L"frá breidd þess í völdu letri; aðrir tölustafir halda stöðu sinni jafnvel með misbreiðu "
+    L"letri. Skjáklukkur haldast miðjaðar með fráteknu plássi. UTC-línan heldur eigin "
+    L"miðjun.\r\n\r\nNota má sérsniðið letur í dagatali með hefðbundnu útliti Windows eða þegar "
+    L"slökkt er á þemum fyrir forritið eða græjuna.",
     L"\r\n\r\nLAGRING\r\nInnstillinger lagres i registeret under "
     L"HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i "
     L"%AppData%\\FortSoft\\CalClock\\settings.xml. Digitale klokker, kalendere og paneler har "
@@ -9001,46 +9041,6 @@ const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT] = {
     L"centrerade, inklusive reserverat utrymme. UTC-raden behåller sin egen "
     L"centrering.\r\n\r\nEgna kalenderteckensnitt stöds med Windows klassiska utseende eller när "
     L"teman är avstängda för programmet eller widgeten.",
-    L"\r\n\r\nTALLENNUS\r\nAsetukset tallennetaan rekisteriin kohtaan "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock tai XML-tiedostoon kansiossa "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Digitaalikelloilla, kalentereilla ja "
-    L"paneeleilla on neljä yhteistä reunatyyliä; yksinkertaisen reunan väri voidaan valita. "
-    L"Tallennustavan vaihto poistaa vain aiemmat CalClock-tiedot. Asetukset voi viedä "
-    L"XML-tiedostoon. XML-tuonti lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan "
-    L"muuttamatta tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja "
-    L"Ei mitään.\r\n\r\nEtunolla tarjoaa ”Kyllä” (oletus), ”Ei, varaa tila” ja ”Ei, ilman tilaa”. "
-    L"”Ei, varaa tila” "
-    L"piilottaa nollan mutta varaa sen leveyden valitussa fontissa; muut numerot säilyttävät "
-    L"paikkansa myös suhteellisilla fonteilla. Näyttökellot pysyvät keskitettyinä varattu tila "
-    L"mukaan lukien. UTC-rivi säilyttää oman keskityksensä.\r\n\r\nKalenterin mukautettuja "
-    L"fontteja voi käyttää Windowsin perinteisessä ulkoasussa tai kun sovelluksen tai "
-    L"pienoisohjelman teemat on poistettu käytöstä.",
-    L"\r\n\r\nLAGRING\r\nIndstillinger gemmes i registreringsdatabasen under "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock eller som XML i "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Digitale ure, kalendere og paneler har fire "
-    L"fælles kanttyper; farven på den enkle kant kan vælges. Skift af lager fjerner kun tidligere "
-    L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
-    L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning "
-    L"tilbyder ClearType, GDI og Ingen.\r\n\r\nForanstillet nul tilbyder »Ja« (standard), »Nej, "
-    L"bevar plads« og »Nej, uden plads«. »Nej, bevar plads« skjuler nullet og reserverer dets "
-    L"bredde i den valgte "
-    L"skrifttype; øvrige cifre beholder deres placering også med proportionale skrifttyper. "
-    L"Skærmure forbliver centrerede inklusive reserveret plads. UTC-linjen bevarer sin egen "
-    L"centrering.\r\n\r\nBrugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske "
-    L"udseende, eller når temaer er slået fra for programmet eller widgeten.",
-    L"\r\n\r\nGEYMSLA\r\nStillingar eru vistaðar í skrásetningu undir "
-    L"HKCU\\SOFTWARE\\FortSoft\\CalClock eða sem XML í "
-    L"%AppData%\\FortSoft\\CalClock\\settings.xml. Stafrænar klukkur, dagatöl og spjöld hafa "
-    L"fjórar sameiginlegar rammagerðir; velja má lit einfalda rammans. Skipti um geymslu "
-    L"fjarlægja aðeins eldri CalClock-gögn. Hægt er að flytja stillingar út sem XML. "
-    L"Innflutningur XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta "
-    L"gerð hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nNúll fremst "
-    L"býður upp á „Já“ (sjálfgefið), „Nei, halda plássi“ og „Nei, án pláss“. „Nei, halda plássi“ "
-    L"felur núllið en tekur "
-    L"frá breidd þess í völdu letri; aðrir tölustafir halda stöðu sinni jafnvel með misbreiðu "
-    L"letri. Skjáklukkur haldast miðjaðar með fráteknu plássi. UTC-línan heldur eigin "
-    L"miðjun.\r\n\r\nNota má sérsniðið letur í dagatali með hefðbundnu útliti Windows eða þegar "
-    L"slökkt er á þemum fyrir forritið eða græjuna.",
     L"\r\n\r\nDEPOLAMA\r\nAyarlar HKCU\\SOFTWARE\\FortSoft\\CalClock altındaki kayıt defterinde "
     L"veya %AppData%\\FortSoft\\CalClock\\settings.xml içindeki XML dosyasında saklanır. Dijital "
     L"saatler, takvimler ve paneller aynı dört kenarlık stilini kullanır; basit kenarlığın rengi "
@@ -9427,6 +9427,38 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
     L"Mute all in the notification-icon menu mutes every widget and, when toggled again, restores "
     L"only those it muted. Pressing M on any widget performs the same global toggle. Enabling an "
     L"alarm with no weekday selected opens that widget’s Alarm tab.",
+    L"\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, smoothing, themes, storage, "
+    L"Windows startup and edge snapping are global and are configured on the Application tab. On "
+    L"first launch, the application language follows the Windows user-interface language, with US "
+    L"English as the fallback; widget language, smoothing and themes affect that widget only. "
+    L"\r\n\r\nA widget menu contains the applicable visibility, always-on-top, seconds, size and "
+    L"date-copy choices, followed by Arrange in a grid, Settings, Help, About and Exit. The "
+    L"notification-icon menu lists numbered widgets and provides Show all, Hide all and Mute all. "
+    L"The separately grouped Arrange in a grid command follows. Showing or restoring widgets "
+    L"brings them forward without changing Always on top. Starting CalClock again activates the "
+    L"running instance and restores the most recently hidden widgets when needed. Available face "
+    L"sizes and second-hand support come from the installed Windows version. Alarm and Signal can "
+    L"be toggled directly in a widget menu; Alarm shows its time and, for a partial week, its "
+    L"active weekdays. Checked Mute in a widget menu corresponds to Muted on the General tab. "
+    L"Mute all in the notification-icon menu mutes every widget and, when toggled again, restores "
+    L"only those it muted. Pressing M on any widget performs the same global toggle. Enabling an "
+    L"alarm with no weekday selected opens that widget’s Alarm tab.",
+    L"\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, smoothing, themes, storage, "
+    L"Windows startup and edge snapping are global and are configured on the Application tab. On "
+    L"first launch, the application language follows the Windows user-interface language, with US "
+    L"English as the fallback; widget language, smoothing and themes affect that widget only. "
+    L"\r\n\r\nA widget menu contains the applicable visibility, always-on-top, seconds, size and "
+    L"date-copy choices, followed by Arrange in a grid, Settings, Help, About and Exit. The "
+    L"notification-icon menu lists numbered widgets and provides Show all, Hide all and Mute all. "
+    L"The separately grouped Arrange in a grid command follows. Showing or restoring widgets "
+    L"brings them forward without changing Always on top. Starting CalClock again activates the "
+    L"running instance and restores the most recently hidden widgets when needed. Available face "
+    L"sizes and second-hand support come from the installed Windows version. Alarm and Signal can "
+    L"be toggled directly in a widget menu; Alarm shows its time and, for a partial week, its "
+    L"active weekdays. Checked Mute in a widget menu corresponds to Muted on the General tab. "
+    L"Mute all in the notification-icon menu mutes every widget and, when toggled again, restores "
+    L"only those it muted. Pressing M on any widget performs the same global toggle. Enabling an "
+    L"alarm with no weekday selected opens that widget’s Alarm tab.",
     L"\r\n\r\nEINSTELLUNGEN UND MENÜS\r\nAnwendungssprache, Schrift, Glättung, Designs, Speicher, "
     L"Windows-Start und Randeinrasten sind global und werden auf der Registerkarte Anwendung "
     L"eingestellt. Beim ersten Start folgt die Sprache der Windows-Anzeigesprache; sonst wird "
@@ -9492,6 +9524,15 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
     L"Generali. Disattiva tutto ripristina poi solo i widget che aveva disattivato. M su un "
     L"widget esegue lo stesso comando globale. Attivare la sveglia senza giorni selezionati apre "
     L"la scheda Sveglia del widget.",
+    L"\r\n\r\nDEFINIÇÕES E MENUS\r\nO idioma, tipo de letra, suavização, temas, armazenamento, "
+    L"arranque com o Windows, ajuste às margens e origem da hora são globais; as opções da "
+    L"aplicação são configuradas no separador Aplicação. No primeiro arranque, o idioma segue a "
+    L"interface do Windows, com inglês dos EUA como alternativa. O idioma e outras opções de "
+    L"widget aplicam-se individualmente. No menu do ícone, Mostrar tudo e Ocultar tudo precedem "
+    L"Silenciar tudo; Dispor numa grelha surge num grupo separado. Silenciar no menu do widget "
+    L"corresponde a Silenciado em Geral. Silenciar tudo repõe depois apenas os widgets que "
+    L"silenciou. M num widget executa a mesma alternância global. Ativar o alarme sem nenhum dia "
+    L"selecionado abre o separador Alarme desse widget.",
     L"\r\n\r\nUSTAWIENIA I MENU\r\nJęzyk, czcionka, wygładzanie, motywy, magazyn ustawień, "
     L"uruchamianie z Windows i przyciąganie są globalne i ustawia się je na karcie Aplikacja. "
     L"Przy pierwszym uruchomieniu język wynika z języka interfejsu Windows, a nieznany zastępuje "
@@ -9522,47 +9563,32 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
     L"Stlmené na karte Všeobecné. Stlmiť všetko potom obnoví iba widgety, ktoré samo stlmilo. "
     L"Kláves M na widgete vykoná rovnaké globálne prepnutie. Zapnutie budíka bez vybraného dňa "
     L"otvorí kartu Budík daného widgetu.",
-    L"\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, smoothing, themes, storage, "
-    L"Windows startup and edge snapping are global and are configured on the Application tab. On "
-    L"first launch, the application language follows the Windows user-interface language, with US "
-    L"English as the fallback; widget language, smoothing and themes affect that widget only. "
-    L"\r\n\r\nA widget menu contains the applicable visibility, always-on-top, seconds, size and "
-    L"date-copy choices, followed by Arrange in a grid, Settings, Help, About and Exit. The "
-    L"notification-icon menu lists numbered widgets and provides Show all, Hide all and Mute all. "
-    L"The separately grouped Arrange in a grid command follows. Showing or restoring widgets "
-    L"brings them forward without changing Always on top. Starting CalClock again activates the "
-    L"running instance and restores the most recently hidden widgets when needed. Available face "
-    L"sizes and second-hand support come from the installed Windows version. Alarm and Signal can "
-    L"be toggled directly in a widget menu; Alarm shows its time and, for a partial week, its "
-    L"active weekdays. Checked Mute in a widget menu corresponds to Muted on the General tab. "
-    L"Mute all in the notification-icon menu mutes every widget and, when toggled again, restores "
-    L"only those it muted. Pressing M on any widget performs the same global toggle. Enabling an "
-    L"alarm with no weekday selected opens that widget’s Alarm tab.",
-    L"\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, smoothing, themes, storage, "
-    L"Windows startup and edge snapping are global and are configured on the Application tab. On "
-    L"first launch, the application language follows the Windows user-interface language, with US "
-    L"English as the fallback; widget language, smoothing and themes affect that widget only. "
-    L"\r\n\r\nA widget menu contains the applicable visibility, always-on-top, seconds, size and "
-    L"date-copy choices, followed by Arrange in a grid, Settings, Help, About and Exit. The "
-    L"notification-icon menu lists numbered widgets and provides Show all, Hide all and Mute all. "
-    L"The separately grouped Arrange in a grid command follows. Showing or restoring widgets "
-    L"brings them forward without changing Always on top. Starting CalClock again activates the "
-    L"running instance and restores the most recently hidden widgets when needed. Available face "
-    L"sizes and second-hand support come from the installed Windows version. Alarm and Signal can "
-    L"be toggled directly in a widget menu; Alarm shows its time and, for a partial week, its "
-    L"active weekdays. Checked Mute in a widget menu corresponds to Muted on the General tab. "
-    L"Mute all in the notification-icon menu mutes every widget and, when toggled again, restores "
-    L"only those it muted. Pressing M on any widget performs the same global toggle. Enabling an "
-    L"alarm with no weekday selected opens that widget’s Alarm tab.",
-    L"\r\n\r\nDEFINIÇÕES E MENUS\r\nO idioma, tipo de letra, suavização, temas, armazenamento, "
-    L"arranque com o Windows, ajuste às margens e origem da hora são globais; as opções da "
-    L"aplicação são configuradas no separador Aplicação. No primeiro arranque, o idioma segue a "
-    L"interface do Windows, com inglês dos EUA como alternativa. O idioma e outras opções de "
-    L"widget aplicam-se individualmente. No menu do ícone, Mostrar tudo e Ocultar tudo precedem "
-    L"Silenciar tudo; Dispor numa grelha surge num grupo separado. Silenciar no menu do widget "
-    L"corresponde a Silenciado em Geral. Silenciar tudo repõe depois apenas os widgets que "
-    L"silenciou. M num widget executa a mesma alternância global. Ativar o alarme sem nenhum dia "
-    L"selecionado abre o separador Alarme desse widget.",
+    L"\r\n\r\nINDSTILLINGER OG MENUER\r\nProgramsprog, skrifttype, udjævning, temaer, lager, "
+    L"start med Windows, kantfastgørelse og tidskilde er globale; programvalgene indstilles på "
+    L"fanen Program. Ved første start følger sproget Windows-grænsefladen, med amerikansk engelsk "
+    L"som reserve. Widgetsprog og andre widgetvalg gælder enkeltvis. I ikonmenuen kommer Vis alle "
+    L"og Skjul alle før Slå al lyd fra; Arranger i et gitter står i en særskilt gruppe efter dem. "
+    L"Slå lyd fra i widgetmenuen svarer til Lyd fra på fanen Generelt. Slå al lyd fra gendanner "
+    L"senere kun de widgets, kommandoen selv dæmpede. M på en widget udfører samme globale skift. "
+    L"Aktivering af alarmen uden valgte ugedage åbner widgetens Alarm-fane.",
+    L"\r\n\r\nASETUKSET JA VALIKOT\r\nSovelluksen kieli, fontti, pehmennys, teemat, tallennus, "
+    L"Windowsin mukana käynnistys, reunakiinnitys ja aikalähde ovat yleisiä; sovellusasetukset "
+    L"määritetään Sovellus-välilehdellä. Ensimmäisellä käynnistyksellä kieli seuraa Windowsin "
+    L"käyttöliittymäkieltä, varalla on amerikanenglanti. Pienoisohjelman kieli ja muut valinnat "
+    L"ovat yksilöllisiä. Kuvakevalikossa Näytä kaikki ja Piilota kaikki ovat ennen Mykistä kaikki "
+    L"-komentoa; Järjestä ruudukkoon on niiden jälkeen omana ryhmänään. Pienoisohjelman Mykistä "
+    L"vastaa Yleiset-välilehden Mykistetty-valintaa. Mykistä kaikki palauttaa myöhemmin vain itse "
+    L"mykistämänsä pienoisohjelmat. M pienoisohjelmassa tekee saman yleisen vaihdon. Herätyksen "
+    L"ottaminen käyttöön ilman valittuja viikonpäiviä avaa pienoisohjelman Herätys-välilehden.",
+    L"\r\n\r\nSTILLINGAR OG VALMYNDIR\r\nTungumál forrits, letur, jöfnun, þemu, geymsla, ræsing "
+    L"með Windows, festing við brúnir og tímagjafi gilda alls staðar; forritsvalkostir eru "
+    L"stilltir á Forrit-flipanum. Við fyrstu ræsingu fylgir tungumálið viðmóti Windows, en "
+    L"bandarísk enska er varaval. Tungumál og aðrir valkostir græju gilda fyrir hverja græju. Í "
+    L"táknvalmyndinni koma Sýna allt og Fela allt á undan Þagga allt; Raða á hnitanet er í "
+    L"sérstökum flokki á eftir þeim. Þagga í valmynd græju samsvarar Þaggað á Almennt-flipanum. "
+    L"Þagga allt endurheimtir síðar aðeins græjurnar sem skipunin þaggaði. M á græju framkvæmir "
+    L"sömu heildarskiptingu. Ef vekjari er virkjaður án valinna vikudaga opnast Vekjari-flipi "
+    L"græjunnar.",
     L"\r\n\r\nINNSTILLINGER OG MENYER\r\nProgramspråk, skrift, utjevning, temaer, lagring, "
     L"oppstart med Windows, kantfesting og tidskilde er globale; programvalgene angis på fanen "
     L"Program. Ved første start følger språket Windows-grensesnittet, med amerikansk engelsk som "
@@ -9579,32 +9605,6 @@ const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT] = {
     L"Tysta i widgetmenyn motsvarar Tyst på fliken Allmänt. Tysta alla återställer därefter bara "
     L"de widgetar som kommandot tystade. M på en widget gör samma globala växling. Om alarmet "
     L"aktiveras utan valda veckodagar öppnas widgetens Alarm-flik.",
-    L"\r\n\r\nASETUKSET JA VALIKOT\r\nSovelluksen kieli, fontti, pehmennys, teemat, tallennus, "
-    L"Windowsin mukana käynnistys, reunakiinnitys ja aikalähde ovat yleisiä; sovellusasetukset "
-    L"määritetään Sovellus-välilehdellä. Ensimmäisellä käynnistyksellä kieli seuraa Windowsin "
-    L"käyttöliittymäkieltä, varalla on amerikanenglanti. Pienoisohjelman kieli ja muut valinnat "
-    L"ovat yksilöllisiä. Kuvakevalikossa Näytä kaikki ja Piilota kaikki ovat ennen Mykistä kaikki "
-    L"-komentoa; Järjestä ruudukkoon on niiden jälkeen omana ryhmänään. Pienoisohjelman Mykistä "
-    L"vastaa Yleiset-välilehden Mykistetty-valintaa. Mykistä kaikki palauttaa myöhemmin vain itse "
-    L"mykistämänsä pienoisohjelmat. M pienoisohjelmassa tekee saman yleisen vaihdon. Herätyksen "
-    L"ottaminen käyttöön ilman valittuja viikonpäiviä avaa pienoisohjelman Herätys-välilehden.",
-    L"\r\n\r\nINDSTILLINGER OG MENUER\r\nProgramsprog, skrifttype, udjævning, temaer, lager, "
-    L"start med Windows, kantfastgørelse og tidskilde er globale; programvalgene indstilles på "
-    L"fanen Program. Ved første start følger sproget Windows-grænsefladen, med amerikansk engelsk "
-    L"som reserve. Widgetsprog og andre widgetvalg gælder enkeltvis. I ikonmenuen kommer Vis alle "
-    L"og Skjul alle før Slå al lyd fra; Arranger i et gitter står i en særskilt gruppe efter dem. "
-    L"Slå lyd fra i widgetmenuen svarer til Lyd fra på fanen Generelt. Slå al lyd fra gendanner "
-    L"senere kun de widgets, kommandoen selv dæmpede. M på en widget udfører samme globale skift. "
-    L"Aktivering af alarmen uden valgte ugedage åbner widgetens Alarm-fane.",
-    L"\r\n\r\nSTILLINGAR OG VALMYNDIR\r\nTungumál forrits, letur, jöfnun, þemu, geymsla, ræsing "
-    L"með Windows, festing við brúnir og tímagjafi gilda alls staðar; forritsvalkostir eru "
-    L"stilltir á Forrit-flipanum. Við fyrstu ræsingu fylgir tungumálið viðmóti Windows, en "
-    L"bandarísk enska er varaval. Tungumál og aðrir valkostir græju gilda fyrir hverja græju. Í "
-    L"táknvalmyndinni koma Sýna allt og Fela allt á undan Þagga allt; Raða á hnitanet er í "
-    L"sérstökum flokki á eftir þeim. Þagga í valmynd græju samsvarar Þaggað á Almennt-flipanum. "
-    L"Þagga allt endurheimtir síðar aðeins græjurnar sem skipunin þaggaði. M á græju framkvæmir "
-    L"sömu heildarskiptingu. Ef vekjari er virkjaður án valinna vikudaga opnast Vekjari-flipi "
-    L"græjunnar.",
     L"\r\n\r\nAYARLAR VE MENÜLER\r\nUygulama dili, yazı tipi, kenar yumuşatma, temalar, depolama, "
     L"Windows ile başlatma, kenara yaslama ve zaman kaynağı geneldir; uygulama seçenekleri "
     L"Uygulama sekmesinde ayarlanır. İlk açılışta dil Windows arayüz dilinden alınır; "
@@ -9958,6 +9958,56 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"current pip finish; a long pip can take up to half a second to end. Widget offsets also "
     L"apply in hundredths of a second. Overlapping widget, alarm, and test tones play as one "
     L"continuous tone until the last overlap ends.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. "
+    L"The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, "
+    L"10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are "
+    L"initially off, with an hourly interval selected. Turning Signal off and on in the widget "
+    L"menu retains the interval. The menu shows the alarm time and signal interval in "
+    L"parentheses. The boundary follows that widget’s time, including UTC, time zone, offset, and "
+    L"any NTP correction. Five short pips sound during the final five seconds and a long pip "
+    L"exactly on the boundary. If several widgets signal at the same instant, only one shared "
+    L"sequence is played. After muting, a pip already sounding may finish; later pips are skipped "
+    L"and only the next scheduled pip sounds after unmuting. A standalone Calendar supports "
+    L"neither alarms, time signals nor muting.\r\n\r\nWith a 20-minute interval, signals sound at "
+    L":00, :20 and :40 in the widget's displayed time.\r\n\r\nOn the Application tab, Time signal "
+    L"sound lets you choose between Built-in generator and System beep. The choice applies to "
+    L"time signals from all widgets, including alarm time signals. Built-in generator is selected "
+    L"by default.\r\n\r\nThe Time signal volume slider on the Application tab shows the built-in "
+    L"generator’s level in dB. The rightmost position is 0 dB, the maximum undistorted sine-wave "
+    L"amplitude; silence is −∞ dB. The default volume is −18 dB. Click Test next to Time signal "
+    L"sound to start a continuous preview, or Stop test to end it. Both sound options can be "
+    L"tested; the test is not saved. Holding the volume slider also plays a preview until the "
+    L"mouse is released, unless the button test is running. Playback starts on the next whole "
+    L"second: short tones every second and a long tone at :00, :05, :10, and so on. Simultaneous "
+    L"preview, widget, and alarm time signals share a single tone. Stopping the test lets the "
+    L"current pip finish; a long pip can take up to half a second to end. Widget offsets also "
+    L"apply in hundredths of a second. Overlapping widget, alarm, and test tones play as one "
+    L"continuous tone until the last overlap ends.",
+    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. "
+    L"The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, "
+    L"10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are "
+    L"initially off, with an hourly interval selected. Turning Signal off and on in the widget "
+    L"menu retains the interval. The menu shows the alarm time and signal interval in "
+    L"parentheses. The boundary follows that widget’s time, including UTC, time zone, offset, and "
+    L"any NTP correction. Five short pips sound during the final five seconds and a long pip "
+    L"exactly on the boundary. If several widgets signal at the same instant, only one shared "
+    L"sequence is played. After muting, a pip already sounding may finish; later pips are skipped "
+    L"and only the next scheduled pip sounds after unmuting. A standalone Calendar supports "
+    L"neither alarms, time signals nor muting.\r\n\r\nWith a 20-minute interval, signals sound at "
+    L":00, :20 and :40 in the widget's displayed time.\r\n\r\nOn the Application tab, Time signal "
+    L"sound lets you choose between Built-in generator and System beep. The choice applies to "
+    L"time signals from all widgets, including alarm time signals. Built-in generator is selected "
+    L"by default.\r\n\r\nThe Time signal volume slider on the Application tab shows the built-in "
+    L"generator’s level in dB. The rightmost position is 0 dB, the maximum undistorted sine-wave "
+    L"amplitude; silence is −∞ dB. The default volume is −18 dB. Click Test next to Time signal "
+    L"sound to start a continuous preview, or Stop test to end it. Both sound options can be "
+    L"tested; the test is not saved. Holding the volume slider also plays a preview until the "
+    L"mouse is released, unless the button test is running. Playback starts on the next whole "
+    L"second: short tones every second and a long tone at :00, :05, :10, and so on. Simultaneous "
+    L"preview, widget, and alarm time signals share a single tone. Stopping the test lets the "
+    L"current pip finish; a long pip can take up to half a second to end. Widget offsets also "
+    L"apply in hundredths of a second. Overlapping widget, alarm, and test tones play as one "
+    L"continuous tone until the last overlap ends.",
     L"\r\n\r\nAKUSTISCHES ZEITZEICHEN\r\nDas Signal entspricht dem Greenwich Time Signal (GTS). "
     L"Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und "
     L"Optionsfelder für Intervalle von 1, 5, 10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten "
@@ -10071,6 +10121,32 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"tono in corso termina; un tono lungo può richiedere fino a mezzo secondo. Gli offset dei "
     L"widget si applicano anche ai centesimi di secondo. I toni sovrapposti di widget, sveglie e "
     L"test formano un unico tono continuo fino alla fine dell’ultima sovrapposizione.",
+    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO sinal segue o padrão do Greenwich Time Signal (GTS). O "
+    L"separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, "
+    L"5, 10, 15, 20, 30 ou 60 minutos segundo a hora apresentada pelo widget. Inicialmente, o "
+    L"sinal está desativado e está selecionado o intervalo de uma hora. Desativar e ativar Sinal "
+    L"no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal "
+    L"entre parênteses. O limite segue a hora do widget, incluindo UTC, fuso, desvio e correção "
+    L"NTP. Soam cinco sinais curtos e um longo; sinais simultâneos de vários widgets são unidos. "
+    L"Ao silenciar, o sinal já iniciado pode terminar; os seguintes são ignorados e só o próximo "
+    L"sinal agendado soa depois de repor o áudio. Um Calendário autónomo não suporta alarme, "
+    L"sinal horário nem silenciamento.\r\n\r\nCom um intervalo de 20 minutos, o sinal soa aos "
+    L":00, :20 e :40 segundo a hora do widget.\r\n\r\nNo separador Aplicação, Som do sinal "
+    L"horário permite escolher entre Gerador integrado e Sinal sonoro do sistema. A escolha "
+    L"aplica-se aos sinais horários de todos os widgets, incluindo os dos alarmes. Gerador "
+    L"integrado é a opção predefinida.\r\n\r\nO controlo de volume do sinal horário no separador "
+    L"Aplicação mostra o nível do gerador integrado em dB. O extremo direito é 0 dB, a amplitude "
+    L"sinusoidal máxima sem distorção; o silêncio é −∞ dB. O volume predefinido é −18 dB. Clique "
+    L"em Testar junto ao som do sinal horário para iniciar uma pré-visualização contínua e em "
+    L"Parar teste para a terminar. Ambos os sons podem ser testados; o teste não é guardado. "
+    L"Manter o controlo de volume premido também reproduz uma pré-visualização até o soltar, "
+    L"exceto se o teste pelo botão estiver ativo. Começa no segundo inteiro seguinte: sons curtos "
+    L"a cada segundo e um longo aos :00, :05, :10, etc. Os sinais simultâneos da "
+    L"pré-visualização, dos widgets e dos alarmes produzem um único som. O gerador integrado "
+    L"inicia e termina os sons numa passagem por zero, mesmo ao parar um teste. Ao parar o teste, "
+    L"o som atual termina; um som longo pode demorar até meio segundo. Os desvios dos widgets "
+    L"também se aplicam em centésimos de segundo. Os sons sobrepostos de widgets, alarmes e "
+    L"testes formam um único som contínuo até ao fim da última sobreposição.",
     L"\r\n\r\nDŹWIĘKOWY SYGNAŁ CZASU\r\nSygnał odpowiada Greenwich Time Signal (GTS). Karta "
     L"Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, "
     L"20, 30 lub 60 minut według czasu wyświetlanego przez widżet. Początkowo sygnał jest "
@@ -10122,82 +10198,83 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"tón. Pri zastavení testu práve rozohraný tón doznie; pri dlhom tóne to môže trvať až pol "
     L"sekundy. Offsety widgetov sa uplatnia aj v stotinách sekundy. Prekrývajúce sa tóny "
     L"widgetov, budíkov a testu znejú ako jediný súvislý tón až do konca posledného prekrytia.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. "
-    L"The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, "
-    L"10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are "
-    L"initially off, with an hourly interval selected. Turning Signal off and on in the widget "
-    L"menu retains the interval. The menu shows the alarm time and signal interval in "
-    L"parentheses. The boundary follows that widget’s time, including UTC, time zone, offset, and "
-    L"any NTP correction. Five short pips sound during the final five seconds and a long pip "
-    L"exactly on the boundary. If several widgets signal at the same instant, only one shared "
-    L"sequence is played. After muting, a pip already sounding may finish; later pips are skipped "
-    L"and only the next scheduled pip sounds after unmuting. A standalone Calendar supports "
-    L"neither alarms, time signals nor muting.\r\n\r\nWith a 20-minute interval, signals sound at "
-    L":00, :20 and :40 in the widget's displayed time.\r\n\r\nOn the Application tab, Time signal "
-    L"sound lets you choose between Built-in generator and System beep. The choice applies to "
-    L"time signals from all widgets, including alarm time signals. Built-in generator is selected "
-    L"by default.\r\n\r\nThe Time signal volume slider on the Application tab shows the built-in "
-    L"generator’s level in dB. The rightmost position is 0 dB, the maximum undistorted sine-wave "
-    L"amplitude; silence is −∞ dB. The default volume is −18 dB. Click Test next to Time signal "
-    L"sound to start a continuous preview, or Stop test to end it. Both sound options can be "
-    L"tested; the test is not saved. Holding the volume slider also plays a preview until the "
-    L"mouse is released, unless the button test is running. Playback starts on the next whole "
-    L"second: short tones every second and a long tone at :00, :05, :10, and so on. Simultaneous "
-    L"preview, widget, and alarm time signals share a single tone. Stopping the test lets the "
-    L"current pip finish; a long pip can take up to half a second to end. Widget offsets also "
-    L"apply in hundredths of a second. Overlapping widget, alarm, and test tones play as one "
-    L"continuous tone until the last overlap ends.",
-    L"\r\n\r\nAUDIBLE TIME SIGNAL\r\nThe signal follows the Greenwich Time Signal (GTS) pattern. "
-    L"The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, "
-    L"10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are "
-    L"initially off, with an hourly interval selected. Turning Signal off and on in the widget "
-    L"menu retains the interval. The menu shows the alarm time and signal interval in "
-    L"parentheses. The boundary follows that widget’s time, including UTC, time zone, offset, and "
-    L"any NTP correction. Five short pips sound during the final five seconds and a long pip "
-    L"exactly on the boundary. If several widgets signal at the same instant, only one shared "
-    L"sequence is played. After muting, a pip already sounding may finish; later pips are skipped "
-    L"and only the next scheduled pip sounds after unmuting. A standalone Calendar supports "
-    L"neither alarms, time signals nor muting.\r\n\r\nWith a 20-minute interval, signals sound at "
-    L":00, :20 and :40 in the widget's displayed time.\r\n\r\nOn the Application tab, Time signal "
-    L"sound lets you choose between Built-in generator and System beep. The choice applies to "
-    L"time signals from all widgets, including alarm time signals. Built-in generator is selected "
-    L"by default.\r\n\r\nThe Time signal volume slider on the Application tab shows the built-in "
-    L"generator’s level in dB. The rightmost position is 0 dB, the maximum undistorted sine-wave "
-    L"amplitude; silence is −∞ dB. The default volume is −18 dB. Click Test next to Time signal "
-    L"sound to start a continuous preview, or Stop test to end it. Both sound options can be "
-    L"tested; the test is not saved. Holding the volume slider also plays a preview until the "
-    L"mouse is released, unless the button test is running. Playback starts on the next whole "
-    L"second: short tones every second and a long tone at :00, :05, :10, and so on. Simultaneous "
-    L"preview, widget, and alarm time signals share a single tone. Stopping the test lets the "
-    L"current pip finish; a long pip can take up to half a second to end. Widget offsets also "
-    L"apply in hundredths of a second. Overlapping widget, alarm, and test tones play as one "
-    L"continuous tone until the last overlap ends.",
-    L"\r\n\r\nSINAL HORÁRIO SONORO\r\nO sinal segue o padrão do Greenwich Time Signal (GTS). O "
-    L"separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, "
-    L"5, 10, 15, 20, 30 ou 60 minutos segundo a hora apresentada pelo widget. Inicialmente, o "
-    L"sinal está desativado e está selecionado o intervalo de uma hora. Desativar e ativar Sinal "
-    L"no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal "
-    L"entre parênteses. O limite segue a hora do widget, incluindo UTC, fuso, desvio e correção "
-    L"NTP. Soam cinco sinais curtos e um longo; sinais simultâneos de vários widgets são unidos. "
-    L"Ao silenciar, o sinal já iniciado pode terminar; os seguintes são ignorados e só o próximo "
-    L"sinal agendado soa depois de repor o áudio. Um Calendário autónomo não suporta alarme, "
-    L"sinal horário nem silenciamento.\r\n\r\nCom um intervalo de 20 minutos, o sinal soa aos "
-    L":00, :20 e :40 segundo a hora do widget.\r\n\r\nNo separador Aplicação, Som do sinal "
-    L"horário permite escolher entre Gerador integrado e Sinal sonoro do sistema. A escolha "
-    L"aplica-se aos sinais horários de todos os widgets, incluindo os dos alarmes. Gerador "
-    L"integrado é a opção predefinida.\r\n\r\nO controlo de volume do sinal horário no separador "
-    L"Aplicação mostra o nível do gerador integrado em dB. O extremo direito é 0 dB, a amplitude "
-    L"sinusoidal máxima sem distorção; o silêncio é −∞ dB. O volume predefinido é −18 dB. Clique "
-    L"em Testar junto ao som do sinal horário para iniciar uma pré-visualização contínua e em "
-    L"Parar teste para a terminar. Ambos os sons podem ser testados; o teste não é guardado. "
-    L"Manter o controlo de volume premido também reproduz uma pré-visualização até o soltar, "
-    L"exceto se o teste pelo botão estiver ativo. Começa no segundo inteiro seguinte: sons curtos "
-    L"a cada segundo e um longo aos :00, :05, :10, etc. Os sinais simultâneos da "
-    L"pré-visualização, dos widgets e dos alarmes produzem um único som. O gerador integrado "
-    L"inicia e termina os sons numa passagem por zero, mesmo ao parar um teste. Ao parar o teste, "
-    L"o som atual termina; um som longo pode demorar até meio segundo. Os desvios dos widgets "
-    L"também se aplicam em centésimos de segundo. Os sons sobrepostos de widgets, alarmes e "
-    L"testes formam um único som contínuo até ao fim da última sobreposição.",
+    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønstret for Greenwich Time Signal (GTS). "
+    L"Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller "
+    L"på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som "
+    L"udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i "
+    L"widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. "
+    L"Grænsen følger widgettiden, inklusive UTC, tidszone, forskydning og NTP-korrektion. Fem "
+    L"korte og ét langt bip lyder; samtidige signaler fra flere widgets flettes sammen. Ved "
+    L"dæmpning må et igangværende bip klinge ud; de følgende springes over, og først det næste "
+    L"planlagte bip lyder efter ophævelse. En selvstændig Kalender understøtter ikke alarm, "
+    L"tidssignal eller dæmpning.\r\n\r\nMed et interval på 20 minutter lyder signalet ved :00, "
+    L":20 og :40 efter widgettiden.\r\n\r\nPå fanen Program kan du under Lyd for tidssignal vælge "
+    L"mellem Indbygget generator og Systembip. Valget gælder tidssignaler fra alle widgets, "
+    L"inklusive tidssignaler for alarmer. Indbygget generator er "
+    L"standardvalget.\r\n\r\nLydstyrkeskyderen for tidssignalet på fanen Program viser den "
+    L"indbyggede generators niveau i dB. Højre endepunkt er 0 dB, maksimal uforvrænget "
+    L"sinusamplitude; stilhed er −∞ dB. Standardlydstyrken er −18 dB. Klik på Test ved "
+    L"tidssignalets lyd for at starte vedvarende prøveafspilning og på Stop test for at afslutte. "
+    L"Begge lyde kan testes; testen gemmes ikke. At holde lydstyrkeskyderen starter også "
+    L"prøveafspilning, indtil musen slippes, medmindre knaptesten kører. Afspilningen begynder på "
+    L"næste hele sekund: korte toner hvert sekund og en lang ved :00, :05, :10 osv. Samtidige "
+    L"signaler fra prøven, widgets og alarmer samles i én tone. Når testen stoppes, afspilles den "
+    L"igangværende tone færdig; en lang tone kan vare op til et halvt sekund. Skyderen følger en "
+    L"decibelskala; −18 dB ligger i midten.\r\n\r\nLydvalget er kun tilgængeligt, når systemet "
+    L"understøtter begge muligheder. Widgetforskydninger gælder også i hundrededele af et sekund. "
+    L"Overlappende toner fra widgets, alarmer og test afspilles som én sammenhængende tone indtil "
+    L"den sidste overlapning slutter.",
+    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki noudattaa Greenwich Time Signal (GTS) -mallia. "
+    L"Aikamerkki-välilehdellä on Äänimerkki käytössä -valintaruutu ja valintanapit 1, 5, 10, 15, "
+    L"20, 30 tai 60 minuutin väleille pienoisohjelman näyttämän ajan mukaan. Äänimerkki on aluksi "
+    L"pois käytöstä, ja valittuna on tunnin väli. Aikamerkin poistaminen käytöstä ja ottaminen "
+    L"uudelleen käyttöön pienoisohjelman valikosta säilyttää aikavälin. Valikko näyttää "
+    L"herätysajan ja aikamerkin välin sulkeissa. Raja seuraa pienoisohjelman aikaa, UTC:tä, "
+    L"aikavyöhykettä, poikkeamaa ja NTP-korjausta myöten. Viisi lyhyttä ja yksi pitkä merkki "
+    L"kuuluu; samanaikaiset merkit yhdistetään. Mykistettäessä jo alkanut ääni saa päättyä; "
+    L"seuraavat ohitetaan ja mykistyksen jälkeen kuuluu vasta seuraava ajastettu ääni. Erillinen "
+    L"Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä.\r\n\r\nKun väli on 20 minuuttia, "
+    L"aikamerkki kuuluu kohdissa :00, :20 ja :40 pienoisohjelman ajan "
+    L"mukaan.\r\n\r\nSovellus-välilehden aikamerkin ääniasetuksessa voit valita vaihtoehdon "
+    L"Sisäinen generaattori tai Järjestelmän äänimerkki. Valinta koskee kaikkien pienoisohjelmien "
+    L"aikamerkkejä, myös herätysten aikamerkkejä. Sisäinen generaattori on "
+    L"oletusvalinta.\r\n\r\nSovellus-välilehden aikamerkin äänenvoimakkuuden liukusäädin näyttää "
+    L"sisäisen generaattorin tason desibeleinä. Oikea ääriasento on 0 dB eli suurin särötön "
+    L"siniaallon amplitudi; hiljaisuus on −∞ dB. Oletusäänenvoimakkuus on −18 dB. Napsauta "
+    L"aikamerkin ääniasetuksen vieressä Testaa aloittaaksesi jatkuvan esikuuntelun ja Pysäytä "
+    L"testi lopettaaksesi sen. Molempia ääniä voi testata; testiä ei tallenneta. Liukusäätimen "
+    L"pitäminen painettuna käynnistää myös esikuuntelun hiiren vapauttamiseen asti, ellei "
+    L"painikkeella käynnistetty testi ole käynnissä. Toisto alkaa seuraavalla tasasekunnilla: "
+    L"lyhyt ääni joka sekunti ja pitkä kohdissa :00, :05, :10 jne. Samanaikaiset esikuuntelun, "
+    L"pienoisohjelmien ja herätysten aikamerkit yhdistetään yhdeksi ääneksi. Vain "
+    L"äänenvoimakkuuden liukusäädin on pois käytöstä järjestelmän äänimerkin kanssa. Kun testi "
+    L"pysäytetään, nykyinen ääni soi loppuun; pitkä ääni voi kestää vielä puoli sekuntia. "
+    L"Pienoisohjelmien aikapoikkeamat huomioidaan myös sekunnin sadasosina. Pienoisohjelmien, "
+    L"herätysten ja testien päällekkäiset äänet soivat yhtenä jatkuvana äänenä viimeisen "
+    L"päällekkäisyyden loppuun asti.",
+    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nMerkið fylgir mynstri Greenwich Time Signal (GTS). "
+    L"Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 "
+    L"eða 60 mínútna bil samkvæmt sýndum tíma græjunnar. Í upphafi er slökkt á merkinu og "
+    L"klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd græjunnar helst "
+    L"bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. Mörkin fylgja "
+    L"tíma græjunnar, þar með talið UTC, tímabelti, hliðrun og NTP-leiðrétting. Fimm stutt og "
+    L"eitt langt píp hljóma; samtímamerki margra græja eru sameinuð. Við þöggun má þegar hafið "
+    L"píp klárast; þeim næstu er sleppt og fyrst næsta áætlaða píp heyrist eftir að þöggun er "
+    L"aflétt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun.\r\n\r\nMeð 20 "
+    L"mínútna millibili hljómar tímamerkið á :00, :20 og :40 samkvæmt tíma græjunnar.\r\n\r\nÁ "
+    L"flipanum Forrit geturðu valið Innbyggður hljóðgjafi eða Kerfishljóð fyrir hljóð "
+    L"tímamerkisins. Valið gildir fyrir tímamerki allra græja, þar á meðal tímamerki vekjara. "
+    L"Innbyggður hljóðgjafi er sjálfgefinn.\r\n\r\nHljóðstyrkssleði tímamerkisins á flipanum "
+    L"Forrit sýnir styrk innbyggða hljóðgjafans í dB. Hægri endastöð er 0 dB, hámarksútslag "
+    L"óbjagaðrar sínusbylgju; þögn er −∞ dB. Sjálfgefinn hljóðstyrkur er −18 dB. Smelltu á Prófa "
+    L"við hljóð tímamerkisins til að hefja samfellda prufu og á Stöðva prófun til að ljúka henni. "
+    L"Hægt er að prófa báðar hljóðgerðir; prufan er ekki vistuð. Að halda hljóðstyrkssleðanum "
+    L"niðri byrjar einnig prufu þar til músinni er sleppt, nema prufan með hnappnum sé í gangi. "
+    L"Hún hefst á næstu heilu sekúndu: stutt hljóð á hverri sekúndu og langt á :00, :05, :10 "
+    L"o.s.frv. Samtímamerki frá prufunni, græjum og vekjurum sameinast í einn tón. Þegar prófun "
+    L"er stöðvuð klárast tónninn sem er í gangi; langur tónn getur tekið allt að hálfa sekúndu. "
+    L"Hliðrun græja tekur einnig mið af hundraðshlutum úr sekúndu. Tónar frá græjum, vekjurum og "
+    L"prófunum sem skarast hljóma sem einn samfelldur tónn þar til síðustu skörun lýkur.",
     L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønsteret til Greenwich Time Signal (GTS). "
     L"Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller "
     L"på 1, 5, 10, 15, 20, 30 eller 60 minutter etter widgetens viste tid. Signalet er først "
@@ -10248,83 +10325,6 @@ const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT] = {
     L"halv sekund. Widgetförskjutningar gäller även i hundradels sekunder. Överlappande toner "
     L"från widgetar, alarm och tester spelas som en sammanhängande ton tills den sista "
     L"överlappningen är slut.",
-    L"\r\n\r\nÄÄNIMERKKI\r\nAikamerkki noudattaa Greenwich Time Signal (GTS) -mallia. "
-    L"Aikamerkki-välilehdellä on Äänimerkki käytössä -valintaruutu ja valintanapit 1, 5, 10, 15, "
-    L"20, 30 tai 60 minuutin väleille pienoisohjelman näyttämän ajan mukaan. Äänimerkki on aluksi "
-    L"pois käytöstä, ja valittuna on tunnin väli. Aikamerkin poistaminen käytöstä ja ottaminen "
-    L"uudelleen käyttöön pienoisohjelman valikosta säilyttää aikavälin. Valikko näyttää "
-    L"herätysajan ja aikamerkin välin sulkeissa. Raja seuraa pienoisohjelman aikaa, UTC:tä, "
-    L"aikavyöhykettä, poikkeamaa ja NTP-korjausta myöten. Viisi lyhyttä ja yksi pitkä merkki "
-    L"kuuluu; samanaikaiset merkit yhdistetään. Mykistettäessä jo alkanut ääni saa päättyä; "
-    L"seuraavat ohitetaan ja mykistyksen jälkeen kuuluu vasta seuraava ajastettu ääni. Erillinen "
-    L"Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä.\r\n\r\nKun väli on 20 minuuttia, "
-    L"aikamerkki kuuluu kohdissa :00, :20 ja :40 pienoisohjelman ajan "
-    L"mukaan.\r\n\r\nSovellus-välilehden aikamerkin ääniasetuksessa voit valita vaihtoehdon "
-    L"Sisäinen generaattori tai Järjestelmän äänimerkki. Valinta koskee kaikkien pienoisohjelmien "
-    L"aikamerkkejä, myös herätysten aikamerkkejä. Sisäinen generaattori on "
-    L"oletusvalinta.\r\n\r\nSovellus-välilehden aikamerkin äänenvoimakkuuden liukusäädin näyttää "
-    L"sisäisen generaattorin tason desibeleinä. Oikea ääriasento on 0 dB eli suurin särötön "
-    L"siniaallon amplitudi; hiljaisuus on −∞ dB. Oletusäänenvoimakkuus on −18 dB. Napsauta "
-    L"aikamerkin ääniasetuksen vieressä Testaa aloittaaksesi jatkuvan esikuuntelun ja Pysäytä "
-    L"testi lopettaaksesi sen. Molempia ääniä voi testata; testiä ei tallenneta. Liukusäätimen "
-    L"pitäminen painettuna käynnistää myös esikuuntelun hiiren vapauttamiseen asti, ellei "
-    L"painikkeella käynnistetty testi ole käynnissä. Toisto alkaa seuraavalla tasasekunnilla: "
-    L"lyhyt ääni joka sekunti ja pitkä kohdissa :00, :05, :10 jne. Samanaikaiset esikuuntelun, "
-    L"pienoisohjelmien ja herätysten aikamerkit yhdistetään yhdeksi ääneksi. Vain "
-    L"äänenvoimakkuuden liukusäädin on pois käytöstä järjestelmän äänimerkin kanssa. Kun testi "
-    L"pysäytetään, nykyinen ääni soi loppuun; pitkä ääni voi kestää vielä puoli sekuntia. "
-    L"Pienoisohjelmien aikapoikkeamat huomioidaan myös sekunnin sadasosina. Pienoisohjelmien, "
-    L"herätysten ja testien päällekkäiset äänet soivat yhtenä jatkuvana äänenä viimeisen "
-    L"päällekkäisyyden loppuun asti.",
-    L"\r\n\r\nHØRBART TIDSSIGNAL\r\nSignalet følger mønstret for Greenwich Time Signal (GTS). "
-    L"Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller "
-    L"på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som "
-    L"udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i "
-    L"widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. "
-    L"Grænsen følger widgettiden, inklusive UTC, tidszone, forskydning og NTP-korrektion. Fem "
-    L"korte og ét langt bip lyder; samtidige signaler fra flere widgets flettes sammen. Ved "
-    L"dæmpning må et igangværende bip klinge ud; de følgende springes over, og først det næste "
-    L"planlagte bip lyder efter ophævelse. En selvstændig Kalender understøtter ikke alarm, "
-    L"tidssignal eller dæmpning.\r\n\r\nMed et interval på 20 minutter lyder signalet ved :00, "
-    L":20 og :40 efter widgettiden.\r\n\r\nPå fanen Program kan du under Lyd for tidssignal vælge "
-    L"mellem Indbygget generator og Systembip. Valget gælder tidssignaler fra alle widgets, "
-    L"inklusive tidssignaler for alarmer. Indbygget generator er "
-    L"standardvalget.\r\n\r\nLydstyrkeskyderen for tidssignalet på fanen Program viser den "
-    L"indbyggede generators niveau i dB. Højre endepunkt er 0 dB, maksimal uforvrænget "
-    L"sinusamplitude; stilhed er −∞ dB. Standardlydstyrken er −18 dB. Klik på Test ved "
-    L"tidssignalets lyd for at starte vedvarende prøveafspilning og på Stop test for at afslutte. "
-    L"Begge lyde kan testes; testen gemmes ikke. At holde lydstyrkeskyderen starter også "
-    L"prøveafspilning, indtil musen slippes, medmindre knaptesten kører. Afspilningen begynder på "
-    L"næste hele sekund: korte toner hvert sekund og en lang ved :00, :05, :10 osv. Samtidige "
-    L"signaler fra prøven, widgets og alarmer samles i én tone. Når testen stoppes, afspilles den "
-    L"igangværende tone færdig; en lang tone kan vare op til et halvt sekund. Skyderen følger en "
-    L"decibelskala; −18 dB ligger i midten.\r\n\r\nLydvalget er kun tilgængeligt, når systemet "
-    L"understøtter begge muligheder. Widgetforskydninger gælder også i hundrededele af et sekund. "
-    L"Overlappende toner fra widgets, alarmer og test afspilles som én sammenhængende tone indtil "
-    L"den sidste overlapning slutter.",
-    L"\r\n\r\nHLJÓÐTÍMAMERKI\r\nMerkið fylgir mynstri Greenwich Time Signal (GTS). "
-    L"Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 "
-    L"eða 60 mínútna bil samkvæmt sýndum tíma græjunnar. Í upphafi er slökkt á merkinu og "
-    L"klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd græjunnar helst "
-    L"bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. Mörkin fylgja "
-    L"tíma græjunnar, þar með talið UTC, tímabelti, hliðrun og NTP-leiðrétting. Fimm stutt og "
-    L"eitt langt píp hljóma; samtímamerki margra græja eru sameinuð. Við þöggun má þegar hafið "
-    L"píp klárast; þeim næstu er sleppt og fyrst næsta áætlaða píp heyrist eftir að þöggun er "
-    L"aflétt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun.\r\n\r\nMeð 20 "
-    L"mínútna millibili hljómar tímamerkið á :00, :20 og :40 samkvæmt tíma græjunnar.\r\n\r\nÁ "
-    L"flipanum Forrit geturðu valið Innbyggður hljóðgjafi eða Kerfishljóð fyrir hljóð "
-    L"tímamerkisins. Valið gildir fyrir tímamerki allra græja, þar á meðal tímamerki vekjara. "
-    L"Innbyggður hljóðgjafi er sjálfgefinn.\r\n\r\nHljóðstyrkssleði tímamerkisins á flipanum "
-    L"Forrit sýnir styrk innbyggða hljóðgjafans í dB. Hægri endastöð er 0 dB, hámarksútslag "
-    L"óbjagaðrar sínusbylgju; þögn er −∞ dB. Sjálfgefinn hljóðstyrkur er −18 dB. Smelltu á Prófa "
-    L"við hljóð tímamerkisins til að hefja samfellda prufu og á Stöðva prófun til að ljúka henni. "
-    L"Hægt er að prófa báðar hljóðgerðir; prufan er ekki vistuð. Að halda hljóðstyrkssleðanum "
-    L"niðri byrjar einnig prufu þar til músinni er sleppt, nema prufan með hnappnum sé í gangi. "
-    L"Hún hefst á næstu heilu sekúndu: stutt hljóð á hverri sekúndu og langt á :00, :05, :10 "
-    L"o.s.frv. Samtímamerki frá prufunni, græjum og vekjurum sameinast í einn tón. Þegar prófun "
-    L"er stöðvuð klárast tónninn sem er í gangi; langur tónn getur tekið allt að hálfa sekúndu. "
-    L"Hliðrun græja tekur einnig mið af hundraðshlutum úr sekúndu. Tónar frá græjum, vekjurum og "
-    L"prófunum sem skarast hljóma sem einn samfelldur tónn þar til síðustu skörun lýkur.",
     L"\r\n\r\nSESLİ ZAMAN SİNYALİ\r\nSinyal, Greenwich Time Signal (GTS) düzenini izler. Sinyal "
     L"sekmesinde Zaman sinyali etkin onay kutusu ve aracın gösterdiği saate göre 1, 5, 10, 15, "
     L"20, 30 veya 60 dakikalık aralıklar için seçenek düğmeleri bulunur. Sinyal başlangıçta "
@@ -10766,6 +10766,22 @@ const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT] = {
     L"directly on the main clock face toggles its second hand. Additional clock menus contain "
     L"only size choices. Additional clocks share the widget’s language, time format, fonts, and "
     L"offset; their digital time omits seconds.",
+    L"\r\n\r\nAdditional clocks: On the General tab, a Calendar with clock widget can show up to "
+    L"two additional clocks with their own names and time zones. Each clock then also shows its "
+    L"local day of the week. Choose each clock face size separately on the Appearance tab or from "
+    L"its right-click menu. Additional clocks have no second hand. Adding, removing, or resizing "
+    L"clocks preserves the widget's attachment to work-area edges.\r\n\r\nOnly a double-click "
+    L"directly on the main clock face toggles its second hand. Additional clock menus contain "
+    L"only size choices. Additional clocks share the widget’s language, time format, fonts, and "
+    L"offset; their digital time omits seconds.",
+    L"\r\n\r\nAdditional clocks: On the General tab, a Calendar with clock widget can show up to "
+    L"two additional clocks with their own names and time zones. Each clock then also shows its "
+    L"local day of the week. Choose each clock face size separately on the Appearance tab or from "
+    L"its right-click menu. Additional clocks have no second hand. Adding, removing, or resizing "
+    L"clocks preserves the widget's attachment to work-area edges.\r\n\r\nOnly a double-click "
+    L"directly on the main clock face toggles its second hand. Additional clock menus contain "
+    L"only size choices. Additional clocks share the widget’s language, time format, fonts, and "
+    L"offset; their digital time omits seconds.",
     L"\r\n\r\nZusätzliche Uhren: Auf der Registerkarte Allgemein kann das Widget Kalender mit Uhr "
     L"bis zu zwei weitere Uhren mit eigenen Namen und Zeitzonen anzeigen. Jede Uhr zeigt dann "
     L"auch ihren lokalen Wochentag. Die Größe jedes Zifferblatts lässt sich unter Darstellung "
@@ -10802,6 +10818,15 @@ const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT] = {
     L"attiva o disattiva la lancetta dei secondi. I menu dei quadranti aggiuntivi contengono solo "
     L"le dimensioni. Condividono lingua, formato, caratteri e offset del widget; l’ora digitale "
     L"non mostra i secondi.",
+    L"\r\n\r\nRelógios adicionais: No separador Geral, Calendário com relógio pode apresentar até "
+    L"dois relógios adicionais com nomes e fusos horários próprios. Cada relógio apresenta também "
+    L"o dia da semana local. Escolha o tamanho de cada mostrador em Aspeto ou no respetivo menu "
+    L"de contexto. Os relógios adicionais não têm ponteiro dos segundos. Adicionar, remover ou "
+    L"redimensionar relógios mantém o widget junto às mesmas margens da área de "
+    L"trabalho.\r\n\r\nSó um duplo clique diretamente no mostrador principal alterna o ponteiro "
+    L"dos segundos. Os menus dos mostradores adicionais contêm apenas tamanhos. Estes relógios "
+    L"partilham o idioma, formato, tipos de letra e desvio do widget; a hora digital não mostra "
+    L"segundos.",
     L"\r\n\r\nDodatkowe zegary: Na karcie Ogólne widżet Kalendarz z zegarem może wyświetlać dwa "
     L"dodatkowe zegary z własnymi nazwami i strefami czasowymi. Każdy zegar pokazuje wtedy także "
     L"lokalny dzień tygodnia. Rozmiar każdej tarczy można wybrać na karcie Wygląd lub w jej menu "
@@ -10818,31 +10843,30 @@ const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT] = {
     L"plochy.\r\n\r\nDvojklik prepína sekundovú ručičku iba priamo na hlavnom ciferníku. Ponuky "
     L"ďalších ciferníkov obsahujú iba veľkosti. Ďalšie hodiny zdieľajú jazyk, formát času, písma "
     L"a offset widgetu; ich digitálny čas sa zobrazuje bez sekúnd.",
-    L"\r\n\r\nAdditional clocks: On the General tab, a Calendar with clock widget can show up to "
-    L"two additional clocks with their own names and time zones. Each clock then also shows its "
-    L"local day of the week. Choose each clock face size separately on the Appearance tab or from "
-    L"its right-click menu. Additional clocks have no second hand. Adding, removing, or resizing "
-    L"clocks preserves the widget's attachment to work-area edges.\r\n\r\nOnly a double-click "
-    L"directly on the main clock face toggles its second hand. Additional clock menus contain "
-    L"only size choices. Additional clocks share the widget’s language, time format, fonts, and "
-    L"offset; their digital time omits seconds.",
-    L"\r\n\r\nAdditional clocks: On the General tab, a Calendar with clock widget can show up to "
-    L"two additional clocks with their own names and time zones. Each clock then also shows its "
-    L"local day of the week. Choose each clock face size separately on the Appearance tab or from "
-    L"its right-click menu. Additional clocks have no second hand. Adding, removing, or resizing "
-    L"clocks preserves the widget's attachment to work-area edges.\r\n\r\nOnly a double-click "
-    L"directly on the main clock face toggles its second hand. Additional clock menus contain "
-    L"only size choices. Additional clocks share the widget’s language, time format, fonts, and "
-    L"offset; their digital time omits seconds.",
-    L"\r\n\r\nRelógios adicionais: No separador Geral, Calendário com relógio pode apresentar até "
-    L"dois relógios adicionais com nomes e fusos horários próprios. Cada relógio apresenta também "
-    L"o dia da semana local. Escolha o tamanho de cada mostrador em Aspeto ou no respetivo menu "
-    L"de contexto. Os relógios adicionais não têm ponteiro dos segundos. Adicionar, remover ou "
-    L"redimensionar relógios mantém o widget junto às mesmas margens da área de "
-    L"trabalho.\r\n\r\nSó um duplo clique diretamente no mostrador principal alterna o ponteiro "
-    L"dos segundos. Os menus dos mostradores adicionais contêm apenas tamanhos. Estes relógios "
-    L"partilham o idioma, formato, tipos de letra e desvio do widget; a hora digital não mostra "
-    L"segundos.",
+    L"\r\n\r\nEkstra ure: På fanen Generelt kan Kalender med ur vise op til to ekstra ure med "
+    L"egne navne og tidszoner. Hvert ur viser også sin lokale ugedag. Vælg størrelsen på hver "
+    L"urskive under Udseende eller i dens højrekliksmenu. Ekstra ure har ingen sekundviser. Når "
+    L"ure tilføjes, fjernes eller ændrer størrelse, forbliver widgetten fastgjort til de samme "
+    L"kanter af arbejdsområdet.\r\n\r\nKun et dobbeltklik direkte på hovedurskiven skifter "
+    L"sekundviseren. Menuerne for ekstra urskiver indeholder kun størrelser. Ekstra ure deler "
+    L"widgetens sprog, tidsformat, skrifttyper og forskydning; den digitale tid viser ikke "
+    L"sekunder.",
+    L"\r\n\r\nLisäkellot: Yleiset-välilehdellä Kalenteri ja kello voi näyttää kaksi lisäkelloa, "
+    L"joilla on omat nimet ja aikavyöhykkeet. Jokainen kello näyttää myös paikallisen "
+    L"viikonpäivän. Valitse kunkin kellotaulun koko Ulkoasu-välilehdellä tai sen pikavalikosta. "
+    L"Lisäkelloissa ei ole sekuntiviisaria. Kellojen lisääminen, poistaminen tai koon muuttaminen "
+    L"säilyttää widgetin kiinnityksen työalueen samoihin reunoihin.\r\n\r\nVain pääkellotaulun "
+    L"suora kaksoisnapsautus vaihtaa sen sekuntiviisarin näkyvyyttä. Lisäkellojen valikoissa on "
+    L"vain kokovaihtoehdot. Lisäkellot käyttävät pienoisohjelman kieltä, aikamuotoa, fontteja ja "
+    L"poikkeamaa; niiden digitaalinen aika ei sisällä sekunteja.",
+    L"\r\n\r\nViðbótarklukkur: Á flipanum Almennt getur Dagatal með klukku sýnt allt að tvær "
+    L"viðbótarklukkur með eigin nöfnum og tímabeltum. Hver klukka sýnir einnig vikudaginn á sínum "
+    L"stað. Veldu stærð hverrar klukkuskífu í Útliti eða í hægrismellivalmynd hennar. "
+    L"Viðbótarklukkur hafa engan sekúnduvísi. Þegar klukkum er bætt við, þær fjarlægðar eða stærð "
+    L"þeirra breytt helst græjan við sömu brúnir vinnusvæðisins.\r\n\r\nAðeins tvísmellur beint á "
+    L"aðalskífuna skiptir um sýnileika sekúnduvísisins. Valmyndir aukaskífa innihalda aðeins "
+    L"stærðir. Aukaklukkur nota tungumál, tímasnið, letur og hliðrun græjunnar; stafræni tíminn "
+    L"sýnir ekki sekúndur.",
     L"\r\n\r\nEkstra klokker: På fanen Generelt kan Kalender med klokke vise opptil to ekstra "
     L"klokker med egne navn og tidssoner. Hver klokke viser også sin lokale ukedag. Velg "
     L"størrelsen på hver urskive under Utseende eller i dens høyreklikkmeny. Ekstra klokker har "
@@ -10859,30 +10883,6 @@ const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT] = {
     L"växlar sekundvisaren. Menyerna för extra urtavlor innehåller bara storlekar. Extra klockor "
     L"delar widgetens språk, tidsformat, teckensnitt och förskjutning; den digitala tiden visar "
     L"inte sekunder.",
-    L"\r\n\r\nLisäkellot: Yleiset-välilehdellä Kalenteri ja kello voi näyttää kaksi lisäkelloa, "
-    L"joilla on omat nimet ja aikavyöhykkeet. Jokainen kello näyttää myös paikallisen "
-    L"viikonpäivän. Valitse kunkin kellotaulun koko Ulkoasu-välilehdellä tai sen pikavalikosta. "
-    L"Lisäkelloissa ei ole sekuntiviisaria. Kellojen lisääminen, poistaminen tai koon muuttaminen "
-    L"säilyttää widgetin kiinnityksen työalueen samoihin reunoihin.\r\n\r\nVain pääkellotaulun "
-    L"suora kaksoisnapsautus vaihtaa sen sekuntiviisarin näkyvyyttä. Lisäkellojen valikoissa on "
-    L"vain kokovaihtoehdot. Lisäkellot käyttävät pienoisohjelman kieltä, aikamuotoa, fontteja ja "
-    L"poikkeamaa; niiden digitaalinen aika ei sisällä sekunteja.",
-    L"\r\n\r\nEkstra ure: På fanen Generelt kan Kalender med ur vise op til to ekstra ure med "
-    L"egne navne og tidszoner. Hvert ur viser også sin lokale ugedag. Vælg størrelsen på hver "
-    L"urskive under Udseende eller i dens højrekliksmenu. Ekstra ure har ingen sekundviser. Når "
-    L"ure tilføjes, fjernes eller ændrer størrelse, forbliver widgetten fastgjort til de samme "
-    L"kanter af arbejdsområdet.\r\n\r\nKun et dobbeltklik direkte på hovedurskiven skifter "
-    L"sekundviseren. Menuerne for ekstra urskiver indeholder kun størrelser. Ekstra ure deler "
-    L"widgetens sprog, tidsformat, skrifttyper og forskydning; den digitale tid viser ikke "
-    L"sekunder.",
-    L"\r\n\r\nViðbótarklukkur: Á flipanum Almennt getur Dagatal með klukku sýnt allt að tvær "
-    L"viðbótarklukkur með eigin nöfnum og tímabeltum. Hver klukka sýnir einnig vikudaginn á sínum "
-    L"stað. Veldu stærð hverrar klukkuskífu í Útliti eða í hægrismellivalmynd hennar. "
-    L"Viðbótarklukkur hafa engan sekúnduvísi. Þegar klukkum er bætt við, þær fjarlægðar eða stærð "
-    L"þeirra breytt helst græjan við sömu brúnir vinnusvæðisins.\r\n\r\nAðeins tvísmellur beint á "
-    L"aðalskífuna skiptir um sýnileika sekúnduvísisins. Valmyndir aukaskífa innihalda aðeins "
-    L"stærðir. Aukaklukkur nota tungumál, tímasnið, letur og hliðrun græjunnar; stafræni tíminn "
-    L"sýnir ekki sekúndur.",
     L"\r\n\r\nEk saatler: Genel sekmesinde Saatli takvim bileşeni, kendi adları ve saat dilimleri "
     L"olan iki ek saat gösterebilir. Her saat kendi yerel haftanın gününü de gösterir. Her "
     L"kadranın boyutunu Görünüm sekmesinden veya kendi sağ tıklama menüsünden seçin. Ek saatlerde "
@@ -11064,6 +11064,24 @@ const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT] = {
     L"zones follow local civil time, including local daylight saving time; the offset next to the "
     L"name reflects the current date. Standalone UTC entries are fixed offsets from -12:00 to "
     L"+14:00 in 15-minute steps and do not observe daylight saving time.",
+    L"\r\n\r\nTIME FORMAT AND TIME ZONES\r\nTime format on the General tab offers Language "
+    L"default (the default), 12 hours, and 24 hours. Language default follows the selected "
+    L"culture; a manual choice is retained when the widget language changes. Separators and time "
+    L"markers follow the widget language. AM/PM is checked by default and controls only the "
+    L"marker in 12-hour mode; AM/PM is used when the culture defines no marker. Monitor clocks "
+    L"show the marker on a separate line below the time. UTC always uses 24-hour time. Named time "
+    L"zones follow local civil time, including local daylight saving time; the offset next to the "
+    L"name reflects the current date. Standalone UTC entries are fixed offsets from -12:00 to "
+    L"+14:00 in 15-minute steps and do not observe daylight saving time.",
+    L"\r\n\r\nTIME FORMAT AND TIME ZONES\r\nTime format on the General tab offers Language "
+    L"default (the default), 12 hours, and 24 hours. Language default follows the selected "
+    L"culture; a manual choice is retained when the widget language changes. Separators and time "
+    L"markers follow the widget language. AM/PM is checked by default and controls only the "
+    L"marker in 12-hour mode; AM/PM is used when the culture defines no marker. Monitor clocks "
+    L"show the marker on a separate line below the time. UTC always uses 24-hour time. Named time "
+    L"zones follow local civil time, including local daylight saving time; the offset next to the "
+    L"name reflects the current date. Standalone UTC entries are fixed offsets from -12:00 to "
+    L"+14:00 in 15-minute steps and do not observe daylight saving time.",
     L"\r\n\r\nZEITFORMAT UND ZEITZONEN\r\nZeitformat auf Allgemein bietet Nach Sprache "
     L"(Standard), 12 Stunden und 24 Stunden. Nach Sprache folgt der gewählten Kultur; eine "
     L"manuelle Auswahl bleibt bei Sprachänderungen erhalten. Trennzeichen und Tageszeitangaben "
@@ -11101,6 +11119,15 @@ const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT] = {
     L"inclusa l’ora legale; lo scostamento indicato corrisponde alla data attuale. Le voci UTC "
     L"separate sono scostamenti fissi da −12:00 a +14:00 a intervalli di 15 minuti, senza ora "
     L"legale.",
+    L"\r\n\r\nFORMATO DA HORA E FUSOS HORÁRIOS\r\nFormato da hora em Geral oferece Conforme o "
+    L"idioma (predefinição), 12 horas e 24 horas. A escolha manual é mantida quando o idioma "
+    L"muda. Os separadores e indicadores seguem o idioma do widget. AM/PM está selecionado por "
+    L"predefinição e controla apenas o indicador no modo de 12 horas; usa-se AM/PM se a cultura "
+    L"não definir nenhum. Os relógios de monitor mostram o indicador numa linha abaixo da hora. "
+    L"UTC usa sempre o formato de 24 horas. Os fusos com nome seguem a hora civil local, "
+    L"incluindo a hora de verão; o desvio junto ao nome corresponde à data atual. As entradas UTC "
+    L"isoladas são desvios fixos de −12:00 a +14:00 em intervalos de 15 minutos, sem hora de "
+    L"verão.",
     L"\r\n\r\nFORMAT CZASU I STREFY\r\nFormat czasu na karcie Ogólne oferuje Według języka "
     L"(domyślnie), 12 godzin i 24 godziny. Ręczny wybór pozostaje zachowany przy zmianie języka. "
     L"Separatory i oznaczenia odpowiadają językowi widżetu. AM/PM jest domyślnie zaznaczone i "
@@ -11117,33 +11144,30 @@ const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT] = {
     L"časom. UTC vždy používa 24-hodinový formát. Pomenované pásma používajú občiansky čas daného "
     L"miesta vrátane jeho letného času; posun pri názve zodpovedá aktuálnemu dátumu. Samostatné "
     L"položky UTC sú pevné posuny od −12:00 do +14:00 po 15 minútach bez letného času.",
-    L"\r\n\r\nTIME FORMAT AND TIME ZONES\r\nTime format on the General tab offers Language "
-    L"default (the default), 12 hours, and 24 hours. Language default follows the selected "
-    L"culture; a manual choice is retained when the widget language changes. Separators and time "
-    L"markers follow the widget language. AM/PM is checked by default and controls only the "
-    L"marker in 12-hour mode; AM/PM is used when the culture defines no marker. Monitor clocks "
-    L"show the marker on a separate line below the time. UTC always uses 24-hour time. Named time "
-    L"zones follow local civil time, including local daylight saving time; the offset next to the "
-    L"name reflects the current date. Standalone UTC entries are fixed offsets from -12:00 to "
-    L"+14:00 in 15-minute steps and do not observe daylight saving time.",
-    L"\r\n\r\nTIME FORMAT AND TIME ZONES\r\nTime format on the General tab offers Language "
-    L"default (the default), 12 hours, and 24 hours. Language default follows the selected "
-    L"culture; a manual choice is retained when the widget language changes. Separators and time "
-    L"markers follow the widget language. AM/PM is checked by default and controls only the "
-    L"marker in 12-hour mode; AM/PM is used when the culture defines no marker. Monitor clocks "
-    L"show the marker on a separate line below the time. UTC always uses 24-hour time. Named time "
-    L"zones follow local civil time, including local daylight saving time; the offset next to the "
-    L"name reflects the current date. Standalone UTC entries are fixed offsets from -12:00 to "
-    L"+14:00 in 15-minute steps and do not observe daylight saving time.",
-    L"\r\n\r\nFORMATO DA HORA E FUSOS HORÁRIOS\r\nFormato da hora em Geral oferece Conforme o "
-    L"idioma (predefinição), 12 horas e 24 horas. A escolha manual é mantida quando o idioma "
-    L"muda. Os separadores e indicadores seguem o idioma do widget. AM/PM está selecionado por "
-    L"predefinição e controla apenas o indicador no modo de 12 horas; usa-se AM/PM se a cultura "
-    L"não definir nenhum. Os relógios de monitor mostram o indicador numa linha abaixo da hora. "
-    L"UTC usa sempre o formato de 24 horas. Os fusos com nome seguem a hora civil local, "
-    L"incluindo a hora de verão; o desvio junto ao nome corresponde à data atual. As entradas UTC "
-    L"isoladas são desvios fixos de −12:00 a +14:00 em intervalos de 15 minutos, sem hora de "
-    L"verão.",
+    L"\r\n\r\nTIDSFORMAT OG TIDSZONER\r\nTidsformat på Generelt tilbyder Efter sprog (standard), "
+    L"12 timer og 24 timer. Et manuelt valg bevares, når sproget ændres. Separatorer og "
+    L"tidsmarkører følger widgetens sprog. AM/PM er slået til som standard og styrer kun markøren "
+    L"i 12-timersformat; AM/PM bruges, hvis kulturen ikke har en egen markør. Skærmure viser "
+    L"markøren på en separat linje under tiden. UTC bruger altid 24-timersformat. Navngivne "
+    L"tidszoner følger lokal tid inklusive sommertid; forskydningen ved navnet gælder den "
+    L"aktuelle dato. Separate UTC-poster er faste forskydninger fra −12:00 til +14:00 i trin på "
+    L"15 minutter uden sommertid.",
+    L"\r\n\r\nAIKAMUOTO JA AIKAVYÖHYKKEET\r\nYleiset-välilehden Aikamuoto tarjoaa Kielen mukaan "
+    L"(oletus), 12 tuntia ja 24 tuntia. Käsin tehty valinta säilyy kielen vaihtuessa. Erottimet "
+    L"ja merkinnät noudattavat pienoisohjelman kieltä. AM/PM on oletusarvoisesti valittu ja ohjaa "
+    L"vain merkintää 12 tunnin muodossa; AM/PM-merkintää käytetään, jos kulttuurilla ei ole omaa. "
+    L"Koko näytön kellot näyttävät merkinnän ajan alla omalla rivillään. UTC käyttää aina 24 "
+    L"tunnin muotoa. Nimetyt aikavyöhykkeet noudattavat paikallista aikaa kesäaikoineen; nimen "
+    L"vieressä oleva siirtymä vastaa nykyistä päivämäärää. Erilliset UTC-valinnat ovat kiinteitä "
+    L"siirtymiä −12:00:sta +14:00:aan 15 minuutin välein ilman kesäaikaa.",
+    L"\r\n\r\nTÍMASNIÐ OG TÍMABELTI\r\nTímasnið á Almennt býður Samkvæmt tungumáli (sjálfgefið), "
+    L"12 klukkustundir og 24 klukkustundir. Handvirkt val helst við breytingu á tungumáli. "
+    L"Aðgreiningarmerki og tímamerkingar fylgja tungumáli græjunnar. AM/PM er sjálfgefið virkt og "
+    L"stjórnar aðeins merkingunni í 12 klukkustunda sniði; AM/PM er notað ef menningarsvæðið "
+    L"skilgreinir enga merkingu. Skjáklukkur sýna hana á sér línu undir tímanum. UTC notar alltaf "
+    L"24 klukkustunda snið. Nafngreind tímabelti fylgja staðartíma með sumartíma; hliðrunin við "
+    L"nafnið gildir fyrir daginn í dag. Sérstakar UTC-færslur eru fastar hliðranir frá −12:00 til "
+    L"+14:00 í 15 mínútna skrefum án sumartíma.",
     L"\r\n\r\nTIDSFORMAT OG TIDSSONER\r\nTidsformat på Generelt tilbyr Etter språk (standard), 12 "
     L"timer og 24 timer. Et manuelt valg beholdes når språket endres. Skilletegn og tidsmarkører "
     L"følger widgetens språk. AM/PM er på som standard og styrer bare markøren i 12-timersformat; "
@@ -11159,30 +11183,6 @@ const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT] = {
     L"24-timmarsformat. Namngivna tidszoner följer lokal tid, inklusive sommartid; förskjutningen "
     L"vid namnet gäller dagens datum. Separata UTC-poster är fasta förskjutningar från −12:00 "
     L"till +14:00 i steg om 15 minuter, utan sommartid.",
-    L"\r\n\r\nAIKAMUOTO JA AIKAVYÖHYKKEET\r\nYleiset-välilehden Aikamuoto tarjoaa Kielen mukaan "
-    L"(oletus), 12 tuntia ja 24 tuntia. Käsin tehty valinta säilyy kielen vaihtuessa. Erottimet "
-    L"ja merkinnät noudattavat pienoisohjelman kieltä. AM/PM on oletusarvoisesti valittu ja ohjaa "
-    L"vain merkintää 12 tunnin muodossa; AM/PM-merkintää käytetään, jos kulttuurilla ei ole omaa. "
-    L"Koko näytön kellot näyttävät merkinnän ajan alla omalla rivillään. UTC käyttää aina 24 "
-    L"tunnin muotoa. Nimetyt aikavyöhykkeet noudattavat paikallista aikaa kesäaikoineen; nimen "
-    L"vieressä oleva siirtymä vastaa nykyistä päivämäärää. Erilliset UTC-valinnat ovat kiinteitä "
-    L"siirtymiä −12:00:sta +14:00:aan 15 minuutin välein ilman kesäaikaa.",
-    L"\r\n\r\nTIDSFORMAT OG TIDSZONER\r\nTidsformat på Generelt tilbyder Efter sprog (standard), "
-    L"12 timer og 24 timer. Et manuelt valg bevares, når sproget ændres. Separatorer og "
-    L"tidsmarkører følger widgetens sprog. AM/PM er slået til som standard og styrer kun markøren "
-    L"i 12-timersformat; AM/PM bruges, hvis kulturen ikke har en egen markør. Skærmure viser "
-    L"markøren på en separat linje under tiden. UTC bruger altid 24-timersformat. Navngivne "
-    L"tidszoner følger lokal tid inklusive sommertid; forskydningen ved navnet gælder den "
-    L"aktuelle dato. Separate UTC-poster er faste forskydninger fra −12:00 til +14:00 i trin på "
-    L"15 minutter uden sommertid.",
-    L"\r\n\r\nTÍMASNIÐ OG TÍMABELTI\r\nTímasnið á Almennt býður Samkvæmt tungumáli (sjálfgefið), "
-    L"12 klukkustundir og 24 klukkustundir. Handvirkt val helst við breytingu á tungumáli. "
-    L"Aðgreiningarmerki og tímamerkingar fylgja tungumáli græjunnar. AM/PM er sjálfgefið virkt og "
-    L"stjórnar aðeins merkingunni í 12 klukkustunda sniði; AM/PM er notað ef menningarsvæðið "
-    L"skilgreinir enga merkingu. Skjáklukkur sýna hana á sér línu undir tímanum. UTC notar alltaf "
-    L"24 klukkustunda snið. Nafngreind tímabelti fylgja staðartíma með sumartíma; hliðrunin við "
-    L"nafnið gildir fyrir daginn í dag. Sérstakar UTC-færslur eru fastar hliðranir frá −12:00 til "
-    L"+14:00 í 15 mínútna skrefum án sumartíma.",
     L"\r\n\r\nSAAT BİÇİMİ VE SAAT DİLİMLERİ\r\nGenel sekmesindeki Saat biçimi, Dile göre "
     L"(varsayılan), 12 saat ve 24 saat seçeneklerini sunar. Dil değiştiğinde elle seçilen düzen "
     L"korunur. Ayırıcılar ve göstergeler araç diline uyar. AM/PM varsayılan olarak işaretlidir ve "
@@ -11391,6 +11391,46 @@ const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {
     L"synchronization status.\r\n\r\nSave log exports the records to CSV, including offsets and "
     L"failure details. Records are not retained between application sessions; save them before "
     L"exiting if you want to keep them.",
+    L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the configured NTP "
+    L"servers for the whole application and therefore for all widgets. NTP corrects only the time "
+    L"displayed by CalClock; the Windows clock is never changed. System time is used until the "
+    L"first valid reply. NTP is the default. The automatic set chooses Czech and Slovak servers, "
+    L"PTB for Europe, or the global pool according to the system region. Multiple measurements "
+    L"are filtered by network delay and outlying replies. Synchronise now starts a fresh "
+    L"measurement immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of "
+    L"later changes to Windows system time. If the connection fails or servers change, it "
+    L"continues from the last valid synchronisation until a new reply arrives; this state is "
+    L"retained until the application closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab "
+    L"records NTP server queries since the application started. Each entry contains the date and "
+    L"local computer time, server, and status. OK identifies a valid reply, with θ showing its "
+    L"offset from Windows system time. ERR gives the failure reason and any error code. The final "
+    L"entry in a query group also shows the combined offset Θ when usable measurements are "
+    L"available.\r\n\r\nOffsets are displayed in milliseconds with four decimal places. A "
+    L"positive value means the server clock is ahead of Windows; a negative value means it is "
+    L"behind. The combined offset Θ reflects the accepted measurements and is also shown in the "
+    L"synchronisation status.\r\n\r\nSave log exports the records to CSV, including offsets and "
+    L"failure details. Records are not retained between application sessions; save them before "
+    L"exiting if you want to keep them.",
+    L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the configured NTP "
+    L"servers for the whole application and therefore for all widgets. NTP corrects only the time "
+    L"displayed by CalClock; the Windows clock is never changed. System time is used until the "
+    L"first valid reply. NTP is the default. The automatic set chooses Czech and Slovak servers, "
+    L"PTB for Europe, or the global pool according to the system region. Multiple measurements "
+    L"are filtered by network delay and outlying replies. Synchronise now starts a fresh "
+    L"measurement immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of "
+    L"later changes to Windows system time. If the connection fails or servers change, it "
+    L"continues from the last valid synchronisation until a new reply arrives; this state is "
+    L"retained until the application closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab "
+    L"records NTP server queries since the application started. Each entry contains the date and "
+    L"local computer time, server, and status. OK identifies a valid reply, with θ showing its "
+    L"offset from Windows system time. ERR gives the failure reason and any error code. The final "
+    L"entry in a query group also shows the combined offset Θ when usable measurements are "
+    L"available.\r\n\r\nOffsets are displayed in milliseconds with four decimal places. A "
+    L"positive value means the server clock is ahead of Windows; a negative value means it is "
+    L"behind. The combined offset Θ reflects the accepted measurements and is also shown in the "
+    L"synchronisation status.\r\n\r\nSave log exports the records to CSV, including offsets and "
+    L"failure details. Records are not retained between application sessions; save them before "
+    L"exiting if you want to keep them.",
     L"\r\n\r\nZEITQUELLE\r\nAuf der Registerkarte Zeit wird für die gesamte Anwendung und damit "
     L"für alle Widgets die Windows-Systemzeit oder die Zeit der eingestellten NTP-Server gewählt. "
     L"NTP korrigiert nur die in CalClock angezeigte Zeit; die Windows-Uhr wird nie geändert. Bis "
@@ -11480,6 +11520,24 @@ const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {
     L"mostrato anche nello stato di sincronizzazione.\r\n\r\nSalva registro esporta le voci in "
     L"CSV, compresi scostamenti e dettagli degli errori. Le voci non vengono conservate tra le "
     L"sessioni; salvarle prima di uscire se si desidera mantenerle.",
+    L"\r\n\r\nORIGEM DA HORA\r\nO separador Hora escolhe para toda a aplicação a hora do Windows "
+    L"ou servidores NTP. O NTP corrige apenas o CalClock e nunca altera o Windows. A predefinição "
+    L"é NTP; o conjunto automático escolhe servidores pela região e filtra medições por atraso e "
+    L"valores atípicos.\r\n\r\nApós a sincronização, o relógio do CalClock continua a funcionar "
+    L"independentemente de alterações posteriores à hora do sistema Windows. Se a ligação falhar "
+    L"ou os servidores forem alterados, continua a partir da última sincronização válida até "
+    L"receber uma nova resposta; este estado mantém-se até fechar a aplicação.\r\n\r\nREGISTO DE "
+    L"SINCRONIZAÇÃO NTP\r\nO separador Hora regista as consultas a servidores NTP desde o início "
+    L"da aplicação. Cada entrada contém a data e hora local do computador, o servidor e o estado. "
+    L"OK identifica uma resposta válida e θ o seu desvio em relação à hora do Windows. ERR indica "
+    L"a causa da falha e o eventual código de erro. A última entrada de um grupo de consultas "
+    L"mostra também o desvio calculado Θ quando existem medições utilizáveis.\r\n\r\nOs desvios "
+    L"são apresentados em milissegundos com quatro casas decimais. Um valor positivo significa "
+    L"que o relógio do servidor está adiantado em relação ao Windows; um valor negativo significa "
+    L"que está atrasado. Θ reflete as medições aceites e também aparece no estado da "
+    L"sincronização.\r\n\r\nGuardar registo exporta as entradas para CSV, incluindo desvios e "
+    L"detalhes das falhas. As entradas não são conservadas entre sessões; guarde-as antes de sair "
+    L"se quiser mantê-las.",
     L"\r\n\r\nŹRÓDŁO CZASU\r\nKarta Czas wybiera dla całej aplikacji, a więc dla wszystkich "
     L"widżetów, czas systemowy Windows albo skonfigurowane serwery NTP. NTP koryguje wyłącznie "
     L"czas wyświetlany przez CalClock; zegar Windows nigdy nie jest zmieniany. Do pierwszej "
@@ -11521,64 +11579,57 @@ const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {
     L"synchronizácie.\r\n\r\nUložiť log uloží záznamy do CSV vrátane odchýlok a dôvodov chýb. "
     L"Záznamy sa medzi spusteniami neuchovávajú; ak ich chcete zachovať, uložte ich pred "
     L"ukončením aplikácie.",
-    L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the configured NTP "
-    L"servers for the whole application and therefore for all widgets. NTP corrects only the time "
-    L"displayed by CalClock; the Windows clock is never changed. System time is used until the "
-    L"first valid reply. NTP is the default. The automatic set chooses Czech and Slovak servers, "
-    L"PTB for Europe, or the global pool according to the system region. Multiple measurements "
-    L"are filtered by network delay and outlying replies. Synchronise now starts a fresh "
-    L"measurement immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of "
-    L"later changes to Windows system time. If the connection fails or servers change, it "
-    L"continues from the last valid synchronisation until a new reply arrives; this state is "
-    L"retained until the application closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab "
-    L"records NTP server queries since the application started. Each entry contains the date and "
-    L"local computer time, server, and status. OK identifies a valid reply, with θ showing its "
-    L"offset from Windows system time. ERR gives the failure reason and any error code. The final "
-    L"entry in a query group also shows the combined offset Θ when usable measurements are "
-    L"available.\r\n\r\nOffsets are displayed in milliseconds with four decimal places. A "
-    L"positive value means the server clock is ahead of Windows; a negative value means it is "
-    L"behind. The combined offset Θ reflects the accepted measurements and is also shown in the "
-    L"synchronisation status.\r\n\r\nSave log exports the records to CSV, including offsets and "
-    L"failure details. Records are not retained between application sessions; save them before "
-    L"exiting if you want to keep them.",
-    L"\r\n\r\nTIME SOURCE\r\nThe Time tab selects Windows system time or the configured NTP "
-    L"servers for the whole application and therefore for all widgets. NTP corrects only the time "
-    L"displayed by CalClock; the Windows clock is never changed. System time is used until the "
-    L"first valid reply. NTP is the default. The automatic set chooses Czech and Slovak servers, "
-    L"PTB for Europe, or the global pool according to the system region. Multiple measurements "
-    L"are filtered by network delay and outlying replies. Synchronise now starts a fresh "
-    L"measurement immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of "
-    L"later changes to Windows system time. If the connection fails or servers change, it "
-    L"continues from the last valid synchronisation until a new reply arrives; this state is "
-    L"retained until the application closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab "
-    L"records NTP server queries since the application started. Each entry contains the date and "
-    L"local computer time, server, and status. OK identifies a valid reply, with θ showing its "
-    L"offset from Windows system time. ERR gives the failure reason and any error code. The final "
-    L"entry in a query group also shows the combined offset Θ when usable measurements are "
-    L"available.\r\n\r\nOffsets are displayed in milliseconds with four decimal places. A "
-    L"positive value means the server clock is ahead of Windows; a negative value means it is "
-    L"behind. The combined offset Θ reflects the accepted measurements and is also shown in the "
-    L"synchronisation status.\r\n\r\nSave log exports the records to CSV, including offsets and "
-    L"failure details. Records are not retained between application sessions; save them before "
-    L"exiting if you want to keep them.",
-    L"\r\n\r\nORIGEM DA HORA\r\nO separador Hora escolhe para toda a aplicação a hora do Windows "
-    L"ou servidores NTP. O NTP corrige apenas o CalClock e nunca altera o Windows. A predefinição "
-    L"é NTP; o conjunto automático escolhe servidores pela região e filtra medições por atraso e "
-    L"valores atípicos.\r\n\r\nApós a sincronização, o relógio do CalClock continua a funcionar "
-    L"independentemente de alterações posteriores à hora do sistema Windows. Se a ligação falhar "
-    L"ou os servidores forem alterados, continua a partir da última sincronização válida até "
-    L"receber uma nova resposta; este estado mantém-se até fechar a aplicação.\r\n\r\nREGISTO DE "
-    L"SINCRONIZAÇÃO NTP\r\nO separador Hora regista as consultas a servidores NTP desde o início "
-    L"da aplicação. Cada entrada contém a data e hora local do computador, o servidor e o estado. "
-    L"OK identifica uma resposta válida e θ o seu desvio em relação à hora do Windows. ERR indica "
-    L"a causa da falha e o eventual código de erro. A última entrada de um grupo de consultas "
-    L"mostra também o desvio calculado Θ quando existem medições utilizáveis.\r\n\r\nOs desvios "
-    L"são apresentados em milissegundos com quatro casas decimais. Um valor positivo significa "
-    L"que o relógio do servidor está adiantado em relação ao Windows; um valor negativo significa "
-    L"que está atrasado. Θ reflete as medições aceites e também aparece no estado da "
-    L"sincronização.\r\n\r\nGuardar registo exporta as entradas para CSV, incluindo desvios e "
-    L"detalhes das falhas. As entradas não são conservadas entre sessões; guarde-as antes de sair "
-    L"se quiser mantê-las.",
+    L"\r\n\r\nTIDSKILDE\r\nFanen Tid vælger Windows-tid eller NTP-servere for hele programmet. "
+    L"NTP korrigerer kun CalClock og ændrer aldrig Windows. NTP er standard; det automatiske sæt "
+    L"vælger servere efter område og filtrerer målinger efter forsinkelse og "
+    L"afvigelser.\r\n\r\nEfter synkronisering går CalClock-uret videre uafhængigt af senere "
+    L"ændringer af systemtiden i Windows. Hvis forbindelsen afbrydes, eller serverne ændres, "
+    L"fortsætter uret fra den seneste gyldige synkronisering, indtil et nyt svar modtages; denne "
+    L"tilstand bevares, indtil programmet lukkes.\r\n\r\nNTP-SYNKRONISERINGSLOG\r\nFanen Tid "
+    L"registrerer NTP-serverforespørgsler siden programmets start. Hver post indeholder dato og "
+    L"computerens lokale tid, server og status. OK angiver et gyldigt svar, og θ viser "
+    L"tidsafvigelsen fra Windows-systemtiden. ERR angiver fejlårsagen og en eventuel fejlkode. "
+    L"Den sidste post i en forespørgselsgruppe viser også den beregnede tidsafvigelse Θ, når "
+    L"brugbare målinger er tilgængelige.\r\n\r\nTidsafvigelser vises i millisekunder med fire "
+    L"decimaler. En positiv værdi betyder, at serveruret går foran Windows; en negativ værdi "
+    L"betyder, at det går bagefter. Θ tager hensyn til de godkendte målinger og vises også i "
+    L"synkroniseringsstatussen.\r\n\r\nGem log eksporterer posterne til CSV, inklusive "
+    L"tidsafvigelser og fejloplysninger. Poster beholdes ikke mellem programstarter; gem dem før "
+    L"afslutning, hvis du vil beholde dem.",
+    L"\r\n\r\nAIKALÄHDE\r\nAika-välilehdellä valitaan koko sovellukselle Windowsin aika tai "
+    L"NTP-palvelimet. NTP korjaa vain CalClockia eikä muuta Windowsia. NTP on oletus; "
+    L"automaattinen joukko valitsee palvelimet alueen mukaan ja suodattaa mittaukset viiveen ja "
+    L"poikkeamien perusteella.\r\n\r\nSynkronoinnin jälkeen CalClockin kello käy riippumatta "
+    L"myöhemmistä Windowsin järjestelmäajan muutoksista. Jos yhteys katkeaa tai palvelimia "
+    L"vaihdetaan, kello jatkaa viimeisestä kelvollisesta synkronoinnista uuteen vastaukseen asti; "
+    L"tämä tila säilyy sovelluksen sulkemiseen "
+    L"saakka.\r\n\r\nNTP-SYNKRONOINTILOKI\r\nAika-välilehti tallentaa NTP-palvelinkyselyt "
+    L"sovelluksen käynnistämisestä alkaen. Jokainen merkintä sisältää päivämäärän ja tietokoneen "
+    L"paikallisen ajan, palvelimen sekä tilan. OK tarkoittaa kelvollista vastausta, ja θ ilmaisee "
+    L"sen aikaeron Windowsin järjestelmäaikaan. ERR kertoo epäonnistumisen syyn ja mahdollisen "
+    L"virhekoodin. Kyselyryhmän viimeinen merkintä näyttää myös lasketun aikaeron Θ, jos "
+    L"käytettävissä on käyttökelpoisia mittauksia.\r\n\r\nAikaerot näytetään millisekunteina "
+    L"neljällä desimaalilla. Positiivinen arvo tarkoittaa, että palvelimen kello on Windowsia "
+    L"edellä; negatiivinen arvo tarkoittaa, että se on jäljessä. Θ perustuu hyväksyttyihin "
+    L"mittauksiin ja näkyy myös synkronoinnin tilassa.\r\n\r\nTallenna loki vie merkinnät "
+    L"CSV-tiedostoon, mukaan lukien aikaerot ja virhetiedot. Merkintöjä ei säilytetä "
+    L"käynnistyskertojen välillä; tallenna ne ennen sulkemista, jos haluat säilyttää ne.",
+    L"\r\n\r\nTÍMAGJAFI\r\nTímaflipinn velur Windows-tíma eða NTP-þjóna fyrir allt forritið. NTP "
+    L"leiðréttir aðeins CalClock og breytir aldrei Windows. NTP er sjálfgefið; sjálfvirka safnið "
+    L"velur þjóna eftir svæði og síar mælingar eftir töf og frávikum.\r\n\r\nEftir samstillingu "
+    L"gengur klukka CalClock áfram óháð síðari breytingum á kerfistíma Windows. Ef samband rofnar "
+    L"eða skipt er um þjóna heldur klukkan áfram frá síðustu gildu samstillingu þar til nýtt svar "
+    L"berst; þetta ástand helst þar til forritinu er "
+    L"lokað.\r\n\r\nNTP-SAMSTILLINGARSKRÁ\r\nTímaflipinn skráir fyrirspurnir til NTP-þjóna frá "
+    L"ræsingu forritsins. Hver færsla inniheldur dagsetningu og staðartíma tölvunnar, þjón og "
+    L"stöðu. OK merkir gilt svar og θ tímamun þess frá kerfistíma Windows. ERR sýnir ástæðu "
+    L"bilunar og villukóða ef við á. Síðasta færsla í hópi fyrirspurna sýnir einnig reiknaðan "
+    L"tímamun Θ þegar nothæfar mælingar liggja fyrir.\r\n\r\nTímamunur er sýndur í millisekúndum "
+    L"með fjórum aukastöfum. Jákvætt gildi merkir að klukka þjónsins er á undan Windows; neikvætt "
+    L"gildi merkir að hún er á eftir. Θ tekur mið af samþykktum mælingum og birtist einnig í "
+    L"samstillingarstöðu.\r\n\r\nVista annál flytur færslur út sem CSV, með tímamun og "
+    L"villuupplýsingum. Færslur varðveitast ekki milli keyrslna; vistaðu þær áður en þú lokar "
+    L"forritinu ef þú vilt geyma þær.",
     L"\r\n\r\nTIDSKILDE\r\nFanen Tid velger Windows-tid eller NTP-servere for hele programmet. "
     L"NTP korrigerer bare CalClock og endrer aldri Windows. NTP er standard; det automatiske "
     L"settet velger servere etter region og filtrerer målinger etter forsinkelse og "
@@ -11613,57 +11664,6 @@ const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT] = {
     L"synkroniseringsstatusen.\r\n\r\nSpara logg exporterar posterna till CSV, inklusive "
     L"tidsavvikelser och feldetaljer. Poster sparas inte mellan programstarter; spara dem innan "
     L"du avslutar om du vill behålla dem.",
-    L"\r\n\r\nAIKALÄHDE\r\nAika-välilehdellä valitaan koko sovellukselle Windowsin aika tai "
-    L"NTP-palvelimet. NTP korjaa vain CalClockia eikä muuta Windowsia. NTP on oletus; "
-    L"automaattinen joukko valitsee palvelimet alueen mukaan ja suodattaa mittaukset viiveen ja "
-    L"poikkeamien perusteella.\r\n\r\nSynkronoinnin jälkeen CalClockin kello käy riippumatta "
-    L"myöhemmistä Windowsin järjestelmäajan muutoksista. Jos yhteys katkeaa tai palvelimia "
-    L"vaihdetaan, kello jatkaa viimeisestä kelvollisesta synkronoinnista uuteen vastaukseen asti; "
-    L"tämä tila säilyy sovelluksen sulkemiseen "
-    L"saakka.\r\n\r\nNTP-SYNKRONOINTILOKI\r\nAika-välilehti tallentaa NTP-palvelinkyselyt "
-    L"sovelluksen käynnistämisestä alkaen. Jokainen merkintä sisältää päivämäärän ja tietokoneen "
-    L"paikallisen ajan, palvelimen sekä tilan. OK tarkoittaa kelvollista vastausta, ja θ ilmaisee "
-    L"sen aikaeron Windowsin järjestelmäaikaan. ERR kertoo epäonnistumisen syyn ja mahdollisen "
-    L"virhekoodin. Kyselyryhmän viimeinen merkintä näyttää myös lasketun aikaeron Θ, jos "
-    L"käytettävissä on käyttökelpoisia mittauksia.\r\n\r\nAikaerot näytetään millisekunteina "
-    L"neljällä desimaalilla. Positiivinen arvo tarkoittaa, että palvelimen kello on Windowsia "
-    L"edellä; negatiivinen arvo tarkoittaa, että se on jäljessä. Θ perustuu hyväksyttyihin "
-    L"mittauksiin ja näkyy myös synkronoinnin tilassa.\r\n\r\nTallenna loki vie merkinnät "
-    L"CSV-tiedostoon, mukaan lukien aikaerot ja virhetiedot. Merkintöjä ei säilytetä "
-    L"käynnistyskertojen välillä; tallenna ne ennen sulkemista, jos haluat säilyttää ne.",
-    L"\r\n\r\nTIDSKILDE\r\nFanen Tid vælger Windows-tid eller NTP-servere for hele programmet. "
-    L"NTP korrigerer kun CalClock og ændrer aldrig Windows. NTP er standard; det automatiske sæt "
-    L"vælger servere efter område og filtrerer målinger efter forsinkelse og "
-    L"afvigelser.\r\n\r\nEfter synkronisering går CalClock-uret videre uafhængigt af senere "
-    L"ændringer af systemtiden i Windows. Hvis forbindelsen afbrydes, eller serverne ændres, "
-    L"fortsætter uret fra den seneste gyldige synkronisering, indtil et nyt svar modtages; denne "
-    L"tilstand bevares, indtil programmet lukkes.\r\n\r\nNTP-SYNKRONISERINGSLOG\r\nFanen Tid "
-    L"registrerer NTP-serverforespørgsler siden programmets start. Hver post indeholder dato og "
-    L"computerens lokale tid, server og status. OK angiver et gyldigt svar, og θ viser "
-    L"tidsafvigelsen fra Windows-systemtiden. ERR angiver fejlårsagen og en eventuel fejlkode. "
-    L"Den sidste post i en forespørgselsgruppe viser også den beregnede tidsafvigelse Θ, når "
-    L"brugbare målinger er tilgængelige.\r\n\r\nTidsafvigelser vises i millisekunder med fire "
-    L"decimaler. En positiv værdi betyder, at serveruret går foran Windows; en negativ værdi "
-    L"betyder, at det går bagefter. Θ tager hensyn til de godkendte målinger og vises også i "
-    L"synkroniseringsstatussen.\r\n\r\nGem log eksporterer posterne til CSV, inklusive "
-    L"tidsafvigelser og fejloplysninger. Poster beholdes ikke mellem programstarter; gem dem før "
-    L"afslutning, hvis du vil beholde dem.",
-    L"\r\n\r\nTÍMAGJAFI\r\nTímaflipinn velur Windows-tíma eða NTP-þjóna fyrir allt forritið. NTP "
-    L"leiðréttir aðeins CalClock og breytir aldrei Windows. NTP er sjálfgefið; sjálfvirka safnið "
-    L"velur þjóna eftir svæði og síar mælingar eftir töf og frávikum.\r\n\r\nEftir samstillingu "
-    L"gengur klukka CalClock áfram óháð síðari breytingum á kerfistíma Windows. Ef samband rofnar "
-    L"eða skipt er um þjóna heldur klukkan áfram frá síðustu gildu samstillingu þar til nýtt svar "
-    L"berst; þetta ástand helst þar til forritinu er "
-    L"lokað.\r\n\r\nNTP-SAMSTILLINGARSKRÁ\r\nTímaflipinn skráir fyrirspurnir til NTP-þjóna frá "
-    L"ræsingu forritsins. Hver færsla inniheldur dagsetningu og staðartíma tölvunnar, þjón og "
-    L"stöðu. OK merkir gilt svar og θ tímamun þess frá kerfistíma Windows. ERR sýnir ástæðu "
-    L"bilunar og villukóða ef við á. Síðasta færsla í hópi fyrirspurna sýnir einnig reiknaðan "
-    L"tímamun Θ þegar nothæfar mælingar liggja fyrir.\r\n\r\nTímamunur er sýndur í millisekúndum "
-    L"með fjórum aukastöfum. Jákvætt gildi merkir að klukka þjónsins er á undan Windows; neikvætt "
-    L"gildi merkir að hún er á eftir. Θ tekur mið af samþykktum mælingum og birtist einnig í "
-    L"samstillingarstöðu.\r\n\r\nVista annál flytur færslur út sem CSV, með tímamun og "
-    L"villuupplýsingum. Færslur varðveitast ekki milli keyrslna; vistaðu þær áður en þú lokar "
-    L"forritinu ef þú vilt geyma þær.",
     L"\r\n\r\nZAMAN KAYNAĞI\r\nZaman sekmesi tüm uygulama için Windows zamanını veya NTP "
     L"sunucularını seçer. NTP yalnızca CalClock'u düzeltir ve Windows'u hiçbir zaman değiştirmez. "
     L"NTP varsayılandır; otomatik küme bölgeye göre sunucu seçer ve ölçümleri gecikme ile aykırı "
@@ -12044,6 +12044,24 @@ const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"blackouts even when Settings is active.\r\n\r\nThe pointer hides after a short period of "
     L"inactivity over monitor clocks and blacked-out monitors, and reappears when the mouse "
     L"moves. It stays visible over the small preview while Settings is open.",
+    L"\r\n\r\nMONITOR CLOCK\r\nThe digital clock can fill one or more monitors and optionally "
+    L"black out the others. Font size is a percentage of monitor height; font, smoothing, colours "
+    L"and padding are also configurable. In UTC mode, UTC can be shown on a separate line. The "
+    L"default is white text on black. While Settings is open, the clock is always a small "
+    L"draggable preview that keeps the monitor aspect ratio, and its position is saved. Grid "
+    L"arrangement ignores and does not move this widget type. Esc hides the clock and removes "
+    L"blackouts even when Settings is active.\r\n\r\nThe pointer hides after a short period of "
+    L"inactivity over monitor clocks and blacked-out monitors, and reappears when the mouse "
+    L"moves. It stays visible over the small preview while Settings is open.",
+    L"\r\n\r\nMONITOR CLOCK\r\nThe digital clock can fill one or more monitors and optionally "
+    L"black out the others. Font size is a percentage of monitor height; font, smoothing, colours "
+    L"and padding are also configurable. In UTC mode, UTC can be shown on a separate line. The "
+    L"default is white text on black. While Settings is open, the clock is always a small "
+    L"draggable preview that keeps the monitor aspect ratio, and its position is saved. Grid "
+    L"arrangement ignores and does not move this widget type. Esc hides the clock and removes "
+    L"blackouts even when Settings is active.\r\n\r\nThe pointer hides after a short period of "
+    L"inactivity over monitor clocks and blacked-out monitors, and reappears when the mouse "
+    L"moves. It stays visible over the small preview while Settings is open.",
     L"\r\n\r\nMONITORUHR\r\nDie Digitaluhr kann einen oder mehrere Monitore ausfüllen und die "
     L"übrigen optional abdunkeln. Die Schriftgröße ist ein Prozentsatz der Monitorhöhe; Schrift, "
     L"Glättung, Farben und Innenabstand sind ebenfalls einstellbar. Im UTC-Modus kann UTC in "
@@ -12084,6 +12102,13 @@ const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"nasconde dopo una breve inattività sugli orologi a schermo intero e sui monitor oscurati, e "
     L"riappare muovendo il mouse. Rimane visibile sulla piccola anteprima quando Impostazioni è "
     L"aperto.",
+    L"\r\n\r\nRELÓGIO NO MONITOR\r\nO relógio digital pode preencher um ou vários monitores e "
+    L"escurecer os restantes. A letra é uma percentagem da altura do monitor e também se "
+    L"configuram tipo de letra, suavização, cores e margem. Com as Definições abertas é sempre "
+    L"uma pequena pré-visualização arrastável. Esc oculta o relógio e remove o "
+    L"escurecimento.\r\n\r\nO ponteiro oculta-se após um curto período de inatividade sobre "
+    L"relógios de monitor e monitores escurecidos, e reaparece ao mover o rato. Permanece visível "
+    L"sobre a pequena pré-visualização com as Definições abertas.",
     L"\r\n\r\nZEGAR NA MONITORZE\r\nZegar cyfrowy może zająć jeden lub kilka monitorów i wygasić "
     L"pozostałe. Rozmiar czcionki jest procentem wysokości monitora; można też ustawić czcionkę, "
     L"wygładzanie, kolory i odstęp. W trybie UTC napis UTC można wyświetlić w osobnym wierszu. "
@@ -12102,31 +12127,25 @@ const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"Nastavení.\r\n\r\nNad celomonitorovými hodinami aj zatemnenými monitormi sa kurzor po "
     L"chvíli nečinnosti skryje a pri pohybe myši sa znovu objaví. Nad zmenšeným náhľadom v režime "
     L"Nastavenia zostáva viditeľný.",
-    L"\r\n\r\nMONITOR CLOCK\r\nThe digital clock can fill one or more monitors and optionally "
-    L"black out the others. Font size is a percentage of monitor height; font, smoothing, colours "
-    L"and padding are also configurable. In UTC mode, UTC can be shown on a separate line. The "
-    L"default is white text on black. While Settings is open, the clock is always a small "
-    L"draggable preview that keeps the monitor aspect ratio, and its position is saved. Grid "
-    L"arrangement ignores and does not move this widget type. Esc hides the clock and removes "
-    L"blackouts even when Settings is active.\r\n\r\nThe pointer hides after a short period of "
-    L"inactivity over monitor clocks and blacked-out monitors, and reappears when the mouse "
-    L"moves. It stays visible over the small preview while Settings is open.",
-    L"\r\n\r\nMONITOR CLOCK\r\nThe digital clock can fill one or more monitors and optionally "
-    L"black out the others. Font size is a percentage of monitor height; font, smoothing, colours "
-    L"and padding are also configurable. In UTC mode, UTC can be shown on a separate line. The "
-    L"default is white text on black. While Settings is open, the clock is always a small "
-    L"draggable preview that keeps the monitor aspect ratio, and its position is saved. Grid "
-    L"arrangement ignores and does not move this widget type. Esc hides the clock and removes "
-    L"blackouts even when Settings is active.\r\n\r\nThe pointer hides after a short period of "
-    L"inactivity over monitor clocks and blacked-out monitors, and reappears when the mouse "
-    L"moves. It stays visible over the small preview while Settings is open.",
-    L"\r\n\r\nRELÓGIO NO MONITOR\r\nO relógio digital pode preencher um ou vários monitores e "
-    L"escurecer os restantes. A letra é uma percentagem da altura do monitor e também se "
-    L"configuram tipo de letra, suavização, cores e margem. Com as Definições abertas é sempre "
-    L"uma pequena pré-visualização arrastável. Esc oculta o relógio e remove o "
-    L"escurecimento.\r\n\r\nO ponteiro oculta-se após um curto período de inatividade sobre "
-    L"relógios de monitor e monitores escurecidos, e reaparece ao mover o rato. Permanece visível "
-    L"sobre a pequena pré-visualização com as Definições abertas.",
+    L"\r\n\r\nSKÆRMUR\r\nDet digitale ur kan fylde en eller flere skærme og mørklægge de øvrige. "
+    L"Skriftstørrelsen er en procentdel af skærmhøjden; skrifttype, udjævning, farver og luft kan "
+    L"også indstilles. Når Indstillinger er åbent, vises altid en lille flytbar forhåndsvisning. "
+    L"Esc skjuler uret og fjerner mørklægningen.\r\n\r\nMarkøren skjules efter kort inaktivitet "
+    L"over skærmure og mørklagte skærme og vises igen, når musen bevæges. Den forbliver synlig "
+    L"over den lille forhåndsvisning, når Indstillinger er åbent.",
+    L"\r\n\r\nNÄYTTÖKELLO\r\nDigitaalinen kello voi täyttää yhden tai useita näyttöjä ja pimentää "
+    L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja "
+    L"täyttö voidaan määrittää. Kun Asetukset on avoinna, näytetään aina pieni siirrettävä "
+    L"esikatselu. Esc piilottaa kellon ja poistaa pimennyksen.\r\n\r\nOsoitin piilotetaan lyhyen "
+    L"käyttämättömyyden jälkeen näyttökellojen ja pimennettyjen näyttöjen päällä. Se palaa "
+    L"näkyviin hiirtä liikuttamalla. Pienen esikatselun päällä osoitin pysyy näkyvissä Asetusten "
+    L"ollessa auki.",
+    L"\r\n\r\nSKJÁKUKKA\r\nStafræna klukkan getur fyllt einn eða fleiri skjái og myrkvað hina. "
+    L"Leturstærð er hlutfall af hæð skjásins; einnig má stilla letur, jöfnun, liti og bil. Þegar "
+    L"Stillingar eru opnar birtist alltaf lítil færanleg forskoðun. Esc felur klukkuna og "
+    L"fjarlægir myrkvun.\r\n\r\nBendillinn felst eftir stutt aðgerðaleysi yfir skjáklukkum og "
+    L"myrkvuðum skjám og birtist aftur þegar músin hreyfist. Hann er sýnilegur yfir litlu "
+    L"forskoðuninni meðan Stillingar eru opnar.",
     L"\r\n\r\nSKJERMKLOKKE\r\nDen digitale klokken kan fylle én eller flere skjermer og mørklegge "
     L"resten. Skriftstørrelsen er en prosentandel av skjermhøyden; skrift, utjevning, farger og "
     L"luft kan også angis. Når Innstillinger er åpent, vises alltid en liten, flyttbar "
@@ -12140,25 +12159,6 @@ const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT] = {
     L"efter en kort stunds inaktivitet över skärmklockor och mörklagda skärmar och visas igen när "
     L"musen rör sig. Den förblir synlig över den lilla förhandsvisningen när Inställningar är "
     L"öppet.",
-    L"\r\n\r\nNÄYTTÖKELLO\r\nDigitaalinen kello voi täyttää yhden tai useita näyttöjä ja pimentää "
-    L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja "
-    L"täyttö voidaan määrittää. Kun Asetukset on avoinna, näytetään aina pieni siirrettävä "
-    L"esikatselu. Esc piilottaa kellon ja poistaa pimennyksen.\r\n\r\nOsoitin piilotetaan lyhyen "
-    L"käyttämättömyyden jälkeen näyttökellojen ja pimennettyjen näyttöjen päällä. Se palaa "
-    L"näkyviin hiirtä liikuttamalla. Pienen esikatselun päällä osoitin pysyy näkyvissä Asetusten "
-    L"ollessa auki.",
-    L"\r\n\r\nSKÆRMUR\r\nDet digitale ur kan fylde en eller flere skærme og mørklægge de øvrige. "
-    L"Skriftstørrelsen er en procentdel af skærmhøjden; skrifttype, udjævning, farver og luft kan "
-    L"også indstilles. Når Indstillinger er åbent, vises altid en lille flytbar forhåndsvisning. "
-    L"Esc skjuler uret og fjerner mørklægningen.\r\n\r\nMarkøren skjules efter kort inaktivitet "
-    L"over skærmure og mørklagte skærme og vises igen, når musen bevæges. Den forbliver synlig "
-    L"over den lille forhåndsvisning, når Indstillinger er åbent.",
-    L"\r\n\r\nSKJÁKUKKA\r\nStafræna klukkan getur fyllt einn eða fleiri skjái og myrkvað hina. "
-    L"Leturstærð er hlutfall af hæð skjásins; einnig má stilla letur, jöfnun, liti og bil. Þegar "
-    L"Stillingar eru opnar birtist alltaf lítil færanleg forskoðun. Esc felur klukkuna og "
-    L"fjarlægir myrkvun.\r\n\r\nBendillinn felst eftir stutt aðgerðaleysi yfir skjáklukkum og "
-    L"myrkvuðum skjám og birtist aftur þegar músin hreyfist. Hann er sýnilegur yfir litlu "
-    L"forskoðuninni meðan Stillingar eru opnar.",
     L"\r\n\r\nMONİTÖR SAATİ\r\nDijital saat bir veya daha fazla monitörü doldurabilir ve "
     L"diğerlerini karartabilir. Yazı tipi boyutu monitör yüksekliğinin yüzdesidir; yazı tipi, "
     L"kenar yumuşatma, renkler ve dolgu da ayarlanabilir. Ayarlar açıkken her zaman küçük, "
@@ -12341,6 +12341,10 @@ const wchar_t* ABOUT_TEXT[LANG_COUNT] = {
     L"plovoucích hodin a kalendářů.",
     L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently "
     L"configured floating clocks and calendars.",
+    L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently "
+    L"configured floating clocks and calendars.",
+    L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently "
+    L"configured floating clocks and calendars.",
     L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
     L"schwebende Uhren und Kalender.",
     L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et "
@@ -12349,26 +12353,22 @@ const wchar_t* ABOUT_TEXT[LANG_COUNT] = {
     L"flotantes configurados por separado.",
     L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
     L"configurati separatamente.",
+    L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
+    L"flutuantes configurados independentemente.",
     L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
     L"skonfigurowanych zegarów i kalendarzy.",
     L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
     L"plávajúcich hodín a kalendárov.",
-    L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently "
-    L"configured floating clocks and calendars.",
-    L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently "
-    L"configured floating clocks and calendars.",
-    L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
-    L"flutuantes configurados independentemente.",
+    L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med "
+    L"separate indstillinger.",
+    L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
+    L"kelluvalle kellolle ja kalenterille.",
+    L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
+    L"sjálfstæðum stillingum.",
     L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere "
     L"med separate innstillinger.",
     L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och "
     L"kalendrar med separata inställningar.",
-    L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
-    L"kelluvalle kellolle ja kalenterille.",
-    L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med "
-    L"separate indstillinger.",
-    L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
-    L"sjálfstæðum stillingum.",
     L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
     L"için yerel bir Win32 uygulaması.",
     L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -12415,19 +12415,19 @@ const wchar_t* ABOUT_VERSION_LABELS[LANG_COUNT] = {
     L"Verze:",
     L"Version:",
     L"Version:",
+    L"Version:",
+    L"Version:",
     L"Version :",
     L"Versión:",
     L"Versione:",
+    L"Versão:",
     L"Wersja:",
     L"Verzia:",
     L"Version:",
-    L"Version:",
-    L"Versão:",
+    L"Versio:",
+    L"Útgáfa:",
     L"Versjon:",
     L"Version:",
-    L"Versio:",
-    L"Version:",
-    L"Útgáfa:",
     L"Sürüm:",
     L"Versioon:",
     L"Leagan:",
@@ -12453,20 +12453,20 @@ const wchar_t* ABOUT_VERSION_LABELS[LANG_COUNT] = {
 const wchar_t* ABOUT_PLATFORM_LABELS[LANG_COUNT] = {
     L"Cílová platforma:",
     L"Target platform:",
+    L"Target platform:",
+    L"Target platform:",
     L"Zielplattform:",
     L"Plateforme cible :",
     L"Plataforma de destino:",
     L"Piattaforma di destinazione:",
+    L"Plataforma de destino:",
     L"Platforma docelowa:",
     L"Cieľová platforma:",
-    L"Target platform:",
-    L"Target platform:",
-    L"Plataforma de destino:",
-    L"Målplattform:",
-    L"Målplattform:",
-    L"Kohdealusta:",
     L"Målplatform:",
+    L"Kohdealusta:",
     L"Markvettvangur:",
+    L"Målplattform:",
+    L"Målplattform:",
     L"Hedef platform:",
     L"Sihtplatvorm:",
     L"Sprioc-ardán:",
@@ -12493,19 +12493,19 @@ const wchar_t* ABOUT_WEBSITE_LABELS[LANG_COUNT] = {
     L"Web:",
     L"Website:",
     L"Website:",
+    L"Website:",
+    L"Website:",
     L"Site web :",
     L"Sitio web:",
     L"Sito web:",
+    L"Site:",
     L"Witryna:",
     L"Web:",
-    L"Website:",
-    L"Website:",
-    L"Site:",
+    L"Websted:",
+    L"Verkkosivusto:",
+    L"Vefsvæði:",
     L"Nettsted:",
     L"Webbplats:",
-    L"Verkkosivusto:",
-    L"Websted:",
-    L"Vefsvæði:",
     L"Web sitesi:",
     L"Veebisait:",
     L"Suíomh gréasáin:",
@@ -12531,20 +12531,20 @@ const wchar_t* ABOUT_WEBSITE_LABELS[LANG_COUNT] = {
 const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT] = {
     L"Navštívit web",
     L"Visit website",
+    L"Visit website",
+    L"Visit website",
     L"Website besuchen",
     L"Visiter le site web",
     L"Visitar el sitio web",
     L"Visita il sito web",
+    L"Visitar o site",
     L"Odwiedź witrynę",
     L"Navštíviť web",
-    L"Visit website",
-    L"Visit website",
-    L"Visitar o site",
+    L"Besøg webstedet",
+    L"Käy verkkosivustolla",
+    L"Heimsækja vefsvæði",
     L"Besøk nettstedet",
     L"Besök webbplatsen",
-    L"Käy verkkosivustolla",
-    L"Besøg webstedet",
-    L"Heimsækja vefsvæði",
     L"Web sitesini ziyaret et",
     L"Ava veebisait",
     L"Oscail an suíomh gréasáin",
@@ -12570,20 +12570,20 @@ const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT] = {
 const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT] = {
     L"&Otevřít ve výchozím prohlížeči",
     L"&Open in default browser",
+    L"&Open in default browser",
+    L"&Open in default browser",
     L"Im Standardbrowser &öffnen",
     L"&Ouvrir dans le navigateur par défaut",
     L"&Abrir en el navegador predeterminado",
     L"&Apri nel browser predefinito",
+    L"&Abrir no navegador predefinido",
     L"&Otwórz w domyślnej przeglądarce",
     L"&Otvoriť v predvolenom prehliadači",
-    L"&Open in default browser",
-    L"&Open in default browser",
-    L"&Abrir no navegador predefinido",
+    L"&Åbn i standardbrowseren",
+    L"&Avaa oletusselaimessa",
+    L"&Opna í sjálfgefnum vafra",
     L"&Åpne i standardnettleseren",
     L"&Öppna i standardwebbläsaren",
-    L"&Avaa oletusselaimessa",
-    L"&Åbn i standardbrowseren",
-    L"&Opna í sjálfgefnum vafra",
     L"Varsayılan tarayıcıda &aç",
     L"&Ava vaikebrauseris",
     L"&Oscail sa bhrabhsálaí réamhshocraithe",
@@ -12609,20 +12609,20 @@ const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT] = {
 const wchar_t* COPY_URL_LABELS[LANG_COUNT] = {
     L"Kopírovat &adresu",
     L"Copy &URL",
+    L"Copy &URL",
+    L"Copy &URL",
     L"&URL kopieren",
     L"Copier l’&URL",
     L"Copiar &URL",
     L"Copia &URL",
+    L"Copiar &URL",
     L"Kopiuj &adres URL",
     L"Kopírovať &adresu",
-    L"Copy &URL",
-    L"Copy &URL",
-    L"Copiar &URL",
+    L"Kopiér &URL",
+    L"Kopioi &URL",
+    L"Afrita &vefslóð",
     L"Kopier &URL",
     L"Kopiera &URL",
-    L"Kopioi &URL",
-    L"Kopiér &URL",
-    L"Afrita &vefslóð",
     L"&URL'yi kopyala",
     L"Kopeeri &aadress",
     L"Cóipeáil an &seoladh",
@@ -12648,20 +12648,20 @@ const wchar_t* COPY_URL_LABELS[LANG_COUNT] = {
 const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT] = {
     L"Kopírovat &informace",
     L"Copy &information",
+    L"Copy &information",
+    L"Copy &information",
     L"&Informationen kopieren",
     L"Copier les &informations",
     L"Copiar &información",
     L"Copia &informazioni",
+    L"Copiar &informações",
     L"Kopiuj &informacje",
     L"Kopírovať &informácie",
-    L"Copy &information",
-    L"Copy &information",
-    L"Copiar &informações",
+    L"Kopiér &oplysninger",
+    L"Kopioi &tiedot",
+    L"Afrita &upplýsingar",
     L"Kopier &informasjon",
     L"Kopiera &information",
-    L"Kopioi &tiedot",
-    L"Kopiér &oplysninger",
-    L"Afrita &upplýsingar",
     L"&Bilgileri kopyala",
     L"Kopeeri &teave",
     L"Cóipeáil an &fhaisnéis",
@@ -12687,20 +12687,20 @@ const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT] = {
 const wchar_t* APPLICATION_TAB_LABELS[LANG_COUNT] = {
     L"Aplikace",
     L"Application",
+    L"Application",
+    L"Application",
     L"Anwendung",
     L"Application",
     L"Aplicación",
     L"Applicazione",
+    L"Aplicação",
     L"Aplikacja",
     L"Aplikácia",
-    L"Application",
-    L"Application",
-    L"Aplicação",
-    L"Program",
     L"Program",
     L"Sovellus",
-    L"Program",
     L"Forrit",
+    L"Program",
+    L"Program",
     L"Uygulama",
     L"Rakendus",
     L"Feidhmchlár",
@@ -12726,20 +12726,20 @@ const wchar_t* APPLICATION_TAB_LABELS[LANG_COUNT] = {
 const wchar_t* SNAP_TO_WORK_AREA_LABELS[LANG_COUNT] = {
     L"Přichytávat k okrajům plochy",
     L"Snap to work area edges",
+    L"Snap to work area edges",
+    L"Snap to work area edges",
     L"An Arbeitsbereichsrändern einrasten",
     L"Aligner sur les bords de la zone de travail",
     L"Ajustar a los bordes del área de trabajo",
     L"Aggancia ai bordi dell'area di lavoro",
+    L"Ajustar às margens da área de trabalho",
     L"Przyciągaj do krawędzi obszaru roboczego",
     L"Prichytávať k okrajom pracovnej plochy",
-    L"Snap to work area edges",
-    L"Snap to work area edges",
-    L"Ajustar às margens da área de trabalho",
+    L"Fastgør til arbejdsområdets kanter",
+    L"Kiinnitä työalueen reunoihin",
+    L"Festa við brúnir vinnusvæðis",
     L"Fest til kantene av arbeidsområdet",
     L"Fäst vid arbetsytans kanter",
-    L"Kiinnitä työalueen reunoihin",
-    L"Fastgør til arbejdsområdets kanter",
-    L"Festa við brúnir vinnusvæðis",
     L"Çalışma alanı kenarlarına yasla",
     L"Tõmba tööala servade külge",
     L"Léim go himill an limistéir oibre",
@@ -12765,20 +12765,20 @@ const wchar_t* SNAP_TO_WORK_AREA_LABELS[LANG_COUNT] = {
 const wchar_t* WARN_UNSAVED_CHANGES_LABELS[LANG_COUNT] = {
     L"Upozornit na neuložené změny",
     L"Warn about unsaved changes",
+    L"Warn about unsaved changes",
+    L"Warn about unsaved changes",
     L"Vor ungespeicherten Änderungen warnen",
     L"Avertir en cas de modifications non enregistrées",
     L"Advertir de cambios sin guardar",
     L"Avvisa in caso di modifiche non salvate",
+    L"Avisar sobre alterações não guardadas",
     L"Ostrzegaj o niezapisanych zmianach",
     L"Upozorniť na neuložené zmeny",
-    L"Warn about unsaved changes",
-    L"Warn about unsaved changes",
-    L"Avisar sobre alterações não guardadas",
+    L"Advar om ændringer, der ikke er gemt",
+    L"Varoita tallentamattomista muutoksista",
+    L"Vara við óvistuðum breytingum",
     L"Advar om ulagrede endringer",
     L"Varna för osparade ändringar",
-    L"Varoita tallentamattomista muutoksista",
-    L"Advar om ændringer, der ikke er gemt",
-    L"Vara við óvistuðum breytingum",
     L"Kaydedilmemiş değişiklikler için uyar",
     L"Hoiata salvestamata muudatuste eest",
     L"Tabhair rabhadh faoi athruithe gan sábháil",
@@ -12806,6 +12806,10 @@ const wchar_t* UNSAVED_SETTINGS_PROMPTS[LANG_COUNT] = {
     L"změny budou ztraceny.",
     L"Do you want to save changes to the settings before closing?\r\n\r\nIf you do not save them, "
     L"all unsaved changes will be lost.",
+    L"Do you want to save changes to the settings before closing?\r\n\r\nIf you do not save them, "
+    L"all unsaved changes will be lost.",
+    L"Do you want to save changes to the settings before closing?\r\n\r\nIf you do not save them, "
+    L"all unsaved changes will be lost.",
     L"Möchten Sie die Änderungen an den Einstellungen vor dem Schließen speichern?\r\n\r\nWenn "
     L"Sie sie nicht speichern, gehen alle ungespeicherten Änderungen verloren.",
     L"Voulez-vous enregistrer les modifications des paramètres avant de fermer ?\r\n\r\nSinon, "
@@ -12814,26 +12818,22 @@ const wchar_t* UNSAVED_SETTINGS_PROMPTS[LANG_COUNT] = {
     L"perderán todos los cambios sin guardar.",
     L"Salvare le modifiche alle impostazioni prima di chiudere?\r\n\r\nSe non vengono salvate, "
     L"tutte le modifiche non salvate andranno perse.",
+    L"Pretende guardar as alterações às definições antes de fechar?\r\n\r\nSe não as guardar, "
+    L"todas as alterações não guardadas serão perdidas.",
     L"Czy zapisać zmiany w ustawieniach przed zamknięciem?\r\n\r\nJeśli ich nie zapiszesz, "
     L"wszystkie niezapisane zmiany zostaną utracone.",
     L"Chcete pred zatvorením uložiť zmeny nastavení?\r\n\r\nAk ich neuložíte, všetky neuložené "
     L"zmeny sa stratia.",
-    L"Do you want to save changes to the settings before closing?\r\n\r\nIf you do not save them, "
-    L"all unsaved changes will be lost.",
-    L"Do you want to save changes to the settings before closing?\r\n\r\nIf you do not save them, "
-    L"all unsaved changes will be lost.",
-    L"Pretende guardar as alterações às definições antes de fechar?\r\n\r\nSe não as guardar, "
-    L"todas as alterações não guardadas serão perdidas.",
+    L"Vil du gemme ændringerne i indstillingerne, før du lukker?\r\n\r\nHvis du ikke gemmer dem, "
+    L"går alle ændringer, der ikke er gemt, tabt.",
+    L"Haluatko tallentaa asetuksiin tehdyt muutokset ennen sulkemista?\r\n\r\nJos et tallenna "
+    L"niitä, kaikki tallentamattomat muutokset menetetään.",
+    L"Viltu vista breytingar á stillingum áður en þú lokar?\r\n\r\nEf þú vistar þær ekki glatast "
+    L"allar óvistaðar breytingar.",
     L"Vil du lagre endringene i innstillingene før du lukker?\r\n\r\nHvis du ikke lagrer dem, går "
     L"alle ulagrede endringer tapt.",
     L"Vill du spara ändringarna i inställningarna innan du stänger?\r\n\r\nOm du inte sparar dem "
     L"går alla osparade ändringar förlorade.",
-    L"Haluatko tallentaa asetuksiin tehdyt muutokset ennen sulkemista?\r\n\r\nJos et tallenna "
-    L"niitä, kaikki tallentamattomat muutokset menetetään.",
-    L"Vil du gemme ændringerne i indstillingerne, før du lukker?\r\n\r\nHvis du ikke gemmer dem, "
-    L"går alle ændringer, der ikke er gemt, tabt.",
-    L"Viltu vista breytingar á stillingum áður en þú lokar?\r\n\r\nEf þú vistar þær ekki glatast "
-    L"allar óvistaðar breytingar.",
     L"Kapatmadan önce ayarlardaki değişiklikleri kaydetmek istiyor musunuz?\r\n\r\nKaydetmezseniz "
     L"kaydedilmemiş tüm değişiklikler kaybolacak.",
     L"Kas soovite enne sulgemist sätete muudatused salvestada?\r\n\r\nKui te neid ei salvesta, "
@@ -12891,8 +12891,7 @@ MonitorColumnText MonitorColumnsText(AppLanguage language) {
     };
 }
 
-/// Formats an initial additional-clock name; callers preserve stored empty names
-/// instead of replacing them.
+/// Formats an initial additional-clock name; callers preserve stored empty names instead of replacing them.
 std::wstring DefaultAdditionalClockName(AppLanguage language, int index) {
     wchar_t text[128] = {};
     swprintf_s(text, ADDITIONAL_CLOCK_NAME_FORMATS[language], index + 1);

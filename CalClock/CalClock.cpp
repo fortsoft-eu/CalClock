@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.1
+ * Last modified for version 1.6.1.0
  */
 
 #define NOMINMAX
@@ -390,46 +390,6 @@ const int ID_WEEK_NUMBERS = 3027;
 const int ID_WIDGET_ANTIALIAS = 3072;
 const int ID_WIDGET_DISABLE_THEMES = 3057;
 const int ID_WIDGET_LANGUAGE = 3018;
-
-/// Language order
-static const AppLanguage LANGUAGE_DISPLAY_ORDER[LANG_COUNT] = {
-    LANG_CS,
-    LANG_EN_US,
-    LANG_EN_GB,
-    LANG_EN_AU,
-    LANG_DE,
-    LANG_FR,
-    LANG_ES,
-    LANG_IT,
-    LANG_PT,
-    LANG_PL,
-    LANG_SK,
-    LANG_DA,
-    LANG_FI,
-    LANG_IS,
-    LANG_NB,
-    LANG_SV,
-    LANG_TR,
-    LANG_ET,
-    LANG_GA,
-    LANG_LT,
-    LANG_LV,
-    LANG_HU,
-    LANG_MT,
-    LANG_NL,
-    LANG_RO,
-    LANG_EL,
-    LANG_BS,
-    LANG_HR,
-    LANG_SL,
-    LANG_CNR,
-    LANG_BE,
-    LANG_BG,
-    LANG_MK,
-    LANG_SR,
-    LANG_UK,
-    LANG_RU
-};
 
 static_assert(ID_MENU_ARRANGE_WIDGETS < ID_MENU_DATE_FORMAT_BASE
     || ID_MENU_ARRANGE_WIDGETS >= ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT);
@@ -958,23 +918,9 @@ static bool WidgetSupportsSound(WidgetType type) {
     return type != WIDGET_CALENDAR;
 }
 
-/// Maps a language selector's display index to its stored language value, defaulting to US English.
+/// Returns the selected language; selector indices follow the language enum directly.
 static AppLanguage LanguageFromCombo(HWND combo) {
-    int selection = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
-    if (selection < 0 || selection >= LANG_COUNT) {
-        return LANG_EN_US;
-    }
-    return LANGUAGE_DISPLAY_ORDER[selection];
-}
-
-/// Finds a stored language in the selector's display order, defaulting to the US English entry.
-static int ComboIndexForLanguage(AppLanguage language) {
-    for (int index = 0; index < LANG_COUNT; index++) {
-        if (LANGUAGE_DISPLAY_ORDER[index] == language) {
-            return index;
-        }
-    }
-    return 1;
+    return static_cast<AppLanguage>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
 }
 
 /// Reads a valid stored antialiasing mode from the selected item's data, or returns defaultValue.
@@ -1013,8 +959,7 @@ static void PopulateFontAntialiasingCombo(HWND combo) {
 
 /// Adds supported language names in their defined display order.
 static void PopulateLanguageCombo(HWND combo) {
-    for (int index = 0; index < LANG_COUNT; index++) {
-        AppLanguage language = LANGUAGE_DISPLAY_ORDER[index];
+    for (int language = 0; language < LANG_COUNT; language++) {
         SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LANGUAGE_NAMES[language]));
     }
 }
@@ -10780,7 +10725,7 @@ static void LoadDraftIntoControls() {
     SetCheck(hUtcCheck, config.showUtc);
     SetCheck(hUtcTextCheck, config.showUtcText);
     SetComboSelection(hTimeFormatCombo, config.timeFormat);
-    SetComboSelection(hWidgetLanguageCombo, ComboIndexForLanguage(config.language));
+    SetComboSelection(hWidgetLanguageCombo, config.language);
     SelectTimeZoneInCombo(config.timeZoneKey);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         const AdditionalClockConfig& clock = config.additionalClocks[index];
@@ -12929,7 +12874,7 @@ static bool CreateSettingsControls() {
     hLanguageCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST, 174, 78, 244, 220,
         hApplicationPage, ID_LANGUAGE, &applicationControls, appLanguageLabel);
     PopulateLanguageCombo(hLanguageCombo);
-    SendMessageW(hLanguageCombo, CB_SETCURSEL, ComboIndexForLanguage(appLanguage), 0);
+    SendMessageW(hLanguageCombo, CB_SETCURSEL, appLanguage, 0);
     HWND timeSignalSoundLabel = AddUnderlayStatic(hApplicationPage, TIME_SIGNAL_SOUND_LABELS[appLanguage],
         WS_VISIBLE, 8, 112, 22, &applicationControls);
     hTimeSignalSoundCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST, 174, 112, 136, 100,

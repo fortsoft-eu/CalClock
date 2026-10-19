@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.1
+ * Last modified for version 1.6.1.0
  */
 
 #pragma once
@@ -101,20 +101,20 @@ enum FontAntialiasing {
 enum AppLanguage {
     LANG_CS,
     LANG_EN_US,
+    LANG_EN_GB,
+    LANG_EN_AU,
     LANG_DE,
     LANG_FR,
     LANG_ES,
     LANG_IT,
+    LANG_PT,
     LANG_PL,
     LANG_SK,
-    LANG_EN_GB,
-    LANG_EN_AU,
-    LANG_PT,
+    LANG_DA,
+    LANG_FI,
+    LANG_IS,
     LANG_NB,
     LANG_SV,
-    LANG_FI,
-    LANG_DA,
-    LANG_IS,
     LANG_TR,
     LANG_ET,
     LANG_GA,
