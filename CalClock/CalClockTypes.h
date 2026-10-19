@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #pragma once
@@ -416,11 +416,4 @@ struct Widget {
     ULONGLONG copyTooltipEndTick = 0;
     ULONGLONG lastAnalogClickTick = 0;
     POINT lastAnalogClickPoint = {};
-};
-
-/// Describes a display's screen rectangle, device name, and primary-monitor flag.
-struct DisplayMonitor {
-    RECT rect = {};
-    std::wstring device;
-    bool primary = false;
 };

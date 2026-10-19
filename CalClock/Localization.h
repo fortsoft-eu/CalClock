@@ -21,12 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #pragma once
 
 #include "CalClockTypes.h"
+
+/// Localized monitor-detail column captions and bit-depth formats.
+struct MonitorColumnText {
+    const wchar_t* model;
+    const wchar_t* refreshRate;
+    const wchar_t* bitDepth;
+    const wchar_t* colorFormat;
+    const wchar_t* colorSpace;
+    const wchar_t* channelDepth;
+    const wchar_t* pixelDepth;
+};
 
 extern const wchar_t* TEXT[LANG_COUNT][TXT_COUNT];
 extern const wchar_t* LANGUAGE_NAMES[LANG_COUNT];
@@ -144,6 +155,9 @@ extern const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT];
 extern const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_URL_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT];
+
+/// Returns localized monitor-detail column captions and bit-depth formats.
+MonitorColumnText MonitorColumnsText(AppLanguage language);
 
 /// Returns the localized initial text for a newly created additional clock.
 std::wstring DefaultAdditionalClockName(AppLanguage language, int index);

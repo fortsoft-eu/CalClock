@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #define NOMINMAX
@@ -241,14 +241,14 @@ std::wstring MonitorRefreshRateText(const MonitorDetails& details) {
 
 /// Formats channel depth when available, otherwise explicitly identifies legacy pixel depth.
 std::wstring MonitorBitDepthText(const MonitorDetails& details, AppLanguage language) {
-    const wchar_t* const* formats = MONITOR_DEPTH_FORMATS[language];
+    const MonitorColumnText& strings = MonitorColumnsText(language);
     wchar_t value[64]{};
     if (details.bitsPerColor != 0) {
-        swprintf_s(value, formats[0], details.bitsPerColor);
+        swprintf_s(value, strings.channelDepth, details.bitsPerColor);
         return value;
     }
     if (details.bitsPerPixel != 0) {
-        swprintf_s(value, formats[1], details.bitsPerPixel);
+        swprintf_s(value, strings.pixelDepth, details.bitsPerPixel);
         return value;
     }
     return L"—";

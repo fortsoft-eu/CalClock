@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #include "Localization.h"
@@ -12875,6 +12875,21 @@ const wchar_t* UNSAVED_SETTINGS_PROMPTS[LANG_COUNT] = {
     L"Сохранить изменения настроек перед закрытием?\r\n\r\nЕсли их не сохранить, все несохранённые "
     L"изменения будут потеряны."
 };
+
+/// Returns localized monitor-detail column captions and bit-depth formats.
+MonitorColumnText MonitorColumnsText(AppLanguage language) {
+    const wchar_t* const* headings = MONITOR_COLUMN_LABELS[language];
+    const wchar_t* const* formats = MONITOR_DEPTH_FORMATS[language];
+    return MonitorColumnText{
+        headings[1],
+        headings[3],
+        headings[4],
+        headings[5],
+        headings[6],
+        formats[0],
+        formats[1]
+    };
+}
 
 /// Formats an initial additional-clock name; callers preserve stored empty names
 /// instead of replacing them.

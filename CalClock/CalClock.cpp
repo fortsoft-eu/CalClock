@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #define NOMINMAX
@@ -1264,6 +1264,7 @@ static BOOL CALLBACK CollectDisplayMonitor(HMONITOR monitor, HDC, LPRECT, LPARAM
     if (monitors != nullptr && GetMonitorInfoW(monitor, &information)) {
         DisplayMonitor item = {};
         item.rect = information.rcMonitor;
+        item.work = information.rcWork;
         item.device = information.szDevice;
         item.primary = (information.dwFlags & MONITORINFOF_PRIMARY) != 0;
         monitors->push_back(item);

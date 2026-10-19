@@ -21,18 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.0.1
  */
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include "Localization.h"
+#include <windows.h>
 #include <dxgi1_6.h>
+#include <string>
+#include <vector>
 
-/// Current monitor metadata, retaining unknown values when Windows cannot report them.
+/// Geometry and device identity of one enumerated display monitor.
+struct DisplayMonitor {
+    RECT rect{};
+    RECT work{};
+    std::wstring device;
+    bool primary = false;
+};
+
+/// Current monitor metadata, retaining unknown values when the operating system cannot report them.
 struct MonitorDetails {
     std::wstring model;
-    DISPLAYCONFIG_RATIONAL refreshRate = {};
+    DISPLAYCONFIG_RATIONAL refreshRate{};
     UINT bitsPerColor = 0;
     UINT bitsPerPixel = 0;
     DISPLAYCONFIG_COLOR_ENCODING colorEncoding = DISPLAYCONFIG_COLOR_ENCODING_FORCE_UINT32;
