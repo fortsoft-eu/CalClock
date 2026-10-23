@@ -20,6 +20,8 @@ Ure in plošče podpirajo budilko. Program sam predvaja zvočno datoteko enkrat 
 
 Čas budilke sprejema HH:mm z dvopičjem, piko, presledkom ali drugim ločilom, lahko tudi brez ločila. Ena ali dve števki pomenita ure, tri ali štiri pa ure in minute: 7, 12, 730, 0730 ali 7:30. Po odhodu iz polja se vrednost poenoti v HH:mm. Odmik se bere z desne, od sekund: 2 pomeni 00:00:02.00, 230 in 0230 pomenita 00:02:30.00, 12345 pa 01:23:45.00. Z ločili dve skupini pomenita minute in sekunde, tri ure, minute in sekunde, četrta pa stotinke; dovoljen je predznak. Dnevi pod Budilka vključena določajo dneve sprožitve; privzeto so izbrani vsi. Vrstni red sledi jeziku programa, sprememba jezika pa ne spremeni shranjenih dni. Budilka pokaže skriti gradnik in ga postavi v ospredje brez trajne spremembe Vedno na vrhu. Predvajaj časovni signal začne prvi kratek pisk pet sekund pred budilko. Nastavitev je neodvisna od zavihka Signal; sočasna zaporedja se združijo. Preizkusi sproži utripanje številčnice ali okvira ter preveri datoteko, ukaz, zvok, naslov HTTP/HTTPS oddaljenega skripta in po potrebi celoten časovni signal. Ustavitev preizkusa ustavi njegov notranji zvok in poskusni signal; ustavitev budilke ustavi njen notranji zvok. Izklop zvoka ne ustavi predvajanja: nadaljuje se neslišno in po vklopu spet postane slišno. Ukazi in oddaljeni skripti niso prizadeti.
 
+Zvočni signali budilke se načrtujejo glede na dejanski trenutek naslednje budilke po pretvorbi časovnega pasu in upoštevanju odmika gradnika. Začnejo se pet dejanskih sekund prej, tudi če prikazana ura preskoči neposredno na čas budilke. Spomladi preskočeni čas budilke ne sproži ne budilke ne njenih signalov. V jeseni ponovljeni uri se budilka in njeni signali sprožijo samo enkrat za isti datum in nastavljeni čas.
+
 Drsnik Glasnost zvoka na zavihku Budilka uravnava notranje predvajanje za posamezni gradnik. Privzetih −18 dB ohrani izvirno raven datoteke (100%). Pomik v desno ojača zvok; največjih 0 dB pomeni približno 794%. −∞ dB pomeni tišino. Spremembe se slišijo tudi med preizkusom. MIDI in datoteke, ki jih ni mogoče dekodirati in se predvajajo z nadomestnim načinom, so omejene na 100%.
 
 ## Izbiranje, tipke in kopiranje datuma
@@ -63,6 +65,10 @@ Sekundni kazalec preklopi le dvoklik neposredno na glavno številčnico. Meniji 
 ## Oblika časa in časovni pasovi
 
 Oblika časa na zavihku Splošno ponuja Glede na jezik (privzeto), 12 ur in 24 ur. Privzeta možnost sledi jeziku gradnika, ročna izbira pa ostane tudi po spremembi jezika. Ločila in časovne oznake sledijo jeziku. AM/PM je privzeto označen in določa le prikaz oznake v 12-urnem načinu. Če jezik nima svoje oznake, se uporabi AM/PM. Ure na zaslonu jo kažejo v ločeni vrstici pod časom. UTC vedno uporablja 24-urni prikaz. Imenovani pasovi sledijo krajevnemu času in poletnemu času; odmik ob imenu velja za trenutni datum. Samostojne izbire UTC so stalni odmiki od -12:00 do +14:00 v korakih po 15 minut brez poletnega časa.
+
+Novi gradniki privzeto uporabljajo **Trenutni časovni pas sistema Windows**, ki sledi trenutnemu časovnemu pasu sistema Windows in nastavitvi samodejnega poletnega časa. Obstoječi gradniki ohranijo izbrane pasove. Ta možnost določa časovni pas; skupni vir časa Windows ali NTP ostane neodvisen.
+
+Odmik gradnika se prišteje času UTC pred pretvorbo v njegov časovni pas, zato premakne tudi trenutek prehoda na poletni ali standardni čas. Ura, ki prehiteva za deset sekund, preide deset sekund prej; ura, ki zaostaja za deset sekund, preide deset sekund pozneje. Kazalci, digitalni prikaz, datumi koledarja, budilke in časovni signali uporabljajo tako dobljeni čas.
 
 ## Vir časa
 

@@ -88,9 +88,13 @@ Zatržítko **AM/PM** je ve výchozím stavu zaškrtnuté. Vypnutí skryje znač
 
 Pojmenovaná časová pásma zobrazují občanský čas vybraného místa a automaticky zohledňují tamní pravidla letního času. Offset u každého názvu odpovídá aktuálnímu datu a obnovuje se při otevření seznamu. Samostatné položky **UTC** poskytují pevné offsety od **UTC−12:00** do **UTC+14:00** po 15 minutách bez změn letního času. Pro každý widget lze nezávisle zvolit místní pásmo, libovolné jiné pojmenované pásmo nebo pevný offset UTC.
 
+Nové widgety mají výchozí volbu **Aktuální časové pásmo Windows**, která sleduje aktuální systémové pásmo i nastavení automatického letního času. Existující widgety si zachovávají zvolená pásma. Tato volba určuje časové pásmo; společný zdroj času Windows nebo NTP zůstává nezávislý.
+
 Každý widget může používat libovolné časové pásmo Windows a offset se znaménkem ve tvaru `[-]HH:mm:ss.ff`. Kompaktní zápis offsetu se vyhodnocuje zprava, počínaje sekundami.
 
 Offset je vhodný například v rozhlasovém či televizním studiu ke kompenzaci zpoždění přenosové trasy. Předsunutí studiových hodin o naměřené zpoždění umožní, aby jejich časové znamení dorazilo k posluchačům ve správný okamžik.
+
+Offset widgetu se přičítá k UTC před převodem do časového pásma, takže posouvá i okamžik přechodu na letní nebo pásmový čas. Hodiny předsunuté o deset sekund přejdou o deset sekund dříve; hodiny zpožděné o deset sekund přejdou o deset sekund později. Výsledný čas používají ručičky, digitální údaj, datum kalendáře, budík i časové znamení.
 
 Na kartě Čas lze pro celou aplikaci, tedy společně pro všechny widgety, vybrat systémový čas Windows nebo čas ze zadaných serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; systémové hodiny Windows se nikdy nemění. Dokud nebyl získán platný údaj, používá se systémový čas. NTP je výchozí. Automatická sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětový fond. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat nyní spustí nové měření okamžitě.
 
@@ -103,6 +107,8 @@ Odchylky se zobrazují v milisekundách se čtyřmi desetinnými místy. Kladná
 Uložit log uloží záznamy do CSV včetně odchylek a důvodů chyb. Záznamy se mezi spuštěními neuchovávají; chcete-li je zachovat, uložte je před ukončením aplikace.
 
 Hodinové widgety podporují budíky pro samostatně vybrané dny v týdnu; ve výchozím stavu je zapnuto všech sedm dnů. Budík zobrazí svůj skrytý widget a přenese jej před ostatní okna, aniž by trvale změnil jeho nastavení vždy navrchu. Soubory WAV, MP3, WMA, MIDI, AAC, M4A a FLAC jsou rozpoznávány pro interní jednorázové nebo opakované přehrávání; skutečnou podporu dekódování poskytují multimediální součásti nainstalované ve Windows. Ostatní soubory a příkazy se předávají Windows asynchronně. Budík může také zavolat adresu HTTP nebo HTTPS. Nezávisle na těchto akcích může budík používat šestipípové časové znamení, jehož první krátké pípnutí zazní pět sekund před nastaveným časem budíku.
+
+Pípání budíku se plánuje podle skutečného nadcházejícího času budíku po převodu do pásma a započtení offsetu widgetu. Začíná pět skutečných sekund před tímto okamžikem, i když hodiny skočí přímo na nastavený čas budíku. Pro přeskočený jarní čas se nespustí budík ani jeho pípání. Při podzimním opakování hodiny se budík i jeho pípání spustí pouze jednou pro stejné datum a nastavený čas.
 
 Tlačítko Test u budíku zobrazí náhled vizuální signalizace a asynchronně otestuje nastavený soubor, příkaz, zvuk i adresu vzdáleného skriptu. Je-li zvoleno časové znamení budíku, Test přehraje také celou šestipípovou sekvenci; Zastavit test ukončí interní zvuk a náhled znamení.
 

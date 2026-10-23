@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.0
+ * Last modified for version 1.6.1.1
  */
 
 #define NOMINMAX
@@ -186,8 +186,8 @@ struct CalendarSizeEntry {
     SIZE size;
 };
 
-/// Contains the panel's client size and rectangles for its header, calendar, clock faces, captions, times, days,
-/// and footer.
+/// Contains the panel's client size and rectangles for its header, calendar, clock faces, captions, times, days, and
+/// footer.
 struct PanelLayout {
     SIZE clientSize = {};
     RECT header = {};
@@ -1412,7 +1412,7 @@ static WidgetConfig DefaultConfig(WidgetType type, int index) {
     config.showUtc = false;
     config.showUtcText = false;
     config.language = appLanguage;
-    config.timeZoneKey = GetSystemTimeZoneKey(timeZones);
+    config.timeZoneKey = SYSTEM_TIME_ZONE_KEY;
     for (int clockIndex = 0; clockIndex < ADDITIONAL_CLOCK_COUNT; clockIndex++) {
         AdditionalClockConfig& clock = config.additionalClocks[clockIndex];
         clock.name = DefaultAdditionalClockName(config.language, clockIndex);
@@ -1672,6 +1672,10 @@ static WidgetConfig CreateStoredWidgetDefaults(WidgetType type, int index, AppLa
     appFontAntialiasing = savedFontAntialiasing;
     config.language = language;
     config.fontAntialiasing = std::clamp(fontAntialiasing, 0, FONT_ANTIALIAS_COUNT - 1);
+    config.timeZoneKey = GetSystemTimeZoneKey(timeZones);
+    for (AdditionalClockConfig& clock : config.additionalClocks) {
+        clock.timeZoneKey = config.timeZoneKey;
+    }
     return config;
 }
 
@@ -1740,6 +1744,12 @@ static bool SetStartWithWindowsEnabled(bool enabled) {
 /// Loads language, time zones, and persisted XML or registry settings.
 /// Removes a stale Windows startup entry and creates an initial analog widget if no stored settings can be loaded.
 static void LoadAllSettings() {
+    for (PersistWindowState* placement : { &settingsWindowState, &helpWindowState, &aboutWindowState }) {
+        placement->SetSavingOptions(PersistWindowStateSavingOptions::None);
+        placement->SetDetectionOptions(WindowDetectionOptions::NoDetection);
+        placement->SetUseWindowsDefaultLocation(false);
+        placement->SetUseWindowsDefaultSize(false);
+    }
     SelectSystemLanguage();
     startWithWindows = false;
     ntpPreset = NTP_PRESET_AUTO;
@@ -2043,13 +2053,13 @@ static ULONGLONG GetApplicationFileTimeValue() {
     return static_cast<ULONGLONG>(static_cast<LONGLONG>(now) + GetApplicationTimeOffset(now));
 }
 
-/// Calculates the next refresh delay from visible widgets' second boundaries, including NTP and fractional offsets.
+/// Calculates the next refresh delay from visible widgets and enabled alarms, including NTP and fractional offsets.
 /// Keeps maintenance responsive and respects the minimum interval of the Windows UI timer.
 static UINT WidgetRefreshDelay(ULONGLONG applicationNow) {
     UINT delay = REFRESH_MAX_INTERVAL;
     LONGLONG applicationPhase = static_cast<LONGLONG>(applicationNow % REFRESH_SECOND_TICKS);
     for (const std::unique_ptr<Widget>& widget : widgets) {
-        if (!widget->config.visible) {
+        if (!widget->config.visible && !widget->config.alarmEnabled) {
             continue;
         }
         LONGLONG phase = applicationPhase + widget->config.offsetMilliseconds % 1000 * REFRESH_MILLISECOND_TICKS;
@@ -2083,21 +2093,22 @@ static void GetApplicationUtcTime(SYSTEMTIME* utc) {
     FileTimeToSystemTime(&fileTime, utc);
 }
 
-/// Converts application UTC to the widget's selected zone or UTC, then applies its millisecond offset.
+/// Applies the widget's millisecond offset to application UTC, then converts to the selected zone or UTC.
 /// Uses the current application time when applicationUtc is zero.
 static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, ULONGLONG applicationUtc = 0) {
-    SYSTEMTIME utc = {};
-    if (applicationUtc == 0) {
-        GetApplicationUtcTime(&utc);
+    ULARGE_INTEGER value = {};
+    value.QuadPart = applicationUtc == 0 ? GetApplicationFileTimeValue() : applicationUtc;
+    LONGLONG current = static_cast<LONGLONG>(value.QuadPart);
+    if (config.offsetMilliseconds > (LLONG_MAX - current) / 10000) {
+        value.QuadPart = LLONG_MAX;
+    } else if (config.offsetMilliseconds < -current / 10000) {
+        value.QuadPart = 0;
     } else {
-        ULARGE_INTEGER value = {};
-        value.QuadPart = applicationUtc;
-        FILETIME fileTime = {
-            value.LowPart,
-            value.HighPart
-        };
-        FileTimeToSystemTime(&fileTime, &utc);
+        value.QuadPart = static_cast<ULONGLONG>(current + config.offsetMilliseconds * 10000);
     }
+    FILETIME fileTime = { value.LowPart, value.HighPart };
+    SYSTEMTIME utc = {};
+    FileTimeToSystemTime(&fileTime, &utc);
     if (config.showUtc) {
         *displayed = utc;
     } else {
@@ -2112,22 +2123,6 @@ static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, 
             SystemTimeToTzSpecificLocalTime(nullptr, &utc, displayed);
         }
     }
-    FILETIME fileTime = {};
-    SystemTimeToFileTime(displayed, &fileTime);
-    ULARGE_INTEGER value = {};
-    value.LowPart = fileTime.dwLowDateTime;
-    value.HighPart = fileTime.dwHighDateTime;
-    LONGLONG current = static_cast<LONGLONG>(value.QuadPart);
-    if (config.offsetMilliseconds > (LLONG_MAX - current) / 10000) {
-        value.QuadPart = LLONG_MAX;
-    } else if (config.offsetMilliseconds < -current / 10000) {
-        value.QuadPart = 0;
-    } else {
-        value.QuadPart = static_cast<ULONGLONG>(current + config.offsetMilliseconds * 10000);
-    }
-    fileTime.dwLowDateTime = value.LowPart;
-    fileTime.dwHighDateTime = value.HighPart;
-    FileTimeToSystemTime(&fileTime, displayed);
 }
 
 /// Converts SYSTEMTIME fields to FILETIME ticks without changing their time zone; returns zero on conversion failure.
@@ -2294,24 +2289,26 @@ static void CheckTimeSignals() {
         }
         displayedValue += applicationNow % 10000;
         ULONGLONG target = 0;
-        if (regularSignal && CalculateTimeSignalTarget(displayedValue, timelineNow,
-            static_cast<TimeSignalMode>(mode), &target)) {
+        if (!CalculateTimeSignalTarget(displayedValue, timelineNow, TIME_SIGNAL_EVERY_MINUTE, &target)) {
+            continue;
+        }
+        SYSTEMTIME targetDisplayedTime = {};
+        GetDisplayedTime(widget->config, &targetDisplayedTime, applicationNow + target - timelineNow);
+        ULONGLONG targetDisplayedValue = SystemTimeValue(targetDisplayedTime);
+        if (targetDisplayedValue == 0) {
+            continue;
+        }
+        if (regularSignal && IsTimeSignalBoundary(targetDisplayedValue, static_cast<TimeSignalMode>(mode))) {
             candidates.push_back(TimeSignalCandidate{ target, true, widget->config.id });
         }
-        if (alarmSignal && CalculateAlarmTimeSignalTarget(displayedValue, timelineNow,
-            widget->config.alarmHour, widget->config.alarmMinute, &target)) {
-            bool enabledOnTargetDay = false;
-            if (target >= timelineNow) {
-                ULARGE_INTEGER targetDisplayedValue = {};
-                targetDisplayedValue.QuadPart = displayedValue + target - timelineNow;
-                FILETIME targetDisplayedFileTime = {};
-                targetDisplayedFileTime.dwLowDateTime = targetDisplayedValue.LowPart;
-                targetDisplayedFileTime.dwHighDateTime = targetDisplayedValue.HighPart;
-                SYSTEMTIME targetDisplayedTime = {};
-                enabledOnTargetDay = FileTimeToSystemTime(&targetDisplayedFileTime, &targetDisplayedTime)
-                    && AlarmEnabledOnDay(widget->config, targetDisplayedTime.wDayOfWeek);
-            }
-            if (enabledOnTargetDay) {
+        if (alarmSignal) {
+            int targetDate = targetDisplayedTime.wYear * 10000 + targetDisplayedTime.wMonth * 100
+                + targetDisplayedTime.wDay;
+            int targetMinute = targetDisplayedTime.wHour * 60 + targetDisplayedTime.wMinute;
+            if (AlarmEnabledOnDay(widget->config, targetDisplayedTime.wDayOfWeek)
+                    && targetDisplayedTime.wHour == widget->config.alarmHour
+                    && targetDisplayedTime.wMinute == widget->config.alarmMinute
+                    && (widget->lastAlarmDate != targetDate || widget->lastAlarmMinute != targetMinute)) {
                 candidates.push_back(TimeSignalCandidate{ target, false, widget->config.id });
             }
         }
@@ -3672,19 +3669,6 @@ static void AlignSettingsSundayFirst(HWND reference, LONG baselineDistance = 0) 
     }
     LONG top = bounds.top + GetSettingsControlBaselineAdjustment(hSundayFirstCheck, reference, baselineDistance);
     SetControlPosition(hSundayFirstCheck, x, top, width, bounds.bottom - bounds.top);
-}
-
-/// Finds the label explicitly associated with a settings field in its parent page.
-static HWND GetSettingsFieldLabel(HWND field) {
-    if (field == nullptr) {
-        return nullptr;
-    }
-    for (HWND label = GetWindow(GetParent(field), GW_CHILD); label != nullptr; label = GetWindow(label, GW_HWNDNEXT)) {
-        if (GetPropW(label, SETTINGS_FIELD_LABEL_PROPERTY) == field) {
-            return label;
-        }
-    }
-    return nullptr;
 }
 
 /// Aligns a volume value to its fixed label and moves its slider by the same baseline adjustment.
@@ -5098,7 +5082,9 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
         ARRAYSIZE(dateText), nullptr);
     UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, layout.header);
     std::wstring zoneName = widget->config.showUtc ? L"UTC" : widget->config.timeZoneKey;
-    if (!widget->config.showUtc) {
+    if (!widget->config.showUtc && _wcsicmp(widget->config.timeZoneKey.c_str(), SYSTEM_TIME_ZONE_KEY) == 0) {
+        zoneName = SYSTEM_TIME_ZONE_LABELS[widget->config.language];
+    } else if (!widget->config.showUtc) {
         for (size_t index = 0; index < timeZones.size(); index++) {
             if (_wcsicmp(timeZones[index].TimeZoneKeyName, widget->config.timeZoneKey.c_str()) == 0) {
                 zoneName = timeZones[index].StandardName;
@@ -6468,11 +6454,14 @@ static void RefreshFullscreenPresentation() {
     }
 }
 
-/// Destroys and rebuilds every widget window, then refreshes the fullscreen presentation.
+/// Rebuilds widget windows after a display change while preserving alarms, then refreshes fullscreen presentation.
 static void RecreateAllWidgetWindows() {
-    DestroyWidgetWindows();
-    for (size_t index = 0; index < widgets.size(); index++) {
-        CreateWidgetWindow(widgets[index].get());
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        if (widget->window == nullptr) {
+            CreateWidgetWindow(widget.get());
+        } else {
+            RecreateWidgetForConfiguration(widget.get(), widget->config);
+        }
     }
     RefreshFullscreenPresentation();
 }
@@ -10561,6 +10550,9 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
     bool changed = SendMessageW(combo, CB_GETCOUNT, 0, 0) != static_cast<LRESULT>(timeZones.size());
     for (size_t index = 0; index < timeZones.size(); index++) {
         std::wstring label = TimeZoneDisplayName(timeZones[index], utc);
+        if (_wcsicmp(timeZones[index].TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
+            label = std::wstring(SYSTEM_TIME_ZONE_LABELS[appLanguage]) + L" (" + label + L")";
+        }
         if (!changed) {
             int length = static_cast<int>(SendMessageW(combo, CB_GETLBTEXTLEN, index, 0));
             if (length != static_cast<int>(label.size())
@@ -12552,9 +12544,9 @@ static bool CreateSettingsControls() {
     }
     SetWindowLongPtrW(hAppearancePage, GWL_EXSTYLE, GetWindowLongPtrW(hAppearancePage, GWL_EXSTYLE) | WS_EX_COMPOSITED);
     int left = 8;
-    int label = 162;
+    int labelWidth = 162;
     int field = 244;
-    int fieldLeft = left + label + 4;
+    int fieldLeft = left + labelWidth + 4;
     HWND nameLabel = AddStatic(hGeneralPage, TXT_NAME, left, 10, 22, &generalControls);
     hNameEdit = AddControl(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL, fieldLeft, 6, field, 24,
         hGeneralPage, ID_NAME, &generalControls, nameLabel);
@@ -12958,8 +12950,8 @@ static bool CreateSettingsControls() {
     UpdateSettingsActionButtonWidths();
     UpdateApplicationControlWidths();
     UpdateSettingsTextControlLayout(hSettings);
-    for (int tab = 0; tab < SETTINGS_TAB_COUNT; tab++) {
-        UpdateSettingsTextControlLayout(GetSettingsPage(tab));
+    for (int tabIndex = 0; tabIndex < SETTINGS_TAB_COUNT; tabIndex++) {
+        UpdateSettingsTextControlLayout(GetSettingsPage(tabIndex));
     }
     InitializeSettingsScrollBars();
     ApplyUiStyle(hSettings);
@@ -13282,7 +13274,7 @@ static void ShowSettingsWindow(int widgetId) {
         ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
     }
     UpdateSettingsApplyButton();
-    if (!settingsWindowState.Attach(hSettings)) {
+    if (!settingsWindowState.Attach(hSettings, "Settings")) {
         CloseSettingsWindow();
         return;
     }
@@ -13630,17 +13622,50 @@ static SIZE InformationTextSize(HWND control) {
     return size;
 }
 
-/// Fits the About dialog to its native dialog-unit layout, wrapped description, and single-line website row.
+/// Measures native dialog base units from the information window's interface font.
+static bool InformationDialogBaseUnits(HFONT font, SIZE* units) {
+    HDC dc = GetDC(nullptr);
+    if (dc == nullptr) {
+        return false;
+    }
+    HGDIOBJ previous = font == nullptr ? nullptr : SelectObject(dc, font);
+    SIZE alphabet = {};
+    TEXTMETRICW metrics = {};
+    bool measured = GetTextExtentPoint32W(dc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &alphabet)
+        && GetTextMetricsW(dc, &metrics);
+    if (measured) {
+        units->cx = (alphabet.cx / 26 + 1) / 2;
+        units->cy = metrics.tmHeight;
+    }
+    if (previous != nullptr) {
+        SelectObject(dc, previous);
+    }
+    ReleaseDC(nullptr, dc);
+    return measured;
+}
+
+/// Fits the About dialog to current-font icon margins, a mirrored header gap, and a single-line website row.
 /// Keeps the default dialog height and gives the remaining space above Close to the license text.
 static void LayoutAboutWindow(HWND window, bool resize) {
     const InformationWindowLayout& layout = aboutWindowLayout;
+    HWND icon = GetDlgItem(window, ID_INFO_ICON);
+    HWND product = GetDlgItem(window, ID_INFO_PRODUCT);
     HWND website = GetDlgItem(window, ID_INFO_WEBSITE);
     HWND link = GetDlgItem(window, ID_INFO_LINK);
+    HFONT font = hUiFont == nullptr ? reinterpret_cast<HFONT>(SendMessageW(window, WM_GETFONT, 0, 0)) : hUiFont;
+    SIZE units = {};
+    if (!InformationDialogBaseUnits(font, &units)) {
+        return;
+    }
     SIZE websiteSize = InformationTextSize(website);
     SIZE linkSize = {};
     SendMessageW(link, LM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&linkSize));
-    RECT spacing = { 0, 0, 4, ABOUT_WEB_GAP_DLU };
-    MapDialogRect(window, &spacing);
+    RECT spacing = { 0, 0, units.cx, MulDiv(ABOUT_WEB_GAP_DLU, units.cy, 8) };
+    SetWindowPos(icon, nullptr, MulDiv(10, units.cx, 4), MulDiv(10, units.cy, 8), 0, 0,
+        SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    RECT iconBounds = InformationControlRect(window, ID_INFO_ICON);
+    int productLeft = iconBounds.right + iconBounds.left;
+    int productTop = MulDiv(6, units.cy, 8);
     int margin = layout.text.left;
     int rightMargin = layout.client.cx - layout.text.right;
     int bottomMargin = layout.client.cy - layout.close.bottom;
@@ -13653,7 +13678,7 @@ static void LayoutAboutWindow(HWND window, bool resize) {
     GetClientRect(window, &client);
     if (resize) {
         client.right =
-            std::max(layout.client.cx, layout.website.left + websiteSize.cx + spacing.right + linkSize.cx + rightMargin);
+            std::max(layout.client.cx, productLeft + websiteSize.cx + spacing.right + linkSize.cx + rightMargin);
         RECT frame = {};
         DWORD style = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_STYLE));
         DWORD extendedStyle = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_EXSTYLE));
@@ -13673,13 +13698,12 @@ static void LayoutAboutWindow(HWND window, bool resize) {
         GetClientRect(window, &client);
     }
     int right = client.right - rightMargin;
-    int productWidth = right - layout.product.left;
-    int productHeight = InformationLabelHeight(GetDlgItem(window, ID_INFO_PRODUCT), productWidth);
-    int websiteY = layout.product.top + productHeight + productGap;
-    int linkX = layout.website.left + websiteSize.cx + spacing.right;
-    PlaceInformationControl(window, ID_INFO_PRODUCT, layout.product.left, layout.product.top, productWidth,
-        productHeight);
-    PlaceInformationControl(window, ID_INFO_WEBSITE, layout.website.left, websiteY, websiteSize.cx, websiteSize.cy);
+    int productWidth = right - productLeft;
+    int productHeight = InformationLabelHeight(product, productWidth);
+    int websiteY = productTop + productHeight + productGap;
+    int linkX = productLeft + websiteSize.cx + spacing.right;
+    PlaceInformationControl(window, ID_INFO_PRODUCT, productLeft, productTop, productWidth, productHeight);
+    PlaceInformationControl(window, ID_INFO_WEBSITE, productLeft, websiteY, websiteSize.cx, websiteSize.cy);
     PlaceInformationControl(window, ID_INFO_LINK, linkX, websiteY, right - linkX, linkSize.cy);
     AlignSettingsControl(link, website);
     RECT websiteBounds = InformationControlRect(window, ID_INFO_WEBSITE);
@@ -13858,7 +13882,8 @@ static void ShowInformationWindow(bool help) {
     LayoutInformationWindow(*target, true);
     const PersistWindowStateData& savedPlacement = placement.GetState();
     bool defaultPosition = savedPlacement.x == CW_USEDEFAULT || savedPlacement.y == CW_USEDEFAULT;
-    if (defaultPosition && !PositionInformationWindowByWindowsDefault(*target) || !placement.Attach(*target)) {
+    if (defaultPosition && !PositionInformationWindowByWindowsDefault(*target)
+            || !placement.Attach(*target, help ? "Help" : "About")) {
         DestroyWindow(*target);
         *target = nullptr;
         return;
@@ -14793,9 +14818,22 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             break;
+        case WM_TIMECHANGE:
         case WM_SETTINGCHANGE:
-            if (window == hSettings) {
+            if (msg == WM_SETTINGCHANGE && window == hSettings) {
                 PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
+            }
+            if (window == hController) {
+                for (const std::unique_ptr<Widget>& current : widgets) {
+                    current->lastRenderKey = -1;
+                    current->rendered = false;
+                    UpdateCalendarDate(current.get());
+                    if (current->config.visible) {
+                        RenderWidget(current.get());
+                    }
+                }
+                ScheduleWidgetRefresh();
+                return 0;
             }
             break;
         case WM_DISPLAYCHANGE:
@@ -15148,11 +15186,11 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                     previousSecond = second;
                     for (size_t index = 0; index < widgets.size(); index++) {
                         UpdateCalendarDate(widgets[index].get());
-                        CheckWidgetAlarm(widgets[index].get());
                     }
                 }
                 for (size_t index = 0; index < widgets.size(); index++) {
                     Widget* current = widgets[index].get();
+                    CheckWidgetAlarm(current);
                     if (!current->config.visible) {
                         continue;
                     }

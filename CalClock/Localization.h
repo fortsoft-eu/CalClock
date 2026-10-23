@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.1
+ * Last modified for version 1.6.1.1
  */
 
 #pragma once
@@ -53,6 +53,7 @@ extern const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT];
 extern const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4];
 extern const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT];
+extern const wchar_t* SYSTEM_TIME_ZONE_LABELS[LANG_COUNT];
 extern const wchar_t* DATE_COPY_LABELS[LANG_COUNT];
 extern const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT];
 extern const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT];

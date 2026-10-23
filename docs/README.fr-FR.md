@@ -88,9 +88,13 @@ La case **AM/PM** est cochée par défaut. La décocher masque l’indicateur sa
 
 Les fuseaux nommés affichent l’heure civile du lieu sélectionné et suivent automatiquement ses règles d’heure d’été. Le décalage auprès de chaque nom correspond à la date actuelle et est actualisé à l’ouverture de la liste. Les entrées **UTC** indépendantes offrent des décalages fixes de **UTC−12:00** à **UTC+14:00** par pas de 15 minutes, sans heure d’été. Choisissez indépendamment pour chaque widget votre fuseau local, tout autre fuseau nommé ou un décalage UTC fixe.
 
+Les nouveaux widgets utilisent par défaut **Fuseau horaire actuel de Windows**, qui suit le fuseau actuel de Windows et son réglage automatique de l’heure d’été. Les widgets existants conservent le fuseau choisi. Cette option concerne le fuseau horaire ; la source de temps commune, Windows ou NTP, reste indépendante.
+
 Chaque widget peut utiliser n’importe quel fuseau Windows et un décalage signé au format `[-]HH:mm:ss.ff`. Une saisie compacte est interprétée depuis la droite, en commençant par les secondes.
 
 Le décalage est utile notamment dans un studio de diffusion pour compenser le retard de la chaîne de transmission. Avancer l’horloge du studio du retard mesuré permet à son signal horaire d’atteindre les auditeurs au moment voulu.
+
+Le décalage du widget est appliqué à UTC avant la conversion vers son fuseau horaire : il décale donc aussi l’instant du changement d’heure. Une horloge avancée de dix secondes change dix secondes plus tôt ; une horloge retardée de dix secondes change dix secondes plus tard. Les aiguilles, l’affichage numérique, les dates du calendrier, les alarmes et les signaux horaires utilisent l’heure ainsi obtenue.
 
 L’onglet Heure sélectionne l’heure système Windows ou les serveurs NTP configurés pour toute l’application, donc pour tous les widgets. NTP corrige uniquement l’heure affichée par CalClock ; l’horloge Windows n’est jamais modifiée. L’heure système est utilisée jusqu’à la première réponse valide. NTP est la valeur par défaut. Le jeu automatique choisit les serveurs tchèques et slovaques, PTB pour l’Europe ou le pool mondial selon la région système. Plusieurs mesures sont filtrées selon le délai réseau et les réponses aberrantes. Synchroniser maintenant lance immédiatement une nouvelle mesure.
 
@@ -103,6 +107,8 @@ Les décalages sont exprimés en millisecondes avec quatre décimales. Une valeu
 Enregistrer le journal exporte les entrées en CSV, avec les décalages et les détails des erreurs. Les entrées ne sont pas conservées entre les sessions ; enregistrez-les avant de quitter pour les garder.
 
 Les widgets d’horloge prennent en charge les alarmes par jour de semaine ; les sept jours sont activés par défaut. Une alarme rend son widget masqué visible et le place devant les autres fenêtres sans modifier durablement son maintien au premier plan. WAV, MP3, WMA, MIDI, AAC, M4A et FLAC sont reconnus pour la lecture interne unique ou en boucle ; le décodage réel dépend des composants multimédias installés dans Windows. Les autres fichiers et commandes sont transmis à Windows de manière asynchrone. Une alarme peut aussi appeler une URL HTTP ou HTTPS. Indépendamment de ces actions, elle peut utiliser le signal à six bips dont le premier bip court sonne cinq secondes avant l’heure programmée.
+
+Les tops sonores de l’alarme sont planifiés d’après l’instant réel de la prochaine alarme, après conversion de fuseau et application du décalage du widget. Ils commencent cinq secondes réelles avant cet instant, même si l’horloge affichée saute directement à l’heure de l’alarme. Une heure d’alarme sautée au printemps ne déclenche ni alarme ni tops. Pendant l’heure répétée en automne, l’alarme et ses tops ne se produisent qu’une fois pour une même date et une même heure configurée.
 
 Test prévisualise l’indication visuelle et teste de façon asynchrone le fichier, la commande, l’audio et l’URL du script distant. Si le signal horaire d’alarme est sélectionné, Test joue aussi sa séquence complète de six bips ; Arrêter le test termine l’audio interne et l’aperçu du signal.
 

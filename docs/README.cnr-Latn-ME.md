@@ -20,6 +20,8 @@ Satovi i paneli podržavaju alarm. Program sam pušta zvučnu datoteku jednom il
 
 Vrijeme alarma prihvata HH:mm sa dvotačkom, tačkom, razmakom ili drugim razdvajačem, a može i bez njega. Jedna ili dvije cifre znače sate, tri ili četiri sate i minute: 7, 12, 730, 0730 ili 7:30. Po napuštanju polja vrijednost se pretvara u HH:mm. Pomak se čita zdesna, počev od sekundi: 2 znači 00:00:02.00, 230 i 0230 znače 00:02:30.00, a 12345 znači 01:23:45.00. Sa razdvajačima dvije grupe su minuti i sekunde, tri sati, minuti i sekunde, a četvrta sadrži stotinke; dozvoljen je predznak. Dani ispod Alarm uključen određuju dane pokretanja; podrazumijevano su izabrani svi. Redoslijed prati jezik programa, a promjena jezika ne mijenja sačuvane dane. Alarm prikazuje skriveni vidžet i dovodi ga ispred drugih prozora bez trajne promjene Uvijek na vrhu. Pusti vremenski signal počinje prvi kratak ton pet sekundi prije alarma. Postavka je nezavisna od kartice Signal; istovremene sekvence se spajaju. Testiraj uključuje treperenje brojčanika ili okvira i provjerava datoteku, naredbu, zvuk, HTTP/HTTPS adresu udaljene skripte i, ako je izabrano, cijeli vremenski signal. Zaustavljanje testa zaustavlja njegov unutrašnji zvuk i probni signal; zaustavljanje alarma zaustavlja njegov unutrašnji zvuk. Isključivanje zvuka ne prekida reprodukciju: ona se nastavlja nečujno i ponovo se čuje nakon uključivanja. Naredbe i udaljene skripte ostaju aktivne.
 
+Zvučni signali alarma planiraju se prema stvarnom trenutku sljedećeg alarma nakon pretvaranja vremenske zone i primjene pomaka vidžeta. Počinju pet stvarnih sekundi prije tog trenutka, čak i kada prikazani sat skoči direktno na vrijeme alarma. Vrijeme alarma preskočeno u proljeće ne pokreće ni alarm ni njegove signale. Tokom sata ponovljenog u jesen alarm i njegovi signali oglašavaju se samo jednom za isti datum i podešeno vrijeme.
+
 Klizač Jačina zvuka na kartici Alarm podešava unutrašnju reprodukciju za taj vidžet. Podrazumijevanih −18 dB čuva izvorni nivo datoteke (100%). Pomjeranje udesno pojačava zvuk; najvećih 0 dB odgovara približno 794%. −∞ dB je tišina. Promjene se čuju i tokom testa. MIDI i datoteke koje ne mogu da se dekodiraju i puštaju se rezervnim načinom ograničeni su na 100%.
 
 ## Izbor, tasteri i kopiranje datuma
@@ -63,6 +65,10 @@ Samo dvoklik neposredno na glavni brojčanik prebacuje njegovu sekundnu kazaljku
 ## Oblik vremena i vremenske zone
 
 Oblik vremena na kartici Opšte nudi Prema jeziku (podrazumijevano), 12 sati i 24 sata. Prva opcija prati jezik, a ručni izbor ostaje nakon njegove promjene. Razdvajači i oznake vremena prate jezik vidžeta. AM/PM je prvobitno uključen i upravlja samo oznakom u 12-časovnom režimu; ako jezik nema sopstvene oznake, koristi se AM/PM. Satovi na monitoru prikazuju oznaku u zasebnom redu ispod vremena. UTC uvijek koristi 24-časovni prikaz. Imenovane zone prate lokalno i ljetnje računanje vremena; pomak uz naziv važi za trenutni datum. Zasebne stavke UTC su stalni pomaci od -12:00 do +14:00 u koracima od 15 minuta bez ljetnjeg računanja vremena.
+
+Novi vidžeti podrazumijevano koriste **Trenutna vremenska zona Windowsa**, koja prati trenutnu vremensku zonu Windowsa i podešavanje automatskog ljetnjeg računanja vremena. Postojeći vidžeti zadržavaju izabrane zone. Ova opcija određuje vremensku zonu; zajednički izvor vremena Windows ili NTP ostaje nezavisan.
+
+Vremenski pomak vidžeta primjenjuje se na UTC prije pretvaranja u njegovu vremensku zonu, pa pomjera i trenutak prelaska na ljetnje ili standardno vrijeme. Sat pomjeren deset sekundi unaprijed prelazi deset sekundi ranije; sat koji kasni deset sekundi prelazi deset sekundi kasnije. Kazaljke, digitalni prikaz, datumi kalendara, alarmi i vremenski signali koriste tako dobijeno vrijeme.
 
 ## Izvor vremena
 

@@ -22,6 +22,8 @@ Kelladel ja paneelidel võib olla äratus. Rakendus esitab helifaili ise ühe ko
 
 Äratus kuvab peidetud vidina ja toob selle ette, muutmata püsivalt suvandit Alati pealmine. Esita ajasignaal alustab esimest lühikest tooni viis sekundit enne äratust. See on vahekaardist Signaal sõltumatu; samaaegsed jadad ühendatakse. Testi paneb sihverplaadi või raami vilkuma ja kontrollib faili, käsku, heli, kaugskripti HTTP/HTTPS-aadressi ning valitud ajasignaali kogu jada. Testi peatamine lõpetab selle sisemise heli ja proovisignaali; äratuse peatamine lõpetab selle sisemise heli. Vaigistamisel esitus jätkub hääletult ja muutub vaigistuse eemaldamisel taas kuuldavaks. Käske ja kaugskripte see ei peata.
 
+Äratuse helisignaalid kavandatakse järgmise äratuse tegeliku hetke järgi pärast ajavööndi teisendust ja vidina nihke rakendamist. Need algavad viis tegelikku sekundit enne seda hetke ka siis, kui kuvatav kell hüppab otse äratusajale. Kevadel vahele jäetud äratusaeg ei käivita äratust ega selle helisignaale. Sügisel korduva tunni ajal käivituvad äratus ja selle signaalid sama kuupäeva ning määratud kellaaja kohta ainult üks kord.
+
 Vahekaardi Äratus liugur Helitugevus määrab selle vidina sisemise heliesituse tugevuse. Vaikimisi −18 dB säilitab faili algtaseme (100%). Paremale liikumine võimendab heli; maksimaalne 0 dB vastab ligikaudu 794%-le. −∞ dB tähendab vaikust. Muutus kostab ka testi ajal. MIDI ja failid, mida ei saa dekodeerida ning esitatakse varumängijaga, on piiratud 100%-ga.
 
 ## Valimine, klahvid ja kuupäeva kopeerimine
@@ -67,6 +69,10 @@ Ainult otse peamisel sihverplaadil tehtud topeltklõps lülitab selle sekundiosu
 ## Kellaajavorming ja ajavööndid
 
 Kellaajavorming vahekaardil Üldine pakub Keele vaikesätet, 12 tundi ja 24 tundi. Esimene järgib vidina keelt; käsivalik säilib keele vahetamisel. Eraldajad ja ajatähised järgivad keelt. AM/PM on vaikimisi sees ja juhib ainult 12-tunnise kuva tähist; keele oma tähise puudumisel kasutatakse AM/PM-i. Ekraanikell kuvab tähise eraldi real kellaaja all. UTC kasutab alati 24-tunnist vormingut. Nimega ajavööndid arvestavad kohalikku ja suveaega; nime kõrval olev nihe kehtib praegusele kuupäevale. Eraldi UTC-valikud on püsinihked −12:00 kuni +14:00 15-minutilise sammuga, ilma suveajata.
+
+Uute vidinate vaikevalik on **Windowsi praegune ajavöönd**, mis järgib Windowsi praegust ajavööndit ja automaatse suveaja sätet. Olemasolevad vidinad säilitavad valitud ajavööndid. See valik määrab ajavööndi; ühine Windowsi või NTP ajaallikas jääb sellest sõltumatuks.
+
+Vidina nihe rakendatakse UTC-ajale enne selle teisendamist ajavööndisse, seega nihutab see ka suveajale ülemineku või sealt naasmise hetke. Kümme sekundit ees olev kell muudab aega kümme sekundit varem; kümme sekundit taga olev kell kümme sekundit hiljem. Osutid, digitaalkuva, kalendrikuupäevad, äratused ja ajasignaalid kasutavad saadud aega.
 
 ## Aja allikas ja NTP-logi
 

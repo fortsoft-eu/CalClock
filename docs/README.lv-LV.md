@@ -22,6 +22,8 @@ Modinātāja laiks pieņem HH:mm ar kolu, punktu, atstarpi, citu atdalītāju va
 
 Modinātājs parāda paslēpto logrīku un izvirza to priekšplānā bez pastāvīgas Vienmēr virspusē maiņas. Atskaņot laika signālu sāk pirmo īso toni piecas sekundes pirms modinātāja. Šī izvēle ir neatkarīga no cilnes Signāls; vienlaicīgās virknes tiek apvienotas. Pārbaudīt ieslēdz ciparnīcas vai rāmja mirgošanu un pārbauda failu, komandu, skaņu, attālā skripta HTTP/HTTPS adresi un izvēlēto pilno laika signālu. Pārbaudes apturēšana pārtrauc tās iekšējo skaņu un izmēģinājuma signālu; modinātāja apturēšana pārtrauc tā iekšējo skaņu. Izslēdzot skaņu, atskaņošana turpinās nedzirdami un kļūst dzirdama pēc ieslēgšanas. Komandas un attālie skripti netiek apturēti.
 
+Modinātāja skaņas signāli tiek plānoti pēc nākamā modinātāja faktiskā brīža pēc laika joslas pārrēķina un logrīka nobīdes piemērošanas. Tie sākas piecas reālas sekundes pirms šā brīža arī tad, ja rādītais pulkstenis pārlec tieši uz modinātāja laiku. Pavasarī izlaists modinātāja laiks neiedarbina ne modinātāju, ne tā signālus. Rudenī atkārtotajā stundā modinātājs un tā signāli nostrādā tikai vienu reizi vienam un tam pašam datumam un iestatītajam laikam.
+
 Slīdnis Skaļums cilnē Modinātājs regulē šī logrīka iekšējo atskaņošanu. Noklusējuma −18 dB saglabā faila sākotnējo līmeni (100%). Pa labi skaņa tiek pastiprināta; lielākie 0 dB atbilst apmēram 794%. −∞ dB ir klusums. Izmaiņas dzirdamas arī pārbaudē. MIDI un faili, kurus nevar dekodēt un atskaņo rezerves atskaņotājs, ir ierobežoti līdz 100%.
 
 ## Atlase, taustiņi un datuma kopēšana
@@ -67,6 +69,10 @@ Tikai dubultklikšķis tieši uz galvenās ciparnīcas pārslēdz tās sekunžu 
 ## Laika formāts un laika joslas
 
 Laika formāts cilnē Vispārīgi piedāvā Atbilstoši valodai (noklusējums), 12 stundas un 24 stundas. Manuālā izvēle paliek pēc valodas maiņas. Atdalītāji un laika apzīmējumi atbilst logrīka valodai. AM/PM sākumā ieslēgts un ietekmē tikai apzīmējumu 12 stundu režīmā; ja valodai nav savu apzīmējumu, lieto AM/PM. Ekrāna pulksteņi to rāda atsevišķā rindā zem laika. UTC vienmēr izmanto 24 stundu formātu. Nosauktās joslas ievēro vietējo un vasaras laiku; nobīde atbilst pašreizējam datumam. Atsevišķās UTC izvēles ir nemainīgas nobīdes no −12:00 līdz +14:00 ar 15 minūšu soli bez vasaras laika.
+
+Jaunie logrīki pēc noklusējuma izmanto **Pašreizējā Windows laika josla**, kas seko pašreizējai Windows laika joslai un automātiskā vasaras laika iestatījumam. Esošie logrīki saglabā izvēlētās joslas. Šī izvēle nosaka laika joslu; kopīgais Windows vai NTP laika avots paliek neatkarīgs.
+
+Logrīka nobīde tiek piemērota UTC laikam pirms pārrēķina tā laika joslā, tāpēc tā pārvieto arī pārejas uz vasaras laiku vai atpakaļ brīdi. Pulkstenis, kas steidzas par desmit sekundēm, pārslēdzas desmit sekundes agrāk; pulkstenis, kas atpaliek par desmit sekundēm, — desmit sekundes vēlāk. Rādītāji, digitālais laiks, kalendāra datumi, modinātāji un laika signāli izmanto iegūto laiku.
 
 ## Laika avots un NTP žurnāls
 

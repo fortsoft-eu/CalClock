@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.1
  */
 
 #define NOMINMAX
@@ -76,7 +76,6 @@ struct TimeSignalPhase {
 static const ULONGLONG FILE_TIME_TICKS_PER_MILLISECOND = 10000;
 static const ULONGLONG FILE_TIME_TICKS_PER_SECOND = 10000000;
 static const ULONGLONG FILE_TIME_TICKS_PER_MINUTE = 60 * FILE_TIME_TICKS_PER_SECOND;
-static const ULONGLONG FILE_TIME_TICKS_PER_DAY = 24 * 60 * FILE_TIME_TICKS_PER_MINUTE;
 static const DWORD BEEP_PIP_FREQUENCY = 1000;
 static const DWORD BEEP_SHORT_PIP_DURATION = 180;
 static const DWORD BEEP_LONG_PIP_DURATION = 950;
@@ -105,6 +104,16 @@ static std::atomic<double> timeSignalPreviewVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 /// Tracks completed time to avoid replaying already rendered portions.
 static DWORD WINAPI TimeSignalThreadProc(void* parameter);
 
+/// Reports whether a displayed FILETIME value is an exact boundary of the enabled signal interval.
+bool IsTimeSignalBoundary(ULONGLONG displayedFileTime, TimeSignalMode mode) {
+    int modeIndex = static_cast<int>(mode);
+    if (modeIndex <= TIME_SIGNAL_NONE || modeIndex >= TIME_SIGNAL_COUNT) {
+        return false;
+    }
+    ULONGLONG interval = static_cast<ULONGLONG>(TIME_SIGNAL_MINUTES[modeIndex]) * FILE_TIME_TICKS_PER_MINUTE;
+    return displayedFileTime % interval == 0;
+}
+
 /// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget offsets.
 /// Returns false for a disabled or invalid interval or a null output pointer.
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
@@ -115,22 +124,6 @@ bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFi
     }
     ULONGLONG interval = static_cast<ULONGLONG>(TIME_SIGNAL_MINUTES[modeIndex]) * FILE_TIME_TICKS_PER_MINUTE;
     ULONGLONG untilTarget = interval - displayedFileTime % interval;
-    *targetTimelineFileTime = timelineFileTime + untilTarget;
-    return true;
-}
-
-/// Maps the next occurrence of an alarm's displayed hour and minute to continuous FILETIME ticks.
-/// Selects the following day when that time has already been reached; rejects invalid inputs.
-bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, int alarmHour,
-        int alarmMinute, ULONGLONG* targetTimelineFileTime) {
-    if (targetTimelineFileTime == nullptr || alarmHour < 0 || alarmHour > 23 || alarmMinute < 0 || alarmMinute > 59) {
-        return false;
-    }
-    ULONGLONG timeOfDay = displayedFileTime % FILE_TIME_TICKS_PER_DAY;
-    ULONGLONG alarmTime = static_cast<ULONGLONG>(alarmHour * 60 + alarmMinute) * FILE_TIME_TICKS_PER_MINUTE;
-    ULONGLONG untilTarget = alarmTime > timeOfDay
-        ? alarmTime - timeOfDay
-        : FILE_TIME_TICKS_PER_DAY - timeOfDay + alarmTime;
     *targetTimelineFileTime = timelineFileTime + untilTarget;
     return true;
 }

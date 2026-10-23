@@ -22,6 +22,8 @@ Il-ħin tal-allarm jaċċetta HH:mm b’żewġ punti, punt, spazju jew separatur
 
 L-allarm juri widget moħbi u jġibu fuq quddiem mingħajr ma jibdel Dejjem fuq nett permanentement. Daqq is-sinjal tal-ħin jibda l-ewwel ton qasir ħames sekondi qabel l-allarm. Dan huwa indipendenti mit-tab Sinjal; sekwenzi simultanji jingħaqdu. Ittestja jteptep il-wiċċ jew il-qafas u jittestja l-fajl, il-kmand, l-awdjo, l-indirizz HTTP/HTTPS tal-iskript remot u, jekk magħżul, is-sinjal tal-ħin sħiħ. Il-waqfien tat-test iwaqqaf l-awdjo intern tiegħu u s-sinjal ta’ prova; il-waqfien tal-allarm iwaqqaf l-awdjo intern tiegħu. Meta ssikket, id-daqq ikompli fis-skiet u jerġa’ jinstema’ meta tneħħi s-sikket. Il-kmandi u l-iskripts remoti jibqgħu attivi.
 
+Is-sinjali tal-allarm jiġu skedati skont il-mument reali tal-allarm li jmiss, wara l-konverżjoni taż-żona tal-ħin u l-applikazzjoni tal-kumpens tal-widget. Jibdew ħames sekondi reali qabel dak il-mument, anki meta l-arloġġ muri jaqbeż direttament għall-ħin tal-allarm. Ħin tal-allarm maqbuż fir-rebbiegħa ma jattivax la l-allarm u lanqas is-sinjali tiegħu. Matul is-siegħa ripetuta fil-ħarifa, l-allarm u s-sinjali tiegħu jseħħu darba biss għall-istess data u ħin issettjat.
+
 Is-slajder Volum tal-awdjo fit-tab Allarm jikkontrolla d-daqq intern ta’ dak il-widget. Id-default −18 dB iżomm il-livell oriġinali tal-fajl (100%). Lejn il-lemin il-ħoss jiġi amplifikat; il-massimu 0 dB huwa madwar 794%. −∞ dB huwa skiet. Il-bidliet jinstemgħu waqt it-test ukoll. MIDI u fajls li ma jistgħux jiġu dekodifikati u jindaqqu b’metodu ta’ riżerva huma limitati għal 100%.
 
 ## Għażla, tastiera u kkupjar tad-data
@@ -67,6 +69,10 @@ Klikk doppju direttament fuq il-wiċċ prinċipali biss jaqleb l-id tas-sekondi 
 ## Format tal-ħin u żoni tal-ħin
 
 Format tal-ħin fit-tab Ġenerali joffri Skont il-lingwa (default), 12-il siegħa u 24 siegħa. Għażla manwali tibqa’ wara bidla fil-lingwa. Is-separaturi u l-markaturi tal-ħin isegwu l-lingwa tal-widget. AM/PM huwa attivat inizjalment u jikkontrolla biss il-markatur fil-format ta’ 12-il siegħa; jekk il-lingwa m’għandhiex markaturi tagħha, jintuża AM/PM. L-arloġġi tal-iskrin juruh f’ringiela separata taħt il-ħin. UTC dejjem juża l-format ta’ 24 siegħa. Żoni msemmija jsegwu r-regoli lokali u tal-ħin tas-sajf; il-kumpens japplika għad-data kurrenti. L-għażliet UTC separati huma kumpensi fissi minn −12:00 sa +14:00 f’passi ta’ 15-il minuta, mingħajr ħin tas-sajf.
+
+Il-widgets il-ġodda jużaw **Iż-żona tal-ħin attwali ta’ Windows** bħala l-għażla predefinita. Din issegwi ż-żona tal-ħin attwali ta’ Windows u s-setting awtomatiku tal-ħin tas-sajf. Il-widgets eżistenti jżommu ż-żoni magħżula tagħhom. Din l-għażla tiddetermina ż-żona tal-ħin; is-sors tal-ħin komuni, Windows jew NTP, jibqa’ indipendenti.
+
+Il-kumpens tal-widget jiġi applikat lill-ħin UTC qabel il-konverżjoni għaż-żona tal-ħin tiegħu, u għalhekk iċaqlaq ukoll il-mument tal-bidla għall-ħin tas-sajf jew lura. Arloġġ li jkun għaxar sekondi ’l quddiem jinbidel għaxar sekondi qabel; arloġġ li jkun għaxar sekondi lura jinbidel għaxar sekondi wara. L-idejn, il-wiri diġitali, id-dati tal-kalendarju, l-allarmi u s-sinjali tal-ħin jużaw il-ħin li jirriżulta.
 
 ## Sors tal-ħin u reġistru NTP
 

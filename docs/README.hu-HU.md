@@ -22,6 +22,8 @@ Az ébresztési idő HH:mm formátumú lehet kettősponttal, ponttal, szóközze
 
 Az ébresztés megjeleníti a rejtett minialkalmazást, és előtérbe hozza a Mindig felül tartós módosítása nélkül. Az Időjelzés lejátszása az első rövid hangot öt másodperccel az ébresztés előtt indítja. Ez független az Időjelzés fültől; az egyidejű sorozatok egyesülnek. A Tesztelés villogtatja a számlapot vagy keretet, és ellenőrzi a fájlt, parancsot, hangot, távoli parancsfájl HTTP/HTTPS-címét és a kiválasztott teljes időjelzést. A teszt leállítása annak belső hangját és próbajelzését, az ébresztés leállítása annak belső hangját állítja le. Némításkor a lejátszás hangtalanul folytatódik, feloldáskor ismét hallható. A parancsok és távoli parancsfájlok nem állnak le.
 
+Az ébresztés hangjelzéseinek ütemezése a következő ébresztés tényleges időpontjához igazodik, az időzóna átszámítása és a minialkalmazás eltolása után. A jelzések öt tényleges másodperccel előtte kezdődnek akkor is, ha a kijelzett óra közvetlenül az ébresztési időre ugrik. A tavasszal kihagyott ébresztési idő sem ébresztést, sem hangjelzést nem indít. Az ősszel megismételt órában ugyanarra a dátumra és beállított időre az ébresztés és a hangjelzései csak egyszer indulnak el.
+
 Az Ébresztés fül Hangerő csúszkája az adott minialkalmazás belső lejátszását szabályozza. Az alapértelmezett −18 dB megőrzi a fájl eredeti szintjét (100%). Jobbra erősíti a hangot; a legnagyobb 0 dB körülbelül 794%. A −∞ dB csendet jelent. A változtatás teszt közben is hallható. A MIDI és a nem dekódolható, tartalék lejátszóval kezelt fájlok legfeljebb 100%-osak.
 
 ## Kijelölés, billentyűk és dátummásolás
@@ -67,6 +69,10 @@ Csak a fő számlapra közvetlenül történő dupla kattintás kapcsolja a más
 ## Időformátum és időzónák
 
 Az Általános fül Időformátum beállítása Nyelv szerinti (alapértelmezett), 12 órás vagy 24 órás. A kézi választás nyelvváltáskor is megmarad. Az elválasztók és időjelölések a minialkalmazás nyelvét követik. Az AM/PM alapból bekapcsolt, csak a 12 órás jelölést szabályozza; saját nyelvi jelölés hiányában AM/PM használatos. A képernyőórák külön sorban, az idő alatt jelzik. Az UTC mindig 24 órás formátumot használ. A név szerinti zónák követik a helyi és nyári időszámítást; az eltolás az aktuális dátumra érvényes. A külön UTC-elemek állandó eltolások −12:00 és +14:00 között 15 perces lépéssel, nyári időszámítás nélkül.
+
+Az új minialkalmazások alapértelmezése **A Windows aktuális időzónája**, amely követi a Windows aktuális időzónáját és az automatikus nyári időszámítás beállítását. A meglévő minialkalmazások megtartják a kiválasztott időzónáikat. Ez a választás az időzónát határozza meg; a közös Windows- vagy NTP-időforrás ettől független marad.
+
+A minialkalmazás eltolása az UTC-időre vonatkozik, még az időzónára való átszámítás előtt, így az óraátállítás pillanatát is eltolja. A tíz másodperccel előrébb járó óra tíz másodperccel korábban, a tíz másodperccel később járó óra tíz másodperccel később áll át. A mutatók, a digitális kijelzés, a naptári dátumok, az ébresztések és az időjelzések az így kapott időt használják.
 
 ## Időforrás és NTP-napló
 

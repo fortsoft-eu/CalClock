@@ -1,4 +1,6 @@
 ﻿<#
+This is open-source software licensed under the terms of the MIT License.
+
 Copyright (c) 2026 Petr Červinka - FortSoft <cervinka@fortsoft.eu>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.6.0.0
+Last modified for version 1.6.1.1
 
 .SYNOPSIS
 Builds CalClock and checks panel content positions during native border changes.

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.1
  */
 
 #define NOMINMAX
@@ -34,8 +34,7 @@
 typedef DWORD(WINAPI* EnumDynamicTimeZoneInformationProc)(DWORD index, PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
 typedef DWORD(WINAPI* GetDynamicTimeZoneInformationProc)(PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
 typedef BOOL(WINAPI* GetTimeZoneInformationForYearProc)(USHORT year,
-    PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZoneInformation,
-    LPTIME_ZONE_INFORMATION timeZoneInformation);
+    PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZoneInformation, LPTIME_ZONE_INFORMATION timeZoneInformation);
 typedef BOOL(WINAPI* SystemTimeToTzSpecificLocalTimeExProc)(const DYNAMIC_TIME_ZONE_INFORMATION* timeZoneInformation,
     const SYSTEMTIME* universalTime, SYSTEMTIME* localTime);
 
@@ -47,6 +46,8 @@ struct RegistryTimeZoneInformation {
     SYSTEMTIME standardDate;
     SYSTEMTIME daylightDate;
 };
+
+const wchar_t SYSTEM_TIME_ZONE_KEY[] = L"@System";
 
 /// Parses UTC or a signed UTC hour offset with optional minutes into minutes east of UTC.
 /// Returns false for malformed names or out-of-range hours and minutes.
@@ -153,8 +154,9 @@ static FARPROC FindProcedure(const wchar_t* moduleName, const char* procedureNam
 
 /// Caches the optional dynamic time-zone enumeration entry point for compatibility with older Windows versions.
 static EnumDynamicTimeZoneInformationProc GetEnumDynamicTimeZoneInformationProc() {
-    static EnumDynamicTimeZoneInformationProc procedure = reinterpret_cast<EnumDynamicTimeZoneInformationProc>(
-        FindProcedure(L"Advapi32.dll", "EnumDynamicTimeZoneInformation"));
+    static EnumDynamicTimeZoneInformationProc procedure =
+        reinterpret_cast<EnumDynamicTimeZoneInformationProc>(FindProcedure(L"Advapi32.dll",
+            "EnumDynamicTimeZoneInformation"));
     return procedure;
 }
 
@@ -168,15 +170,17 @@ static GetDynamicTimeZoneInformationProc GetGetDynamicTimeZoneInformationProc() 
 
 /// Caches the optional entry point for retrieving a time zone's rules for a specific year.
 static GetTimeZoneInformationForYearProc GetGetTimeZoneInformationForYearProc() {
-    static GetTimeZoneInformationForYearProc procedure = reinterpret_cast<GetTimeZoneInformationForYearProc>(
-        FindProcedure(L"Kernel32.dll", "GetTimeZoneInformationForYear"));
+    static GetTimeZoneInformationForYearProc procedure =
+        reinterpret_cast<GetTimeZoneInformationForYearProc>(FindProcedure(L"Kernel32.dll",
+            "GetTimeZoneInformationForYear"));
     return procedure;
 }
 
 /// Caches the optional dynamic UTC-to-local conversion entry point.
 static SystemTimeToTzSpecificLocalTimeExProc GetSystemTimeToTzSpecificLocalTimeExProc() {
-    static SystemTimeToTzSpecificLocalTimeExProc procedure = reinterpret_cast<SystemTimeToTzSpecificLocalTimeExProc>(
-        FindProcedure(L"Kernel32.dll", "SystemTimeToTzSpecificLocalTimeEx"));
+    static SystemTimeToTzSpecificLocalTimeExProc procedure =
+        reinterpret_cast<SystemTimeToTzSpecificLocalTimeExProc>(FindProcedure(L"Kernel32.dll",
+            "SystemTimeToTzSpecificLocalTimeEx"));
     return procedure;
 }
 
@@ -196,7 +200,7 @@ static bool ReadRegistryString(HKEY key, const wchar_t* name, wchar_t* value, DW
     return true;
 }
 
-/// Copies dynamic zone data into the legacy structure, clearing transition dates when daylight saving time is disabled.
+/// Copies dynamic zone data into the legacy structure, preserving the configured seasonal transition dates.
 static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source, TIME_ZONE_INFORMATION* destination) {
     ZeroMemory(destination, sizeof(*destination));
     destination->Bias = source.Bias;
@@ -206,17 +210,13 @@ static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source,
     wcscpy_s(destination->DaylightName, source.DaylightName);
     destination->DaylightDate = source.DaylightDate;
     destination->DaylightBias = source.DaylightBias;
-    if (source.DynamicDaylightTimeDisabled) {
-        ZeroMemory(&destination->StandardDate, sizeof(destination->StandardDate));
-        ZeroMemory(&destination->DaylightDate, sizeof(destination->DaylightDate));
-    }
 }
 
 /// Appends zones with valid TZI records from the Windows time-zone registry, supplying missing names from their keys.
 static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     HKEY root = nullptr;
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones", 0, KEY_READ,
-            &root) != ERROR_SUCCESS) {
+        &root) != ERROR_SUCCESS) {
         return;
     }
     for (DWORD index = 0;; index++) {
@@ -262,7 +262,7 @@ static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATI
     RegCloseKey(root);
 }
 
-/// Rebuilds the zone list from Windows APIs or the registry, adds fixed UTC offsets, and sorts the result.
+/// Rebuilds the zone list with current Windows settings first, followed by sorted named zones and fixed UTC offsets.
 void LoadTimeZoneList(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     if (zones == nullptr) {
         return;
@@ -287,10 +287,13 @@ void LoadTimeZoneList(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     }
     AddFixedTimeZones(zones);
     std::sort(zones->begin(), zones->end(), TimeZoneLess);
+    DYNAMIC_TIME_ZONE_INFORMATION system = {};
+    wcscpy_s(system.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY);
+    zones->insert(zones->begin(), system);
 }
 
 /// Prefixes a named zone with its UTC offset at the supplied instant, including applicable daylight saving time.
-/// Returns only the normalized offset for fixed-offset or unnamed zones.
+/// Returns only the normalized offset for fixed-offset, unnamed, or current-Windows-settings zones.
 std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc) {
     std::wstring name = zone.StandardName;
     LONG fixedOffset = 0;
@@ -324,7 +327,7 @@ std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, cons
 }
 
 /// Finds the current Windows time-zone key using available APIs, the registry, or a standard-name match.
-/// Falls back to the first listed zone, or an empty string when the list is empty.
+/// Falls back to the first listed explicit zone, or an empty string when none is available.
 std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones) {
     GetDynamicTimeZoneInformationProc getDynamic = GetGetDynamicTimeZoneInformationProc();
     if (getDynamic != nullptr) {
@@ -347,19 +350,34 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
     TIME_ZONE_INFORMATION current = {};
     if (GetTimeZoneInformation(&current) != TIME_ZONE_ID_INVALID) {
         for (size_t index = 0; index < zones.size(); index++) {
-            if (_wcsicmp(zones[index].StandardName, current.StandardName) == 0) {
+            if (_wcsicmp(zones[index].TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) != 0
+                    && _wcsicmp(zones[index].StandardName, current.StandardName) == 0) {
                 return zones[index].TimeZoneKeyName;
             }
         }
     }
-    return zones.empty() ? L"" : zones[0].TimeZoneKeyName;
+    for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : zones) {
+        if (_wcsicmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) != 0) {
+            return zone.TimeZoneKeyName;
+        }
+    }
+    return L"";
 }
 
-/// Converts UTC to the selected zone, using fixed offsets directly and dynamic or yearly rules for named zones.
+/// Converts UTC using current Windows settings, fixed offsets, or dynamic or yearly rules for named zones.
 /// Returns false if the destination is null or Windows cannot perform the conversion.
 bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc, SYSTEMTIME* local) {
     if (local == nullptr) {
         return false;
+    }
+    DYNAMIC_TIME_ZONE_INFORMATION current = {};
+    const DYNAMIC_TIME_ZONE_INFORMATION* selectedZone = &zone;
+    if (_wcsicmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
+        GetDynamicTimeZoneInformationProc getDynamic = GetGetDynamicTimeZoneInformationProc();
+        if (getDynamic == nullptr || getDynamic(&current) == TIME_ZONE_ID_INVALID) {
+            return SystemTimeToTzSpecificLocalTime(nullptr, &utc, local) != FALSE;
+        }
+        selectedZone = &current;
     }
     LONG fixedOffset = 0;
     if (ParseTimeZoneOffset(zone.TimeZoneKeyName, &fixedOffset)) {
@@ -368,13 +386,14 @@ bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTE
         return SystemTimeToTzSpecificLocalTime(&fixed, &utc, local) != FALSE;
     }
     SystemTimeToTzSpecificLocalTimeExProc convertDynamic = GetSystemTimeToTzSpecificLocalTimeExProc();
-    if (convertDynamic != nullptr) {
-        return convertDynamic(&zone, &utc, local) != FALSE;
+    if (convertDynamic != nullptr && !selectedZone->DynamicDaylightTimeDisabled) {
+        return convertDynamic(selectedZone, &utc, local) != FALSE;
     }
     TIME_ZONE_INFORMATION information = {};
     GetTimeZoneInformationForYearProc getForYear = GetGetTimeZoneInformationForYearProc();
-    if (getForYear == nullptr || !getForYear(utc.wYear, const_cast<PDYNAMIC_TIME_ZONE_INFORMATION>(&zone), &information)) {
-        CopyTimeZoneInformation(zone, &information);
+    if (selectedZone->DynamicDaylightTimeDisabled || getForYear == nullptr
+            || !getForYear(utc.wYear, const_cast<PDYNAMIC_TIME_ZONE_INFORMATION>(selectedZone), &information)) {
+        CopyTimeZoneInformation(*selectedZone, &information);
     }
     return SystemTimeToTzSpecificLocalTime(&information, &utc, local) != FALSE;
 }

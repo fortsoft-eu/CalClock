@@ -88,9 +88,13 @@ Los relojes digitales, paneles de calendario con reloj y relojes de monitor ofre
 
 Las zonas con nombre muestran la hora civil del lugar y aplican automáticamente sus reglas de horario de verano. El desfase junto a cada nombre corresponde a la fecha actual y se actualiza al abrir la lista. Las entradas **UTC** independientes ofrecen desfases fijos desde **UTC−12:00** hasta **UTC+14:00**, en pasos de 15 minutos y sin cambios de verano. Elija de forma independiente para cada widget su zona local, cualquier otra zona con nombre o un desfase UTC fijo.
 
+Los widgets nuevos usan por defecto **Zona horaria actual de Windows**, que sigue la zona horaria actual de Windows y su ajuste automático del horario de verano. Los widgets existentes conservan la zona elegida. Esta opción determina la zona horaria; la fuente de tiempo compartida, Windows o NTP, sigue siendo independiente.
+
 Cada widget puede usar cualquier zona de Windows y un desfase con signo de la forma `[-]HH:mm:ss.ff`. La entrada compacta se interpreta desde la derecha, empezando por los segundos.
 
 El desfase resulta útil, por ejemplo, en estudios de radiodifusión para compensar el retardo de la ruta de transmisión. Adelantar el reloj del estudio según el retardo medido permite que la señal llegue a los oyentes en el instante previsto.
+
+El desfase del widget se aplica a UTC antes de convertir la hora a su zona, por lo que también desplaza el instante del cambio de horario. Un reloj adelantado diez segundos cambia diez segundos antes; uno atrasado diez segundos cambia diez segundos después. Las agujas, la indicación digital, las fechas del calendario, las alarmas y las señales horarias usan la hora resultante.
 
 La pestaña Hora selecciona la hora del sistema Windows o los servidores NTP configurados para toda la aplicación y, por tanto, para todos los widgets. NTP solo corrige la hora mostrada por CalClock; el reloj de Windows nunca se modifica. Se usa la hora del sistema hasta la primera respuesta válida. NTP es el valor predeterminado. El conjunto automático elige servidores checos y eslovacos, PTB para Europa o el grupo mundial según la región del sistema. Varias mediciones se filtran por retardo de red y respuestas atípicas. Sincronizar ahora inicia una medición nueva de inmediato.
 
@@ -103,6 +107,8 @@ Los desfases se muestran en milisegundos con cuatro decimales. Un valor positivo
 Guardar registro exporta las entradas a CSV, incluidos los desfases y los detalles de los errores. Las entradas no se conservan entre sesiones; guárdelas antes de salir si desea conservarlas.
 
 Los widgets de reloj admiten alarmas en días seleccionados individualmente; los siete días están activos por defecto. Una alarma hace visible su widget oculto y lo coloca delante de otras ventanas sin modificar permanentemente su opción de estar siempre encima. WAV, MP3, WMA, MIDI, AAC, M4A y FLAC se reconocen para reproducción interna única o repetida; la compatibilidad real depende de los componentes multimedia instalados en Windows. Los demás archivos y comandos se pasan a Windows de forma asíncrona. Una alarma también puede llamar a una URL HTTP o HTTPS. Independientemente de estas acciones, puede usar la señal de seis pitidos, cuyo primer pitido corto suena cinco segundos antes de la hora configurada.
+
+Los pitidos de la alarma se programan según el instante real de la próxima alarma, tras convertir la zona horaria y aplicar el desfase del widget. Comienzan cinco segundos reales antes, incluso si el reloj mostrado salta directamente a la hora de la alarma. Una hora de alarma omitida en primavera no produce ni alarma ni pitidos. Durante la hora repetida en otoño, la alarma y sus pitidos suenan una sola vez para la misma fecha y hora configurada.
 
 Prueba muestra la indicación visual y prueba asíncronamente el archivo, comando, audio y URL del script remoto. Si está seleccionada la señal horaria de alarma, reproduce también la secuencia completa de seis pitidos; Detener prueba termina el audio interno y la vista previa de señal.
 

@@ -1,4 +1,6 @@
 ﻿<#
+This is open-source software licensed under the terms of the MIT License.
+
 Copyright (c) 2026 Petr Červinka - FortSoft <cervinka@fortsoft.eu>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.6.0.0
+Last modified for version 1.6.1.1
 
 .SYNOPSIS
 Builds CalClock and runs the clock and NTP regression tests.
@@ -65,7 +67,8 @@ try {
         $options = $commonOptions + @("/Fo`"$buildRoot/$testName.obj`"", "/Fe`"$buildRoot/$testName.exe`"", "tests/$testName.cpp")
         if ($testName -eq 'TimeSourceTests') {
             $options += Get-ChildItem CalClock/Release -Filter '*.obj' |
-                Where-Object { $_.BaseName -notin 'CalClock', 'ClockTime', 'NtpClient', 'TimeSignal' } |
+                Where-Object { $_.BaseName -notin 'CalClock', 'ClockTime', 'NtpClient', 'TimeSignal',
+                    'TimeZoneSupport' } |
                 ForEach-Object { '"' + $_.FullName + '"' }
         }
         $options += @('/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF', '/OPT:ICF',

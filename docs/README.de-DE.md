@@ -88,9 +88,13 @@ Digitaluhren, Kalender-Uhr-Panels und Monitoruhren bieten unter **Zeitformat** a
 
 Benannte Zeitzonen zeigen die gesetzliche Ortszeit des gewählten Ortes und berücksichtigen dessen Sommerzeitregeln automatisch. Der Versatz neben dem Namen gilt für das aktuelle Datum und wird beim Öffnen der Liste aktualisiert. Eigenständige **UTC**-Einträge bieten feste Versätze von **UTC−12:00** bis **UTC+14:00** in 15-Minuten-Schritten ohne Sommerzeitwechsel. Pro Widget können Ortszone, eine beliebige andere benannte Zone oder ein fester UTC-Versatz gewählt werden.
 
+Neue Widgets verwenden standardmäßig **Aktuelle Windows-Zeitzone**. Diese Option folgt der aktuellen Windows-Zeitzone und der Einstellung für die automatische Sommerzeit. Vorhandene Widgets behalten ihre ausgewählten Zonen. Die gemeinsame Zeitquelle Windows oder NTP ist davon unabhängig.
+
 Jedes Widget kann eine beliebige Windows-Zeitzone und einen vorzeichenbehafteten Versatz im Format `[-]HH:mm:ss.ff` verwenden. Kompakte Eingaben werden von rechts, beginnend mit Sekunden, ausgewertet.
 
 Der Versatz ist beispielsweise im Rundfunkstudio nützlich, um die Verzögerung der Übertragungsstrecke auszugleichen. Wird die Studiouhr um die gemessene Verzögerung vorgestellt, erreicht ihr Zeitzeichen die Hörer zum vorgesehenen Zeitpunkt.
+
+Der Widget-Versatz wird vor der Umrechnung in die Zeitzone auf UTC angewendet und verschiebt damit auch den Zeitpunkt einer Zeitumstellung. Eine um zehn Sekunden vorgestellte Uhr stellt sich zehn Sekunden früher um; eine um zehn Sekunden nachgestellte Uhr zehn Sekunden später. Zeiger, Digitalanzeige, Kalenderdatum, Wecker und Zeitzeichen verwenden die so berechnete Zeit.
 
 Auf der Registerkarte Zeit wird für die gesamte Anwendung und damit für alle Widgets die Windows-Systemzeit oder die Zeit der eingestellten NTP-Server gewählt. NTP korrigiert nur die in CalClock angezeigte Zeit; die Windows-Uhr wird nie geändert. Bis zur ersten gültigen Antwort wird die Systemzeit verwendet. NTP ist voreingestellt. Die automatische Gruppe wählt nach der Systemregion die tschechisch-slowakischen Server, PTB für Europa oder den globalen Pool. Mehrere Messungen werden nach Netzverzögerung und Ausreißern gefiltert. Jetzt synchronisieren startet sofort eine neue Messung.
 
@@ -103,6 +107,8 @@ Abweichungen werden in Millisekunden mit vier Nachkommastellen angezeigt. Ein po
 Protokoll speichern exportiert die Einträge einschließlich Abweichungen und Fehlerdetails als CSV. Einträge werden nicht über Programmstarts hinweg aufbewahrt; speichern Sie sie vor dem Beenden, wenn Sie sie behalten möchten.
 
 Uhr-Widgets unterstützen Wecker für einzeln wählbare Wochentage; standardmäßig sind alle sieben Tage aktiv. Ein Wecker macht sein ausgeblendetes Widget sichtbar und holt es vor andere Fenster, ohne „Immer im Vordergrund“ dauerhaft zu verändern. WAV, MP3, WMA, MIDI, AAC, M4A und FLAC werden für einmalige oder wiederholte interne Wiedergabe erkannt; die tatsächliche Dekodierung hängt von den installierten Windows-Multimediakomponenten ab. Andere Dateien und Befehle werden asynchron an Windows übergeben. Ein Wecker kann auch eine HTTP- oder HTTPS-Adresse aufrufen. Unabhängig davon kann er ein Zeitzeichen aus sechs Tönen verwenden, dessen erster kurzer Ton fünf Sekunden vor der Weckzeit erklingt.
+
+Die Weckertöne werden anhand des tatsächlich bevorstehenden Weckzeitpunkts nach Zeitzonenumrechnung und Widget-Versatz geplant. Sie beginnen fünf tatsächlich verstrichene Sekunden davor, auch wenn die angezeigte Uhr direkt zur Weckzeit springt. Eine im Frühjahr übersprungene Weckzeit löst weder Wecker noch Töne aus. In der im Herbst wiederholten Stunde ertönen Wecker und Töne für dasselbe Datum und dieselbe eingestellte Uhrzeit nur einmal.
 
 Test zeigt die visuelle Weckeranzeige und prüft Datei, Befehl, Audio und entfernte Skriptadresse asynchron. Ist das Weckerzeitzeichen ausgewählt, spielt Test auch die gesamte Folge aus sechs Tönen; Test stoppen beendet interne Audiowiedergabe und Signalvorschau.
 

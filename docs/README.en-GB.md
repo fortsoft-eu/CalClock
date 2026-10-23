@@ -88,9 +88,13 @@ The **AM/PM** checkbox is checked by default. Turning it off hides the marker wi
 
 Named time zones show the civil time of the selected location and automatically follow that location's daylight saving rules. The offset next to each name reflects the current date and is refreshed when the list opens. Standalone **UTC** entries provide fixed offsets from **UTC−12:00** through **UTC+14:00**, in 15-minute steps, without daylight saving changes. Choose your local zone, any other named zone, or a fixed UTC offset independently for each widget.
 
+New widgets default to **Current Windows time zone**, which follows the current Windows time zone and its automatic daylight saving setting. Existing widgets retain their selected zones. This choice affects the time zone; the shared Windows or NTP time source remains independent of it.
+
 Each widget can use an arbitrary Windows time zone and a signed offset in the form `[-]HH:mm:ss.ff`. Compact offset input is interpreted from the right, starting with seconds.
 
 The offset is useful in broadcast studios, for example, to compensate for transmission path delay. Advancing the studio clock by the measured delay allows its time signal to reach listeners at the intended time.
+
+The widget offset is applied to UTC before conversion to its time zone, so it also shifts the instant of a daylight saving transition. A clock advanced by ten seconds changes ten seconds early; a clock delayed by ten seconds changes ten seconds late. Clock hands, digital text, calendar dates, alarms, and time signals use the resulting time.
 
 The Time tab selects Windows system time or the configured NTP servers for the whole application and therefore for all widgets. NTP corrects only the time displayed by CalClock; the Windows clock is never changed. System time is used until the first valid reply. NTP is the default. The automatic set chooses Czech and Slovak servers, PTB for Europe, or the global pool according to the system region. Multiple measurements are filtered by network delay and outlying replies. Synchronise now starts a fresh measurement immediately.
 
@@ -103,6 +107,8 @@ Offsets are displayed in milliseconds with four decimal places. A positive value
 Save log exports the records to CSV, including offsets and failure details. Records are not retained between application sessions; save them before exiting if you want to keep them.
 
 Clock widgets support alarms on individually selected weekdays; all seven days are enabled by default. An alarm makes its hidden widget visible and brings it in front of other windows without permanently changing its always-on-top setting. WAV, MP3, WMA, MIDI, AAC, M4A, and FLAC files are recognised for internal playback once or continuously; actual decoding support is provided by the multimedia components installed in Windows. Other files and commands are passed to Windows asynchronously. An alarm can also call an HTTP or HTTPS URL. Independently of these actions, an alarm may use the six-pip time signal whose first short pip sounds five seconds before the configured alarm time.
+
+Alarm pips are scheduled from the actual upcoming alarm time after time-zone conversion and the widget offset. They start five elapsed seconds before that instant, including when the displayed clock jumps directly to the alarm time. A skipped spring alarm time produces neither an alarm nor its pips. During a repeated autumn hour, an alarm and its pips occur only once for the same date and configured time.
 
 The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
 

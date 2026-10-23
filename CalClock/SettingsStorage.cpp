@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.1
  */
 
 #define NOMINMAX
@@ -369,9 +369,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         if (SUCCEEDED(result)) {
             result = WriteXmlTextAttribute(writer, L"timeZoneKey", config.timeZoneKey);
         }
-        for (int index = 0; index < ADDITIONAL_CLOCK_COUNT && SUCCEEDED(result); index++) {
-            const AdditionalClockConfig& clock = config.additionalClocks[index];
-            std::wstring prefix = L"additionalClock" + std::to_wstring(index + 1);
+        for (int clockIndex = 0; clockIndex < ADDITIONAL_CLOCK_COUNT && SUCCEEDED(result); clockIndex++) {
+            const AdditionalClockConfig& clock = config.additionalClocks[clockIndex];
+            std::wstring prefix = L"additionalClock" + std::to_wstring(clockIndex + 1);
             result = WriteXmlNumberAttribute(writer, (prefix + L"Enabled").c_str(), clock.enabled);
             if (SUCCEEDED(result)) {
                 result = WriteXmlTextAttribute(writer, (prefix + L"Name").c_str(), clock.name);
@@ -754,16 +754,16 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlAttribute(reader, L"timeZoneKey", &text)) {
         config->timeZoneKey = text;
     }
-    for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-        AdditionalClockConfig& clock = config->additionalClocks[index];
-        std::wstring prefix = L"additionalClock" + std::to_wstring(index + 1);
+    for (int clockIndex = 0; clockIndex < ADDITIONAL_CLOCK_COUNT; clockIndex++) {
+        AdditionalClockConfig& clock = config->additionalClocks[clockIndex];
+        std::wstring prefix = L"additionalClock" + std::to_wstring(clockIndex + 1);
         if (ReadXmlNumberAttribute(reader, (prefix + L"Enabled").c_str(), &number)) {
             clock.enabled = number != 0;
         }
         if (ReadXmlAttribute(reader, (prefix + L"Name").c_str(), &text)) {
             clock.name = text;
         } else {
-            clock.name = DefaultAdditionalClockName(config->language, index);
+            clock.name = DefaultAdditionalClockName(config->language, clockIndex);
         }
         if (ReadXmlAttribute(reader, (prefix + L"TimeZoneKey").c_str(), &text)) {
             clock.timeZoneKey = text;

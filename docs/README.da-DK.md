@@ -88,9 +88,13 @@ Digitale ure, kalenderpaneler og skærmure tilbyder **Efter sprog**, **12 timer*
 
 Navngivne tidszoner viser stedets civile tid og følger automatisk dets sommertidsregler. Forskydningen ved navnet gælder den aktuelle dato og opdateres, når listen åbnes. Særskilte **UTC**-punkter tilbyder faste forskydninger fra **UTC−12:00** til **UTC+14:00** i trin på 15 minutter uden sommertid. Vælg lokal zone, en anden navngiven zone eller fast UTC-forskydning uafhængigt for hver widget.
 
+Nye widgets bruger som standard **Aktuel Windows-tidszone**, som følger den aktuelle Windows-tidszone og indstillingen for automatisk sommertid. Eksisterende widgets beholder deres valgte zoner. Valget bestemmer tidszonen; den fælles tidskilde Windows eller NTP er uafhængig af det.
+
 Hver widget kan bruge en vilkårlig Windows-tidszone og en forskydning med fortegn i formen `[-]HH:mm:ss.ff`. Kompakt indtastning fortolkes fra højre, begyndende med sekunder.
 
 Forskydning er nyttig i eksempelvis radiostudier til at kompensere for forsinkelsen i transmissionsvejen. Ved at stille studiets ur foran med den målte forsinkelse når tidssignalet lytterne på det tilsigtede tidspunkt.
+
+Widgettens forskydning anvendes på UTC før omregning til tidszonen og forskyder derfor også tidspunktet for skift til eller fra sommertid. Et ur, der går ti sekunder foran, skifter ti sekunder tidligere; et ur, der går ti sekunder bagefter, skifter ti sekunder senere. Visere, digital visning, kalenderdatoer, alarmer og tidssignaler bruger den beregnede tid.
 
 Fanen Tid vælger Windows-tid eller NTP-servere for hele programmet. NTP korrigerer kun CalClock og ændrer aldrig Windows. NTP er standard; det automatiske sæt vælger servere efter område og filtrerer målinger efter forsinkelse og afvigelser.
 
@@ -103,6 +107,8 @@ Tidsafvigelser vises i millisekunder med fire decimaler. En positiv værdi betyd
 Gem log eksporterer posterne til CSV, inklusive tidsafvigelser og fejloplysninger. Poster beholdes ikke mellem programstarter; gem dem før afslutning, hvis du vil beholde dem.
 
 Urwidgets understøtter alarmer på individuelt valgte ugedage; alle syv er aktive som standard. En alarm viser sin skjulte widget og bringer den foran andre vinduer uden permanent at ændre altid øverst. WAV, MP3, WMA, MIDI, AAC, M4A og FLAC genkendes til intern engangsafspilning eller gentagelse; faktisk afkodning afhænger af installerede Windows-mediekomponenter. Andre filer og kommandoer sendes asynkront til Windows. En alarm kan også kalde en HTTP- eller HTTPS-adresse. Uafhængigt heraf kan den bruge tidssignalet med seks bip, hvor første korte bip lyder fem sekunder før alarmtiden.
+
+Alarmtonerne planlægges efter det faktiske tidspunkt for den kommende alarm, efter tidszoneomregning og widgetforskydning. De begynder fem reelle sekunder før dette tidspunkt, også når det viste ur springer direkte til alarmtiden. En alarmtid, der springes over om foråret, udløser hverken alarm eller toner. I den gentagne time om efteråret udløses alarmen og dens toner kun én gang for samme dato og indstillede klokkeslæt.
 
 Test viser den visuelle markering og afprøver fil, kommando, lyd og fjernscriptets adresse asynkront. Hvis alarmens tidssignal er valgt, afspilles også hele sekvensen på seks bip; Stop test afslutter intern lyd og signalforhåndsvisning.
 

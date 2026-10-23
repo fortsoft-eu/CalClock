@@ -88,9 +88,13 @@ Stafrænar klukkur, dagatalsspjöld og skjáklukkur bjóða **Samkvæmt tungumá
 
 Nafngreind tímabelti sýna borgaralegan tíma valins staðar og fylgja sjálfkrafa sumartímareglum hans. Hliðrun við nafnið gildir fyrir núverandi dagsetningu og uppfærist þegar listinn opnast. Sérstakar **UTC**-færslur bjóða fasta hliðrun frá **UTC−12:00** til **UTC+14:00** í 15 mínútna skrefum, án sumartíma. Veldu staðbundið belti, annað nafngreint belti eða fasta UTC-hliðrun sjálfstætt fyrir hverja græju.
 
+Nýjar græjur nota sjálfgefið **Núverandi tímabelti Windows**, sem fylgir núverandi tímabelti Windows og stillingu fyrir sjálfvirkan sumartíma. Græjur sem þegar eru til halda völdum tímabeltum. Þetta val ákvarðar tímabeltið; sameiginlegur tímagjafi Windows eða NTP er óháður því.
+
 Hver græja getur notað hvaða Windows-tímabelti sem er og hliðrun með formerki á sniðinu `[-]HH:mm:ss.ff`. Samþjöppuð innsláttargildi eru túlkuð frá hægri, frá sekúndum.
 
 Hliðrun er gagnleg til dæmis í útvarpsveri til að bæta upp seinkun í flutningsleið. Með því að flýta klukku versins um mælda seinkun nær tímamerkið hlustendum á tilætluðum tíma.
+
+Tímafráviki græjunnar er bætt við UTC áður en tímanum er breytt yfir í tímabeltið. Það færir því einnig augnablikið þegar skipt er yfir í eða úr sumartíma. Klukka sem er tíu sekúndum á undan skiptir tíu sekúndum fyrr, en klukka sem er tíu sekúndum á eftir skiptir tíu sekúndum síðar. Vísar, stafrænn tími, dagsetningar dagatals, vekjarar og tímamerki nota tímann sem þannig fæst.
 
 Tímaflipinn velur Windows-tíma eða NTP-þjóna fyrir allt forritið. NTP leiðréttir aðeins CalClock og breytir aldrei Windows. NTP er sjálfgefið; sjálfvirka safnið velur þjóna eftir svæði og síar mælingar eftir töf og frávikum.
 
@@ -103,6 +107,8 @@ Tímamunur er sýndur í millisekúndum með fjórum aukastöfum. Jákvætt gild
 Vista annál flytur færslur út sem CSV, með tímamun og villuupplýsingum. Færslur varðveitast ekki milli keyrslna; vistaðu þær áður en þú lokar forritinu ef þú vilt geyma þær.
 
 Klukkugræjur styðja vekjara á völdum vikudögum; allir sjö eru virkir sjálfgefið. Vekjari birtir sína földu græju og færir hana fram fyrir aðra glugga án þess að breyta alltaf efst varanlega. WAV, MP3, WMA, MIDI, AAC, M4A og FLAC eru þekkt til innri spilunar einu sinni eða í sífellu; raunveruleg afkóðun ræðst af uppsettum margmiðlunarhlutum Windows. Aðrar skrár og skipanir eru sendar Windows ósamstillt. Vekjari getur líka kallað HTTP- eða HTTPS-slóð. Óháð þessu getur hann notað sex-pípa tímamerkið, þar sem fyrsta stutta pípið hljómar fimm sekúndum fyrir stilltan vekjaratíma.
+
+Hljóðmerki vekjarans miðast við raunverulegt augnablik næstu vekjarahringingar eftir umreikning í tímabeltið og beitingu tímafráviks græjunnar. Þau hefjast fimm raunverulegum sekúndum fyrr, jafnvel þótt klukkan hoppi beint á stilltan vekjaratíma. Vekjaratími sem er sleppt að vori kveikir hvorki á vekjara né hljóðmerkjum. Þegar klukkustund er endurtekin að hausti hringja vekjarinn og hljóðmerki hans aðeins einu sinni fyrir sömu dagsetningu og stilltan tíma.
 
 Prófa sýnir sjónræna merkingu og prófar skrá, skipun, hljóð og slóð fjarskriftu ósamstillt. Ef tímamerki vekjarans er valið er öll sex-pípa runan líka spiluð; Stöðva prófun lýkur innri hljóðspilun og forskoðun merkisins.
 

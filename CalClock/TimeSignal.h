@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.1
  */
 
 #pragma once
@@ -29,15 +29,13 @@
 #include "CalClockTypes.h"
 #include <windows.h>
 
+/// Reports whether a displayed FILETIME value is an exact boundary of the enabled signal interval.
+bool IsTimeSignalBoundary(ULONGLONG displayedFileTime, TimeSignalMode mode);
+
 /// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget offsets.
 /// Returns false for a disabled or invalid interval or a null output pointer.
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
     ULONGLONG* targetTimelineFileTime);
-
-/// Maps the next occurrence of an alarm's displayed hour and minute to continuous FILETIME ticks.
-/// Selects the following day when that time has already been reached; rejects invalid inputs.
-bool CalculateAlarmTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, int alarmHour,
-    int alarmMinute, ULONGLONG* targetTimelineFileTime);
 
 /// Caches whether the Windows version requires generated audio instead of system Beep output.
 bool IsTimeSignalGeneratorRequired();

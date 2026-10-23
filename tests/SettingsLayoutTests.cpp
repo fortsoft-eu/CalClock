@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.1
  */
 
 #define WriteRegistrySettings CaptureTestRegistrySettings
@@ -108,6 +108,19 @@ static std::vector<AppearanceTransitionFrame> appearanceTransitionFrames;
 
 /// Renders a native field or an entire visible settings window into a test image.
 static FieldImage ReadFieldImage(HWND control, bool children = false, bool native = false);
+
+/// Finds the label explicitly associated with a settings field in its parent page.
+static HWND GetSettingsFieldLabel(HWND field) {
+    if (field == nullptr) {
+        return nullptr;
+    }
+    for (HWND label = GetWindow(GetParent(field), GW_CHILD); label != nullptr; label = GetWindow(label, GW_HWNDNEXT)) {
+        if (GetPropW(label, SETTINGS_FIELD_LABEL_PROPERTY) == field) {
+            return label;
+        }
+    }
+    return nullptr;
+}
 
 /// Records native-control assertions without stopping after the first failure.
 static void Check(bool condition, const char* description) {

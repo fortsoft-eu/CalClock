@@ -88,9 +88,13 @@ Digitala klockor, kalenderpaneler och skärmklockor erbjuder **Enligt språk**, 
 
 Namngivna tidszoner visar ortens civila tid och följer automatiskt dess sommartidsregler. Förskjutningen bredvid namnet gäller aktuellt datum och uppdateras när listan öppnas. Separata **UTC**-poster erbjuder fasta förskjutningar från **UTC−12:00** till **UTC+14:00** i steg om 15 minuter utan sommartid. Välj lokal zon, valfri annan namngiven zon eller fast UTC-förskjutning oberoende för varje widget.
 
+Nya widgetar använder som standard **Aktuell tidszon i Windows**, som följer Windows aktuella tidszon och inställningen för automatisk sommartid. Befintliga widgetar behåller sina valda zoner. Valet bestämmer tidszonen; den gemensamma tidskällan Windows eller NTP är oberoende av det.
+
 Varje widget kan använda valfri Windows-tidszon och en förskjutning med tecken i formen `[-]HH:mm:ss.ff`. Kompakt inmatning tolkas från höger, med sekunder först.
 
 Förskjutningen är användbar exempelvis i sändningsstudior för att kompensera för överföringskedjans fördröjning. Om studioklockan ställs fram med den uppmätta fördröjningen når tidssignalen lyssnarna vid avsedd tidpunkt.
+
+Widgetens förskjutning läggs till UTC före omräkningen till tidszonen och flyttar därför även tidpunkten för övergång till eller från sommartid. En klocka som går tio sekunder före ställer om tio sekunder tidigare; en klocka som går tio sekunder efter ställer om tio sekunder senare. Visare, digital visning, kalenderdatum, alarm och tidssignaler använder den beräknade tiden.
 
 Fliken Tid väljer Windows-tid eller NTP-servrar för hela programmet. NTP korrigerar bara CalClock och ändrar aldrig Windows. NTP är standard; den automatiska uppsättningen väljer servrar efter region och filtrerar mätningar efter fördröjning och avvikelse.
 
@@ -103,6 +107,8 @@ Tidsavvikelser visas i millisekunder med fyra decimaler. Ett positivt värde bet
 Spara logg exporterar posterna till CSV, inklusive tidsavvikelser och feldetaljer. Poster sparas inte mellan programstarter; spara dem innan du avslutar om du vill behålla dem.
 
 Klockwidgetar har alarm för individuellt valda veckodagar; alla sju är aktiva som standard. Ett alarm visar sin dolda widget och för den framför andra fönster utan att permanent ändra alltid överst. WAV, MP3, WMA, MIDI, AAC, M4A och FLAC identifieras för intern engångs- eller upprepad uppspelning; faktisk avkodning beror på installerade Windows-mediekomponenter. Andra filer och kommandon skickas asynkront till Windows. Ett alarm kan även anropa en HTTP- eller HTTPS-adress. Oberoende av detta kan det använda sex-toners tidssignalen, vars första korta ton ljuder fem sekunder före alarmtiden.
+
+Alarmtonerna planeras efter den faktiska tidpunkten för nästa alarm, efter tidszonsomräkning och widgetförskjutning. De börjar fem verkliga sekunder före den tidpunkten, även när klockan hoppar direkt till alarmtiden. En alarmtid som hoppas över på våren utlöser varken alarm eller toner. Under den upprepade timmen på hösten utlöses alarmet och dess toner bara en gång för samma datum och inställda klockslag.
 
 Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrskriptadress asynkront. Om alarmets tidssignal valts spelas också hela sekvensen med sex toner; Stoppa test avslutar internt ljud och signalens förhandsvisning.
 

@@ -22,6 +22,8 @@ Laikrodžiai ir skydeliai palaiko žadintuvą. Programa pati leidžia garso fail
 
 Žadintuvas parodo paslėptą valdiklį ir iškelia jį į priekį nekeisdamas Visada viršuje visam laikui. Leisti laiko signalą pradeda pirmą trumpą toną likus penkioms sekundėms iki žadintuvo. Ši nuostata nepriklauso nuo skirtuko Signalas; vienalaikės sekos sujungiamos. Tikrinti įjungia ciferblato arba rėmelio mirksėjimą ir tikrina failą, komandą, garsą, nuotolinio scenarijaus HTTP/HTTPS adresą ir, jei pasirinkta, visą laiko signalą. Sustabdžius tikrinimą nutraukiamas jo vidinis garsas ir bandomasis signalas; sustabdžius žadintuvą – jo vidinis garsas. Nutildžius atkūrimas tęsiasi tyliai ir vėl girdimas įjungus garsą. Komandos ir nuotoliniai scenarijai nestabdomi.
 
+Žadintuvo garsiniai signalai planuojami pagal tikrąjį artimiausio žadintuvo momentą po laiko juostos konvertavimo ir valdiklio poslinkio pritaikymo. Jie prasideda penkiomis tikromis sekundėmis anksčiau, net kai rodomas laikrodis peršoka tiesiai į žadintuvo laiką. Pavasarį praleistas žadintuvo laikas nesukelia nei žadintuvo, nei jo signalų. Rudenį pasikartojančią valandą žadintuvas ir jo signalai suveikia tik kartą tai pačiai datai ir nustatytam laikui.
+
 Slankiklis Garsumas skirtuke Žadintuvas valdo šio valdiklio vidinį atkūrimą. Numatytieji −18 dB išlaiko pradinį failo lygį (100%). Slenkant dešinėn garsas stiprinamas; didžiausi 0 dB atitinka maždaug 794%. −∞ dB reiškia tylą. Pakeitimai girdimi ir tikrinant. MIDI ir failams, kurių negalima dekoduoti ir kurie atkuriami atsarginiu būdu, taikoma 100% riba.
 
 ## Pasirinkimas, klavišai ir datos kopijavimas
@@ -67,6 +69,10 @@ Tik dukart spustelėjus tiesiai pagrindinį ciferblatą perjungiama jo sekundži
 ## Laiko formatas ir laiko juostos
 
 Laiko formatas skirtuke Bendra siūlo Pagal kalbą (numatyta), 12 valandų ir 24 valandos. Rankinis pasirinkimas išlieka pakeitus kalbą. Skyrikliai ir laiko žymos priklauso nuo valdiklio kalbos. AM/PM iš pradžių įjungta ir valdo tik 12 valandų formato žymą; jei kalba neturi savų žymų, naudojama AM/PM. Ekrano laikrodžiai žymą rodo atskiroje eilutėje po laiku. UTC visada naudoja 24 valandų formatą. Vardinės juostos laikosi vietinio ir vasaros laiko taisyklių; poslinkis atitinka dabartinę datą. Atskiros UTC parinktys yra pastovūs poslinkiai nuo −12:00 iki +14:00 kas 15 minučių be vasaros laiko.
+
+Nauji valdikliai pagal numatytąją nuostatą naudoja **Dabartinė Windows laiko juosta**, kuri seka dabartinę Windows laiko juostą ir automatinio vasaros laiko nuostatą. Esami valdikliai išlaiko pasirinktas juostas. Šis pasirinkimas nustato laiko juostą; bendras Windows arba NTP laiko šaltinis lieka nepriklausomas.
+
+Valdiklio poslinkis pritaikomas UTC laikui prieš konvertuojant į jo laiko juostą, todėl paslenka ir perėjimo į vasaros laiką arba iš jo momentą. Dešimčia sekundžių skubantis laikrodis persijungia dešimčia sekundžių anksčiau, o dešimčia sekundžių vėluojantis — dešimčia sekundžių vėliau. Rodyklės, skaitmeninis rodinys, kalendoriaus datos, žadintuvai ir laiko signalai naudoja gautą laiką.
 
 ## Laiko šaltinis ir NTP žurnalas
 

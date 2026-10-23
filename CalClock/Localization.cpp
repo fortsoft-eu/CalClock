@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.0
+ * Last modified for version 1.6.1.1
  */
 
 #include "Localization.h"
@@ -2405,6 +2405,45 @@ const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4] = {
     { L"Подебљано", L"Курзив", L"Подвучено", L"Прецртано" },
     { L"Напівжирний", L"Курсив", L"Підкреслений", L"Закреслений" },
     { L"Полужирный", L"Курсив", L"Подчёркнутый", L"Зачёркнутый" }
+};
+
+const wchar_t* SYSTEM_TIME_ZONE_LABELS[LANG_COUNT] = {
+    L"Aktuální časové pásmo Windows",
+    L"Current Windows time zone",
+    L"Current Windows time zone",
+    L"Current Windows time zone",
+    L"Aktuelle Windows-Zeitzone",
+    L"Fuseau horaire actuel de Windows",
+    L"Zona horaria actual de Windows",
+    L"Fuso orario corrente di Windows",
+    L"Fuso horário atual do Windows",
+    L"Bieżąca strefa czasowa systemu Windows",
+    L"Aktuálne časové pásmo Windows",
+    L"Aktuel Windows-tidszone",
+    L"Windowsin nykyinen aikavyöhyke",
+    L"Núverandi tímabelti Windows",
+    L"Gjeldende tidssone i Windows",
+    L"Aktuell tidszon i Windows",
+    L"Geçerli Windows saat dilimi",
+    L"Windowsi praegune ajavöönd",
+    L"Crios ama reatha Windows",
+    L"Dabartinė Windows laiko juosta",
+    L"Pašreizējā Windows laika josla",
+    L"A Windows aktuális időzónája",
+    L"Iż-żona tal-ħin attwali ta’ Windows",
+    L"Huidige Windows-tijdzone",
+    L"Fusul orar curent din Windows",
+    L"Τρέχουσα ζώνη ώρας των Windows",
+    L"Trenutna vremenska zona Windowsa",
+    L"Trenutna vremenska zona sustava Windows",
+    L"Trenutni časovni pas sistema Windows",
+    L"Trenutna vremenska zona Windowsa",
+    L"Бягучы часавы пояс Windows",
+    L"Текуща часова зона на Windows",
+    L"Тековна временска зона на Windows",
+    L"Тренутна временска зона Windows-а",
+    L"Поточний часовий пояс Windows",
+    L"Текущий часовой пояс Windows"
 };
 
 const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT] = {

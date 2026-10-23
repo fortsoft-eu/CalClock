@@ -22,6 +22,8 @@ Glacann am an aláraim le HH:mm, le hidirstad, lánstad, spás nó deighilteoir 
 
 Taispeánann aláram giuirléid fholaithe agus tugann sé chun tosaigh í gan Ar barr i gcónaí a athrú go buan. Tosaíonn Seinn an comhartha ama an chéad bhíp ghearr cúig shoicind roimh an aláram. Tá sé neamhspleách ar an gcluaisín Comhartha, ach cumaisctear seichimh chomhuaineacha. Cuireann Tástáil aghaidh an chloig nó fráma an phainéil ag caochadh agus seiceálann sé an comhad, an t-ordú, an fhuaim, URL HTTP/HTTPS an chianscript agus, má roghnaítear é, an comhartha ama iomlán. Stopann Stop an tástáil an fhuaim inmheánach agus an comhartha trialach; stopann Stop an t-aláram fuaim inmheánach an aláraim. Leanann athsheinm ar aghaidh go ciúin nuair a bhalbhaítear é agus éiríonn sé inchloiste arís nuair a bhaintear an balbhú. Ní stoptar orduithe ná cianscripteanna.
 
+Déantar bípeanna an aláraim a sceidealú de réir am iarbhír an chéad aláraim eile tar éis tiontú crios ama agus fritháireamh na giuirléide a chur i bhfeidhm. Tosaíonn siad cúig shoicind iarbhír roimh an am sin, fiú má léimeann an clog taispeánta díreach chuig am an aláraim. Má sciptear am aláraim san earrach, ní ghníomhachtaítear an t-aláram ná na bípeanna. Le linn na huaire a athdhéantar san fhómhar, ní tharlaíonn an t-aláram agus a chuid bípeanna ach uair amháin don dáta agus don am socraithe céanna.
+
 Socraíonn Airde na fuaime ar an gcluaisín Aláram leibhéal na gcomhad a sheinntear go hinmheánach don ghiuirléid sin. Coinníonn an réamhshocrú −18 dB leibhéal bunaidh an chomhaid (100%). Méadaíonn bogadh ar dheis an fhuaim; is ionann an t-uasmhéid 0 dB agus thart ar 794%. Is tost é −∞ dB. Cloistear athruithe le linn tástála freisin. Tá MIDI agus comhaid a sheinntear le seinnteoir cúltaca toisc nach féidir iad a dhíchódú teoranta do 100%.
 
 ## Roghnú, eochracha agus cóipeáil dátaí
@@ -67,6 +69,10 @@ Ní athraíonn ach déchliceáil díreach ar an bpríomhaghaidh a lámh soicind�
 ## Formáid ama agus criosanna ama
 
 Tugann Formáid ama ar Ginearálta De réir na teanga (réamhshocrú), 12 uair agus 24 uair. Fanann rogha láimhe tar éis athrú teanga. Leanann deighilteoirí agus marcóirí ama an teanga. Tá AM/PM cumasaithe ar dtús agus ní rialaíonn sé ach an marcóir i mód 12 uair; mura bhfuil marcóirí ag an teanga, úsáidtear AM/PM. Taispeánann cloig scáileáin é ar shraith ar leith faoin am. Úsáideann UTC formáid 24 uair i gcónaí. Leanann criosanna ainmnithe a rialacha áitiúla agus ama samhraidh; baineann an fritháireamh leis an dáta reatha. Is fritháirimh sheasta ó −12:00 go +14:00 i gcéimeanna 15 nóiméad iad na míreanna UTC ar leith, gan am samhraidh.
+
+Úsáideann giuirléidí nua **Crios ama reatha Windows** mar réamhshocrú. Leanann an rogha seo crios ama reatha Windows agus socrú uathoibríoch an ama samhraidh. Coinníonn na giuirléidí atá ann cheana na criosanna ama atá roghnaithe acu. Baineann an rogha leis an gcrios ama; fanann an fhoinse ama chomhroinnte Windows nó NTP neamhspleách uirthi.
+
+Cuirtear fritháireamh na giuirléide le UTC sula dtiontaítear an t-am chuig a crios ama, agus mar sin bogtar am an aistrithe go ham samhraidh nó uaidh freisin. Athraíonn clog atá deich soicind chun tosaigh deich soicind níos luaithe; athraíonn clog atá deich soicind ar gcúl deich soicind níos déanaí. Úsáideann na snáthaidí, an taispeáint dhigiteach, dátaí an fhéilire, na haláraim agus na comharthaí ama an t-am a fhaightear.
 
 ## Foinse ama agus logchomhad NTP
 

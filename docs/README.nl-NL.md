@@ -22,6 +22,8 @@ De alarmtijd accepteert HH:mm met een dubbele punt, punt, spatie of ander scheid
 
 Een alarm toont een verborgen widget en brengt deze naar voren zonder Altijd op voorgrond blijvend te wijzigen. Tijdsignaal afspelen begint de eerste korte toon vijf seconden vóór het alarm. Dit staat los van het tabblad Signaal; gelijktijdige reeksen worden samengevoegd. Testen laat de wijzerplaat of rand knipperen en test het bestand, de opdracht, het geluid, de HTTP/HTTPS-URL van het externe script en, indien gekozen, het volledige tijdsignaal. Test stoppen beëindigt de interne audio en het proefsignaal van de test; het alarm stoppen beëindigt de interne alarmaudio. Bij dempen loopt interne audio stil door en wordt na opheffen weer hoorbaar. Opdrachten en externe scripts blijven actief.
 
+De pieptonen van het alarm worden gepland volgens het werkelijke tijdstip van het eerstvolgende alarm, na tijdzoneconversie en toepassing van de widgetverschuiving. Ze beginnen vijf werkelijke seconden eerder, ook als de weergegeven klok rechtstreeks naar de alarmtijd springt. Een alarmtijd die in het voorjaar wordt overgeslagen, activeert geen alarm of pieptonen. Tijdens het herhaalde uur in het najaar worden het alarm en de pieptonen voor dezelfde datum en ingestelde tijd slechts eenmaal afgespeeld.
+
 Geluidsvolume op het tabblad Alarm regelt de interne weergave voor die widget. De standaard −18 dB behoudt het oorspronkelijke bestandsniveau (100%). Naar rechts versterkt het geluid; het maximum van 0 dB is ongeveer 794%. −∞ dB betekent stilte. Wijzigingen zijn ook tijdens een test hoorbaar. MIDI en bestanden die niet gedecodeerd kunnen worden en via een alternatieve speler worden afgespeeld, zijn beperkt tot 100%.
 
 ## Selecteren, toetsen en datums kopiëren
@@ -67,6 +69,10 @@ Alleen dubbelklikken rechtstreeks op de hoofdwijzerplaat schakelt de secondewijz
 ## Tijdnotatie en tijdzones
 
 Tijdnotatie op Algemeen biedt Volgens taal (standaard), 12 uur en 24 uur. Een handmatige keuze blijft na een taalwijziging behouden. Scheidingstekens en tijdsaanduidingen volgen de widgettaal. AM/PM is aanvankelijk ingeschakeld en regelt alleen de aanduiding bij 12 uur; zonder eigen taalaanduidingen wordt AM/PM gebruikt. Schermklokken tonen deze in een aparte rij onder de tijd. UTC gebruikt altijd de 24-uursnotatie. Benoemde zones volgen lokale tijd en zomertijd; de verschuiving geldt voor de huidige datum. Aparte UTC-items zijn vaste verschuivingen van −12:00 tot +14:00 in stappen van 15 minuten, zonder zomertijd.
+
+Nieuwe widgets gebruiken standaard **Huidige Windows-tijdzone**. Deze optie volgt de huidige Windows-tijdzone en de instelling voor automatische zomertijd. Bestaande widgets behouden hun gekozen tijdzones. De keuze bepaalt de tijdzone; de gedeelde tijdbron Windows of NTP blijft daarvan onafhankelijk.
+
+De verschuiving van de widget wordt op UTC toegepast vóór de omzetting naar de tijdzone en verschuift daardoor ook het moment van de zomertijdwisseling. Een klok die tien seconden voorloopt, schakelt tien seconden eerder om; een klok die tien seconden achterloopt, tien seconden later. Wijzers, digitale weergave, kalenderdatums, alarmen en tijdsignalen gebruiken de resulterende tijd.
 
 ## Tijdbron en NTP-logboek
 

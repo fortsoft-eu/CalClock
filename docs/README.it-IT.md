@@ -88,9 +88,13 @@ La casella **AM/PM** è selezionata per impostazione predefinita. Deselezionarla
 
 I fusi con nome mostrano l’ora civile della località e ne seguono automaticamente le regole dell’ora legale. Lo scostamento accanto al nome corrisponde alla data corrente e viene aggiornato all’apertura dell’elenco. Le voci **UTC** separate offrono scostamenti fissi da **UTC−12:00** a **UTC+14:00**, a passi di 15 minuti e senza ora legale. Ogni widget può scegliere indipendentemente fuso locale, altro fuso con nome o scostamento UTC fisso.
 
+I nuovi widget usano per impostazione predefinita **Fuso orario corrente di Windows**, che segue il fuso orario corrente di Windows e l’impostazione automatica dell’ora legale. I widget esistenti mantengono il fuso scelto. Questa opzione determina il fuso orario; la sorgente temporale condivisa, Windows o NTP, rimane indipendente.
+
 Ogni widget può usare qualsiasi fuso Windows e uno scostamento con segno nella forma `[-]HH:mm:ss.ff`. L’immissione compatta viene interpretata da destra, iniziando dai secondi.
 
 Lo scostamento è utile, ad esempio, negli studi di trasmissione per compensare il ritardo del percorso del segnale. Anticipare l’orologio dello studio del ritardo misurato permette al segnale orario di raggiungere gli ascoltatori al momento previsto.
+
+Lo scostamento del widget viene applicato a UTC prima della conversione nel suo fuso orario, quindi sposta anche l’istante del cambio d’ora. Un orologio avanti di dieci secondi cambia dieci secondi prima; uno indietro di dieci secondi cambia dieci secondi dopo. Lancette, indicazione digitale, date del calendario, sveglie e segnali orari usano l’ora risultante.
 
 La scheda Ora seleziona l’ora di sistema Windows o i server NTP configurati per l’intera applicazione e quindi per tutti i widget. NTP corregge solo l’ora visualizzata da CalClock; l’orologio di Windows non viene mai modificato. L’ora di sistema viene usata fino alla prima risposta valida. NTP è l’impostazione predefinita. Il gruppo automatico sceglie i server cechi e slovacchi, PTB per l’Europa o il pool globale in base all’area di sistema. Più misurazioni vengono filtrate in base al ritardo di rete e alle risposte anomale. Sincronizza ora avvia subito una nuova misurazione.
 
@@ -103,6 +107,8 @@ Gli scostamenti sono espressi in millisecondi con quattro cifre decimali. Un val
 Salva registro esporta le voci in CSV, compresi scostamenti e dettagli degli errori. Le voci non vengono conservate tra le sessioni; salvarle prima di uscire se si desidera mantenerle.
 
 I widget orologio supportano sveglie per giorni scelti individualmente; tutti e sette sono attivi per impostazione predefinita. La sveglia rende visibile il proprio widget nascosto e lo porta davanti alle altre finestre senza modificare permanentemente lo stato sempre in primo piano. WAV, MP3, WMA, MIDI, AAC, M4A e FLAC sono riconosciuti per la riproduzione interna singola o ripetuta; il supporto effettivo dipende dai componenti multimediali di Windows installati. Altri file e comandi vengono passati a Windows in modo asincrono. Una sveglia può anche richiamare un URL HTTP o HTTPS. Indipendentemente, può usare il segnale a sei bip, il cui primo tono breve suona cinque secondi prima dell’ora impostata.
+
+I toni della sveglia vengono programmati in base all’istante effettivo della prossima sveglia, dopo la conversione del fuso e l’applicazione dello scostamento del widget. Iniziano cinque secondi effettivi prima, anche quando l’orologio visualizzato salta direttamente all’ora della sveglia. Un’ora di sveglia saltata in primavera non attiva né sveglia né toni. Durante l’ora ripetuta in autunno, la sveglia e i suoi toni si attivano una sola volta per la stessa data e ora impostata.
 
 Prova mostra l’indicazione visiva e verifica in modo asincrono file, comando, audio e URL dello script remoto. Se è selezionato il segnale della sveglia, riproduce anche tutti e sei i bip; Interrompi prova termina audio interno e anteprima del segnale.
 

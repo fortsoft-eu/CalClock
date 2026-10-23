@@ -88,9 +88,13 @@ Dijital saatler, saatli takvim panelleri ve monitör saatleri Genel’deki **Saa
 
 Adlandırılmış saat dilimleri seçili yerin resmî yerel saatini gösterir ve o yerin yaz saati kurallarını otomatik izler. Adın yanındaki fark geçerli tarihe aittir ve liste açılırken yenilenir. Bağımsız **UTC** girdileri **UTC−12:00** ile **UTC+14:00** arasında 15 dakikalık adımlarla, yaz saati değişimi olmadan sabit kaydırmalar sunar. Her araç için yerel bölge, başka bir adlandırılmış bölge veya sabit UTC kaydırması bağımsız seçilebilir.
 
+Yeni araçlarda varsayılan seçenek **Geçerli Windows saat dilimi** olur. Bu seçenek Windows’un geçerli saat dilimini ve otomatik yaz saati ayarını izler. Mevcut araçlar seçili saat dilimlerini korur. Bu seçim saat dilimini belirler; ortak Windows veya NTP zaman kaynağı bundan bağımsızdır.
+
 Her araç herhangi bir Windows saat dilimini ve `[-]HH:mm:ss.ff` biçiminde işaretli kaydırmayı kullanabilir. Kısa giriş sağdan, saniyelerden başlayarak yorumlanır.
 
 Kaydırma, örneğin yayın stüdyolarında iletim yolunun gecikmesini telafi etmek için yararlıdır. Stüdyo saatini ölçülen gecikme kadar ileri almak zaman sinyalinin dinleyicilere hedeflenen anda ulaşmasını sağlar.
+
+Aracın zaman kaydırması, saat dilimine dönüştürülmeden önce UTC’ye uygulanır; böylece yaz saati uygulamasına geçiş veya uygulamadan çıkış anını da kaydırır. On saniye ileri ayarlanmış saat on saniye erken, on saniye geri ayarlanmış saat on saniye geç değişir. İbreler, dijital gösterim, takvim tarihleri, alarmlar ve saat sinyalleri sonuçta elde edilen zamanı kullanır.
 
 Zaman sekmesi tüm uygulama için Windows zamanını veya NTP sunucularını seçer. NTP yalnızca CalClock'u düzeltir ve Windows'u hiçbir zaman değiştirmez. NTP varsayılandır; otomatik küme bölgeye göre sunucu seçer ve ölçümleri gecikme ile aykırı değerlere göre süzer.
 
@@ -103,6 +107,8 @@ Zaman farkları milisaniye cinsinden dört ondalık basamakla gösterilir. Pozit
 Günlüğü kaydet, zaman farkları ve hata ayrıntıları dahil kayıtları CSV’ye aktarır. Kayıtlar uygulama oturumları arasında korunmaz; saklamak istiyorsanız uygulamadan çıkmadan önce kaydedin.
 
 Saat araçları ayrı seçilen hafta günlerinde alarm sunar; varsayılan olarak yedi gün de etkindir. Alarm gizli aracını gösterir ve her zaman üstte ayarını kalıcı değiştirmeden diğer pencerelerin önüne getirir. WAV, MP3, WMA, MIDI, AAC, M4A ve FLAC tek seferlik veya döngülü dahili çalma için tanınır; gerçek çözme desteği Windows’taki çoklu ortam bileşenlerine bağlıdır. Diğer dosya ve komutlar Windows’a eşzamansız iletilir. Alarm HTTP veya HTTPS adresi de çağırabilir. Bunlardan bağımsız olarak ilk kısa bipin alarm saatinden beş saniye önce başladığı altı bipli zaman sinyalini kullanabilir.
+
+Alarmın ses sinyalleri, saat dilimi dönüşümü ve araç kaydırması uygulandıktan sonraki gerçek alarm anına göre planlanır. Gösterilen saat doğrudan alarm saatine atlasa bile sinyaller bu andan beş gerçek saniye önce başlar. İlkbaharda atlanan bir alarm saati ne alarmı ne de sinyallerini başlatır. Sonbaharda tekrarlanan saatte, aynı tarih ve ayarlı saat için alarm ve sinyalleri yalnızca bir kez çalar.
 
 Test görsel uyarıyı gösterir ve dosya, komut, ses ve uzak betik adresini eşzamansız dener. Alarm zaman sinyali seçilmişse altı biplik dizinin tamamını da çalar; Testi durdur dahili sesi ve sinyal önizlemesini bitirir.
 

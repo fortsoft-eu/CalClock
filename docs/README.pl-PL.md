@@ -88,9 +88,13 @@ Zegary cyfrowe, panele kalendarza z zegarem i zegary na monitorze oferują **Wed
 
 Nazwane strefy pokazują czas urzędowy wybranego miejsca i automatycznie stosują jego reguły czasu letniego. Przesunięcie przy nazwie odpowiada bieżącej dacie i jest odświeżane przy otwieraniu listy. Oddzielne pozycje **UTC** udostępniają stałe przesunięcia od **UTC−12:00** do **UTC+14:00** co 15 minut, bez czasu letniego. Każdy widżet może niezależnie używać strefy lokalnej, dowolnej nazwanej strefy lub stałego przesunięcia UTC.
 
+Nowe widżety domyślnie używają opcji **Bieżąca strefa czasowa systemu Windows**, która śledzi bieżącą strefę Windows oraz ustawienie automatycznej zmiany czasu letniego. Istniejące widżety zachowują wybrane strefy. Opcja określa strefę czasową; wspólne źródło czasu Windows lub NTP pozostaje niezależne.
+
 Każdy widżet może używać dowolnej strefy Windows i przesunięcia ze znakiem w formacie `[-]HH:mm:ss.ff`. Zwarty zapis jest interpretowany od prawej, zaczynając od sekund.
 
 Przesunięcie przydaje się np. w studiu nadawczym do kompensacji opóźnienia toru transmisyjnego. Przyspieszenie zegara o zmierzone opóźnienie pozwala dostarczyć sygnał czasu słuchaczom we właściwej chwili.
+
+Przesunięcie widżetu jest stosowane do UTC przed przeliczeniem na jego strefę czasową, więc przesuwa również moment zmiany czasu. Zegar przyspieszony o dziesięć sekund zmienia czas dziesięć sekund wcześniej, a opóźniony o dziesięć sekund — dziesięć sekund później. Wskazówki, wyświetlacz cyfrowy, daty kalendarza, budziki i sygnały czasu korzystają z otrzymanego czasu.
 
 Karta Czas wybiera dla całej aplikacji, a więc dla wszystkich widżetów, czas systemowy Windows albo skonfigurowane serwery NTP. NTP koryguje wyłącznie czas wyświetlany przez CalClock; zegar Windows nigdy nie jest zmieniany. Do pierwszej prawidłowej odpowiedzi używany jest czas systemowy. NTP jest ustawieniem domyślnym. Zestaw automatyczny wybiera według regionu systemu serwery czeskie i słowackie, PTB dla Europy albo pulę globalną. Wiele pomiarów jest filtrowanych według opóźnienia sieci i wartości odstających. Synchronizuj teraz natychmiast rozpoczyna nowy pomiar.
 
@@ -103,6 +107,8 @@ Odchylenia są wyświetlane w milisekundach z czterema miejscami po przecinku. W
 Zapisz dziennik eksportuje wpisy do CSV wraz z odchyleniami i szczegółami błędów. Wpisy nie są zachowywane między uruchomieniami; zapisz je przed zamknięciem aplikacji, jeśli chcesz je zachować.
 
 Widżety zegarów obsługują alarmy w wybrane dni; domyślnie aktywne są wszystkie siedem. Alarm pokazuje swój ukryty widżet i przenosi go przed inne okna, nie zmieniając trwale trybu zawsze na wierzchu. WAV, MP3, WMA, MIDI, AAC, M4A i FLAC są rozpoznawane do wewnętrznego odtwarzania raz lub w pętli; rzeczywiste dekodowanie zależy od zainstalowanych składników multimedialnych Windows. Inne pliki i polecenia przekazywane są do Windows asynchronicznie. Alarm może też wywołać adres HTTP lub HTTPS. Niezależnie może używać sześciotonowego sygnału czasu, którego pierwszy krótki ton rozlega się pięć sekund przed ustawioną godziną.
+
+Sygnały dźwiękowe budzika są planowane według rzeczywistego momentu najbliższego budzika po przeliczeniu strefy i uwzględnieniu przesunięcia widżetu. Zaczynają się pięć rzeczywistych sekund przed tym momentem, także gdy wyświetlany zegar przeskakuje bezpośrednio do godziny budzika. Dla godziny pominiętej wiosną nie uruchamia się budzik ani jego sygnały. Podczas godziny powtarzanej jesienią budzik i jego sygnały uruchamiają się tylko raz dla tej samej daty i ustawionej godziny.
 
 Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Jeśli wybrano sygnał czasu alarmu, odtwarza także pełną sekwencję sześciu tonów; Zatrzymaj test kończy wewnętrzne audio i podgląd sygnału.
 

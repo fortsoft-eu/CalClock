@@ -88,9 +88,13 @@ Digitaalikellot, yhdistelmäpaneelit ja näyttökellot tarjoavat Yleiset-välile
 
 Nimetyt aikavyöhykkeet näyttävät valitun paikan virallisen ajan ja seuraavat automaattisesti sen kesäaikasääntöjä. Nimen vieressä oleva siirtymä vastaa nykyistä päivämäärää ja päivittyy luetteloa avattaessa. Erilliset **UTC**-valinnat tarjoavat kiinteät siirtymät välillä **UTC−12:00**–**UTC+14:00** 15 minuutin välein ilman kesäaikaa. Jokaiselle pienoisohjelmalle voi valita erikseen paikallisen vyöhykkeen, muun nimetyn vyöhykkeen tai kiinteän UTC-siirtymän.
 
+Uusien pienoisohjelmien oletus on **Windowsin nykyinen aikavyöhyke**, joka seuraa Windowsin nykyistä aikavyöhykettä ja automaattisen kesäajan asetusta. Nykyiset pienoisohjelmat säilyttävät valitut vyöhykkeensä. Valinta koskee aikavyöhykettä; yhteinen Windows- tai NTP-aikalähde on siitä riippumaton.
+
 Jokainen pienoisohjelma voi käyttää mitä tahansa Windows-aikavyöhykettä ja etumerkillistä siirtymää muodossa `[-]HH:mm:ss.ff`. Tiivis syöte tulkitaan oikealta alkaen sekunneista.
 
 Aikasiirtymä on hyödyllinen esimerkiksi lähetysstudiossa siirtotien viiveen kompensoimiseen. Kun studiokelloa aikaistetaan mitatun viiveen verran, aikamerkki saavuttaa kuulijat tarkoitettuna hetkenä.
+
+Pienoisohjelman siirtymä lisätään UTC-aikaan ennen muuntamista aikavyöhykkeelle, joten se siirtää myös kesäaikaan siirtymisen tai siitä palaamisen hetkeä. Kymmenen sekuntia edellä käyvä kello vaihtaa aikaa kymmenen sekuntia aiemmin, ja kymmenen sekuntia jäljessä käyvä kymmenen sekuntia myöhemmin. Viisarit, digitaalinäyttö, kalenteripäivät, herätykset ja aikamerkit käyttävät näin saatua aikaa.
 
 Aika-välilehdellä valitaan koko sovellukselle Windowsin aika tai NTP-palvelimet. NTP korjaa vain CalClockia eikä muuta Windowsia. NTP on oletus; automaattinen joukko valitsee palvelimet alueen mukaan ja suodattaa mittaukset viiveen ja poikkeamien perusteella.
 
@@ -103,6 +107,8 @@ Aikaerot näytetään millisekunteina neljällä desimaalilla. Positiivinen arvo
 Tallenna loki vie merkinnät CSV-tiedostoon, mukaan lukien aikaerot ja virhetiedot. Merkintöjä ei säilytetä käynnistyskertojen välillä; tallenna ne ennen sulkemista, jos haluat säilyttää ne.
 
 Kellopienoisohjelmat tukevat herätyksiä erikseen valittuina viikonpäivinä; kaikki seitsemän ovat oletuksena käytössä. Herätys näyttää piilotetun pienoisohjelmansa ja nostaa sen muiden ikkunoiden eteen muuttamatta aina päällimmäisenä -asetusta pysyvästi. WAV, MP3, WMA, MIDI, AAC, M4A ja FLAC tunnistetaan sisäiseen kerta- tai toistuvaan soittoon; todellinen purkutuki riippuu Windowsiin asennetuista multimediakomponenteista. Muut tiedostot ja komennot välitetään Windowsille asynkronisesti. Herätys voi myös kutsua HTTP- tai HTTPS-osoitetta. Näistä riippumatta se voi käyttää kuuden piippauksen aikamerkkiä, jonka ensimmäinen lyhyt piippaus alkaa viisi sekuntia ennen asetettua herätysaikaa.
+
+Herätyksen äänimerkit ajoitetaan seuraavan herätyksen todellisen ajankohdan mukaan aikavyöhykemuunnoksen ja pienoisohjelman siirtymän jälkeen. Ne alkavat viisi todellista sekuntia ennen ajankohtaa myös silloin, kun näytetty kello hyppää suoraan herätysaikaan. Keväällä ohitettu herätysaika ei käynnistä herätystä eikä sen äänimerkkejä. Syksyllä toistuvan tunnin aikana herätys ja sen äänimerkit käynnistyvät vain kerran samalle päivämäärälle ja asetetulle kellonajalle.
 
 Testaa näyttää visuaalisen ilmoituksen ja kokeilee tiedostoa, komentoa, ääntä ja etäkomentosarjan osoitetta asynkronisesti. Jos herätyksen aikamerkki on valittu, se toistaa myös kaikki kuusi piippausta; Lopeta testi päättää sisäisen äänen ja aikamerkin esikatselun.
 

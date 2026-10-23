@@ -22,6 +22,8 @@ Ora alarmei acceptă HH:mm cu două puncte, punct, spațiu, alt separator sau f�
 
 Alarma afișează widgetul ascuns și îl aduce în față fără a modifica permanent Întotdeauna deasupra. Redare semnal orar pornește primul ton scurt cu cinci secunde înaintea alarmei. Este independent de fila Semnal; secvențele simultane sunt îmbinate. Testare face să clipească cadranul sau rama și verifică fișierul, comanda, sunetul, adresa HTTP/HTTPS a scriptului la distanță și, dacă este selectat, întregul semnal orar. Oprirea testului oprește sunetul intern și semnalul de probă ale acestuia; oprirea alarmei oprește sunetul ei intern. Dezactivarea sunetului nu oprește redarea: aceasta continuă în liniște și se aude din nou după reactivare. Comenzile și scripturile la distanță nu sunt oprite.
 
+Semnalele sonore ale alarmei sunt programate după momentul real al următoarei alarme, după conversia fusului orar și aplicarea decalajului widgetului. Ele încep cu cinci secunde reale înainte, chiar dacă ceasul afișat sare direct la ora alarmei. O oră de alarmă omisă primăvara nu declanșează nici alarma, nici semnalele sale. În ora repetată toamna, alarma și semnalele sale se declanșează o singură dată pentru aceeași dată și oră configurată.
+
 Glisorul Volum audio din fila Alarmă controlează redarea internă a widgetului. Valoarea implicită −18 dB păstrează nivelul inițial al fișierului (100%). Spre dreapta se amplifică sunetul; maximul de 0 dB corespunde la aproximativ 794%. −∞ dB înseamnă liniște. Modificările se aud și în timpul testului. MIDI și fișierele care nu pot fi decodificate și sunt redate prin metoda de rezervă sunt limitate la 100%.
 
 ## Selecție, taste și copierea datei
@@ -67,6 +69,10 @@ Numai dublul clic direct pe cadranul principal comută secundarul acestuia. Meni
 ## Formatul orei și fusuri orare
 
 Format oră din General oferă Conform limbii (implicit), 12 ore și 24 de ore. Alegerea manuală rămâne după schimbarea limbii. Separatorii și marcajele urmează limba widgetului. AM/PM este inițial activat și controlează numai marcajul în modul de 12 ore; dacă limba nu are marcaje proprii, se utilizează AM/PM. Ceasurile pe ecran îl arată pe un rând separat sub oră. UTC folosește întotdeauna formatul de 24 de ore. Fusurile denumite urmează ora locală și ora de vară; decalajul este pentru data curentă. Opțiunile UTC separate sunt decalaje fixe de la −12:00 la +14:00 în pași de 15 minute fără oră de vară.
+
+Widgeturile noi folosesc implicit **Fusul orar curent din Windows**, care urmărește fusul orar curent din Windows și setarea automată a orei de vară. Widgeturile existente își păstrează fusurile alese. Această opțiune stabilește fusul orar; sursa de timp comună, Windows sau NTP, rămâne independentă.
+
+Decalajul widgetului se aplică orei UTC înaintea conversiei în fusul său orar, astfel încât deplasează și momentul trecerii la ora de vară sau înapoi. Un ceas avansat cu zece secunde schimbă ora cu zece secunde mai devreme; unul întârziat cu zece secunde o schimbă cu zece secunde mai târziu. Limbile ceasului, afișajul digital, datele calendarului, alarmele și semnalele orare folosesc ora rezultată.
 
 ## Sursa de timp și jurnalul NTP
 

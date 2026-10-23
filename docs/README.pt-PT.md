@@ -88,9 +88,13 @@ Relógios digitais, painéis de calendário com relógio e relógios no monitor 
 
 Os fusos com nome apresentam a hora civil do local e seguem automaticamente as suas regras de hora de verão. O desvio junto ao nome corresponde à data atual e é atualizado ao abrir a lista. As entradas **UTC** independentes oferecem desvios fixos de **UTC−12:00** a **UTC+14:00**, em passos de 15 minutos, sem hora de verão. Cada widget pode escolher o fuso local, qualquer outro fuso com nome ou um desvio UTC fixo de forma independente.
 
+Os novos widgets usam por predefinição **Fuso horário atual do Windows**, que acompanha o fuso horário atual do Windows e a definição automática da hora de verão. Os widgets existentes mantêm o fuso escolhido. Esta opção determina o fuso horário; a fonte de tempo partilhada, Windows ou NTP, permanece independente.
+
 Cada widget pode usar qualquer fuso do Windows e um desvio com sinal no formato `[-]HH:mm:ss.ff`. A entrada compacta é interpretada da direita para a esquerda, começando pelos segundos.
 
 O desvio é útil, por exemplo, em estúdios de radiodifusão para compensar o atraso do percurso de transmissão. Adiantar o relógio do estúdio pelo atraso medido permite que o sinal horário chegue aos ouvintes no momento previsto.
+
+O desvio do widget é aplicado a UTC antes da conversão para o seu fuso horário, pelo que também desloca o instante da mudança de hora. Um relógio adiantado dez segundos muda dez segundos mais cedo; um relógio atrasado dez segundos muda dez segundos mais tarde. Os ponteiros, a indicação digital, as datas do calendário, os alarmes e os sinais horários usam a hora resultante.
 
 O separador Hora escolhe para toda a aplicação a hora do Windows ou servidores NTP. O NTP corrige apenas o CalClock e nunca altera o Windows. A predefinição é NTP; o conjunto automático escolhe servidores pela região e filtra medições por atraso e valores atípicos.
 
@@ -103,6 +107,8 @@ Os desvios são apresentados em milissegundos com quatro casas decimais. Um valo
 Guardar registo exporta as entradas para CSV, incluindo desvios e detalhes das falhas. As entradas não são conservadas entre sessões; guarde-as antes de sair se quiser mantê-las.
 
 Os widgets de relógio permitem alarmes por dias escolhidos individualmente; os sete dias estão ativos por predefinição. Um alarme torna visível o seu widget oculto e coloca-o à frente de outras janelas sem alterar permanentemente o estado sempre no topo. WAV, MP3, WMA, MIDI, AAC, M4A e FLAC são reconhecidos para reprodução interna única ou repetida; o suporte efetivo depende dos componentes multimédia instalados no Windows. Outros ficheiros e comandos são passados ao Windows de forma assíncrona. Um alarme pode também chamar um URL HTTP ou HTTPS. Independentemente, pode usar o sinal de seis tons cujo primeiro tom curto toca cinco segundos antes da hora definida.
+
+Os sinais sonoros do alarme são agendados a partir do instante real do próximo alarme, após a conversão do fuso e a aplicação do desvio do widget. Começam cinco segundos reais antes desse instante, mesmo quando o relógio apresentado salta diretamente para a hora do alarme. Uma hora de alarme omitida na primavera não ativa o alarme nem os sinais. Durante a hora repetida no outono, o alarme e os seus sinais ocorrem apenas uma vez para a mesma data e hora configurada.
 
 Teste mostra a indicação visual e testa de forma assíncrona ficheiro, comando, áudio e URL do script remoto. Se o sinal horário do alarme estiver selecionado, reproduz também os seis tons completos; Parar teste termina o áudio interno e a pré-visualização do sinal.
 
