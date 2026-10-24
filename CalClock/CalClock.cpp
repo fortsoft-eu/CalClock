@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.6.1.3
  */
 
 #define NOMINMAX
@@ -186,6 +186,12 @@ struct CalendarSizeEntry {
     SIZE size;
 };
 
+struct PanelNoticeLayout {
+    RECT separator = {};
+    RECT icon = {};
+    RECT text = {};
+};
+
 /// Contains the panel's client size and rectangles for its header, calendar, clock faces, captions, times, days, and
 /// footer.
 struct PanelLayout {
@@ -196,6 +202,8 @@ struct PanelLayout {
     RECT names[ADDITIONAL_CLOCK_COUNT] = {};
     RECT times[ADDITIONAL_CLOCK_COUNT + 1] = {};
     RECT days[ADDITIONAL_CLOCK_COUNT + 1] = {};
+    std::vector<PanelNoticeLayout> notices;
+    RECT noticeBottomSeparator = {};
     RECT footer = {};
 };
 
@@ -243,8 +251,6 @@ const UINT_PTR SETTINGS_REPORT_HEADER_SUBCLASS_ID = 0xCC07;
 
 /// Layout, appearance and alarm constants
 const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
-static const int PANEL_CALENDAR_OFFSET_Y = -4;
-static const int PANEL_SIDE_PADDING = 12;
 const int ABOUT_ICON_SIZE = 32;
 const int ABOUT_LARGE_ICON_SIZE = 48;
 const int ABOUT_LARGE_ICON_DPI = 130;
@@ -275,6 +281,7 @@ static const int WORK_AREA_SNAP_DISTANCE = 5;
 const int ID_PANEL_BOTTOM_FONT = 3075;
 const int ID_PANEL_DATE_LINK = 115;
 const int ID_PANEL_TIME_FONT = 3074;
+const int ID_PANEL_TIME_NOTICES = 3077;
 const int ID_PANEL_TIME_ZONE_LINK = 116;
 const int ID_PANEL_TOP_FONT = 3073;
 
@@ -439,6 +446,7 @@ HWND hTopmostCheck = nullptr;
 HWND hSecondsCheck = nullptr;
 HWND hUtcCheck = nullptr;
 HWND hUtcTextCheck = nullptr;
+HWND hPanelTimeNoticesCheck = nullptr;
 HWND hAdditionalEnabledChecks[ADDITIONAL_CLOCK_COUNT] = {};
 HWND hAdditionalNameLabels[ADDITIONAL_CLOCK_COUNT] = {};
 HWND hAdditionalNameEdits[ADDITIONAL_CLOCK_COUNT] = {};
@@ -845,6 +853,9 @@ static void CloseWidgetAudio(Widget* widget);
 
 /// Rebuilds a widget for a new configuration while preserving screen-edge attachments and relevant runtime state.
 static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& configuration);
+
+static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration,
+    const std::vector<TimeDateNotice>* notices = nullptr, ULONGLONG applicationUtc = 0);
 
 /// Creates a calendar font from system message-font metrics and widget face and style settings.
 /// Returns null on failure; the caller owns the returned GDI font.
@@ -2093,9 +2104,9 @@ static void GetApplicationUtcTime(SYSTEMTIME* utc) {
     FileTimeToSystemTime(&fileTime, utc);
 }
 
-/// Applies the widget's millisecond offset to application UTC, then converts to the selected zone or UTC.
+/// Applies the widget's millisecond offset to application UTC without changing the time zone.
 /// Uses the current application time when applicationUtc is zero.
-static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, ULONGLONG applicationUtc = 0) {
+static void GetWidgetUtcTime(const WidgetConfig& config, SYSTEMTIME* utc, ULONGLONG applicationUtc = 0) {
     ULARGE_INTEGER value = {};
     value.QuadPart = applicationUtc == 0 ? GetApplicationFileTimeValue() : applicationUtc;
     LONGLONG current = static_cast<LONGLONG>(value.QuadPart);
@@ -2107,8 +2118,13 @@ static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, 
         value.QuadPart = static_cast<ULONGLONG>(current + config.offsetMilliseconds * 10000);
     }
     FILETIME fileTime = { value.LowPart, value.HighPart };
+    FileTimeToSystemTime(&fileTime, utc);
+}
+
+/// Converts the widget's offset-adjusted UTC instant to its selected zone or UTC.
+static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, ULONGLONG applicationUtc = 0) {
     SYSTEMTIME utc = {};
-    FileTimeToSystemTime(&fileTime, &utc);
+    GetWidgetUtcTime(config, &utc, applicationUtc);
     if (config.showUtc) {
         *displayed = utc;
     } else {
@@ -2123,6 +2139,69 @@ static void GetDisplayedTime(const WidgetConfig& config, SYSTEMTIME* displayed, 
             SystemTimeToTzSpecificLocalTime(nullptr, &utc, displayed);
         }
     }
+}
+
+/// Builds native date/time notices from one widget-specific UTC instant and the selected Windows zone.
+static std::vector<TimeDateNotice> GetPanelTimeNotices(const WidgetConfig& config, bool calendarDateSupported = true,
+        ULONGLONG applicationUtc = 0) {
+    if (config.type != WIDGET_PANEL || !config.panelTimeNotices) {
+        return {};
+    }
+    SYSTEMTIME utc = {};
+    GetWidgetUtcTime(config, &utc, applicationUtc);
+    DYNAMIC_TIME_ZONE_INFORMATION zone = {};
+    const DYNAMIC_TIME_ZONE_INFORMATION* selected = nullptr;
+    bool recognized = true;
+    bool autoAdjustment = true;
+    if (config.showUtc) {
+        selected = &zone;
+    } else if (_wcsicmp(config.timeZoneKey.c_str(), SYSTEM_TIME_ZONE_KEY) == 0) {
+        if (GetDynamicTimeZoneInformation(&zone) != TIME_ZONE_ID_INVALID) {
+            selected = &zone;
+            recognized = false;
+            for (const DYNAMIC_TIME_ZONE_INFORMATION& candidate : timeZones) {
+                if (_wcsicmp(candidate.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) != 0
+                        && _wcsicmp(candidate.TimeZoneKeyName, zone.TimeZoneKeyName) == 0) {
+                    recognized = true;
+                    break;
+                }
+            }
+            autoAdjustment = !zone.DynamicDaylightTimeDisabled
+                || zone.StandardDate.wMonth != 0
+                || zone.DaylightDate.wMonth != 0;
+        }
+    } else {
+        for (const DYNAMIC_TIME_ZONE_INFORMATION& candidate : timeZones) {
+            if (_wcsicmp(candidate.TimeZoneKeyName, config.timeZoneKey.c_str()) == 0) {
+                selected = &candidate;
+                break;
+            }
+        }
+        if (selected == nullptr) {
+            recognized = false;
+            if (GetDynamicTimeZoneInformation(&zone) != TIME_ZONE_ID_INVALID) {
+                selected = &zone;
+                autoAdjustment = !zone.DynamicDaylightTimeDisabled
+                    || zone.StandardDate.wMonth != 0
+                    || zone.DaylightDate.wMonth != 0;
+            }
+        }
+    }
+    return GetTimeDateNotices(selected, utc, LANGUAGE_LOCALES[config.language], autoAdjustment, calendarDateSupported,
+        recognized);
+}
+
+/// Compares the ordered text and icon contents of two native-notice snapshots.
+static bool PanelTimeNoticesEqual(const std::vector<TimeDateNotice>& left, const std::vector<TimeDateNotice>& right) {
+    if (left.size() != right.size()) {
+        return false;
+    }
+    for (size_t index = 0; index < left.size(); index++) {
+        if (left[index].text != right[index].text || left[index].icon != right[index].icon) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /// Converts SYSTEMTIME fields to FILETIME ticks without changing their time zone; returns zero on conversion failure.
@@ -2302,8 +2381,8 @@ static void CheckTimeSignals() {
             candidates.push_back(TimeSignalCandidate{ target, true, widget->config.id });
         }
         if (alarmSignal) {
-            int targetDate = targetDisplayedTime.wYear * 10000 + targetDisplayedTime.wMonth * 100
-                + targetDisplayedTime.wDay;
+            int targetDate =
+                targetDisplayedTime.wYear * 10000 + targetDisplayedTime.wMonth * 100 + targetDisplayedTime.wDay;
             int targetMinute = targetDisplayedTime.wHour * 60 + targetDisplayedTime.wMinute;
             if (AlarmEnabledOnDay(widget->config, targetDisplayedTime.wDayOfWeek)
                     && targetDisplayedTime.wHour == widget->config.alarmHour
@@ -2611,7 +2690,7 @@ static int GetPanelClockGroupWidth(const WidgetConfig& config) {
         sample.wMinute = 58;
         sample.wSecond = 58;
         SIZE extent = MeasureClockTime(screen, config, sample);
-        width = std::max(width, static_cast<int>(extent.cx) + 4);
+        width = std::max(width, static_cast<int>(extent.cx) + 6);
         SelectObject(screen, previous);
     }
     if (font != nullptr) {
@@ -2623,28 +2702,41 @@ static int GetPanelClockGroupWidth(const WidgetConfig& config) {
     return width;
 }
 
-/// Measures panel fonts and enabled clocks and calculates all child rectangles and the required client size.
-static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
+/// Measures panel content and applies the modern native flyout's font, relative-pixel, and column layout rules.
+static PanelLayout CalculatePanelLayout(const WidgetConfig& config, const std::vector<TimeDateNotice>* notices = nullptr,
+        ULONGLONG applicationUtc = 0) {
     PanelLayout layout;
     SIZE calendarSize = GetCalendarSize(config, true);
     bool additional = HasAdditionalClocks(config);
-    int headerHeight = 27;
-    int lineHeight = 25;
-    int nameHeight = 24;
-    int timeTextHeight = 21;
-    int footerTextHeight = 24;
-    int footerHeight = 28;
-    int weekdayWidth = 0;
+    SYSTEMTIME displayed = {};
+    GetDisplayedTime(config, &displayed, applicationUtc);
+    wchar_t dateText[256] = {};
+    wchar_t dayText[128] = {};
+    int dateLength = GetDateFormatEx(LANGUAGE_LOCALES[config.language], DATE_LONGDATE, &displayed, nullptr, dateText,
+        ARRAYSIZE(dateText), nullptr);
+    int dayLength = GetDateFormatEx(LANGUAGE_LOCALES[config.language], 0, &displayed, L"dddd", dayText,
+        ARRAYSIZE(dayText), nullptr);
+    bool mainDay = additional || dateLength > 0 && dayLength > 0 && wcsstr(dateText, dayText) == nullptr;
     HDC dc = GetDC(nullptr);
+    int dpi = dc == nullptr ? 96 : GetDeviceCaps(dc, LOGPIXELSY);
+    int sidePadding = MulDiv(14, dpi, 96);
+    int bodyPadding = MulDiv(10, dpi, 96);
+    int clockPadding = MulDiv(4, dpi, 96);
+    int extraPadding = MulDiv(8, dpi, 96);
+    int timeTextHeight = MulDiv(15, dpi, 96);
+    int topTextHeight = timeTextHeight;
+    int footerTextHeight = timeTextHeight;
+    int weekdayWidth = 0;
+    int dateWidth = 0;
+    int nameWidths[ADDITIONAL_CLOCK_COUNT] = {};
     HFONT font = CreatePanelFont(config.panelTimeFont, config.fontAntialiasing);
     if (dc != nullptr && font != nullptr) {
-        HGDIOBJ oldFont = SelectObject(dc, font);
+        HGDIOBJ previousFont = SelectObject(dc, font);
         TEXTMETRICW metrics = {};
         if (GetTextMetricsW(dc, &metrics)) {
-            timeTextHeight = static_cast<int>(metrics.tmHeight);
-            lineHeight = std::max(lineHeight, timeTextHeight + 4);
+            timeTextHeight = metrics.tmHeight;
         }
-        if (additional) {
+        if (mainDay) {
             SYSTEMTIME date = { 2026, 9, 0, 1, 0, 0, 0, 0 };
             for (int day = 1; day <= 7; day++) {
                 date.wDay = static_cast<WORD>(day);
@@ -2652,36 +2744,44 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
                 GetDateFormatEx(LANGUAGE_LOCALES[config.language], 0, &date, L"dddd", text, ARRAYSIZE(text), nullptr);
                 SIZE extent = {};
                 GetTextExtentPoint32W(dc, text, static_cast<int>(wcslen(text)), &extent);
-                weekdayWidth = std::max(weekdayWidth, static_cast<int>(extent.cx) + 4);
+                weekdayWidth = std::max(weekdayWidth, static_cast<int>(extent.cx));
             }
         }
-        SelectObject(dc, oldFont);
+        SelectObject(dc, previousFont);
     }
     if (font != nullptr) {
         DeleteObject(font);
     }
     font = CreatePanelFont(config.panelTopFont, config.fontAntialiasing);
     if (dc != nullptr && font != nullptr) {
-        HGDIOBJ oldFont = SelectObject(dc, font);
+        HGDIOBJ previousFont = SelectObject(dc, font);
         TEXTMETRICW metrics = {};
         if (GetTextMetricsW(dc, &metrics)) {
-            nameHeight = std::max(nameHeight, static_cast<int>(metrics.tmHeight) + 4);
-            headerHeight = std::max(headerHeight, static_cast<int>(metrics.tmHeight) + 4);
+            topTextHeight = metrics.tmHeight;
         }
-        SelectObject(dc, oldFont);
+        SIZE extent = {};
+        GetTextExtentPoint32W(dc, dateText, static_cast<int>(wcslen(dateText)), &extent);
+        dateWidth = extent.cx;
+        for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
+            if (config.additionalClocks[index].enabled) {
+                std::wstring name = AdditionalClockName(config, index);
+                GetTextExtentPoint32W(dc, name.c_str(), static_cast<int>(name.size()), &extent);
+                nameWidths[index] = extent.cx;
+            }
+        }
+        SelectObject(dc, previousFont);
     }
     if (font != nullptr) {
         DeleteObject(font);
     }
     font = CreatePanelFont(config.panelBottomFont, config.fontAntialiasing);
     if (dc != nullptr && font != nullptr) {
-        HGDIOBJ oldFont = SelectObject(dc, font);
+        HGDIOBJ previousFont = SelectObject(dc, font);
         TEXTMETRICW metrics = {};
         if (GetTextMetricsW(dc, &metrics)) {
-            footerTextHeight = static_cast<int>(metrics.tmHeight);
-            footerHeight = std::max(footerHeight, footerTextHeight + 4);
+            footerTextHeight = metrics.tmHeight;
         }
-        SelectObject(dc, oldFont);
+        SelectObject(dc, previousFont);
     }
     if (font != nullptr) {
         DeleteObject(font);
@@ -2689,87 +2789,131 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config) {
     if (dc != nullptr) {
         ReleaseDC(nullptr, dc);
     }
-    int clockHeight = config.size;
+    int digitalHeight = timeTextHeight + 2;
+    int mainHeight = clockPadding + config.size + clockPadding + digitalHeight;
+    if (mainDay) {
+        mainHeight += clockPadding + timeTextHeight;
+    }
+    int extraClockHeight = 0;
     for (const AdditionalClockConfig& clock : config.additionalClocks) {
         if (clock.enabled) {
-            clockHeight = std::max(clockHeight, NormalizeAnalogClockSize(clock.size) + nameHeight);
+            extraClockHeight = std::max(extraClockHeight, NormalizeAnalogClockSize(clock.size));
         }
     }
-    int groupHeight = clockHeight + 2 + lineHeight;
+    int extraHeight = additional ? extraPadding + topTextHeight + clockPadding + extraClockHeight + clockPadding
+        + digitalHeight + clockPadding + timeTextHeight : 0;
+    int bodyHeight = std::max(static_cast<int>(calendarSize.cy) + bodyPadding, mainHeight);
+    bodyHeight = std::max(bodyHeight, extraHeight);
+    int bodyTop = sidePadding + topTextHeight + bodyPadding;
+    int calendarTop = bodyTop + (bodyHeight - calendarSize.cy - bodyPadding) / 2;
+    layout.calendar = RECT{ sidePadding, calendarTop, sidePadding + calendarSize.cx, calendarTop + calendarSize.cy };
+    int mainTop = bodyTop + (bodyHeight - mainHeight) / 2 + clockPadding;
+    int nameTop = bodyTop + (bodyHeight - extraHeight) / 2 + extraPadding;
+    int extraTop = nameTop + topTextHeight + clockPadding;
+    int clockBottom = mainTop + config.size;
     if (additional) {
-        groupHeight += lineHeight;
+        clockBottom = std::max(clockBottom, extraTop + extraClockHeight);
     }
-    int contentHeight = std::max(static_cast<int>(calendarSize.cy), groupHeight);
-    int contentTop = 7 + headerHeight + 1;
-    int calendarTop = contentTop + (contentHeight - calendarSize.cy) / 2 + PANEL_CALENDAR_OFFSET_Y;
-    layout.calendar = RECT{
-        PANEL_SIDE_PADDING,
-        calendarTop,
-        PANEL_SIDE_PADDING + calendarSize.cx,
-        calendarTop + calendarSize.cy
-    };
-    int clockBottom = contentTop + (contentHeight - groupHeight) / 2 + clockHeight;
-    int left = layout.calendar.right + 12;
+    int timeTop = clockBottom + clockPadding;
+    int dayTop = timeTop + digitalHeight + clockPadding;
+    int left = layout.calendar.right + bodyPadding;
+    int extraCount = 0;
     for (int index = 0; index <= ADDITIONAL_CLOCK_COUNT; index++) {
         if (index > 0 && !config.additionalClocks[index - 1].enabled) {
             continue;
         }
         WidgetConfig clock = index == 0 ? config : AdditionalClockConfiguration(config, index - 1);
         int width = std::max(GetPanelClockGroupWidth(clock), weekdayWidth);
+        if (index > 0) {
+            if (extraCount > 0) {
+                left += 10;
+            }
+            width = std::max(width, nameWidths[index - 1]);
+            extraCount++;
+        }
         int clockLeft = left + (width - clock.size) / 2;
-        POINT faceCenter = GetAnalogClockFaceCenter(clock.size);
-        int textLeft = clockLeft + faceCenter.x - width / 2;
-        layout.clocks[index] = RECT{
-            clockLeft,
-            clockBottom - clock.size,
-            clockLeft + clock.size,
-            clockBottom
-        };
-        layout.times[index] = RECT{
-            textLeft,
-            clockBottom + 2,
-            textLeft + width,
-            clockBottom + 2 + lineHeight
-        };
-        if (additional) {
-            layout.days[index] = RECT{
-                textLeft,
-                layout.times[index].bottom - 2,
-                textLeft + width,
-                layout.times[index].bottom + lineHeight - 2
-            };
+        int clockTop = clockBottom - clock.size;
+        layout.clocks[index] = RECT{ clockLeft, clockTop, clockLeft + clock.size, clockTop + clock.size };
+        layout.times[index] = RECT{ left, timeTop, left + width, timeTop + timeTextHeight };
+        if (index > 0 || mainDay) {
+            layout.days[index] = RECT{ left, dayTop, left + width, dayTop + timeTextHeight };
         }
         if (index > 0) {
-            layout.names[index - 1] = RECT{
-                textLeft,
-                clockBottom - clock.size - nameHeight - 2,
-                textLeft + width,
-                clockBottom - clock.size - 2
-            };
+            int captionTop = clockTop - clockPadding - topTextHeight;
+            layout.names[index - 1] = RECT{ left, captionTop, left + width, captionTop + topTextHeight };
         }
-        left += width + 12;
+        left += width;
+        if (index == 0 && additional) {
+            left += bodyPadding;
+        }
     }
-    layout.clientSize.cx = left - 12 + PANEL_SIDE_PADDING;
-    layout.header = RECT{ PANEL_SIDE_PADDING, 7, layout.clientSize.cx - PANEL_SIDE_PADDING, contentTop - 1 };
-    int footerTop = contentTop + contentHeight + 4;
-    if (additional) {
-        int rowGap = lineHeight - timeTextHeight - 2;
-        int dayTextBottom = layout.days[0].top + (lineHeight - timeTextHeight) / 2 + timeTextHeight;
-        int footerTextOffset = (footerHeight - footerTextHeight) / 2;
-        footerTop = std::max(static_cast<int>(layout.calendar.bottom) + 4, dayTextBottom + rowGap - footerTextOffset);
+    layout.clientSize.cx = std::max(left + sidePadding, dateWidth);
+    layout.header = RECT{ 0, sidePadding, layout.clientSize.cx, sidePadding + topTextHeight };
+    int footerTop = bodyTop + bodyHeight + bodyPadding;
+    if (config.panelTimeNotices && notices != nullptr && !notices->empty()) {
+        HDC noticeDC = GetDC(nullptr);
+        HFONT noticeFont = CreatePanelFont(config.panelBottomFont, config.fontAntialiasing);
+        if (noticeDC != nullptr && noticeFont != nullptr) {
+            HGDIOBJ previousFont = SelectObject(noticeDC, noticeFont);
+            TEXTMETRICW metrics = {};
+            if (GetTextMetricsW(noticeDC, &metrics)) {
+                int rowPadding = MulDiv(8, dpi, 96);
+                int textPaddingTop = MulDiv(5, dpi, 96);
+                int separatorHeight = MulDiv(2, dpi, 96);
+                int iconSize = MulDiv(16, dpi, 96);
+                int iconLeft = rowPadding;
+                int textLeft = iconLeft + iconSize + rowPadding;
+                int textWidth = std::max(1L, layout.clientSize.cx - rowPadding - textLeft);
+                for (const TimeDateNotice& notice : *notices) {
+                    RECT measured = { 0, 0, textWidth, 0 };
+                    DrawTextW(noticeDC, notice.text.c_str(), static_cast<int>(notice.text.size()), &measured,
+                        DT_CALCRECT | DT_WORDBREAK | DT_NOFULLWIDTHCHARBREAK | DT_NOPREFIX);
+                    int textHeight = std::max(metrics.tmHeight, measured.bottom - measured.top);
+                    int rowHeight = std::max(iconSize + rowPadding + rowPadding, textHeight + textPaddingTop);
+                    int rowTop = footerTop + separatorHeight;
+                    PanelNoticeLayout row;
+                    row.separator = RECT{ 0, footerTop, layout.clientSize.cx, rowTop };
+                    row.icon = RECT{
+                        iconLeft,
+                        rowTop + rowPadding,
+                        iconLeft + iconSize,
+                        rowTop + rowPadding + iconSize
+                    };
+                    row.text = RECT{
+                        textLeft,
+                        rowTop + textPaddingTop,
+                        textLeft + textWidth,
+                        rowTop + textPaddingTop + textHeight
+                    };
+                    layout.notices.push_back(row);
+                    footerTop = rowTop + rowHeight + rowPadding;
+                }
+                layout.noticeBottomSeparator = RECT{ 0, footerTop, layout.clientSize.cx, footerTop + separatorHeight };
+                footerTop += separatorHeight;
+            }
+            SelectObject(noticeDC, previousFont);
+        }
+        if (noticeFont != nullptr) {
+            DeleteObject(noticeFont);
+        }
+        if (noticeDC != nullptr) {
+            ReleaseDC(nullptr, noticeDC);
+        }
     }
+    int footerPadding = MulDiv(14, dpi, 96);
     layout.footer = RECT{
-        PANEL_SIDE_PADDING,
+        0,
         footerTop,
-        layout.clientSize.cx - PANEL_SIDE_PADDING,
-        footerTop + footerHeight
+        layout.clientSize.cx,
+        footerTop + footerTextHeight + footerPadding + footerPadding
     };
-    layout.clientSize.cy = layout.footer.bottom + 7;
+    layout.clientSize.cy = layout.footer.bottom;
     return layout;
 }
 
 /// Calculates outer widget dimensions from its type, content, font, padding, border, and selected monitor.
-static void GetWidgetDimensions(const WidgetConfig& config, int* width, int* height) {
+static void GetWidgetDimensions(const WidgetConfig& config, int* width, int* height,
+        const std::vector<TimeDateNotice>* notices = nullptr, ULONGLONG applicationUtc = 0) {
     if (config.type == WIDGET_FULLSCREEN) {
         RECT monitorRect = {};
         if (GetPrimarySelectedMonitorRect(config, &monitorRect)) {
@@ -2825,7 +2969,7 @@ static void GetWidgetDimensions(const WidgetConfig& config, int* width, int* hei
         *width = calendarSize.cx;
         *height = calendarSize.cy;
     } else {
-        PanelLayout layout = CalculatePanelLayout(config);
+        PanelLayout layout = CalculatePanelLayout(config, notices, applicationUtc);
         *width = layout.clientSize.cx;
         *height = layout.clientSize.cy;
     }
@@ -2877,8 +3021,9 @@ static void ResizeWidgetPreservingWorkAreaAttachment(Widget* widget, int width, 
 }
 
 /// Copies the requested calendar, primary clock, and time-text rectangles from the calculated panel layout.
-static void GetPanelLayout(const WidgetConfig& config, RECT* calendarRect, POINT* clockPosition, RECT* timeRect) {
-    PanelLayout layout = CalculatePanelLayout(config);
+static void GetPanelLayout(const WidgetConfig& config, RECT* calendarRect, POINT* clockPosition, RECT* timeRect,
+        const std::vector<TimeDateNotice>* notices = nullptr, ULONGLONG applicationUtc = 0) {
+    PanelLayout layout = CalculatePanelLayout(config, notices, applicationUtc);
     if (calendarRect != nullptr) {
         *calendarRect = layout.calendar;
     }
@@ -2891,10 +3036,10 @@ static void GetPanelLayout(const WidgetConfig& config, RECT* calendarRect, POINT
 }
 
 /// Moves the configured position inside the nearest work area, or monitor bounds for fullscreen widgets.
-static void ClampWidgetPosition(WidgetConfig* config) {
+static void ClampWidgetPosition(WidgetConfig* config, const std::vector<TimeDateNotice>* notices = nullptr) {
     int width = 0;
     int height = 0;
-    GetWidgetDimensions(*config, &width, &height);
+    GetWidgetDimensions(*config, &width, &height, notices);
     RECT desired = { config->x, config->y, config->x + width, config->y + height };
     HMONITOR monitor = MonitorFromRect(&desired, MONITOR_DEFAULTTONEAREST);
     MONITORINFO information = {};
@@ -4004,19 +4149,19 @@ static bool SetForegroundWindowEx(HWND window) {
 }
 
 /// Updates the primary and additional analog controls using each clock's displayed time and time zone.
-static void UpdateAnalogTime(Widget* widget) {
+static void UpdateAnalogTime(Widget* widget, ULONGLONG applicationUtc = 0) {
     if (widget == nullptr) {
         return;
     }
     SYSTEMTIME time = {};
     if (widget->analogChild != nullptr) {
-        GetDisplayedTime(widget->config, &time);
+        GetDisplayedTime(widget->config, &time, applicationUtc);
         SetAnalogClockTime(widget->analogChild, time);
     }
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         if (widget->additionalAnalogChildren[index] != nullptr) {
             WidgetConfig clock = AdditionalClockConfiguration(widget->config, index);
-            GetDisplayedTime(clock, &time);
+            GetDisplayedTime(clock, &time, applicationUtc);
             SetAnalogClockTime(widget->additionalAnalogChildren[index], time);
         }
     }
@@ -4763,9 +4908,10 @@ static void DrawDigitalWidthBorder(HDC dc, int width, int height, int inset, int
 }
 
 /// Formats the current displayed time into a bounded buffer and adds an enabled UTC suffix or fullscreen footer.
-static void GetDigitalTimeText(const WidgetConfig& config, wchar_t* text, size_t textCount) {
+static void GetDigitalTimeText(const WidgetConfig& config, wchar_t* text, size_t textCount,
+        ULONGLONG applicationUtc = 0) {
     SYSTEMTIME time = {};
-    GetDisplayedTime(config, &time);
+    GetDisplayedTime(config, &time, applicationUtc);
     std::wstring formatted = FormatWidgetTime(config, time);
     if (config.showUtc && config.showUtcText) {
         formatted += config.type == WIDGET_FULLSCREEN ? L"\r\nUTC" : L" UTC";
@@ -4840,7 +4986,7 @@ static void PaintOpaqueDigitalWidget(Widget* widget, HWND window, HDC dc) {
 static void RenderCustomWidget(Widget* widget) {
     int width = 0;
     int height = 0;
-    GetWidgetDimensions(widget->config, &width, &height);
+    GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
     HDC screen = GetDC(nullptr);
     if (screen == nullptr) {
         return;
@@ -4899,8 +5045,8 @@ static void RenderCustomWidget(Widget* widget) {
         int minimumHitTestAlpha = (255 + opacity - 1) / std::max(1, static_cast<int>(opacity));
         for (int index = 0; index < width * height; index++) {
             DWORD pixel = pixels[index];
-            int coverage = 255
-                - (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
+            int coverage =
+                255 - (static_cast<BYTE>(pixel) + static_cast<BYTE>(pixel >> 8) + static_cast<BYTE>(pixel >> 16)) / 3;
             int alpha = std::max(minimumHitTestAlpha, coverage);
             int red = GetRValue(color) * alpha / 255;
             int green = GetGValue(color) * alpha / 255;
@@ -5076,7 +5222,7 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     if (widget == nullptr) {
         return;
     }
-    PanelLayout layout = CalculatePanelLayout(widget->config);
+    PanelLayout layout = CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
     wchar_t dateText[128] = {};
     GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText,
         ARRAYSIZE(dateText), nullptr);
@@ -5186,7 +5332,7 @@ static void CreatePanelLinks(Widget* widget) {
     SetWindowPos(widget->panelDateLink, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SetWindowPos(widget->panelTimeZoneLink, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SYSTEMTIME displayed = {};
-    GetDisplayedTime(widget->config, &displayed);
+    GetDisplayedTime(widget->config, &displayed, widget->panelApplicationUtc);
     UpdatePanelLinks(widget, displayed);
     widget->panelDateTooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW, nullptr,
         WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -5224,6 +5370,54 @@ static void ExcludePanelControlsFromText(HWND window, HDC dc) {
     }
 }
 
+/// Paints one native notice divider with a system-color line when theme drawing is unavailable.
+static void DrawPanelNoticeSeparator(HDC dc, HTHEME theme, const RECT& separator) {
+    bool drawn =
+        theme != nullptr && SUCCEEDED(DrawThemeBackground(theme, dc, FLYOUT_DIVIDER, 0, &separator, nullptr));
+    if (!drawn) {
+        RECT line = separator;
+        line.bottom = line.top + 1;
+        FillRect(dc, &line, GetSysColorBrush(COLOR_3DSHADOW));
+    }
+}
+
+/// Paints the native notice icons and wrapped text into the panel's existing shared buffer.
+static void DrawPanelTimeNotices(Widget* widget, HDC dc, const PanelLayout& layout) {
+    if (layout.notices.empty()) {
+        return;
+    }
+    HFONT font = CreatePanelFont(widget->config.panelBottomFont, widget->config.fontAntialiasing);
+    if (font == nullptr) {
+        return;
+    }
+    HGDIOBJ previousFont = SelectObject(dc, font);
+    SetBkMode(dc, TRANSPARENT);
+    SetTextColor(dc, GetSysColor(COLOR_WINDOWTEXT));
+    HTHEME theme = OpenThemeData(widget->window, L"Flyout");
+    size_t count = std::min(layout.notices.size(), widget->panelNotices.size());
+    for (size_t index = 0; index < count; index++) {
+        const TimeDateNotice& notice = widget->panelNotices[index];
+        const PanelNoticeLayout& row = layout.notices[index];
+        DrawPanelNoticeSeparator(dc, theme, row.separator);
+        const wchar_t* iconName = notice.icon == TimeDateNoticeIcon::Warning ? IDI_WARNING : IDI_INFORMATION;
+        HICON icon = nullptr;
+        if (SUCCEEDED(LoadIconMetric(nullptr, iconName, LIM_SMALL, &icon))) {
+            DrawIconEx(dc, row.icon.left, row.icon.top, icon, row.icon.right - row.icon.left,
+                row.icon.bottom - row.icon.top, 0, nullptr, DI_NORMAL);
+            DestroyIcon(icon);
+        }
+        RECT text = row.text;
+        DrawTextW(dc, notice.text.c_str(), static_cast<int>(notice.text.size()), &text,
+            DT_WORDBREAK | DT_NOFULLWIDTHCHARBREAK | DT_NOPREFIX);
+    }
+    DrawPanelNoticeSeparator(dc, theme, layout.noticeBottomSeparator);
+    if (theme != nullptr) {
+        CloseThemeData(theme);
+    }
+    SelectObject(dc, previousFont);
+    DeleteObject(font);
+}
+
 /// Paints the panel background and text, clipping all clock captions, times, and weekdays beneath its child controls.
 /// Draws alarm or identification feedback after restoring the original drawing region.
 static void PaintPanelWidget(Widget* widget, HDC dc) {
@@ -5238,7 +5432,7 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
     FillRect(dc, &full, background);
     DeleteObject(background);
     SYSTEMTIME time = {};
-    GetDisplayedTime(widget->config, &time);
+    GetDisplayedTime(widget->config, &time, widget->panelApplicationUtc);
     int savedDC = SaveDC(dc);
     if (savedDC == 0) {
         return;
@@ -5246,18 +5440,17 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
     ExcludePanelControlsFromText(widget->window, dc);
     HFONT timeFont = CreatePanelFont(widget->config.panelTimeFont, widget->config.fontAntialiasing);
     HFONT nameFont = CreatePanelFont(widget->config.panelTopFont, widget->config.fontAntialiasing);
-    PanelLayout layout = CalculatePanelLayout(widget->config);
-    bool additional = HasAdditionalClocks(widget->config);
+    PanelLayout layout = CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
     for (int index = 0; index <= ADDITIONAL_CLOCK_COUNT; index++) {
         if (index > 0 && !widget->config.additionalClocks[index - 1].enabled) {
             continue;
         }
         WidgetConfig clock = index == 0 ? widget->config : AdditionalClockConfiguration(widget->config, index - 1);
         wchar_t clockText[128] = {};
-        GetDigitalTimeText(clock, clockText, ARRAYSIZE(clockText));
+        GetDigitalTimeText(clock, clockText, ARRAYSIZE(clockText), widget->panelApplicationUtc);
         DrawWidgetTimeText(dc, clockText, layout.times[index], timeFont, RGB(0, 0, 0), clock);
-        if (additional) {
-            GetDisplayedTime(clock, &time);
+        if (!IsRectEmpty(&layout.days[index])) {
+            GetDisplayedTime(clock, &time, widget->panelApplicationUtc);
             wchar_t day[128] = {};
             GetDateFormatEx(LANGUAGE_LOCALES[clock.language], 0, &time, L"dddd", day, ARRAYSIZE(day), nullptr);
             DrawCenteredText(dc, day, layout.days[index], timeFont, RGB(0, 0, 0));
@@ -5267,6 +5460,7 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
                 RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
         }
     }
+    DrawPanelTimeNotices(widget, dc, layout);
     RestoreDC(dc, savedDC);
     DeleteObject(nameFont);
     DeleteObject(timeFont);
@@ -5339,16 +5533,61 @@ static void RenderWidget(Widget* widget) {
         return;
     }
     if (widget->config.type == WIDGET_PANEL) {
-        UpdateAnalogTime(widget);
+        ULONGLONG previousApplicationUtc = widget->panelApplicationUtc;
+        bool noticesChanged = false;
+        if (widget->panelNoticesPrepared) {
+            widget->panelNoticesPrepared = false;
+        } else {
+            widget->panelApplicationUtc = GetApplicationFileTimeValue();
+            std::vector<TimeDateNotice> notices = GetPanelTimeNotices(widget->config, widget->panelCalendarDateSupported,
+                widget->panelApplicationUtc);
+            noticesChanged = !PanelTimeNoticesEqual(widget->panelNotices, notices);
+            widget->panelNotices = std::move(notices);
+        }
         SYSTEMTIME displayed = {};
-        GetDisplayedTime(widget->config, &displayed);
-        UpdatePanelLinks(widget, displayed);
+        GetDisplayedTime(widget->config, &displayed, widget->panelApplicationUtc);
         int dateKey = displayed.wYear * 10000 + displayed.wMonth * 100 + displayed.wDay;
+        bool dateChanged = widget->lastPanelDateKey != dateKey;
+        bool layoutChanged = false;
+        if (widget->rendered && dateChanged) {
+            PanelLayout previous = CalculatePanelLayout(widget->config, nullptr, previousApplicationUtc);
+            PanelLayout current = CalculatePanelLayout(widget->config, nullptr, widget->panelApplicationUtc);
+            layoutChanged = !EqualRect(&previous.clocks[0], &current.clocks[0]);
+        }
+        bool resized = false;
+        if (!widget->rendered || noticesChanged || dateChanged) {
+            int width = 0;
+            int height = 0;
+            GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
+            RECT current = {};
+            if (GetWindowRect(widget->window, &current)
+                    && (current.right - current.left != width
+                        || current.bottom - current.top != height
+                        || layoutChanged)) {
+                if (widget->rendered && IsWindowVisible(widget->window)) {
+                    WidgetConfig positioned = widget->config;
+                    POINT position = { current.left, current.top };
+                    GetPositionPreservingWorkAreaAttachment(widget->window, width, height, &position);
+                    positioned.x = position.x;
+                    positioned.y = position.y;
+                    if (RecreatePanelWidgetBuffered(widget, positioned, &widget->panelNotices,
+                        widget->panelApplicationUtc)) {
+                        return;
+                    }
+                }
+                ResizeWidgetPreservingWorkAreaAttachment(widget, width, height,
+                    SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+                resized = true;
+            }
+        }
+        UpdateAnalogTime(widget, widget->panelApplicationUtc);
+        UpdatePanelLinks(widget, displayed);
         if (!widget->rendered || widget->lastPanelDateKey != dateKey || widget->alarmActive) {
             widget->lastPanelDateKey = dateKey;
             InvalidateRect(widget->window, nullptr, FALSE);
         } else {
-            PanelLayout layout = CalculatePanelLayout(widget->config);
+            PanelLayout layout =
+                CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
             for (int index = 0; index <= ADDITIONAL_CLOCK_COUNT; index++) {
                 if (index > 0 && !widget->config.additionalClocks[index - 1].enabled) {
                     continue;
@@ -5358,7 +5597,19 @@ static void RenderWidget(Widget* widget) {
                 InvalidateRect(widget->window, &textRect, FALSE);
             }
         }
-        RedrawWindow(widget->window, nullptr, nullptr, RDW_UPDATENOW | RDW_ALLCHILDREN);
+        if (noticesChanged && !widget->panelNotices.empty()) {
+            PanelLayout layout =
+                CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
+            if (!layout.notices.empty()) {
+                RECT noticeBounds = { 0, layout.notices.front().separator.top, layout.clientSize.cx, layout.footer.top };
+                InvalidateRect(widget->window, &noticeBounds, FALSE);
+            }
+        }
+        UINT redrawFlags = RDW_UPDATENOW | RDW_ALLCHILDREN;
+        if (resized) {
+            redrawFlags |= RDW_FRAME | RDW_INVALIDATE;
+        }
+        RedrawWindow(widget->window, nullptr, nullptr, redrawFlags);
         widget->rendered = true;
         return;
     }
@@ -5381,7 +5632,8 @@ static void RenderWidget(Widget* widget) {
     } else {
         int desiredWidth = 0;
         int desiredHeight = 0;
-        GetWidgetDimensions(widget->config, &desiredWidth, &desiredHeight);
+        GetWidgetDimensions(widget->config, &desiredWidth, &desiredHeight, &widget->panelNotices,
+            widget->panelApplicationUtc);
         RECT current = {};
         if (GetWindowRect(widget->window, &current)
                 && (current.right - current.left != desiredWidth || current.bottom - current.top != desiredHeight)) {
@@ -5949,7 +6201,8 @@ static void CreateAnalogChild(Widget* widget) {
     int childY = 0;
     if (widget->config.type == WIDGET_PANEL) {
         POINT clockPosition = {};
-        GetPanelLayout(widget->config, nullptr, &clockPosition, nullptr);
+        GetPanelLayout(widget->config, nullptr, &clockPosition, nullptr, &widget->panelNotices,
+            widget->panelApplicationUtc);
         childX = clockPosition.x;
         childY = clockPosition.y;
     }
@@ -5977,7 +6230,7 @@ static void CreateAdditionalAnalogChildren(Widget* widget) {
     if (widget->config.type != WIDGET_PANEL) {
         return;
     }
-    PanelLayout layout = CalculatePanelLayout(widget->config);
+    PanelLayout layout = CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         if (!widget->config.additionalClocks[index].enabled) {
             continue;
@@ -6018,7 +6271,8 @@ static bool UpdateAnalogSeconds(Widget* widget) {
     int childY = 0;
     if (widget->config.type == WIDGET_PANEL) {
         POINT clockPosition = {};
-        GetPanelLayout(widget->config, nullptr, &clockPosition, nullptr);
+        GetPanelLayout(widget->config, nullptr, &clockPosition, nullptr, &widget->panelNotices,
+            widget->panelApplicationUtc);
         childX = clockPosition.x;
         childY = clockPosition.y;
     }
@@ -6069,7 +6323,8 @@ static void CreateCalendarChild(Widget* widget) {
     int childY = 0;
     if (widget->config.type == WIDGET_PANEL) {
         RECT calendarRect = {};
-        GetPanelLayout(widget->config, &calendarRect, nullptr, nullptr);
+        GetPanelLayout(widget->config, &calendarRect, nullptr, nullptr, &widget->panelNotices,
+            widget->panelApplicationUtc);
         childX = calendarRect.left;
         childY = calendarRect.top;
     }
@@ -6087,9 +6342,9 @@ static void CreateCalendarChild(Widget* widget) {
         ApplyCalendarFont(widget);
         MonthCal_SetCalendarBorder(widget->calendarChild, TRUE, 0);
         SYSTEMTIME displayed = {};
-        GetDisplayedTime(widget->config, &displayed);
+        GetDisplayedTime(widget->config, &displayed, widget->panelApplicationUtc);
         MonthCal_SetToday(widget->calendarChild, &displayed);
-        MonthCal_SetCurSel(widget->calendarChild, &displayed);
+        widget->panelCalendarDateSupported = MonthCal_SetCurSel(widget->calendarChild, &displayed) != FALSE;
         widget->lastCalendarDateKey = displayed.wYear * 10000 + displayed.wMonth * 100 + displayed.wDay;
         MonthCal_SetFirstDayOfWeek(widget->calendarChild, widget->config.sundayFirst ? 6 : 0);
         RECT minimum = {};
@@ -6168,7 +6423,8 @@ static bool SetFullscreenPreview(Widget* widget) {
 
 /// Creates a widget's main and required child or monitor windows and applies layout, theme, rendering, and visibility.
 /// Activates the main window when replacing an active widget; other creation paths leave activation unchanged.
-static void CreateWidgetWindow(Widget* widget, bool activate = false) {
+static void CreateWidgetWindow(Widget* widget, bool activate = false,
+        const std::vector<TimeDateNotice>* notices = nullptr, ULONGLONG applicationUtc = 0) {
     if (widget == nullptr) {
         return;
     }
@@ -6178,6 +6434,14 @@ static void CreateWidgetWindow(Widget* widget, bool activate = false) {
             clock.size = NormalizeAnalogClockSize(clock.size);
         }
     }
+    bool previousCalendarSupported = widget->panelCalendarDateSupported;
+    widget->panelApplicationUtc = widget->config.type == WIDGET_PANEL
+        ? applicationUtc == 0 ? GetApplicationFileTimeValue() : applicationUtc
+        : 0;
+    widget->panelNotices = notices == nullptr
+        ? GetPanelTimeNotices(widget->config, previousCalendarSupported, widget->panelApplicationUtc)
+        : *notices;
+    widget->panelNoticesPrepared = true;
     bool fullscreen = widget->config.type == WIDGET_FULLSCREEN;
     std::vector<const DisplayMonitor*> selectedMonitors;
     if (fullscreen) {
@@ -6187,11 +6451,11 @@ static void CreateWidgetWindow(Widget* widget, bool activate = false) {
             widget->config.y = selectedMonitors[0]->rect.top;
         }
     } else {
-        ClampWidgetPosition(&widget->config);
+        ClampWidgetPosition(&widget->config, &widget->panelNotices);
     }
     int width = 0;
     int height = 0;
-    GetWidgetDimensions(widget->config, &width, &height);
+    GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
     bool parentedControl = widget->config.type == WIDGET_PANEL || widget->config.type == WIDGET_CALENDAR;
     DWORD extended = WS_EX_TOOLWINDOW | (widget->config.topMost || fullscreen ? WS_EX_TOPMOST : 0);
     if (!fullscreen && (!parentedControl || widget->config.opacity < 100)) {
@@ -6269,6 +6533,10 @@ static void CreateWidgetWindow(Widget* widget, bool activate = false) {
     if (widget->config.type == WIDGET_CALENDAR || widget->config.type == WIDGET_PANEL) {
         CreateCalendarChild(widget);
     }
+    if (widget->panelCalendarDateSupported != previousCalendarSupported) {
+        widget->panelNotices = GetPanelTimeNotices(widget->config, widget->panelCalendarDateSupported,
+            widget->panelApplicationUtc);
+    }
     CreatePanelLinks(widget);
     if (parentedControl && widget->config.opacity < 100) {
         SetLayeredWindowAttributes(widget->window, 0, static_cast<BYTE>(widget->config.opacity * 255 / 100), LWA_ALPHA);
@@ -6286,6 +6554,7 @@ static void CreateWidgetWindow(Widget* widget, bool activate = false) {
             }
         }
     }
+    widget->panelNoticesPrepared = false;
 }
 
 /// Stops widget audio and destroys its windows, tooltips, and owned fonts, then clears the associated runtime handles.
@@ -6829,7 +7098,7 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         if (widget->config.type == WIDGET_DIGITAL) {
             int width = 0;
             int height = 0;
-            GetWidgetDimensions(widget->config, &width, &height);
+            GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
             ResizeWidgetPreservingWorkAreaAttachment(widget, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
         }
     } else if (command == ID_MENU_STOP_ALARM) {
@@ -6982,18 +7251,19 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
                 AppendMenuW(dateMenu, MF_SEPARATOR, 0, nullptr);
             }
             std::wstring label = DateFormatCaption(widget->config, selectedDate, index);
-            AppendMenuCommand(dateMenu, MF_STRING | (widget->config.dateCopyFormat == index ? MF_CHECKED : 0),
-                ID_MENU_DATE_FORMAT_BASE + index, label.c_str(), &dateMenuMnemonics);
+            AppendMenuCommand(dateMenu, MF_STRING, ID_MENU_DATE_FORMAT_BASE + index, label.c_str(), &dateMenuMnemonics);
         }
+        CheckMenuRadioItem(dateMenu, ID_MENU_DATE_FORMAT_BASE, ID_MENU_DATE_FORMAT_BASE + DATE_FORMAT_COUNT - 1,
+            ID_MENU_DATE_FORMAT_BASE + widget->config.dateCopyFormat, MF_BYCOMMAND);
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         if (widget->config.type == WIDGET_CALENDAR) {
-            AppendMenuCommand(menu, MF_STRING | (widget->config.showToday ? MF_CHECKED : 0),
-                ID_MENU_SHOW_TODAY, SHOW_TODAY_LABELS[widget->config.language], &menuMnemonics);
+            AppendMenuCommand(menu, MF_STRING | (widget->config.showToday ? MF_CHECKED : 0), ID_MENU_SHOW_TODAY,
+                SHOW_TODAY_LABELS[widget->config.language], &menuMnemonics);
         }
-        AppendMenuCommand(menu, MF_STRING | (widget->config.weekNumbers ? MF_CHECKED : 0),
-            ID_MENU_WEEK_NUMBERS, WT(widget, TXT_WEEK_NUMBERS), &menuMnemonics);
-        AppendMenuCommand(menu, MF_STRING | (widget->config.sundayFirst ? MF_CHECKED : 0),
-            ID_MENU_SUNDAY_FIRST, WT(widget, TXT_SUNDAY_FIRST), &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.weekNumbers ? MF_CHECKED : 0), ID_MENU_WEEK_NUMBERS,
+            WT(widget, TXT_WEEK_NUMBERS), &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.sundayFirst ? MF_CHECKED : 0), ID_MENU_SUNDAY_FIRST,
+            WT(widget, TXT_SUNDAY_FIRST), &menuMnemonics);
         AppendMenuCommand(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(dateMenu),
             DATE_COPY_LABELS[widget->config.language], &menuMnemonics);
     }
@@ -7005,20 +7275,25 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         std::wstring signalLabel = TimeSignalMenuLabel(widget->config);
         AppendMenuCommand(menu, MF_STRING | (widget->config.timeSignalEnabled ? MF_CHECKED : 0),
             ID_MENU_TIME_SIGNAL_ENABLED, signalLabel.c_str(), &menuMnemonics);
-        AppendMenuCommand(menu, MF_STRING | (widget->config.soundsMuted ? MF_CHECKED : 0),
-            ID_MENU_MUTE, MUTE_LABELS[widget->config.language], &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING | (widget->config.soundsMuted ? MF_CHECKED : 0), ID_MENU_MUTE,
+            MUTE_LABELS[widget->config.language], &menuMnemonics);
     }
     if (widget->config.type == WIDGET_ANALOG || widget->config.type == WIDGET_PANEL) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         int sizes[4] = {};
         int sizeCount = GetAnalogClockSizes(sizes);
+        UINT selectedSizeCommand = 0;
         for (int index = 0; index < sizeCount; index++) {
             std::wstring label = WT(widget, TXT_SIZE);
             label += L" ";
             label += std::to_wstring(sizes[index]);
-            AppendMenuCommand(menu, MF_STRING | (widget->config.size == sizes[index] ? MF_CHECKED : 0),
-                ID_MENU_SIZE_104 + index, label.c_str(), &menuMnemonics);
+            AppendMenuCommand(menu, MF_STRING, ID_MENU_SIZE_104 + index, label.c_str(), &menuMnemonics);
+            if (widget->config.size == sizes[index]) {
+                selectedSizeCommand = ID_MENU_SIZE_104 + index;
+            }
         }
+        CheckMenuRadioItem(menu, ID_MENU_SIZE_104, ID_MENU_SIZE_104 + sizeCount - 1, selectedSizeCommand,
+            MF_BYCOMMAND);
     }
     if (widget->alarmActive) {
         AppendMenuCommand(menu, MF_STRING, ID_MENU_STOP_ALARM, WT(widget, TXT_STOP_ALARM), &menuMnemonics);
@@ -7049,11 +7324,16 @@ static HMENU CreateAdditionalClockMenu(const Widget* widget, int index) {
     const AdditionalClockConfig& clock = widget->config.additionalClocks[index];
     int sizes[4] = {};
     int count = GetAnalogClockSizes(sizes);
+    int selectedSize = NormalizeAnalogClockSize(clock.size);
+    UINT selectedSizeCommand = 0;
     for (int item = 0; item < count; item++) {
         std::wstring label = std::wstring(WT(widget, TXT_SIZE)) + L" " + std::to_wstring(sizes[item]);
-        AppendMenuCommand(menu, MF_STRING | (NormalizeAnalogClockSize(clock.size) == sizes[item] ? MF_CHECKED : 0),
-            ID_MENU_SIZE_104 + item, label.c_str(), &mnemonics);
+        AppendMenuCommand(menu, MF_STRING, ID_MENU_SIZE_104 + item, label.c_str(), &mnemonics);
+        if (selectedSize == sizes[item]) {
+            selectedSizeCommand = ID_MENU_SIZE_104 + item;
+        }
     }
+    CheckMenuRadioItem(menu, ID_MENU_SIZE_104, ID_MENU_SIZE_104 + count - 1, selectedSizeCommand, MF_BYCOMMAND);
     return menu;
 }
 
@@ -10291,6 +10571,7 @@ static void UpdateSettingControlVisibility() {
         { hSundayFirstCheck, calendar },
         { hDateFormatLabel, calendar },
         { hDateFormatCombo, calendar },
+        { hPanelTimeNoticesCheck, panel },
         { hTimeFormatLabel, digital || panel },
         { hTimeFormatCombo, digital || panel },
         { hShowAmPmCheck, digital || panel }
@@ -10426,6 +10707,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         { hTimeFormatCombo, (digital || panel) && !WidgetUsesUtcTime(timeConfiguration) },
         { hShowAmPmCheck, supportsAmPm },
         { hUtcTextCheck, (digital || panel) && utc },
+        { hPanelTimeNoticesCheck, panel },
         { hTimeZoneLabel, !utc },
         { hTimeZoneCombo, !utc },
         { hTopmostCheck, !fullscreen },
@@ -10716,6 +10998,7 @@ static void LoadDraftIntoControls() {
     SetCheck(hSecondsCheck, config.showSeconds && supportsSeconds);
     SetCheck(hUtcCheck, config.showUtc);
     SetCheck(hUtcTextCheck, config.showUtcText);
+    SetCheck(hPanelTimeNoticesCheck, config.panelTimeNotices);
     SetComboSelection(hTimeFormatCombo, config.timeFormat);
     SetComboSelection(hWidgetLanguageCombo, config.language);
     SelectTimeZoneInCombo(config.timeZoneKey);
@@ -10852,6 +11135,9 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     }
     config.showUtc = GetCheck(hUtcCheck);
     config.showUtcText = GetCheck(hUtcTextCheck);
+    if (config.type == WIDGET_PANEL) {
+        config.panelTimeNotices = GetCheck(hPanelTimeNoticesCheck);
+    }
     if (IsWindowEnabled(hShowAmPmCheck)) {
         config.showAmPm = GetCheck(hShowAmPmCheck);
     }
@@ -11115,6 +11401,7 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
         && left.showSeconds == right.showSeconds
         && left.showUtc == right.showUtc
         && left.showUtcText == right.showUtcText
+        && left.panelTimeNotices == right.panelTimeNotices
         && left.language == right.language
         && left.timeZoneKey == right.timeZoneKey
         && left.monitorDevices == right.monitorDevices
@@ -11262,15 +11549,17 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
 }
 
 /// Prepares a complete native panel outside the desktop, then moves it into place and hides the old panel in one batch.
-/// Synchronizes the prepared surface with desktop composition before the swap.
-/// Preserves native client dimensions, calendar selection, alarm and identification state; returns false on failure.
-static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration) {
+/// Synchronizes the prepared surface with desktop composition before the swap. Preserves native client dimensions,
+/// calendar selection, alarm and identification state; returns false on failure.
+static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration,
+        const std::vector<TimeDateNotice>* notices, ULONGLONG applicationUtc) {
     Widget replacement;
     replacement.config = configuration;
+    replacement.panelCalendarDateSupported = widget->panelCalendarDateSupported;
     bool visible = IsWindowVisible(widget->window) != FALSE;
     bool activate = GetActiveWindow() == widget->window;
     replacement.config.visible = false;
-    CreateWidgetWindow(&replacement);
+    CreateWidgetWindow(&replacement, false, notices, applicationUtc);
     if (replacement.window == nullptr) {
         return false;
     }
@@ -11308,6 +11597,7 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
     }
     MonthCal_SetCurrentView(replacement.calendarChild, MonthCal_GetCurrentView(widget->calendarChild));
     replacement.rendered = false;
+    replacement.panelNoticesPrepared = true;
     RenderWidget(&replacement);
     RedrawWindow(replacement.window, nullptr, nullptr,
         RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN | RDW_NOERASE);
@@ -11360,6 +11650,10 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     if (widget == nullptr || widget->window == nullptr) {
         return;
     }
+    ULONGLONG noticeUtc =
+        configuration.type == WIDGET_PANEL && configuration.panelTimeNotices ? GetApplicationFileTimeValue() : 0;
+    std::vector<TimeDateNotice> notices =
+        GetPanelTimeNotices(configuration, widget->panelCalendarDateSupported, noticeUtc);
     RECT rect = {};
     bool hasPosition = GetWindowRect(widget->window, &rect) != FALSE;
     int targetX = rect.left;
@@ -11368,7 +11662,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     if (hasPosition) {
         int newWidth = 0;
         int newHeight = 0;
-        GetWidgetDimensions(configuration, &newWidth, &newHeight);
+        GetWidgetDimensions(configuration, &newWidth, &newHeight, &notices);
         POINT position = { targetX, targetY };
         if (GetPositionPreservingWorkAreaAttachment(widget->window, newWidth, newHeight, &position,
             &horizontalAttachment)) {
@@ -11382,8 +11676,8 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
             && configuration.type == WIDGET_PANEL) {
         POINT previousClockPosition = {};
         POINT newClockPosition = {};
-        GetPanelLayout(widget->config, nullptr, &previousClockPosition, nullptr);
-        GetPanelLayout(configuration, nullptr, &newClockPosition, nullptr);
+        GetPanelLayout(widget->config, nullptr, &previousClockPosition, nullptr, &widget->panelNotices);
+        GetPanelLayout(configuration, nullptr, &newClockPosition, nullptr, &notices);
         targetX = rect.left + previousClockPosition.x - newClockPosition.x;
     }
     bool fullscreenChanged = widget->config.type == WIDGET_FULLSCREEN || configuration.type == WIDGET_FULLSCREEN;
@@ -11394,7 +11688,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     }
     if (widget->config.type == WIDGET_PANEL
             && configuration.type == WIDGET_PANEL
-            && RecreatePanelWidgetBuffered(widget, positionedConfiguration)) {
+            && RecreatePanelWidgetBuffered(widget, positionedConfiguration, &notices, noticeUtc)) {
         return;
     }
     bool activate = GetActiveWindow() == widget->window;
@@ -11445,7 +11739,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     widget->calendarChild = nullptr;
     widget->calendarProc = nullptr;
     widget->config = positionedConfiguration;
-    CreateWidgetWindow(widget, activate);
+    CreateWidgetWindow(widget, activate, &notices, noticeUtc);
     if (fullscreenChanged && (hSettings == nullptr || !IsWindow(hSettings))) {
         RefreshFullscreenPresentation();
     }
@@ -11552,7 +11846,7 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
     if (widget->config.type == WIDGET_CALENDAR && borderStyleChanged) {
         int width = 0;
         int height = 0;
-        GetWidgetDimensions(widget->config, &width, &height);
+        GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
         UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOREDRAW | SWP_FRAMECHANGED;
         ResizeWidgetPreservingWorkAreaAttachment(widget, width, height, flags);
         widget->rendered = false;
@@ -11560,7 +11854,7 @@ static void ApplyWidgetAppearancePreview(Widget* widget, const WidgetConfig& app
     } else if (digitalDimensionsChanged && !widget->config.transparentBackground) {
         int width = 0;
         int height = 0;
-        GetWidgetDimensions(widget->config, &width, &height);
+        GetWidgetDimensions(widget->config, &width, &height, &widget->panelNotices, widget->panelApplicationUtc);
         UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOREDRAW | SWP_FRAMECHANGED;
         ResizeWidgetPreservingWorkAreaAttachment(widget, width, height, flags);
         widget->rendered = false;
@@ -11812,9 +12106,14 @@ static void ApplySettingsDraft() {
                     settingsDraft[draftIndex].previewX = position.x;
                     settingsDraft[draftIndex].previewY = position.y;
                 } else {
+                    const WidgetConfig& draft = settingsDraft[draftIndex];
+                    ULONGLONG noticeUtc =
+                        draft.type == WIDGET_PANEL && draft.panelTimeNotices ? GetApplicationFileTimeValue() : 0;
+                    std::vector<TimeDateNotice> notices =
+                        GetPanelTimeNotices(draft, current->panelCalendarDateSupported, noticeUtc);
                     int newWidth = 0;
                     int newHeight = 0;
-                    GetWidgetDimensions(settingsDraft[draftIndex], &newWidth, &newHeight);
+                    GetWidgetDimensions(draft, &newWidth, &newHeight, &notices);
                     POINT position = { rect.left, rect.top };
                     bool horizontalAttachment = false;
                     GetPositionPreservingWorkAreaAttachment(current->window, newWidth, newHeight, &position,
@@ -11824,8 +12123,8 @@ static void ApplySettingsDraft() {
                             && settingsDraft[draftIndex].type == WIDGET_PANEL) {
                         POINT currentClockPosition = {};
                         POINT draftClockPosition = {};
-                        GetPanelLayout(current->config, nullptr, &currentClockPosition, nullptr);
-                        GetPanelLayout(settingsDraft[draftIndex], nullptr, &draftClockPosition, nullptr);
+                        GetPanelLayout(current->config, nullptr, &currentClockPosition, nullptr, &current->panelNotices);
+                        GetPanelLayout(draft, nullptr, &draftClockPosition, nullptr, &notices);
                         position.x = rect.left + currentClockPosition.x - draftClockPosition.x;
                     }
                     settingsDraft[draftIndex].x = position.x;
@@ -11860,8 +12159,8 @@ static void ApplySettingsDraft() {
         }
     }
     bool newUseNtpTime = SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1;
-    int newNtpPreset = std::clamp(static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0)), 0,
-        NTP_PRESET_COUNT - 1);
+    int newNtpPreset =
+        std::clamp(static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0)), 0, NTP_PRESET_COUNT - 1);
     std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
         ? GetControlText(hNtpServersEdit)
         : NtpServersForPreset(newNtpPreset);
@@ -12591,11 +12890,15 @@ static bool CreateSettingsControls() {
     }
     hShowAmPmCheck = AddControl(0, L"BUTTON", L"AM/PM", WS_TABSTOP | BS_AUTOCHECKBOX,
         left + 300, 204, 94, 24, hGeneralPage, ID_SHOW_AM_PM, &generalControls);
+    hPanelTimeNoticesCheck = AddControl(0, L"BUTTON", PANEL_TIME_NOTICES_LABELS[appLanguage],
+        WS_TABSTOP | BS_AUTOCHECKBOX, left, 234, SETTINGS_PAGE_CONTENT_RIGHT - left, 24, hGeneralPage,
+        ID_PANEL_TIME_NOTICES, &generalControls);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-        int top = 234 + index * 80;
+        int top = 264 + index * 80;
         std::wstring label = AdditionalClockLabel(appLanguage, index, true);
-        hAdditionalEnabledChecks[index] = AddControl(0, L"BUTTON", label.c_str(), WS_TABSTOP | WS_CLIPSIBLINGS
-            | BS_AUTOCHECKBOX, left, top + 2, 244, 24, hGeneralPage, ID_ADDITIONAL_ENABLED_BASE + index, &generalControls);
+        hAdditionalEnabledChecks[index] = AddControl(0, L"BUTTON", label.c_str(),
+            WS_TABSTOP | WS_CLIPSIBLINGS | BS_AUTOCHECKBOX, left, top + 2, 244, 24, hGeneralPage,
+            ID_ADDITIONAL_ENABLED_BASE + index, &generalControls);
         hAdditionalNameLabels[index] = AddStatic(hGeneralPage, TXT_NAME, left, top + 28, 22, &generalControls);
         std::wstring name = DefaultAdditionalClockName(appLanguage, index);
         hAdditionalNameEdits[index] = AddControl(WS_EX_CLIENTEDGE, L"EDIT", name.c_str(), WS_TABSTOP | ES_AUTOHSCROLL,
@@ -12608,11 +12911,12 @@ static bool CreateSettingsControls() {
         FillTimeZoneCombo(hAdditionalTimeZoneCombos[index]);
     }
     hMonitorLabel = AddUnderlayStatic(hGeneralPage, MONITOR_LABELS[appLanguage], 0, left, 237, 22, &generalControls);
-    hMonitorList = AddControl(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"", WS_TABSTOP | LVS_REPORT | LVS_SHOWSELALWAYS, left, 262, SETTINGS_PAGE_CONTENT_RIGHT - left, pageHeight - 291,
-        hGeneralPage, ID_MONITOR_LIST, &generalControls);
+    hMonitorList = AddControl(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"", WS_TABSTOP | LVS_REPORT | LVS_SHOWSELALWAYS, left,
+        262, SETTINGS_PAGE_CONTENT_RIGHT - left, pageHeight - 291, hGeneralPage, ID_MONITOR_LIST, &generalControls);
     InitializeMonitorList();
     hBlackoutMonitorsCheck = AddControl(0, L"BUTTON", BLACKOUT_MONITOR_LABELS[appLanguage],
-        WS_TABSTOP | BS_AUTOCHECKBOX, left, pageHeight - 28, 226, 24, hGeneralPage, ID_BLACKOUT_MONITORS, &generalControls);
+        WS_TABSTOP | BS_AUTOCHECKBOX, left, pageHeight - 28, 226, 24, hGeneralPage, ID_BLACKOUT_MONITORS,
+        &generalControls);
     hSizeLabel = AddStatic(hAppearancePage, TXT_SIZE, 8, 10, 22, &appearanceControls);
     hSizeCombo = AddControl(0, WC_COMBOBOXW, L"", WS_TABSTOP | CBS_DROPDOWNLIST, 148, 6, 87, 180, hAppearancePage,
         ID_SIZE, &appearanceControls, hSizeLabel);
@@ -12838,8 +13142,9 @@ static bool CreateSettingsControls() {
     hNtpStatus = CreateWindowExW(WS_EX_TRANSPARENT, L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_OWNERDRAW,
         8, 161, SETTINGS_PAGE_CONTENT_RIGHT - 8, 42, hTimePage, nullptr, hInstance, nullptr);
     timeControls.push_back(hNtpStatus);
-    hNtpLogList = AddControl(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"", WS_TABSTOP | LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDRAWFIXED,
-        8, 208, SETTINGS_PAGE_CONTENT_RIGHT - 8, pageHeight - 291, hTimePage, ID_NTP_LOG, &timeControls);
+    hNtpLogList = AddControl(WS_EX_CLIENTEDGE, WC_LISTVIEWW, L"",
+        WS_TABSTOP | LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDRAWFIXED, 8, 208, SETTINGS_PAGE_CONTENT_RIGHT - 8,
+        pageHeight - 291, hTimePage, ID_NTP_LOG, &timeControls);
     InitializeNtpLog();
     hNtpSaveLogButton = AddControl(0, L"BUTTON", NTP_SAVE_LOG_LABELS[appLanguage], WS_TABSTOP,
         SETTINGS_PAGE_CONTENT_RIGHT - 180, pageHeight - 79, 180, UI_BUTTON_HEIGHT,
@@ -12986,6 +13291,7 @@ static void RebuildSettingsControls() {
     hTimePage = nullptr;
     hApplicationPage = nullptr;
     hUtcTextCheck = nullptr;
+    hPanelTimeNoticesCheck = nullptr;
     hShowAmPmCheck = nullptr;
     hTimeFormatCombo = nullptr;
     hTimeFormatLabel = nullptr;
@@ -13927,7 +14233,8 @@ static void HandleSettingsCommand(int id, int notification) {
         int type = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
         if (selectedDraftIndex >= 0
                 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
-                && type >= 0 && type < WIDGET_TYPE_COUNT) {
+                && type >= 0
+                && type < WIDGET_TYPE_COUNT) {
             WidgetConfig& config = settingsDraft[selectedDraftIndex];
             WidgetType previousType = config.type;
             std::wstring editedName = GetControlText(hNameEdit);
@@ -13950,6 +14257,7 @@ static void HandleSettingsCommand(int id, int notification) {
                     preview.showSeconds = config.showSeconds;
                     preview.showUtc = config.showUtc;
                     preview.showUtcText = config.showUtcText;
+                    preview.panelTimeNotices = config.panelTimeNotices;
                     preview.showAmPm = config.showAmPm;
                     preview.timeFormat = config.timeFormat;
                     preview.language = config.language;
@@ -14591,7 +14899,7 @@ static void SelectCalendarToday(Widget* widget, bool preserveView) {
     }
     MonthCal_SetToday(widget->calendarChild, &today);
     MonthCal_SetCurrentView(widget->calendarChild, MCMV_MONTH);
-    MonthCal_SetCurSel(widget->calendarChild, &today);
+    widget->panelCalendarDateSupported = MonthCal_SetCurSel(widget->calendarChild, &today) != FALSE;
     MonthCal_SetCurrentView(widget->calendarChild, view);
     if (suspendRedraw) {
         SendMessageW(widget->calendarChild, WM_SETREDRAW, TRUE, 0);

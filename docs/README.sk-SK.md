@@ -62,6 +62,8 @@ Kalendár s hodinami môže zobrazovať až dvoje ďalšie hodiny. Každé zapni
 
 Horný dátum panela je odkazom vracajúcim kalendár na dnešok; dolný text pásma otvára klasické nastavenia dátumu a času Windows.
 
+Kalendáre s hodinami môžu nad dolným odkazom zobrazovať oznámenia dátumu a času Windows. Voľba **Oznámenia dátumu a času** na karte **Všeobecné** je predvolene zapnutá a ukladá sa pre každý panel samostatne. Ak platí viac oznámení, zobrazia sa pod sebou rovnako ako vo Windows. Ak je voľba vypnutá alebo nie je žiadne aktuálne oznámenie, zostáva pôvodná veľkosť aj rozloženie panela zachované a nevyhradzuje sa žiadne prázdne miesto.
+
 `Zarovnať do mriežky` usporiada viditeľné widgety do stabilnej neprekrývajúcej sa mriežky a približne zachová ich ručné rozmiestnenie. Widget, z ktorého ponuky bol príkaz vyvolaný, zostáva na mieste; príkaz z oblasti oznámení usporadúva každý monitor samostatne. Hodiny na monitore sú vynechané.
 
 ## Vzhľad

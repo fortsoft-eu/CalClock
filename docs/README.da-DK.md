@@ -62,6 +62,8 @@ Et kalenderpanel kan vise op til to ekstra ure. Aktivér hvert ur på Generelt o
 
 I panelet er datoen øverst et link, som fører kalenderen til i dag. Tidszoneteksten nederst åbner Windows’ klassiske indstillinger for dato og klokkeslæt.
 
+Paneler med kalender og ur kan vise Windows-meddelelser om dato og klokkeslæt over det nederste link. **Meddelelser om dato og klokkeslæt** på fanen **Generelt** er slået til som standard og gemmes separat for hvert panel. Når flere meddelelser er relevante, vises de under hinanden som i Windows. Hvis indstillingen er slået fra, eller der ikke er nogen relevant meddelelse, bevarer panelet sin oprindelige størrelse og sit layout uden at reservere tom plads.
+
 `Arranger i gitter` placerer synlige skrivebordswidgets i et stabilt gitter uden overlapning og bevarer omtrent den manuelle placering. Widgeten, hvis menu startede kommandoen, bliver stående; kommandoen fra meddelelsesområdet arrangerer hver skærm særskilt. Skærmure er undtaget.
 
 ## Udseende

@@ -38,6 +38,8 @@ Atverot iestatījumus no paziņojumu apgabala ikonas, tiek atlasīts pēdējais 
 
 Sakārtot režģī saglabā aptuveno manuālo izkārtojumu, pievelk centrus tuvākajiem režģa punktiem un novērš pārklāšanos. Logrīks, kura izvēlnē izsaukta komanda, paliek vietā. Logrīka izvēlne ietekmē tā monitoru, paziņojumu ikona katru monitoru atsevišķi. Atkārtojot izkārtojums paliek stabils. Dubultklikšķis iestatījumos izceļ logrīku ar ātru gaišzilu mirgošanu; modinātājs mirgo lēnāk sarkani. Izslēdzot Vienmēr virspusē, logrīks tiek novietots aiz pārējiem logiem. Paneļa augšējā saite atgriež kalendāru šodienā, apakšējā atver Windows klasiskos datuma un laika iestatījumus. Ieslēgta pievilkšana pievelk vilktu logrīku darba apgabala malai līdz piecu pikseļu attālumā. Lieluma maiņa saglabā piesaisti tai pašai malai vai malu pārim.
 
+Kalendāra un pulksteņa paneļos virs apakšējās saites var rādīt Windows datuma un laika paziņojumus. Cilnes **Vispārīgi** opcija **Datuma un laika paziņojumi** pēc noklusējuma ir ieslēgta un tiek saglabāta katram panelim atsevišķi. Ja vienlaikus ir vairāki attiecināmi paziņojumi, tie tiek rādīti cits zem cita tāpat kā Windows. Ja opcija ir izslēgta vai nav neviena attiecināma paziņojuma, panelis saglabā sākotnējo izmēru un izkārtojumu, nerezervējot tukšu vietu.
+
 Atsevišķā kalendārā Šodienas rinda cilnē Izskats vai izvēlnē rāda vai slēpj apakšējo rindu. Pāriet uz šodienu atlasa šodienas datumu un atjauno mēneša skatu. Mainoties datumam pēc logrīka laika, šodiena tiek atlasīta automātiski, saglabājot pašreizējo skatu.
 
 ## Izskats un glabāšana

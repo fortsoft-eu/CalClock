@@ -62,6 +62,8 @@ Un panneau calendrier et horloge peut afficher jusqu’à deux horloges supplém
 
 Dans ce panneau, la date supérieure est un lien ramenant le calendrier à aujourd’hui ; le texte de fuseau inférieur ouvre les paramètres classiques Date et heure de Windows.
 
+Les panneaux calendrier et horloge peuvent afficher les notifications de date et d’heure de Windows au-dessus du lien inférieur. L’option **Notifications de date et d’heure** de l’onglet **Général** est activée par défaut et enregistrée séparément pour chaque panneau. Lorsque plusieurs notifications s’appliquent, elles s’affichent les unes sous les autres, comme dans Windows. Si l’option est désactivée ou qu’aucune notification ne s’applique, le panneau conserve sa taille et sa disposition d’origine, sans réserver d’espace vide.
+
 `Aligner sur la grille` place les widgets de bureau visibles sur une grille stable sans chevauchement en préservant approximativement leur disposition manuelle. Le widget ayant lancé la commande depuis son menu reste en place ; la commande de la zone de notification traite chaque moniteur indépendamment. Les horloges sur moniteur sont exclues.
 
 ## Apparence

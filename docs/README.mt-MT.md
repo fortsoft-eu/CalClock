@@ -38,6 +38,8 @@ Meta tiftaħ is-settings mill-ikona taż-żona tan-notifiki, jerġa’ jintgħa�
 
 Irranġa fi gradilja iżomm bejn wieħed u ieħor it-tqassim manwali, iwaħħal iċ-ċentri mal-eqreb punti tal-gradilja u jneħħi s-sovrapożizzjonijiet. Il-widget li minnu ġie msejjaħ il-kmand jibqa’ f’postu. Il-menu tal-widget jaġixxi fuq il-moniter tiegħu; l-ikona tan-notifiki fuq kull moniter separatament. Ir-ripetizzjoni żżomm tqassim stabbli. Klikk doppju fis-settings jidentifika widget b’teptip blu ċar mgħaġġel; allarm iteptep aħmar aktar bil-mod. It-tifi ta’ Dejjem fuq nett jibgħat il-widget wara t-twieqi l-oħra. Il-link ta’ fuq fil-panew jirritorna għal-lum; t’isfel jiftaħ is-settings klassiċi tad-data u l-ħin tal-Windows. Meta t-twaħħil ikun attivat, widget mkaxkar sa ħames pixels mit-tarf jeħel mat-tarf taż-żona tax-xogħol. Il-bidla fid-daqs iżżomm ir-rabta mal-istess tarf jew par truf.
 
+Il-pannelli tal-kalendarju bl-arloġġ jistgħu juru l-avviżi tad-data u l-ħin ta’ Windows fuq il-link t’isfel. L-għażla **Avviżi dwar id-data u l-ħin** fit-tab **Ġenerali** tkun attivata b’mod awtomatiku u tinħażen separatament għal kull pannell. Meta japplikaw diversi avviżi, jidhru wieħed taħt l-ieħor bħal fil-Windows. Jekk l-għażla tkun mitfija jew ma jkun hemm ebda avviż applikabbli, id-daqs u t-tqassim oriġinali tal-pannell jibqgħu l-istess, mingħajr spazju vojt riżervat.
+
 F’kalendarju separat, Ringiela tal-lum fit-tab Dehra jew fil-menu turi jew taħbi r-ringiela t’isfel. Mur għad-data tal-lum jagħżel illum u jirritorna għall-vista tax-xahar. Meta d-data tinbidel skont il-ħin tal-widget, illum jintgħażel awtomatikament waqt li tinżamm il-vista kurrenti.
 
 ## Dehra u ħażna

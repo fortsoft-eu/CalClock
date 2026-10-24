@@ -62,6 +62,8 @@ Kalenteri- ja kellopaneeli voi näyttää kaksi lisäkelloa. Ota kumpikin käytt
 
 Paneelin yläpäivämäärä on linkki, joka palauttaa kalenterin tähän päivään. Alareunan aikavyöhyketeksti avaa Windowsin perinteiset päivämäärä- ja aika-asetukset.
 
+Kalenterin ja kellon sisältävät paneelit voivat näyttää Windowsin päivämäärä- ja aikailmoitukset alalinkin yläpuolella. **Päivämäärä- ja aikailmoitukset**-asetus **Yleiset**-välilehdellä on oletusarvoisesti käytössä, ja se tallennetaan erikseen kullekin paneelille. Kun useita ilmoituksia on aiheellista näyttää, ne näkyvät allekkain kuten Windowsissa. Jos asetus on poissa käytöstä tai aiheellisia ilmoituksia ei ole, paneelin alkuperäinen koko ja asettelu säilyvät eikä tyhjää tilaa varata.
+
 `Järjestä ruudukkoon` sijoittaa näkyvät työpöydän pienoisohjelmat vakaaseen ruudukkoon ilman päällekkäisyyksiä säilyttäen likimain niiden käsin asetetun sijainnin. Komennon oman valikkonsa kautta käynnistänyt pienoisohjelma pysyy paikallaan; ilmoitusalueen komento järjestää jokaisen näytön erikseen. Näyttökellot eivät kuulu järjestelyyn.
 
 ## Ulkoasu

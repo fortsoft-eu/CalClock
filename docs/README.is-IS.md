@@ -62,6 +62,8 @@ Dagatals- og klukkuspjald getur sýnt tvær viðbótarklukkur. Virkjaðu hvora �
 
 Efri dagsetning spjaldsins er tengill sem færir dagatalið á daginn í dag; neðri tímabeltatextinn opnar hefðbundnar dagsetningar- og tímastillingar Windows.
 
+Spjöld með dagatali og klukku geta birt tilkynningar Windows um dagsetningu og tíma fyrir ofan neðri tengilinn. Valkosturinn **Tilkynningar um dagsetningu og tíma** á flipanum **Almennt** er sjálfgefið virkur og vistaður sérstaklega fyrir hvert spjald. Ef fleiri en ein tilkynning á við birtast þær hver undir annarri eins og í Windows. Ef valkosturinn er óvirkur eða engin tilkynning á við haldast upprunaleg stærð og uppsetning spjaldsins óbreytt án þess að autt svæði sé tekið frá.
+
 `Raða í hnitanet` raðar sýnilegum skjáborðsgræjum stöðugt án skörunar og varðveitir handvirka uppröðun nokkurn veginn. Græjan sem ræsti skipunina úr eigin valmynd helst á sínum stað; skipunin á tilkynningasvæðinu raðar hverjum skjá sjálfstætt. Skjáklukkur eru undanskildar.
 
 ## Útlit

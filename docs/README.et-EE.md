@@ -38,6 +38,8 @@ Olekuala ikoonilt seadete avamisel taastatakse viimati valitud vidin.
 
 Paiguta ruudustikku säilitab ligikaudse käsitsi paigutuse, tõmbab keskpunktid lähimatele ruudustikupunktidele ja kõrvaldab kattumised. Käsu käivitanud vidin jääb paigale. Vidina menüü mõjutab selle kuvarit, olekuala ikoon iga kuvarit eraldi. Kordamine säilitab stabiilse paigutuse. Sätete topeltklõps tõstab vidina esile kiire helesinise vilkumisega; äratus vilgub aeglasemalt punaselt. Alati pealmine väljalülitamine saadab vidina teiste akende taha. Paneeli ülemine link toob kalendri tänasele kuupäevale ja alumine avab Windowsi klassikalised kuupäeva ja kellaaja sätted. Servatõmme haarab lohistatava vidina tööala serva külge kuni viie piksli kauguselt. Suuruse muutmisel säilib kinnitus sama serva või servapaari külge.
 
+Kalendri ja kellaga paneelid võivad alumise lingi kohal näidata Windowsi kuupäeva- ja kellaajateateid. Vahekaardi **Üldine** valik **Kuupäeva ja kellaaja teated** on vaikimisi sisse lülitatud ja salvestatakse iga paneeli jaoks eraldi. Kui kehtib mitu teadet, kuvatakse need nagu Windowsis üksteise all. Kui valik on välja lülitatud või asjakohast teadet pole, säilivad paneeli algne suurus ja paigutus ning tühja ruumi ei reserveerita.
+
 Eraldi kalendris kuvab või peidab Tänase kuupäeva rida vahekaardil Ilme või menüüs alumise rea. Mine tänasele kuupäevale valib tänase päeva ja taastab kuuvaate. Kui vidina aja järgi kuupäev muutub, valitakse tänane kuupäev automaatselt praegust kalendrivaadet säilitades.
 
 ## Ilme ja salvestamine

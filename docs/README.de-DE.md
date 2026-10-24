@@ -62,6 +62,8 @@ Ein Kalender mit Uhr kann bis zu zwei zusätzliche Uhren anzeigen. Jede Uhr wird
 
 Im Kalender-Uhr-Panel führt der Datumslink oben den Kalender zum heutigen Tag zurück. Der Zeitzonentext unten öffnet die klassischen Windows-Einstellungen für Datum und Uhrzeit.
 
+Kalender-Uhr-Panels können oberhalb des unteren Links die Datums- und Uhrzeithinweise von Windows anzeigen. Die Option **Hinweise zu Datum und Uhrzeit** auf der Registerkarte **Allgemein** ist standardmäßig aktiviert und wird für jedes Panel getrennt gespeichert. Treffen mehrere Hinweise zu, erscheinen sie wie in Windows untereinander. Ist die Option deaktiviert oder liegt kein zutreffender Hinweis vor, bleiben Größe und Anordnung des Panels unverändert, ohne dass Leerraum reserviert wird.
+
 `Am Raster ausrichten` ordnet sichtbare Desktop-Widgets in einem stabilen, überlappungsfreien Raster an und erhält ihre ungefähre manuelle Positionierung. Das Widget, aus dessen Menü der Befehl stammt, bleibt an seinem Platz; der Befehl im Infobereich ordnet jeden Monitor unabhängig an. Monitoruhren sind ausgenommen.
 
 ## Darstellung

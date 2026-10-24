@@ -62,6 +62,8 @@ Un pannello calendario e orologio può mostrare fino a due orologi aggiuntivi. A
 
 Nel pannello, la data superiore è un collegamento che riporta il calendario a oggi; il testo inferiore del fuso apre le impostazioni classiche Data e ora di Windows.
 
+I pannelli con calendario e orologio possono mostrare gli avvisi di data e ora di Windows sopra il collegamento inferiore. L’opzione **Avvisi su data e ora** nella scheda **Generali** è attiva per impostazione predefinita e viene salvata separatamente per ogni pannello. Quando sono pertinenti più avvisi, vengono mostrati uno sotto l’altro, come in Windows. Se l’opzione è disattivata o non ci sono avvisi pertinenti, il pannello mantiene le dimensioni e la disposizione originali, senza riservare spazi vuoti.
+
 `Allinea alla griglia` dispone i widget desktop visibili su una griglia stabile senza sovrapposizioni, mantenendo approssimativamente il posizionamento manuale. Il widget dal cui menu è stato richiamato resta fermo; il comando dell’area di notifica organizza ogni monitor separatamente. Gli orologi su monitor sono esclusi.
 
 ## Aspetto

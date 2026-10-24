@@ -38,6 +38,8 @@ La deschiderea setărilor din pictograma din zona de notificare, este selectat d
 
 Aranjare în grilă păstrează aproximativ pozițiile manuale, aliniază centrele la cele mai apropiate puncte ale grilei și elimină suprapunerile. Widgetul din al cărui meniu s-a lansat comanda rămâne pe loc. Meniul widgetului afectează monitorul său; pictograma de notificare tratează fiecare monitor separat. Repetarea păstrează aranjarea stabilă. Dublul clic din Setări identifică widgetul prin clipire rapidă albastru-deschis; alarma clipește mai lent în roșu. Dezactivarea Întotdeauna deasupra trimite widgetul în spatele ferestrelor. Legătura superioară a panoului revine la azi, cea inferioară deschide setările clasice Windows pentru dată și oră. Alinierea la margini atrage widgetul glisat la marginea zonei de lucru de la cel mult cinci pixeli. Redimensionarea păstrează atașarea la aceeași margine sau pereche de margini.
 
+Panourile cu calendar și ceas pot afișa notificările Windows despre dată și oră deasupra legăturii de jos. Opțiunea **Notificări despre dată și oră** din fila **General** este activată implicit și se salvează separat pentru fiecare panou. Dacă sunt aplicabile mai multe notificări, acestea apar una sub alta, ca în Windows. Dacă opțiunea este dezactivată sau nu există nicio notificare aplicabilă, panoul își păstrează dimensiunea și aspectul inițial, fără a rezerva spațiu gol.
+
 Pentru un calendar separat, Rândul Azi din Aspect sau meniu afișează ori ascunde rândul inferior. Salt la ziua de azi selectează azi și restabilește vizualizarea lunară. Când data se schimbă după ora widgetului, ziua de azi se selectează automat, păstrând vizualizarea curentă.
 
 ## Aspect și stocare

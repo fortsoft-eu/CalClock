@@ -38,6 +38,8 @@ Atidarius nuostatas iš pranešimų srities piktogramos, vėl atveriamos paskuti
 
 Išdėstyti tinkleliu išlaiko apytikslį rankinį išdėstymą, prikabina centrus prie artimiausių tinklo taškų ir pašalina persidengimą. Komandą iškvietęs valdiklis lieka vietoje. Valdiklio meniu veikia jo monitorių; pranešimų srities piktograma – kiekvieną monitorių atskirai. Pakartojimas išlaiko išdėstymą stabilų. Dukart spustelėjus parametruose valdiklis greitai mirksi šviesiai mėlynai; žadintuvas mirksi lėčiau raudonai. Išjungus Visada viršuje valdiklis nusiunčiamas už kitų langų. Viršutinis skydelio saitas grąžina kalendorių į šiandieną, apatinis atidaro klasikinius „Windows“ datos ir laiko parametrus. Įjungtas prikabinimas pritraukia velkamą valdiklį prie darbo srities krašto iki penkių pikselių atstumu. Keičiant dydį ryšys su tuo pačiu kraštu arba kraštų pora išlieka.
 
+Kalendoriaus ir laikrodžio skydeliai virš apatinės nuorodos gali rodyti „Windows“ datos ir laiko pranešimus. Skirtuko **Bendra** parinktis **Datos ir laiko pranešimai** įjungta pagal numatytąsias nuostatas ir išsaugoma atskirai kiekvienam skydeliui. Kai aktualūs keli pranešimai, jie rodomi vienas po kito vertikaliai, kaip „Windows“. Jei parinktis išjungta arba aktualių pranešimų nėra, išlaikomas pradinis skydelio dydis ir išdėstymas, nepaliekant rezervuotos tuščios vietos.
+
 Atskiro kalendoriaus Šiandienos eilutė skirtuke Išvaizda arba meniu rodo ar slepia apatinę eilutę. Pereiti į šiandieną pasirenka šiandienos datą ir atkuria mėnesio rodinį. Pasikeitus datai pagal valdiklio laiką šiandiena pasirenkama automatiškai išlaikant dabartinį rodinį.
 
 ## Išvaizda ir saugojimas

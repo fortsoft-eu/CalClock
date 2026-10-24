@@ -38,6 +38,8 @@ Otvaranje postavki preko ikone u području obavijesti ponovno odabire posljednji
 
 Rasporedi u mrežu čuva približan ručni raspored, priljubljuje središta widgeta uz najbliže točke mreže i uklanja preklapanja. Izbornik widgeta djeluje na njegov zaslon, a ikona u području obavijesti na svaki zaslon zasebno. Ponavljanje naredbe čuva raspored. Dvostruki klik u Postavkama označava widget brzim svijetloplavim treperenjem; alarm treperi sporije i crveno. Isključivanje opcije Uvijek na vrhu šalje widget iza ostalih prozora. Na ploči kalendara sa satom gornja poveznica vraća kalendar na današnji datum, a donja otvara klasične postavke datuma i vremena Windowsa. Ako je priljubljivanje uključeno, widget se tijekom povlačenja priljubljuje uz rub radnog područja na udaljenosti do pet piksela. Promjena veličine čuva vezu s istim rubom ili parom rubova.
 
+Ploče kalendara sa satom mogu iznad donje poveznice prikazivati obavijesti sustava Windows o datumu i vremenu. Mogućnost **Obavijesti o datumu i vremenu** na kartici **Općenito** uključena je prema zadanim postavkama i sprema se zasebno za svaku ploču. Ako je primjenjivo više obavijesti, prikazuju se jedna ispod druge kao u sustavu Windows. Kada je mogućnost isključena ili nema primjenjivih obavijesti, ploča zadržava izvornu veličinu i raspored, bez rezerviranja praznog prostora.
+
 Za samostalni kalendar prikažite ili sakrijte Redak Danas na kartici Izgled ili u izborniku widgeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu widgeta, današnji se datum odabire automatski uz očuvanje trenutačnog prikaza kalendara.
 
 ## Izgled i spremanje postavki

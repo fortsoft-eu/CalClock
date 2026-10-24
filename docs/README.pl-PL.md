@@ -62,6 +62,8 @@ Panel kalendarza z zegarem może wyświetlać dwa dodatkowe zegary. Włącz każ
 
 W panelu górna data jest łączem przywracającym kalendarz do dzisiaj; dolny tekst strefy otwiera klasyczne ustawienia Daty i godziny Windows.
 
+Panele kalendarza z zegarem mogą wyświetlać powiadomienia systemu Windows o dacie i godzinie nad dolnym łączem. Opcja **Powiadomienia o dacie i godzinie** na karcie **Ogólne** jest domyślnie włączona i zapisywana osobno dla każdego panelu. Jeśli ma zastosowanie kilka powiadomień, są one wyświetlane jedno pod drugim, tak jak w systemie Windows. Gdy opcja jest wyłączona lub nie ma odpowiedniego powiadomienia, panel zachowuje pierwotny rozmiar i układ, bez rezerwowania pustego miejsca.
+
 `Wyrównaj do siatki` rozmieszcza widoczne widżety pulpitu w stabilnej siatce bez nakładania, w przybliżeniu zachowując układ ręczny. Widżet, z którego menu uruchomiono polecenie, pozostaje na miejscu; polecenie z obszaru powiadomień układa każdy monitor niezależnie. Zegary na monitorze są wykluczone.
 
 ## Wygląd

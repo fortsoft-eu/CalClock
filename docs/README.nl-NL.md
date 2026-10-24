@@ -38,6 +38,8 @@ Wanneer u de instellingen opent via het systeemvakpictogram, wordt de laatst ges
 
 Schikken in raster behoudt de globale handmatige indeling, lijnt middelpunten uit op de dichtstbijzijnde rasterpunten en verwijdert overlap. De widget waarvan het menu is gebruikt blijft staan. Een widgetmenu beïnvloedt zijn beeldscherm; het systeemvakpictogram behandelt elk scherm afzonderlijk. Herhalen houdt de indeling stabiel. Dubbelklikken in Instellingen markeert een widget met snel lichtblauw knipperen; een alarm knippert langzamer rood. Altijd op voorgrond uitschakelen plaatst de widget achter andere vensters. De bovenste paneelkoppeling gaat naar vandaag, de onderste opent de klassieke Windows-instellingen voor datum en tijd. Als uitlijnen op randen is ingeschakeld, klikt een versleepte widget binnen vijf pixels vast aan de rand van het werkgebied. Bij vergroten of verkleinen blijft dezelfde rand of hetzelfde paar randen behouden.
 
+Panelen met een kalender en klok kunnen boven de onderste koppeling Windows-meldingen over datum en tijd tonen. **Meldingen over datum en tijd** op het tabblad **Algemeen** is standaard ingeschakeld en wordt voor elk paneel afzonderlijk opgeslagen. Als meerdere meldingen van toepassing zijn, staan ze net als in Windows onder elkaar. Wanneer de optie is uitgeschakeld of er geen toepasselijke melding is, blijven de oorspronkelijke afmetingen en indeling van het paneel behouden zonder lege ruimte te reserveren.
+
 Bij een losse kalender toont of verbergt Rij Vandaag op Vormgeving of in het menu de onderste rij. Naar vandaag kiest vandaag en herstelt de maandweergave. Bij een datumwisseling volgens de widgettijd wordt vandaag automatisch gekozen zonder de huidige kalenderweergave te veranderen.
 
 ## Vormgeving en opslag

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.6.1.3
  */
 
 #pragma once
@@ -75,6 +75,7 @@ extern const wchar_t* SHOW_TODAY_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT];
 extern const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT];
+extern const wchar_t* PANEL_TIME_NOTICES_LABELS[LANG_COUNT];
 extern const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT];
 extern const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT];
 extern const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT];

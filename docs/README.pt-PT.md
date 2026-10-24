@@ -62,6 +62,8 @@ Um painel de calendário com relógio pode apresentar até dois relógios adicio
 
 Neste painel, a data superior é uma ligação que leva o calendário a hoje; o texto inferior do fuso abre as definições clássicas de Data e hora do Windows.
 
+Os painéis de calendário e relógio podem apresentar os avisos de data e hora do Windows acima da ligação inferior. A opção **Avisos de data e hora** no separador **Geral** está ativada por predefinição e é guardada separadamente para cada painel. Quando se aplicam vários avisos, estes aparecem uns por baixo dos outros, como no Windows. Se a opção estiver desativada ou não houver avisos aplicáveis, o painel mantém o tamanho e a disposição originais, sem reservar espaço vazio.
+
 `Alinhar na grelha` coloca os widgets visíveis numa grelha estável sem sobreposições, preservando aproximadamente a disposição manual. O widget cujo menu invocou o comando permanece no lugar; o comando da área de notificação organiza cada monitor separadamente. Os relógios no monitor são excluídos.
 
 ## Aspeto

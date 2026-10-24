@@ -34,6 +34,8 @@ Ob odpiranju nastavitev prek ikone v območju za obvestila je znova izbran nazad
 
 Razporedi v mrežo ohrani približno ročno razporeditev, pripne središča na najbližje mrežne točke in odpravi prekrivanje. Meni gradnika deluje na njegovem zaslonu, ikona za obvestila pa na vsakem zaslonu posebej. Ponovitev ohrani razporeditev. Dvoklik v Nastavitvah označi gradnik s hitrim svetlomodrim utripanjem; budilka utripa počasneje in rdeče. Izklop Vedno na vrhu pošlje gradnik v ozadje. Na plošči koledarja z uro zgornja povezava vrne koledar na danes, spodnja pa odpre klasične nastavitve datuma in časa Windows. Vključeno pripenjanje pritegne vlečeni gradnik do roba delovnega območja na razdalji petih slikovnih pik. Spreminjanje velikosti ohrani pripetost na isti rob ali par robov.
 
+Plošče koledarja z uro lahko nad spodnjo povezavo prikazujejo obvestila sistema Windows o datumu in času. Možnost **Obvestila o datumu in času** na zavihku **Splošno** je privzeto vklopljena in se shrani za vsako ploščo posebej. Če je ustreznih obvestil več, so prikazana drugo pod drugim kot v sistemu Windows. Če je možnost izklopljena ali ni ustreznih obvestil, plošča ohrani prvotno velikost in razporeditev, brez rezerviranega praznega prostora.
+
 V samostojnem koledarju možnost Vrstica Danes na zavihku Videz ali v meniju pokaže ali skrije spodnjo vrstico. Pojdi na današnji datum izbere danes in vrne mesečni pogled. Ob spremembi datuma po času gradnika se današnji datum izbere samodejno, trenutni pogled koledarja pa se ohrani.
 
 ## Videz in shranjevanje

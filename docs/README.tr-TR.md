@@ -62,6 +62,8 @@ Saatli takvim paneli en fazla iki ek saat gösterebilir. Her birini Genel’de e
 
 Panelin üst tarihi, takvimi bugüne döndüren bir bağlantıdır; alttaki saat dilimi metni Windows’un klasik Tarih ve Saat ayarlarını açar.
 
+Takvim ve saat panelleri, alt bağlantının üzerinde Windows tarih ve saat bildirimlerini gösterebilir. **Genel** sekmesindeki **Tarih ve saat bildirimleri** seçeneği varsayılan olarak açıktır ve her panel için ayrı kaydedilir. Birden fazla bildirim geçerliyse Windows’taki gibi alt alta gösterilir. Seçenek kapalıysa veya geçerli bir bildirim yoksa panelin özgün boyutu ve düzeni korunur; boş alan ayrılmaz.
+
 `Izgaraya hizala`, görünür masaüstü araçlarını yaklaşık elle yerleştirme düzenini koruyarak sabit ve çakışmayan bir ızgaraya yerleştirir. Komutun kendi menüsünden çağrıldığı araç yerinde kalır; bildirim alanındaki komut her monitörü ayrı düzenler. Monitör saatleri kapsam dışındadır.
 
 ## Görünüm

@@ -38,6 +38,8 @@ Otvaranje postavki preko ikone u području obavijesti ponovo bira posljednji oda
 
 Rasporedi u mrežu čuva približan ručni raspored, priljubljuje središta vidžeta uz najbliže tačke mreže i uklanja preklapanja. Meni vidžeta djeluje na njegov ekran, a ikona u području obavijesti na svaki ekran zasebno. Ponavljanje naredbe čuva raspored. Dvostruki klik u Postavkama označava vidžet brzim svijetloplavim treperenjem; alarm treperi sporije i crveno. Isključivanje opcije Uvijek na vrhu šalje vidžet iza ostalih prozora. Na ploči kalendara sa satom gornja poveznica vraća kalendar na današnji datum, a donja otvara klasične postavke datuma i vremena Windowsa. Ako je priljubljivanje uključeno, vidžet se tokom povlačenja priljubljuje uz ivicu radnog područja na udaljenosti do pet piksela. Promjena veličine čuva vezu s istom ivicom ili parom ivica.
 
+Ploče kalendara sa satom mogu iznad donje veze prikazivati obavještenja Windowsa o datumu i vremenu. Opcija **Obavještenja o datumu i vremenu** na kartici **Općenito** uključena je prema zadanim postavkama i čuva se zasebno za svaku ploču. Ako je primjenjivo više obavještenja, prikazuju se jedno ispod drugog kao u Windowsu. Kada je opcija isključena ili nema primjenjivih obavještenja, ploča zadržava izvornu veličinu i raspored, bez rezervisanja praznog prostora.
+
 Za samostalni kalendar prikažite ili sakrijte Red Danas na kartici Izgled ili u meniju vidžeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu vidžeta, današnji se datum odabire automatski uz očuvanje trenutnog prikaza kalendara.
 
 ## Izgled i čuvanje postavki

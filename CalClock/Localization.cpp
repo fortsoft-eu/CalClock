@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.6.1.3
  */
 
 #include "Localization.h"
@@ -3592,6 +3592,45 @@ const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT] = {
     L"Фонт &доњег реда:",
     L"Шрифт &нижнього рядка:",
     L"Шрифт &нижней строки:"
+};
+
+const wchar_t* PANEL_TIME_NOTICES_LABELS[LANG_COUNT] = {
+    L"Oznámení data a času",
+    L"Date and time notices",
+    L"Date and time notices",
+    L"Date and time notices",
+    L"Hinweise zu Datum und Uhrzeit",
+    L"Notifications de date et d’heure",
+    L"Avisos de fecha y hora",
+    L"Avvisi su data e ora",
+    L"Avisos de data e hora",
+    L"Powiadomienia o dacie i godzinie",
+    L"Oznámenia dátumu a času",
+    L"Meddelelser om dato og klokkeslæt",
+    L"Päivämäärä- ja aikailmoitukset",
+    L"Tilkynningar um dagsetningu og tíma",
+    L"Varsler om dato og klokkeslett",
+    L"Meddelanden om datum och tid",
+    L"Tarih ve saat bildirimleri",
+    L"Kuupäeva ja kellaaja teated",
+    L"Fógraí dáta agus ama",
+    L"Datos ir laiko pranešimai",
+    L"Datuma un laika paziņojumi",
+    L"Dátum- és időértesítések",
+    L"Avviżi dwar id-data u l-ħin",
+    L"Meldingen over datum en tijd",
+    L"Notificări despre dată și oră",
+    L"Ειδοποιήσεις ημερομηνίας και ώρας",
+    L"Obavještenja o datumu i vremenu",
+    L"Obavijesti o datumu i vremenu",
+    L"Obvestila o datumu in času",
+    L"Obavještenja o datumu i vremenu",
+    L"Апавяшчэнні пра дату і час",
+    L"Известия за дата и час",
+    L"Известувања за датум и време",
+    L"Обавештења о датуму и времену",
+    L"Сповіщення про дату й час",
+    L"Уведомления о дате и времени"
 };
 
 const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT] = {

@@ -62,6 +62,8 @@ Et kalenderpanel kan vise opptil to ekstra klokker. Aktiver hver klokke på Gene
 
 I panelet er datoen øverst en lenke som flytter kalenderen til i dag, mens tidssoneteksten nederst åpner de klassiske innstillingene for dato og klokkeslett i Windows.
 
+Paneler med kalender og klokke kan vise Windows-varsler om dato og klokkeslett over den nederste lenken. **Varsler om dato og klokkeslett** på fanen **Generelt** er aktivert som standard og lagres separat for hvert panel. Når flere varsler er aktuelle, vises de under hverandre som i Windows. Hvis innstillingen er deaktivert eller ingen varsler er aktuelle, beholder panelet sin opprinnelige størrelse og utforming uten å sette av tom plass.
+
 `Plasser i rutenett` ordner synlige skrivebordswidgeter i et stabilt rutenett uten overlapping og beholder omtrent den manuelle plasseringen. Widgeten som startet kommandoen fra sin meny, blir stående; kommandoen fra systemstatusfeltet ordner hver skjerm separat. Skjermklokker holdes utenfor.
 
 ## Utseende

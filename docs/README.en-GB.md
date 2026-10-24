@@ -62,6 +62,8 @@ A calendar-and-clock panel can show up to two additional clocks. Enable each clo
 
 In a calendar-and-clock panel, the upper date is a link that returns the calendar to today, while the lower time-zone text opens the classic Windows Date and Time settings.
 
+Calendar-and-clock panels can show Windows date and time notices above the lower link. **Date and time notices** on the **General** tab is enabled by default and saved separately for each panel. When several notices apply, they appear one below another as in Windows. If the option is off or there is no applicable notice, the panel keeps its original size and layout with no empty space reserved.
+
 The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-overlapping grid while preserving their approximate manual layout. The widget whose menu invoked the command remains in place; the notification-area command arranges each monitor independently. Monitor clocks are excluded.
 
 ## Appearance

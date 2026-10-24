@@ -62,6 +62,8 @@ En kalenderpanel kan visa upp till två extra klockor. Aktivera varje klocka på
 
 I panelen är datumet överst en länk som återför kalendern till idag. Tidszonstexten nederst öppnar de klassiska inställningarna för Datum och tid i Windows.
 
+Paneler med kalender och klocka kan visa Windows-meddelanden om datum och tid ovanför den nedre länken. **Meddelanden om datum och tid** på fliken **Allmänt** är aktiverat som standard och sparas separat för varje panel. När flera meddelanden är aktuella visas de under varandra som i Windows. Om inställningen är avstängd eller inget meddelande är aktuellt behåller panelen sin ursprungliga storlek och layout utan att reservera tomt utrymme.
+
 `Ordna i rutnät` placerar synliga skrivbordswidgetar i ett stabilt rutnät utan överlappning och bevarar ungefär den manuella placeringen. Widgeten vars meny startade kommandot stannar på plats; kommandot i meddelandefältet ordnar varje skärm oberoende. Skärmklockor undantas.
 
 ## Utseende

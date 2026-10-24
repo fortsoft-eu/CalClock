@@ -62,6 +62,8 @@ Kalendář s hodinami může zobrazit až dvoje další hodiny. Každé zapněte
 
 V kalendáři s hodinami je horní datum odkazem, který vrací kalendář na dnešek, zatímco dolní text časového pásma otevírá klasické nastavení data a času Windows.
 
+Kalendáře s hodinami mohou nad dolním odkazem zobrazovat oznámení data a času Windows. Volba **Oznámení data a času** na kartě **Obecné** je ve výchozím stavu zapnutá a ukládá se pro každý panel samostatně. Pokud platí více oznámení, zobrazí se pod sebou stejně jako ve Windows. Je-li volba vypnutá nebo není žádné aktuální oznámení, zůstává původní velikost i rozložení panelu zachované a nevyhrazuje se žádné prázdné místo.
+
 Příkaz `Zarovnat do mřížky` přichytí viditelné widgety na ploše do stabilní nepřekrývající se mřížky a přibližně zachová jejich ruční rozmístění. Widget, z jehož nabídky byl příkaz vyvolán, zůstává na místě; příkaz z oznamovací oblasti zarovnává každý monitor samostatně. Hodiny na monitoru jsou vynechány.
 
 ## Vzhled

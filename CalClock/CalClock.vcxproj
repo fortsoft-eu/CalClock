@@ -91,6 +91,7 @@
     <ClCompile Include="SelectionEdit.cpp" />
     <ClCompile Include="SettingsEdit.cpp" />
     <ClCompile Include="SettingsStorage.cpp" />
+    <ClCompile Include="TimeDateNotices.cpp" />
     <ClCompile Include="TimeFormats.cpp" />
     <ClCompile Include="TimeSignal.cpp" />
     <ClCompile Include="TimeZoneSupport.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="SelectionEdit.h" />
     <ClInclude Include="SettingsEdit.h" />
     <ClInclude Include="SettingsStorage.h" />
+    <ClInclude Include="TimeDateNotices.h" />
     <ClInclude Include="TimeFormats.h" />
     <ClInclude Include="TimeSignal.h" />
     <ClInclude Include="TimeZoneSupport.h" />

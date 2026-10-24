@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.6.1.3
  */
 
 #define NOMINMAX
@@ -516,6 +516,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"panelBottomFontCharSet", config.panelBottomFont.charSet);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"panelTimeNotices", config.panelTimeNotices);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"padding", config.padding);
         }
         if (SUCCEEDED(result)) {
@@ -912,6 +915,9 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     }
     if (ReadXmlNumberAttribute(reader, L"panelBottomFontCharSet", &number)) {
         config->panelBottomFont.charSet = static_cast<BYTE>(std::clamp<LONGLONG>(number, 0, 255));
+    }
+    if (ReadXmlNumberAttribute(reader, L"panelTimeNotices", &number)) {
+        config->panelTimeNotices = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"padding", &number)) {
         int maximumPadding = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
@@ -1358,6 +1364,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"PanelBottomFontCharSet", &value)) {
         config->panelBottomFont.charSet = static_cast<BYTE>(value);
     }
+    if (ReadDword(key, L"PanelTimeNotices", &value)) {
+        config->panelTimeNotices = value != 0;
+    }
     if (ReadDword(key, L"Padding", &value)) {
         int maximumPadding = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
         config->padding = std::clamp(static_cast<int>(value), 0, maximumPadding);
@@ -1501,6 +1510,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"PanelBottomFontUnderline", config.panelBottomFont.underline);
     WriteDword(key, L"PanelBottomFontStrikeOut", config.panelBottomFont.strikeOut);
     WriteDword(key, L"PanelBottomFontCharSet", config.panelBottomFont.charSet);
+    WriteDword(key, L"PanelTimeNotices", config.panelTimeNotices);
     WriteDword(key, L"Padding", config.padding);
     WriteDword(key, L"BorderStyle", config.borderStyle);
     WriteDword(key, L"BorderWidth", config.borderWidth);

@@ -21,13 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.0
+ * Last modified for version 1.6.1.3
  */
 
 #pragma once
 
 #include <windows.h>
 #include "PersistWindowState.h"
+#include "TimeDateNotices.h"
 #include <string>
 #include <vector>
 
@@ -283,6 +284,7 @@ struct WidgetConfig {
     bool showSeconds = false;
     bool showUtc = false;
     bool showUtcText = false;
+    bool panelTimeNotices = true;
     AppLanguage language = LANG_CS;
     std::wstring timeZoneKey;
     std::wstring monitorDevices;
@@ -393,6 +395,10 @@ struct Widget {
     int lastObservedAlarmMinute = -1;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
+    std::vector<TimeDateNotice> panelNotices;
+    ULONGLONG panelApplicationUtc = 0;
+    bool panelNoticesPrepared = false;
+    bool panelCalendarDateSupported = true;
     int lastCalendarDateKey = -1;
     HWND panelDateLink = nullptr;
     HFONT panelDateFont = nullptr;

@@ -38,6 +38,8 @@ Az értesítési terület ikonjáról megnyitott beállításokban a legutóbb k
 
 A Rácsba rendezés megőrzi a hozzávetőleges kézi elrendezést, a középpontokat a legközelebbi rácspontokhoz illeszti és megszünteti az átfedéseket. A parancsot indító minialkalmazás helyben marad. A saját menü a saját monitorra, az értesítési ikon minden monitorra külön hat. Ismételve az elrendezés stabil marad. A beállításokbeli dupla kattintás gyors világoskék villogással jelöl; az ébresztés lassabban, pirosan villog. A Mindig felül kikapcsolása a többi ablak mögé küldi a minialkalmazást. A panel felső hivatkozása a mai napra tér vissza, az alsó a Windows klasszikus dátum- és időbeállításait nyitja meg. Az engedélyezett szélhez illesztés öt képponton belül a munkaterület széléhez húzza a mozgatott minialkalmazást. Átméretezéskor ugyanahhoz a szélhez vagy sarokhoz csatlakozik.
 
+A naptárt és órát tartalmazó panelek az alsó hivatkozás fölött jeleníthetik meg a Windows dátum- és időértesítéseit. Az **Általános** lap **Dátum- és időértesítések** beállítása alapértelmezés szerint be van kapcsolva, és panelenként külön mentődik. Ha több értesítés is aktuális, azok a Windowshoz hasonlóan egymás alatt jelennek meg. Kikapcsolt beállítás esetén, illetve ha nincs aktuális értesítés, a panel eredeti mérete és elrendezése változatlan marad, üres hely lefoglalása nélkül.
+
 Önálló naptárban a Mai dátum sora a Megjelenés fülön vagy menüben az alsó sort kapcsolja. Az Ugrás a mai napra kiválasztja a mai dátumot és visszaállítja a havi nézetet. A minialkalmazás szerinti dátumváltáskor a mai nap automatikusan kijelölődik az aktuális nézet megtartásával.
 
 ## Megjelenés és tárolás

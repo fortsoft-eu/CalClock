@@ -62,6 +62,8 @@ Un panel de calendario con reloj puede mostrar hasta dos relojes adicionales. Ac
 
 En este panel, la fecha superior es un enlace que devuelve el calendario a hoy; el texto inferior de zona horaria abre la configuración clásica de Fecha y hora de Windows.
 
+Los paneles de calendario y reloj pueden mostrar los avisos de fecha y hora de Windows sobre el enlace inferior. La opción **Avisos de fecha y hora** de la pestaña **General** está activada de forma predeterminada y se guarda por separado para cada panel. Cuando corresponden varios avisos, se muestran uno debajo de otro, como en Windows. Si la opción está desactivada o no hay ningún aviso aplicable, el panel conserva su tamaño y distribución originales, sin reservar espacio vacío.
+
 `Alinear en cuadrícula` ajusta los widgets de escritorio visibles a una cuadrícula estable sin solapamientos, conservando aproximadamente su disposición manual. El widget desde cuyo menú se invoca permanece en su sitio; el comando del área de notificación organiza cada monitor de forma independiente. Se excluyen los relojes de monitor.
 
 ## Apariencia
