@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.2
  */
 
 #define NOMINMAX
@@ -703,15 +703,16 @@ bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background) {
     HBRUSH brush = CreateSolidBrush(color);
     FillRect(targetDC, &client, brush);
     DeleteObject(brush);
-    if (analogClockImplementation == ANALOG_CLOCK_VISTA) {
-        renderClock(reinterpret_cast<void*>(stateValue), nullptr, targetDC);
-        return true;
-    }
-    if (analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
-        renderClock(reinterpret_cast<void*>(stateValue), nullptr, targetDC);
-        return true;
-    }
     BYTE* state = reinterpret_cast<BYTE*>(stateValue);
+    if (analogClockImplementation == ANALOG_CLOCK_VISTA || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
+        int backgroundOffset = analogClockImplementation == ANALOG_CLOCK_VISTA ? 0x24 : 0x20;
+        DWORD** colorAddress = reinterpret_cast<DWORD**>(state + backgroundOffset);
+        DWORD* oldColor = *colorAddress;
+        *colorAddress = &background;
+        renderClock(state, nullptr, targetDC);
+        *colorAddress = oldColor;
+        return true;
+    }
     DWORD** backgroundAddress = reinterpret_cast<DWORD**>(state + 0x20);
     if (backgroundAddress == nullptr || *backgroundAddress == nullptr) {
         return false;
