@@ -183,7 +183,6 @@
 
 #define IDC_GRID_COLUMN_SIZE                    5135
 
-#define IDC_GRID_COLUMN_ACTION                  5136
 
 #define IDC_GRID_ROW_TIME_FIELDS                5140
 #define IDC_GRID_ROW_TIME_ACTIONS               5141
@@ -191,6 +190,9 @@
 #define IDC_SETTINGS_FOOTER_GAP                 5142
 #define IDC_SETTINGS_BUTTON_ROW_STEP            5143
 #define IDC_LAYOUT_PANEL_LOWER_SHIFT            5144
+
+#define INFO_CLOSE_WIDTH_DLU                    50
+#define INFO_CLOSE_HEIGHT_DLU                   14
 
 #define ABOUT_LICENSE_WIDTH_96DPI               508
 #define ABOUT_LICENSE_HEIGHT_96DPI              267

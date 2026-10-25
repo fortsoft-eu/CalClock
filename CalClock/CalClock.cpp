@@ -208,10 +208,9 @@ struct PanelLayout {
     RECT footer = {};
 };
 
-/// Stores the system font and initial button and license dimensions for an information dialog.
+/// Stores the interface font and initial license dimensions for an information dialog.
 struct InformationWindowLayout {
     HFONT font = nullptr;
-    SIZE button = {};
     SIZE license = {};
     UINT dpi = 96;
     bool ownsFont = false;
@@ -769,6 +768,8 @@ static void SetControlPosition(HWND control, int x, int y, int width, int height
 static RECT GetSettingsResourceRect(HWND parent, int id);
 static int SettingsDialogHeight(int value);
 static int SettingsDialogWidth(int value);
+static bool GetDialogFontBaseUnits(HFONT font, SIZE* units);
+static void UpdateSettingsActionButtonWidths();
 static bool PositionInformationWindowByWindowsDefault(HWND window);
 
 /// Tests whether a handle matches one of the settings page handles.
@@ -3060,6 +3061,56 @@ static void ResetUiFont() {
     }
 }
 
+/// Reports whether the effective application font overrides the native system face or style.
+static bool HasApplicationUiFont() {
+    const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
+    int weight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
+    bool italic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
+    return !face.empty() || weight != FW_NORMAL || italic;
+}
+
+/// Creates the effective application face and style at the native system font size and window DPI.
+static HFONT CreateApplicationUiFont(HWND window) {
+    HFONT systemFont = CreateSystemDialogFont(window);
+    if (systemFont == nullptr) {
+        return nullptr;
+    }
+    LOGFONTW font = {};
+    bool described = GetObjectW(systemFont, sizeof(font), &font) != 0;
+    DeleteObject(systemFont);
+    if (!described) {
+        return nullptr;
+    }
+    const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
+    font.lfWeight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
+    font.lfItalic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
+    font.lfQuality = FontQuality(appFontAntialiasing);
+    if (!face.empty()) {
+        wcsncpy_s(font.lfFaceName, face.c_str(), _TRUNCATE);
+        font.lfCharSet = DEFAULT_CHARSET;
+    }
+    return CreateFontIndirectW(&font);
+}
+
+/// Replaces the application font in open dialogs before releasing their previous shared font.
+static void RefreshApplicationFonts() {
+    HFONT font = CreateApplicationUiFont(hSettings);
+    if (font == nullptr) {
+        return;
+    }
+    HFONT previous = hUiFont;
+    hUiFont = font;
+    const HWND windows[] = { hSettings, hHelp, hAbout };
+    for (HWND window : windows) {
+        if (window != nullptr) {
+            ApplyUiStyle(window);
+        }
+    }
+    if (previous != nullptr) {
+        DeleteObject(previous);
+    }
+}
+
 /// Creates the About license font using Consolas at the reference 8-point size.
 /// The caller owns the returned GDI font, which may be null on failure.
 static HFONT CreateAboutFont(HWND window) {
@@ -3074,32 +3125,8 @@ static HFONT CreateAboutFont(HWND window) {
 
 /// Applies draft application font choices to open forms while retaining committed settings for restoration.
 static void ApplyApplicationFontPreview() {
-    std::wstring savedFace = appFontFace;
-    int savedWeight = appFontWeight;
-    bool savedItalic = appFontItalic;
-    HFONT previousFont = hUiFont;
-    appFontFace = settingsAppFontFace;
-    appFontWeight = settingsAppFontWeight;
-    appFontItalic = settingsAppFontItalic;
-    hUiFont = nullptr;
-    if (hSettings != nullptr) {
-        ApplyUiStyle(hSettings);
-    }
-    if (hHelp != nullptr) {
-        ApplyUiStyle(hHelp);
-    }
-    if (hAbout != nullptr) {
-        ApplyUiStyle(hAbout);
-    }
-    appFontFace = savedFace;
-    appFontWeight = savedWeight;
-    appFontItalic = savedItalic;
-    if (hUiFont != nullptr && previousFont != nullptr) {
-        DeleteObject(previousFont);
-    } else if (hUiFont == nullptr) {
-        hUiFont = previousFont;
-    }
     settingsApplicationFontPreviewActive = true;
+    RefreshApplicationFonts();
 }
 
 /// Restores committed application fonts after a preview and releases the temporary font when replaced.
@@ -3107,23 +3134,8 @@ static void RestoreApplicationFontPreview() {
     if (!settingsApplicationFontPreviewActive) {
         return;
     }
-    HFONT previewFont = hUiFont;
-    hUiFont = nullptr;
-    if (hSettings != nullptr) {
-        ApplyUiStyle(hSettings);
-    }
-    if (hHelp != nullptr) {
-        ApplyUiStyle(hHelp);
-    }
-    if (hAbout != nullptr) {
-        ApplyUiStyle(hAbout);
-    }
-    if (hUiFont != nullptr && previewFont != nullptr) {
-        DeleteObject(previewFont);
-    } else if (hUiFont == nullptr) {
-        hUiFont = previewFont;
-    }
     settingsApplicationFontPreviewActive = false;
+    RefreshApplicationFonts();
 }
 
 /// Returns the native combo inside a ComboBoxEx, or the original handle for other controls.
@@ -3757,7 +3769,7 @@ static bool IsSettingsPanelAppearanceField(HWND control) {
 }
 
 /// Aligns panel font rows using their native button heights and the authored dialog-unit gap.
-/// Preserves the antialiasing combo's upper gap and the calendar checkboxes' distance above the final Appearance controls.
+/// Preserves the antialiasing combo's upper gap and the calendar checkboxes' existing positions.
 static void LayoutSettingsPanelAppearanceRows() {
     if (!IsSettingsPanelAppearanceField(hFontButton)) {
         return;
@@ -3783,7 +3795,7 @@ static void LayoutSettingsPanelAppearanceRows() {
         OffsetSettingsControl(hWidgetAntialiasCombo, calendarFont.bottom + SettingsDialogHeight(2) - antialias.top);
     }
     RECT panelShift = GetSettingsResourceRect(hAppearancePage, IDC_LAYOUT_PANEL_LOWER_SHIFT);
-    LONG footerOffset = (panelShift.bottom - panelShift.top) / 20;
+    LONG footerOffset = (panelShift.bottom - panelShift.top) / 20 + SettingsDialogHeight(1);
     AlignSettingsControl(hWeekNumbersCheck, hWidgetDisableThemesCheck,
         -spacing + SettingsDialogHeight(1) - footerOffset);
     AlignSettingsSundayFirst(hWeekNumbersCheck);
@@ -3812,18 +3824,22 @@ static void LayoutSettingsTextAppearanceRows() {
         LONG top = first.top + spacing + (height - (antialias.bottom - antialias.top)) / 2;
         OffsetSettingsControl(hWidgetAntialiasCombo, top - antialias.top);
     }
+    RECT panelShift = GetSettingsResourceRect(hAppearancePage, IDC_LAYOUT_PANEL_LOWER_SHIFT);
+    LONG footerOffset = (panelShift.bottom - panelShift.top) / 5
+        + (panelShift.bottom - panelShift.top) / 20 + SettingsDialogHeight(1);
     if (type == WIDGET_CALENDAR) {
         RECT border = {};
         if (GetWindowRect(hBorderColorButton, &border)) {
             OffsetSettingsControl(hBorderColorButton, first.top + 2 * spacing - border.top);
         }
-        AlignSettingsSundayFirst(hWidgetDisableThemesCheck, -spacing + SettingsDialogHeight(1));
+        AlignSettingsSundayFirst(hWidgetDisableThemesCheck, -spacing + SettingsDialogHeight(1) - footerOffset);
         AlignSettingsControl(hWeekNumbersCheck, hSundayFirstCheck, -spacing + SettingsDialogHeight(1));
         AlignSettingsControl(hShowTodayCheck, hWeekNumbersCheck, -spacing + SettingsDialogHeight(1));
         return;
     }
     if (type == WIDGET_DIGITAL) {
-        AlignSettingsControl(hTransparentBackgroundCheck, hWidgetDisableThemesCheck, -spacing + SettingsDialogHeight(1));
+        AlignSettingsControl(hTransparentBackgroundCheck, hWidgetDisableThemesCheck,
+            -spacing + SettingsDialogHeight(1) - footerOffset);
     }
     const HWND colors[] = {
         hTextColorButton,
@@ -3995,9 +4011,6 @@ static void LayoutSettingsControlGrids() {
     };
     const HWND timeFields[] = { GetDlgItem(hTimePage, IDC_TIME_SOURCE_LABEL), hNtpPresetLabel };
     const HWND timeActions[] = { hNtpServersEdit, hNtpSyncButton, hNtpStatus };
-    const HWND actionColumns[] = {
-        GetDlgItem(hSettings, ID_SAVE), GetDlgItem(hSettings, ID_CANCEL), GetDlgItem(hSettings, ID_APPLY)
-    };
     HWND days[ALARM_DAY_COUNT] = {};
     int firstDay = GetCultureFirstAlarmDay(appLanguage);
     LayoutSettingsWindowControls();
@@ -4022,7 +4035,6 @@ static void LayoutSettingsControlGrids() {
         applicationRows, ARRAYSIZE(applicationRows));
     SpaceSettingsControls(hApplicationPage, IDC_GRID_ROW_APPLICATION, 5, false,
         applicationChecks, ARRAYSIZE(applicationChecks));
-    SpaceSettingsControls(hSettings, IDC_GRID_COLUMN_ACTION, 2, true, actionColumns, ARRAYSIZE(actionColumns));
     SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_FIELDS, 5, false, timeFields, ARRAYSIZE(timeFields));
     SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_ACTIONS, 5, false, timeActions, ARRAYSIZE(timeActions));
     if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
@@ -4037,6 +4049,7 @@ static void LayoutSettingsControlGrids() {
 /// Aligns mixed settings rows after the shared font, theme, or page layout changes.
 static void AlignSettingsControls() {
     LayoutSettingsControlGrids();
+    UpdateSettingsActionButtonWidths();
     UpdateApplicationControlWidths();
     LayoutSettingsPanelAppearanceRows();
     LayoutSettingsTextAppearanceRows();
@@ -4093,18 +4106,7 @@ static void ApplyUiStyle(HWND window) {
         return;
     }
     if (hUiFont == nullptr) {
-        NONCLIENTMETRICSW metrics = {};
-        metrics.cbSize = sizeof(metrics);
-        if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0)) {
-            metrics.lfMessageFont.lfWeight = appFontWeight;
-            metrics.lfMessageFont.lfItalic = appFontItalic;
-            metrics.lfMessageFont.lfQuality = FontQuality(appFontAntialiasing);
-            if (!appFontFace.empty()) {
-                wcsncpy_s(metrics.lfMessageFont.lfFaceName, appFontFace.c_str(), _TRUNCATE);
-                metrics.lfMessageFont.lfCharSet = DEFAULT_CHARSET;
-            }
-            hUiFont = CreateFontIndirectW(&metrics.lfMessageFont);
-        }
+        hUiFont = CreateApplicationUiFont(window);
     }
     const wchar_t* themeName = themesDisabled ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
@@ -8028,29 +8030,48 @@ static void SetSettingsControlPosition(HWND control, int layoutId, int offsetY =
     SetControlPosition(control, bounds.left, bounds.top + offsetY, bounds.right - bounds.left, bounds.bottom - bounds.top);
 }
 
-/// Matches the settings action-button widths to Test while preserving their gaps and the group's right edge.
+/// Uses one native content width with a 50-DLU minimum, preserving the footer heights, gap, and right edge.
 static void UpdateSettingsActionButtonWidths() {
-    RECT reference = {};
-    if (!GetWindowRect(hTimeSignalTestButton, &reference)) {
-        return;
-    }
-    int width = reference.right - reference.left;
-    int displacement = 0;
     const HWND buttons[] = {
         GetDlgItem(hSettings, ID_SAVE),
         GetDlgItem(hSettings, ID_CANCEL),
         GetDlgItem(hSettings, ID_APPLY)
     };
-    for (int index = static_cast<int>(ARRAYSIZE(buttons)) - 1; index >= 0; index--) {
-        RECT bounds = {};
-        if (!GetWindowRect(buttons[index], &bounds)) {
+    RECT bounds[ARRAYSIZE(buttons)] = {};
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(buttons[0], WM_GETFONT, 0, 0));
+    SIZE units = {};
+    if (!GetDialogFontBaseUnits(font, &units)) {
+        return;
+    }
+    int width = MulDiv(50, units.cx, 4);
+    for (int index = 0; index < ARRAYSIZE(buttons); index++) {
+        if (!GetWindowRect(buttons[index], &bounds[index])) {
             return;
         }
-        MapWindowPoints(HWND_DESKTOP, hSettings, reinterpret_cast<POINT*>(&bounds), 2);
-        int expansion = width - (bounds.right - bounds.left);
-        SetControlPosition(buttons[index], bounds.left - expansion - displacement, bounds.top,
-            width, bounds.bottom - bounds.top);
-        displacement += expansion;
+        MapWindowPoints(HWND_DESKTOP, hSettings, reinterpret_cast<POINT*>(&bounds[index]), 2);
+        SIZE ideal = {};
+        if (!SendMessageW(buttons[index], BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal))) {
+            HDC dc = GetDC(buttons[index]);
+            if (dc != nullptr) {
+                HFONT buttonFont = reinterpret_cast<HFONT>(SendMessageW(buttons[index], WM_GETFONT, 0, 0));
+                HGDIOBJ previous = buttonFont == nullptr ? nullptr : SelectObject(dc, buttonFont);
+                std::wstring text = GetControlText(buttons[index]);
+                RECT measured = {};
+                DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &measured, DT_CALCRECT | DT_SINGLELINE);
+                ideal.cx = measured.right + MulDiv(12, units.cx, 4) + 2 * GetSystemMetrics(SM_CXEDGE);
+                if (previous != nullptr && previous != HGDI_ERROR) {
+                    SelectObject(dc, previous);
+                }
+                ReleaseDC(buttons[index], dc);
+            }
+        }
+        width = std::max(width, static_cast<int>(ideal.cx));
+    }
+    int gap = (bounds[2].left - bounds[0].right - (bounds[1].right - bounds[1].left)) / 2;
+    int left = bounds[2].right - width;
+    for (int index = static_cast<int>(ARRAYSIZE(buttons)) - 1; index >= 0; index--) {
+        SetControlPosition(buttons[index], left, bounds[index].top, width, bounds[index].bottom - bounds[index].top);
+        left -= width + gap;
     }
 }
 
@@ -10647,8 +10668,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         if (type == WIDGET_ANALOG) {
             SetSettingsControlPosition(hWidgetAntialiasLabel, IDC_LAYOUT_ANTIALIAS_ANALOG);
         } else {
-            SetSettingsControlPosition(hWidgetDisableThemesCheck, IDC_LAYOUT_THEMES,
-                panelOffset + panelOffset / 4);
+            int footerOffset = (panelShift.bottom - panelShift.top) / 5
+                + (panelShift.bottom - panelShift.top) / 20 + SettingsDialogHeight(1);
+            SetSettingsControlPosition(hWidgetDisableThemesCheck, IDC_LAYOUT_THEMES, footerOffset);
         }
     }
     const LRESULT borderStylePosition = SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0);
@@ -12143,6 +12165,7 @@ static void ApplySettingsDraft() {
     appFontDialogSize = std::clamp(settingsAppFontDialogSize, 10, 9990);
     appFontWeight = std::clamp(settingsAppFontWeight, 0, 1000);
     appFontItalic = settingsAppFontItalic;
+    settingsApplicationFontPreviewActive = false;
     storageUsesXml = GetCheck(hUseXmlSettingsCheck);
     bool requestedStartWithWindows = GetCheck(hStartWithWindowsCheck);
     if (requestedStartWithWindows != startWithWindows) {
@@ -12226,20 +12249,10 @@ static void ApplySettingsDraft() {
         || previousAppFontFace != appFontFace
         || previousAppFontWeight != appFontWeight
         || previousAppFontItalic != appFontItalic;
-    if (appFontChanged) {
-        ResetUiFont();
-    }
     bool uiStyleChanged = previousThemesDisabled != themesDisabled || appFontChanged;
     if (uiStyleChanged) {
-        ApplyUiStyle(hSettings);
-        if (hHelp != nullptr) {
-            ApplyUiStyle(hHelp);
-        }
-        if (hAbout != nullptr) {
-            ApplyUiStyle(hAbout);
-        }
+        RefreshApplicationFonts();
     }
-    settingsApplicationFontPreviewActive = false;
     settingsAppliedWidgets.clear();
     for (const std::unique_ptr<Widget>& widget : widgets) {
         settingsAppliedWidgets.push_back(widget->config);
@@ -12863,7 +12876,7 @@ static bool CreateSettingsControls() {
     hPanelTimeNoticesCheck = BindSettingsControl(hGeneralPage, ID_PANEL_TIME_NOTICES,
         PANEL_TIME_NOTICES_LABELS[appLanguage], &generalControls);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-            std::wstring label = AdditionalClockLabel(appLanguage, index, true);
+        std::wstring label = AdditionalClockLabel(appLanguage, index, true);
         hAdditionalEnabledChecks[index] = BindSettingsControl(hGeneralPage, ID_ADDITIONAL_ENABLED_BASE + index,
             label.c_str(), &generalControls);
         hAdditionalNameLabels[index] = BindSettingsLabel(hGeneralPage, IDC_ADDITIONAL_NAME_LABELS_BASE + index,
@@ -13055,7 +13068,7 @@ static bool CreateSettingsControls() {
         }
         hTimeSignalIntervalRadios[mode - 1] = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_INTERVAL_BASE + mode - 1,
             TIME_SIGNAL_MODE_LABELS[appLanguage][mode], &timeSignalControls);
-        }
+    }
     HWND timeSignalNote = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_NOTE, TIME_SIGNAL_NOTE[appLanguage]);
     timeSignalControls.push_back(timeSignalNote);
     HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL, TIME_SOURCE_LABELS[appLanguage],
@@ -13170,7 +13183,6 @@ static bool CreateSettingsControls() {
             }
         }
     }
-    UpdateSettingsActionButtonWidths();
     UpdateApplicationControlWidths();
     UpdateSettingsTextControlLayout(hSettings);
     for (int tabIndex = 0; tabIndex < SETTINGS_TAB_COUNT; tabIndex++) {
@@ -13818,12 +13830,10 @@ static RECT InformationControlRect(HWND window, int id) {
     return rect;
 }
 
-/// Captures the native button size, system font and reference license dimensions before layout.
+/// Captures the initial interface font and reference license dimensions before layout.
 static void InitializeInformationWindowLayout(HWND window, bool help) {
     InformationWindowLayout& layout = help ? helpWindowLayout : aboutWindowLayout;
-    RECT button = InformationControlRect(window, ID_INFO_CLOSE);
     layout.font = reinterpret_cast<HFONT>(SendMessageW(window, WM_GETFONT, 0, 0));
-    layout.button = SIZE{ button.right - button.left, button.bottom - button.top };
     layout.dpi = GetSystemDialogDpi(window);
     if (!help) {
         layout.license = SIZE{ MulDiv(ABOUT_LICENSE_WIDTH_96DPI, layout.dpi, 96),
@@ -13877,8 +13887,8 @@ static SIZE InformationTextSize(HWND control) {
     return size;
 }
 
-/// Measures native dialog base units from the information window's interface font.
-static bool InformationDialogBaseUnits(HFONT font, SIZE* units) {
+/// Measures native dialog base units from the supplied interface font.
+static bool GetDialogFontBaseUnits(HFONT font, SIZE* units) {
     HDC dc = GetDC(nullptr);
     if (dc == nullptr) {
         return false;
@@ -13903,16 +13913,19 @@ static bool InformationDialogBaseUnits(HFONT font, SIZE* units) {
 static SIZE InformationDialogUnits(HWND window, int x, int y) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
     SIZE units = {};
-    if (!InformationDialogBaseUnits(layout.font, &units)) {
+    if (!GetDialogFontBaseUnits(layout.font, &units)) {
         return SIZE{};
     }
     return SIZE{ MulDiv(x, units.cx, 4), MulDiv(y, units.cy, 8) };
 }
 
-/// Applies the system interface font and current theme while keeping the About license in Consolas.
+/// Applies the effective interface font and current theme while keeping the About license in Consolas.
 static bool ApplyInformationWindowStyle(HWND window, bool updateFont) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
-    HFONT font = updateFont ? CreateSystemDialogFont(window) : layout.font;
+    HFONT font = layout.font;
+    if (updateFont) {
+        font = HasApplicationUiFont() ? CreateApplicationUiFont(window) : CreateSystemDialogFont(window);
+    }
     if (font == nullptr) {
         return false;
     }
@@ -13958,7 +13971,7 @@ static bool ApplyInformationWindowStyle(HWND window, bool updateFont) {
     return true;
 }
 
-/// Places information controls using system-font dialog units and preserves the reference About license dimensions.
+/// Places information controls using current-font dialog units and preserves the reference About license dimensions.
 static void LayoutInformationWindow(HWND window) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
     if (!layout.initialized || IsIconic(window)) {
@@ -13970,7 +13983,7 @@ static void LayoutInformationWindow(HWND window) {
     UINT dpi = GetSystemDialogDpi(window);
     SIZE margin = InformationDialogUnits(window, 10, 10);
     SIZE gap = InformationDialogUnits(window, 4, 6);
-    SIZE button = { MulDiv(layout.button.cx, dpi, layout.dpi), MulDiv(layout.button.cy, dpi, layout.dpi) };
+    SIZE button = InformationDialogUnits(window, INFO_CLOSE_WIDTH_DLU, INFO_CLOSE_HEIGHT_DLU);
     SIZE ideal = {};
     SendDlgItemMessageW(window, ID_INFO_CLOSE, BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal));
     button.cx = std::max(button.cx, ideal.cx);
@@ -14050,7 +14063,8 @@ static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM 
     }
     if (message == WM_NOTIFY) {
         NMHDR* notification = reinterpret_cast<NMHDR*>(lParam);
-        if (window == hAbout && notification->hwndFrom == hAboutTooltip
+        if (window == hAbout
+                && notification->hwndFrom == hAboutTooltip
                 && notification->code == TTN_GETDISPINFOW) {
             NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
             swprintf_s(aboutTooltipText, ABOUT_VISIT_TOOLTIP[appLanguage], ABOUT_WEBSITE_URL);
@@ -14125,7 +14139,7 @@ static bool PositionInformationWindowByWindowsDefault(HWND window) {
         SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE) != FALSE;
 }
 
-/// Creates or activates Help or About using a system-font dialog template, localized content and saved placement.
+/// Creates or activates Help or About using the selected interface font, localized content and saved placement.
 static void ShowInformationWindow(bool help) {
     HWND* target = help ? &hHelp : &hAbout;
     PersistWindowState& placement = help ? helpWindowState : aboutWindowState;
@@ -14136,7 +14150,15 @@ static void ShowInformationWindow(bool help) {
     }
     layout = {};
     UINT resource = help ? IDD_HELP : IDD_ABOUT;
-    DLGTEMPLATE* definition = LoadSystemDialogTemplate(hInstance, resource, nullptr);
+    bool customFont = HasApplicationUiFont();
+    HFONT font = customFont ? CreateApplicationUiFont(nullptr) : nullptr;
+    if (customFont && font == nullptr) {
+        return;
+    }
+    DLGTEMPLATE* definition = LoadSystemDialogTemplate(hInstance, resource, nullptr, font);
+    if (font != nullptr) {
+        DeleteObject(font);
+    }
     if (definition == nullptr) {
         return;
     }

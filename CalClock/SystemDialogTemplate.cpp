@@ -87,12 +87,13 @@ static UINT DialogFontPoints(HWND owner, HFONT font) {
     return measured ? MulDiv(metrics.tmHeight - metrics.tmInternalLeading, 72, GetSystemDialogDpi(owner)) : 0;
 }
 
-DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner) {
+DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner, HFONT dialogFont) {
     HRSRC resource = FindResourceW(instance, MAKEINTRESOURCEW(resourceId), RT_DIALOG);
     HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(instance, resource);
     DWORD size = resource == nullptr ? 0 : SizeofResource(instance, resource);
     const BYTE* source = loaded == nullptr ? nullptr : static_cast<const BYTE*>(LockResource(loaded));
-    if (source == nullptr || size < EXTENDED_DIALOG_HEADER_SIZE
+    if (source == nullptr
+            || size < EXTENDED_DIALOG_HEADER_SIZE
             || reinterpret_cast<const WORD*>(source)[1] != 0xFFFF
             || *reinterpret_cast<const DWORD*>(source + 12) & DS_SETFONT) {
         return nullptr;
@@ -109,11 +110,11 @@ DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND 
     if (controlsOffset > size) {
         return nullptr;
     }
-    HFONT font = CreateSystemDialogFont(owner);
+    HFONT font = dialogFont == nullptr ? CreateSystemDialogFont(owner) : dialogFont;
     LOGFONTW description = {};
     UINT points = font == nullptr ? 0 : DialogFontPoints(owner, font);
     bool described = font != nullptr && GetObjectW(font, sizeof(description), &description);
-    if (font != nullptr) {
+    if (dialogFont == nullptr && font != nullptr) {
         DeleteObject(font);
     }
     if (!described || points == 0 || points >= 0x7FFF) {
