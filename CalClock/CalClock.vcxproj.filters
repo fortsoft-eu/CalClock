@@ -63,6 +63,9 @@
     <ClCompile Include="SettingsStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SystemDialogTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="TimeDateNotices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -135,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SettingsStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemDialogTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeDateNotices.h">
