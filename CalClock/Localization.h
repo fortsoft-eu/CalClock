@@ -158,6 +158,7 @@ extern const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT];
 extern const wchar_t* ABOUT_WEBSITE_FAILED[LANG_COUNT];
 extern const wchar_t* ABOUT_COPY_URL_FAILED[LANG_COUNT];
 extern const wchar_t* ABOUT_COPY_INFORMATION_FAILED[LANG_COUNT];
+extern const wchar_t* ABOUT_LICENSE_UNAVAILABLE[LANG_COUNT];
 extern const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_URL_LABELS[LANG_COUNT];
 extern const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT];

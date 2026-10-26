@@ -33,17 +33,20 @@
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "Version.lib")
 
+ /// Physical monitor bounds and the corresponding taskbar-adjusted work area.
 struct MonitorWorkArea {
     RECT monitor;
     RECT work;
 };
 
+/// Owned monitor work areas and the first error reported during enumeration.
 struct MonitorCollection {
     MonitorWorkArea* areas;
     UINT count;
     DWORD error;
 };
 
+/// Best usable window rectangle and its area and distance ranking.
 struct PlacementCandidate {
     RECT bounds;
     LONGLONG area;
@@ -51,6 +54,7 @@ struct PlacementCandidate {
     bool found;
 };
 
+/// Identity and matching options used while locating another instance of a form.
 struct ExistingFormSearch {
     HWND target;
     HWND existing;
@@ -60,6 +64,7 @@ struct ExistingFormSearch {
     DWORD error;
 };
 
+/// Language and code-page pair identifying a version-resource string table.
 struct VersionResourceTranslation {
     WORD language;
     WORD codePage;
@@ -99,8 +104,7 @@ static DWORD ReadMonitorWorkAreas(MonitorWorkArea** areas, UINT* count) {
     *areas = nullptr;
     *count = 0;
     MonitorCollection collection = MonitorCollection{ nullptr, 0, ERROR_SUCCESS };
-    if (EnumDisplayMonitors(nullptr, nullptr, CollectMonitor, reinterpret_cast<LPARAM>(&collection))
-            && collection.count) {
+    if (EnumDisplayMonitors(nullptr, nullptr, CollectMonitor, reinterpret_cast<LPARAM>(&collection)) && collection.count) {
         *areas = collection.areas;
         *count = collection.count;
         return ERROR_SUCCESS;
@@ -445,9 +449,8 @@ void PersistWindowState::InitializeRegistryPath() {
     }
     VersionResourceTranslation* translations = nullptr;
     UINT translationBytes = 0;
-    if (GetFileVersionInfoW(module, 0, bytes, information)
-        && VerQueryValueW(information, L"\\VarFileInfo\\Translation",
-            reinterpret_cast<void**>(&translations), &translationBytes)) {
+    if (GetFileVersionInfoW(module, 0, bytes, information) && VerQueryValueW(information, L"\\VarFileInfo\\Translation",
+        reinterpret_cast<void**>(&translations), &translationBytes)) {
         for (UINT index = 0; index < translationBytes / sizeof(*translations); index++) {
             wchar_t query[64];
             wchar_t* company = nullptr;

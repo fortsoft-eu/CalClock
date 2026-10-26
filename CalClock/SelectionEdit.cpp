@@ -21,12 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.3
  */
 
 #include "SelectionEdit.h"
 #include <windowsx.h>
-#include <commctrl.h>
+#ifndef WM_XBUTTONDOWN
+#define WM_XBUTTONDOWN 0x020B
+#endif
+
+#ifndef WM_XBUTTONDBLCLK
+#define WM_XBUTTONDBLCLK 0x020D
+#endif
+
+typedef DWORD(WINAPI* SelectionTickCountFunction)();
+typedef ULONGLONG(WINAPI* SelectionTickCount64Function)();
 
 enum class SelectionUnit {
     None,
@@ -47,6 +56,9 @@ struct SelectionState {
     int length;
     int clickCount;
     ULONGLONG clickTime;
+    WNDPROC originalProc;
+    SelectionTickCountFunction tickCount;
+    SelectionTickCount64Function tickCount64;
     POINT clickPoint;
     POINT mousePoint;
     SelectionUnit unit;
@@ -54,7 +66,7 @@ struct SelectionState {
     int anchorEnd;
 };
 
-static constexpr UINT_PTR selectionSubclassId = 1003;
+static const wchar_t selectionProperty[] = L"SelectionEdit.State";
 static constexpr UINT_PTR selectionScrollTimer = 0xCC02;
 
 /// Clears the private gesture without changing the visible selection.
@@ -72,7 +84,11 @@ static void EndSelection(HWND window, SelectionState& state) {
 
 /// Tests consecutive presses against the system double-click time and rectangle.
 static bool ContinuesClickSequence(const SelectionState& state, POINT point, ULONGLONG time) {
-    if (state.clickCount == 0 || time - state.clickTime > GetDoubleClickTime()) {
+    ULONGLONG elapsed = time - state.clickTime;
+    if (!state.tickCount64) {
+        elapsed &= 0xFFFFFFFFULL;
+    }
+    if (state.clickCount == 0 || elapsed > GetDoubleClickTime()) {
         return false;
     }
     int width = GetSystemMetrics(SM_CXDOUBLECLK);
@@ -145,7 +161,8 @@ static CharacterType SelectionCharacterType(wchar_t character) {
     WORD extended = 0;
     GetStringTypeW(CT_CTYPE1, &character, 1, &basic);
     GetStringTypeW(CT_CTYPE3, &character, 1, &extended);
-    if (character == L'_' || character >= 0x0300 && character <= 0x036F
+    if (character == L'_'
+            || character >= 0x0300 && character <= 0x036F
             || character >= 0x1AB0 && character <= 0x1AFF
             || character >= 0x1DC0 && character <= 0x1DFF
             || character >= 0x20D0 && character <= 0x20FF
@@ -263,11 +280,11 @@ static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM
     EndSelection(window, state);
     if (wParam & (MK_SHIFT | MK_CONTROL)) {
         state.clickCount = 0;
-        return DefSubclassProc(window, msg, wParam, lParam);
+        return CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
     }
     SetFocus(window);
     const POINT point = POINT{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-    const ULONGLONG time = GetTickCount64();
+    const ULONGLONG time = state.tickCount64 ? state.tickCount64() : state.tickCount();
     if (!ContinuesClickSequence(state, point, time)) {
         state.clickCount = 1;
     } else if (state.clickCount == 2) {
@@ -281,14 +298,39 @@ static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM
         return 0;
     }
     state.unit = SelectionUnit::Native;
-    return DefSubclassProc(window, WM_LBUTTONDOWN, wParam, lParam);
+    return CallWindowProcW(state.originalProc, window, WM_LBUTTONDOWN, wParam, lParam);
+}
+
+/// Preserves native dialog-key handling while enabling Tab navigation and Ctrl+A selection.
+static LRESULT HandleSelectionDialogCode(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+    LRESULT result = CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
+    if (wParam == VK_TAB) {
+        result &= ~(DLGC_WANTTAB | DLGC_WANTALLKEYS);
+    }
+    const MSG* key = reinterpret_cast<const MSG*>(lParam);
+    if (key && (key->message == WM_KEYDOWN && key->wParam == L'A' && GetKeyState(VK_CONTROL) & 0x8000
+            || key->message == WM_CHAR && key->wParam == 1)) {
+        result |= DLGC_WANTMESSAGE;
+    }
+    return result;
+}
+
+/// Releases the gesture state, restores the original procedure and forwards window destruction.
+static LRESULT HandleSelectionDestroy(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+    WNDPROC originalProc = state.originalProc;
+    EndSelection(window, state);
+    SetWindowLongPtrW(window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalProc));
+    RemovePropW(window, selectionProperty);
+    HeapFree(GetProcessHeap(), 0, &state);
+    return CallWindowProcW(originalProc, window, msg, wParam, lParam);
 }
 
 /// Adds system-sized repeated clicks and anchored selection while preserving native ordinary and modifier gestures.
-static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
-        DWORD_PTR referenceData) {
-    SelectionState& state = *reinterpret_cast<SelectionState*>(referenceData);
+static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    SelectionState& state = *reinterpret_cast<SelectionState*>(GetPropW(window, selectionProperty));
     switch (msg) {
+        case WM_GETDLGCODE:
+            return HandleSelectionDialogCode(window, msg, wParam, lParam, state);
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
             return HandleSelectionPress(window, msg, wParam, lParam, state);
@@ -311,7 +353,7 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
             }
             if (state.unit == SelectionUnit::Native) {
                 state.unit = SelectionUnit::None;
-                const LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
+                const LRESULT result = CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
                 DWORD start = 0;
                 DWORD end = 0;
                 SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
@@ -357,27 +399,43 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
         case WM_MBUTTONDBLCLK:
         case WM_XBUTTONDOWN:
         case WM_XBUTTONDBLCLK:
+        case EM_REPLACESEL:
         case WM_SETTEXT:
             state.clickCount = 0;
             EndSelection(window, state);
             break;
         case WM_NCDESTROY:
-            EndSelection(window, state);
-            RemoveWindowSubclass(window, SelectionEditProc, subclassId);
-            HeapFree(GetProcessHeap(), 0, &state);
-            break;
+            return HandleSelectionDestroy(window, msg, wParam, lParam, state);
     }
-    return DefSubclassProc(window, msg, wParam, lParam);
+    return CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
 }
 
-/// Allocates the text field's independent gesture state.
+/// Allocates the gesture state and selects the available native tick counter.
 bool InstallSelectionEditHandler(HWND window) {
-    SelectionState* state =
-        static_cast<SelectionState*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(SelectionState)));
+    SelectionState* state = static_cast<SelectionState*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY,
+        sizeof(SelectionState)));
     if (!state) {
         return false;
     }
-    if (!SetWindowSubclass(window, SelectionEditProc, selectionSubclassId, reinterpret_cast<DWORD_PTR>(state))) {
+    HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
+    if (kernel) {
+        state->tickCount64 = reinterpret_cast<SelectionTickCount64Function>(GetProcAddress(kernel, "GetTickCount64"));
+        if (!state->tickCount64) {
+            state->tickCount = reinterpret_cast<SelectionTickCountFunction>(GetProcAddress(kernel, "GetTickCount"));
+        }
+    }
+    if (!state->tickCount64 && !state->tickCount) {
+        HeapFree(GetProcessHeap(), 0, state);
+        return false;
+    }
+    if (!SetPropW(window, selectionProperty, state)) {
+        HeapFree(GetProcessHeap(), 0, state);
+        return false;
+    }
+    state->originalProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(window, GWLP_WNDPROC,
+        reinterpret_cast<LONG_PTR>(SelectionEditProc)));
+    if (!state->originalProc) {
+        RemovePropW(window, selectionProperty);
         HeapFree(GetProcessHeap(), 0, state);
         return false;
     }

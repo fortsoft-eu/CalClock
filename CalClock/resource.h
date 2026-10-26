@@ -158,14 +158,9 @@
 #define IDC_SETTINGS_CONTENT                    5100
 #define IDC_LAYOUT_OPACITY_TOP                  5101
 #define IDC_LAYOUT_OPACITY_SIZED                5102
-#define IDC_LAYOUT_OPACITY_ANALOG               5103
 #define IDC_LAYOUT_FONT                         5104
-#define IDC_LAYOUT_LEADING_PANEL                5105
 #define IDC_LAYOUT_LEADING_TEXT                 5106
-#define IDC_LAYOUT_DATE_PANEL                   5107
 #define IDC_LAYOUT_DATE_CALENDAR                5108
-#define IDC_LAYOUT_BORDER_PANEL                 5109
-#define IDC_LAYOUT_ANTIALIAS_ANALOG             5110
 #define IDC_LAYOUT_THEMES                       5111
 #define IDC_LAYOUT_SUNDAY_PANEL                 5112
 #define IDC_LAYOUT_SUNDAY_CALENDAR              5113
@@ -190,9 +185,11 @@
 #define IDC_SETTINGS_FOOTER_GAP                 5142
 #define IDC_SETTINGS_BUTTON_ROW_STEP            5143
 #define IDC_LAYOUT_PANEL_LOWER_SHIFT            5144
+#define IDC_GRID_ROW_UNIFORM_APPEARANCE         5145
+#define IDC_GRID_ROW_ANALOG_APPEARANCE          5146
 
-#define INFO_CLOSE_WIDTH_DLU                    50
-#define INFO_CLOSE_HEIGHT_DLU                   14
+#define DIALOG_BUTTON_WIDTH_DLU                 43
+#define DIALOG_BUTTON_HEIGHT_DLU                12
 
 #define ABOUT_LICENSE_WIDTH_96DPI               508
 #define ABOUT_LICENSE_HEIGHT_96DPI              267
@@ -201,9 +198,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        113
-#define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         5145
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_RESOURCE_VALUE                113
+#define _APS_NEXT_COMMAND_VALUE                 40001
+#define _APS_NEXT_CONTROL_VALUE                 5147
+#define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif
