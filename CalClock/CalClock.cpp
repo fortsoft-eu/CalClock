@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.3
+ * Last modified for version 1.6.1.4
  */
 
 #define NOMINMAX
@@ -85,7 +85,7 @@
 #pragma comment(lib, "Version.lib")
 #pragma comment(lib, "Dwmapi.lib")
 
- /// Function pointer types
+/// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
@@ -784,7 +784,7 @@ static bool PositionInformationWindowByWindowsDefault(HWND window);
 /// Tests whether a handle matches one of the settings page handles.
 static bool IsSettingsPageWindow(HWND window);
 
-/// Aligns Appearance fields and color buttons, fits Default Appearance to the right, and reserves border-slider space.
+/// Aligns Appearance fields and buttons to a common width and reserves border-slider space.
 static void UpdateSettingsColorControlLayout();
 
 /// Matches Application field gaps to the current root action-button gap.
@@ -7949,7 +7949,7 @@ static void SetSettingsColorControlPosition(HWND button, int x, int width, int g
     SetControlPosition(preview, x + width + gap, bounds.top, height, height);
 }
 
-/// Aligns Appearance fields and color buttons, fits Default Appearance to the right, and reserves border-slider space.
+/// Aligns Appearance fields and buttons to a common width and reserves border-slider space.
 static void UpdateSettingsColorControlLayout() {
     RECT save = {};
     RECT cancel = {};
@@ -7991,18 +7991,20 @@ static void UpdateSettingsColorControlLayout() {
     RECT dateFormat = {};
     if (GetWindowRect(hDateFormatCombo, &dateFormat)) {
         MapWindowPoints(HWND_DESKTOP, GetParent(hDateFormatCombo), reinterpret_cast<POINT*>(&dateFormat), 2);
-        SetControlPosition(hDateFormatCombo, secondColumn, dateFormat.top, right - secondColumn,
+        SetControlPosition(hDateFormatCombo, secondColumn, dateFormat.top, buttonWidth,
             dateFormat.bottom - dateFormat.top);
     }
     RECT leadingZero = {};
     if (GetWindowRect(hLeadingZeroCombo, &leadingZero)) {
         MapWindowPoints(HWND_DESKTOP, GetParent(hLeadingZeroCombo), reinterpret_cast<POINT*>(&leadingZero), 2);
-        SetControlPosition(hLeadingZeroCombo, secondColumn, leadingZero.top, right - secondColumn,
+        SetControlPosition(hLeadingZeroCombo, secondColumn, leadingZero.top, buttonWidth,
             leadingZero.bottom - leadingZero.top);
     }
     RECT size = {};
-    if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
-            && settingsDraft[selectedDraftIndex].type == WIDGET_ANALOG && GetWindowRect(hSizeCombo, &size)) {
+    if (selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+            && settingsDraft[selectedDraftIndex].type == WIDGET_ANALOG
+            && GetWindowRect(hSizeCombo, &size)) {
         MapWindowPoints(HWND_DESKTOP, GetParent(hSizeCombo), reinterpret_cast<POINT*>(&size), 2);
         if (size.left != secondColumn) {
             SetWindowPos(hSizeCombo, nullptr, secondColumn, size.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
@@ -8010,7 +8012,8 @@ static void UpdateSettingsColorControlLayout() {
     }
     RECT firstAdditionalSize = {};
     RECT lastAdditionalSize = {};
-    if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
+    if (selectedDraftIndex >= 0
+            && selectedDraftIndex < static_cast<int>(settingsDraft.size())
             && settingsDraft[selectedDraftIndex].type == WIDGET_PANEL
             && GetWindowRect(hAdditionalSizeCombos[0], &firstAdditionalSize)
             && GetWindowRect(hAdditionalSizeCombos[1], &lastAdditionalSize)) {
@@ -8029,8 +8032,8 @@ static void UpdateSettingsColorControlLayout() {
     RECT defaults = {};
     if (hDefaultAppearanceButton != nullptr && GetWindowRect(hDefaultAppearanceButton, &defaults)) {
         MapWindowPoints(HWND_DESKTOP, GetParent(hDefaultAppearanceButton), reinterpret_cast<POINT*>(&defaults), 2);
-        SetControlPosition(hDefaultAppearanceButton, secondColumn, defaults.top,
-            right - secondColumn, defaults.bottom - defaults.top);
+        SetControlPosition(hDefaultAppearanceButton, secondColumn, defaults.top, buttonWidth,
+            defaults.bottom - defaults.top);
     }
     RECT border = {};
     if (hBorderTrackBar != nullptr && GetWindowRect(hBorderTrackBar, &border)) {
@@ -13781,7 +13784,9 @@ static LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARA
 /// Releases the cached Unicode boundary analysis and its retained text.
 static void ResetInformationWordBreak() {
     if (informationWordBreakState.analysis != nullptr) {
-        ScriptStringFree(&informationWordBreakState.analysis);
+        if (FAILED(ScriptStringFree(&informationWordBreakState.analysis))) {
+            OutputDebugStringW(L"CalClock: ScriptStringFree failed while clearing Unicode word-break analysis.\r\n");
+        }
         informationWordBreakState.analysis = nullptr;
     }
     informationWordBreakState.text.clear();
