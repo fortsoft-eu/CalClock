@@ -21,25 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.3
+ * Last modified for version 1.6.1.4
  */
 
 #include "SystemDialogTemplate.h"
 #include <cwchar>
 
+/// Signature used to resolve the optional GetDpiForWindow export without a static import.
+typedef UINT(WINAPI* GetDpiForWindowProc)(HWND);
+
+/// Byte lengths of the fixed extended-dialog header and extended font attributes.
 static const SIZE_T EXTENDED_DIALOG_HEADER_SIZE = 26;
 static const SIZE_T EXTENDED_FONT_HEADER_SIZE = 6;
 
+/// Returns window DPI when supported, otherwise device-context DPI; a null window uses the screen DC.
+/// Returns 96 if the device context or its DPI is unavailable.
 UINT GetSystemDialogDpi(HWND window) {
+    HMODULE module = GetModuleHandleW(L"user32.dll");
+    GetDpiForWindowProc getDpi = nullptr;
+    if (module != nullptr) {
+        getDpi = reinterpret_cast<GetDpiForWindowProc>(GetProcAddress(module, "GetDpiForWindow"));
+    }
+    if (getDpi != nullptr && window != nullptr) {
+        return getDpi(window);
+    }
     HDC dc = GetDC(window);
     if (dc == nullptr) {
         return 96;
     }
     UINT dpi = GetDeviceCaps(dc, LOGPIXELSY);
     ReleaseDC(window, dc);
-    return dpi;
+    return dpi == 0 ? 96 : dpi;
 }
 
+/// Creates the current system message font scaled from system DPI to the target window DPI.
+/// Returns a caller-owned font, or null if system metrics or font creation fails.
 HFONT CreateSystemDialogFont(HWND window) {
     NONCLIENTMETRICSW metrics = {};
     metrics.cbSize = sizeof(metrics);
@@ -53,6 +69,7 @@ HFONT CreateSystemDialogFont(HWND window) {
     return CreateFontIndirectW(&metrics.lfMessageFont);
 }
 
+/// Skips one empty, ordinal, or null-terminated UTF-16 field; returns false if its words are truncated.
 static bool SkipDialogField(const WORD*& cursor, const WORD* end) {
     if (cursor == end) {
         return false;
@@ -74,6 +91,8 @@ static bool SkipDialogField(const WORD*& cursor, const WORD* end) {
     return true;
 }
 
+/// Converts the font's measured character height, excluding internal leading, to points at the owner's DPI.
+/// Returns zero if the device context or font metrics cannot be obtained.
 static UINT DialogFontPoints(HWND owner, HFONT font) {
     HDC dc = GetDC(owner);
     if (dc == nullptr) {
@@ -87,6 +106,10 @@ static UINT DialogFontPoints(HWND owner, HFONT font) {
     return measured ? MulDiv(metrics.tmHeight - metrics.tmInternalLeading, 72, GetSystemDialogDpi(owner)) : 0;
 }
 
+/// Copies an extended dialog resource without DS_SETFONT and inserts the supplied or current system message font.
+/// Preserves menu, class, title, control data and DWORD alignment; the supplied font remains caller-owned.
+/// Returns a template to free with HeapFree(GetProcessHeap(), 0, ...), or null on resource, format, font or
+/// allocation failure.
 DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner, HFONT dialogFont) {
     HRSRC resource = FindResourceW(instance, MAKEINTRESOURCEW(resourceId), RT_DIALOG);
     HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(instance, resource);
