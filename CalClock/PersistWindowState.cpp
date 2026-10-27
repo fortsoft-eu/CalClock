@@ -33,7 +33,7 @@
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "Version.lib")
 
- /// Physical monitor bounds and the corresponding taskbar-adjusted work area.
+/// Physical monitor bounds and the corresponding taskbar-adjusted work area.
 struct MonitorWorkArea {
     RECT monitor;
     RECT work;
