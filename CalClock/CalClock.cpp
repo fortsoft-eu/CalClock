@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.2.0
+ * Last modified for version 1.6.3.0
  */
 
 #define NOMINMAX
@@ -716,7 +716,7 @@ static void RefreshInformationWindows();
 
 /// Anchors Help or About controls to the client area, measures wrapped product text, and preserves right and bottom
 /// spacing.
-static void LayoutInformationWindow(HWND window);
+static void LayoutInformationWindow(HWND window, bool resize = true);
 static bool ApplyInformationWindowStyle(HWND window, bool updateFont);
 
 /// Returns the Windows message-font face, falling back to the stock GUI font or an empty string.
@@ -14142,7 +14142,7 @@ static int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int le
             position--;
         }
         while (position > 0 && (!attributes[position].fCharStop
-            || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
+                || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
             position--;
         }
     } else if (code == WB_RIGHT) {
@@ -14150,7 +14150,7 @@ static int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int le
             position++;
         }
         while (position < length && (!attributes[position].fCharStop
-            || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
+                || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
             position++;
         }
     }
@@ -14374,8 +14374,29 @@ static bool ApplyInformationWindowStyle(HWND window, bool updateFont) {
     return true;
 }
 
-/// Places information controls using current-font dialog units and preserves the reference About license dimensions.
-static void LayoutInformationWindow(HWND window) {
+/// Fits the About window to its monitor work area after its natural layout, without saving the adjusted size.
+static void FitAboutWindowToWorkArea(HWND window) {
+    RECT bounds = {};
+    MONITORINFO monitor = { sizeof(monitor) };
+    if (!GetWindowRect(window, &bounds)
+            || !GetMonitorInfoW(MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST), &monitor)) {
+        return;
+    }
+    LONG width = std::min(bounds.right - bounds.left, monitor.rcWork.right - monitor.rcWork.left);
+    LONG height = std::min(bounds.bottom - bounds.top, monitor.rcWork.bottom - monitor.rcWork.top);
+    LONG left = std::clamp(bounds.left, monitor.rcWork.left, monitor.rcWork.right - width);
+    LONG top = std::clamp(bounds.top, monitor.rcWork.top, monitor.rcWork.bottom - height);
+    if (left != bounds.left
+            || top != bounds.top
+            || width != bounds.right - bounds.left
+            || height != bounds.bottom - bounds.top) {
+        SetWindowPos(window, nullptr, left, top, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+}
+
+/// Builds the natural About layout from its fixed license dimensions, then fits it to the monitor work area.
+/// Resize notifications anchor the edit to the right and bottom edges and the Close button to the bottom right.
+static void LayoutInformationWindow(HWND window, bool resize) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
     if (!layout.initialized || IsIconic(window)) {
         return;
@@ -14407,7 +14428,7 @@ static void LayoutInformationWindow(HWND window) {
     }
     button.cx = std::max(button.cx, ideal.cx);
     int textTop = margin.cy;
-    if (window == hAbout) {
+    if (window == hAbout && resize) {
         SIZE license = { MulDiv(layout.license.cx, dpi, layout.dpi), MulDiv(layout.license.cy, dpi, layout.dpi) };
         client.right = license.cx + 2 * InformationDialogUnits(window, 10, 0).cx;
         SetWindowPos(GetDlgItem(window, ID_INFO_ICON), nullptr, margin.cx, margin.cy, 0, 0,
@@ -14445,6 +14466,9 @@ static void LayoutInformationWindow(HWND window) {
                 bounds.bottom - bounds.top + client.bottom - current.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
         }
     }
+    if (window == hAbout && !resize) {
+        textTop = InformationControlRect(window, ID_INFO_TEXT).top;
+    }
     int buttonY = client.bottom - margin.cy - button.cy;
     PlaceInformationControl(window, ID_INFO_CLOSE, client.right - margin.cx - button.cx, buttonY, button.cx, button.cy);
     PlaceInformationControl(window, ID_INFO_TEXT, margin.cx, textTop,
@@ -14455,6 +14479,9 @@ static void LayoutInformationWindow(HWND window) {
         int height = GetSystemMetrics(SM_CYHSCROLL);
         UINT flags = SWP_NOACTIVATE | (IsZoomed(window) ? SWP_HIDEWINDOW : SWP_SHOWWINDOW);
         SetWindowPos(grip, HWND_BOTTOM, client.right - width, client.bottom - height, width, height, flags);
+    }
+    if (window == hAbout && resize) {
+        FitAboutWindowToWorkArea(window);
     }
 }
 
@@ -14476,7 +14503,7 @@ static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM 
         return TRUE;
     }
     if (message == WM_SIZE) {
-        LayoutInformationWindow(window);
+        LayoutInformationWindow(window, false);
         return TRUE;
     }
     if (message == WM_DRAWITEM && wParam == ID_INFO_PRODUCT) {
@@ -14504,6 +14531,10 @@ static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM 
         SIZE size = InformationDialogUnits(window, 180, 110);
         MINMAXINFO* information = reinterpret_cast<MINMAXINFO*>(lParam);
         information->ptMinTrackSize = POINT{ size.cx, size.cy };
+        return TRUE;
+    }
+    if (message == WM_DISPLAYCHANGE && window == hAbout) {
+        LayoutInformationWindow(window);
         return TRUE;
     }
     if (message == WM_THEMECHANGED || message == WM_SETTINGCHANGE) {
