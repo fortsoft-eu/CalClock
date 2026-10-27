@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.5
+ * Last modified for version 1.6.1.6
  */
 
 #define NOMINMAX
@@ -505,6 +505,7 @@ static bool monitorSortAscending = true;
 static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
 static bool settingsComboAccepted = false;
+static bool settingsGeneralCheckboxReferenceValid = false;
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 bool ntpHasSynchronized = false;
@@ -575,6 +576,9 @@ std::wstring settingsAppFontFace;
 
 /// NTP synchronization history for the current process
 std::vector<NtpQueryLogEntry> ntpSynchronizationLog;
+
+/// General checkbox offsets from label baselines, captured from RC in half pixels.
+static LONG settingsGeneralCheckboxBaselineDistances[3] = {};
 
 /// Widgets
 std::vector<std::unique_ptr<Widget>> widgets;
@@ -3707,6 +3711,46 @@ static void OffsetSettingsControl(HWND control, LONG distance) {
         SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
 }
 
+/// Reads a native checkbox glyph rectangle in screen pixels using its current theme or classic system metrics.
+static bool GetSettingsCheckboxGlyphBounds(HWND control, RECT* bounds) {
+    WINDOWINFO information = { sizeof(information) };
+    if (!GetWindowInfo(control, &information)) {
+        return false;
+    }
+    SIZE glyph = { GetSystemMetrics(SM_CXMENUCHECK), GetSystemMetrics(SM_CYMENUCHECK) };
+    HTHEME theme = GetWindowTheme(control);
+    if (theme != nullptr) {
+        SIZE themed = {};
+        if (SUCCEEDED(GetThemePartSize(theme, nullptr, BP_CHECKBOX, CBS_UNCHECKEDNORMAL, nullptr, TS_TRUE, &themed))) {
+            glyph = themed;
+        }
+    }
+    *bounds = information.rcClient;
+    bounds->right = bounds->left + glyph.cx;
+    bounds->top += (bounds->bottom - bounds->top - glyph.cy) / 2;
+    bounds->bottom = bounds->top + glyph.cy;
+    return true;
+}
+
+/// Centers the first two General checkbox rows by their native glyphs in the free space between adjacent combos.
+/// Preserves their authored row spacing, dimensions, horizontal positions, and shared text baselines.
+static void CenterSettingsGeneralCheckboxes() {
+    RECT upper = {};
+    RECT lower = {};
+    RECT first = {};
+    RECT last = {};
+    if (!GetWindowRect(hTypeCombo, &upper) || !GetWindowRect(hTimeZoneCombo, &lower)
+            || !GetSettingsCheckboxGlyphBounds(hVisibleCheck, &first)
+            || !GetSettingsCheckboxGlyphBounds(hUtcCheck, &last)) {
+        return;
+    }
+    LONG offset = (upper.bottom + lower.top - first.top - last.bottom) / 2;
+    const HWND controls[] = { hVisibleCheck, hTopmostCheck, hSecondsCheck, hUtcCheck, hUtcTextCheck, hSoundsMutedCheck };
+    for (HWND control : controls) {
+        OffsetSettingsControl(control, offset);
+    }
+}
+
 /// Measures a label or checkbox text baseline in screen pixels using its current font and native text placement.
 /// Accounts for the custom NTP caption glyph ascent and returns false if the window or font metrics cannot be read.
 static bool GetSettingsLabelBaseline(HWND label, LONG* baseline) {
@@ -3743,6 +3787,25 @@ static bool GetSettingsLabelBaseline(HWND label, LONG* baseline) {
     }
     *baseline = top + ascent;
     return true;
+}
+
+/// Measures twice the checkbox glyph-center distance from an adjacent static's actual text baseline.
+static bool GetSettingsCheckboxBaselineDistance(HWND checkbox, HWND label, LONG* distance) {
+    RECT glyph = {};
+    LONG baseline = 0;
+    if (!GetSettingsCheckboxGlyphBounds(checkbox, &glyph) || !GetSettingsLabelBaseline(label, &baseline)) {
+        return false;
+    }
+    *distance = glyph.top + glyph.bottom - 2 * baseline;
+    return true;
+}
+
+/// Preserves the glyph-to-baseline offset captured from RC while accounting for font and theme changes.
+static void AlignSettingsCheckboxToBaseline(HWND checkbox, HWND label, LONG referenceDistance) {
+    LONG distance = 0;
+    if (GetSettingsCheckboxBaselineDistance(checkbox, label, &distance)) {
+        OffsetSettingsControl(checkbox, (referenceDistance - distance) / 2);
+    }
 }
 
 /// Anchors the monitor caption above its fixed listview and positions the NTP and command fields below their captions.
@@ -4194,6 +4257,15 @@ static void AlignSettingsControls() {
         }
     }
     EnumChildWindows(hSettings, AlignSettingsFieldLabel, 0);
+    CenterSettingsGeneralCheckboxes();
+    if (settingsGeneralCheckboxReferenceValid) {
+        AlignSettingsCheckboxToBaseline(hPanelTimeNoticesCheck, hTimeFormatLabel,
+            settingsGeneralCheckboxBaselineDistances[0]);
+        for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
+            AlignSettingsCheckboxToBaseline(hAdditionalEnabledChecks[index], hAdditionalNameLabels[index],
+                settingsGeneralCheckboxBaselineDistances[index + 1]);
+        }
+    }
     for (HWND combo : hAdditionalSizeCombos) {
         AlignSettingsControl(combo, hSizeLabel);
     }
@@ -13050,6 +13122,7 @@ static void BrowseForCommand() {
 /// fonts, and themes. Returns false when a required control or its text-selection handler could not be created.
 static bool CreateSettingsControls() {
     WindowRedrawScope redraw(hSettings);
+    settingsGeneralCheckboxReferenceValid = false;
     bool previousUpdating = updatingSettingsControls;
     updatingSettingsControls = true;
     generalControls.clear();
@@ -13432,6 +13505,13 @@ static bool CreateSettingsControls() {
         UpdateSettingsTextControlLayout(GetSettingsPage(tabIndex));
     }
     InitializeSettingsScrollBars();
+    settingsGeneralCheckboxReferenceValid =
+        GetSettingsCheckboxBaselineDistance(hPanelTimeNoticesCheck, hTimeFormatLabel,
+            &settingsGeneralCheckboxBaselineDistances[0])
+        && GetSettingsCheckboxBaselineDistance(hAdditionalEnabledChecks[0], hAdditionalNameLabels[0],
+            &settingsGeneralCheckboxBaselineDistances[1])
+        && GetSettingsCheckboxBaselineDistance(hAdditionalEnabledChecks[1], hAdditionalNameLabels[1],
+            &settingsGeneralCheckboxBaselineDistances[2]);
     ApplyUiStyle(hSettings);
     updatingSettingsControls = previousUpdating;
     return true;
