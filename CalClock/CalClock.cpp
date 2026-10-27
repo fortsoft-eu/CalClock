@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.4
+ * Last modified for version 1.6.1.5
  */
 
 #define NOMINMAX
@@ -254,9 +254,11 @@ const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
 const UINT_PTR SETTINGS_CONTROL_SUBCLASS_ID = 0xCC05;
 const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
 const UINT_PTR SETTINGS_REPORT_HEADER_SUBCLASS_ID = 0xCC07;
+const UINT_PTR SETTINGS_LIST_BORDER_SUBCLASS_ID = 0xCC08;
 
 /// Layout, appearance and alarm constants
 const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
+const int MAX_DIALOG_BUTTON_HEIGHT = 28;
 const int ABOUT_ICON_SIZE = 32;
 const int ABOUT_LARGE_ICON_SIZE = 48;
 const int ABOUT_LARGE_ICON_DPI = 130;
@@ -778,7 +780,12 @@ static RECT GetSettingsResourceRect(HWND parent, int id);
 static int SettingsDialogHeight(int value);
 static int SettingsDialogWidth(int value);
 static bool GetDialogFontBaseUnits(HFONT font, SIZE* units);
+static int DialogHeightFromUnits(int value, int baseUnit);
+static void LimitDialogVerticalUnits(HWND window, int resourceId = 0);
+static LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu = 12);
+static void FitSettingsButtonWidth(HWND button, bool alignRight);
 static void UpdateSettingsActionButtonWidths();
+static void UpdateSettingsWindowLayout();
 static bool PositionInformationWindowByWindowsDefault(HWND window);
 
 /// Tests whether a handle matches one of the settings page handles.
@@ -829,9 +836,9 @@ static void SelectCalendarToday(Widget* widget, bool preserveView = false);
 /// Returns independently advancing NTP UTC when synchronized, otherwise the current system UTC.
 static void GetApplicationUtcTime(SYSTEMTIME* utc);
 
-/// Returns a borrowed common UI string in the current application language.
+/// Returns a borrowed localized UI string in the current application language.
 static const wchar_t* T(TextId id) {
-    return TEXT[appLanguage][id];
+    return GetLocalizedText(appLanguage, id);
 }
 
 /// Reports whether a widget type supports alarms and time signals; standalone calendars do not.
@@ -872,8 +879,7 @@ static void SelectFontAntialiasing(HWND combo, int mode) {
 static void PopulateFontAntialiasingCombo(HWND combo) {
     const FontAntialiasing modes[] = { FONT_ANTIALIAS_CLEARTYPE, FONT_ANTIALIAS_GDI, FONT_ANTIALIAS_NONE };
     for (FontAntialiasing mode : modes) {
-        LRESULT index = SendMessageW(combo, CB_ADDSTRING, 0,
-            reinterpret_cast<LPARAM>(ANTIALIASING_NAMES[appLanguage][mode]));
+        LRESULT index = SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(ANTIALIASING_TEXT_IDS[mode])));
         SendMessageW(combo, CB_SETITEMDATA, index, mode);
     }
 }
@@ -881,22 +887,20 @@ static void PopulateFontAntialiasingCombo(HWND combo) {
 /// Adds supported language names in their defined display order.
 static void PopulateLanguageCombo(HWND combo) {
     for (int language = 0; language < LANG_COUNT; language++) {
-        SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(LANGUAGE_NAMES[language]));
+        const wchar_t* name = GetLocalizedText(static_cast<AppLanguage>(language), TXT_LANGUAGE_NAME);
+        SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(name));
     }
 }
 
 /// Returns a borrowed widget-type name in the application language.
 static const wchar_t* TypeName(WidgetType type) {
-    if (type == WIDGET_FULLSCREEN) {
-        return FULLSCREEN_WIDGET_NAMES[appLanguage];
-    }
-    return T(static_cast<TextId>(TXT_ANALOG + static_cast<int>(type)));
+    return T(WIDGET_TYPE_TEXT_IDS[type]);
 }
 
-/// Returns a borrowed common string in the widget's language, or the application language for a null widget.
+/// Returns a borrowed localized string in the widget's language, or the application language for a null widget.
 static const wchar_t* WT(const Widget* widget, TextId id) {
     AppLanguage language = widget == nullptr ? appLanguage : widget->config.language;
-    return TEXT[language][id];
+    return GetLocalizedText(language, id);
 }
 
 /// Normalizes a character to uppercase for comparing assigned keyboard mnemonics.
@@ -965,11 +969,11 @@ static void AppendMenuCommand(HMENU menu, UINT flags, UINT_PTR command, const wc
 
 /// Appends localized Settings, Help, About, and Exit commands with distinct menu mnemonics.
 static void AppendApplicationMenuCommands(HMENU menu, AppLanguage language, std::vector<wchar_t>* usedMnemonics) {
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_SETTINGS, TEXT[language][TXT_SETTINGS], usedMnemonics);
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_HELP, TEXT[language][TXT_HELP], usedMnemonics);
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_ABOUT, TEXT[language][TXT_ABOUT], usedMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_SETTINGS, GetLocalizedText(language, TXT_SETTINGS), usedMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_HELP, GetLocalizedText(language, TXT_HELP), usedMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_ABOUT, GetLocalizedText(language, TXT_ABOUT), usedMnemonics);
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
-    AppendMenuCommand(menu, MF_STRING, ID_MENU_EXIT, TEXT[language][TXT_EXIT], usedMnemonics);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_EXIT, GetLocalizedText(language, TXT_EXIT), usedMnemonics);
 }
 
 /// Supplies the active calendar locale to common controls, otherwise forwarding to the original locale query.
@@ -2097,7 +2101,7 @@ static std::vector<TimeDateNotice> GetPanelTimeNotices(const WidgetConfig& confi
             }
         }
     }
-    return GetTimeDateNotices(selected, utc, LANGUAGE_LOCALES[config.language], autoAdjustment, calendarDateSupported,
+    return GetTimeDateNotices(selected, utc, GetLanguageLocale(config.language), autoAdjustment, calendarDateSupported,
         recognized);
 }
 
@@ -2164,7 +2168,7 @@ static std::wstring GetWeekdayAbbreviation(AppLanguage language, int mondayBased
     date.wMonth = 1;
     date.wDay = static_cast<WORD>(1 + std::clamp(mondayBasedDay, 0, ALARM_DAY_COUNT - 1));
     wchar_t text[32] = {};
-    if (GetDateFormatEx(LANGUAGE_LOCALES[language], 0, &date, L"ddd", text, ARRAYSIZE(text), nullptr) > 0) {
+    if (GetDateFormatEx(GetLanguageLocale(language), 0, &date, L"ddd", text, ARRAYSIZE(text), nullptr) > 0) {
         return text;
     }
     static const wchar_t* fallback[ALARM_DAY_COUNT] = { L"Mon", L"Tue", L"Wed", L"Thu", L"Fri", L"Sat", L"Sun" };
@@ -2174,7 +2178,7 @@ static std::wstring GetWeekdayAbbreviation(AppLanguage language, int mondayBased
 /// Returns the locale's first weekday as a Monday-based index, defaulting to Monday.
 static int GetCultureFirstAlarmDay(AppLanguage language) {
     wchar_t firstDayText[4] = {};
-    if (GetLocaleInfoEx(LANGUAGE_LOCALES[language], LOCALE_IFIRSTDAYOFWEEK, firstDayText, ARRAYSIZE(firstDayText)) > 0) {
+    if (GetLocaleInfoEx(GetLanguageLocale(language), LOCALE_IFIRSTDAYOFWEEK, firstDayText, ARRAYSIZE(firstDayText)) > 0) {
         int firstDay = _wtoi(firstDayText);
         if (firstDay >= 0 && firstDay < ALARM_DAY_COUNT) {
             return firstDay;
@@ -2187,7 +2191,7 @@ static int GetCultureFirstAlarmDay(AppLanguage language) {
 static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
     wchar_t time[16] = {};
     swprintf_s(time, L"%02d:%02d", config.alarmHour, config.alarmMinute);
-    std::wstring label = TEXT[config.language][TXT_ALARM];
+    std::wstring label = GetLocalizedText(config.language, TXT_ALARM);
     label += L" (";
     label += time;
     label += L")";
@@ -2218,14 +2222,14 @@ static std::wstring AlarmMenuLabel(const WidgetConfig& config) {
 /// Builds a localized signal menu caption with the retained interval, whether enabled or disabled.
 /// Lowercases the interval's initial using the widget locale while preserving capitalization within the phrase.
 static std::wstring TimeSignalMenuLabel(const WidgetConfig& config) {
-    std::wstring interval = TIME_SIGNAL_MODE_LABELS[config.language][config.timeSignal];
+    std::wstring interval = GetLocalizedText(config.language, TIME_SIGNAL_TEXT_IDS[config.timeSignal]);
     wchar_t initial = 0;
-    bool initialMapped = LCMapStringEx(LANGUAGE_LOCALES[config.language], LCMAP_LOWERCASE | LCMAP_LINGUISTIC_CASING,
+    bool initialMapped = LCMapStringEx(GetLanguageLocale(config.language), LCMAP_LOWERCASE | LCMAP_LINGUISTIC_CASING,
         interval.c_str(), 1, &initial, 1, nullptr, nullptr, 0) == 1;
     if (initialMapped) {
         interval[0] = initial;
     }
-    std::wstring label = TIME_SIGNAL_MENU_LABELS[config.language];
+    std::wstring label = GetLocalizedText(config.language, TXT_TIME_SIGNAL_MENU_LABEL);
     label += L" (";
     label += interval;
     label += L")";
@@ -2443,7 +2447,7 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless) {
     if (!showToday) {
         style |= MCS_NOTODAY;
     }
-    CalendarLocaleScope localeScope(LANGUAGE_LOCALES[config.language]);
+    CalendarLocaleScope localeScope(GetLanguageLocale(config.language));
     HWND calendar = CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, 0, 0, 0, 0, nullptr, nullptr, hInstance, nullptr);
     if (calendar != nullptr) {
         const wchar_t* themeName = disabledThemes ? L"" : nullptr;
@@ -2552,7 +2556,9 @@ static SIZE MeasureClockTime(HDC dc, const WidgetConfig& config, SYSTEMTIME time
 
 /// Formats the localized name or visibility caption for a zero-based additional-clock index.
 static std::wstring AdditionalClockLabel(AppLanguage language, int index, bool show) {
-    const wchar_t* format = show ? ADDITIONAL_CLOCK_SHOW_FORMATS[language] : ADDITIONAL_CLOCK_NAME_FORMATS[language];
+    const wchar_t* format = show
+        ? GetLocalizedText(language, TXT_ADDITIONAL_CLOCK_SHOW_FORMAT)
+        : GetLocalizedText(language, TXT_ADDITIONAL_CLOCK_NAME_FORMAT);
     wchar_t text[128] = {};
     swprintf_s(text, format, index + 1);
     return text;
@@ -2621,9 +2627,9 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config, const std::v
     GetDisplayedTime(config, &displayed, applicationUtc);
     wchar_t dateText[256] = {};
     wchar_t dayText[128] = {};
-    int dateLength = GetDateFormatEx(LANGUAGE_LOCALES[config.language], DATE_LONGDATE, &displayed, nullptr, dateText,
+    int dateLength = GetDateFormatEx(GetLanguageLocale(config.language), DATE_LONGDATE, &displayed, nullptr, dateText,
         ARRAYSIZE(dateText), nullptr);
-    int dayLength = GetDateFormatEx(LANGUAGE_LOCALES[config.language], 0, &displayed, L"dddd", dayText,
+    int dayLength = GetDateFormatEx(GetLanguageLocale(config.language), 0, &displayed, L"dddd", dayText,
         ARRAYSIZE(dayText), nullptr);
     bool mainDay = additional || dateLength > 0 && dayLength > 0 && wcsstr(dateText, dayText) == nullptr;
     HDC dc = GetDC(nullptr);
@@ -2650,7 +2656,7 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config, const std::v
             for (int day = 1; day <= 7; day++) {
                 date.wDay = static_cast<WORD>(day);
                 wchar_t text[128] = {};
-                GetDateFormatEx(LANGUAGE_LOCALES[config.language], 0, &date, L"dddd", text, ARRAYSIZE(text), nullptr);
+                GetDateFormatEx(GetLanguageLocale(config.language), 0, &date, L"dddd", text, ARRAYSIZE(text), nullptr);
                 SIZE extent = {};
                 GetTextExtentPoint32W(dc, text, static_cast<int>(wcslen(text)), &extent);
                 weekdayWidth = std::max(weekdayWidth, static_cast<int>(extent.cx));
@@ -3048,7 +3054,7 @@ static HFONT CreateCalendarUiFont(const WidgetConfig& config) {
 static void UpdateApplicationFontButtons() {
     if (hAppFontButton != nullptr) {
         std::wstring caption = settingsAppFontFace.empty()
-            ? SYSTEM_DEFAULT_FONT_LABELS[appLanguage]
+            ? T(TXT_SYSTEM_DEFAULT_FONT_LABEL)
             : settingsAppFontFace;
         caption += L"…";
         SetWindowTextW(hAppFontButton, caption.c_str());
@@ -3330,9 +3336,9 @@ static int SettingsDialogWidth(int value) {
 
 /// Maps a vertical dialog-unit distance using the native settings resource font.
 static int SettingsDialogHeight(int value) {
-    RECT bounds = { 0, 0, 0, value };
-    MapDialogRect(hSettings, &bounds);
-    return bounds.bottom;
+    RECT units = { 0, 0, 0, 8 };
+    MapDialogRect(hSettings, &units);
+    return DialogHeightFromUnits(value, units.bottom);
 }
 
 /// Reads the selected control font's native metrics in its current device context without substituting a font.
@@ -3562,6 +3568,50 @@ static LRESULT CALLBACK SettingsColorPreviewSubclassProc(HWND window, UINT msg, 
     return result;
 }
 
+/// Recolors the outer one-pixel native list border with the current Edit theme border color after nonclient painting.
+/// Retains native painting when visual styles or theme metrics are unavailable and removes the subclass on destruction.
+static LRESULT CALLBACK SettingsListBorderSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
+    UNREFERENCED_PARAMETER(referenceData);
+    if (message == WM_NCDESTROY) {
+        RemoveWindowSubclass(window, SettingsListBorderSubclassProc, subclassId);
+    }
+    LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+    if (message != WM_NCPAINT || themesDisabled || !AreVisualStylesActive()) {
+        return result;
+    }
+    HTHEME theme = OpenThemeData(nullptr, L"Edit");
+    if (theme == nullptr) {
+        return result;
+    }
+    COLORREF borderColor = 0;
+    HRESULT colorResult = GetThemeColor(theme, EP_EDITBORDER_NOSCROLL, EPSN_NORMAL, TMT_BORDERCOLOR, &borderColor);
+    CloseThemeData(theme);
+    WINDOWINFO information = { sizeof(information) };
+    if (FAILED(colorResult) || !GetWindowInfo(window, &information)) {
+        return result;
+    }
+    HDC dc = GetWindowDC(window);
+    if (dc == nullptr) {
+        return result;
+    }
+    HBRUSH brush = CreateSolidBrush(borderColor);
+    if (brush != nullptr) {
+        RECT border = {
+            0,
+            0,
+            information.rcWindow.right - information.rcWindow.left,
+            information.rcWindow.bottom - information.rcWindow.top
+        };
+        FrameRect(dc, &border, brush);
+    }
+    if (brush != nullptr) {
+        DeleteObject(brush);
+    }
+    ReleaseDC(window, dc);
+    return result;
+}
+
 /// Recalculates settings tabs, list rows, labels, combos, and edits without restricting descriptive notes.
 static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM) {
     HWND edit = SettingsEdit::GetEdit(control);
@@ -3584,6 +3634,20 @@ static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM) {
         UpdateSettingsComboMetrics(control);
     } else if (_wcsicmp(className, L"EDIT") == 0 && (GetWindowLongPtrW(control, GWL_STYLE) & ES_MULTILINE) == 0) {
         UpdateEditMetrics(control);
+    } else if (_wcsicmp(className, L"BUTTON") == 0) {
+        LONG_PTR type = GetWindowLongPtrW(control, GWL_STYLE) & BS_TYPEMASK;
+        if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
+            HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
+            SIZE units = {};
+            RECT bounds = {};
+            if (GetDialogFontBaseUnits(font, &units) && GetWindowRect(control, &bounds)) {
+                LONG height = DialogHeightFromUnits(DIALOG_BUTTON_HEIGHT_DLU, units.cy);
+                if (bounds.bottom - bounds.top != height) {
+                    SetWindowPos(control, nullptr, 0, 0, bounds.right - bounds.left, height,
+                        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+                }
+            }
+        }
     } else if (GetPropW(control, SETTINGS_FIELD_LABEL_PROPERTY) != nullptr) {
         RECT bounds = {};
         TEXTMETRICW metrics = {};
@@ -3643,6 +3707,66 @@ static void OffsetSettingsControl(HWND control, LONG distance) {
         SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
 }
 
+/// Measures a label or checkbox text baseline in screen pixels using its current font and native text placement.
+/// Accounts for the custom NTP caption glyph ascent and returns false if the window or font metrics cannot be read.
+static bool GetSettingsLabelBaseline(HWND label, LONG* baseline) {
+    WINDOWINFO information = { sizeof(information) };
+    if (label == nullptr || !GetWindowInfo(label, &information)) {
+        return false;
+    }
+    HDC dc = GetDC(label);
+    if (dc == nullptr) {
+        return false;
+    }
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(label, WM_GETFONT, 0, 0));
+    HGDIOBJ previous = font == nullptr ? nullptr : SelectObject(dc, font);
+    TEXTMETRICW metrics = {};
+    bool measured = GetTextMetricsW(dc, &metrics) != FALSE;
+    LONG ascent = metrics.tmAscent;
+    if (measured && label == hNtpServersLabel) {
+        ascent = GetUiTextLine(dc, GetControlText(label)).ascent;
+    }
+    if (previous != nullptr && previous != HGDI_ERROR) {
+        SelectObject(dc, previous);
+    }
+    ReleaseDC(label, dc);
+    if (!measured) {
+        return false;
+    }
+    LONG top = information.rcClient.top;
+    wchar_t className[16] = {};
+    GetClassNameW(label, className, ARRAYSIZE(className));
+    if (_wcsicmp(className, L"BUTTON") == 0) {
+        top += GetSettingsButtonTextTop(label, information, metrics);
+    } else if ((GetWindowLongPtrW(label, GWL_STYLE) & SS_CENTERIMAGE) != 0) {
+        top += (information.rcClient.bottom - information.rcClient.top - metrics.tmHeight) / 2;
+    }
+    *baseline = top + ascent;
+    return true;
+}
+
+/// Anchors the monitor caption above its fixed listview and positions the NTP and command fields below their captions.
+/// Uses the baseline-to-field gaps authored in RC without moving the monitor listview.
+static void AlignSettingsFieldsBelowLabels() {
+    RECT spacing = GetSettingsResourceRect(hSettings, IDC_SETTINGS_LABEL_FIELD_GAP);
+    LONG gap = spacing.bottom - spacing.top;
+    RECT commandSpacing = GetSettingsResourceRect(hSettings, IDC_SETTINGS_COMMAND_FIELD_GAP);
+    LONG baseline = 0;
+    RECT bounds = {};
+    if (GetWindowRect(hMonitorList, &bounds) && GetSettingsLabelBaseline(hMonitorLabel, &baseline)) {
+        OffsetSettingsControl(hMonitorLabel, bounds.top - gap - baseline);
+    }
+    const HWND labels[] = { hNtpServersLabel, GetDlgItem(hAlarmPage, ID_RUN_COMMAND) };
+    const HWND fields[] = { hNtpServersEdit, hCommandEdit };
+    for (int index = 0; index < ARRAYSIZE(fields); index++) {
+        if (GetWindowRect(SettingsEdit::GetFrame(fields[index]), &bounds)
+                && GetSettingsLabelBaseline(labels[index], &baseline)) {
+            LONG fieldGap = index == 0 ? gap : commandSpacing.bottom - commandSpacing.top;
+            OffsetSettingsControl(fields[index], baseline + fieldGap - bounds.top);
+        }
+    }
+}
+
 /// Measures the native vertical adjustment needed to align a control with adjacent text without moving it.
 static LONG GetSettingsControlBaselineAdjustment(HWND control, HWND reference, LONG baselineDistance) {
     WINDOWINFO controlInfo = {};
@@ -3663,6 +3787,10 @@ static LONG GetSettingsControlBaselineAdjustment(HWND control, HWND reference, L
     HGDIOBJ previousFont = font == nullptr ? nullptr : SelectObject(dc, font);
     TEXTMETRICW metrics = {};
     bool measured = GetTextMetricsW(dc, &metrics) != FALSE;
+    LONG baselineOffset = 0;
+    if (measured && control == hNtpServersLabel) {
+        baselineOffset = GetUiTextLine(dc, GetControlText(control)).ascent - metrics.tmAscent;
+    }
     if (previousFont != nullptr && previousFont != HGDI_ERROR) {
         SelectObject(dc, previousFont);
     }
@@ -3692,7 +3820,7 @@ static LONG GetSettingsControlBaselineAdjustment(HWND control, HWND reference, L
     }
     wchar_t controlClass[32] = {};
     GetClassNameW(control, controlClass, ARRAYSIZE(controlClass));
-    LONG controlTextTop = controlInfo.rcClient.top - controlInfo.rcWindow.top;
+    LONG controlTextTop = controlInfo.rcClient.top - controlInfo.rcWindow.top + baselineOffset;
     if (_wcsicmp(controlClass, WC_COMBOBOXW) == 0 || _wcsicmp(controlClass, WC_COMBOBOXEXW) == 0) {
         COMBOBOXINFO combo = {};
         combo.cbSize = sizeof(combo);
@@ -3799,9 +3927,8 @@ static void LayoutSettingsUniformAppearanceRows() {
         hWidgetAntialiasLabel,
         hBorderLabel,
         hLeadingZeroLabel,
-        hDateFormatLabel,
         hWeekNumbersCheck,
-        hWidgetDisableThemesCheck
+        hDateFormatLabel
     };
     const HWND digitalRows[] = {
         hOpacityLabel,
@@ -3814,8 +3941,7 @@ static void LayoutSettingsUniformAppearanceRows() {
         hPaddingLabel,
         hBorderWidthLabel,
         hLeadingZeroLabel,
-        hTransparentBackgroundCheck,
-        hWidgetDisableThemesCheck
+        hTransparentBackgroundCheck
     };
     const HWND* rows = digitalRows;
     int count = static_cast<int>(ARRAYSIZE(digitalRows));
@@ -3844,28 +3970,15 @@ static void LayoutSettingsCalendarAppearanceRows() {
             || settingsDraft[selectedDraftIndex].type != WIDGET_CALENDAR) {
         return;
     }
+    LONG spacing = SettingsDialogHeight(15);
+    AlignSettingsControl(hFontLabel, hOpacityLabel, 2 * spacing);
     AlignSettingsControl(hFontButton, hFontLabel);
-    RECT first = {};
-    if (!GetWindowRect(hFontButton, &first)) {
-        return;
-    }
-    LONG height = first.bottom - first.top;
-    LONG spacing = height + SettingsDialogHeight(2);
-    RECT antialias = {};
-    if (GetWindowRect(hWidgetAntialiasCombo, &antialias)) {
-        LONG top = first.top + spacing + (height - (antialias.bottom - antialias.top)) / 2;
-        OffsetSettingsControl(hWidgetAntialiasCombo, top - antialias.top);
-    }
-    RECT panelShift = GetSettingsResourceRect(hAppearancePage, IDC_LAYOUT_PANEL_LOWER_SHIFT);
-    LONG footerOffset = (panelShift.bottom - panelShift.top) / 5
-        + (panelShift.bottom - panelShift.top) / 20 + SettingsDialogHeight(1);
-    RECT border = {};
-    if (GetWindowRect(hBorderColorButton, &border)) {
-        OffsetSettingsControl(hBorderColorButton, first.top + 2 * spacing - border.top);
-    }
-    AlignSettingsSundayFirst(hWidgetDisableThemesCheck, -spacing + SettingsDialogHeight(1) - footerOffset);
-    AlignSettingsControl(hWeekNumbersCheck, hSundayFirstCheck, -spacing + SettingsDialogHeight(1));
-    AlignSettingsControl(hShowTodayCheck, hWeekNumbersCheck, -spacing + SettingsDialogHeight(1));
+    AlignSettingsControl(hWidgetAntialiasCombo, hFontLabel, spacing);
+    AlignSettingsControl(hBorderColorButton, hWidgetAntialiasCombo, spacing);
+    AlignSettingsControl(hShowTodayCheck, hBorderColorButton, 3 * spacing);
+    AlignSettingsControl(hWeekNumbersCheck, hShowTodayCheck, spacing);
+    AlignSettingsSundayFirst(hWeekNumbersCheck, spacing);
+    AlignSettingsControl(hDateFormatLabel, hSundayFirstCheck, spacing);
 }
 
 /// Anchors text-widget border rows to their font-based button positions and detail rows to opacity/font-size spacing.
@@ -3941,30 +4054,24 @@ static void UpdateSettingsWidgetListLayout() {
     SetControlPosition(hWidgetList, list.left, list.top, list.right - list.left, std::max(1L, list.bottom - list.top));
 }
 
-/// Anchors lower settings buttons and the tab control to the resource content bottom without DPI-rounding drift.
+/// Aligns left actions with the tab bottom and places the five bottom actions two dialog units below it.
 static void LayoutSettingsWindowControls() {
-    RECT content = GetSettingsResourceRect(hSettings, IDC_SETTINGS_CONTENT);
+    RECT tabs = GetSettingsResourceRect(hSettings, ID_TABS);
     RECT gap = GetSettingsResourceRect(hSettings, IDC_SETTINGS_FOOTER_GAP);
-    RECT rowStep = GetSettingsResourceRect(hSettings, IDC_SETTINGS_BUTTON_ROW_STEP);
-    RECT save = GetSettingsResourceRect(hSettings, ID_SAVE);
-    int footerTop = content.bottom - (gap.bottom - gap.top) - (save.bottom - save.top);
-    int rowTop = footerTop - (rowStep.bottom - rowStep.top);
-    const int footerIds[] = { ID_IMPORT_SETTINGS, ID_EXPORT_SETTINGS, ID_SAVE, ID_CANCEL, ID_APPLY };
+    int footerTop = tabs.bottom + gap.bottom - gap.top;
     const int rowIds[] = { ID_REMOVE, ID_DUPLICATE };
+    const int footerIds[] = { ID_IMPORT_SETTINGS, ID_EXPORT_SETTINGS, ID_SAVE, ID_CANCEL, ID_APPLY };
+    for (int id : rowIds) {
+        RECT bounds = GetSettingsResourceRect(hSettings, id);
+        int height = bounds.bottom - bounds.top;
+        SetControlPosition(GetDlgItem(hSettings, id), bounds.left, tabs.bottom - height, bounds.right - bounds.left,
+            height);
+    }
     for (int id : footerIds) {
         RECT bounds = GetSettingsResourceRect(hSettings, id);
         SetControlPosition(GetDlgItem(hSettings, id), bounds.left, footerTop, bounds.right - bounds.left,
             bounds.bottom - bounds.top);
     }
-    for (int id : rowIds) {
-        RECT bounds = GetSettingsResourceRect(hSettings, id);
-        SetControlPosition(GetDlgItem(hSettings, id), bounds.left, rowTop, bounds.right - bounds.left,
-            bounds.bottom - bounds.top);
-    }
-    RECT tabs = GetSettingsResourceRect(hSettings, ID_TABS);
-    RECT remove = GetSettingsResourceRect(hSettings, ID_REMOVE);
-    SetControlPosition(hTabs, tabs.left, tabs.top, tabs.right - tabs.left, remove.bottom - tabs.top);
-    UpdateSettingsTabLayout();
 }
 
 /// Maps the rational dialog-unit span authored in RC to one pixel step and preserves control sizes.
@@ -3975,6 +4082,10 @@ static void SpaceSettingsControls(HWND parent, int stepId, int divisor, bool hor
     MapDialogRect(hSettings, &units);
     int unitPixels = horizontal ? units.right : units.bottom;
     int unitDivisor = horizontal ? 4 : 8;
+    if (!horizontal && unitPixels * DIALOG_BUTTON_HEIGHT_DLU > MAX_DIALOG_BUTTON_HEIGHT * 8) {
+        unitPixels = MAX_DIALOG_BUTTON_HEIGHT;
+        unitDivisor = DIALOG_BUTTON_HEIGHT_DLU;
+    }
     int mappedSpan = horizontal ? spacing.right - spacing.left : spacing.bottom - spacing.top;
     int dialogSpan = MulDiv(mappedSpan, unitDivisor, unitPixels);
     int step = MulDiv(dialogSpan, unitPixels, unitDivisor * divisor);
@@ -4000,24 +4111,14 @@ static void SpaceSettingsControls(HWND parent, int stepId, int divisor, bool hor
 
 /// Preserves shared row and column strides before native font-baseline alignment across every settings page.
 static void LayoutSettingsControlGrids() {
-    const HWND names[] = {
-        GetDlgItem(hGeneralPage, IDC_NAME_LABEL), GetDlgItem(hGeneralPage, IDC_TYPE_LABEL)
-    };
-    const HWND generalRows[] = {
-        hTimeZoneLabel,
-        GetDlgItem(hGeneralPage, IDC_OFFSET_LABEL),
-        GetDlgItem(hGeneralPage, IDC_WIDGET_LANGUAGE_LABEL),
-        hTimeFormatLabel
-    };
-    const HWND firstAdditionalRows[] = { hAdditionalNameLabels[0], hAdditionalTimeZoneLabels[0] };
-    const HWND secondAdditionalRows[] = { hAdditionalNameLabels[1], hAdditionalTimeZoneLabels[1] };
     const HWND textRows[] = { hOpacityLabel, hFontSizeLabel, hFontLabel };
     const HWND sizeColumns[] = { hSizeCombo, hAdditionalSizeCombos[0], hAdditionalSizeCombos[1] };
     const HWND applicationRows[] = {
         hAppFontLabel,
         GetDlgItem(hApplicationPage, IDC_APP_ANTIALIAS_LABEL),
         GetDlgItem(hApplicationPage, IDC_APP_LANGUAGE_LABEL),
-        GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL)
+        GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL),
+        hTimeSignalVolumeLabel
     };
     const HWND applicationChecks[] = {
         hDisableThemesCheck,
@@ -4030,41 +4131,36 @@ static void LayoutSettingsControlGrids() {
     const HWND timeActions[] = { hNtpServersEdit, hNtpSyncButton, hNtpStatus };
     HWND days[ALARM_DAY_COUNT] = {};
     int firstDay = GetCultureFirstAlarmDay(appLanguage);
+    RECT applicationSpacing = GetSettingsResourceRect(hApplicationPage, IDC_GRID_ROW_APPLICATION);
+    LONG applicationStep = applicationSpacing.bottom - applicationSpacing.top;
     LayoutSettingsWindowControls();
     for (int index = 0; index < ALARM_DAY_COUNT; index++) {
         days[index] = hAlarmDayChecks[(firstDay + index) % ALARM_DAY_COUNT];
     }
-    SpaceSettingsControls(hGeneralPage, IDC_GRID_ROW_STANDARD, 1, false, names,
-        ARRAYSIZE(names));
-    SpaceSettingsControls(hGeneralPage, IDC_GRID_ROW_STANDARD, 1, false, generalRows,
-        ARRAYSIZE(generalRows));
-    SpaceSettingsControls(hGeneralPage, IDC_GRID_ROW_STANDARD, 1, false, firstAdditionalRows,
-        ARRAYSIZE(firstAdditionalRows));
-    SpaceSettingsControls(hGeneralPage, IDC_GRID_ROW_STANDARD, 1, false, secondAdditionalRows,
-        ARRAYSIZE(secondAdditionalRows));
-    SpaceSettingsControls(hAppearancePage, IDC_GRID_COLUMN_SIZE, 2, true, sizeColumns,
-        ARRAYSIZE(sizeColumns));
-    SpaceSettingsControls(hAlarmPage, IDC_GRID_COLUMN_WEEKDAY, 2, true, days,
-        ARRAYSIZE(days));
+    SpaceSettingsControls(hAppearancePage, IDC_GRID_COLUMN_SIZE, 2, true, sizeColumns, ARRAYSIZE(sizeColumns));
+    SpaceSettingsControls(hAlarmPage, IDC_GRID_COLUMN_WEEKDAY, 2, true, days, ARRAYSIZE(days));
     for (HWND day : days) {
         RECT bounds = GetSettingsResourceRect(hAlarmPage, GetDlgCtrlID(day));
         SetControlPosition(day, bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top);
     }
     SpaceSettingsControls(hTimeSignalPage, IDC_GRID_ROW_SIGNAL, 5, false, hTimeSignalIntervalRadios,
         ARRAYSIZE(hTimeSignalIntervalRadios));
-    SpaceSettingsControls(hApplicationPage, IDC_GRID_ROW_APPLICATION, 5, false, applicationRows,
-        ARRAYSIZE(applicationRows));
-    SpaceSettingsControls(hApplicationPage, IDC_GRID_ROW_APPLICATION, 5, false, applicationChecks,
-        ARRAYSIZE(applicationChecks));
-    SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_FIELDS, 5, false, timeFields,
-        ARRAYSIZE(timeFields));
-    SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_ACTIONS, 5, false, timeActions,
-        ARRAYSIZE(timeActions));
+    for (int index = 1; index < ARRAYSIZE(applicationRows); index++) {
+        AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
+    }
+    for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
+        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 2) * applicationStep);
+    }
+    SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_FIELDS, 5, false, timeFields, ARRAYSIZE(timeFields));
+    LONG timeFieldSpacing = GetSettingsControlBaselineAdjustment(timeFields[0], hNtpPresetLabel, 0);
+    AlignSettingsControl(hNtpServersLabel, hNtpPresetLabel, timeFieldSpacing);
+    AlignSettingsFieldsBelowLabels();
+    SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_ACTIONS, 5, false, timeActions, ARRAYSIZE(timeActions));
+    OffsetSettingsControl(hNtpStatus, SettingsDialogHeight(5));
     if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         WidgetType type = settingsDraft[selectedDraftIndex].type;
         if (type == WIDGET_CALENDAR) {
-            SpaceSettingsControls(hAppearancePage, IDC_GRID_ROW_APPEARANCE, 1, false, textRows,
-                ARRAYSIZE(textRows));
+            SpaceSettingsControls(hAppearancePage, IDC_GRID_ROW_APPEARANCE, 1, false, textRows, ARRAYSIZE(textRows));
         }
     }
 }
@@ -4073,9 +4169,30 @@ static void LayoutSettingsControlGrids() {
 static void AlignSettingsControls() {
     LayoutSettingsControlGrids();
     UpdateSettingsActionButtonWidths();
+    FitSettingsButtonWidth(hNtpSaveLogButton, true);
+    FitSettingsButtonWidth(hNtpSyncButton, false);
+    const HWND timeButtons[] = { hNtpSyncButton, hNtpSaveLogButton };
+    const HWND timeFields[] = { SettingsEdit::GetFrame(hNtpServersEdit), hNtpLogList };
+    for (int index = 0; index < ARRAYSIZE(timeButtons); index++) {
+        RECT field = {};
+        RECT button = {};
+        if (GetWindowRect(timeFields[index], &field) && GetWindowRect(timeButtons[index], &button)) {
+            LONG offset = field.bottom + SettingsDialogHeight(3) - button.top;
+            OffsetSettingsControl(timeButtons[index], offset);
+            if (index == 0) {
+                OffsetSettingsControl(hNtpStatus, offset);
+            }
+        }
+    }
     UpdateApplicationControlWidths();
     LayoutSettingsUniformAppearanceRows();
     LayoutSettingsCalendarAppearanceRows();
+    if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+        if (settingsDraft[selectedDraftIndex].type != WIDGET_ANALOG) {
+            HWND reference = settingsDraft[selectedDraftIndex].type == WIDGET_DIGITAL ? hOpacityLabel : hSizeLabel;
+            AlignSettingsControl(hWidgetDisableThemesCheck, reference, 11 * SettingsDialogHeight(15));
+        }
+    }
     EnumChildWindows(hSettings, AlignSettingsFieldLabel, 0);
     for (HWND combo : hAdditionalSizeCombos) {
         AlignSettingsControl(combo, hSizeLabel);
@@ -4092,7 +4209,8 @@ static void AlignSettingsControls() {
     AlignSettingsControl(hFontSizeValue, hFontSizeLabel);
     AlignSettingsVolumeControls(hAlarmVolumeLabel, hAlarmVolumeValue, hAlarmVolumeTrackBar);
     AlignSettingsVolumeControls(hTimeSignalVolumeLabel, hTimeSignalVolumeValue, hTimeSignalVolumeTrackBar);
-    AlignSettingsControl(hShowAmPmCheck, hTimeFormatCombo);
+    AlignSettingsControl(hShowAmPmCheck, hTimeFormatLabel);
+    AlignSettingsControl(hBlackoutMonitorsCheck, GetDlgItem(hGeneralPage, IDC_NAME_LABEL), 11 * SettingsDialogHeight(15));
     AlignSettingsControl(hDefaultAppearanceButton, hWidgetDisableThemesCheck);
     AlignSettingsAppearanceTrackBar(hOpacityTrackBar, hOpacityLabel);
     AlignSettingsAppearanceTrackBar(hFontSizeTrackBar, hFontSizeLabel);
@@ -4110,6 +4228,7 @@ static void UpdateSettingsControlMetrics() {
     monitorColumnsInitialized = false;
     InitializeNtpLogColumnWidths();
     InitializeMonitorColumnWidths();
+    UpdateSettingsWindowLayout();
 }
 
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and requests
@@ -4761,8 +4880,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     DWRITE_FONT_STYLE style = config.fontItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
     IDWriteTextFormat* format = nullptr;
     const wchar_t* fontFace = config.fontFace.empty() ? L"Arial" : config.fontFace.c_str();
-    result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL,
-        fontSize, LANGUAGE_LOCALES[config.language], &format);
+    result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize,
+        GetLanguageLocale(config.language), &format);
     if (FAILED(result) || format == nullptr) {
         target->Release();
         return false;
@@ -4786,8 +4905,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         fontSize = std::max(1.0f, fontSize * std::min(widthScale, heightScale));
         format->Release();
         format = nullptr;
-        result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL,
-            fontSize, LANGUAGE_LOCALES[config.language], &format);
+        result = dwriteFactory->CreateTextFormat(fontFace, nullptr, weight, style, DWRITE_FONT_STRETCH_NORMAL, fontSize,
+            GetLanguageLocale(config.language), &format);
         if (SUCCEEDED(result) && format != nullptr) {
             format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
             format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
@@ -4811,8 +4930,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
             clockMetrics.widthIncludingTrailingWhitespace, clockMetrics.height, &layout);
     }
     if (SUCCEEDED(result) && !footerText.empty()) {
-        result = dwriteFactory->CreateTextLayout(footerText.c_str(), static_cast<UINT32>(footerText.size()),
-            format, static_cast<float>(width), clockMetrics.height, &footerLayout);
+        result = dwriteFactory->CreateTextLayout(footerText.c_str(), static_cast<UINT32>(footerText.size()), format,
+            static_cast<float>(width), clockMetrics.height, &footerLayout);
         if (SUCCEEDED(result) && footerLayout != nullptr) {
             footerLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
             DWRITE_TEXT_RANGE footerRange = { 0, static_cast<UINT32>(footerText.size()) };
@@ -5055,8 +5174,8 @@ static void RenderCustomWidget(Widget* widget) {
     int inset = widget->config.padding + borderStyleInset + widget->config.borderWidth;
     RECT textRect = { inset, inset, width - inset, height - inset };
     HFONT font = CreateWidgetDrawingFont(widget->config);
-    DrawWidgetTimeText(dc, text, textRect, font, transparentDigital ? RGB(0, 0, 0) : textColor,
-        widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    DrawWidgetTimeText(dc, text, textRect, font, transparentDigital ? RGB(0, 0, 0) : textColor, widget->config,
+        DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     DeleteObject(font);
     if (transparentDigital && widget->config.borderStyle == DIGITAL_BORDER_SINGLE) {
         DrawBorderStyle(dc, width, height, DIGITAL_BORDER_TOOL_WINDOW, RGB(0, 0, 0));
@@ -5260,12 +5379,12 @@ static void UpdatePanelLinks(Widget* widget, const SYSTEMTIME& time) {
     }
     PanelLayout layout = CalculatePanelLayout(widget->config, &widget->panelNotices, widget->panelApplicationUtc);
     wchar_t dateText[128] = {};
-    GetDateFormatEx(LANGUAGE_LOCALES[widget->config.language], DATE_LONGDATE, &time, nullptr, dateText,
+    GetDateFormatEx(GetLanguageLocale(widget->config.language), DATE_LONGDATE, &time, nullptr, dateText,
         ARRAYSIZE(dateText), nullptr);
     UpdatePanelLinkButton(widget->panelDateLink, widget->panelDateFont, dateText, layout.header);
     std::wstring zoneName = widget->config.showUtc ? L"UTC" : widget->config.timeZoneKey;
     if (!widget->config.showUtc && _wcsicmp(widget->config.timeZoneKey.c_str(), SYSTEM_TIME_ZONE_KEY) == 0) {
-        zoneName = SYSTEM_TIME_ZONE_LABELS[widget->config.language];
+        zoneName = GetLocalizedText(widget->config.language, TXT_SYSTEM_TIME_ZONE_LABEL);
     } else if (!widget->config.showUtc) {
         for (size_t index = 0; index < timeZones.size(); index++) {
             if (_wcsicmp(timeZones[index].TimeZoneKeyName, widget->config.timeZoneKey.c_str()) == 0) {
@@ -5487,7 +5606,7 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
         if (!IsRectEmpty(&layout.days[index])) {
             GetDisplayedTime(clock, &time, widget->panelApplicationUtc);
             wchar_t day[128] = {};
-            GetDateFormatEx(LANGUAGE_LOCALES[clock.language], 0, &time, L"dddd", day, ARRAYSIZE(day), nullptr);
+            GetDateFormatEx(GetLanguageLocale(clock.language), 0, &time, L"dddd", day, ARRAYSIZE(day), nullptr);
             DrawCenteredText(dc, day, layout.days[index], timeFont, RGB(0, 0, 0));
         }
         if (index > 0) {
@@ -6367,7 +6486,7 @@ static void CreateCalendarChild(Widget* widget) {
     if (widget->config.type == WIDGET_PANEL || !widget->config.showToday) {
         style |= MCS_NOTODAY;
     }
-    CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
+    CalendarLocaleScope localeScope(GetLanguageLocale(widget->config.language));
     widget->calendarChild = CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, 0, 0, 0, 0, widget->window,
         reinterpret_cast<HMENU>(114), hInstance, nullptr);
     if (widget->calendarChild != nullptr) {
@@ -7257,14 +7376,15 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     HMENU menu = CreatePopupMenu();
     std::vector<wchar_t> menuMnemonics;
     AppendMenuCommand(menu, MF_STRING, ID_MENU_VISIBLE, widget->config.visible
-        ? HIDE_WIDGET_LABELS[widget->config.language]
-        : SHOW_WIDGET_LABELS[widget->config.language], &menuMnemonics);
+        ? GetLocalizedText(widget->config.language, TXT_HIDE_WIDGET_LABEL)
+        : GetLocalizedText(widget->config.language, TXT_SHOW_WIDGET_LABEL), &menuMnemonics);
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuCommand(menu, MF_STRING | (widget->config.topMost ? MF_CHECKED : 0), ID_MENU_TOPMOST,
             WT(widget, TXT_TOPMOST), &menuMnemonics);
     }
     if (widget->config.type == WIDGET_CALENDAR) {
-        AppendMenuCommand(menu, MF_STRING, ID_MENU_TODAY, PANEL_TODAY_TOOLTIP[widget->config.language], &menuMnemonics);
+        AppendMenuCommand(menu, MF_STRING, ID_MENU_TODAY,
+            GetLocalizedText(widget->config.language, TXT_PANEL_TODAY_TOOLTIP), &menuMnemonics);
     }
     if (widget->config.type != WIDGET_CALENDAR) {
         bool secondsAvailable = widget->config.type != WIDGET_ANALOG || AnalogClockSupportsSeconds(widget->config.size);
@@ -7293,14 +7413,14 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         if (widget->config.type == WIDGET_CALENDAR) {
             AppendMenuCommand(menu, MF_STRING | (widget->config.showToday ? MF_CHECKED : 0), ID_MENU_SHOW_TODAY,
-                SHOW_TODAY_LABELS[widget->config.language], &menuMnemonics);
+                GetLocalizedText(widget->config.language, TXT_SHOW_TODAY_LABEL), &menuMnemonics);
         }
         AppendMenuCommand(menu, MF_STRING | (widget->config.weekNumbers ? MF_CHECKED : 0), ID_MENU_WEEK_NUMBERS,
             WT(widget, TXT_WEEK_NUMBERS), &menuMnemonics);
         AppendMenuCommand(menu, MF_STRING | (widget->config.sundayFirst ? MF_CHECKED : 0), ID_MENU_SUNDAY_FIRST,
             WT(widget, TXT_SUNDAY_FIRST), &menuMnemonics);
         AppendMenuCommand(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(dateMenu),
-            DATE_COPY_LABELS[widget->config.language], &menuMnemonics);
+            GetLocalizedText(widget->config.language, TXT_DATE_COPY_LABEL), &menuMnemonics);
     }
     if (WidgetSupportsSound(widget->config.type)) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -7311,7 +7431,7 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
         AppendMenuCommand(menu, MF_STRING | (widget->config.timeSignalEnabled ? MF_CHECKED : 0),
             ID_MENU_TIME_SIGNAL_ENABLED, signalLabel.c_str(), &menuMnemonics);
         AppendMenuCommand(menu, MF_STRING | (widget->config.soundsMuted ? MF_CHECKED : 0), ID_MENU_MUTE,
-            MUTE_LABELS[widget->config.language], &menuMnemonics);
+            GetLocalizedText(widget->config.language, TXT_MUTE_LABEL), &menuMnemonics);
     }
     if (widget->config.type == WIDGET_ANALOG || widget->config.type == WIDGET_PANEL) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -7336,7 +7456,8 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
     if (widget->config.type != WIDGET_FULLSCREEN) {
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
         UINT arrangeFlags = WidgetArrangementMenuFlags(widget);
-        AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, ARRANGE_WIDGET_LABELS[widget->config.language],
+        AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS,
+            GetLocalizedText(widget->config.language, TXT_ARRANGE_WIDGET_LABEL),
             &menuMnemonics);
     }
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -7449,10 +7570,10 @@ static void ShowTrayContextMenu() {
     if (!hasSoundWidget) {
         muteFlags |= MF_GRAYED;
     }
-    AppendMenuCommand(menu, muteFlags, ID_MENU_MUTE, MUTE_ALL_LABELS[appLanguage], &menuMnemonics);
+    AppendMenuCommand(menu, muteFlags, ID_MENU_MUTE, T(TXT_MUTE_ALL_LABEL), &menuMnemonics);
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     UINT arrangeFlags = WidgetArrangementMenuFlags(nullptr);
-    AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, ARRANGE_WIDGET_LABELS[appLanguage], &menuMnemonics);
+    AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, T(TXT_ARRANGE_WIDGET_LABEL), &menuMnemonics);
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     AppendApplicationMenuCommands(menu, appLanguage, &menuMnemonics);
     POINT point = {};
@@ -7610,6 +7731,9 @@ static HWND BindSettingsControl(HWND parent, int id, const wchar_t* text,
         if (fieldLabel != nullptr) {
             SetPropW(fieldLabel, SETTINGS_FIELD_LABEL_PROPERTY, control);
         }
+        if (_wcsicmp(className, L"LISTBOX") == 0 || _wcsicmp(className, WC_LISTVIEWW) == 0) {
+            SetWindowSubclass(control, SettingsListBorderSubclassProc, SETTINGS_LIST_BORDER_SUBCLASS_ID, 0);
+        }
         UpdateSettingsFieldMetrics(control, 0);
     }
     if (group != nullptr) {
@@ -7640,9 +7764,8 @@ static HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text)
     if (parent == nullptr || control == nullptr || text == nullptr) {
         return nullptr;
     }
-    HWND tooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW,
-        nullptr, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT,
-        CW_USEDEFAULT, CW_USEDEFAULT, parent, nullptr, hInstance, nullptr);
+    HWND tooltip = CreateWindowExW(WS_EX_TOPMOST | WS_EX_NOACTIVATE, TOOLTIPS_CLASSW, nullptr, WS_POPUP | TTS_ALWAYSTIP
+        | TTS_NOPREFIX, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, parent, nullptr, hInstance, nullptr);
     if (tooltip == nullptr) {
         return nullptr;
     }
@@ -7660,13 +7783,10 @@ static HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text)
 }
 
 /// Calculates a nonresizable settings window that fits the work area and adds scrollbars when its content cannot fit.
-static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* width, int* height) {
+static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* width, int* height,
+        RECT* availableArea = nullptr) {
     DWORD baseStyle =
         static_cast<DWORD>(GetWindowLongPtrW(hSettings, GWL_STYLE)) & ~(WS_VISIBLE | WS_HSCROLL | WS_VSCROLL);
-    RECT content = {};
-    GetClientRect(hSettings, &content);
-    settingsContentWidth = content.right;
-    settingsContentHeight = content.bottom;
     RECT frame = {};
     AdjustWindowRectEx(&frame, baseStyle, FALSE, extendedStyle);
     int desiredWidth = settingsContentWidth + frame.right - frame.left;
@@ -7683,6 +7803,9 @@ static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* widt
     RECT workArea = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
     if (monitor != nullptr && GetMonitorInfoW(monitor, &information)) {
         workArea = information.rcWork;
+    }
+    if (availableArea != nullptr) {
+        *availableArea = workArea;
     }
     int workWidth = std::max(1, static_cast<int>(workArea.right - workArea.left));
     int workHeight = std::max(1, static_cast<int>(workArea.bottom - workArea.top));
@@ -7738,6 +7861,72 @@ static void InitializeSettingsScrollBars() {
         vertical.nPage = static_cast<UINT>(std::max(0L, client.bottom - client.top));
         vertical.nPos = 0;
         SetScrollInfo(hSettings, SB_VERT, &vertical, TRUE);
+    }
+}
+
+/// Fits Settings to its content and available work area, retaining the authored gap below the bottom action buttons.
+/// Updates scrollbars, preserves valid scroll positions, and skips minimized windows without activating them.
+static void UpdateSettingsWindowLayout() {
+    if (hSettings == nullptr || settingsContentWidth <= 0 || IsIconic(hSettings)) {
+        return;
+    }
+    DWORD currentStyle = static_cast<DWORD>(GetWindowLongPtrW(hSettings, GWL_STYLE));
+    int previousX = (currentStyle & WS_HSCROLL) != 0 ? GetScrollPos(hSettings, SB_HORZ) : 0;
+    int previousY = (currentStyle & WS_VSCROLL) != 0 ? GetScrollPos(hSettings, SB_VERT) : 0;
+    RECT gap = GetSettingsResourceRect(hSettings, IDC_SETTINGS_BOTTOM_GAP);
+    const int buttonIds[] = { ID_IMPORT_SETTINGS, ID_EXPORT_SETTINGS, ID_SAVE, ID_CANCEL, ID_APPLY };
+    LONG bottom = 0;
+    for (int id : buttonIds) {
+        bottom = std::max(bottom, GetSettingsResourceRect(hSettings, id).bottom);
+    }
+    settingsContentHeight = bottom + previousY + gap.bottom - gap.top;
+    DWORD extendedStyle = static_cast<DWORD>(GetWindowLongPtrW(hSettings, GWL_EXSTYLE));
+    DWORD style = 0;
+    int width = 0;
+    int height = 0;
+    RECT availableArea = {};
+    GetSettingsWindowLayout(extendedStyle, &style, &width, &height, &availableArea);
+    style |= currentStyle & WS_VISIBLE;
+    RECT bounds = {};
+    if (!GetWindowRect(hSettings, &bounds)) {
+        return;
+    }
+    LONG x = std::clamp(bounds.left, availableArea.left, availableArea.right - width);
+    LONG y = std::clamp(bounds.top, availableArea.top, availableArea.bottom - height);
+    UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
+    if (bounds.left == x && bounds.top == y) {
+        flags |= SWP_NOMOVE;
+    }
+    if (style != currentStyle) {
+        SetWindowLongPtrW(hSettings, GWL_STYLE, style);
+        flags |= SWP_FRAMECHANGED;
+    }
+    if (style != currentStyle
+            || bounds.left != x
+            || bounds.top != y
+            || bounds.right - bounds.left != width
+            || bounds.bottom - bounds.top != height) {
+        SetWindowPos(hSettings, nullptr, x, y, width, height, flags);
+    }
+    InitializeSettingsScrollBars();
+    SCROLLINFO position = { sizeof(position), SIF_POS };
+    int currentX = 0;
+    int currentY = 0;
+    if ((style & WS_HSCROLL) != 0) {
+        position.nPos = previousX;
+        SetScrollInfo(hSettings, SB_HORZ, &position, TRUE);
+        currentX = GetScrollPos(hSettings, SB_HORZ);
+    }
+    if ((style & WS_VSCROLL) != 0) {
+        position.nPos = previousY;
+        SetScrollInfo(hSettings, SB_VERT, &position, TRUE);
+        currentY = GetScrollPos(hSettings, SB_VERT);
+    }
+    int deltaX = previousX - currentX;
+    int deltaY = previousY - currentY;
+    if (deltaX != 0 || deltaY != 0) {
+        ScrollWindowEx(hSettings, deltaX, deltaY, nullptr, nullptr, nullptr, nullptr,
+            SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
     }
 }
 
@@ -8050,6 +8239,59 @@ static void SetSettingsControlPosition(HWND control, int layoutId, int offsetY =
     SetControlPosition(control, bounds.left, bounds.top + offsetY, bounds.right - bounds.left, bounds.bottom - bounds.top);
 }
 
+/// Returns the larger of the minimum pixel width and the native ideal button width.
+/// If native measurement is unavailable, measures the caption with its current font and includes the larger of the
+/// requested total DLU padding and native text margins, plus the border edges.
+static LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu) {
+    SIZE ideal = {};
+    if (!SendMessageW(button, BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal))) {
+        HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
+        SIZE units = {};
+        HDC dc = GetDC(button);
+        if (dc != nullptr) {
+            HGDIOBJ previous = font == nullptr ? nullptr : SelectObject(dc, font);
+            std::wstring text = GetControlText(button);
+            RECT measured = {};
+            if (GetDialogFontBaseUnits(font, &units)) {
+                DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &measured, DT_CALCRECT | DT_SINGLELINE);
+                RECT margins = {};
+                SendMessageW(button, BCM_GETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
+                LONG padding = std::max(static_cast<LONG>(MulDiv(paddingDlu, units.cx, 4)), margins.left + margins.right);
+                ideal.cx = measured.right + padding + 2 * GetSystemMetrics(SM_CXEDGE);
+            }
+            if (previous != nullptr && previous != HGDI_ERROR) {
+                SelectObject(dc, previous);
+            }
+            ReleaseDC(button, dc);
+        }
+    }
+    return std::max(minimum, ideal.cx);
+}
+
+/// Fits an NTP action button to its caption with eight DLU text margins on each side and the standard minimum width.
+/// Preserves its top and height, retaining its left edge or aligning its right edge to the page content boundary.
+static void FitSettingsButtonWidth(HWND button, bool alignRight) {
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
+    SIZE units = {};
+    RECT bounds = {};
+    if (!GetDialogFontBaseUnits(font, &units) || !GetWindowRect(button, &bounds)) {
+        return;
+    }
+    HWND parent = GetParent(button);
+    MapWindowPoints(HWND_DESKTOP, parent, reinterpret_cast<POINT*>(&bounds), 2);
+    RECT margins = {};
+    SendMessageW(button, BCM_GETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
+    margins.left = MulDiv(8, units.cx, 4);
+    margins.right = margins.left;
+    SendMessageW(button, BCM_SETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
+    int width = PreferredButtonWidth(button, MulDiv(DIALOG_BUTTON_WIDTH_DLU, units.cx, 4));
+    int left = bounds.left;
+    if (alignRight) {
+        left = GetSettingsResourceRect(parent, IDC_SETTINGS_CONTENT).right - width;
+    }
+    SetControlPosition(button, left, bounds.top, width, bounds.bottom - bounds.top);
+}
+
 /// Sizes action buttons uniformly and shortens the widget-type combo while retaining its left edge.
 static void UpdateSettingsActionButtonWidths() {
     const int footerButtonCount = 3;
@@ -8066,43 +8308,36 @@ static void UpdateSettingsActionButtonWidths() {
         return;
     }
     int width = MulDiv(DIALOG_BUTTON_WIDTH_DLU, units.cx, 4);
+    int addWidth = width;
     for (int index = 0; index < ARRAYSIZE(buttons); index++) {
         if (!GetWindowRect(buttons[index], &bounds[index])) {
             return;
         }
         MapWindowPoints(HWND_DESKTOP, hSettings, reinterpret_cast<POINT*>(&bounds[index]), 2);
-        SIZE ideal = {};
-        if (!SendMessageW(buttons[index], BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal))) {
-            HDC dc = GetDC(buttons[index]);
-            if (dc != nullptr) {
-                HFONT buttonFont = reinterpret_cast<HFONT>(SendMessageW(buttons[index], WM_GETFONT, 0, 0));
-                HGDIOBJ previous = buttonFont == nullptr ? nullptr : SelectObject(dc, buttonFont);
-                std::wstring text = GetControlText(buttons[index]);
-                RECT measured = {};
-                DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &measured, DT_CALCRECT | DT_SINGLELINE);
-                ideal.cx = measured.right + MulDiv(12, units.cx, 4) + 2 * GetSystemMetrics(SM_CXEDGE);
-                if (previous != nullptr && previous != HGDI_ERROR) {
-                    SelectObject(dc, previous);
-                }
-                ReleaseDC(buttons[index], dc);
-            }
+        if (index < footerButtonCount) {
+            width = PreferredButtonWidth(buttons[index], width);
+        } else {
+            addWidth = PreferredButtonWidth(buttons[index], addWidth, 0);
         }
-        width = std::max(width, static_cast<int>(ideal.cx));
     }
     RECT combo = {};
-    if (!GetWindowRect(hAddType, &combo)) {
+    RECT importButton = {};
+    RECT exportButton = {};
+    if (!GetWindowRect(hAddType, &combo)
+            || !GetWindowRect(GetDlgItem(hSettings, ID_IMPORT_SETTINGS), &importButton)
+            || !GetWindowRect(GetDlgItem(hSettings, ID_EXPORT_SETTINGS), &exportButton)) {
         return;
     }
     MapWindowPoints(HWND_DESKTOP, hSettings, reinterpret_cast<POINT*>(&combo), 2);
-    int gap = (bounds[2].left - bounds[0].right - (bounds[1].right - bounds[1].left)) / 2;
+    int gap = exportButton.left - importButton.right;
     int left = bounds[footerButtonCount - 1].right - width;
     for (int index = footerButtonCount - 1; index >= 0; index--) {
         SetControlPosition(buttons[index], left, bounds[index].top, width, bounds[index].bottom - bounds[index].top);
         left -= width + gap;
     }
-    int addLeft = bounds[footerButtonCount].right - width;
-    SetControlPosition(buttons[footerButtonCount], addLeft, bounds[footerButtonCount].top,
-        width, bounds[footerButtonCount].bottom - bounds[footerButtonCount].top);
+    int addLeft = bounds[footerButtonCount].right - addWidth;
+    SetControlPosition(buttons[footerButtonCount], addLeft, bounds[footerButtonCount].top, addWidth,
+        bounds[footerButtonCount].bottom - bounds[footerButtonCount].top);
     SetControlPosition(hAddType, combo.left, combo.top,
         std::max(1L, addLeft - SettingsDialogWidth(4) - combo.left), combo.bottom - combo.top);
 }
@@ -8574,9 +8809,10 @@ static bool HideFullscreenWidgetsFromEscape() {
 /// Returns an owned copy of a control's current Unicode text.
 static std::wstring GetControlText(HWND control) {
     int length = GetWindowTextLengthW(control);
-    std::vector<wchar_t> text(length + 1, 0);
-    GetWindowTextW(control, text.data(), static_cast<int>(text.size()));
-    return text.data();
+    std::wstring text(static_cast<size_t>(length) + 1, L'\0');
+    int copied = GetWindowTextW(control, text.data(), static_cast<int>(text.size()));
+    text.resize(copied);
+    return text;
 }
 
 /// Updates a nonnull control's text only when the visible string changes.
@@ -8833,7 +9069,8 @@ static bool MeasureSettingsReportItem(MEASUREITEMSTRUCT* item) {
     HGDIOBJ previous = font == nullptr ? nullptr : SelectObject(dc, font);
     std::wstring text;
     if (item->CtlID == ID_MONITOR_LIST) {
-        for (const wchar_t* heading : MONITOR_COLUMN_LABELS[appLanguage]) {
+        for (TextId textId : MONITOR_COLUMN_TEXT_IDS) {
+            const wchar_t* heading = T(textId);
             text += heading;
         }
         for (const MonitorListEntry& entry : monitorListEntries) {
@@ -8842,11 +9079,13 @@ static bool MeasureSettingsReportItem(MEASUREITEMSTRUCT* item) {
             }
         }
     } else {
-        text = NTP_STATUS_FAILED[appLanguage];
-        for (const wchar_t* heading : NTP_LOG_COLUMN_LABELS[appLanguage]) {
+        text = T(TXT_NTP_STATUS_FAILED);
+        for (TextId textId : NTP_LOG_COLUMN_TEXT_IDS) {
+            const wchar_t* heading = T(textId);
             text += heading;
         }
-        for (const wchar_t* error : NTP_LOG_ERROR_LABELS[appLanguage]) {
+        for (TextId textId : NTP_LOG_ERROR_TEXT_IDS) {
+            const wchar_t* error = T(textId);
             text += error;
         }
     }
@@ -8981,6 +9220,7 @@ static INT_PTR GetSettingsColorPreviewBrush(HWND preview, HDC dc) {
 static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
         case WM_INITDIALOG:
+            LimitDialogVerticalUnits(window, static_cast<int>(lParam));
             BufferedPaintInit();
             EnableThemeDialogTexture(window, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
             return TRUE;
@@ -9007,7 +9247,11 @@ static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT msg, WPARAM wParam, L
 /// Routes settings actions while retaining native dialog painting, navigation and default-button behavior.
 static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
     if (message == WM_INITDIALOG) {
+        LimitDialogVerticalUnits(window, IDD_SETTINGS);
         return FALSE;
+    }
+    if (message == WM_SIZE && wParam == SIZE_RESTORED && hTabs != nullptr) {
+        PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
     }
     if (message == WM_COMMAND
             || message == WM_CLOSE
@@ -9066,7 +9310,7 @@ static bool RestoreSettingsRootControls() {
 
 /// Creates a settings page from its native dialog resource without activating it.
 static HWND CreateSettingsPage(int templateId) {
-    return CreateDialogParamW(hInstance, MAKEINTRESOURCEW(templateId), hSettings, SettingsPageProc, 0);
+    return CreateDialogParamW(hInstance, MAKEINTRESOURCEW(templateId), hSettings, SettingsPageProc, templateId);
 }
 
 /// Assigns unique mnemonics across the main settings controls and the active page.
@@ -9204,8 +9448,8 @@ static void UpdateTimeSignalVolumePreview() {
         StopTimeSignalVolumePreview();
     }
     const wchar_t* caption = settingsTimeSignalTestActive
-        ? STOP_TEST_LABELS[appLanguage]
-        : TEST_COMMAND_LABELS[appLanguage];
+        ? T(TXT_STOP_TEST_LABEL)
+        : T(TXT_TEST_COMMAND_LABEL);
     SetControlCaption(hTimeSignalTestButton, caption);
 }
 
@@ -9266,10 +9510,7 @@ static void UpdateTimeSignalVolumeControls() {
 static std::wstring FormatNtpLogTime(ULONGLONG timestamp) {
     ULARGE_INTEGER value = {};
     value.QuadPart = timestamp;
-    FILETIME fileTime = {
-        value.LowPart,
-        value.HighPart
-    };
+    FILETIME fileTime = { value.LowPart, value.HighPart };
     SYSTEMTIME utc = {};
     bool converted = FileTimeToSystemTime(&fileTime, &utc) != FALSE;
     if (!converted) {
@@ -9294,8 +9535,8 @@ static std::wstring FormatNtpLogOffset(LONGLONG offset100Nanoseconds) {
         ? 0ULL - static_cast<ULONGLONG>(offset100Nanoseconds)
         : static_cast<ULONGLONG>(offset100Nanoseconds);
     wchar_t separator[8] = L".";
-    int separatorLength =
-        GetLocaleInfoEx(LANGUAGE_LOCALES[appLanguage], LOCALE_SDECIMAL, separator, ARRAYSIZE(separator));
+    int separatorLength = GetLocaleInfoEx(GetLanguageLocale(appLanguage), LOCALE_SDECIMAL, separator,
+        ARRAYSIZE(separator));
     if (separatorLength == 0) {
         separator[0] = L'.';
         separator[1] = L'\0';
@@ -9315,7 +9556,7 @@ static std::wstring FormatNtpLogStatus(const NtpQueryLogEntry& entry) {
     } else {
         status = L"ERR: ";
         int errorIndex = std::clamp(static_cast<int>(entry.error), 0, 3);
-        status += NTP_LOG_ERROR_LABELS[appLanguage][errorIndex];
+        status += T(NTP_LOG_ERROR_TEXT_IDS[errorIndex]);
         if (entry.errorCode != 0) {
             status += L" (" + std::to_wstring(entry.errorCode) + L")";
         }
@@ -9347,7 +9588,7 @@ static std::wstring NtpLogCsvText() {
         if (column > 0) {
             csv += L',';
         }
-        csv += QuoteCsvField(NTP_LOG_COLUMN_LABELS[appLanguage][column]);
+        csv += QuoteCsvField(T(NTP_LOG_COLUMN_TEXT_IDS[column]));
     }
     csv += L"\r\n";
     for (const NtpQueryLogEntry& entry : ntpSynchronizationLog) {
@@ -9517,18 +9758,18 @@ static std::wstring SuggestedSaveFileName(const wchar_t* prefix, const wchar_t* 
 /// Opens the CSV save dialog and saves all current-session NTP records without applying settings drafts.
 static void SaveNtpLog() {
     const COMDLG_FILTERSPEC filters[] = {
-        COMDLG_FILTERSPEC{ CSV_FILE_TYPE_LABELS[appLanguage], L"*.csv" }
+        COMDLG_FILTERSPEC{ T(TXT_CSV_FILE_TYPE_LABEL), L"*.csv" }
     };
     std::wstring fileName = SuggestedSaveFileName(L"CalClock-NTP-log", L"csv");
     std::wstring path;
-    bool selected = ChooseApplicationFile(true, fileName.c_str(), filters, ARRAYSIZE(filters),
-        NTP_SAVE_LOG_LABELS[appLanguage], &path);
+    bool selected = ChooseApplicationFile(true, fileName.c_str(), filters, ARRAYSIZE(filters), T(TXT_NTP_SAVE_LOG_LABEL),
+        &path);
     if (!selected) {
         return;
     }
     bool saved = WriteNtpLogCsv(path);
     if (!saved) {
-        MessageBoxW(hSettings, NTP_LOG_EXPORT_FAILED[appLanguage], T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
+        MessageBoxW(hSettings, T(TXT_NTP_LOG_EXPORT_FAILED), T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
     }
 }
 
@@ -9745,13 +9986,7 @@ static void UpdateNtpLabelHeights() {
         if (height <= 0) {
             continue;
         }
-        int top = bounds.top;
-        if (label == hTimeGlobalNote) {
-            RECT client = {};
-            GetClientRect(hTimePage, &client);
-            top = client.bottom - SettingsDialogHeight(2) - height;
-        }
-        SetControlPosition(label, bounds.left, top, bounds.right - bounds.left, height);
+        SetControlPosition(label, bounds.left, bounds.top, bounds.right - bounds.left, height);
     }
 }
 
@@ -9817,14 +10052,15 @@ static void InitializeNtpLog() {
     column.mask = LVCF_TEXT | LVCF_SUBITEM;
     for (int index = 0; index < 3; index++) {
         column.iSubItem = index;
-        column.pszText = const_cast<wchar_t*>(NTP_LOG_COLUMN_LABELS[appLanguage][index]);
+        column.pszText = const_cast<wchar_t*>(T(NTP_LOG_COLUMN_TEXT_IDS[index]));
         ListView_InsertColumn(hNtpLogList, index, &column);
     }
     for (size_t index = 0; index < ntpSynchronizationLog.size(); index++) {
         InsertNtpLogEntry(ntpSynchronizationLog[index], index);
     }
     ApplyNtpLogSort();
-    SetWindowSubclass(ListView_GetHeader(hNtpLogList), SettingsReportHeaderSubclassProc, SETTINGS_REPORT_HEADER_SUBCLASS_ID, 0);
+    SetWindowSubclass(ListView_GetHeader(hNtpLogList), SettingsReportHeaderSubclassProc,
+        SETTINGS_REPORT_HEADER_SUBCLASS_ID, 0);
     SetWindowSubclass(hNtpLogList, NtpLogSubclassProc, ID_NTP_LOG, 0);
     ScrollNtpLogToBottom();
 }
@@ -9867,23 +10103,23 @@ static void UpdateNtpSettingsControls() {
     SetControlEnabled(hNtpSyncButton, ntpSelected && winsockReady && settingsApplied);
     std::wstring status;
     if (!ntpSelected) {
-        status = NTP_STATUS_SYSTEM[appLanguage];
+        status = T(TXT_NTP_STATUS_SYSTEM);
     } else if (!winsockReady) {
-        status = NTP_STATUS_FAILED[appLanguage];
+        status = T(TXT_NTP_STATUS_FAILED);
     } else if (ntpQueryRunning) {
-        status = NTP_STATUS_WAITING[appLanguage];
+        status = T(TXT_NTP_STATUS_WAITING);
     } else if (ntpTimeValid && ntpLastQueryFailed) {
         LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
-        status = NTP_STATUS_RETAINED[appLanguage];
+        status = T(TXT_NTP_STATUS_RETAINED);
         status += L" " + ntpActiveServer + L" (Θ = " + FormatNtpLogOffset(offset100Nanoseconds) + L")";
     } else if (ntpTimeValid) {
         LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
-        status = NTP_STATUS_SYNCHRONIZED[appLanguage];
+        status = T(TXT_NTP_STATUS_SYNCHRONIZED);
         status += L" " + ntpActiveServer + L" (Θ = " + FormatNtpLogOffset(offset100Nanoseconds) + L")";
     } else if (lastNtpAttemptTick != 0) {
-        status = NTP_STATUS_FAILED[appLanguage];
+        status = T(TXT_NTP_STATUS_FAILED);
     } else {
-        status = NTP_STATUS_WAITING[appLanguage];
+        status = T(TXT_NTP_STATUS_WAITING);
     }
     if (GetControlText(hNtpStatus) != status) {
         SetControlText(hNtpStatus, status.c_str());
@@ -10264,7 +10500,7 @@ static void InitializeMonitorList() {
     column.mask = LVCF_TEXT | LVCF_SUBITEM;
     for (int index = 0; index < MONITOR_COLUMN_COUNT; index++) {
         column.iSubItem = index;
-        column.pszText = const_cast<wchar_t*>(MONITOR_COLUMN_LABELS[appLanguage][index]);
+        column.pszText = const_cast<wchar_t*>(T(MONITOR_COLUMN_TEXT_IDS[index]));
         ListView_InsertColumn(hMonitorList, index, &column);
     }
     SetWindowSubclass(ListView_GetHeader(hMonitorList), SettingsReportHeaderSubclassProc,
@@ -10294,7 +10530,7 @@ static void PopulateMonitorList() {
         entry.details = details[index];
         entry.text[0] = MonitorDisplayName(entry.monitor.device);
         if (entry.monitor.primary) {
-            entry.text[0] += std::wstring(L" (") + MONITOR_PRIMARY_LABELS[appLanguage] + L")";
+            entry.text[0] += std::wstring(L" (") + T(TXT_MONITOR_PRIMARY_LABEL) + L")";
         }
         entry.text[1] = entry.details.model.empty() ? L"—" : entry.details.model;
         wchar_t value[96] = {};
@@ -10685,7 +10921,6 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         SetCheck(hTopmostCheck, true);
     }
     if (updateLayout) {
-        RECT panelShift = GetSettingsResourceRect(hAppearancePage, IDC_LAYOUT_PANEL_LOWER_SHIFT);
         int opacityLayout = hasSize ? IDC_LAYOUT_OPACITY_SIZED : IDC_LAYOUT_OPACITY_TOP;
         SetSettingsControlPosition(hOpacityLabel, opacityLayout);
         if (hasTextFont && !panel) {
@@ -10696,11 +10931,6 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         }
         if (type == WIDGET_CALENDAR) {
             SetSettingsControlPosition(hDateFormatLabel, IDC_LAYOUT_DATE_CALENDAR);
-        }
-        if (type != WIDGET_ANALOG) {
-            int footerOffset = (panelShift.bottom - panelShift.top) / 5
-                + (panelShift.bottom - panelShift.top) / 20 + SettingsDialogHeight(1);
-            SetSettingsControlPosition(hWidgetDisableThemesCheck, IDC_LAYOUT_THEMES, footerOffset);
         }
     }
     const LRESULT borderStylePosition = SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0);
@@ -10879,7 +11109,7 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
     for (size_t index = 0; index < timeZones.size(); index++) {
         std::wstring label = TimeZoneDisplayName(timeZones[index], utc);
         if (_wcsicmp(timeZones[index].TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
-            label = std::wstring(SYSTEM_TIME_ZONE_LABELS[appLanguage]) + L" (" + label + L")";
+            label = std::wstring(T(TXT_SYSTEM_TIME_ZONE_LABEL)) + L" (" + label + L")";
         }
         if (!changed) {
             int length = static_cast<int>(SendMessageW(combo, CB_GETLBTEXTLEN, index, 0));
@@ -11157,7 +11387,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     std::wstring remoteScriptUrl = GetControlText(hRemoteScriptEdit);
     if (selectedType != WIDGET_CALENDAR && remoteScriptEnabled && !IsRemoteScriptUrlValid(remoteScriptUrl)) {
         if (showErrors) {
-            MessageBoxW(hSettings, INVALID_REMOTE_SCRIPT_URL[appLanguage], T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
+            MessageBoxW(hSettings, T(TXT_INVALID_REMOTE_SCRIPT_URL), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
             SetFocus(hRemoteScriptEdit);
             SendMessageW(hRemoteScriptEdit, EM_SETSEL, 0, -1);
         }
@@ -11254,7 +11484,7 @@ static bool SaveControlsToDraft(bool showErrors) {
 /// Displays the localized widget-limit notice and returns focus to the widget list after dismissal.
 static void ShowWidgetLimitMessage() {
     wchar_t msg[256] = {};
-    swprintf_s(msg, WIDGET_LIMIT_MESSAGES[appLanguage], MAX_WIDGET_COUNT);
+    swprintf_s(msg, T(TXT_WIDGET_LIMIT_MESSAGE), MAX_WIDGET_COUNT);
     MessageBoxW(hSettings, msg, T(TXT_SETTINGS), MB_OK | MB_ICONINFORMATION);
     SetFocus(hWidgetList);
 }
@@ -11290,7 +11520,7 @@ static void AppendWidgetCopies(const std::vector<WidgetConfig>& originals) {
     for (size_t index = 0; index < copyCount; index++) {
         WidgetConfig copy = originals[index];
         copy.id = AllocateWidgetId();
-        copy.name += WIDGET_COPY_SUFFIXES[appLanguage];
+        copy.name += T(TXT_WIDGET_COPY_SUFFIXES);
         copy.x = std::min(copy.x, INT_MAX - 28) + 28;
         copy.y = std::min(copy.y, INT_MAX - 28) + 28;
         settingsDraft.push_back(copy);
@@ -12457,12 +12687,12 @@ static bool ChooseButtonColor(HWND button) {
 /// Updates the selected widget's font labels and font-button captions without rewriting unchanged text.
 static void UpdateFontDescription(const WidgetConfig& config) {
     SetControlCaption(hFontLabel, config.type == WIDGET_PANEL
-        ? CALENDAR_FONT_LABELS[appLanguage]
-        : FONT_LABELS[appLanguage]);
+        ? T(TXT_CALENDAR_FONT_LABEL)
+        : T(TXT_FONT_LABEL));
     if (hFontButton != nullptr) {
         std::wstring caption = config.fontFace;
         if ((config.type == WIDGET_CALENDAR || config.type == WIDGET_PANEL) && !IsWindowEnabled(hFontButton)) {
-            caption = SYSTEM_DEFAULT_FONT_LABELS[appLanguage];
+            caption = T(TXT_SYSTEM_DEFAULT_FONT_LABEL);
         }
         caption += L"…";
         SetControlCaption(hFontButton, caption.c_str());
@@ -12508,6 +12738,7 @@ static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT msg, WPARAM, LPARAM pa
     if (msg != WM_INITDIALOG) {
         return 0;
     }
+    LimitDialogVerticalUnits(dialog);
     const CHOOSEFONTW* choice = reinterpret_cast<const CHOOSEFONTW*>(parameter);
     FontDialogMode mode = choice == nullptr
         ? FONT_DIALOG_FACE_AND_STYLE
@@ -12553,7 +12784,7 @@ static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT msg, WPARAM, LPARAM pa
     int verticalMargin = horizontalMargin;
     int buttonGap = std::max(static_cast<int>(cancelRect.left - okRect.right), 6);
     int buttonWidth = okRect.right - okRect.left;
-    int buttonHeight = okRect.bottom - okRect.top;
+    int buttonHeight = std::min(static_cast<int>(okRect.bottom - okRect.top), MAX_DIALOG_BUTTON_HEIGHT);
     int contentRight = static_cast<int>(std::max(faceRect.right, styleRect.right));
     int contentBottom = static_cast<int>(std::max(faceRect.bottom, styleRect.bottom));
     if (mode == FONT_DIALOG_WITH_SIZE) {
@@ -12721,8 +12952,8 @@ static void StopSettingsPreview() {
     }
     settingsVisualPreviewWidgetId = -1;
     settingsVisualPreviewActive = false;
-    if (hTestCommandButton != nullptr && GetControlText(hTestCommandButton) != TEST_COMMAND_LABELS[appLanguage]) {
-        SetWindowTextW(hTestCommandButton, TEST_COMMAND_LABELS[appLanguage]);
+    if (hTestCommandButton != nullptr && GetControlText(hTestCommandButton) != T(TXT_TEST_COMMAND_LABEL)) {
+        SetWindowTextW(hTestCommandButton, T(TXT_TEST_COMMAND_LABEL));
     }
 }
 
@@ -12751,7 +12982,7 @@ static void TestSettingsCommand() {
     bool remoteScriptEnabled = GetCheck(hRemoteScriptCheck);
     std::wstring remoteScriptUrl = GetControlText(hRemoteScriptEdit);
     if (remoteScriptEnabled && !IsRemoteScriptUrlValid(remoteScriptUrl)) {
-        MessageBoxW(hSettings, INVALID_REMOTE_SCRIPT_URL[appLanguage], T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
+        MessageBoxW(hSettings, T(TXT_INVALID_REMOTE_SCRIPT_URL), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
         SetFocus(hRemoteScriptEdit);
         SendMessageW(hRemoteScriptEdit, EM_SETSEL, 0, -1);
         return;
@@ -12791,7 +13022,7 @@ static void TestSettingsCommand() {
         StopSettingsPreview();
         return;
     }
-    SetWindowTextW(hTestCommandButton, STOP_TEST_LABELS[appLanguage]);
+    SetWindowTextW(hTestCommandButton, T(TXT_STOP_TEST_LABEL));
 }
 
 /// Opens the localized file picker, enables the selected alarm command, and defaults recognized audio files to looping
@@ -12803,7 +13034,7 @@ static void BrowseForCommand() {
     dialog.hwndOwner = hSettings;
     dialog.lpstrFile = fileName;
     dialog.nMaxFile = ARRAYSIZE(fileName);
-    dialog.lpstrFilter = COMMAND_FILE_FILTERS[appLanguage];
+    dialog.lpstrFilter = T(TXT_COMMAND_FILE_FILTER);
     dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
     if (GetOpenFileNameW(&dialog)) {
         SetCheck(hRunCommandCheck, true);
@@ -12850,11 +13081,11 @@ static bool CreateSettingsControls() {
     TabCtrl_InsertItem(hTabs, 1, &tab);
     tab.pszText = const_cast<wchar_t*>(T(TXT_ALARM));
     TabCtrl_InsertItem(hTabs, 2, &tab);
-    tab.pszText = const_cast<wchar_t*>(TIME_SIGNAL_TAB_LABELS[appLanguage]);
+    tab.pszText = const_cast<wchar_t*>(T(TXT_TIME_SIGNAL_TAB_LABEL));
     TabCtrl_InsertItem(hTabs, 3, &tab);
-    tab.pszText = const_cast<wchar_t*>(TIME_TAB_LABELS[appLanguage]);
+    tab.pszText = const_cast<wchar_t*>(T(TXT_TIME_TAB_LABEL));
     TabCtrl_InsertItem(hTabs, 4, &tab);
-    tab.pszText = const_cast<wchar_t*>(APPLICATION_TAB_LABELS[appLanguage]);
+    tab.pszText = const_cast<wchar_t*>(T(TXT_APPLICATION_TAB_LABEL));
     TabCtrl_InsertItem(hTabs, 5, &tab);
     hGeneralPage = CreateSettingsPage(IDD_SETTINGS_GENERAL);
     hAppearancePage = CreateSettingsPage(IDD_SETTINGS_APPEARANCE);
@@ -12881,8 +13112,8 @@ static bool CreateSettingsControls() {
     hTopmostCheck = BindSettingsControl(hGeneralPage, ID_TOPMOST, Mnemonic(TXT_TOPMOST).c_str(), &generalControls);
     hSecondsCheck = BindSettingsControl(hGeneralPage, ID_SECONDS, Mnemonic(TXT_SECONDS).c_str(), &generalControls);
     hUtcCheck = BindSettingsControl(hGeneralPage, ID_UTC, Mnemonic(TXT_UTC).c_str(), &generalControls);
-    hUtcTextCheck = BindSettingsControl(hGeneralPage, ID_UTC_TEXT, UTC_TEXT_LABELS[appLanguage], &generalControls);
-    hSoundsMutedCheck = BindSettingsControl(hGeneralPage, ID_SOUNDS_ENABLED, MUTED_LABELS[appLanguage], &generalControls);
+    hUtcTextCheck = BindSettingsControl(hGeneralPage, ID_UTC_TEXT, T(TXT_UTC_TEXT_LABEL), &generalControls);
+    hSoundsMutedCheck = BindSettingsControl(hGeneralPage, ID_SOUNDS_ENABLED, T(TXT_MUTED_LABEL), &generalControls);
     SetCheck(hSoundsMutedCheck, false);
     hTimeZoneLabel = BindSettingsLabel(hGeneralPage, IDC_TIME_ZONE_LABEL, Mnemonic(TXT_TIMEZONE).c_str(),
         &generalControls);
@@ -12890,45 +13121,41 @@ static bool CreateSettingsControls() {
     FillTimeZoneCombo();
     HWND offsetLabel = BindSettingsLabel(hGeneralPage, IDC_OFFSET_LABEL, Mnemonic(TXT_OFFSET).c_str(), &generalControls);
     hOffsetEdit = BindSettingsControl(hGeneralPage, ID_OFFSET, L"", &generalControls, offsetLabel);
-    HWND widgetLanguageLabel = BindSettingsLabel(hGeneralPage, IDC_WIDGET_LANGUAGE_LABEL,
-        WIDGET_LANGUAGE_LABELS[appLanguage], &generalControls);
+    HWND widgetLanguageLabel = BindSettingsLabel(hGeneralPage, IDC_WIDGET_LANGUAGE_LABEL, T(TXT_WIDGET_LANGUAGE_LABEL),
+        &generalControls);
     hWidgetLanguageCombo = BindSettingsControl(hGeneralPage, ID_WIDGET_LANGUAGE, L"", &generalControls,
         widgetLanguageLabel);
     PopulateLanguageCombo(hWidgetLanguageCombo);
-    hTimeFormatLabel = BindSettingsLabel(hGeneralPage, IDC_TIME_FORMAT_LABEL, TIME_FORMAT_LABELS[appLanguage],
+    hTimeFormatLabel = BindSettingsLabel(hGeneralPage, IDC_TIME_FORMAT_LABEL, T(TXT_TIME_FORMAT_LABEL),
         &generalControls);
     hTimeFormatCombo = BindSettingsControl(hGeneralPage, ID_TIME_FORMAT, L"", &generalControls, hTimeFormatLabel);
     for (int mode = 0; mode < TIME_FORMAT_COUNT; mode++) {
         SendMessageW(hTimeFormatCombo, CB_ADDSTRING, 0,
-            reinterpret_cast<LPARAM>(TIME_FORMAT_MODE_LABELS[appLanguage][mode]));
+            reinterpret_cast<LPARAM>(T(TIME_FORMAT_TEXT_IDS[mode])));
     }
     hShowAmPmCheck = BindSettingsControl(hGeneralPage, ID_SHOW_AM_PM, L"AM/PM", &generalControls);
-    hPanelTimeNoticesCheck = BindSettingsControl(hGeneralPage, ID_PANEL_TIME_NOTICES,
-        PANEL_TIME_NOTICES_LABELS[appLanguage], &generalControls);
+    hPanelTimeNoticesCheck = BindSettingsControl(hGeneralPage, ID_PANEL_TIME_NOTICES, T(TXT_PANEL_TIME_NOTICES_LABEL),
+        &generalControls);
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
         std::wstring label = AdditionalClockLabel(appLanguage, index, true);
         hAdditionalEnabledChecks[index] = BindSettingsControl(hGeneralPage, ID_ADDITIONAL_ENABLED_BASE + index,
             label.c_str(), &generalControls);
         hAdditionalNameLabels[index] = BindSettingsLabel(hGeneralPage, IDC_ADDITIONAL_NAME_LABELS_BASE + index,
-            Mnemonic(TXT_NAME).c_str(),
-            &generalControls);
+            Mnemonic(TXT_NAME).c_str(), &generalControls);
         std::wstring name = DefaultAdditionalClockName(appLanguage, index);
         hAdditionalNameEdits[index] = BindSettingsControl(hGeneralPage, ID_ADDITIONAL_NAME_BASE + index, name.c_str(),
-            &generalControls,
-            hAdditionalNameLabels[index]);
+            &generalControls, hAdditionalNameLabels[index]);
         hAdditionalTimeZoneLabels[index] = BindSettingsLabel(hGeneralPage,
-            IDC_ADDITIONAL_TIME_ZONE_LABELS_BASE + index, Mnemonic(TXT_TIMEZONE).c_str(),
-            &generalControls);
+            IDC_ADDITIONAL_TIME_ZONE_LABELS_BASE + index, Mnemonic(TXT_TIMEZONE).c_str(), &generalControls);
         hAdditionalTimeZoneCombos[index] = BindSettingsControl(hGeneralPage, ID_ADDITIONAL_TIMEZONE_BASE + index, L"",
-            &generalControls,
-            hAdditionalTimeZoneLabels[index]);
+            &generalControls, hAdditionalTimeZoneLabels[index]);
         FillTimeZoneCombo(hAdditionalTimeZoneCombos[index]);
     }
-    hMonitorLabel = BindSettingsLabel(hGeneralPage, IDC_MONITOR_LABEL, MONITOR_LABELS[appLanguage], &generalControls);
+    hMonitorLabel = BindSettingsLabel(hGeneralPage, IDC_MONITOR_LABEL, T(TXT_MONITOR_LABEL), &generalControls);
     hMonitorList = BindSettingsControl(hGeneralPage, ID_MONITOR_LIST, L"", &generalControls);
     InitializeMonitorList();
-    hBlackoutMonitorsCheck = BindSettingsControl(hGeneralPage, ID_BLACKOUT_MONITORS,
-        BLACKOUT_MONITOR_LABELS[appLanguage], &generalControls);
+    hBlackoutMonitorsCheck = BindSettingsControl(hGeneralPage, ID_BLACKOUT_MONITORS, T(TXT_BLACKOUT_MONITOR_LABEL),
+        &generalControls);
     hSizeLabel = BindSettingsLabel(hAppearancePage, IDC_SIZE_LABEL, Mnemonic(TXT_SIZE).c_str(), &appearanceControls);
     hSizeCombo = BindSettingsControl(hAppearancePage, ID_SIZE, L"", &appearanceControls, hSizeLabel);
     int sizes[4] = {};
@@ -12961,39 +13188,35 @@ static bool CreateSettingsControls() {
     SendMessageW(hFontSizeTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hFontSizeTrackBar, TBM_SETPAGESIZE, 0, 5);
     hFontSizeValue = BindSettingsControl(hAppearancePage, IDC_FONT_SIZE_VALUE, L"", &appearanceControls);
-    hFontLabel = BindSettingsLabel(hAppearancePage, IDC_FONT_LABEL, FONT_LABELS[appLanguage], &appearanceControls);
-    hFontButton = BindSettingsControl(hAppearancePage, ID_FONT, FONT_BUTTON_LABELS[appLanguage], &appearanceControls);
-    hPanelTopFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_TOP_FONT_LABEL,
-        PANEL_TOP_FONT_LABELS[appLanguage], &appearanceControls);
+    hFontLabel = BindSettingsLabel(hAppearancePage, IDC_FONT_LABEL, T(TXT_FONT_LABEL), &appearanceControls);
+    hFontButton = BindSettingsControl(hAppearancePage, ID_FONT, T(TXT_FONT_BUTTON_LABEL), &appearanceControls);
+    hPanelTopFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_TOP_FONT_LABEL, T(TXT_PANEL_TOP_FONT_LABEL),
+        &appearanceControls);
     hPanelTopFontButton = BindSettingsControl(hAppearancePage, ID_PANEL_TOP_FONT, L"", &appearanceControls,
         hPanelTopFontLabel);
-    hPanelTimeFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_TIME_FONT_LABEL,
-        PANEL_TIME_FONT_LABELS[appLanguage], &appearanceControls);
+    hPanelTimeFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_TIME_FONT_LABEL, T(TXT_PANEL_TIME_FONT_LABEL),
+        &appearanceControls);
     hPanelTimeFontButton = BindSettingsControl(hAppearancePage, ID_PANEL_TIME_FONT, L"", &appearanceControls,
         hPanelTimeFontLabel);
-    hPanelBottomFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_BOTTOM_FONT_LABEL,
-        PANEL_BOTTOM_FONT_LABELS[appLanguage], &appearanceControls);
+    hPanelBottomFontLabel = BindSettingsLabel(hAppearancePage, IDC_PANEL_BOTTOM_FONT_LABEL, T(TXT_PANEL_BOTTOM_FONT_LABEL), &appearanceControls);
     hPanelBottomFontButton = BindSettingsControl(hAppearancePage, ID_PANEL_BOTTOM_FONT, L"", &appearanceControls,
         hPanelBottomFontLabel);
     hTextColorButton = BindSettingsControl(hAppearancePage, ID_TEXT_COLOR, Mnemonic(TXT_TEXT_COLOR).c_str(),
         &appearanceControls);
     hBackgroundColorButton = BindSettingsControl(hAppearancePage, ID_BACKGROUND_COLOR,
-        Mnemonic(TXT_BACKGROUND_COLOR).c_str(),
-        &appearanceControls);
-    hAlarmTextColorButton = BindSettingsControl(hAppearancePage, ID_ALARM_TEXT_COLOR, ALARM_TEXT_COLOR_LABELS[appLanguage],
+        Mnemonic(TXT_BACKGROUND_COLOR).c_str(), &appearanceControls);
+    hAlarmTextColorButton = BindSettingsControl(hAppearancePage, ID_ALARM_TEXT_COLOR, T(TXT_ALARM_TEXT_COLOR_LABEL),
         &appearanceControls);
     hAlarmBackgroundColorButton = BindSettingsControl(hAppearancePage, ID_ALARM_BACKGROUND_COLOR,
-        ALARM_BACKGROUND_COLOR_LABELS[appLanguage],
-        &appearanceControls);
-    hPaddingLabel = BindSettingsLabel(hAppearancePage, IDC_PADDING_LABEL, PADDING_LABELS[appLanguage],
-        &appearanceControls);
+        T(TXT_ALARM_BACKGROUND_COLOR_LABEL), &appearanceControls);
+    hPaddingLabel = BindSettingsLabel(hAppearancePage, IDC_PADDING_LABEL, T(TXT_PADDING_LABEL), &appearanceControls);
     hPaddingTrackBar = BindSettingsControl(hAppearancePage, ID_PADDING, L"", &appearanceControls);
     SendMessageW(hPaddingTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_PADDING_MAX));
     SendMessageW(hPaddingTrackBar, TBM_SETTICFREQ, 5, 0);
     SendMessageW(hPaddingTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hPaddingTrackBar, TBM_SETPAGESIZE, 0, 5);
     hPaddingValue = BindSettingsControl(hAppearancePage, IDC_PADDING_VALUE, L"", &appearanceControls);
-    hBorderWidthLabel = BindSettingsLabel(hAppearancePage, IDC_BORDER_WIDTH_LABEL, BORDER_WIDTH_LABELS[appLanguage],
+    hBorderWidthLabel = BindSettingsLabel(hAppearancePage, IDC_BORDER_WIDTH_LABEL, T(TXT_BORDER_WIDTH_LABEL),
         &appearanceControls);
     hBorderWidthTrackBar = BindSettingsControl(hAppearancePage, ID_BORDER_WIDTH, L"", &appearanceControls);
     SendMessageW(hBorderWidthTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, DIGITAL_BORDER_WIDTH_MAX));
@@ -13001,13 +13224,13 @@ static bool CreateSettingsControls() {
     SendMessageW(hBorderWidthTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hBorderWidthTrackBar, TBM_SETPAGESIZE, 0, 1);
     hBorderWidthValue = BindSettingsControl(hAppearancePage, IDC_BORDER_WIDTH_VALUE, L"", &appearanceControls);
-    hBorderLabel = BindSettingsLabel(hAppearancePage, IDC_BORDER_LABEL, BORDER_LABELS[appLanguage], &appearanceControls);
+    hBorderLabel = BindSettingsLabel(hAppearancePage, IDC_BORDER_LABEL, T(TXT_BORDER_LABEL), &appearanceControls);
     hBorderTrackBar = BindSettingsControl(hAppearancePage, ID_BORDER, L"", &appearanceControls);
     SendMessageW(hBorderTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(0, 3));
     SendMessageW(hBorderTrackBar, TBM_SETTICFREQ, 1, 0);
     SendMessageW(hBorderTrackBar, TBM_SETLINESIZE, 0, 1);
     SendMessageW(hBorderTrackBar, TBM_SETPAGESIZE, 0, 1);
-    hBorderColorButton = BindSettingsControl(hAppearancePage, ID_BORDER_COLOR, BORDER_COLOR_LABELS[appLanguage],
+    hBorderColorButton = BindSettingsControl(hAppearancePage, ID_BORDER_COLOR, T(TXT_BORDER_COLOR_LABEL),
         &appearanceControls);
     const HWND colorButtons[] = {
         hTextColorButton,
@@ -13021,10 +13244,11 @@ static bool CreateSettingsControls() {
     }
     hLeadingZeroLabel = BindSettingsLabel(hAppearancePage, IDC_LEADING_ZERO_LABEL, T(TXT_LEADING_ZERO),
         &appearanceControls);
-    hLeadingZeroCombo = BindSettingsControl(hAppearancePage, ID_LEADING_ZERO, L"", &appearanceControls, hLeadingZeroLabel);
+    hLeadingZeroCombo = BindSettingsControl(hAppearancePage, ID_LEADING_ZERO, L"", &appearanceControls,
+        hLeadingZeroLabel);
     for (int mode = 0; mode < LEADING_ZERO_MODE_COUNT; mode++) {
         SendMessageW(hLeadingZeroCombo, CB_ADDSTRING, 0,
-            reinterpret_cast<LPARAM>(LEADING_ZERO_MODE_LABELS[appLanguage][mode]));
+            reinterpret_cast<LPARAM>(T(LEADING_ZERO_TEXT_IDS[mode])));
     }
     hTransparentBackgroundCheck = BindSettingsControl(hAppearancePage, ID_TRANSPARENT_BG,
         Mnemonic(TXT_TRANSPARENT_BG).c_str(), &appearanceControls);
@@ -13032,30 +13256,27 @@ static bool CreateSettingsControls() {
         &appearanceControls);
     hSundayFirstCheck = BindSettingsControl(hAppearancePage, ID_SUNDAY_FIRST, Mnemonic(TXT_SUNDAY_FIRST).c_str(),
         &appearanceControls);
-    hShowTodayCheck = BindSettingsControl(hAppearancePage, ID_SHOW_TODAY, SHOW_TODAY_LABELS[appLanguage],
-        &appearanceControls);
-    hDateFormatLabel = BindSettingsLabel(hAppearancePage, IDC_DATE_FORMAT_LABEL, DATE_FORMAT_LABELS[appLanguage],
+    hShowTodayCheck = BindSettingsControl(hAppearancePage, ID_SHOW_TODAY, T(TXT_SHOW_TODAY_LABEL), &appearanceControls);
+    hDateFormatLabel = BindSettingsLabel(hAppearancePage, IDC_DATE_FORMAT_LABEL, T(TXT_DATE_FORMAT_LABEL),
         &appearanceControls);
     hDateFormatCombo = BindSettingsControl(hAppearancePage, ID_DATE_FORMAT, L"", &appearanceControls, hDateFormatLabel);
     hWidgetAntialiasLabel = BindSettingsLabel(hAppearancePage, IDC_WIDGET_ANTIALIAS_LABEL,
-        ANTIALIASING_LABELS[appLanguage], &appearanceControls);
+        T(TXT_ANTIALIASING_LABEL), &appearanceControls);
     hWidgetAntialiasCombo = BindSettingsControl(hAppearancePage, ID_WIDGET_ANTIALIAS, L"", &appearanceControls,
         hWidgetAntialiasLabel);
     PopulateFontAntialiasingCombo(hWidgetAntialiasCombo);
     hWidgetDisableThemesCheck = BindSettingsControl(hAppearancePage, ID_WIDGET_DISABLE_THEMES,
-        Mnemonic(TXT_VISUAL_STYLES).c_str(),
-        &appearanceControls);
+        Mnemonic(TXT_VISUAL_STYLES).c_str(), &appearanceControls);
     hDefaultAppearanceButton = BindSettingsControl(hAppearancePage, ID_DEFAULT_APPEARANCE,
-        DEFAULT_APPEARANCE_LABELS[appLanguage],
-        &appearanceControls);
+        T(TXT_DEFAULT_APPEARANCE_LABEL), &appearanceControls);
     hAlarmEnabledCheck = BindSettingsControl(hAlarmPage, ID_ALARM_ENABLED, Mnemonic(TXT_ALARM_ACTIVE).c_str(),
         &alarmControls);
     int firstAlarmDay = GetCultureFirstAlarmDay(appLanguage);
     for (int position = 0; position < ALARM_DAY_COUNT; position++) {
         int day = (firstAlarmDay + position) % ALARM_DAY_COUNT;
         std::wstring dayLabel = GetWeekdayAbbreviation(appLanguage, day);
-        hAlarmDayChecks[day] = BindSettingsControl(hAlarmPage, ID_ALARM_DAY_BASE + day,
-            dayLabel.c_str(), &alarmControls);
+        hAlarmDayChecks[day] = BindSettingsControl(hAlarmPage, ID_ALARM_DAY_BASE + day, dayLabel.c_str(),
+            &alarmControls);
         RECT slot = GetSettingsResourceRect(hAlarmPage, IDC_ALARM_DAY_SLOT_BASE + position);
         SetWindowPos(hAlarmDayChecks[day], nullptr, slot.left, slot.top, slot.right - slot.left,
             slot.bottom - slot.top, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -13067,10 +13288,9 @@ static bool CreateSettingsControls() {
     hRunCommandCheck = BindSettingsControl(hAlarmPage, ID_RUN_COMMAND, Mnemonic(TXT_RUN_FILE).c_str(), &alarmControls);
     hCommandEdit = BindSettingsControl(hAlarmPage, ID_COMMAND, L"", &alarmControls);
     hBrowseButton = BindSettingsControl(hAlarmPage, ID_BROWSE, Mnemonic(TXT_BROWSE).c_str(), &alarmControls);
-    hTestCommandButton = BindSettingsControl(hAlarmPage, ID_TEST_COMMAND, TEST_COMMAND_LABELS[appLanguage],
-        &alarmControls);
+    hTestCommandButton = BindSettingsControl(hAlarmPage, ID_TEST_COMMAND, T(TXT_TEST_COMMAND_LABEL), &alarmControls);
     hLoopAudioCheck = BindSettingsControl(hAlarmPage, ID_LOOP_AUDIO, Mnemonic(TXT_LOOP_AUDIO).c_str(), &alarmControls);
-    hAlarmVolumeLabel = BindSettingsLabel(hAlarmPage, IDC_ALARM_VOLUME_LABEL, ALARM_VOLUME_LABELS[appLanguage],
+    hAlarmVolumeLabel = BindSettingsLabel(hAlarmPage, IDC_ALARM_VOLUME_LABEL, T(TXT_ALARM_VOLUME_LABEL),
         &alarmControls);
     hAlarmVolumeTrackBar = BindSettingsControl(hAlarmPage, ID_ALARM_VOLUME, L"", &alarmControls);
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
@@ -13081,85 +13301,81 @@ static bool CreateSettingsControls() {
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETLINESIZE, 0, 10);
     SendMessageW(hAlarmVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
     hAlarmVolumeValue = BindSettingsControl(hAlarmPage, IDC_ALARM_VOLUME_VALUE, L"", &alarmControls);
-    hRemoteScriptCheck = BindSettingsControl(hAlarmPage, ID_REMOTE_SCRIPT, REMOTE_SCRIPT_LABELS[appLanguage],
-        &alarmControls);
-    hRemoteScriptLabel = BindSettingsLabel(hAlarmPage, IDC_REMOTE_SCRIPT_LABEL, REMOTE_SCRIPT_URL_LABELS[appLanguage],
+    hRemoteScriptCheck = BindSettingsControl(hAlarmPage, ID_REMOTE_SCRIPT, T(TXT_REMOTE_SCRIPT_LABEL), &alarmControls);
+    hRemoteScriptLabel = BindSettingsLabel(hAlarmPage, IDC_REMOTE_SCRIPT_LABEL, T(TXT_REMOTE_SCRIPT_URL_LABEL),
         &alarmControls);
     hRemoteScriptEdit = BindSettingsControl(hAlarmPage, ID_REMOTE_SCRIPT_URL, L"", &alarmControls, hRemoteScriptLabel);
-    hAlarmTimeSignalCheck = BindSettingsControl(hAlarmPage, ID_ALARM_TIME_SIGNAL,
-        ALARM_TIME_SIGNAL_LABELS[appLanguage], &alarmControls);
+    hAlarmTimeSignalCheck = BindSettingsControl(hAlarmPage, ID_ALARM_TIME_SIGNAL, T(TXT_ALARM_TIME_SIGNAL_LABEL),
+        &alarmControls);
     hTimeSignalEnabledCheck = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_ENABLED,
-        TIME_SIGNAL_ENABLED_LABELS[appLanguage],
-        &timeSignalControls);
+        T(TXT_TIME_SIGNAL_ENABLED_LABEL), &timeSignalControls);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
         DWORD style = BS_AUTORADIOBUTTON;
         if (mode == TIME_SIGNAL_EVERY_MINUTE) {
             style |= WS_GROUP | WS_TABSTOP;
         }
         hTimeSignalIntervalRadios[mode - 1] = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_INTERVAL_BASE
-            + mode - 1, TIME_SIGNAL_MODE_LABELS[appLanguage][mode], &timeSignalControls);
+            + mode - 1, T(TIME_SIGNAL_TEXT_IDS[mode]), &timeSignalControls);
     }
-    HWND timeSignalNote = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_NOTE, TIME_SIGNAL_NOTE[appLanguage]);
+    HWND timeSignalNote = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_NOTE, T(TXT_TIME_SIGNAL_NOTE));
     timeSignalControls.push_back(timeSignalNote);
-    HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL, TIME_SOURCE_LABELS[appLanguage],
-        &timeControls);
+    HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL, T(TXT_TIME_SOURCE_LABEL), &timeControls);
     hTimeSourceCombo = BindSettingsControl(hTimePage, ID_TIME_SOURCE, L"", &timeControls, timeSourceLabel);
-    SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(SYSTEM_TIME_LABELS[appLanguage]));
-    SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_TIME_LABELS[appLanguage]));
+    SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_SYSTEM_TIME_LABEL)));
+    SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_NTP_TIME_LABEL)));
     SendMessageW(hTimeSourceCombo, CB_SETCURSEL, useNtpTime ? 1 : 0, 0);
-    hNtpPresetLabel = BindSettingsLabel(hTimePage, IDC_NTP_PRESET_LABEL, NTP_PRESET_FIELD_LABELS[appLanguage],
-        &timeControls);
+    hNtpPresetLabel = BindSettingsLabel(hTimePage, IDC_NTP_PRESET_LABEL, T(TXT_NTP_PRESET_FIELD_LABEL), &timeControls);
     hNtpPresetCombo = BindSettingsControl(hTimePage, ID_NTP_PRESET, L"", &timeControls, hNtpPresetLabel);
     for (int preset = 0; preset < NTP_PRESET_COUNT; preset++) {
-        SendMessageW(hNtpPresetCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(NTP_PRESET_LABELS[appLanguage][preset]));
+        SendMessageW(hNtpPresetCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(NTP_PRESET_TEXT_IDS[preset])));
     }
     SendMessageW(hNtpPresetCombo, CB_SETCURSEL, ntpPreset, 0);
-    hNtpServersLabel = BindSettingsControl(hTimePage, IDC_NTP_SERVERS_LABEL, NTP_SERVERS_LABELS[appLanguage]);
+    hNtpServersLabel = BindSettingsControl(hTimePage, IDC_NTP_SERVERS_LABEL, T(TXT_NTP_SERVERS_LABEL));
     timeControls.push_back(hNtpServersLabel);
     hNtpServersEdit = BindSettingsControl(hTimePage, ID_NTP_SERVERS, ntpServers.c_str(), &timeControls);
-    hNtpSyncButton = BindSettingsControl(hTimePage, ID_NTP_SYNC, NTP_SYNC_LABELS[appLanguage], &timeControls);
+    hNtpSyncButton = BindSettingsControl(hTimePage, ID_NTP_SYNC, T(TXT_NTP_SYNC_LABEL), &timeControls);
     hNtpStatus = BindSettingsControl(hTimePage, IDC_NTP_STATUS, L"");
     timeControls.push_back(hNtpStatus);
     hNtpLogList = BindSettingsControl(hTimePage, ID_NTP_LOG, L"", &timeControls);
     InitializeNtpLog();
-    hNtpSaveLogButton = BindSettingsControl(hTimePage, ID_NTP_SAVE_LOG, NTP_SAVE_LOG_LABELS[appLanguage], &timeControls);
-    hTimeGlobalNote = BindSettingsControl(hTimePage, IDC_TIME_GLOBAL_NOTE, TIME_GLOBAL_NOTE[appLanguage]);
+    hNtpSaveLogButton = BindSettingsControl(hTimePage, ID_NTP_SAVE_LOG, T(TXT_NTP_SAVE_LOG_LABEL), &timeControls);
+    hTimeGlobalNote = BindSettingsControl(hTimePage, IDC_TIME_GLOBAL_NOTE, T(TXT_TIME_GLOBAL_NOTE));
     timeControls.push_back(hTimeGlobalNote);
     UpdateNtpSettingsControls();
-    hAppFontLabel = BindSettingsLabel(hApplicationPage, IDC_APP_FONT_LABEL, APPLICATION_FONT_LABELS[appLanguage],
+    hAppFontLabel = BindSettingsLabel(hApplicationPage, IDC_APP_FONT_LABEL, T(TXT_APPLICATION_FONT_LABEL),
         &applicationControls);
     hAppFontButton = BindSettingsControl(hApplicationPage, ID_APP_FONT, L"", &applicationControls);
     hAppFontDefaultButton = BindSettingsControl(hApplicationPage, ID_APP_FONT_DEFAULT,
-        DEFAULT_FONT_LABELS[appLanguage], &applicationControls);
+        T(TXT_DEFAULT_FONT_LABEL), &applicationControls);
     UpdateApplicationFontButtons();
-    HWND appAntialiasLabel = BindSettingsLabel(hApplicationPage, IDC_APP_ANTIALIAS_LABEL,
-        ANTIALIASING_LABELS[appLanguage], &applicationControls);
+    HWND appAntialiasLabel = BindSettingsLabel(hApplicationPage, IDC_APP_ANTIALIAS_LABEL, T(TXT_ANTIALIASING_LABEL),
+        &applicationControls);
     hAppAntialiasCombo = BindSettingsControl(hApplicationPage, ID_APP_ANTIALIAS, L"", &applicationControls,
         appAntialiasLabel);
     PopulateFontAntialiasingCombo(hAppAntialiasCombo);
     SelectFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
     HWND appLanguageLabel = BindSettingsLabel(hApplicationPage, IDC_APP_LANGUAGE_LABEL,
-        APPLICATION_LANGUAGE_LABELS[appLanguage], &applicationControls);
+        T(TXT_APPLICATION_LANGUAGE_LABEL), &applicationControls);
     hLanguageCombo = BindSettingsControl(hApplicationPage, ID_LANGUAGE, L"", &applicationControls, appLanguageLabel);
     PopulateLanguageCombo(hLanguageCombo);
     SendMessageW(hLanguageCombo, CB_SETCURSEL, appLanguage, 0);
     HWND timeSignalSoundLabel = BindSettingsLabel(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL,
-        TIME_SIGNAL_SOUND_LABELS[appLanguage], &applicationControls);
+        T(TXT_TIME_SIGNAL_SOUND_LABEL), &applicationControls);
     hTimeSignalSoundCombo = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_SOUND, L"", &applicationControls,
         timeSignalSoundLabel);
     SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0,
-        reinterpret_cast<LPARAM>(TIME_SIGNAL_GENERATED_SOUND_LABELS[appLanguage]));
+        reinterpret_cast<LPARAM>(T(TXT_TIME_SIGNAL_GENERATED_SOUND_LABEL)));
     SendMessageW(hTimeSignalSoundCombo, CB_ADDSTRING, 0,
-        reinterpret_cast<LPARAM>(TIME_SIGNAL_SYSTEM_SOUND_LABELS[appLanguage]));
+        reinterpret_cast<LPARAM>(T(TXT_TIME_SIGNAL_SYSTEM_SOUND_LABEL)));
     bool generatorRequired = IsTimeSignalGeneratorRequired();
     SendMessageW(hTimeSignalSoundCombo, CB_SETCURSEL, generatorRequired || generatedTimeSignal ? 0 : 1, 0);
     EnableWindow(hTimeSignalSoundCombo, !generatorRequired);
     EnableWindow(timeSignalSoundLabel, !generatorRequired);
     settingsTimeSignalTestActive = false;
-    hTimeSignalTestButton = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_TEST,
-        TEST_COMMAND_LABELS[appLanguage], &applicationControls);
+    hTimeSignalTestButton = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_TEST, T(TXT_TEST_COMMAND_LABEL),
+        &applicationControls);
     hTimeSignalVolumeLabel = BindSettingsLabel(hApplicationPage, IDC_TIME_SIGNAL_VOLUME_LABEL,
-        TIME_SIGNAL_VOLUME_LABELS[appLanguage], &applicationControls);
+        T(TXT_TIME_SIGNAL_VOLUME_LABEL), &applicationControls);
     hTimeSignalVolumeTrackBar = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_VOLUME, L"", &applicationControls);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
         TIME_SIGNAL_VOLUME_SLIDER_MAX));
@@ -13177,23 +13393,20 @@ static bool CreateSettingsControls() {
     hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES, Mnemonic(TXT_VISUAL_STYLES).c_str(),
         &applicationControls);
     SetCheck(hDisableThemesCheck, themesDisabled);
-    hUseXmlSettingsCheck = BindSettingsControl(hApplicationPage, ID_USE_XML_SETTINGS, XML_STORAGE_LABELS[appLanguage],
+    hUseXmlSettingsCheck = BindSettingsControl(hApplicationPage, ID_USE_XML_SETTINGS, T(TXT_XML_STORAGE_LABEL),
         &applicationControls);
     SetCheck(hUseXmlSettingsCheck, storageUsesXml);
-    hSnapToWorkAreaCheck = BindSettingsControl(hApplicationPage, ID_SNAP_TO_WORK_AREA,
-        SNAP_TO_WORK_AREA_LABELS[appLanguage],
+    hSnapToWorkAreaCheck = BindSettingsControl(hApplicationPage, ID_SNAP_TO_WORK_AREA, T(TXT_SNAP_TO_WORK_AREA_LABEL),
         &applicationControls);
     SetCheck(hSnapToWorkAreaCheck, snapWidgetsToWorkArea);
     hStartWithWindowsCheck = BindSettingsControl(hApplicationPage, ID_START_WITH_WINDOWS,
-        START_WITH_WINDOWS_LABELS[appLanguage],
-        &applicationControls);
+        T(TXT_START_WITH_WINDOWS_LABEL), &applicationControls);
     SetCheck(hStartWithWindowsCheck, startWithWindows);
     hWarnUnsavedChangesCheck = BindSettingsControl(hApplicationPage, ID_WARN_UNSAVED_CHANGES,
-        WARN_UNSAVED_CHANGES_LABELS[appLanguage],
-        &applicationControls);
+        T(TXT_WARN_UNSAVED_CHANGES_LABEL), &applicationControls);
     SetCheck(hWarnUnsavedChangesCheck, warnOnUnsavedChanges);
-    BindSettingsControl(hSettings, ID_IMPORT_SETTINGS, IMPORT_SETTINGS_LABELS[appLanguage]);
-    BindSettingsControl(hSettings, ID_EXPORT_SETTINGS, EXPORT_SETTINGS_LABELS[appLanguage]);
+    BindSettingsControl(hSettings, ID_IMPORT_SETTINGS, T(TXT_IMPORT_SETTINGS_LABEL));
+    BindSettingsControl(hSettings, ID_EXPORT_SETTINGS, T(TXT_EXPORT_SETTINGS_LABEL));
     BindSettingsControl(hSettings, ID_SAVE, Mnemonic(TXT_SAVE).c_str());
     BindSettingsControl(hSettings, ID_CANCEL, Mnemonic(TXT_CANCEL).c_str());
     BindSettingsControl(hSettings, ID_APPLY, Mnemonic(TXT_APPLY).c_str());
@@ -13406,7 +13619,7 @@ static bool ChooseSettingsXmlFile(bool save, std::wstring* path) {
         return false;
     }
     const COMDLG_FILTERSPEC filters[] = {
-        COMDLG_FILTERSPEC{ XML_FILE_TYPE_LABELS[appLanguage], L"*.xml" }
+        COMDLG_FILTERSPEC{ T(TXT_XML_FILE_TYPE_LABEL), L"*.xml" }
     };
     std::wstring fileName;
     if (save) {
@@ -13427,7 +13640,7 @@ static void ExportSettings() {
     }
     ApplySettingsDraft();
     if (!WriteSettingsXml(path, CaptureSettingsSnapshot())) {
-        MessageBoxW(hSettings, SETTINGS_EXPORT_FAILED[appLanguage], T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
+        MessageBoxW(hSettings, T(TXT_SETTINGS_EXPORT_FAILED), T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
     }
 }
 
@@ -13440,7 +13653,7 @@ static void ImportSettings() {
     }
     SettingsSnapshot snapshot = {};
     if (!ReadSettingsXml(path, appLanguage, CreateStoredWidgetDefaults, &snapshot)) {
-        MessageBoxW(hSettings, INVALID_SETTINGS_FILE[appLanguage], T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
+        MessageBoxW(hSettings, T(TXT_INVALID_SETTINGS_FILE), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
         return;
     }
     snapshot.fileDialogDirectory = fileDialogDirectory;
@@ -13527,14 +13740,17 @@ static void ShowSettingsWindow(int widgetId) {
     SendMessageW(hSettings, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(windowIcon));
     SendMessageW(hSettings, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(windowIcon));
     SetWindowTextW(hSettings, T(TXT_SETTINGS));
+    RECT content = {};
+    GetClientRect(hSettings, &content);
+    settingsContentWidth = content.right;
+    settingsContentHeight = content.bottom;
     GetSettingsWindowLayout(extendedStyle, &style, &settingsWidth, &settingsHeight);
     SetWindowLongPtrW(hSettings, GWL_STYLE, style);
     const PersistWindowStateData& placement = settingsWindowState.GetState();
     SetWindowPos(hSettings, nullptr, 0, 0, settingsWidth, settingsHeight,
         SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     if (placement.x != CW_USEDEFAULT && placement.y != CW_USEDEFAULT) {
-        SetWindowPos(hSettings, nullptr, placement.x, placement.y, 0, 0,
-            SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(hSettings, nullptr, placement.x, placement.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
     } else {
         PositionInformationWindowByWindowsDefault(hSettings);
     }
@@ -13668,17 +13884,17 @@ static std::wstring BuildAboutTitle() {
 
 /// Builds localized product information including description, version, copyright, and target platform.
 static std::wstring BuildAboutProductText() {
-    std::wstring description = ABOUT_TEXT[appLanguage];
+    std::wstring description = T(TXT_ABOUT_TEXT);
     size_t separator = description.find(L"\r\n\r\n");
     if (separator != std::wstring::npos) {
         description.erase(0, separator + 4);
     }
     std::wstring result = L"CalClock\r\n" + description + L"\r\n\r\n";
-    result += ABOUT_VERSION_LABELS[appLanguage];
+    result += T(TXT_ABOUT_VERSION_LABEL);
     result += L" ";
     result += GetApplicationVersion();
     result += L"\r\nCopyright © Petr Červinka – FortSoft 2026\r\n";
-    result += ABOUT_PLATFORM_LABELS[appLanguage];
+    result += T(TXT_ABOUT_PLATFORM_LABEL);
     result += L" Win32 (x86)";
     return result;
 }
@@ -13690,14 +13906,14 @@ static std::wstring BuildAboutLinkText() {
 
 /// Combines product information and the labeled website URL as plain text for copying.
 static std::wstring BuildAboutClipboardText() {
-    return BuildAboutProductText() + L"\r\n" + ABOUT_WEBSITE_LABELS[appLanguage] + L" " + ABOUT_WEBSITE_URL;
+    return BuildAboutProductText() + L"\r\n" + T(TXT_ABOUT_WEBSITE_LABEL) + L" " + ABOUT_WEBSITE_URL;
 }
 
 /// Opens the About website and reports failures in the selected application language.
 static void OpenAboutWebsite() {
     HINSTANCE result = ShellExecuteW(hAbout, L"open", ABOUT_WEBSITE_URL, nullptr, nullptr, SW_SHOWNORMAL);
     if (reinterpret_cast<INT_PTR>(result) <= 32) {
-        MessageBoxW(hAbout, ABOUT_WEBSITE_FAILED[appLanguage], T(TXT_APP), MB_OK | MB_ICONERROR);
+        MessageBoxW(hAbout, T(TXT_ABOUT_WEBSITE_FAILED), T(TXT_APP), MB_OK | MB_ICONERROR);
     }
 }
 
@@ -13710,13 +13926,13 @@ static void ShowAboutContextMenu(HWND source, LPARAM location) {
     }
     int controlId = GetDlgCtrlID(source);
     if (controlId == ID_INFO_LINK) {
-        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_OPEN_LINK, OPEN_IN_BROWSER_LABELS[appLanguage]);
+        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_OPEN_LINK, T(TXT_OPEN_IN_BROWSER_LABEL));
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
-        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_URL, COPY_URL_LABELS[appLanguage]);
+        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_URL, T(TXT_COPY_URL_LABEL));
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
-        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_INFORMATION, COPY_INFORMATION_LABELS[appLanguage]);
+        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_INFORMATION, T(TXT_COPY_INFORMATION_LABEL));
     } else {
-        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_INFORMATION, COPY_INFORMATION_LABELS[appLanguage]);
+        AppendMenuW(menu, MF_STRING, ID_MENU_ABOUT_COPY_INFORMATION, T(TXT_COPY_INFORMATION_LABEL));
     }
     POINT point = { GET_X_LPARAM(location), GET_Y_LPARAM(location) };
     if (location == -1) {
@@ -13731,11 +13947,11 @@ static void ShowAboutContextMenu(HWND source, LPARAM location) {
         OpenAboutWebsite();
     } else if (command == ID_MENU_ABOUT_COPY_URL) {
         if (!CopyTextToClipboard(hAbout, ABOUT_WEBSITE_URL)) {
-            MessageBoxW(hAbout, ABOUT_COPY_URL_FAILED[appLanguage], T(TXT_APP), MB_OK | MB_ICONERROR);
+            MessageBoxW(hAbout, T(TXT_ABOUT_COPY_URL_FAILED), T(TXT_APP), MB_OK | MB_ICONERROR);
         }
     } else if (command == ID_MENU_ABOUT_COPY_INFORMATION) {
         if (!CopyTextToClipboard(hAbout, BuildAboutClipboardText())) {
-            MessageBoxW(hAbout, ABOUT_COPY_INFORMATION_FAILED[appLanguage], T(TXT_APP), MB_OK | MB_ICONERROR);
+            MessageBoxW(hAbout, T(TXT_ABOUT_COPY_INFORMATION_FAILED), T(TXT_APP), MB_OK | MB_ICONERROR);
         }
     }
 }
@@ -13821,7 +14037,7 @@ static int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int le
             position--;
         }
         while (position > 0 && (!attributes[position].fCharStop
-                || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
+            || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
             position--;
         }
     } else if (code == WB_RIGHT) {
@@ -13829,7 +14045,7 @@ static int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int le
             position++;
         }
         while (position < length && (!attributes[position].fCharStop
-                || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
+            || !attributes[position].fSoftBreak && !attributes[position - 1].fWhiteSpace)) {
             position++;
         }
     }
@@ -13839,19 +14055,9 @@ static int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int le
 /// Updates open Help and About windows for the application language and recalculates their layouts.
 static void RefreshInformationWindows() {
     if (hHelp != nullptr && IsWindow(hHelp)) {
-        SetWindowTextW(hHelp, HELP_WINDOW_TITLES[appLanguage]);
-        std::wstring helpText = std::wstring(HELP_TEXT[appLanguage])
-            + HELP_ALARM_APPENDIX[appLanguage]
-            + HELP_SELECTION_APPENDIX[appLanguage]
-            + HELP_LAYOUT_APPENDIX[appLanguage]
-            + HELP_STORAGE_APPENDIX[appLanguage]
-            + HELP_SETTINGS_APPENDIX[appLanguage]
-            + HELP_TIME_SIGNAL_APPENDIX[appLanguage]
-            + HELP_ADDITIONAL_CLOCK_APPENDIX[appLanguage]
-            + HELP_TIME_FORMAT_APPENDIX[appLanguage]
-            + HELP_TIME_APPENDIX[appLanguage]
-            + HELP_FULLSCREEN_APPENDIX[appLanguage];
-        SetDlgItemTextW(hHelp, ID_INFO_TEXT, helpText.c_str());
+        SetWindowTextW(hHelp, T(TXT_HELP_WINDOW_TITLES));
+        const wchar_t* helpText = T(TXT_HELP_TEXT);
+        SetDlgItemTextW(hHelp, ID_INFO_TEXT, helpText);
         SetDlgItemTextW(hHelp, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());
         LayoutInformationWindow(hHelp);
     }
@@ -13861,7 +14067,7 @@ static void RefreshInformationWindows() {
         std::wstring linkText = BuildAboutLinkText();
         SetWindowTextW(hAbout, title.c_str());
         SetDlgItemTextW(hAbout, ID_INFO_PRODUCT, productText.c_str());
-        SetDlgItemTextW(hAbout, ID_INFO_WEBSITE, ABOUT_WEBSITE_LABELS[appLanguage]);
+        SetDlgItemTextW(hAbout, ID_INFO_WEBSITE, T(TXT_ABOUT_WEBSITE_LABEL));
         SetDlgItemTextW(hAbout, ID_INFO_LINK, linkText.c_str());
         SetDlgItemTextW(hAbout, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());
         LayoutInformationWindow(hAbout);
@@ -13958,6 +14164,49 @@ static bool GetDialogFontBaseUnits(HFONT font, SIZE* units) {
     return measured;
 }
 
+/// Converts vertical dialog units to pixels using the font base unit, capped so a standard button is at most 28 pixels.
+static int DialogHeightFromUnits(int value, int baseUnit) {
+    if (baseUnit * DIALOG_BUTTON_HEIGHT_DLU > MAX_DIALOG_BUTTON_HEIGHT * 8) {
+        return MulDiv(value, MAX_DIALOG_BUTTON_HEIGHT, DIALOG_BUTTON_HEIGHT_DLU);
+    }
+    return MulDiv(value, baseUnit, 8);
+}
+
+/// Caps initial dialog and child Y dimensions using the standard button height limit, preserving X dimensions and fonts.
+/// Uses the original extended resource height when available to avoid retaining Windows initial work-area clipping.
+static void LimitDialogVerticalUnits(HWND window, int resourceId) {
+    RECT units = { 0, 0, 0, 8 };
+    if (!MapDialogRect(window, &units) || units.bottom * DIALOG_BUTTON_HEIGHT_DLU <= MAX_DIALOG_BUTTON_HEIGHT * 8) {
+        return;
+    }
+    HWND control = GetWindow(window, GW_CHILD);
+    while (control != nullptr) {
+        RECT bounds = {};
+        if (GetWindowRect(control, &bounds)) {
+            MapWindowPoints(HWND_DESKTOP, window, reinterpret_cast<POINT*>(&bounds), 2);
+            int top = DialogHeightFromUnits(MulDiv(bounds.top, 8, units.bottom), units.bottom);
+            int height = DialogHeightFromUnits(MulDiv(bounds.bottom - bounds.top, 8, units.bottom), units.bottom);
+            SetWindowPos(control, nullptr, bounds.left, top, bounds.right - bounds.left, height,
+                SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        control = GetWindow(control, GW_HWNDNEXT);
+    }
+    RECT client = {};
+    RECT bounds = {};
+    if (GetClientRect(window, &client) && GetWindowRect(window, &bounds)) {
+        int dialogHeight = MulDiv(client.bottom, 8, units.bottom);
+        HRSRC resource = FindResourceW(hInstance, MAKEINTRESOURCEW(resourceId), RT_DIALOG);
+        HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(hInstance, resource);
+        const WORD* definition = loaded == nullptr ? nullptr : static_cast<const WORD*>(LockResource(loaded));
+        if (definition != nullptr && SizeofResource(hInstance, resource) >= 26 && definition[1] == 0xFFFF) {
+            dialogHeight = static_cast<short>(definition[12]);
+        }
+        int height = DialogHeightFromUnits(dialogHeight, units.bottom);
+        SetWindowPos(window, nullptr, 0, 0, bounds.right - bounds.left,
+            bounds.bottom - bounds.top - client.bottom + height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+}
+
 /// Converts current information-dialog font units to native pixel dimensions.
 static SIZE InformationDialogUnits(HWND window, int x, int y) {
     InformationWindowLayout& layout = window == hHelp ? helpWindowLayout : aboutWindowLayout;
@@ -13965,7 +14214,7 @@ static SIZE InformationDialogUnits(HWND window, int x, int y) {
     if (!GetDialogFontBaseUnits(layout.font, &units)) {
         return SIZE{};
     }
-    return SIZE{ MulDiv(x, units.cx, 4), MulDiv(y, units.cy, 8) };
+    return SIZE{ MulDiv(x, units.cx, 4), DialogHeightFromUnits(y, units.cy) };
 }
 
 /// Applies the effective interface font and current theme while keeping the About license in Consolas.
@@ -14107,6 +14356,7 @@ static void LayoutInformationWindow(HWND window) {
 /// Leaves native dialog navigation to Windows and forwards the existing information-window actions and notifications.
 static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
     if (message == WM_INITDIALOG) {
+        LimitDialogVerticalUnits(window, lParam != 0 ? IDD_HELP : IDD_ABOUT);
         HWND& target = lParam != 0 ? hHelp : hAbout;
         target = window;
         return FALSE;
@@ -14133,7 +14383,7 @@ static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM 
                 && notification->hwndFrom == hAboutTooltip
                 && notification->code == TTN_GETDISPINFOW) {
             NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
-            swprintf_s(aboutTooltipText, ABOUT_VISIT_TOOLTIP[appLanguage], ABOUT_WEBSITE_URL);
+            swprintf_s(aboutTooltipText, T(TXT_ABOUT_VISIT_TOOLTIP), ABOUT_WEBSITE_URL);
             information->lpszText = aboutTooltipText;
             SetWindowLongPtrW(window, DWLP_MSGRESULT, 0);
             return TRUE;
@@ -14256,7 +14506,7 @@ static void ShowInformationWindow(bool help) {
     }
     if (!help) {
         std::wstring license = LoadLicenseText();
-        SetWindowTextW(text, license.empty() ? ABOUT_LICENSE_UNAVAILABLE[appLanguage] : license.c_str());
+        SetWindowTextW(text, license.empty() ? T(TXT_ABOUT_LICENSE_UNAVAILABLE) : license.c_str());
         const int controls[] = { ID_INFO_PRODUCT, ID_INFO_WEBSITE, ID_INFO_LINK, ID_INFO_ICON };
         for (int id : controls) {
             if (!SetWindowSubclass(GetDlgItem(*target, id), AboutControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID, 0)) {
@@ -14659,7 +14909,7 @@ static void RequestCloseSettingsWindow() {
     UpdateSettingsApplyButton();
     HWND applyButton = GetDlgItem(hSettings, ID_APPLY);
     if (warnOnUnsavedChanges && IsWindowEnabled(applyButton)) {
-        int response = MessageBoxW(hSettings, UNSAVED_SETTINGS_PROMPTS[appLanguage], T(TXT_SETTINGS),
+        int response = MessageBoxW(hSettings, T(TXT_UNSAVED_SETTINGS_PROMPT), T(TXT_SETTINGS),
             MB_YESNOCANCEL | MB_ICONWARNING);
         if (response == IDYES) {
             HandleSettingsCommand(ID_SAVE, BN_CLICKED);
@@ -14909,7 +15159,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, 
             widget->calendarTitlePressed = false;
             ReleaseCapture();
             if (widget->calendarProc != nullptr) {
-                CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
+                CalendarLocaleScope localeScope(GetLanguageLocale(widget->config.language));
                 CallWindowProcW(widget->calendarProc, window, WM_LBUTTONDOWN,
                     widget->calendarTitlePressKeys, widget->calendarTitlePressPosition);
                 return CallWindowProcW(widget->calendarProc, window, WM_LBUTTONUP, wParam, lParam);
@@ -14937,7 +15187,7 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, 
             }
         }
         if (widget->calendarProc != nullptr) {
-            CalendarLocaleScope localeScope(LANGUAGE_LOCALES[widget->config.language]);
+            CalendarLocaleScope localeScope(GetLanguageLocale(widget->config.language));
             if (widget->config.type == WIDGET_PANEL) {
                 if (msg == WM_ERASEBKGND) {
                     PaintPanelCalendarBuffered(window, widget, reinterpret_cast<HDC>(wParam));
@@ -15317,11 +15567,12 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
         case WM_SYSCOLORCHANGE:
             if (window == hSettings) {
                 PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
-                RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+                RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
             }
             break;
         case WM_UPDATE_SETTINGS_CONTROL_METRICS:
             if (window == hSettings) {
+                WindowRedrawScope appearanceRedraw(hAppearancePage);
                 UpdateSettingsControlMetrics();
                 UpdateSettingControlAvailability(false);
                 return 0;
@@ -15422,7 +15673,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                         && reinterpret_cast<NMHDR*>(lParam)->hwndFrom == widget->panelDateTooltip
                         && reinterpret_cast<NMHDR*>(lParam)->code == TTN_GETDISPINFOW) {
                     NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
-                    information->lpszText = const_cast<wchar_t*>(PANEL_TODAY_TOOLTIP[widget->config.language]);
+                    information->lpszText =
+                        const_cast<wchar_t*>(GetLocalizedText(widget->config.language, TXT_PANEL_TODAY_TOOLTIP));
                     return 0;
                 }
                 if (widget->calendarChild != nullptr

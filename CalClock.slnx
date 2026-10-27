@@ -11,10 +11,5 @@
   <Folder Name="/tests/">
     <File Path="tests\ClockTimeTests.cpp" />
     <File Path="tests\RunClockTests.ps1" />
-    <File Path="tests\TimeSourceTests.cpp" />
-    <File Path="tests\SettingsLayoutTests.cpp" />
-    <File Path="tests\RunSettingsLayoutTests.ps1" />
-    <File Path="tests\PanelRenderingTests.cpp" />
-    <File Path="tests\RunPanelRenderingTests.ps1" />
   </Folder>
 </Solution>

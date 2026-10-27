@@ -21,12 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.3
+ * Last modified for version 1.6.1.5
  */
 
 #pragma once
 
 #include "CalClockTypes.h"
+#include <array>
+#include <initializer_list>
+
+/// Associates one immutable translation with its named text key during compilation.
+struct LocalizedText {
+    TextId id;
+    const wchar_t* text;
+};
+
+/// Associates a complete translation table with one existing application language identifier.
+struct LocalizedLanguage {
+    AppLanguage id;
+    const wchar_t* texts[TXT_COUNT];
+};
 
 /// Localized monitor-detail column captions and bit-depth formats.
 struct MonitorColumnText {
@@ -39,129 +53,90 @@ struct MonitorColumnText {
     const wchar_t* pixelDepth;
 };
 
-extern const wchar_t* TEXT[LANG_COUNT][TXT_COUNT];
-extern const wchar_t* LANGUAGE_NAMES[LANG_COUNT];
-extern const wchar_t* FULLSCREEN_WIDGET_NAMES[LANG_COUNT];
-extern const wchar_t* WIDGET_COPY_SUFFIXES[LANG_COUNT];
-extern const wchar_t* WIDGET_LIMIT_MESSAGES[LANG_COUNT];
-extern const wchar_t* COMMAND_FILE_FILTERS[LANG_COUNT];
-extern const wchar_t* XML_FILE_TYPE_LABELS[LANG_COUNT];
-extern const wchar_t* CSV_FILE_TYPE_LABELS[LANG_COUNT];
-extern const wchar_t* LANGUAGE_LOCALES[LANG_COUNT];
-extern const wchar_t* WIDGET_LANGUAGE_LABELS[LANG_COUNT];
-extern const wchar_t* APPLICATION_LANGUAGE_LABELS[LANG_COUNT];
-extern const wchar_t* APPLICATION_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* FONT_STYLE_LABELS[LANG_COUNT][4];
-extern const wchar_t* SYSTEM_DEFAULT_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* SYSTEM_TIME_ZONE_LABELS[LANG_COUNT];
-extern const wchar_t* DATE_COPY_LABELS[LANG_COUNT];
-extern const wchar_t* DATE_FORMAT_LABELS[LANG_COUNT];
-extern const wchar_t* LOCAL_SHORT_LABELS[LANG_COUNT];
-extern const wchar_t* LOCAL_LONG_LABELS[LANG_COUNT];
-extern const wchar_t* ARRANGE_WIDGET_LABELS[LANG_COUNT];
-extern const wchar_t* SHOW_WIDGET_LABELS[LANG_COUNT];
-extern const wchar_t* HIDE_WIDGET_LABELS[LANG_COUNT];
-extern const wchar_t* UTC_TEXT_LABELS[LANG_COUNT];
-extern const wchar_t* MONITOR_LABELS[LANG_COUNT];
-extern const wchar_t* MONITOR_COLUMN_LABELS[LANG_COUNT][MONITOR_COLUMN_COUNT];
-extern const wchar_t* MONITOR_PRIMARY_LABELS[LANG_COUNT];
-extern const wchar_t* MONITOR_DEPTH_FORMATS[LANG_COUNT][2];
-extern const wchar_t* BLACKOUT_MONITOR_LABELS[LANG_COUNT];
-extern const wchar_t* FONT_LABELS[LANG_COUNT];
-extern const wchar_t* FONT_BUTTON_LABELS[LANG_COUNT];
-extern const wchar_t* CALENDAR_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* PANEL_TOP_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* SHOW_TODAY_LABELS[LANG_COUNT];
-extern const wchar_t* PANEL_TODAY_TOOLTIP[LANG_COUNT];
-extern const wchar_t* PANEL_TIME_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* PANEL_BOTTOM_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* PANEL_TIME_NOTICES_LABELS[LANG_COUNT];
-extern const wchar_t* DEFAULT_FONT_LABELS[LANG_COUNT];
-extern const wchar_t* ALARM_TEXT_COLOR_LABELS[LANG_COUNT];
-extern const wchar_t* ALARM_BACKGROUND_COLOR_LABELS[LANG_COUNT];
-extern const wchar_t* PADDING_LABELS[LANG_COUNT];
-extern const wchar_t* BORDER_LABELS[LANG_COUNT];
-extern const wchar_t* BORDER_COLOR_LABELS[LANG_COUNT];
-extern const wchar_t* BORDER_WIDTH_LABELS[LANG_COUNT];
-extern const wchar_t* ADDITIONAL_CLOCK_NAME_FORMATS[LANG_COUNT];
-extern const wchar_t* ADDITIONAL_CLOCK_SHOW_FORMATS[LANG_COUNT];
-extern const wchar_t* TIME_FORMAT_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_FORMAT_MODE_LABELS[LANG_COUNT][TIME_FORMAT_COUNT];
-extern const wchar_t* LEADING_ZERO_MODE_LABELS[LANG_COUNT][LEADING_ZERO_MODE_COUNT];
-extern const wchar_t* TIME_SIGNAL_SOUND_LABELS[LANG_COUNT];
-extern const wchar_t* ALARM_VOLUME_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_VOLUME_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_SYSTEM_SOUND_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_GENERATED_SOUND_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_TAB_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_MENU_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_ENABLED_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SIGNAL_MODE_LABELS[LANG_COUNT][TIME_SIGNAL_COUNT];
-extern const wchar_t* TIME_SIGNAL_NOTE[LANG_COUNT];
-extern const wchar_t* TIME_TAB_LABELS[LANG_COUNT];
-extern const wchar_t* APPLICATION_TAB_LABELS[LANG_COUNT];
-extern const wchar_t* TIME_SOURCE_LABELS[LANG_COUNT];
-extern const wchar_t* SYSTEM_TIME_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_TIME_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_SERVERS_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_PRESET_FIELD_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_PRESET_LABELS[LANG_COUNT][NTP_PRESET_COUNT];
-extern const wchar_t* NTP_SYNC_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_LOG_COLUMN_LABELS[LANG_COUNT][3];
-extern const wchar_t* NTP_LOG_ERROR_LABELS[LANG_COUNT][4];
-extern const wchar_t* NTP_SAVE_LOG_LABELS[LANG_COUNT];
-extern const wchar_t* NTP_LOG_EXPORT_FAILED[LANG_COUNT];
-extern const wchar_t* TIME_GLOBAL_NOTE[LANG_COUNT];
-extern const wchar_t* NTP_STATUS_SYSTEM[LANG_COUNT];
-extern const wchar_t* NTP_STATUS_WAITING[LANG_COUNT];
-extern const wchar_t* NTP_STATUS_FAILED[LANG_COUNT];
-extern const wchar_t* NTP_STATUS_RETAINED[LANG_COUNT];
-extern const wchar_t* NTP_STATUS_SYNCHRONIZED[LANG_COUNT];
-extern const wchar_t* ANTIALIASING_LABELS[LANG_COUNT];
-extern const wchar_t* ANTIALIASING_NAMES[LANG_COUNT][FONT_ANTIALIAS_COUNT];
-extern const wchar_t* DEFAULT_APPEARANCE_LABELS[LANG_COUNT];
-extern const wchar_t* TEST_COMMAND_LABELS[LANG_COUNT];
-extern const wchar_t* STOP_TEST_LABELS[LANG_COUNT];
-extern const wchar_t* ALARM_TIME_SIGNAL_LABELS[LANG_COUNT];
-extern const wchar_t* REMOTE_SCRIPT_LABELS[LANG_COUNT];
-extern const wchar_t* REMOTE_SCRIPT_URL_LABELS[LANG_COUNT];
-extern const wchar_t* INVALID_REMOTE_SCRIPT_URL[LANG_COUNT];
-extern const wchar_t* IMPORT_SETTINGS_LABELS[LANG_COUNT];
-extern const wchar_t* EXPORT_SETTINGS_LABELS[LANG_COUNT];
-extern const wchar_t* INVALID_SETTINGS_FILE[LANG_COUNT];
-extern const wchar_t* SETTINGS_EXPORT_FAILED[LANG_COUNT];
-extern const wchar_t* XML_STORAGE_LABELS[LANG_COUNT];
-extern const wchar_t* START_WITH_WINDOWS_LABELS[LANG_COUNT];
-extern const wchar_t* SNAP_TO_WORK_AREA_LABELS[LANG_COUNT];
-extern const wchar_t* WARN_UNSAVED_CHANGES_LABELS[LANG_COUNT];
-extern const wchar_t* UNSAVED_SETTINGS_PROMPTS[LANG_COUNT];
-extern const wchar_t* MUTE_LABELS[LANG_COUNT];
-extern const wchar_t* MUTE_ALL_LABELS[LANG_COUNT];
-extern const wchar_t* MUTED_LABELS[LANG_COUNT];
-extern const wchar_t* HELP_WINDOW_TITLES[LANG_COUNT];
-extern const wchar_t* HELP_TEXT[LANG_COUNT];
-extern const wchar_t* HELP_ALARM_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_SELECTION_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_LAYOUT_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_STORAGE_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_SETTINGS_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_TIME_SIGNAL_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_ADDITIONAL_CLOCK_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_TIME_FORMAT_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_TIME_APPENDIX[LANG_COUNT];
-extern const wchar_t* HELP_FULLSCREEN_APPENDIX[LANG_COUNT];
-extern const wchar_t* ABOUT_TEXT[LANG_COUNT];
-extern const wchar_t* ABOUT_VERSION_LABELS[LANG_COUNT];
-extern const wchar_t* ABOUT_PLATFORM_LABELS[LANG_COUNT];
-extern const wchar_t* ABOUT_WEBSITE_LABELS[LANG_COUNT];
-extern const wchar_t* ABOUT_VISIT_TOOLTIP[LANG_COUNT];
-extern const wchar_t* ABOUT_WEBSITE_FAILED[LANG_COUNT];
-extern const wchar_t* ABOUT_COPY_URL_FAILED[LANG_COUNT];
-extern const wchar_t* ABOUT_COPY_INFORMATION_FAILED[LANG_COUNT];
-extern const wchar_t* ABOUT_LICENSE_UNAVAILABLE[LANG_COUNT];
-extern const wchar_t* OPEN_IN_BROWSER_LABELS[LANG_COUNT];
-extern const wchar_t* COPY_URL_LABELS[LANG_COUNT];
-extern const wchar_t* COPY_INFORMATION_LABELS[LANG_COUNT];
+/// Maps widget kinds to their named translation keys.
+inline constexpr TextId WIDGET_TYPE_TEXT_IDS[] = {
+    TXT_ANALOG,
+    TXT_DIGITAL,
+    TXT_CALENDAR,
+    TXT_PANEL,
+    TXT_FULLSCREEN_WIDGET_NAME,
+};
+static_assert(ARRAYSIZE(WIDGET_TYPE_TEXT_IDS) == WIDGET_TYPE_COUNT);
+
+inline constexpr TextId MONITOR_COLUMN_TEXT_IDS[] = {
+    TXT_MONITOR_COLUMN_DISPLAY,
+    TXT_MONITOR_COLUMN_MODEL,
+    TXT_MONITOR_COLUMN_RESOLUTION,
+    TXT_MONITOR_COLUMN_REFRESH_RATE,
+    TXT_MONITOR_COLUMN_BIT_DEPTH,
+    TXT_MONITOR_COLUMN_COLOR_FORMAT,
+    TXT_MONITOR_COLUMN_COLOR_SPACE,
+    TXT_MONITOR_COLUMN_POSITION,
+};
+static_assert(ARRAYSIZE(MONITOR_COLUMN_TEXT_IDS) == MONITOR_COLUMN_COUNT);
+
+inline constexpr TextId TIME_FORMAT_TEXT_IDS[] = {
+    TXT_TIME_FORMAT_CULTURE,
+    TXT_TIME_FORMAT_12_HOUR,
+    TXT_TIME_FORMAT_24_HOUR,
+};
+static_assert(ARRAYSIZE(TIME_FORMAT_TEXT_IDS) == TIME_FORMAT_COUNT);
+
+inline constexpr TextId LEADING_ZERO_TEXT_IDS[] = {
+    TXT_LEADING_ZERO_VISIBLE,
+    TXT_LEADING_ZERO_RESERVED,
+    TXT_LEADING_ZERO_OMITTED,
+};
+static_assert(ARRAYSIZE(LEADING_ZERO_TEXT_IDS) == LEADING_ZERO_MODE_COUNT);
+
+inline constexpr TextId TIME_SIGNAL_TEXT_IDS[] = {
+    TXT_TIME_SIGNAL_NONE,
+    TXT_TIME_SIGNAL_EVERY_MINUTE,
+    TXT_TIME_SIGNAL_EVERY_FIVE_MINUTES,
+    TXT_TIME_SIGNAL_EVERY_TEN_MINUTES,
+    TXT_TIME_SIGNAL_EVERY_QUARTER_HOUR,
+    TXT_TIME_SIGNAL_EVERY_TWENTY_MINUTES,
+    TXT_TIME_SIGNAL_EVERY_HALF_HOUR,
+    TXT_TIME_SIGNAL_EVERY_HOUR,
+};
+static_assert(ARRAYSIZE(TIME_SIGNAL_TEXT_IDS) == TIME_SIGNAL_COUNT);
+
+inline constexpr TextId NTP_PRESET_TEXT_IDS[] = {
+    TXT_NTP_PRESET_AUTO,
+    TXT_NTP_PRESET_CESNET,
+    TXT_NTP_PRESET_PTB,
+    TXT_NTP_PRESET_GLOBAL,
+    TXT_NTP_PRESET_CUSTOM,
+};
+static_assert(ARRAYSIZE(NTP_PRESET_TEXT_IDS) == NTP_PRESET_COUNT);
+
+inline constexpr TextId NTP_LOG_COLUMN_TEXT_IDS[] = {
+    TXT_NTP_LOG_COLUMN_DATE,
+    TXT_NTP_LOG_COLUMN_SERVER,
+    TXT_NTP_LOG_COLUMN_STATUS,
+};
+static_assert(ARRAYSIZE(NTP_LOG_COLUMN_TEXT_IDS) == 3);
+
+inline constexpr TextId NTP_LOG_ERROR_TEXT_IDS[] = {
+    TXT_NTP_LOG_ERROR_INVALID_REPLY,
+    TXT_NTP_LOG_ERROR_NAME_RESOLUTION,
+    TXT_NTP_LOG_ERROR_NETWORK,
+    TXT_NTP_LOG_ERROR_TIMEOUT,
+};
+static_assert(ARRAYSIZE(NTP_LOG_ERROR_TEXT_IDS) == 4);
+
+inline constexpr TextId ANTIALIASING_TEXT_IDS[] = {
+    TXT_ANTIALIASING_GDI,
+    TXT_ANTIALIASING_CLEARTYPE,
+    TXT_ANTIALIASING_NONE,
+};
+static_assert(ARRAYSIZE(ANTIALIASING_TEXT_IDS) == FONT_ANTIALIAS_COUNT);
+
+/// Returns a borrowed, immutable translation identified by the existing language enum and a named text key.
+const wchar_t* GetLocalizedText(AppLanguage language, TextId id);
+
+/// Returns the supported Windows locale name, including the existing Serbian and Montenegrin fallbacks.
+const wchar_t* GetLanguageLocale(AppLanguage language);
 
 /// Returns localized monitor-detail column captions and bit-depth formats.
 MonitorColumnText MonitorColumnsText(AppLanguage language);
@@ -169,4 +144,55 @@ MonitorColumnText MonitorColumnsText(AppLanguage language);
 /// Returns the localized initial text for a newly created additional clock.
 std::wstring DefaultAdditionalClockName(AppLanguage language, int index);
 
+/// Resolves unavailable Serbian and Montenegrin Windows locale names without modifying the translation catalog.
 void InitializeLanguageLocales();
+
+/// Builds one language at compile time and rejects missing, duplicate, empty, or invalid text entries.
+consteval LocalizedLanguage DefineLanguage(AppLanguage language, std::initializer_list<LocalizedText> entries) {
+    if (entries.size() != TXT_COUNT) {
+        throw "Every language must define every TextId exactly once.";
+    }
+    LocalizedLanguage result = { language, {} };
+    for (const LocalizedText& entry : entries) {
+        int id = static_cast<int>(entry.id);
+        if (id < 0 || id >= TXT_COUNT) {
+            throw "Invalid translation TextId.";
+        }
+        if (entry.text == nullptr || entry.text[0] == L'\0') {
+            throw "A translation cannot be null or empty.";
+        }
+        if (result.texts[id] != nullptr) {
+            throw "Duplicate translation TextId.";
+        }
+        result.texts[id] = entry.text;
+    }
+    return result;
+}
+
+/// Indexes complete languages by AppLanguage at compile time, independently of their source order.
+/// Rejects missing, duplicate, or invalid language identifiers before any executable can be produced.
+consteval std::array<LocalizedLanguage, LANG_COUNT> DefineLocalization(
+        std::initializer_list<LocalizedLanguage> languages) {
+    if (languages.size() != LANG_COUNT) {
+        throw "Every AppLanguage must have a complete translation table.";
+    }
+    std::array<LocalizedLanguage, LANG_COUNT> result = {};
+    std::array<bool, LANG_COUNT> included = {};
+    for (const LocalizedLanguage& language : languages) {
+        int id = static_cast<int>(language.id);
+        if (id < 0 || id >= LANG_COUNT) {
+            throw "Invalid localization AppLanguage.";
+        }
+        if (included[id]) {
+            throw "Duplicate localization AppLanguage.";
+        }
+        for (const wchar_t* text : language.texts) {
+            if (text == nullptr || text[0] == L'\0') {
+                throw "Every language must contain a nonempty translation for every TextId.";
+            }
+        }
+        result[id] = language;
+        included[id] = true;
+    }
+    return result;
+}

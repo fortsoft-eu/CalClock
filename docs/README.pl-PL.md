@@ -70,7 +70,7 @@ Panele kalendarza z zegarem mogą wyświetlać powiadomienia systemu Windows o d
 
 Dla samodzielnych kalendarzy **Wiersz Dzisiaj** w menu lub na karcie Wygląd kontroluje dolny wiersz. Domyślnie jest zaznaczony; odznaczenie ukrywa wiersz i zmniejsza kalendarz. Wybór zapisuje się dla każdego widżetu osobno. **Przejdź do dzisiaj** pozostaje dostępne i wraca do widoku miesiąca. Przy zmianie daty według czasu widżetu kalendarze automatycznie wybierają dzisiaj, zachowując bieżący widok.
 
-Zmiany wyglądu są natychmiast widoczne na wybranym widżecie. `Anuluj` odrzuca niezastosowane zmiany; `Wygląd domyślny` przywraca wartości danego typu.
+Zmiany wyglądu są od razu widoczne w podglądzie wybranego widżetu. `Wygląd domyślny` przywraca domyślne wartości dla tego typu widżetu. Przy zamykaniu ustawień z niezastosowanymi zmianami pojawia się pytanie o ich zapisanie. Ostrzeżenie jest domyślnie włączone i można je wyłączyć na karcie Aplikacja.
 
 Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ramka ma konfigurowalny kolor; ustawienie szerokości jest dostępne tam, gdzie widżet je obsługuje. Przezroczyste zegary cyfrowe oferują te same style co nieprzezroczyste. Czcionki aplikacji i kalendarza nie mają wyboru rozmiaru; cyfrowe i teksty panelu mają. Własne czcionki kalendarza są obsługiwane przy klasycznym wyglądzie systemu Windows lub po wyłączeniu motywów dla aplikacji bądź widżetu.
 

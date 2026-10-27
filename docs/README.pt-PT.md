@@ -70,7 +70,7 @@ Os painéis de calendário e relógio podem apresentar os avisos de data e hora 
 
 Nos calendários independentes, **Linha Hoje**, no menu ou em Aspeto, controla a linha inferior. Está selecionada por predefinição; desmarcá-la oculta a linha e reduz o calendário. A escolha é guardada por widget. **Ir para hoje** continua disponível no menu e regressa à vista mensal. Quando a data muda segundo a hora do widget, o calendário seleciona hoje automaticamente, mantendo a vista atual.
 
-As alterações de aspeto são imediatamente pré-visualizadas no widget selecionado. `Cancelar` descarta as alterações não aplicadas; `Aspeto predefinido` repõe os valores do respetivo tipo de widget.
+As alterações de aspeto são imediatamente pré-visualizadas no widget selecionado. `Aspeto predefinido` repõe os valores predefinidos desse tipo de widget. Ao fechar as definições com alterações não aplicadas, é perguntado se pretende guardá-las. Este aviso está ativado por predefinição e pode ser desativado no separador Aplicação.
 
 Relógios digitais, calendários e painéis partilham quatro estilos de contorno. O estilo simples também permite escolher a cor; a largura é configurável quando o widget a suporta. Os relógios digitais transparentes oferecem os mesmos estilos que os opacos. Para aplicação e calendário não incluem tamanho; para relógios digitais e texto do painel incluem. Os tipos de letra personalizados do calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para a aplicação ou o widget.
 

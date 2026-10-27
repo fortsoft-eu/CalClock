@@ -70,7 +70,7 @@ Paneler med kalender och klocka kan visa Windows-meddelanden om datum och tid ov
 
 För fristående kalendrar styr **Idag-rad** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
 
-Utseendeändringar förhandsvisas direkt på vald widget. `Avbryt` tar bort ändringar som inte har verkställts; `Standardutseende` återställer värdena för widgettypen.
+Utseendeändringar förhandsvisas direkt på den valda widgeten. `Standardutseende` återställer standardvärdena för den widgettypen. När Inställningar stängs med ändringar som inte har verkställts får du frågan om de ska sparas. Varningen är aktiverad som standard och kan stängas av på fliken Program.
 
 Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. Egna kalenderteckensnitt stöds med Windows klassiska utseende eller när teman är avstängda för programmet eller widgeten.
 

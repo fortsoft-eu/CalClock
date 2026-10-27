@@ -70,7 +70,7 @@ Les panneaux calendrier et horloge peuvent afficher les notifications de date et
 
 Pour les calendriers indépendants, **Ligne Aujourd’hui**, dans le menu du widget ou l’onglet Apparence, contrôle la ligne du bas. Elle est cochée par défaut ; la décocher masque la ligne et réduit le calendrier. Le choix est enregistré par widget. **Aller à aujourd’hui** reste disponible dans le menu et revient à la vue mensuelle. Au changement de date selon l’heure propre au widget, le calendrier sélectionne automatiquement aujourd’hui tout en conservant la vue actuelle.
 
-Les modifications d’apparence sont immédiatement prévisualisées sur le widget sélectionné. `Annuler` abandonne les modifications non appliquées ; `Apparence par défaut` rétablit les valeurs par défaut du type de widget.
+Les modifications d’apparence sont immédiatement prévisualisées sur le widget sélectionné. `Apparence par défaut` rétablit les valeurs par défaut de ce type de widget. À la fermeture des paramètres avec des modifications non appliquées, une confirmation d’enregistrement est demandée. Cet avertissement est activé par défaut et peut être désactivé dans l’onglet Application.
 
 Horloges numériques, calendriers et panneaux combinés partagent quatre styles de bordure. Le style simple possède une couleur configurable ; la largeur est réglable lorsque le widget la prend en charge. Les horloges numériques transparentes proposent les mêmes styles que les opaques. Les polices de calendrier personnalisées sont prises en charge avec l’apparence classique de Windows ou lorsque les thèmes sont désactivés pour l’application ou le widget.
 

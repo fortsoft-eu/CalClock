@@ -70,7 +70,7 @@ Kalendáre s hodinami môžu nad dolným odkazom zobrazovať oznámenia dátumu 
 
 Pri samostatných kalendároch voľba **Riadok Dnes** v ponuke alebo na karte Vzhľad ovláda spodný riadok. Predvolene je zaškrtnutá; odškrtnutím sa riadok skryje a kalendár zmenší. Voľba sa ukladá samostatne. **Prejsť na dnešok** zostáva dostupné a vracia mesačné zobrazenie. Pri zmene dátumu podľa času widgetu kalendáre automaticky vyberú dnešok a zachovajú aktuálny spôsob zobrazenia.
 
-Zmeny vzhľadu sa okamžite zobrazujú na vybranom widgete. `Zrušiť` zruší nepoužité zmeny; `Predvolený vzhľad` obnoví hodnoty daného typu.
+Zmeny vzhľadu sa ihneď zobrazujú v náhľade vybraného widgetu. `Predvolený vzhľad` obnoví predvolené hodnoty daného typu widgetu. Pri zatváraní Nastavení s nepoužitými zmenami sa zobrazí otázka na uloženie. Upozornenie je predvolene zapnuté a možno ho vypnúť na karte Aplikácia.
 
 Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jednoduchý rámček má nastaviteľnú farbu; šírka je dostupná tam, kde ju widget podporuje. Priehľadné digitálne hodiny ponúkajú rovnaké štýly ako nepriehľadné. Pri písme aplikácie a kalendára neponúkajú veľkosť, pri digitálnych hodinách a textoch panela áno. Vlastné písmo kalendára sa používa pri klasickom vzhľade Windows alebo pri vypnutých motívoch aplikácie či widgetu.
 

@@ -70,7 +70,7 @@ Příkaz `Zarovnat do mřížky` přichytí viditelné widgety na ploše do stab
 
 U samostatných kalendářů volba **Řádek Dnes** v nabídce widgetu nebo na kartě Vzhled v Nastavení ovládá viditelnost spodního řádku Dnes. Ve výchozím stavu je zaškrtnutá; odškrtnutím řádek skryjete a kalendář se zmenší. Volba se ukládá samostatně pro každý widget. Příkaz **Přejít na dnešek** zůstává v nabídce dostupný a vrací kalendář do měsíčního zobrazení. Při změně data podle času příslušného widgetu kalendáře automaticky vyberou dnešek a zachovají aktuální způsob zobrazení.
 
-Změny vzhledu se okamžitě zobrazují na vybraném widgetu. `Zrušit` zruší nepoužité změny vzhledu, zatímco `Výchozí vzhled` obnoví výchozí hodnoty pro příslušný typ widgetu.
+Změny vzhledu se ihned zobrazují v náhledu vybraného widgetu. `Výchozí vzhled` obnoví výchozí hodnoty daného typu widgetu. Při zavírání Nastavení s nepoužitými změnami se zobrazí dotaz na uložení. Upozornění je ve výchozím stavu zapnuté a lze je vypnout na kartě Aplikace.
 
 Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly rámečku. Jednoduchý rámeček má také nastavitelnou barvu; nastavení šířky rámečku je dostupné tam, kde je vybraný widget podporuje. Průhledné digitální hodiny nabízejí stejné styly jako neprůhledné. Vlastní písmo kalendáře se používá při klasickém vzhledu Windows nebo při vypnutých motivech aplikace či widgetu.
 

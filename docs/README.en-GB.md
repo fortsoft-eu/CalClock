@@ -70,7 +70,7 @@ The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-o
 
 For standalone calendars, **Today row** in the widget menu or on the Appearance tab in Settings controls whether the bottom Today row is visible. It is checked by default; clear it to hide the row and shrink the calendar to fit. The choice is saved separately for each widget. **Go to Today** remains available in the menu and returns to the month view. When the date changes according to each widget’s time, calendars select today automatically while preserving their current view.
 
-Appearance changes are previewed immediately on the selected widget. `Cancel` discards unapplied appearance changes, while `Default appearance` restores the defaults for that widget type.
+Appearance changes are previewed immediately on the selected widget. `Default appearance` restores the defaults for that widget type. Closing Settings with unapplied changes asks whether to save them. This warning is enabled by default and can be turned off on the Application tab.
 
 Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border colour; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Custom calendar fonts are supported with the Windows classic appearance or with visual styles turned off for the application or widget.
 

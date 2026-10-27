@@ -70,7 +70,7 @@ Takvim ve saat panelleri, alt bağlantının üzerinde Windows tarih ve saat bil
 
 Bağımsız takvimlerde menüdeki veya Görünüm sekmesindeki **Bugün satırı**, alttaki satırın görünürlüğünü denetler. Varsayılan olarak işaretlidir; işareti kaldırmak satırı gizler ve takvimi küçültür. Seçim araç başına saklanır. **Bugüne git** menüde kullanılabilir kalır ve ay görünümüne döner. Aracın zamanına göre tarih değiştiğinde takvim bugünü otomatik seçer ve geçerli görünümünü korur.
 
-Görünüm değişiklikleri seçili araçta hemen önizlenir. `İptal` uygulanmamış değişiklikleri geri alır; `Varsayılan görünüm` o araç türünün varsayılanlarını geri getirir.
+Görünüm değişiklikleri seçili araçta hemen önizlenir. `Varsayılan görünüm`, o araç türünün varsayılan değerlerini geri yükler. Uygulanmamış değişiklikler varken Ayarlar kapatılırsa bunların kaydedilip kaydedilmeyeceği sorulur. Bu uyarı varsayılan olarak açıktır ve Uygulama sekmesinden kapatılabilir.
 
 Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaşır. Tek çizgili kenarlığın rengi de ayarlanabilir; genişlik denetimi aracın desteklediği yerlerde kullanılabilir. Saydam dijital saatlerde opak saatlerle aynı stiller bulunur. Uygulama ve takvim yazı tiplerinde boyut yoktur; dijital saatlerde ve panel metinlerinde vardır. Özel takvim yazı tipleri, Windows klasik görünümünde veya uygulama ya da araç için temalar kapatıldığında desteklenir.
 

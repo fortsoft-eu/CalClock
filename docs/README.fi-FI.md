@@ -70,7 +70,7 @@ Kalenterin ja kellon sisältävät paneelit voivat näyttää Windowsin päiväm
 
 Erillisissä kalentereissa **Tänään-rivi** pikavalikossa tai Ulkoasu-välilehdellä säätää alarivin näkyvyyttä. Se on oletuksena valittuna; valinnan poistaminen piilottaa rivin ja pienentää kalenteria. Valinta tallennetaan pienoisohjelmakohtaisesti. **Siirry tähän päivään** pysyy käytettävissä ja palauttaa kuukausinäkymän. Päivämäärän vaihtuessa pienoisohjelman ajan mukaan kalenteri valitsee tämän päivän automaattisesti ja säilyttää nykyisen näkymän.
 
-Ulkoasumuutokset näkyvät heti valitussa pienoisohjelmassa. `Peruuta` hylkää muutokset, joita ei ole otettu käyttöön; `Oletusulkoasu` palauttaa kyseisen tyypin oletusasetukset.
+Ulkoasumuutokset näkyvät heti valitun pienoisohjelman esikatselussa. `Oletusulkoasu` palauttaa kyseisen pienoisohjelmatyypin oletusasetukset. Kun asetukset suljetaan ja muutoksia on ottamatta käyttöön, ohjelma kysyy niiden tallentamisesta. Varoitus on oletusarvoisesti käytössä, ja sen voi poistaa käytöstä Sovellus-välilehdellä.
 
 Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyliä. Yksinkertaisen reunuksen väriä voi muuttaa; leveys on säädettävissä sitä tukevissa pienoisohjelmissa. Läpinäkyvät digitaaliset kellot tarjoavat samat tyylit kuin peittävät. Sovelluksen ja kalenterin fonteista puuttuu kokovalinta, mutta digitaalisissa ja paneeliteksteissä se on mukana. Kalenterin mukautettuja fontteja voi käyttää Windowsin perinteisessä ulkoasussa tai kun sovelluksen tai pienoisohjelman teemat on poistettu käytöstä.
 

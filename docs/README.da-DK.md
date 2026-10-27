@@ -70,7 +70,7 @@ Paneler med kalender og ur kan vise Windows-meddelelser om dato og klokkeslæt o
 
 For selvstændige kalendere styrer **Rækken I dag** i menuen eller på Udseende den nederste række. Den er markeret som standard; fjern markeringen for at skjule rækken og gøre kalenderen mindre. Valget gemmes pr. widget. **Gå til i dag** forbliver tilgængeligt og vender tilbage til månedsvisningen. Når datoen skifter efter widgetens tid, vælger kalenderen automatisk i dag og bevarer sin aktuelle visning.
 
-Udseendeændringer vises straks på den valgte widget. `Annuller` kasserer ændringer, der ikke er anvendt; `Standardudseende` gendanner standarderne for widgettypen.
+Udseendeændringer vises straks som et eksempel på den valgte widget. `Standardudseende` gendanner standardværdierne for denne widgettype. Når Indstillinger lukkes med ændringer, der ikke er anvendt, bliver du spurgt, om de skal gemmes. Advarslen er slået til som standard og kan slås fra på fanen Program.
 
 Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har justerbar farve; rammebredde kan ændres, hvor widgeten understøtter det. Gennemsigtige digitale ure tilbyder samme stile som uigennemsigtige. Program- og kalenderskrifter har intet størrelsesvalg, mens digitale ure og paneltekster har. En indbygget kalender bruger kun en egen skrifttype, når visuelle typografier er slået fra for kalenderen eller hele programmet.
 

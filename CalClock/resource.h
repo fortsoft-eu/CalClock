@@ -166,7 +166,6 @@
 #define IDC_LAYOUT_SUNDAY_CALENDAR              5113
 #define IDC_ALARM_DAY_SLOT_BASE                 5120
 
-#define IDC_GRID_ROW_STANDARD                   5130
 
 #define IDC_GRID_ROW_APPLICATION                5131
 
@@ -183,6 +182,9 @@
 #define IDC_GRID_ROW_TIME_ACTIONS               5141
 
 #define IDC_SETTINGS_FOOTER_GAP                 5142
+#define IDC_SETTINGS_BOTTOM_GAP                 5147
+#define IDC_SETTINGS_LABEL_FIELD_GAP            5148
+#define IDC_SETTINGS_COMMAND_FIELD_GAP          5149
 #define IDC_SETTINGS_BUTTON_ROW_STEP            5143
 #define IDC_LAYOUT_PANEL_LOWER_SHIFT            5144
 #define IDC_GRID_ROW_UNIFORM_APPEARANCE         5145
@@ -200,7 +202,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE                113
 #define _APS_NEXT_COMMAND_VALUE                 40001
-#define _APS_NEXT_CONTROL_VALUE                 5147
+#define _APS_NEXT_CONTROL_VALUE                 5150
 #define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif

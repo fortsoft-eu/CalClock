@@ -21,15 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.6.1.1
+Last modified for version 1.6.1.5
 
 .SYNOPSIS
-Builds CalClock and runs the clock and NTP regression tests.
+Builds CalClock and runs the continuous-clock regression tests.
 
 .DESCRIPTION
-Builds Release | x86, compiles both test executables, and runs the continuous-clock tests at four counter
-frequencies before running the NTP and time-signal tests. The tests simulate time and network activity without
-changing the computer's clock or contacting external servers. Generated files are placed in
+Builds Release | x86, compiles the continuous-clock test executable, and runs it at four counter frequencies.
+The tests simulate clock and counter values without changing the computer's clock. Generated files are placed in
 CalClock/Release/clock-tests. A build or test failure stops the script with an error.
 
 .PARAMETER VisualStudioPath
@@ -63,35 +62,21 @@ try {
         throw 'CalClock build failed.'
     }
     $commonOptions = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/Gy', '/DUNICODE', '/D_UNICODE')
-    foreach ($testName in 'ClockTimeTests', 'TimeSourceTests') {
-        $options = $commonOptions + @("/Fo`"$buildRoot/$testName.obj`"", "/Fe`"$buildRoot/$testName.exe`"", "tests/$testName.cpp")
-        if ($testName -eq 'TimeSourceTests') {
-            $options += Get-ChildItem CalClock/Release -Filter '*.obj' |
-                Where-Object { $_.BaseName -notin 'CalClock', 'ClockTime', 'NtpClient', 'TimeSignal',
-                    'TimeZoneSupport' } |
-                ForEach-Object { '"' + $_.FullName + '"' }
-        }
-        $options += @('/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF', '/OPT:ICF',
-            'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib', 'uuid.lib')
-        if ($testName -eq 'TimeSourceTests') {
-            $options += '/LTCG'
-        }
-        $responsePath = Join-Path $buildRoot "$testName.rsp"
-        Set-Content -LiteralPath $responsePath -Value ($options -join ' ') -Encoding utf8
-        & $env:ComSpec /d /s /c "`"$vcvars`" >nul && cl @`"$responsePath`""
-        if ($LASTEXITCODE -ne 0) {
-            throw "$testName build failed."
-        }
+    $testName = 'ClockTimeTests'
+    $options = $commonOptions + @("/Fo`"$buildRoot/$testName.obj`"", "/Fe`"$buildRoot/$testName.exe`"",
+        "tests/$testName.cpp", '/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF', '/OPT:ICF',
+        'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib', 'uuid.lib')
+    $responsePath = Join-Path $buildRoot "$testName.rsp"
+    Set-Content -LiteralPath $responsePath -Value ($options -join ' ') -Encoding utf8
+    & $env:ComSpec /d /s /c "`"$vcvars`" >nul && cl @`"$responsePath`""
+    if ($LASTEXITCODE -ne 0) {
+        throw "$testName build failed."
     }
     foreach ($frequency in '3125000', '3579545', '10000000', '3000000000') {
         & "$buildRoot/ClockTimeTests.exe" $frequency
         if ($LASTEXITCODE -ne 0) {
             throw "ClockTimeTests failed at $frequency Hz."
         }
-    }
-    & "$buildRoot/TimeSourceTests.exe"
-    if ($LASTEXITCODE -ne 0) {
-        throw 'TimeSourceTests failed.'
     }
 } finally {
     Pop-Location

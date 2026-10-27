@@ -70,7 +70,7 @@ Paneler med kalender og klokke kan vise Windows-varsler om dato og klokkeslett o
 
 For frittstående kalendere styrer **I dag-raden** i menyen eller på Utseende den nederste raden. Valget er på som standard; fjern merket for å skjule raden og redusere kalenderen. Innstillingen lagres per widget. **Gå til i dag** er fortsatt tilgjengelig og går tilbake til månedsvisningen. Når datoen endres etter widgetens egen tid, velger kalenderen i dag automatisk uten å endre gjeldende visning.
 
-Utseendeendringer forhåndsvises straks på valgt widget. `Avbryt` forkaster endringer som ikke er tatt i bruk; `Standardutseende` gjenoppretter standardene for widgettypen.
+Utseendeendringer forhåndsvises straks på den valgte widgeten. `Standardutseende` gjenoppretter standardverdiene for denne widgettypen. Når Innstillinger lukkes med endringer som ikke er tatt i bruk, blir du spurt om de skal lagres. Advarselen er aktivert som standard og kan slås av på fanen Program.
 
 Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den enkle rammen har justerbar farge; rammebredde kan endres der widgeten støtter det. Gjennomsiktige digitale klokker tilbyr de samme stilene som ugjennomsiktige. Program- og kalenderskrifter utelater størrelse, mens digitale klokker og paneltekster inkluderer den. En frittstående Kalender støtter ikke alarm, tidssignal eller demping.
 

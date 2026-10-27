@@ -70,7 +70,7 @@ I pannelli con calendario e orologio possono mostrare gli avvisi di data e ora d
 
 Nei calendari autonomi, **Riga Oggi** nel menu o nella scheda Aspetto controlla la visibilità della riga inferiore. È selezionata per impostazione predefinita; deselezionandola si nasconde la riga e il calendario si riduce. La scelta viene salvata per widget. **Vai a oggi** resta disponibile e torna alla vista mensile. Al cambio di data secondo l’ora del widget, il calendario seleziona automaticamente oggi mantenendo la vista attuale.
 
-Le modifiche dell’aspetto sono mostrate subito sul widget selezionato. `Annulla` elimina le modifiche non applicate; `Aspetto predefinito` ripristina i valori iniziali del tipo di widget.
+Le modifiche all’aspetto sono mostrate subito nell’anteprima del widget selezionato. `Aspetto predefinito` ripristina i valori predefiniti di quel tipo di widget. Chiudendo le impostazioni con modifiche non applicate, viene chiesto se salvarle. Questo avviso è attivo per impostazione predefinita e può essere disattivato nella scheda Applicazione.
 
 Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bordo semplice ha anche un colore configurabile; la larghezza è disponibile quando supportata dal widget. Gli orologi digitali trasparenti mantengono le stesse scelte di quelli opachi. Per applicazione e calendario non offrono la dimensione; per orologi digitali e testi del pannello sì. I caratteri personalizzati del calendario sono supportati con l’aspetto classico di Windows o con i temi disattivati per l’applicazione o il widget.
 

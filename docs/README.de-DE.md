@@ -70,7 +70,7 @@ Kalender-Uhr-Panels können oberhalb des unteren Links die Datums- und Uhrzeithi
 
 Bei eigenständigen Kalendern bestimmt **Heute-Zeile** im Widget-Menü oder auf Darstellung, ob die untere Heute-Zeile sichtbar ist. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Die Wahl wird pro Widget gespeichert. **Zu heute wechseln** bleibt im Menü verfügbar und kehrt zur Monatsansicht zurück. Beim Datumswechsel gemäß der Zeit des jeweiligen Widgets wählen Kalender automatisch den heutigen Tag aus und behalten dabei ihre aktuelle Ansicht bei.
 
-Darstellungsänderungen erscheinen sofort am ausgewählten Widget. `Abbrechen` setzt noch nicht übernommene Änderungen zurück; `Standarddarstellung` stellt die Standardwerte dieses Widget-Typs wieder her.
+Darstellungsänderungen erscheinen sofort in der Vorschau des ausgewählten Widgets. `Standarddarstellung` stellt die Standardwerte dieses Widget-Typs wieder her. Beim Schließen der Einstellungen mit noch nicht übernommenen Änderungen wird gefragt, ob diese gespeichert werden sollen. Die Warnung ist standardmäßig aktiviert und lässt sich auf der Registerkarte Anwendung ausschalten.
 
 Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfache Rahmen bietet eine einstellbare Farbe; die Rahmenbreite lässt sich dort ändern, wo das Widget dies unterstützt. Transparente Digitaluhren bieten dieselben Stile wie undurchsichtige. Für Anwendungs- und Kalenderschrift gibt es keine Größenwahl, für Digitaluhren und Paneltexte dagegen schon. Eigene Kalenderschriftarten werden beim klassischen Windows-Erscheinungsbild oder bei deaktivierten Designs für die Anwendung oder das Widget unterstützt.
 

@@ -70,7 +70,7 @@ Spjöld með dagatali og klukku geta birt tilkynningar Windows um dagsetningu og
 
 Fyrir sjálfstæð dagatöl stjórnar **Línan Í dag** í valmynd eða á Útlit neðstu línunni. Hún er sjálfgefið valin; afveldu hana til að fela línuna og minnka dagatalið. Valið er vistað fyrir hverja græju. **Fara á daginn í dag** er áfram tiltækt og snýr aftur í mánaðarsýn. Þegar dagsetning breytist samkvæmt tíma græjunnar velur dagatalið daginn í dag sjálfkrafa en heldur núverandi sýn.
 
-Útlitsbreytingar sjást strax á valinni græju. `Hætta við` afturkallar breytingar sem hafa ekki verið staðfestar; `Sjálfgefið útlit` endurheimtir gildi viðkomandi tegundar.
+Útlitsbreytingar sjást strax í forskoðun valinnar græju. `Sjálfgefið útlit` endurheimtir sjálfgefin gildi þeirrar græjutegundar. Þegar stillingum er lokað með breytingum sem hafa ekki verið staðfestar er spurt hvort vista eigi þær. Viðvörunin er sjálfgefið virk og má slökkva á henni á flipanum Forrit.
 
 Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ramminn hefur stillanlegan lit; breidd má stilla þar sem græjan styður það. Gagnsæjar stafrænar klukkur bjóða sömu stíla og ógagnsæjar. Forrits- og dagatalsletur hafa ekki stærðarval, en stafrænar klukkur og spjaldtextar hafa það. Nota má sérsniðið letur í dagatali með hefðbundnu útliti Windows eða þegar slökkt er á þemum fyrir forritið eða græjuna.
 

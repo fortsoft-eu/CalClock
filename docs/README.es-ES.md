@@ -70,7 +70,7 @@ Los paneles de calendario y reloj pueden mostrar los avisos de fecha y hora de W
 
 Para calendarios independientes, **Fila Hoy** en el menú o en Apariencia controla la fila inferior. Está marcada de forma predeterminada; al desmarcarla se oculta la fila y se reduce el calendario. La elección se guarda por widget. **Ir a hoy** sigue disponible y vuelve a la vista mensual. Al cambiar la fecha según la hora del widget, el calendario selecciona hoy automáticamente y conserva la vista actual.
 
-Los cambios de apariencia se previsualizan inmediatamente en el widget seleccionado. `Cancelar` descarta los cambios no aplicados; `Aspecto predeterminado` recupera los valores de ese tipo de widget.
+Los cambios de apariencia se previsualizan inmediatamente en el widget seleccionado. `Aspecto predeterminado` restaura los valores predeterminados de ese tipo de widget. Al cerrar la configuración con cambios sin aplicar, se pregunta si desea guardarlos. Este aviso está activado de forma predeterminada y puede desactivarse en la pestaña Aplicación.
 
 Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El borde simple permite configurar el color; el ancho se puede ajustar cuando el widget lo admite. Los relojes digitales transparentes ofrecen los mismos estilos que los opacos. Las fuentes de aplicación y calendario no incluyen tamaño; las digitales y de texto del panel sí. Las fuentes personalizadas del calendario se admiten con la apariencia clásica de Windows o con los temas desactivados para la aplicación o el widget.
 

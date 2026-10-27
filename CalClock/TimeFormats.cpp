@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.6.1.5
  */
 
 #define NOMINMAX
@@ -32,7 +32,8 @@
 /// Reads a time-format property for the selected language without user locale overrides.
 /// Returns an empty string if Windows cannot provide the value.
 static std::wstring GetTimeLocaleValue(AppLanguage language, LCTYPE type) {
-    const wchar_t* locale = LANGUAGE_LOCALES[std::clamp(static_cast<int>(language), 0, LANG_COUNT - 1)];
+    const wchar_t* locale =
+        GetLanguageLocale(static_cast<AppLanguage>(std::clamp(static_cast<int>(language), 0, LANG_COUNT - 1)));
     int length = GetLocaleInfoEx(locale, type | LOCALE_NOUSEROVERRIDE, nullptr, 0);
     if (length <= 1) {
         return L"";
@@ -110,7 +111,8 @@ std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time
     if (!config.showSeconds) {
         flags |= TIME_NOSECONDS;
     }
-    const wchar_t* locale = LANGUAGE_LOCALES[std::clamp(static_cast<int>(config.language), 0, LANG_COUNT - 1)];
+    const wchar_t* locale =
+        GetLanguageLocale(static_cast<AppLanguage>(std::clamp(static_cast<int>(config.language), 0, LANG_COUNT - 1)));
     int length = GetTimeFormatEx(locale, flags, &time, pattern.c_str(), nullptr, 0);
     if (length <= 1) {
         return L"";

@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.6.1.5
  */
 
 #include "DateFormats.h"
 #include "Localization.h"
 #include <algorithm>
 
- /// Groups date-copy formats for separators in the format selector.
+/// Groups date-copy formats for separators in the format selector.
 enum DateFormatGroup {
     DATE_FORMAT_GROUP_LOCAL,
     DATE_FORMAT_GROUP_SORTABLE,
@@ -89,8 +89,8 @@ std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
     const DateFormatDefinition& definition = DATE_FORMAT_DEFINITIONS[selected];
     wchar_t text[160] = {};
-    int length = GetDateFormatEx(LANGUAGE_LOCALES[config.language], definition.flags, &date, definition.pattern, text,
-        ARRAYSIZE(text), nullptr);
+    int length = GetDateFormatEx(GetLanguageLocale(config.language), definition.flags, &date, definition.pattern,
+        text, ARRAYSIZE(text), nullptr);
     if (length == 0) {
         swprintf_s(text, L"%04d-%02d-%02d", date.wYear, date.wMonth, date.wDay);
     }
@@ -101,8 +101,10 @@ std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date
 static std::wstring GetLocaleDatePattern(const WidgetConfig& config, int formatIndex) {
     LCTYPE type = formatIndex == DATE_LOCAL_LONG ? LOCALE_SLONGDATE : LOCALE_SSHORTDATE;
     wchar_t pattern[160] = {};
-    if (GetLocaleInfoEx(LANGUAGE_LOCALES[config.language], type, pattern, ARRAYSIZE(pattern)) == 0) {
-        return formatIndex == DATE_LOCAL_LONG ? LOCAL_LONG_LABELS[config.language] : LOCAL_SHORT_LABELS[config.language];
+    if (GetLocaleInfoEx(GetLanguageLocale(config.language), type, pattern, ARRAYSIZE(pattern)) == 0) {
+        return formatIndex == DATE_LOCAL_LONG
+            ? GetLocalizedText(config.language, TXT_LOCAL_LONG_LABEL)
+            : GetLocalizedText(config.language, TXT_LOCAL_SHORT_LABEL);
     }
     return pattern;
 }
@@ -114,7 +116,9 @@ std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& dat
     std::wstring name = definition.caption == nullptr ? GetLocaleDatePattern(config, selected) : definition.caption;
     if (selected == DATE_LOCAL_SHORT || selected == DATE_LOCAL_LONG) {
         name += L" (";
-        name += selected == DATE_LOCAL_SHORT ? LOCAL_SHORT_LABELS[config.language] : LOCAL_LONG_LABELS[config.language];
+        name += selected == DATE_LOCAL_SHORT
+            ? GetLocalizedText(config.language, TXT_LOCAL_SHORT_LABEL)
+            : GetLocalizedText(config.language, TXT_LOCAL_LONG_LABEL);
         name += L")";
     }
     return name + L"  —  " + FormatWidgetDate(config, date, selected);
