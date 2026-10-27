@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.5
+ * Last modified for version 1.6.3.0
  */
 
 #pragma once
@@ -61,6 +61,7 @@ inline constexpr TextId WIDGET_TYPE_TEXT_IDS[] = {
     TXT_PANEL,
     TXT_FULLSCREEN_WIDGET_NAME,
 };
+
 static_assert(ARRAYSIZE(WIDGET_TYPE_TEXT_IDS) == WIDGET_TYPE_COUNT);
 
 inline constexpr TextId MONITOR_COLUMN_TEXT_IDS[] = {
@@ -73,6 +74,7 @@ inline constexpr TextId MONITOR_COLUMN_TEXT_IDS[] = {
     TXT_MONITOR_COLUMN_COLOR_SPACE,
     TXT_MONITOR_COLUMN_POSITION,
 };
+
 static_assert(ARRAYSIZE(MONITOR_COLUMN_TEXT_IDS) == MONITOR_COLUMN_COUNT);
 
 inline constexpr TextId TIME_FORMAT_TEXT_IDS[] = {
@@ -80,6 +82,7 @@ inline constexpr TextId TIME_FORMAT_TEXT_IDS[] = {
     TXT_TIME_FORMAT_12_HOUR,
     TXT_TIME_FORMAT_24_HOUR,
 };
+
 static_assert(ARRAYSIZE(TIME_FORMAT_TEXT_IDS) == TIME_FORMAT_COUNT);
 
 inline constexpr TextId LEADING_ZERO_TEXT_IDS[] = {
@@ -87,6 +90,7 @@ inline constexpr TextId LEADING_ZERO_TEXT_IDS[] = {
     TXT_LEADING_ZERO_RESERVED,
     TXT_LEADING_ZERO_OMITTED,
 };
+
 static_assert(ARRAYSIZE(LEADING_ZERO_TEXT_IDS) == LEADING_ZERO_MODE_COUNT);
 
 inline constexpr TextId TIME_SIGNAL_TEXT_IDS[] = {
@@ -99,6 +103,7 @@ inline constexpr TextId TIME_SIGNAL_TEXT_IDS[] = {
     TXT_TIME_SIGNAL_EVERY_HALF_HOUR,
     TXT_TIME_SIGNAL_EVERY_HOUR,
 };
+
 static_assert(ARRAYSIZE(TIME_SIGNAL_TEXT_IDS) == TIME_SIGNAL_COUNT);
 
 inline constexpr TextId NTP_PRESET_TEXT_IDS[] = {
@@ -108,6 +113,7 @@ inline constexpr TextId NTP_PRESET_TEXT_IDS[] = {
     TXT_NTP_PRESET_GLOBAL,
     TXT_NTP_PRESET_CUSTOM,
 };
+
 static_assert(ARRAYSIZE(NTP_PRESET_TEXT_IDS) == NTP_PRESET_COUNT);
 
 inline constexpr TextId NTP_LOG_COLUMN_TEXT_IDS[] = {
@@ -115,6 +121,7 @@ inline constexpr TextId NTP_LOG_COLUMN_TEXT_IDS[] = {
     TXT_NTP_LOG_COLUMN_SERVER,
     TXT_NTP_LOG_COLUMN_STATUS,
 };
+
 static_assert(ARRAYSIZE(NTP_LOG_COLUMN_TEXT_IDS) == 3);
 
 inline constexpr TextId NTP_LOG_ERROR_TEXT_IDS[] = {
@@ -123,6 +130,7 @@ inline constexpr TextId NTP_LOG_ERROR_TEXT_IDS[] = {
     TXT_NTP_LOG_ERROR_NETWORK,
     TXT_NTP_LOG_ERROR_TIMEOUT,
 };
+
 static_assert(ARRAYSIZE(NTP_LOG_ERROR_TEXT_IDS) == 4);
 
 inline constexpr TextId ANTIALIASING_TEXT_IDS[] = {
@@ -130,6 +138,7 @@ inline constexpr TextId ANTIALIASING_TEXT_IDS[] = {
     TXT_ANTIALIASING_CLEARTYPE,
     TXT_ANTIALIASING_NONE,
 };
+
 static_assert(ARRAYSIZE(ANTIALIASING_TEXT_IDS) == FONT_ANTIALIAS_COUNT);
 
 /// Returns a borrowed, immutable translation identified by the existing language enum and a named text key.

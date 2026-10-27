@@ -68,6 +68,7 @@ typedef void (*PersistWindowStateEventHandler)(PersistWindowState*, const Persis
 
 /// Restores and persists native window bounds, show state and instance registration.
 class PersistWindowState {
+
 private:
     HWND window;
     HANDLE instanceMutex;
