@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.6
+ * Last modified for version 1.6.1.7
  */
 
 #define NOMINMAX
@@ -2751,11 +2751,13 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config, const std::v
             extraCount++;
         }
         int clockLeft = left + (width - clock.size) / 2;
+        POINT faceCenter = GetAnalogClockFaceCenter(clock.size);
+        int textLeft = clockLeft + faceCenter.x - width / 2;
         int clockTop = clockBottom - clock.size;
         layout.clocks[index] = RECT{ clockLeft, clockTop, clockLeft + clock.size, clockTop + clock.size };
-        layout.times[index] = RECT{ left, timeTop, left + width, timeTop + timeTextHeight };
+        layout.times[index] = RECT{ textLeft, timeTop, textLeft + width, timeTop + timeTextHeight };
         if (index > 0 || mainDay) {
-            layout.days[index] = RECT{ left, dayTop, left + width, dayTop + timeTextHeight };
+            layout.days[index] = RECT{ textLeft, dayTop, textLeft + width, dayTop + timeTextHeight };
         }
         if (index > 0) {
             int captionTop = clockTop - clockPadding - topTextHeight;
