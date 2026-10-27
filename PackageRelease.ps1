@@ -26,10 +26,14 @@ Last modified for version 1.6.1.1
 
 [CmdletBinding()]
 param (
-    [string]$SignerName,
-    [string]$CertificateThumbprint,
-    [string]$SignToolPath,
-    [string]$TimestampServer
+    [string]$SignerName =
+        [Environment]::GetEnvironmentVariable("BUILD_SIGNER_NAME", "User"),
+    [string]$CertificateThumbprint =
+        [Environment]::GetEnvironmentVariable("BUILD_CERTIFICATE_THUMBPRINT", "User"),
+    [string]$SignToolPath =
+        [Environment]::GetEnvironmentVariable("BUILD_SIGNTOOL_PATH", "User"),
+    [string]$TimestampServer =
+        [Environment]::GetEnvironmentVariable("BUILD_TIMESTAMP_SERVER", "User")
 )
 
 Set-StrictMode -Version Latest
