@@ -13465,7 +13465,6 @@ static bool CreateSettingsControls() {
     bool generatorRequired = IsTimeSignalGeneratorRequired();
     SendMessageW(hTimeSignalSoundCombo, CB_SETCURSEL, generatorRequired || generatedTimeSignal ? 0 : 1, 0);
     EnableWindow(hTimeSignalSoundCombo, !generatorRequired);
-    EnableWindow(timeSignalSoundLabel, !generatorRequired);
     settingsTimeSignalTestActive = false;
     hTimeSignalTestButton = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_TEST, T(TXT_TEST_COMMAND_LABEL),
         &applicationControls);
