@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.3.0
+ * Last modified for version 1.6.3.1
  */
 
 #define NOMINMAX
@@ -14526,12 +14526,6 @@ static INT_PTR CALLBACK InformationDialogProc(HWND window, UINT message, WPARAM 
             SetWindowLongPtrW(window, DWLP_MSGRESULT, 0);
             return TRUE;
         }
-    }
-    if (message == WM_GETMINMAXINFO && window == hHelp) {
-        SIZE size = InformationDialogUnits(window, 180, 110);
-        MINMAXINFO* information = reinterpret_cast<MINMAXINFO*>(lParam);
-        information->ptMinTrackSize = POINT{ size.cx, size.cy };
-        return TRUE;
     }
     if (message == WM_DISPLAYCHANGE && window == hAbout) {
         LayoutInformationWindow(window);
