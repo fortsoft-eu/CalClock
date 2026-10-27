@@ -21,13 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.6.3.0
  */
 
 #pragma once
 
 #include <windows.h>
 
+/// Matching rules used to locate an existing instance of the attached form.
 enum class WindowDetectionOptions {
     Default,
     TitleContains,
@@ -37,11 +38,13 @@ enum class WindowDetectionOptions {
     NoDetection
 };
 
+/// Storage options for persisting a form's window state.
 enum class PersistWindowStateSavingOptions {
     None,
     Registry
 };
 
+/// Persisted normal bounds, show state and topmost status of a native window.
 struct PersistWindowStateData {
     int x = CW_USEDEFAULT;
     int y = CW_USEDEFAULT;
@@ -53,14 +56,17 @@ struct PersistWindowStateData {
     bool restoreMaximized = false;
 };
 
+/// Registry handle and native error code supplied to persistence event callbacks.
 struct PersistWindowStateEventArgs {
     HKEY registryKey;
     DWORD errorCode;
 };
 
+/// Restores and persists native window bounds, show state and instance registration.
 class PersistWindowState;
 typedef void (*PersistWindowStateEventHandler)(PersistWindowState*, const PersistWindowStateEventArgs&, void*);
 
+/// Restores and persists native window bounds, show state and instance registration.
 class PersistWindowState {
 private:
     HWND window;
@@ -128,6 +134,7 @@ private:
     /// Serializes form registration using a stable application and form identity.
     bool RegisterForm(HWND target, bool* alreadyRunning);
 
+    /// Releases the registration lock before callbacks or attachment cleanup can close its handle.
     void ReleaseRegistrationLock();
 
     /// Releases the registered identity, subclass and mutex without destroying the form.
