@@ -3113,6 +3113,7 @@ static HFONT CreateApplicationUiFont(HWND window) {
 }
 
 /// Replaces the application font in open dialogs before releasing their previous shared font.
+/// Defers final settings alignment until native font changes and the initiating button click have completed.
 static void RefreshApplicationFonts() {
     HFONT font = CreateApplicationUiFont(hSettings);
     if (font == nullptr) {
@@ -3128,6 +3129,9 @@ static void RefreshApplicationFonts() {
     }
     if (previous != nullptr) {
         DeleteObject(previous);
+    }
+    if (hSettings != nullptr) {
+        PostMessageW(hSettings, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
     }
 }
 
@@ -4276,8 +4280,8 @@ static void AlignSettingsControls() {
     AlignSettingsControl(hLoopAudioCheck, hTestCommandButton);
     AlignSettingsControl(hFontButton, hFontLabel);
     UpdateApplicationControlOrder();
-    AlignSettingsControl(hAppFontButton, hAppFontLabel);
     AlignSettingsControl(hAppFontDefaultButton, hAppFontLabel);
+    AlignSettingsControl(hAppFontButton, hAppFontDefaultButton);
     AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
     AlignSettingsControl(hOpacityValue, hOpacityLabel);
     AlignSettingsControl(hFontSizeValue, hFontSizeLabel);
