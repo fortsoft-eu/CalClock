@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.7
+ * Last modified for version 1.6.2.0
  */
 
 #define NOMINMAX
@@ -8651,6 +8651,26 @@ static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lPa
     return TRUE;
 }
 
+/// Restricts native dropdown drawing to the current item without changing the closed-field renderer.
+/// Prevents tall font metrics from allowing one row to erase or paint over adjacent rows.
+static LRESULT DrawSettingsComboItem(HWND window, WPARAM wParam, LPARAM lParam) {
+    const DRAWITEMSTRUCT* item = reinterpret_cast<const DRAWITEMSTRUCT*>(lParam);
+    if (item == nullptr
+            || item->CtlType != ODT_COMBOBOX
+            || (item->itemState & ODS_COMBOBOXEDIT) != 0
+            || GetSettingsComboBox(window) == window) {
+        return DrawSettingsComboSelection(window, wParam, lParam);
+    }
+    int saved = SaveDC(item->hDC);
+    if (saved == 0) {
+        return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+    }
+    IntersectClipRect(item->hDC, item->rcItem.left, item->rcItem.top, item->rcItem.right, item->rcItem.bottom);
+    LRESULT result = DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+    RestoreDC(item->hDC, saved);
+    return result;
+}
+
 /// Keeps the settings default button in step with focus and prevents clicks on covered controls.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
 static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
@@ -8671,7 +8691,7 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         case WM_CTLCOLOREDIT:
             return GetSettingsComboControlBrush(window, msg, wParam, lParam);
         case WM_DRAWITEM:
-            return DrawSettingsComboSelection(window, wParam, lParam);
+            return DrawSettingsComboItem(window, wParam, lParam);
         case CB_ADDSTRING:
         case CB_INSERTSTRING:
             return InsertSettingsComboString(window, msg, wParam, lParam);
