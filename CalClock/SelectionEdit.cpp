@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.3.0
+ * Last modified for version 1.6.3.1
  */
 
 #include "SelectionEdit.h"
@@ -311,7 +311,7 @@ static LRESULT HandleSelectionDialogCode(HWND window, UINT msg, WPARAM wParam, L
     }
     const MSG* key = reinterpret_cast<const MSG*>(lParam);
     if (key && (key->message == WM_KEYDOWN && key->wParam == L'A' && GetKeyState(VK_CONTROL) & 0x8000
-        || key->message == WM_CHAR && key->wParam == 1)) {
+            || key->message == WM_CHAR && key->wParam == 1)) {
         result |= DLGC_WANTMESSAGE;
     }
     return result;
