@@ -250,6 +250,7 @@ const UINT WM_SETTINGS_AUDIO_FINISHED = WM_APP + 5;
 const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
+const UINT WM_ALIGN_SETTINGS_FONT_BUTTON = WM_APP + 10;
 const UINT_PTR TIMER_REFRESH = 1;
 const UINT REFRESH_MAX_INTERVAL = 100;
 const LONGLONG REFRESH_SECOND_TICKS = 10000000;
@@ -4480,7 +4481,6 @@ static void AlignSettingsControls() {
     AlignSettingsControl(hFontButton, hFontLabel);
     UpdateApplicationControlOrder();
     AlignSettingsControl(hAppFontDefaultButton, hAppFontLabel);
-    AlignSettingsControl(hAppFontButton, hAppFontDefaultButton);
     AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
     AlignSettingsControl(hOpacityValue, hOpacityLabel);
     AlignSettingsControl(hFontSizeValue, hFontSizeLabel);
@@ -8278,6 +8278,19 @@ static void InitializeSettingsScrollBars() {
     }
 }
 
+/// Matches the font chooser's vertical bounds to the aligned Default button without changing its width.
+static void AlignApplicationFontButton() {
+    RECT bounds = {};
+    RECT reference = {};
+    if (!GetWindowRect(hAppFontButton, &bounds) || !GetWindowRect(hAppFontDefaultButton, &reference)) {
+        return;
+    }
+    MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&bounds), 2);
+    MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&reference), 2);
+    SetControlPosition(hAppFontButton, bounds.left, reference.top, bounds.right - bounds.left,
+        reference.bottom - reference.top);
+}
+
 /// Fits Settings to its content and available work area, retaining the authored gap below the bottom action
 /// buttons. Updates scrollbars, preserves valid scroll positions, and skips minimized windows without
 /// activating them.
@@ -8348,6 +8361,7 @@ static void UpdateSettingsWindowLayout() {
         RedrawWindow(hSettings, nullptr, nullptr,
             RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN | RDW_UPDATENOW);
     }
+    PostMessageW(hSettings, WM_ALIGN_SETTINGS_FONT_BUTTON, 0, 0);
 }
 
 /// Applies a scrollbar request within its valid range and scrolls the settings child windows by the resulting
@@ -9765,6 +9779,7 @@ static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wPa
             || message == WM_MOUSEWHEEL
             || message == WM_NOTIFY
             || message == WM_UPDATE_SETTINGS_CONTROL_METRICS
+            || message == WM_ALIGN_SETTINGS_FONT_BUTTON
             || message == WM_DRAWITEM
             || message == DM_GETDEFID) {
         LRESULT result = WindowProc(window, message, wParam, lParam);
@@ -15966,6 +15981,12 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
                 RedrawWindow(window, nullptr, nullptr,
                     RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+            }
+            break;
+        case WM_ALIGN_SETTINGS_FONT_BUTTON:
+            if (window == hSettings && !settingsLayoutSuspended) {
+                AlignApplicationFontButton();
+                return 0;
             }
             break;
         case WM_UPDATE_SETTINGS_CONTROL_METRICS:
