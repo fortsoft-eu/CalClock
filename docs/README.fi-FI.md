@@ -131,11 +131,12 @@ irrotettuna ja näkyy nimellä **Laite ei ole käytettävissä**; sen aikamerkit
 käytettävissä tai valitaan toinen lähtö. Laiteluettelo päivittyy avattaessa. Valinta tallennetaan erikseen jokaiselle
 pienoisohjelmalle rekisteriin tai XML-asetuksiin.
 
-Aikamerkit yhdistetään automaattisesti kussakin äänilähdössä. Erikseen valittu laite ja samaan laitteeseen viittaava
-**Windowsin oletuslaite** käyttävät yhtä lähtöä. Eri laitteet toimivat itsenäisesti; siniaalto, vaiheen jatkuvuus sekä
-äänten alkaminen ja päättyminen nollassa säilyvät. Herätykset, myös sisäisesti toistettavat tiedostot ja herätystä
-edeltävät aikamerkit, sekä kaikki testit käyttävät edelleen Windowsin oletusäänilähtöä. Ne yhdistetään säännöllisiin
-aikamerkkeihin vain yhteisessä äänilähdössä.
+Aikamerkit yhdistetään automaattisesti kussakin äänilähdössä. Erikseen valittu laite ja samaan laitteeseen
+viittaava Windowsin oletuslaite käyttävät yhtä lähtöä. Eri laitteet toimivat itsenäisesti; siniaalto, vaiheen
+jatkuvuus sekä äänten alkaminen ja päättyminen nollassa säilyvät. Testin äänilähtö Sovellus-välilehdellä
+tallentaa laitteen generaattorin testeille ja äänenvoimakkuuden esikuuntelulle. Järjestelmän äänimerkki
+poistaa vain tämän valinnan käytöstä. Hälytykset käyttävät edelleen Windowsin oletuslähtöä. Ne yhdistetään
+säännöllisiin aikamerkkeihin vain yhteisessä äänilähdössä.
 
 Herätyksen ja aikamerkin voi vaihtaa myös ääntä tukevan pienoisohjelman pikavalikossa. Herätyskohta näyttää ajan ja aktiiviset päivät, jos kaikkia päiviä ei ole valittu. Mykistä koskee kyseistä pienoisohjelmaa ja vastaa Yleiset-välilehden valintaa. Erillinen Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä. Ilmoitusalueen komento on Mykistä kaikki; `M` missä tahansa pienoisohjelmassa tekee saman yleisen vaihdon. Yleinen mykistyksen poisto palauttaa vain edellisen yleisen toiminnon mykistämät pienoisohjelmat. Sisäinen ääni jatkuu hiljaisena ja kuuluu taas mykistyksen poistuttua. Jo alkanut piippaus voi päättyä; seuraavat jätetään pois, kunnes ääni otetaan käyttöön. Muut komennot ja etäkomentosarjat eivät muutu.
 

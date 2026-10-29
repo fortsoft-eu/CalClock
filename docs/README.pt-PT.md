@@ -131,11 +131,12 @@ explicitamente mantém-se selecionado após ser desligado e aparece como **Dispo
 ficam em silêncio até estar disponível ou ser escolhida outra saída. A lista de dispositivos é atualizada ao abrir. A
 seleção é guardada separadamente para cada widget no Registo ou nas definições XML.
 
-Os sinais são combinados automaticamente por saída. Um dispositivo escolhido explicitamente e **Dispositivo
-predefinido do Windows** que indique esse mesmo dispositivo partilham uma saída. Dispositivos diferentes funcionam de
-forma independente; mantêm-se a onda sinusoidal, a continuidade de fase e o início e fim dos tons em zero. Os alarmes,
-incluindo os ficheiros reproduzidos internamente e os sinais que os antecedem, e todos os testes continuam a utilizar
-a saída predefinida do Windows. Só se combinam com sinais regulares numa saída comum.
+Os sinais são combinados automaticamente por saída. Um dispositivo escolhido explicitamente e Dispositivo
+predefinido do Windows que indique esse mesmo dispositivo partilham uma saída. Dispositivos diferentes
+funcionam de forma independente; mantêm-se a onda sinusoidal, a continuidade de fase e o início e fim dos tons
+em zero. Saída de áudio do teste no separador Aplicação guarda o dispositivo para os testes do gerador e a
+pré-visualização do volume. O sinal sonoro do sistema desativa apenas este seletor. Os alarmes continuam a
+usar a saída predefinida do Windows. Só se combinam com sinais regulares numa saída comum.
 
 Alarmes e sinais também podem ser ativados no menu contextual de cada widget com som. A entrada do alarme mostra a hora e, salvo se todos estiverem selecionados, os dias ativos. Sem som afeta o widget e corresponde à opção em Geral. Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento. Na área de notificação existe Silenciar tudo; `M` em qualquer widget executa a mesma alternância global. A reativação global restaura apenas widgets silenciados pela ação global anterior. O áudio interno continua silenciosamente e volta a ouvir-se ao reativar. Um tom já iniciado pode terminar; os seguintes são ignorados até reativar o som. Comandos não sonoros e scripts remotos não são afetados.
 

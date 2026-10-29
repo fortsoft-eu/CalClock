@@ -424,6 +424,8 @@ HWND hRunCommandCheck = nullptr;
 HWND hTestCommandButton = nullptr;
 HWND hAudioOutputLabel = nullptr;
 HWND hAudioOutputCombo = nullptr;
+HWND hTestAudioOutputLabel = nullptr;
+HWND hTestAudioOutputCombo = nullptr;
 HWND hTimeSignalEnabledCheck = nullptr;
 HWND hTimeSignalIntervalRadios[TIME_SIGNAL_COUNT - 1] = {};
 
@@ -568,6 +570,8 @@ std::wstring fileDialogDirectory;
 std::wstring ntpActiveServer;
 std::wstring ntpServers;
 std::wstring settingsAppFontFace;
+std::wstring testAudioOutputDevice;
+std::wstring settingsTestAudioOutputDevice;
 
 /// NTP synchronization history for the current process
 std::vector<NtpQueryLogEntry> ntpSynchronizationLog;
@@ -585,6 +589,7 @@ std::vector<WidgetConfig> settingsAppliedWidgets;
 
 /// Widget identifiers
 std::vector<AudioOutputDevice> settingsAudioOutputs;
+std::vector<AudioOutputDevice> settingsTestAudioOutputs;
 std::vector<TimeSignalSourceGroup> currentTimeSignalSources;
 std::vector<int> lastHiddenWidgetIds;
 std::vector<int> lastMutedWidgetIds;
@@ -1520,6 +1525,7 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.warnOnUnsavedChanges = warnOnUnsavedChanges;
     snapshot.generatedTimeSignal = generatedTimeSignal;
     snapshot.timeSignalVolume = timeSignalVolume;
+    snapshot.testAudioOutputDevice = testAudioOutputDevice;
     snapshot.fontAntialiasing = appFontAntialiasing;
     snapshot.fontFace = appFontFace;
     snapshot.fontDialogSize = appFontDialogSize;
@@ -1551,6 +1557,7 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     snapWidgetsToWorkArea = snapshot.snapWidgetsToWorkArea;
     warnOnUnsavedChanges = snapshot.warnOnUnsavedChanges;
     generatedTimeSignal = snapshot.generatedTimeSignal;
+    testAudioOutputDevice = snapshot.testAudioOutputDevice;
     timeSignalVolume = std::clamp<double>(snapshot.timeSignalVolume, TIME_SIGNAL_VOLUME_MIN,
         TIME_SIGNAL_VOLUME_MAX);
     appFontAntialiasing = std::clamp(snapshot.fontAntialiasing, 0, FONT_ANTIALIAS_COUNT - 1);
@@ -3902,7 +3909,7 @@ static void CenterSettingsGeneralCheckboxes() {
     }
 }
 
-/// Measures a label or checkbox text baseline in screen pixels using its current font and native text
+/// Measures a label or button text baseline in screen pixels using its current font and native text
 /// placement. Accounts for the custom NTP caption glyph ascent and returns false if the window or font
 /// metrics cannot be read.
 static bool GetSettingsLabelBaseline(HWND label, LONG* baseline) {
@@ -4347,6 +4354,7 @@ static void LayoutSettingsControlGrids() {
         GetDlgItem(hApplicationPage, IDC_APP_ANTIALIAS_LABEL),
         GetDlgItem(hApplicationPage, IDC_APP_LANGUAGE_LABEL),
         GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL),
+        hTestAudioOutputLabel,
         hTimeSignalVolumeLabel
     };
     const HWND applicationChecks[] = {
@@ -4376,6 +4384,14 @@ static void LayoutSettingsControlGrids() {
     }
     SpaceSettingsControls(hTimeSignalPage, IDC_GRID_ROW_SIGNAL, 5, false, hTimeSignalIntervalRadios,
         ARRAYSIZE(hTimeSignalIntervalRadios));
+    LONG enabledBaseline = 0;
+    LONG firstRadioBaseline = 0;
+    if (GetSettingsLabelBaseline(hTimeSignalEnabledCheck, &enabledBaseline)
+            && GetSettingsLabelBaseline(hTimeSignalIntervalRadios[0], &firstRadioBaseline)) {
+        AlignSettingsControl(hAudioOutputLabel,
+            hTimeSignalIntervalRadios[ARRAYSIZE(hTimeSignalIntervalRadios) - 1],
+            firstRadioBaseline - enabledBaseline);
+    }
     for (int index = 1; index < ARRAYSIZE(applicationRows); index++) {
         AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
     }
@@ -9945,35 +9961,35 @@ static double SelectedTimeSignalVolume() {
 }
 
 /// Reads the selected persistent endpoint ID; the first combo item always means the Windows default output.
-static std::wstring SelectedAudioOutputDevice() {
-    int selection = static_cast<int>(SendMessageW(hAudioOutputCombo, CB_GETCURSEL, 0, 0));
-    return selection > 0 && selection <= static_cast<int>(settingsAudioOutputs.size())
-        ? settingsAudioOutputs[selection - 1].id : L"";
+static std::wstring SelectedAudioOutputDevice(HWND combo, const std::vector<AudioOutputDevice>& devices) {
+    int selection = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    return selection > 0 && selection <= static_cast<int>(devices.size()) ? devices[selection - 1].id : L"";
 }
 
 /// Refreshes available output names while preserving a saved endpoint that is temporarily disconnected.
-static void FillAudioOutputCombo(const std::wstring& selected) {
-    settingsAudioOutputs = EnumerateAudioOutputDevices();
+static void FillAudioOutputCombo(HWND combo, std::vector<AudioOutputDevice>& devices,
+        const std::wstring& selected) {
+    devices = EnumerateAudioOutputDevices();
     bool found = selected.empty();
-    for (const AudioOutputDevice& device : settingsAudioOutputs) {
+    for (const AudioOutputDevice& device : devices) {
         found = found || device.id == selected;
     }
     if (!found) {
-        settingsAudioOutputs.push_back(AudioOutputDevice{ selected, T(TXT_AUDIO_OUTPUT_UNAVAILABLE) });
+        devices.push_back(AudioOutputDevice{ selected, T(TXT_AUDIO_OUTPUT_UNAVAILABLE) });
     }
-    SendMessageW(hAudioOutputCombo, CB_RESETCONTENT, 0, 0);
-    SendMessageW(hAudioOutputCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_AUDIO_OUTPUT_DEFAULT)));
+    SendMessageW(combo, CB_RESETCONTENT, 0, 0);
+    SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_AUDIO_OUTPUT_DEFAULT)));
     int selection = 0;
-    for (size_t index = 0; index < settingsAudioOutputs.size(); index++) {
-        const AudioOutputDevice& device = settingsAudioOutputs[index];
-        SendMessageW(hAudioOutputCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(device.name.c_str()));
+    for (size_t index = 0; index < devices.size(); index++) {
+        const AudioOutputDevice& device = devices[index];
+        SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(device.name.c_str()));
         if (device.id == selected) {
             selection = static_cast<int>(index) + 1;
         }
     }
     bool generatedTone = IsTimeSignalGeneratorRequired()
         || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
-    SetComboSelection(hAudioOutputCombo, generatedTone ? selection : 0);
+    SetComboSelection(combo, generatedTone ? selection : 0);
 }
 
 /// Starts or stops the merged time-signal preview from the Test button and active slider drag, updating the
@@ -9986,7 +10002,8 @@ static void UpdateTimeSignalVolumePreview() {
         bool generatedTone =
             IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
         double volume = SelectedTimeSignalVolume();
-        if (!StartTimeSignalVolumePreview(generatedTone, volume, generatedTimeSignal)) {
+        if (!StartTimeSignalVolumePreview(generatedTone, volume, generatedTimeSignal,
+            settingsTestAudioOutputDevice)) {
             settingsTimeSignalTestActive = false;
         }
     } else {
@@ -10037,6 +10054,17 @@ static void UpdateTimeSignalVolumeControls() {
     }
     bool enabled = IsTimeSignalGeneratorRequired()
         || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+    SetControlEnabled(hTestAudioOutputCombo, enabled);
+    int outputSelection = 0;
+    if (enabled) {
+        for (size_t index = 0; index < settingsTestAudioOutputs.size(); index++) {
+            if (settingsTestAudioOutputs[index].id == settingsTestAudioOutputDevice) {
+                outputSelection = static_cast<int>(index) + 1;
+                break;
+            }
+        }
+    }
+    SetComboSelection(hTestAudioOutputCombo, outputSelection);
     SetControlEnabled(hTimeSignalVolumeTrackBar, enabled);
     SetControlEnabled(hTimeSignalVolumeLabel, enabled);
     SetControlEnabled(hTimeSignalVolumeValue, enabled);
@@ -11947,7 +11975,7 @@ static void LoadDraftIntoControls() {
     SetCheck(hRemoteScriptCheck, config.callRemoteScript);
     SetControlText(hRemoteScriptEdit, config.remoteScriptUrl.c_str());
     SetCheck(hAlarmTimeSignalCheck, config.alarmTimeSignal);
-    FillAudioOutputCombo(config.timeSignalOutputDevice);
+    FillAudioOutputCombo(hAudioOutputCombo, settingsAudioOutputs, config.timeSignalOutputDevice);
     SetCheck(hTimeSignalEnabledCheck, config.timeSignalEnabled);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
         SetCheck(hTimeSignalIntervalRadios[mode - 1], config.timeSignal == mode);
@@ -12064,7 +12092,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     config.callRemoteScript = remoteScriptEnabled;
     config.remoteScriptUrl = remoteScriptUrl;
     if (IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0) {
-        config.timeSignalOutputDevice = SelectedAudioOutputDevice();
+        config.timeSignalOutputDevice = SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
     }
     config.timeSignalEnabled = supportsSound && GetCheck(hTimeSignalEnabledCheck);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
@@ -12351,6 +12379,7 @@ static bool HasPendingSettingsChanges() {
             || GetCheck(hWarnUnsavedChangesCheck) != warnOnUnsavedChanges
             || SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing) != appFontAntialiasing
             || settingsAppFontFace != appFontFace
+            || settingsTestAudioOutputDevice != testAudioOutputDevice
             || settingsAppFontDialogSize != appFontDialogSize
             || settingsAppFontWeight != appFontWeight
             || settingsAppFontItalic != appFontItalic
@@ -12552,7 +12581,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
         GetWidgetDimensions(configuration, &newWidth, &newHeight, &notices);
         POINT position = { targetX, targetY };
         if (GetPositionPreservingWorkAreaAttachment(widget->window, newWidth, newHeight, &position,
-                &horizontalAttachment)) {
+            &horizontalAttachment)) {
             targetX = position.x;
             targetY = position.y;
         }
@@ -12984,6 +13013,7 @@ static void ApplySettingsDraft() {
     warnOnUnsavedChanges = GetCheck(hWarnUnsavedChangesCheck);
     generatedTimeSignal = SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
     timeSignalVolume = SelectedTimeSignalVolume();
+    testAudioOutputDevice = settingsTestAudioOutputDevice;
     std::vector<int> hiddenWidgetIds;
     for (size_t widgetIndex = 0; widgetIndex < widgets.size(); widgetIndex++) {
         if (!widgets[widgetIndex]->config.visible) {
@@ -13158,6 +13188,7 @@ static void ApplySettingsDraft() {
     settingsDraft = settingsAppliedWidgets;
     settingsAppearanceOriginals = settingsAppliedWidgets;
     settingsAppFontFace = appFontFace;
+    settingsTestAudioOutputDevice = testAudioOutputDevice;
     settingsAppFontDialogSize = appFontDialogSize;
     settingsAppFontWeight = appFontWeight;
     settingsAppFontItalic = appFontItalic;
@@ -14081,6 +14112,11 @@ static bool CreateSettingsControls() {
     settingsTimeSignalTestActive = false;
     hTimeSignalTestButton = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_TEST,
         T(TXT_TEST_COMMAND_LABEL), &applicationControls);
+    hTestAudioOutputLabel = BindSettingsLabel(hApplicationPage, IDC_TEST_AUDIO_OUTPUT_LABEL,
+        T(TXT_TEST_AUDIO_OUTPUT_LABEL), &applicationControls);
+    hTestAudioOutputCombo = BindSettingsControl(hApplicationPage, ID_TEST_AUDIO_OUTPUT, L"",
+        &applicationControls, hTestAudioOutputLabel);
+    FillAudioOutputCombo(hTestAudioOutputCombo, settingsTestAudioOutputs, settingsTestAudioOutputDevice);
     hTimeSignalVolumeLabel = BindSettingsLabel(hApplicationPage, IDC_TIME_SIGNAL_VOLUME_LABEL,
         T(TXT_TIME_SIGNAL_VOLUME_LABEL), &applicationControls);
     hTimeSignalVolumeTrackBar = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_VOLUME, L"",
@@ -14162,7 +14198,8 @@ static void CaptureSettingsControlValue(HWND control, int page,
     if (_wcsicmp(className, L"EDIT") == 0) {
         values->push_back(SettingsControlValue{ page, id, WM_SETTEXT, 0, 0, GetControlText(control) });
     } else if ((_wcsicmp(className, WC_COMBOBOXEXW) == 0 || _wcsicmp(className, WC_COMBOBOXW) == 0)
-            && control != hAudioOutputCombo) {
+            && control != hAudioOutputCombo
+            && control != hTestAudioOutputCombo) {
         WPARAM selectedItemIndex = static_cast<WPARAM>(SendMessageW(control, CB_GETCURSEL, 0, 0));
         SettingsControlValue savedComboSelection{ page, id, CB_SETCURSEL, selectedItemIndex, 0, {} };
         values->push_back(savedComboSelection);
@@ -14247,6 +14284,9 @@ static void DestroySettingsChildControls() {
     hAudioOutputLabel = nullptr;
     hAudioOutputCombo = nullptr;
     settingsAudioOutputs.clear();
+    settingsTestAudioOutputs.clear();
+    hTestAudioOutputLabel = nullptr;
+    hTestAudioOutputCombo = nullptr;
     hTimeSignalTestButton = nullptr;
     hTimeSignalVolumeLabel = nullptr;
     hTimeSignalVolumeTrackBar = nullptr;
@@ -14404,6 +14444,9 @@ static void CloseSettingsWindow() {
     hAudioOutputLabel = nullptr;
     hAudioOutputCombo = nullptr;
     settingsAudioOutputs.clear();
+    settingsTestAudioOutputs.clear();
+    hTestAudioOutputLabel = nullptr;
+    hTestAudioOutputCombo = nullptr;
     hTimeSignalTestButton = nullptr;
     hTimeSignalVolumeLabel = nullptr;
     hTimeSignalVolumeTrackBar = nullptr;
@@ -14545,6 +14588,7 @@ static void ShowSettingsWindow(int widgetId) {
     settingsAppearancePreviewIds.clear();
     settingsAppearancePreviewActive = false;
     settingsAppFontFace = appFontFace;
+    settingsTestAudioOutputDevice = testAudioOutputDevice;
     settingsAppFontDialogSize = appFontDialogSize;
     settingsAppFontWeight = appFontWeight;
     settingsAppFontItalic = appFontItalic;
@@ -15017,11 +15061,18 @@ static void HandleSettingsCommand(int id, int notification) {
     } else if (id == ID_TIME_SIGNAL_TEST && notification == BN_CLICKED) {
         settingsTimeSignalTestActive = !settingsTimeSignalTestActive;
         UpdateTimeSignalVolumePreview();
+    } else if (id == ID_TEST_AUDIO_OUTPUT && notification == CBN_SELCHANGE) {
+        if (IsWindowEnabled(hTestAudioOutputCombo)) {
+            settingsTestAudioOutputDevice =
+                SelectedAudioOutputDevice(hTestAudioOutputCombo, settingsTestAudioOutputs);
+            UpdateTimeSignalVolumePreview();
+        }
     } else if (id == ID_AUDIO_OUTPUT && notification == CBN_SELCHANGE) {
         if (IsWindowEnabled(hAudioOutputCombo)
                 && selectedDraftIndex >= 0
                 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
-            settingsDraft[selectedDraftIndex].timeSignalOutputDevice = SelectedAudioOutputDevice();
+            settingsDraft[selectedDraftIndex].timeSignalOutputDevice =
+                SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
         }
     } else if (id == ID_TIME_SIGNAL_SOUND && notification == CBN_SELCHANGE) {
         UpdateTimeSignalVolumeControls();
@@ -15648,8 +15699,11 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
     }
     if (*notification == CBN_DROPDOWN) {
         if (control == hAudioOutputCombo) {
-            std::wstring selected = SelectedAudioOutputDevice();
-            FillAudioOutputCombo(selected);
+            std::wstring selected = SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
+            FillAudioOutputCombo(hAudioOutputCombo, settingsAudioOutputs, selected);
+        }
+        if (control == hTestAudioOutputCombo) {
+            FillAudioOutputCombo(control, settingsTestAudioOutputs, settingsTestAudioOutputDevice);
         }
         hSettingsOpenCombo = control;
         settingsComboInitialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));

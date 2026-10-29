@@ -130,10 +130,11 @@ kobles fra, og vises som **Enheten er ikke tilgjengelig**; signalene er stille t
 utgang velges. Enhetslisten oppdateres når den åpnes. Valget lagres separat for hver widget i registeret eller
 XML-innstillingene.
 
-Signaler slås automatisk sammen for hver utgang. En bestemt enhet og **Windows-standardenhet** som peker på samme
-enhet, deler én utgang. Ulike enheter arbeider uavhengig; sinuskurven, sammenhengende fase og tonenes start og slutt
-ved null bevares. Alarmer, inkludert internt avspilte filer og tidssignaler før alarmen, samt alle tester bruker
-fortsatt Windows-standardutgangen. De slås bare sammen med regelmessige signaler på en felles utgang.
+Signaler slås automatisk sammen for hver utgang. En bestemt enhet og Windows-standardenhet som peker på samme
+enhet, deler én utgang. Ulike enheter arbeider uavhengig; sinuskurven, sammenhengende fase og tonenes start og
+slutt ved null bevares. Lydutgang for test på fanen Program lagrer enheten for generatortester og
+forhåndslytting av volum. Systempip deaktiverer bare denne velgeren. Alarmer bruker fortsatt
+Windows-standardutgangen. De slås bare sammen med regelmessige signaler på en felles utgang.
 
 Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med lyd. Alarmoppføringen viser tiden og aktive ukedager hvis ikke alle er valgt. Demp gjelder widgeten og gjenspeiles på Generelt. En frittstående Kalender støtter ikke alarm, tidssignal eller demping. I systemstatusfeltet heter kommandoen Demp alle. Global oppheving gjenoppretter bare widgeter dempet av forrige globale handling. Intern lyd fortsetter lydløst og blir hørbar igjen når dempingen oppheves. En pågående tone kan fullføres; senere toner hoppes over til lyden aktiveres. Andre kommandoer og eksterne skript påvirkes ikke.
 

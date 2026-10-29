@@ -79,11 +79,12 @@ roghnaithe má dhícheanglaítear é agus taispeántar mar **Gléas nach bhfuil 
 go dtí go mbeidh sé ar fáil nó go roghnófar aschur eile. Athnuaitear liosta na ngléasanna nuair a osclaítear é.
 Sábháiltear an rogha ar leith do gach giuirléid sa chlárlann nó sna socruithe XML.
 
-Cumaisctear comharthaí go huathoibríoch do gach aschur. Roinneann gléas a roghnaítear go sonrach agus **Gléas
-réamhshocraithe Windows** a thagraíonn don ghléas céanna aon aschur amháin. Oibríonn gléasanna éagsúla go
-neamhspleách; caomhnaítear an tonn sínis, leanúnachas an phas agus tús agus deireadh na dton ag nialas. Úsáideann
-aláraim, lena n-áirítear comhaid a sheinntear san fheidhmchlár agus comharthaí ama roimh an aláram, agus gach tástáil
-aschur réamhshocraithe Windows fós. Ní chumaisctear iad le comharthaí rialta ach ar aschur comhroinnte.
+Cumaisctear comharthaí go huathoibríoch do gach aschur. Roinneann gléas a roghnaítear go sonrach agus Gléas
+réamhshocraithe Windows a thagraíonn don ghléas céanna aon aschur amháin. Oibríonn gléasanna éagsúla go
+neamhspleách; caomhnaítear an tonn sínis, leanúnachas an phas agus tús agus deireadh na dton ag nialas.
+Sábhálann Aschur fuaime tástála ar an gcluaisín Feidhmchlár an gléas le haghaidh tástálacha gineadóra agus
+réamhéisteachta toirte. Ní dhíchumasaíonn Bíp córais ach an roghnóir seo. Úsáideann aláraim aschur
+réamhshocraithe Windows fós. Ní chumaisctear iad le comharthaí rialta ach ar aschur comhroinnte.
 
 ## Cloig bhreise
 

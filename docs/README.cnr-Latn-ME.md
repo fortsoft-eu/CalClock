@@ -75,11 +75,11 @@ izabran poslije isključivanja i prikazuje se kao **Uređaj nije dostupan**; nje
 postane dostupan ili se izabere drugi izlaz. Spisak uređaja osvježava se pri otvaranju. Izbor se čuva zasebno za svaki
 vidžet u registru ili XML podešavanjima.
 
-Signali se automatski spajaju za svaki izlaz. Izričito izabrani uređaj i **Podrazumijevani Windows uređaj** koji
-upućuje na isti uređaj dijele jedan izlaz. Različiti uređaji rade nezavisno; sinusni talas, kontinuitet faze te
-početak i završetak tonova u nuli ostaju očuvani. Alarmi, uključujući interno puštane datoteke i vremenske signale
-prije alarma, i svi testovi i dalje koriste podrazumijevani izlaz Windowsa. S redovnim signalima spajaju se samo na
-zajedničkom izlazu.
+Signali se automatski spajaju za svaki izlaz. Izričito izabrani uređaj i Podrazumijevani Windows uređaj koji
+upućuje na isti uređaj dijele jedan izlaz. Različiti uređaji rade nezavisno; sinusni talas, kontinuitet faze
+te početak i završetak tonova u nuli ostaju očuvani. Zvučni izlaz testa na kartici Aplikacija pamti uređaj za
+testove generatora i pregled jačine zvuka. Sistemski zvučni signal onemogućava samo ovaj izbor. Alarmi i dalje
+koriste podrazumijevani izlaz Windowsa. S redovnim signalima spajaju se samo na zajedničkom izlazu.
 
 ## Dodatni satovi
 

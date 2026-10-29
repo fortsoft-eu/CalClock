@@ -53,9 +53,10 @@ double TimeSignalVolumeFromDecibels(double decibels);
 bool StartTimeSignalPlayback(ULONGLONG targetTimelineFileTime, bool muted, bool generatedTone, double volume,
     HWND notifyWindow, UINT notifyMessage, const std::wstring& outputDevice);
 
-/// Starts or updates a Windows-default preview on the applied sound mode's route to merge with its scheduled
-/// pips. Uses a long pip every fifth second and returns false if the playback worker cannot start.
-bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone);
+/// Starts or updates the test on its selected output, merging with signals on that output. System Beep
+/// uses the Windows default. Returns false when the selected device or playback worker is unavailable.
+bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone,
+    const std::wstring& outputDevice);
 
 /// Atomically updates the preview volume after clamping it to the stored generator-volume range.
 void SetTimeSignalPreviewVolume(double volume);

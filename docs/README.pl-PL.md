@@ -131,11 +131,11 @@ wybrane po odłączeniu i jest oznaczone jako **Urządzenie niedostępne**; jego
 będzie dostępne lub nie zostanie wybrane inne wyjście. Lista urządzeń jest odświeżana po rozwinięciu. Wybór jest
 zapisywany osobno dla każdego widżetu w rejestrze lub ustawieniach XML.
 
-Sygnały są automatycznie łączone na każdym wyjściu. Urządzenie wybrane bezpośrednio i wskazująca je opcja **Domyślne
-urządzenie Windows** współdzielą jedno wyjście. Różne urządzenia działają niezależnie; zachowane są sinusoida,
-ciągłość fazy oraz początek i koniec tonów w zerze. Alarmy, w tym pliki odtwarzane wewnętrznie i poprzedzające alarm
-sygnały czasu, oraz wszystkie testy nadal korzystają z domyślnego wyjścia Windows. Łączą się z regularnymi sygnałami
-tylko na wspólnym wyjściu.
+Sygnały są automatycznie łączone na każdym wyjściu. Urządzenie wybrane bezpośrednio i wskazująca je opcja
+Domyślne urządzenie Windows współdzielą jedno wyjście. Różne urządzenia działają niezależnie; zachowane są
+sinusoida, ciągłość fazy oraz początek i koniec tonów w zerze. Wyjście dźwięku testu na karcie Aplikacja
+zapamiętuje urządzenie do testów generatora i podglądu głośności. Sygnał systemowy wyłącza tylko ten wybór.
+Budziki nadal używają domyślnego wyjścia Windows. Łączą się z regularnymi sygnałami tylko na wspólnym wyjściu.
 
 Alarm i sygnał można także przełączać w menu widżetu obsługującego dźwięk. Pozycja alarmu pokazuje godzinę oraz aktywne dni, jeśli nie wybrano wszystkich. Zaznaczone Wycisz dotyczy widżetu i odpowiada polu na karcie Ogólne. Samodzielny Kalendarz nie obsługuje alarmu, sygnału czasu ani wyciszenia. W obszarze powiadomień polecenie nazywa się Wycisz wszystko; `M` na dowolnym widżecie wykonuje tę samą globalną zmianę. Globalne przywrócenie dźwięku dotyczy tylko widżetów wyciszonych poprzednią akcją globalną. Wewnętrzne audio trwa bezgłośnie i staje się słyszalne po wyłączeniu wyciszenia. Rozpoczęty ton może się skończyć; następne są pomijane do włączenia dźwięku. Polecenia niedźwiękowe i zdalne skrypty pozostają bez zmian.
 

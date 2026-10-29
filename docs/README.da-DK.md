@@ -130,10 +130,11 @@ frakobles, og vises som **Enhed ikke tilgængelig**; dens signaler er tavse, ind
 udgang vælges. Enhedslisten opdateres, når den åbnes. Valget gemmes særskilt for hver widget i registreringsdatabasen
 eller XML-indstillingerne.
 
-Signaler flettes automatisk for hver udgang. En bestemt enhed og **Windows-standardenhed**, som peger på samme enhed,
-deler én udgang. Forskellige enheder arbejder uafhængigt; sinuskurven, den sammenhængende fase samt tonernes
-begyndelse og afslutning ved nul bevares. Alarmer, herunder internt afspillede filer og tidssignaler før alarmen, samt
-alle test bruger fortsat Windows-standardudgangen. De flettes kun med regelmæssige signaler på en fælles udgang.
+Signaler flettes automatisk for hver udgang. En bestemt enhed og Windows-standardenhed, som peger på samme
+enhed, deler én udgang. Forskellige enheder arbejder uafhængigt; sinuskurven, den sammenhængende fase samt
+tonernes begyndelse og afslutning ved nul bevares. Lydudgang til test på fanen Program gemmer enheden til
+generatortest og lydstyrkeprøver. Systembip deaktiverer kun denne vælger. Alarmer bruger fortsat
+Windows-standardudgangen. De flettes kun med regelmæssige signaler på en fælles udgang.
 
 Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
 

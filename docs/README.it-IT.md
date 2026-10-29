@@ -131,11 +131,12 @@ esplicitamente resta selezionato dopo la disconnessione e viene indicato come **
 segnali restano silenziosi finché non è disponibile o si sceglie un’altra uscita. L’elenco dei dispositivi si aggiorna
 all’apertura. La selezione viene salvata separatamente per ogni widget nel Registro o nelle impostazioni XML.
 
-I segnali vengono uniti automaticamente per ogni uscita. Un dispositivo scelto esplicitamente e **Dispositivo
-predefinito di Windows** che indica lo stesso dispositivo condividono un’unica uscita. Dispositivi diversi funzionano
-indipendentemente; si conservano la sinusoide, la continuità di fase e l’inizio e la fine dei toni a zero. Le sveglie,
-inclusi i file riprodotti internamente e i segnali che le precedono, e tutte le prove continuano a usare l’uscita
-predefinita di Windows. Si uniscono ai segnali periodici soltanto su un’uscita comune.
+I segnali vengono uniti automaticamente per ogni uscita. Un dispositivo scelto esplicitamente e Dispositivo
+predefinito di Windows che indica lo stesso dispositivo condividono un’unica uscita. Dispositivi diversi
+funzionano indipendentemente; si conservano la sinusoide, la continuità di fase e l’inizio e la fine dei toni
+a zero. Uscita audio di prova nella scheda Applicazione memorizza il dispositivo per le prove del generatore e
+l’anteprima del volume. Il segnale di sistema disattiva solo questo selettore. Le sveglie continuano a usare
+l’uscita predefinita di Windows. Si uniscono ai segnali periodici soltanto su un’uscita comune.
 
 Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto audio. La voce della sveglia mostra l’ora e, se non sono selezionati tutti i giorni, quelli attivi. Silenzioso riguarda il widget e corrisponde alla casella su Generali. Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio. Nell’area di notifica il comando è Silenzia tutto; `M` su qualsiasi widget esegue la stessa commutazione globale. La riattivazione globale ripristina soltanto i widget silenziati dall’azione globale precedente. L’audio interno continua senza suono e torna udibile alla riattivazione. Un bip già iniziato può terminare; i successivi vengono saltati fino al ritorno dell’audio. Comandi non audio e script remoti non sono interessati.
 

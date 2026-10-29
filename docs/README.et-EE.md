@@ -79,11 +79,11 @@ lahtiühendamisel ja kuvatakse nimega **Seade pole saadaval**; selle signaalid o
 valitakse teine väljund. Seadmeloendit värskendatakse selle avamisel. Valik salvestatakse iga vidina jaoks eraldi
 registrisse või XML-sätetesse.
 
-Signaalid ühendatakse automaatselt iga väljundi jaoks. Eraldi valitud seade ja samale seadmele viitav **Windowsi
-vaikeseade** kasutavad ühist väljundit. Erinevad seadmed töötavad sõltumatult; siinuslaine, faasi pidevus ning toonide
-algus ja lõpp nullis säilivad. Äratused, sealhulgas rakenduses esitatavad failid ja äratusele eelnevad ajasignaalid,
-ning kõik proovid kasutavad endiselt Windowsi vaikeväljundit. Need ühendatakse korrapäraste signaalidega ainult ühisel
-väljundil.
+Signaalid ühendatakse automaatselt iga väljundi jaoks. Eraldi valitud seade ja samale seadmele viitav Windowsi
+vaikeseade kasutavad ühist väljundit. Erinevad seadmed töötavad sõltumatult; siinuslaine, faasi pidevus ning
+toonide algus ja lõpp nullis säilivad. Testi heliväljund vahekaardil Rakendus salvestab seadme generaatori
+testide ja helitugevuse eelkuulamise jaoks. Süsteemi piiks keelab ainult selle valiku. Äratused kasutavad
+endiselt Windowsi vaikeväljundit. Need ühendatakse korrapäraste signaalidega ainult ühisel väljundil.
 
 ## Lisakellad
 

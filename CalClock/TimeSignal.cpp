@@ -725,20 +725,33 @@ void CancelTimeSignalPlayback(ULONGLONG target, const std::wstring& outputDevice
     ReleaseIdleTimeSignalOutputs();
 }
 
-/// Updates the existing preview on the Windows default output without changing other output streams.
+/// Updates preview volume without changing the selected output or scheduled signal volumes.
 void SetTimeSignalPreviewVolume(double volume) {
     for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
         route->previewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX));
     }
 }
 
-/// Starts a Windows-default preview on the applied sound mode's route, including when previewing the other
-/// mode. Defers migration while another route's system Beep is in progress; subsequent preview updates retry
-/// it.
-bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone) {
+/// Routes the preview to its selected endpoint, retaining default-output merging across sound modes.
+/// Defers migration until an in-progress system Beep ends; subsequent updates retry it.
+bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone,
+        const std::wstring& outputDevice) {
     generatedTone = IsTimeSignalGeneratorRequired() || generatedTone;
     scheduledGeneratedTone = IsTimeSignalGeneratorRequired() || scheduledGeneratedTone;
-    TimeSignalOutputRoute* output = GetTimeSignalOutput(L"", scheduledGeneratedTone);
+    bool physicalOutput = scheduledGeneratedTone;
+    if (generatedTone && !scheduledGeneratedTone && !outputDevice.empty()) {
+        std::wstring selectedEndpoint;
+        std::wstring defaultEndpoint;
+        UINT selectedId = 0;
+        UINT defaultId = 0;
+        if (!ResolveAudioOutputDevice(outputDevice, &selectedEndpoint, &selectedId)) {
+            StopTimeSignalVolumePreview();
+            return false;
+        }
+        physicalOutput = !ResolveAudioOutputDevice(L"", &defaultEndpoint, &defaultId)
+            || selectedEndpoint != defaultEndpoint;
+    }
+    TimeSignalOutputRoute* output = GetTimeSignalOutput(generatedTone ? outputDevice : L"", physicalOutput);
     if (output == nullptr || !EnsureTimeSignalThread(*output)) {
         StopTimeSignalVolumePreview();
         return false;
@@ -789,7 +802,7 @@ void FinishTimeSignalPlayback() {
     ReleaseIdleTimeSignalOutputs();
 }
 
-/// Clears all widget schedules while allowing an active Windows-default preview to finish independently.
+/// Clears widget schedules while allowing an active preview to finish on its selected output.
 void StopTimeSignalPlayback() {
     for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
         AcquireSRWLockExclusive(&route->lock);

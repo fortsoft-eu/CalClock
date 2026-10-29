@@ -130,10 +130,11 @@ kopplas bort och visas som **Enheten är inte tillgänglig**; dess signaler är 
 annan utgång väljs. Enhetslistan uppdateras när den öppnas. Valet sparas separat för varje widget i registret eller
 XML-inställningarna.
 
-Signaler slås automatiskt samman för varje utgång. En särskilt vald enhet och **Windows standardenhet** som pekar på
-samma enhet delar en utgång. Olika enheter arbetar oberoende; sinusvågen, sammanhängande fas samt tonernas början och
-slut vid noll bevaras. Alarm, inklusive internt spelade filer och tidssignaler före alarmet, och alla tester använder
-fortfarande Windows standardutgång. De slås bara samman med regelbundna signaler på en gemensam utgång.
+Signaler slås automatiskt samman för varje utgång. En särskilt vald enhet och Windows standardenhet som pekar
+på samma enhet delar en utgång. Olika enheter arbetar oberoende; sinusvågen, sammanhängande fas samt tonernas
+början och slut vid noll bevaras. Ljudutgång för test på fliken Program sparar enheten för generatortest och
+förhandslyssning av volymen. Systempip inaktiverar bara denna väljare. Alarm använder fortfarande Windows
+standardutgång. De slås bara samman med regelbundna signaler på en gemensam utgång.
 
 Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 

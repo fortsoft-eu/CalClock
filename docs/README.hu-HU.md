@@ -80,11 +80,12 @@ eszköz leválasztás után is kiválasztva marad, és **Az eszköz nem érhető
 maradnak, amíg az eszköz elérhetővé nem válik, vagy másik kimenetet nem választ. Az eszközlista a lenyitásakor
 frissül. A választás minden minialkalmazáshoz külön mentődik a beállításjegyzékbe vagy az XML-beállításokba.
 
-A jelzések kimenetenként automatikusan egyesülnek. A külön kiválasztott eszköz és az ugyanarra mutató **Windows
-alapértelmezett eszköze** egyetlen kimenetet használ. A különböző eszközök egymástól függetlenül működnek; a
-szinuszhullám, a fázis folytonossága és a hangok nullán való kezdete és vége megmarad. Az ébresztések, beleértve az
-alkalmazáson belül lejátszott fájlokat és az ébresztést megelőző időjelzéseket, valamint minden teszt továbbra is a
-Windows alapértelmezett kimenetét használják. Csak közös kimeneten egyesülnek a rendszeres jelzésekkel.
+A jelzések kimenetenként automatikusan egyesülnek. A külön kiválasztott eszköz és az ugyanarra mutató Windows
+alapértelmezett eszköze egyetlen kimenetet használ. A különböző eszközök egymástól függetlenül működnek; a
+szinuszhullám, a fázis folytonossága és a hangok nullán való kezdete és vége megmarad. Az Alkalmazás lap Teszt
+hangkimenete beállítása elmenti a generátorteszt és a hangerőpróba eszközét. A rendszerhang csak ezt a
+választót tiltja le. Az ébresztők továbbra is a Windows alapértelmezett kimenetét használják. Csak közös
+kimeneten egyesülnek a rendszeres jelzésekkel.
 
 ## További órák
 

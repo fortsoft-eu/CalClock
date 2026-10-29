@@ -131,11 +131,12 @@ vybrané aj po odpojení a zobrazí sa ako **Nedostupné zariadenie**; jeho znam
 dostupné alebo nezvolíte iný výstup. Zoznam zariadení sa obnovuje pri rozbalení. Voľba sa ukladá samostatne pre každý
 widget do registra alebo XML.
 
-Zlučovanie prebieha automaticky pre každý výstup zvlášť. Výslovne zvolené zariadenie a voľba **Predvolené zariadenie
-Windows**, ktorá práve odkazuje na to isté zariadenie, zdieľajú jeden výstup. Rôzne zariadenia pracujú nezávisle;
-výpočet sínusovky, nadväznosť fázy a začiatky aj konce tónov v nule zostávajú zachované. Budíky vrátane interne
-prehrávaných súborov a predpípania aj všetky testy naďalej používajú predvolený výstup Windows. S pravidelnými
-znameniami sa zlúčia len na spoločnom výstupe.
+Zlučovanie prebieha automaticky pre každý výstup zvlášť. Výslovne zvolené zariadenie a voľba Predvolené
+zariadenie Windows, ktorá práve odkazuje na to isté zariadenie, zdieľajú jeden výstup. Rôzne zariadenia
+pracujú nezávisle; výpočet sínusovky, nadväznosť fázy a začiatky aj konce tónov v nule zostávajú zachované.
+Zvukový výstup testu na karte Aplikácia ukladá zariadenie pre test generátora a počúvanie pri zmene
+hlasitosti. Systémové pípanie zneaktívni iba tento výber. Budíky naďalej používajú predvolený výstup Windows.
+S pravidelnými znameniami sa zlúčia len na spoločnom výstupe.
 
 Budík a znamenie možno zapínať aj v ponuke každého widgetu so zvukom. Položka budíka zobrazuje čas a, ak nie sú zvolené všetky dni, aktívne dni. Zaškrtnuté Stlmené ovplyvňuje widget a zodpovedá voľbe na karte Všeobecné. Samostatný Kalendár nepodporuje budík, časové znamenie ani stlmenie. V oblasti oznámení sa príkaz nazýva Stlmiť všetko; `M` na ľubovoľnom widgete vykoná rovnaké globálne prepnutie. Globálne zrušenie stlmenia obnoví iba widgety stlmené predchádzajúcou globálnou akciou. Interný zvuk pokračuje potichu a po obnovení je znovu počuteľný. Rozbehnuté pípnutie môže doznieť; ďalšie sa vynechávajú do povolenia zvuku. Nezvukové príkazy a vzdialené skripty nie sú ovplyvnené.
 

@@ -81,11 +81,11 @@ beschikbaar is of een andere uitgang wordt gekozen. De apparatenlijst wordt bij 
 per widget afzonderlijk opgeslagen in het register of de XML-instellingen.
 
 Signalen worden automatisch per uitgang samengevoegd. Een uitdrukkelijk gekozen apparaat en
-**Windows-standaardapparaat** dat naar hetzelfde apparaat verwijst, delen één uitgang. Verschillende apparaten werken
-onafhankelijk; de sinusgolf, doorlopende fase en het begin en einde van tonen bij nul blijven behouden. Alarmen,
-inclusief intern afgespeelde bestanden en tijdsignalen vóór het alarm, en alle tests blijven de
-Windows-standaarduitgang gebruiken. Ze worden alleen op een gemeenschappelijke uitgang met regelmatige signalen
-samengevoegd.
+Windows-standaardapparaat dat naar hetzelfde apparaat verwijst, delen één uitgang. Verschillende apparaten
+werken onafhankelijk; de sinusgolf, doorlopende fase en het begin en einde van tonen bij nul blijven behouden.
+Audio-uitvoer voor test op het tabblad Toepassing bewaart het apparaat voor generatortests en
+volumevoorbeelden. De systeempiep schakelt alleen deze keuzelijst uit. Alarmen blijven de standaarduitvoer van
+Windows gebruiken. Ze worden alleen op een gemeenschappelijke uitgang met regelmatige signalen samengevoegd.
 
 ## Extra klokken
 

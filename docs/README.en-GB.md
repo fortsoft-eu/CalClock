@@ -130,10 +130,11 @@ if disconnected and appears as **Unavailable device**; its signals stay silent u
 output is selected. The device list refreshes when opened. The selection is saved separately for each widget in
 registry or XML settings.
 
-Signals merge automatically for each output. An explicit device choice and **Windows default device** pointing to that
-same device share one output. Different devices operate independently; the sine waveform, continuous phase, and starts
-and ends at zero amplitude are preserved. Alarms, including internally played files and alarm time signals, and all
-tests continue to use the Windows default output. They merge with regular signals only on a shared output.
+Signals merge automatically for each output. An explicit device choice and Windows default device pointing to
+that same device share one output. Different devices operate independently; the sine waveform, continuous
+phase, and starts and ends at zero amplitude are preserved. Test audio output on the Application tab saves the
+device for generator tests and volume previews. System beep disables only this selector. Alarms continue to
+use the Windows default output. They merge with regular signals only on a shared output.
 
 Alarm and time-signal enablement can also be toggled in each sound-capable widget's context menu. The alarm item shows its time and, unless all days are selected, its active weekdays. The checked Mute command affects its widget and is reflected by Muted on the General tab. A standalone Calendar supports neither alarms, time signals nor muting. The notification-area command is named Mute all; pressing `M` on any widget performs the same global toggle. Global unmute restores only the widgets muted by the preceding global action. Internal audio continues silently and resumes when unmuted. A pip already in progress may finish, while subsequent pips are skipped until sound is enabled again. Non-audio commands and remote scripts are unaffected.
 

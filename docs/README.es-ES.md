@@ -131,11 +131,13 @@ expresamente permanece seleccionado al desconectarse y aparece como **Dispositiv
 en silencio hasta que esté disponible o se elija otra salida. La lista de dispositivos se actualiza al abrirla. La
 selección se guarda por separado para cada widget en el Registro o en los ajustes XML.
 
-Las señales se combinan automáticamente por salida. Un dispositivo elegido expresamente y **Dispositivo predeterminado
-de Windows** que apunte a ese mismo dispositivo comparten una salida. Los dispositivos distintos funcionan de forma
-independiente; se conservan la onda sinusoidal, la continuidad de fase y el inicio y final de los tonos en cero. Las
-alarmas, incluidos los archivos reproducidos internamente y las señales previas a la alarma, y todas las pruebas
-siguen usando la salida predeterminada de Windows. Solo se combinan con señales periódicas en una salida común.
+Las señales se combinan automáticamente por salida. Un dispositivo elegido expresamente y Dispositivo
+predeterminado de Windows que apunte a ese mismo dispositivo comparten una salida. Los dispositivos distintos
+funcionan de forma independiente; se conservan la onda sinusoidal, la continuidad de fase y el inicio y final
+de los tonos en cero. Salida de audio de prueba en la pestaña Aplicación guarda el dispositivo para las
+pruebas del generador y la vista previa del volumen. El pitido del sistema desactiva solo este selector. Las
+alarmas siguen usando la salida predeterminada de Windows. Solo se combinan con señales periódicas en una
+salida común.
 
 La alarma y señal también se activan desde el menú contextual de cada widget con sonido. La entrada de alarma muestra su hora y, si no están seleccionados todos, sus días activos. Un Calendario independiente no admite alarma, señal horaria ni silencio. El comando del área de notificación es Silenciar todo; `M` sobre cualquier widget hace lo mismo. Desactivar la sordina global solo restaura los widgets silenciados por la acción global anterior. El audio interno continúa en silencio y vuelve a oírse al reactivarlo. Un pitido iniciado puede terminar; los siguientes se omiten hasta habilitar el sonido. Los comandos no sonoros y los scripts remotos no se ven afectados.
 

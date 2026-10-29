@@ -80,10 +80,11 @@ pasiekiamas arba pasirenkama kita išvestis. Įrenginių sąrašas atnaujinamas 
 valdikliui atskirai įrašomas į registrą arba XML parametrus.
 
 Signalai automatiškai sujungiami kiekvienoje išvestyje. Atskirai pasirinktas įrenginys ir į tą patį įrenginį
-nukreiptas **Numatytasis Windows įrenginys** naudoja vieną išvestį. Skirtingi įrenginiai veikia nepriklausomai;
-išlaikoma sinusoidė, fazės tolydumas ir tonų pradžia bei pabaiga ties nuliu. Žadintuvai, įskaitant programoje
-leidžiamus failus ir signalus prieš žadintuvą, bei visi bandymai tebenaudoja numatytąją Windows išvestį. Su
-reguliariais signalais jie sujungiami tik bendroje išvestyje.
+nukreiptas Numatytasis Windows įrenginys naudoja vieną išvestį. Skirtingi įrenginiai veikia nepriklausomai;
+išlaikoma sinusoidė, fazės tolydumas ir tonų pradžia bei pabaiga ties nuliu. Bandymo garso išvestis kortelėje
+Programa išsaugo įrenginį generatoriaus bandymams ir garsumo perklausai. Sistemos pyptelėjimas išjungia tik šį
+parinkiklį. Žadintuvai ir toliau naudoja numatytąją „Windows“ išvestį. Su reguliariais signalais jie
+sujungiami tik bendroje išvestyje.
 
 ## Papildomi laikrodžiai
 

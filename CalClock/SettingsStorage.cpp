@@ -270,6 +270,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
     }
     if (SUCCEEDED(result)) {
+        result = WriteXmlTextAttribute(writer, L"testAudioOutputDevice", snapshot.testAudioOutputDevice);
+    }
+    if (SUCCEEDED(result)) {
         result =
             WriteXmlTextAttribute(writer, L"timeSignalVolume", FormatRealNumber(snapshot.timeSignalVolume));
     }
@@ -1074,6 +1077,7 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
             if (ReadXmlNumberAttribute(reader, L"generatedTimeSignal", &number)) {
                 loaded.generatedTimeSignal = number == 0;
             }
+            ReadXmlAttribute(reader, L"testAudioOutputDevice", &loaded.testAudioOutputDevice);
             std::wstring volumeText;
             double volume = 0.0;
             if (ReadXmlAttribute(reader, L"timeSignalVolume", &volumeText)
@@ -1660,6 +1664,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"GeneratedTimeSignal", &value)) {
         loaded.generatedTimeSignal = value == 0;
     }
+    ReadString(root, L"TestAudioOutputDevice", &loaded.testAudioOutputDevice);
     double volume = 0.0;
     if (ReadTimeSignalVolume(root, &volume)) {
         loaded.timeSignalVolume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
@@ -1821,6 +1826,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"VisualStyles", !snapshot.themesDisabled);
     WriteDword(root, L"GeneratedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
     WriteTimeSignalVolume(root, snapshot.timeSignalVolume);
+    WriteString(root, L"TestAudioOutputDevice", snapshot.testAudioOutputDevice);
     WriteDword(root, L"SnapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
     WriteDword(root, L"WarnOnUnsavedChanges", snapshot.warnOnUnsavedChanges);
     WriteDword(root, L"FontAntialiasing", snapshot.fontAntialiasing);

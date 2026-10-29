@@ -131,10 +131,11 @@ odpojení a v seznamu se zobrazí jako **Nedostupné zařízení**; jeho znamen�
 nebo nezvolíte jiný výstup. Seznam zařízení se obnovuje při rozbalení. Volba se ukládá samostatně pro každý widget do
 registru nebo XML.
 
-Slučování probíhá automaticky pro každý výstup zvlášť. Výslovně zvolené zařízení a volba **Výchozí zařízení Windows**,
-která právě odkazuje na stejné zařízení, sdílejí jeden výstup. Různá zařízení pracují nezávisle; výpočet sinusovky,
-návaznost fáze a začátky i konce tónů v nule zůstávají zachované. Budíky včetně interně přehrávaných souborů a
-předpípávání i všechny testy nadále používají výchozí výstup Windows. S pravidelnými znameními se sloučí jen na
+Slučování probíhá automaticky pro každý výstup zvlášť. Výslovně zvolené zařízení a volba Výchozí zařízení
+Windows, která právě odkazuje na stejné zařízení, sdílejí jeden výstup. Různá zařízení pracují nezávisle;
+výpočet sinusovky, návaznost fáze a začátky i konce tónů v nule zůstávají zachované. Zvukový výstup testu na
+kartě Aplikace ukládá zařízení pro test generátoru a poslech při změně hlasitosti. Systémové pípání zašedne
+pouze tento výběr. Budíky nadále používají výchozí výstup Windows. S pravidelnými znameními se sloučí jen na
 společném výstupu.
 
 Budík i časové znamení lze zapínat také v kontextové nabídce každého widgetu podporujícího zvuk. Položka budíku zobrazuje jeho čas a, nejsou-li zvoleny všechny dny, také aktivní dny v týdnu. Zaškrtnutý příkaz Ztlumeno ovlivňuje svůj widget a odpovídá volbě Ztlumeno na kartě Obecné. Samostatný Kalendář nepodporuje budík, časové znamení ani ztlumení. Příkaz v oznamovací oblasti se jmenuje Ztlumit vše; `M` na libovolném widgetu provede stejné globální přepnutí. Globální zrušení ztlumení obnoví pouze widgety ztlumené předchozí globální akcí. Interní zvuk pokračuje tiše a po zrušení ztlumení je opět slyšitelný. Již probíhající pípnutí může doznít, další se vynechávají do opětovného povolení zvuku. Příkazy nesouvisející se zvukem a vzdálené skripty nejsou ovlivněny.

@@ -79,10 +79,11 @@ magħżul meta jiġi skonnettjat u jidher bħala **Apparat mhux disponibbli**; i
 jerġa’ jkun disponibbli jew jintgħażel ħruġ ieħor. Il-lista tal-apparati tiġġedded meta tinfetaħ. L-għażla tinħażen
 separatament għal kull widget fir-reġistru jew fis-settings XML.
 
-Is-sinjali jingħaqdu awtomatikament għal kull ħruġ. Apparat magħżul speċifikament u **Apparat predefinit ta’ Windows**
-li jirreferi għall-istess apparat jaqsmu ħruġ wieħed. Apparati differenti jaħdmu indipendentement; jinżammu l-mewġa
-sinusojdali, il-kontinwità tal-fażi u l-bidu u t-tmiem tat-toni f’żero. L-allarmi, inklużi fajls li jindaqqu
-internament u s-sinjali tal-ħin ta’ qabel l-allarm, u t-testijiet kollha jibqgħu jużaw il-ħruġ predefinit ta’ Windows.
+Is-sinjali jingħaqdu awtomatikament għal kull ħruġ. Apparat magħżul speċifikament u Apparat predefinit ta’
+Windows li jirreferi għall-istess apparat jaqsmu ħruġ wieħed. Apparati differenti jaħdmu indipendentement;
+jinżammu l-mewġa sinusojdali, il-kontinwità tal-fażi u l-bidu u t-tmiem tat-toni f’żero. Ħruġ tal-awdjo
+tat-test fit-tab Applikazzjoni jiffranka l-apparat għat-testijiet tal-ġeneratur u l-previżjoni tal-volum.
+Il-ħoss tas-sistema jiddiżattiva biss dan is-selettur. L-allarmi jibqgħu jużaw il-ħruġ predefinit ta’ Windows.
 Jingħaqdu mas-sinjali regolari biss fuq ħruġ komuni.
 
 ## Arloġġi addizzjonali

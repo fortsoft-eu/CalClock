@@ -78,10 +78,11 @@ selectat după deconectare și apare ca **Dispozitiv indisponibil**; semnalele s
 disponibil sau se alege altă ieșire. Lista dispozitivelor se actualizează la deschidere. Alegerea este salvată separat
 pentru fiecare widget în registru sau în setările XML.
 
-Semnalele se combină automat pentru fiecare ieșire. Un dispozitiv ales explicit și **Dispozitivul implicit Windows**
-care indică același dispozitiv folosesc o singură ieșire. Dispozitivele diferite funcționează independent; se
-păstrează sinusoida, continuitatea fazei și începutul și sfârșitul tonurilor la zero. Alarmele, inclusiv fișierele
-redate intern și semnalele orare dinaintea alarmei, precum și toate testele folosesc în continuare ieșirea implicită
+Semnalele se combină automat pentru fiecare ieșire. Un dispozitiv ales explicit și Dispozitivul implicit
+Windows care indică același dispozitiv folosesc o singură ieșire. Dispozitivele diferite funcționează
+independent; se păstrează sinusoida, continuitatea fazei și începutul și sfârșitul tonurilor la zero. Ieșire
+audio pentru test din fila Aplicație salvează dispozitivul pentru testele generatorului și previzualizarea
+volumului. Bipul de sistem dezactivează doar acest selector. Alarmele continuă să folosească ieșirea implicită
 Windows. Se combină cu semnalele regulate numai pe o ieșire comună.
 
 ## Ceasuri suplimentare

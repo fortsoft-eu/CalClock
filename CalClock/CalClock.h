@@ -404,6 +404,7 @@ enum TextId {
     TXT_SNAP_TO_WORK_AREA_LABEL,
     TXT_WARN_UNSAVED_CHANGES_LABEL,
     TXT_UNSAVED_SETTINGS_PROMPT,
+    TXT_TEST_AUDIO_OUTPUT_LABEL,
     TXT_COUNT
 };
 
@@ -503,6 +504,7 @@ struct SettingsSnapshot {
     bool warnOnUnsavedChanges = true;
     bool generatedTimeSignal = true;
     double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
+    std::wstring testAudioOutputDevice;
     int fontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
     std::wstring fontFace;
     int fontDialogSize = 90;

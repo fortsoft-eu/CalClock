@@ -131,10 +131,11 @@ kesilirse seçim korunur ve **Aygıt kullanılamıyor** olarak görünür; aygı
 seçilene kadar sinyalleri sessiz kalır. Aygıt listesi açıldığında yenilenir. Seçim her araç için kayıt defteri veya
 XML ayarlarında ayrı ayrı saklanır.
 
-Sinyaller her çıkış için otomatik birleştirilir. Açıkça seçilen aygıt ile aynı aygıta işaret eden **Windows varsayılan
-aygıtı** tek çıkışı paylaşır. Farklı aygıtlar bağımsız çalışır; sinüs dalgası, faz sürekliliği ve tonların sıfırda
-başlayıp bitmesi korunur. Uygulama içinde çalınan dosyalar ve alarm öncesi zaman sinyalleri dahil alarmlar ile tüm
-testler Windows'un varsayılan çıkışını kullanmaya devam eder. Düzenli sinyallerle yalnızca ortak bir çıkışta
+Sinyaller her çıkış için otomatik birleştirilir. Açıkça seçilen aygıt ile aynı aygıta işaret eden Windows
+varsayılan aygıtı tek çıkışı paylaşır. Farklı aygıtlar bağımsız çalışır; sinüs dalgası, faz sürekliliği ve
+tonların sıfırda başlayıp bitmesi korunur. Uygulama sekmesindeki Test ses çıkışı, üreteç testleri ve ses
+düzeyi önizlemeleri için aygıtı kaydeder. Sistem bip sesi yalnızca bu seçiciyi devre dışı bırakır. Alarmlar
+Windows varsayılan çıkışını kullanmaya devam eder. Düzenli sinyallerle yalnızca ortak bir çıkışta
 birleştirilirler.
 
 Alarm ve zaman sinyali ses destekleyen araçların bağlam menüsünden de açılabilir. Alarm öğesi saatini ve tüm günler seçili değilse etkin günleri gösterir. Sessiz komutu kendi aracını etkiler ve Genel’deki seçimle eşleşir. Bağımsız Takvim alarmı, zaman sinyalini veya sessize almayı desteklemez. Bildirim alanındaki komut Tümünü sessize al’dır; herhangi bir araç üzerinde `M` aynı genel geçişi yapar. Genel sessizliği kaldırmak yalnızca önceki genel eylemin susturduğu araçları geri getirir. Dahili ses sessizce ilerler ve sessizlik kaldırılınca yeniden duyulur. Başlamış bip bitebilir; sonraki bipler ses açılana kadar atlanır. Ses dışı komutlar ve uzak betikler etkilenmez.

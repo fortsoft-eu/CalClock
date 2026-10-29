@@ -131,11 +131,12 @@ reste sélectionné après sa déconnexion et apparaît comme **Périphérique i
 silencieux jusqu’à son retour ou au choix d’une autre sortie. La liste des périphériques est actualisée à son
 ouverture. Le choix est enregistré séparément pour chaque widget dans le Registre ou les paramètres XML.
 
-Les signaux sont fusionnés automatiquement pour chaque sortie. Un périphérique choisi explicitement et **Périphérique
-Windows par défaut** désignant ce même périphérique partagent une seule sortie. Les périphériques différents
-fonctionnent indépendamment ; la sinusoïde, la continuité de phase et les débuts et fins des sons à zéro sont
-préservés. Les alarmes, y compris les fichiers lus en interne et les signaux qui les précèdent, ainsi que tous les
-tests utilisent toujours la sortie Windows par défaut. Ils ne fusionnent avec les signaux réguliers que sur une sortie
+Les signaux sont fusionnés automatiquement pour chaque sortie. Un périphérique choisi explicitement et
+Périphérique Windows par défaut désignant ce même périphérique partagent une seule sortie. Les périphériques
+différents fonctionnent indépendamment ; la sinusoïde, la continuité de phase et les débuts et fins des sons à
+zéro sont préservés. Sortie audio du test dans l’onglet Application mémorise le périphérique des tests du
+générateur et de l’aperçu du volume. Le bip système désactive uniquement ce sélecteur. Les alarmes utilisent
+toujours la sortie Windows par défaut. Ils ne fusionnent avec les signaux réguliers que sur une sortie
 commune.
 
 L’alarme et le signal horaire peuvent aussi être activés dans le menu contextuel de tout widget sonore. L’entrée d’alarme montre son heure et, sauf si tous sont sélectionnés, ses jours actifs. Muet agit sur son widget et correspond à la case de Général. Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son. La commande de notification Tout mettre en sourdine est également accessible avec `M` sur un widget. La réactivation globale ne restaure que les widgets mis en sourdine par l’action globale précédente. L’audio interne continue silencieusement et redevient audible ensuite. Un bip déjà commencé peut se terminer ; les suivants sont ignorés jusqu’à réactivation du son. Les commandes non audio et scripts distants ne sont pas affectés.

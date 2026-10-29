@@ -78,11 +78,11 @@ izvēlēta arī pēc atvienošanas un sarakstā tiek parādīta kā **Ierīce na
 ir pieejama vai izvēlēta cita izvade. Ierīču saraksts tiek atjaunināts, to izvēršot. Izvēle katram logrīkam tiek
 saglabāta atsevišķi reģistrā vai XML iestatījumos.
 
-Signāli tiek automātiski apvienoti katrā izvadē. Atsevišķi izvēlēta ierīce un uz to pašu ierīci norādoša izvēle
-**Windows noklusējuma ierīce** izmanto vienu izvadi. Dažādas ierīces darbojas neatkarīgi; tiek saglabāta sinusoīda,
-fāzes nepārtrauktība un toņu sākums un beigas nullē. Modinātāji, tostarp lietotnē atskaņotie faili un signāli pirms
-modinātāja, kā arī visas pārbaudes turpina izmantot Windows noklusējuma izvadi. Tie tiek apvienoti ar regulārajiem
-signāliem tikai kopīgā izvadē.
+Signāli tiek automātiski apvienoti katrā izvadē. Atsevišķi izvēlēta ierīce un uz to pašu ierīci norādoša
+izvēle Windows noklusējuma ierīce izmanto vienu izvadi. Dažādas ierīces darbojas neatkarīgi; tiek saglabāta
+sinusoīda, fāzes nepārtrauktība un toņu sākums un beigas nullē. Testa skaņas izvade cilnē Lietotne saglabā
+ierīci ģeneratora testiem un skaļuma priekšskatījumam. Sistēmas pīkstiens atspējo tikai šo izvēli. Modinātāji
+joprojām izmanto Windows noklusējuma izvadi. Tie tiek apvienoti ar regulārajiem signāliem tikai kopīgā izvadē.
 
 ## Papildu pulksteņi
 

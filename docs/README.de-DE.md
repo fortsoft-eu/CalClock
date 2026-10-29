@@ -132,10 +132,11 @@ verfügbar ist oder ein anderer Ausgang gewählt wird. Die Geräteliste wird bei
 wird für jedes Widget getrennt in der Registrierung oder in den XML-Einstellungen gespeichert.
 
 Zeitzeichen werden je Ausgang automatisch zusammengeführt. Ein ausdrücklich gewähltes Gerät und
-**Windows-Standardgerät**, das auf dasselbe Gerät verweist, teilen einen Ausgang. Verschiedene Geräte arbeiten
-unabhängig; Sinuskurve, durchgehende Phase sowie Tonanfang und Tonende bei null bleiben erhalten. Wecker
-einschließlich intern abgespielter Dateien und vorangestellter Zeitzeichen sowie alle Tests verwenden weiterhin den
-Windows-Standardausgang. Sie werden nur auf einem gemeinsamen Ausgang mit regelmäßigen Zeitzeichen zusammengeführt.
+Windows-Standardgerät, das auf dasselbe Gerät verweist, teilen einen Ausgang. Verschiedene Geräte arbeiten
+unabhängig; Sinuskurve, durchgehende Phase sowie Tonanfang und Tonende bei null bleiben erhalten. Audioausgabe
+für den Test auf der Registerkarte Anwendung speichert das Gerät für Generatortests und Lautstärkevorschauen.
+Systemsignalton deaktiviert nur diese Auswahl. Wecker verwenden weiterhin die Windows-Standardausgabe. Sie
+werden nur auf einem gemeinsamen Ausgang mit regelmäßigen Zeitzeichen zusammengeführt.
 
 Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widgets umschalten. Der Weckereintrag zeigt die Zeit und, sofern nicht alle Tage aktiv sind, die ausgewählten Wochentage. Der markierte Befehl Stumm betrifft sein Widget und entspricht Stumm auf Allgemein. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Im Infobereich heißt der Befehl Alle stummschalten; `M` auf einem Widget führt dieselbe globale Aktion aus. Das globale Aufheben der Stummschaltung stellt nur die durch die vorherige globale Aktion stummgeschalteten Widgets wieder her. Interne Audiowiedergabe läuft lautlos weiter und wird danach wieder hörbar. Ein bereits laufender Ton darf enden; weitere Töne werden bis zur erneuten Freigabe übersprungen. Andere Befehle und entfernte Skripte bleiben unbeeinflusst.
 

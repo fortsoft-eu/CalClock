@@ -75,11 +75,11 @@ izbrana tudi po odklopu in je prikazana kot **Naprava ni na voljo**; njeni signa
 voljo ali izberete drugega izhoda. Seznam naprav se osveži ob odpiranju. Izbira se za vsak gradnik posebej shrani v
 register ali nastavitve XML.
 
-Signali se samodejno združujejo za vsak izhod posebej. Izrecno izbrana naprava in možnost **Privzeta naprava
-Windows**, ki kaže na isto napravo, uporabljata en izhod. Različne naprave delujejo neodvisno; ohranijo se sinusni
-val, zveznost faze ter začetek in konec tonov pri ničli. Budilke, vključno z datotekami, ki se predvajajo znotraj
-programa, in signali pred budilko, ter vsi preizkusi še naprej uporabljajo privzeti izhod sistema Windows. Z rednimi
-signali se združijo samo na skupnem izhodu.
+Signali se samodejno združujejo za vsak izhod posebej. Izrecno izbrana naprava in možnost Privzeta naprava
+Windows, ki kaže na isto napravo, uporabljata en izhod. Različne naprave delujejo neodvisno; ohranijo se
+sinusni val, zveznost faze ter začetek in konec tonov pri ničli. Zvočni izhod preizkusa na zavihku Program
+shrani napravo za preizkuse generatorja in predposlušanje glasnosti. Sistemski pisk onemogoči samo ta izbor.
+Budilke še naprej uporabljajo privzeti izhod Windows. Z rednimi signali se združijo samo na skupnem izhodu.
 
 ## Dodatne ure
 

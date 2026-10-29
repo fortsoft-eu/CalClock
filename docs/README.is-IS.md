@@ -130,10 +130,11 @@ virkjar hann aftur. Windows Vista notar hljóðgjafann sjálfkrafa.
 annað úttak er valið. Tækjalistinn uppfærist þegar hann er opnaður. Valið er vistað sérstaklega fyrir hverja græju í
 skrásetningunni eða XML-stillingum.
 
-Tímamerki eru sameinuð sjálfkrafa á hverju úttaki. Sérstaklega valið tæki og **Sjálfgefið tæki Windows** sem vísar á
-sama tæki deila einu úttaki. Mismunandi tæki vinna sjálfstætt; sínusbylgjan, samfelldur fasi og upphaf og endir tóna
-við núll haldast óbreytt. Vekjarar, þar á meðal skrár sem forritið spilar og tímamerki fyrir vekjara, ásamt öllum
-prófunum nota áfram sjálfgefið úttak Windows. Þau sameinast aðeins reglulegum tímamerkjum á sameiginlegu úttaki.
+Tímamerki eru sameinuð sjálfkrafa á hverju úttaki. Sérstaklega valið tæki og Sjálfgefið tæki Windows sem vísar
+á sama tæki deila einu úttaki. Mismunandi tæki vinna sjálfstætt; sínusbylgjan, samfelldur fasi og upphaf og
+endir tóna við núll haldast óbreytt. Hljóðúttak prófunar á flipanum Forrit vistar tækið fyrir prófanir
+hljóðgjafans og forskoðun hljóðstyrks. Kerfishljóð gerir aðeins þennan valreit óvirkan. Vekjarar nota áfram
+sjálfgefið úttak Windows. Þau sameinast aðeins reglulegum tímamerkjum á sameiginlegu úttaki.
 
 Vekjara og tímamerki má líka kveikja og slökkva á í samhengisvalmynd hljóðgræju. Vekjarafærslan sýnir tímann og virka daga ef ekki allir eru valdir. Þöggun gildir fyrir græjuna og samsvarar valinu á Almennt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun. Skipunin á tilkynningasvæðinu er Þagga allt; `M` á hvaða græju sem er framkvæmir sömu almennu breytingu. Almenn afþöggun endurheimtir aðeins þær græjur sem síðasta almenna aðgerð þaggaði. Innri spilun heldur áfram hljóðlaust og verður aftur heyranleg þegar þöggun lýkur. Yfirstandandi píp getur klárast; seinni pípum er sleppt þar til hljóð er virkjað. Aðrar skipanir og fjarskriftur eru óbreyttar.
 
