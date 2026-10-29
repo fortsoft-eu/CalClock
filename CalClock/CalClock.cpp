@@ -4481,6 +4481,7 @@ static void AlignSettingsControls() {
     AlignSettingsControl(hFontButton, hFontLabel);
     UpdateApplicationControlOrder();
     AlignSettingsControl(hAppFontDefaultButton, hAppFontLabel);
+    AlignSettingsControl(hAppFontButton, hAppFontLabel);
     AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
     AlignSettingsControl(hOpacityValue, hOpacityLabel);
     AlignSettingsControl(hFontSizeValue, hFontSizeLabel);
@@ -8793,7 +8794,7 @@ static void UpdateSettingsActionButtonWidths() {
         std::max(1L, addLeft - SettingsDialogWidth(4) - combo.left), combo.bottom - combo.top);
 }
 
-/// Gives Default and Test the same width from their longer caption, preserving their common right edge.
+/// Gives Default and both Test captions the same width, preserving their common right edge.
 /// The font selector and sound combo fill the remaining row width with the action-button gap.
 static void UpdateApplicationControlWidths() {
     RECT save = {};
@@ -8823,7 +8824,23 @@ static void UpdateApplicationControlWidths() {
     }
     LONG width = MulDiv(DIALOG_BUTTON_WIDTH_DLU, units.cx, 4);
     width = PreferredButtonWidth(hAppFontDefaultButton, width, 0);
-    width = PreferredButtonWidth(hTimeSignalTestButton, width, 0);
+    HWND measurement = CreateWindowExW(0, L"BUTTON", L"", WS_CHILD | BS_PUSHBUTTON,
+        0, 0, 0, 0, hApplicationPage, nullptr, hInstance, nullptr);
+    if (measurement == nullptr) {
+        return;
+    }
+    SendMessageW(measurement, WM_SETFONT, reinterpret_cast<WPARAM>(buttonFont), FALSE);
+    const wchar_t* theme = themesDisabled ? L"" : nullptr;
+    SetWindowTheme(measurement, theme, theme);
+    RECT margins = {};
+    SendMessageW(hTimeSignalTestButton, BCM_GETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
+    SendMessageW(measurement, BCM_SETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
+    const TextId testCaptions[] = { TXT_TEST_COMMAND_LABEL, TXT_STOP_TEST_LABEL };
+    for (TextId caption : testCaptions) {
+        SetWindowTextW(measurement, T(caption));
+        width = PreferredButtonWidth(measurement, width, 0);
+    }
+    DestroyWindow(measurement);
     LONG left = test.right - width;
     SetControlPosition(hTimeSignalTestButton, left, test.top, width, test.bottom - test.top);
     SetControlPosition(hTimeSignalSoundCombo, sound.left, sound.top, left - gap - sound.left,
