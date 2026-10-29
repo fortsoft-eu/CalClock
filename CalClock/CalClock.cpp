@@ -3233,8 +3233,8 @@ HFONT CreateApplicationUiFont(HWND window) {
 }
 
 /// Replaces the application font in open dialogs before releasing their previous shared font.
-/// Defers final settings alignment until native font changes and the initiating button click have completed.
-static void RefreshApplicationFonts() {
+/// Defers final settings alignment and optional recreation until font changes and the button click complete.
+static void RefreshApplicationFonts(bool rebuildSettings = true) {
     HFONT font = CreateApplicationUiFont(hSettings);
     if (font == nullptr) {
         return;
@@ -3251,7 +3251,7 @@ static void RefreshApplicationFonts() {
         DeleteObject(previous);
     }
     if (hSettings != nullptr) {
-        PostMessageW(hSettings, WM_UPDATE_SETTINGS_CONTROL_METRICS, TRUE, 0);
+        PostMessageW(hSettings, WM_UPDATE_SETTINGS_CONTROL_METRICS, rebuildSettings, 0);
     }
 }
 
@@ -13081,9 +13081,6 @@ static void ApplySettingsDraft() {
     themesDisabled = GetCheck(hDisableThemesCheck);
     int previousAppFontAntialiasing = appFontAntialiasing;
     appFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
-    std::wstring previousAppFontFace = appFontFace;
-    int previousAppFontWeight = appFontWeight;
-    bool previousAppFontItalic = appFontItalic;
     appFontFace = settingsAppFontFace;
     appFontDialogSize = std::clamp(settingsAppFontDialogSize, 10, 9990);
     appFontWeight = std::clamp(settingsAppFontWeight, 0, 1000);
@@ -13168,13 +13165,10 @@ static void ApplySettingsDraft() {
     settingsAppearancePreviewActive = false;
     settingsAppearancePreviewIds.clear();
     settingsAppearanceOriginals.clear();
-    bool appFontChanged = previousAppFontAntialiasing != appFontAntialiasing
-        || previousAppFontFace != appFontFace
-        || previousAppFontWeight != appFontWeight
-        || previousAppFontItalic != appFontItalic;
-    bool uiStyleChanged = previousThemesDisabled != themesDisabled || appFontChanged;
+    bool uiStyleChanged = previousThemesDisabled != themesDisabled
+        || previousAppFontAntialiasing != appFontAntialiasing;
     if (uiStyleChanged) {
-        RefreshApplicationFonts();
+        RefreshApplicationFonts(false);
     }
     settingsAppliedWidgets.clear();
     for (const std::unique_ptr<Widget>& widget : widgets) {
