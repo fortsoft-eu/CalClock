@@ -503,6 +503,7 @@ static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
 static bool settingsComboAccepted = false;
 static bool settingsGeneralCheckboxReferenceValid = false;
+static bool settingsLayoutSuspended = false;
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 bool ntpHasSynchronized = false;
@@ -8281,7 +8282,7 @@ static void InitializeSettingsScrollBars() {
 /// buttons. Updates scrollbars, preserves valid scroll positions, and skips minimized windows without
 /// activating them.
 static void UpdateSettingsWindowLayout() {
-    if (hSettings == nullptr || settingsContentWidth <= 0 || IsIconic(hSettings)) {
+    if (hSettings == nullptr || settingsContentWidth <= 0 || settingsLayoutSuspended || IsIconic(hSettings)) {
         return;
     }
     DWORD currentStyle = static_cast<DWORD>(GetWindowLongPtrW(hSettings, GWL_STYLE));
@@ -8315,11 +8316,12 @@ static void UpdateSettingsWindowLayout() {
         SetWindowLongPtrW(hSettings, GWL_STYLE, style);
         flags |= SWP_FRAMECHANGED;
     }
-    if (style != currentStyle
-            || bounds.left != x
-            || bounds.top != y
-            || bounds.right - bounds.left != width
-            || bounds.bottom - bounds.top != height) {
+    bool changed = style != currentStyle
+        || bounds.left != x
+        || bounds.top != y
+        || bounds.right - bounds.left != width
+        || bounds.bottom - bounds.top != height;
+    if (changed) {
         SetWindowPos(hSettings, nullptr, x, y, width, height, flags);
     }
     InitializeSettingsScrollBars();
@@ -8341,6 +8343,10 @@ static void UpdateSettingsWindowLayout() {
     if (deltaX != 0 || deltaY != 0) {
         ScrollWindowEx(hSettings, deltaX, deltaY, nullptr, nullptr, nullptr, nullptr,
             SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
+    }
+    if (changed) {
+        RedrawWindow(hSettings, nullptr, nullptr,
+            RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN | RDW_UPDATENOW);
     }
 }
 
@@ -14350,9 +14356,33 @@ static void RestoreSettingsControlValues(const std::vector<SettingsControlValue>
     }
 }
 
-/// Recreates Settings controls, retaining the selected tab and optional draft values.
-static void RebuildSettingsControls(bool preserveValues = false) {
+/// Recreates Settings child controls with painting and outer resizing suspended, restoring values and tab.
+static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
+        const std::vector<SettingsControlValue>& values, const std::vector<int>& selectedWidgets,
+        bool applyEnabled) {
     WindowRedrawScope redraw(hSettings);
+    settingsLayoutSuspended = true;
+    DestroySettingsChildControls();
+    SetWindowTextW(hSettings, T(TXT_SETTINGS));
+    bool controlsCreated = RestoreSettingsRootControls() && CreateSettingsControls();
+    if (controlsCreated) {
+        RefreshWidgetList(true, false);
+        LoadDraftIntoControls();
+        if (hTabs != nullptr) {
+            if (preserveValues) {
+                RestoreSettingsControlValues(values, selectedWidgets, applyEnabled);
+            }
+            TabCtrl_SetCurSel(hTabs, std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1));
+            ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
+        }
+    }
+    settingsLayoutSuspended = false;
+    return controlsCreated;
+}
+
+/// Recreates Settings controls, retaining the selected tab and optional draft values.
+/// Defers the outer resize until all controls are ready and painting is enabled.
+static void RebuildSettingsControls(bool preserveValues = false) {
     timeSignalVolumeDragging = false;
     settingsTimeSignalTestActive = false;
     StopTimeSignalVolumePreview();
@@ -14370,22 +14400,13 @@ static void RebuildSettingsControls(bool preserveValues = false) {
     }
     int selectedTab = hTabs == nullptr ? 0 : TabCtrl_GetCurSel(hTabs);
     settingsTab = std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1);
-    DestroySettingsChildControls();
-    SetWindowTextW(hSettings, T(TXT_SETTINGS));
-    if (!RestoreSettingsRootControls() || !CreateSettingsControls()) {
+    bool controlsCreated =
+        RecreateSettingsChildControls(preserveValues, selectedTab, values, selectedWidgets, applyEnabled);
+    if (!controlsCreated) {
         CloseSettingsWindow();
         return;
     }
-    RefreshWidgetList(true, false);
-    LoadDraftIntoControls();
-    if (hTabs == nullptr) {
-        return;
-    }
-    if (preserveValues) {
-        RestoreSettingsControlValues(values, selectedWidgets, applyEnabled);
-    }
-    TabCtrl_SetCurSel(hTabs, std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1));
-    ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
+    UpdateSettingsWindowLayout();
     SetFocus(preserveValues ? hAppFontButton : hAddType);
 }
 
@@ -15949,7 +15970,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             break;
         case WM_UPDATE_SETTINGS_CONTROL_METRICS:
             if (window == hSettings) {
-                WindowRedrawScope redraw(wParam != 0 ? hSettings : hAppearancePage);
+                WindowRedrawScope redraw(wParam != 0 ? nullptr : hAppearancePage);
                 if (wParam != 0) {
                     RebuildSettingsControls(true);
                     if (hSettings == nullptr) {
