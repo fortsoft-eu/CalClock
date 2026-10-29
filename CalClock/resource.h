@@ -87,6 +87,8 @@
 #define ID_TIME_SIGNAL_ENABLED                  3078
 #define ID_TIME_SIGNAL_INTERVAL_BASE            3150
 #define ID_TIME_SIGNAL_NOTE                     3080
+#define ID_AUDIO_OUTPUT                         3096
+#define IDC_AUDIO_OUTPUT_LABEL                  5150
 #define ID_TIME_SIGNAL_SOUND                    3093
 #define ID_TIME_SIGNAL_VOLUME                   3094
 #define ID_TIME_SIGNAL_TEST                     3095
@@ -202,7 +204,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE                113
 #define _APS_NEXT_COMMAND_VALUE                 40001
-#define _APS_NEXT_CONTROL_VALUE                 5150
+#define _APS_NEXT_CONTROL_VALUE                 5151
 #define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif

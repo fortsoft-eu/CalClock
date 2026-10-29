@@ -4,6 +4,10 @@
 
 CalClock hija applikazzjoni nattiva Win32/x86 għal Windows Vista u verżjonijiet aktar ġodda, b’arloġġi u kalendarji fuq id-desktop li jistgħu jiġu kkonfigurati separatament. Taħdem fiż-żona tan-notifiki u tappoġġja sa 32 widget u 36 għażla tal-lingwa; il-lingwa tal-programm u ta’ kull widget tintgħażel separatament.
 
+L-arloġġi analogi jużaw il-kontroll tas-sistema Windows `ClockWndMain`, b’detezzjoni awtomatika tad-daqsijiet
+disponibbli u tal-appoġġ għall-id tas-sekondi. Jekk id-daqs magħżul ma jappoġġjax l-id tas-sekondi, il-kmand
+Sekondi jkun diżattivat, iżda l-għażla ssejvjata tinżamm għal daqs ieħor appoġġjat.
+
 ## Kontrolli
 
 Mexxi arloġġ jew panew billi tkaxkru bil-buttuna tax-xellug tal-maws. Kalendarju separat jitmexxa miż-żona vojta tiegħu. Klikk bil-lemin fuq widget jew l-ikona taż-żona tan-notifiki jiftaħ il-menu. Klikk bix-xellug fuq l-ikona jaħbi l-widgets viżibbli; jekk kollha moħbija, jirrestawra biss dawk li nħbew l-aħħar.
@@ -58,9 +62,28 @@ Il-menu tal-widget fih l-għażliet xierqa għall-viżibbiltà, Dejjem fuq nett,
 
 ## Sinjal tal-ħin li jinstema’
 
-Is-sinjal isegwi s-Sinjal tal-Ħin ta’ Greenwich (GTS): ħames toni qosra fl-aħħar ħames sekondi u ton twil eżatt fil-ħin stabbilit. It-tab Sinjal għandu Sinjal tal-ħin attivat u intervalli ta’ 1, 5, 10, 15, 20, 30 jew 60 minuta skont il-ħin tal-widget. Għall-ewwel huwa mitfi b’intervall ta’ siegħa magħżul. Il-bidla fil-menu żżomm l-intervall. Jitqiesu UTC, iż-żona, il-kumpens u NTP; b’20 minuta jindaqq f’:00, :20 u :40. Sinjali simultanji ta’ widgets u allarmi jingħaqdu. Wara s-sikket, it-ton kurrenti jista’ jispiċċa, dawk li jmiss jinqabżu u wara li jerġa’ jinxtegħel il-ħoss jinstema’ biss it-ton skedat li jmiss. Kalendarju separat m’għandux allarm, sinjal tal-ħin jew sikket.
+Is-sinjal isegwi s-Sinjal tal-Ħin ta’ Greenwich (GTS): ħames toni qosra fl-aħħar ħames sekondi u ton twil eżatt fil-ħin stabbilit. It-tab Sinjal għandu Sinjal tal-ħin attivat u intervalli ta’ 1, 5, 10, 15, 20, 30 jew 60 minuta skont il-ħin tal-widget. Għall-ewwel huwa mitfi b’intervall ta’ siegħa magħżul. Il-bidla fil-menu żżomm l-intervall. Jitqiesu UTC, iż-żona, il-kumpens u NTP; b’20 minuta jindaqq f’:00, :20 u :40. Wara s-sikket, it-ton kurrenti jista’ jispiċċa, dawk li jmiss jinqabżu u wara li jerġa’ jinxtegħel il-ħoss jinstema’ biss it-ton skedat li jmiss. Kalendarju separat m’għandux allarm, sinjal tal-ħin jew sikket.
 
-Ħoss tas-sinjal tal-ħin fit-tab Applikazzjoni joffri Ġeneratur integrat (default) u Ħoss tas-sistema għall-widgets u l-allarmi kollha. Volum tas-sinjal tal-ħin juri l-livell tal-ġeneratur f’dB: 0 dB fuq il-lemin huwa l-massimu ta’ amplitudni sinusojdali mingħajr distorsjoni, −∞ dB huwa skiet, u d-default −18 dB. Ittestja jibda previżjoni kontinwa, Waqqaf it-test itemmha. Iż-żewġ ħsejjes jistgħu jiġu ttestjati; it-test ma jiġix issejvjat. Iż-żamma tas-slajder iddoqq ukoll sal-ħelsien tal-maws, sakemm mhux għaddej test mill-buttuna. Id-daqq jibda fis-sekonda sħiħa li jmiss: ton qasir kull sekonda u twil f’:00, :05, :10 u hekk ikompli. Sinjali simultanji ta’ prova, widgets u allarmi jaqsmu ton wieħed. Il-waqfien iħalli t-ton kurrenti jispiċċa; wieħed twil jista’ jdum nofs sekonda oħra. Jitqiesu ċ-ċentesimi tal-kumpens; toni li jikkoinċidu jindaqqu kontinwament sa tmiem l-aħħar sovrapożizzjoni.
+Ħoss tas-sinjal tal-ħin fit-tab Applikazzjoni joffri Ġeneratur integrat (default) u Ħoss tas-sistema għall-widgets u l-allarmi kollha. Volum tas-sinjal tal-ħin juri l-livell tal-ġeneratur f’dB: 0 dB fuq il-lemin huwa l-massimu ta’ amplitudni sinusojdali mingħajr distorsjoni, −∞ dB huwa skiet, u d-default −18 dB. Ittestja jibda previżjoni kontinwa, Waqqaf it-test itemmha. Iż-żewġ ħsejjes jistgħu jiġu ttestjati; it-test ma jiġix issejvjat. Iż-żamma tas-slajder iddoqq ukoll sal-ħelsien tal-maws, sakemm mhux għaddej test mill-buttuna. Id-daqq jibda fis-sekonda sħiħa li jmiss: ton qasir kull sekonda u twil f’:00, :05, :10 u hekk ikompli. Il-waqfien iħalli t-ton kurrenti jispiċċa; wieħed twil jista’ jdum nofs sekonda oħra. Jitqiesu ċ-ċentesimi tal-kumpens; toni li jikkoinċidu jindaqqu kontinwament sa tmiem l-aħħar sovrapożizzjoni fuq l-istess ħruġ tal-awdjo.
+
+**Ħruġ tal-awdjo**
+
+**Ħruġ tal-awdjo** fit-tab **Sinjal** jagħżel apparat għas-sinjali regolari tal-ħin ta’ kull widget li jappoġġja
+l-ħoss. Iż-żona tal-ħin, il-kumpens u l-intervall tal-widget ma jinbidlux. L-għażla tal-ġeneratur u l-volum tas-sinjal
+jibqgħu globali fit-tab **Applikazzjoni**. B’**Ħoss tas-sistema**, il-kaxxa tibqa’ tidher iżda tkun griża u
+diżattivata, u żżomm l-apparat magħżul; **Ġeneratur integrat** jerġa’ jattivaha. Windows Vista juża l-ġeneratur
+awtomatikament.
+
+**Apparat predefinit ta’ Windows** isegwi l-ħruġ predefinit attwali ta’ Windows. Apparat magħżul speċifikament jibqa’
+magħżul meta jiġi skonnettjat u jidher bħala **Apparat mhux disponibbli**; is-sinjali tiegħu jibqgħu siekta sakemm
+jerġa’ jkun disponibbli jew jintgħażel ħruġ ieħor. Il-lista tal-apparati tiġġedded meta tinfetaħ. L-għażla tinħażen
+separatament għal kull widget fir-reġistru jew fis-settings XML.
+
+Is-sinjali jingħaqdu awtomatikament għal kull ħruġ. Apparat magħżul speċifikament u **Apparat predefinit ta’ Windows**
+li jirreferi għall-istess apparat jaqsmu ħruġ wieħed. Apparati differenti jaħdmu indipendentement; jinżammu l-mewġa
+sinusojdali, il-kontinwità tal-fażi u l-bidu u t-tmiem tat-toni f’żero. L-allarmi, inklużi fajls li jindaqqu
+internament u s-sinjali tal-ħin ta’ qabel l-allarm, u t-testijiet kollha jibqgħu jużaw il-ħruġ predefinit ta’ Windows.
+Jingħaqdu mas-sinjali regolari biss fuq ħruġ komuni.
 
 ## Arloġġi addizzjonali
 
@@ -95,6 +118,10 @@ Il-pointer tal-maws jinħeba wara ftit inattività fuq l-arloġġ jew il-moniter
 Huma meħtieġa Microsoft Visual Studio bl-għodod MSVC v145 u Windows SDK. Iftaħ `CalClock.slnx`, agħżel `Release | x86` u ibni s-soluzzjoni. Il-fajl eżegwibbli jinħoloq f’`Release\CalClock.exe`. Win32/x86 biss huwa appoġġjat għax l-integrazzjoni mal-kontroll tal-arloġġ tal-Windows teħtieġ kompatibbiltà x86.
 
 Wara l-bini, `.\PackageRelease.ps1` joħloq `CalClock-<version>-win32.zip`; il-verżjoni tinqara minn `Release\CalClock.exe`. Fl-għerq tal-arkivju hemm `CalClock.exe` u `license.txt`. Il-parametri fakultattivi tal-iffirmar `-SignerName`, `-SignToolPath` u `-TimestampServer` jingħataw meta jitħaddem. Firma Authenticode valida eżistenti tiġi vverifikata u ma tinbidilx. Il-pakketti ZIP preċedenti ta’ CalClock jitneħħew fil-bidu ta’ kull tħaddim; żball fl-iffirmar jew fil-verifika jwaqqaf l-ippakkjar.
+
+Il-valuri predefiniti tal-parametri tal-iffirmar jinqraw ukoll mill-varjabbli tal-ambjent tal-utent ta’ Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. L-argumenti
+espliċiti tal-linja tal-kmand jieħdu preċedenza.
 
 ## Liċenzja
 

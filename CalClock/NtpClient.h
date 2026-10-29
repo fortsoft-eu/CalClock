@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.0.0
  */
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include "CalClock.h"
 #include <atomic>
 #include <string>
 #include <vector>
@@ -39,7 +39,8 @@ enum class NtpQueryError {
     Timeout
 };
 
-/// Records a server query's completion time, measured offset, failure details, and optional combined group offset.
+/// Records a server query's completion time, measured offset, failure details, and optional combined group
+/// offset.
 struct NtpQueryLogEntry {
     bool hasCombinedOffset = false;
     bool success = false;
@@ -51,7 +52,8 @@ struct NtpQueryLogEntry {
     std::wstring server;
 };
 
-/// Carries the NTP correction to the continuous clock, the measured system offset, and individual query records.
+/// Carries the NTP correction to the continuous clock, the measured system offset, and individual query
+/// records.
 struct NtpThreadResult {
     bool success = false;
     LONGLONG clockOffset100Nanoseconds = 0;
@@ -70,5 +72,5 @@ bool HasNtpServers(const std::wstring& serverList);
 
 /// Starts an NTP worker and returns its thread handle, or null on failure. The caller owns the handle and
 /// must keep both atomic flags alive until the worker exits; the receiver owns posted results.
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage,
-    std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning);
+HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow,
+    UINT notifyMessage, std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning);

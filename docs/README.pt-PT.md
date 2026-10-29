@@ -8,7 +8,7 @@ O CalClock é uma aplicação nativa Win32/x86 para Windows Vista e versões pos
 
 - Até 32 widgets configuráveis individualmente
 - Idioma, fuso horário, desvio de hora, visibilidade e estado sempre no topo por widget
-- Relógios analógicos com tamanho do mostrador selecionável e ponteiro dos segundos opcional
+- Relógios analógicos baseados no controlo Windows `ClockWndMain`, com deteção dos tamanhos disponíveis e suporte para o ponteiro dos segundos
 - Relógios digitais com tipos de letra, cores, opacidade, margens interiores, contornos, zero inicial opcional e fundo transparente opcional
 - Calendários nativos do Windows com seleção de datas, quatro estilos de contorno, cor configurável, números de semana, escolha do primeiro dia e 33 formatos de cópia
 - Painéis de calendário e relógio com até dois relógios adicionais com nome e fusos independentes, tamanhos separados de mostrador, quatro estilos de contorno, cor configurável, texto UTC, zero inicial e tipo de letra próprio para cada linha de texto
@@ -114,9 +114,28 @@ Os sinais sonoros do alarme são agendados a partir do instante real do próximo
 
 Teste mostra a indicação visual e testa de forma assíncrona ficheiro, comando, áudio e URL do script remoto. Se o sinal horário do alarme estiver selecionado, reproduz também os seis tons completos; Parar teste termina o áudio interno e a pré-visualização do sinal.
 
-O separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos segundo a hora apresentada pelo widget. Inicialmente, o sinal está desativado e está selecionado o intervalo de uma hora. Desativar e ativar Sinal no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal entre parênteses. O intervalo de 20 minutos toca a :00, :20 e :40 dessa hora. O padrão é o **Greenwich Time Signal (GTS)**: cinco tons curtos marcam os últimos cinco segundos e um mais longo o limite exato. São respeitados fusos, UTC, desvios e correção NTP atual. O sinal do alarme e o separador Sinal permanecem independentes; quando coincidem, o CalClock reproduz uma única sequência partilhada. São respeitados desvios fracionários, e os tons sobrepostos de widgets, alarmes e testes continuam sem interrupção até terminar a última sobreposição.
+O separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos segundo a hora apresentada pelo widget. Inicialmente, o sinal está desativado e está selecionado o intervalo de uma hora. Desativar e ativar Sinal no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal entre parênteses. O intervalo de 20 minutos toca a :00, :20 e :40 dessa hora. O padrão é o **Greenwich Time Signal (GTS)**: cinco tons curtos marcam os últimos cinco segundos e um mais longo o limite exato. São respeitados fusos, UTC, desvios e correção NTP atual. O sinal do alarme e o separador Sinal permanecem independentes. São respeitados desvios fracionários, e os tons sobrepostos de widgets, alarmes e testes continuam sem interrupção até terminar a última sobreposição na mesma saída de áudio.
 
-**Som do sinal horário** em Aplicação permite escolher **Gerador integrado** (predefinido) ou **Sinal sonoro do sistema**. A escolha aplica-se a todos os sinais, incluindo os dos alarmes, e é guardada globalmente. No **Gerador integrado**, **Volume do sinal horário** mostra o nível em dB para toda a aplicação. À direita fica **0 dB**, a amplitude sinusoidal máxima sem distorção; silêncio é **−∞ dB**. O valor predefinido é **−18 dB**. A escala em decibéis tem −18 dB a meio. O gerador inicia e termina tons na passagem por zero, também ao parar um teste. O tom atual termina normalmente; um tom longo pode demorar até meio segundo. **Testar**, junto de **Som do sinal horário**, inicia a pré-visualização contínua; **Parar teste** termina-a. Ambos os modos podem ser testados e o estado do teste não é guardado. Manter premido o controlo de volume também inicia uma pré-visualização até soltar o rato, exceto se o teste pelo botão estiver ativo. A reprodução começa no próximo segundo inteiro, com tons curtos a cada segundo e um longo a :00, :05, :10, etc. A pré-visualização e sinais simultâneos de widgets ou alarmes partilham um único tom. A escolha só está disponível quando o sistema suporta ambos os modos.
+**Som do sinal horário** em Aplicação permite escolher **Gerador integrado** (predefinido) ou **Sinal sonoro do sistema**. A escolha aplica-se a todos os sinais, incluindo os dos alarmes, e é guardada globalmente. No **Gerador integrado**, **Volume do sinal horário** mostra o nível em dB para toda a aplicação. À direita fica **0 dB**, a amplitude sinusoidal máxima sem distorção; silêncio é **−∞ dB**. O valor predefinido é **−18 dB**. A escala em decibéis tem −18 dB a meio. O gerador inicia e termina tons na passagem por zero, também ao parar um teste. O tom atual termina normalmente; um tom longo pode demorar até meio segundo. **Testar**, junto de **Som do sinal horário**, inicia a pré-visualização contínua; **Parar teste** termina-a. Ambos os modos podem ser testados e o estado do teste não é guardado. Manter premido o controlo de volume também inicia uma pré-visualização até soltar o rato, exceto se o teste pelo botão estiver ativo. A reprodução começa no próximo segundo inteiro, com tons curtos a cada segundo e um longo a :00, :05, :10, etc. A escolha só está disponível quando o sistema suporta ambos os modos.
+
+**Saída de áudio**
+
+**Saída de áudio** no separador **Sinal** seleciona o dispositivo para os sinais horários regulares de cada widget com
+som. O fuso horário, o desvio e o intervalo do widget não são alterados. A escolha do gerador e o volume continuam a
+ser globais no separador **Aplicação**. Com **Sinal sonoro do sistema**, o seletor permanece visível mas desativado e
+conserva o dispositivo escolhido; **Gerador integrado** volta a ativá-lo. O Windows Vista utiliza automaticamente o
+gerador.
+
+**Dispositivo predefinido do Windows** acompanha a saída predefinida atual do Windows. Um dispositivo escolhido
+explicitamente mantém-se selecionado após ser desligado e aparece como **Dispositivo indisponível**; os seus sinais
+ficam em silêncio até estar disponível ou ser escolhida outra saída. A lista de dispositivos é atualizada ao abrir. A
+seleção é guardada separadamente para cada widget no Registo ou nas definições XML.
+
+Os sinais são combinados automaticamente por saída. Um dispositivo escolhido explicitamente e **Dispositivo
+predefinido do Windows** que indique esse mesmo dispositivo partilham uma saída. Dispositivos diferentes funcionam de
+forma independente; mantêm-se a onda sinusoidal, a continuidade de fase e o início e fim dos tons em zero. Os alarmes,
+incluindo os ficheiros reproduzidos internamente e os sinais que os antecedem, e todos os testes continuam a utilizar
+a saída predefinida do Windows. Só se combinam com sinais regulares numa saída comum.
 
 Alarmes e sinais também podem ser ativados no menu contextual de cada widget com som. A entrada do alarme mostra a hora e, salvo se todos estiverem selecionados, os dias ativos. Sem som afeta o widget e corresponde à opção em Geral. Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento. Na área de notificação existe Silenciar tudo; `M` em qualquer widget executa a mesma alternância global. A reativação global restaura apenas widgets silenciados pela ação global anterior. O áudio interno continua silenciosamente e volta a ouvir-se ao reativar. Um tom já iniciado pode terminar; os seguintes são ignorados até reativar o som. Comandos não sonoros e scripts remotos não são afetados.
 
@@ -124,7 +143,7 @@ Alarmes e sinais também podem ser ativados no menu contextual de cada widget co
 
 Cada menu contém os comandos pertinentes ao tipo — visibilidade, sempre no topo, segundos, tamanho analógico ou formato da data copiada — seguidos de `Alinhar na grelha`, Definições, Ajuda, Acerca de e Sair. O menu de notificação enumera todos os widgets com o seu número e oferece Mostrar tudo, Ocultar tudo e Silenciar tudo. `Alinhar na grelha` surge num grupo separado antes dos comandos da aplicação.
 
-Mostrar ou restaurar widgets coloca-os à frente das outras janelas sem alterar o estado sempre no topo. O CalClock garante pelo menos um widget visível ao iniciar. Um segundo arranque ativa a instância existente e restaura os widgets ocultados mais recentemente se nenhum estiver visível. O ícone de notificação é registado novamente de forma automática após o reinício do Explorador do Windows.
+Mostrar ou restaurar widgets coloca-os à frente das outras janelas sem alterar o estado sempre no topo. O CalClock garante pelo menos um widget visível ao iniciar. Um segundo arranque ativa a instância existente e restaura os widgets ocultados mais recentemente se nenhum estiver visível. O ícone de notificação é registado novamente de forma automática após o reinício do Explorador do Windows. Se `ClockWndMain` não suportar ponteiro dos segundos no tamanho selecionado, Segundos fica desativado, mas a escolha é conservada para outro tamanho compatível.
 
 ## Armazenamento das definições
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Apenas Win32/x86 é suportado. O projeto não disponibiliza intencionalmente uma configuração x64, pois a integração com o controlo do relógio Windows exige compatibilidade x86.
+
+Após a compilação, execute `.\PackageRelease.ps1` para criar `CalClock-<version>-win32.zip` com o programa e a
+respetiva licença.
+
+Os parâmetros de assinatura também obtêm valores predefinidos das variáveis de ambiente do utilizador do Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Os argumentos
+explícitos da linha de comandos têm prioridade.
 
 ## Licença
 

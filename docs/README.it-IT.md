@@ -8,7 +8,7 @@ CalClock è un’applicazione nativa Win32/x86 per Windows Vista e versioni succ
 
 - Fino a 32 widget configurabili indipendentemente
 - Lingua, fuso orario, scostamento, visibilità e stato sempre in primo piano per ciascun widget
-- Orologi analogici con dimensioni del quadrante selezionabili e lancetta dei secondi facoltativa
+- Orologi analogici basati sul controllo Windows `ClockWndMain`, con rilevamento delle dimensioni disponibili e supporto della lancetta dei secondi
 - Orologi digitali con caratteri, colori, opacità, margini interni, bordi, zero iniziale facoltativo e sfondo trasparente facoltativo
 - Calendari nativi di Windows con selezione della data, quattro stili di bordo, colore del bordo configurabile, numeri delle settimane, scelta del primo giorno e 33 formati di copia
 - Pannelli calendario e orologio con fino a due orologi aggiuntivi dotati di nome e fusi indipendenti, dimensioni separate dei quadranti, quattro stili di bordo, colore configurabile, testo UTC, zero iniziale e carattere distinto per ogni riga di testo
@@ -114,9 +114,28 @@ I toni della sveglia vengono programmati in base all’istante effettivo della p
 
 Prova mostra l’indicazione visiva e verifica in modo asincrono file, comando, audio e URL dello script remoto. Se è selezionato il segnale della sveglia, riproduce anche tutti e sei i bip; Interrompi prova termina audio interno e anteprima del segnale.
 
-La scheda Segnale contiene la casella Segnale orario attivo e pulsanti di opzione per intervalli di 1, 5, 10, 15, 20, 30 o 60 minuti secondo l’ora visualizzata dal widget. Inizialmente il segnale è disattivato e l’intervallo selezionato è di un’ora. Disattivare e riattivare Segnale nel menu del widget mantiene l’intervallo. Il menu mostra tra parentesi l’ora della sveglia e l’intervallo del segnale. L’intervallo di 20 minuti segnala :00, :20 e :40 di quell’ora. Segue il **Greenwich Time Signal (GTS)**: cinque bip brevi indicano gli ultimi cinque secondi e uno più lungo il limite esatto. Sono rispettati fuso, UTC, scostamenti e correzione NTP attuale. Segnale della sveglia e scheda Segnale restano indipendenti; quando gli orari coincidono, CalClock riproduce un’unica sequenza condivisa. Sono rispettati gli scostamenti frazionari; i toni sovrapposti di widget, sveglie e prove suonano senza interruzioni fino al termine dell’ultima sovrapposizione.
+La scheda Segnale contiene la casella Segnale orario attivo e pulsanti di opzione per intervalli di 1, 5, 10, 15, 20, 30 o 60 minuti secondo l’ora visualizzata dal widget. Inizialmente il segnale è disattivato e l’intervallo selezionato è di un’ora. Disattivare e riattivare Segnale nel menu del widget mantiene l’intervallo. Il menu mostra tra parentesi l’ora della sveglia e l’intervallo del segnale. L’intervallo di 20 minuti segnala :00, :20 e :40 di quell’ora. Segue il **Greenwich Time Signal (GTS)**: cinque bip brevi indicano gli ultimi cinque secondi e uno più lungo il limite esatto. Sono rispettati fuso, UTC, scostamenti e correzione NTP attuale. Segnale della sveglia e scheda Segnale restano indipendenti. Sono rispettati gli scostamenti frazionari; i toni sovrapposti di widget, sveglie e prove suonano senza interruzioni fino al termine dell’ultima sovrapposizione sulla stessa uscita audio.
 
-**Suono del segnale orario** in Applicazione offre **Generatore integrato** (predefinito) e **Segnale acustico di sistema**. Vale per tutti i segnali dei widget, inclusi quelli delle sveglie, e viene salvato globalmente. Per il **Generatore integrato**, **Volume del segnale orario** indica il livello in dB per l’intera applicazione. A destra si trova **0 dB**, la massima ampiezza sinusoidale senza distorsione; il silenzio è **−∞ dB**. Il valore predefinito è **−18 dB**. Il bip corrente viene lasciato terminare; quello lungo può richiedere fino a mezzo secondo. **Prova** accanto a **Suono del segnale orario** avvia l’anteprima continua; **Ferma prova** la termina. Si possono provare entrambi i modi e lo stato della prova non viene salvato. Tenere premuto il cursore del volume avvia un’anteprima fino al rilascio del mouse, salvo quando è attiva la prova avviata dal pulsante. La riproduzione inizia al successivo secondo intero, con toni brevi ogni secondo e uno lungo a :00, :05, :10 ecc. Anteprima e segnali simultanei dei widget o sveglie condividono un solo tono. La scelta è disponibile solo se il sistema supporta entrambe le modalità.
+**Suono del segnale orario** in Applicazione offre **Generatore integrato** (predefinito) e **Segnale acustico di sistema**. Vale per tutti i segnali dei widget, inclusi quelli delle sveglie, e viene salvato globalmente. Per il **Generatore integrato**, **Volume del segnale orario** indica il livello in dB per l’intera applicazione. A destra si trova **0 dB**, la massima ampiezza sinusoidale senza distorsione; il silenzio è **−∞ dB**. Il valore predefinito è **−18 dB**. Il bip corrente viene lasciato terminare; quello lungo può richiedere fino a mezzo secondo. **Prova** accanto a **Suono del segnale orario** avvia l’anteprima continua; **Ferma prova** la termina. Si possono provare entrambi i modi e lo stato della prova non viene salvato. Tenere premuto il cursore del volume avvia un’anteprima fino al rilascio del mouse, salvo quando è attiva la prova avviata dal pulsante. La riproduzione inizia al successivo secondo intero, con toni brevi ogni secondo e uno lungo a :00, :05, :10 ecc. La scelta è disponibile solo se il sistema supporta entrambe le modalità.
+
+**Uscita audio**
+
+**Uscita audio** nella scheda **Segnale** seleziona il dispositivo per i segnali orari periodici di ogni widget con
+audio. Fuso orario, scostamento e intervallo del widget restano invariati. La scelta del generatore e il volume
+rimangono globali nella scheda **Applicazione**. Con **Segnale acustico di sistema**, il selettore resta visibile ma
+disabilitato e conserva il dispositivo scelto; **Generatore integrato** lo riattiva. Windows Vista usa automaticamente
+il generatore.
+
+**Dispositivo predefinito di Windows** segue l’uscita predefinita attuale di Windows. Un dispositivo scelto
+esplicitamente resta selezionato dopo la disconnessione e viene indicato come **Dispositivo non disponibile**; i suoi
+segnali restano silenziosi finché non è disponibile o si sceglie un’altra uscita. L’elenco dei dispositivi si aggiorna
+all’apertura. La selezione viene salvata separatamente per ogni widget nel Registro o nelle impostazioni XML.
+
+I segnali vengono uniti automaticamente per ogni uscita. Un dispositivo scelto esplicitamente e **Dispositivo
+predefinito di Windows** che indica lo stesso dispositivo condividono un’unica uscita. Dispositivi diversi funzionano
+indipendentemente; si conservano la sinusoide, la continuità di fase e l’inizio e la fine dei toni a zero. Le sveglie,
+inclusi i file riprodotti internamente e i segnali che le precedono, e tutte le prove continuano a usare l’uscita
+predefinita di Windows. Si uniscono ai segnali periodici soltanto su un’uscita comune.
 
 Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto audio. La voce della sveglia mostra l’ora e, se non sono selezionati tutti i giorni, quelli attivi. Silenzioso riguarda il widget e corrisponde alla casella su Generali. Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio. Nell’area di notifica il comando è Silenzia tutto; `M` su qualsiasi widget esegue la stessa commutazione globale. La riattivazione globale ripristina soltanto i widget silenziati dall’azione globale precedente. L’audio interno continua senza suono e torna udibile alla riattivazione. Un bip già iniziato può terminare; i successivi vengono saltati fino al ritorno dell’audio. Comandi non audio e script remoti non sono interessati.
 
@@ -124,7 +143,7 @@ Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto
 
 Ogni menu widget include i comandi pertinenti al tipo — visibilità, primo piano, secondi, dimensioni analogiche o formato della data copiata — seguiti da `Allinea alla griglia`, Impostazioni, Guida, Informazioni ed Esci. Il menu di notifica elenca i widget con il loro numero, poi Mostra tutto, Nascondi tutto e Silenzia tutto. `Allinea alla griglia`, in un gruppo separato, precede i comandi dell’applicazione.
 
-Mostrare o ripristinare widget li porta davanti alle altre finestre senza cambiare il loro stato sempre in primo piano. CalClock assicura almeno un widget visibile all’avvio. Un secondo avvio attiva l’istanza esistente e ripristina i widget nascosti più di recente se nessuno è visibile. Dopo il riavvio di Esplora risorse l’icona di notifica viene registrata di nuovo automaticamente.
+Mostrare o ripristinare widget li porta davanti alle altre finestre senza cambiare il loro stato sempre in primo piano. CalClock assicura almeno un widget visibile all’avvio. Un secondo avvio attiva l’istanza esistente e ripristina i widget nascosti più di recente se nessuno è visibile. Dopo il riavvio di Esplora risorse l’icona di notifica viene registrata di nuovo automaticamente. Se `ClockWndMain` non supporta i secondi nelle dimensioni scelte, Secondi è disattivato, ma la preferenza resta salvata per un’altra dimensione compatibile.
 
 ## Archiviazione delle impostazioni
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 È supportata solo la configurazione Win32/x86. Il progetto non offre intenzionalmente x64 perché l’integrazione con il controllo orologio Windows richiede compatibilità x86.
+
+Dopo la compilazione, eseguire `.\PackageRelease.ps1` per creare `CalClock-<version>-win32.zip` con il programma e la
+licenza.
+
+I parametri di firma leggono i valori predefiniti anche dalle variabili d’ambiente utente di Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Gli argomenti
+forniti esplicitamente nella riga di comando hanno la precedenza.
 
 ## Licenza
 

@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.7.0.0
  */
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "AudioProcessing.h"
-#include "CalClockTypes.h"
+#include "CalClock.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -53,7 +53,8 @@ static int AudioPlaybackVolume(const AudioThreadParameters& parameters) {
     return std::clamp(parameters.volume->load(), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
 }
 
-/// Converts the current alarm level to linear sample gain, treating -18 dB as unity and the minimum as silence.
+/// Converts the current alarm level to linear sample gain, treating -18 dB as unity and the minimum
+/// as silence.
 double AudioPlaybackGain(const AudioThreadParameters& parameters) {
     int volume = AudioPlaybackVolume(parameters);
     if (volume == ALARM_VOLUME_MIN) {
@@ -75,7 +76,8 @@ bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& forma
     format.validBits = wave.wBitsPerSample;
     format.blockAlign = wave.nBlockAlign;
     if (wave.wFormatTag == WAVE_FORMAT_EXTENSIBLE) {
-        if (size < sizeof(WAVEFORMATEXTENSIBLE) || wave.cbSize < sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)) {
+        if (size < sizeof(WAVEFORMATEXTENSIBLE)
+                || wave.cbSize < sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)) {
             return false;
         }
         WAVEFORMATEXTENSIBLE extended = {};
@@ -91,7 +93,9 @@ bool GetAudioSampleFormat(const BYTE* data, ULONG size, AudioSampleFormat& forma
             format.validBits = extended.Samples.wValidBitsPerSample;
         }
     }
-    if (wave.nChannels == 0 || wave.nSamplesPerSec == 0 || format.blockAlign != wave.nChannels * (format.bits / 8)) {
+    if (wave.nChannels == 0
+            || wave.nSamplesPerSec == 0
+            || format.blockAlign != wave.nChannels * (format.bits / 8)) {
         return false;
     }
     if (format.tag == WAVE_FORMAT_IEEE_FLOAT) {
@@ -152,7 +156,8 @@ HRESULT ApplyAudioGain(BYTE* data, size_t length, const AudioSampleFormat& forma
         } else if (value & sign) {
             value -= int64_t{ 1 } << format.bits;
         }
-        double scaled = std::clamp(value * gain / step, static_cast<double>(minimum), static_cast<double>(maximum));
+        double scaled = std::clamp(value * gain / step, static_cast<double>(minimum),
+            static_cast<double>(maximum));
         value = std::llround(scaled) * step;
         if (format.bits == 8) {
             value += 128;

@@ -4,6 +4,10 @@
 
 CalClock je izvorni program Win32/x86 za Windows Vista in novejše različice z neodvisno nastavljivimi plavajočimi urami in koledarji. Deluje v območju za obvestila. Podpira do 32 gradnikov in 36 jezikovnih različic; jezik programa in vsakega gradnika izberete ločeno.
 
+Analogne ure uporabljajo sistemski kontrolnik Windows `ClockWndMain`, s samodejnim zaznavanjem razpoložljivih
+velikosti in podpore za sekundni kazalec. Če izbrana velikost ne podpira sekundnega kazalca, je ukaz Sekunde
+onemogočen, shranjena izbira pa se ohrani za drugo podprto velikost.
+
 ## Upravljanje
 
 Uro ali ploščo povlecite z levim miškinim gumbom. Samostojni koledar premikate za prosti del. Desni klik na gradnik ali ikono v območju za obvestila odpre meni. Levi klik na ikono skrije vidne gradnike; če so vsi skriti, obnovi samo nazadnje skrite.
@@ -52,11 +56,30 @@ Meni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti
 
 ## Zvočni časovni signal
 
-Signal sledi vzorcu Greenwich Time Signal (GTS). Zavihek Signal ponuja Časovni signal vključen in intervale 1, 5, 10, 15, 20, 30 ali 60 minut po prikazanem času gradnika. Signal je sprva izključen, izbran pa je enourni interval. Preklop v meniju ohrani interval; čas budilke in interval sta prikazana v oklepajih. Časovna meja upošteva UTC, časovni pas, odmik in NTP. V zadnjih petih sekundah se oglasi pet kratkih piskov, natanko na meji pa dolg. Sočasni signali se združijo v eno zaporedje. Ob izklopu zvoka se trenutni pisk lahko konča, nadaljnji se izpustijo, po vklopu pa se zasliši šele naslednji načrtovani pisk. Samostojni Koledar nima budilke, časovnega signala ali utišanja.
+Signal sledi vzorcu Greenwich Time Signal (GTS). Zavihek Signal ponuja Časovni signal vključen in intervale 1, 5, 10, 15, 20, 30 ali 60 minut po prikazanem času gradnika. Signal je sprva izključen, izbran pa je enourni interval. Preklop v meniju ohrani interval; čas budilke in interval sta prikazana v oklepajih. Časovna meja upošteva UTC, časovni pas, odmik in NTP. V zadnjih petih sekundah se oglasi pet kratkih piskov, natanko na meji pa dolg. Ob izklopu zvoka se trenutni pisk lahko konča, nadaljnji se izpustijo, po vklopu pa se zasliši šele naslednji načrtovani pisk. Samostojni Koledar nima budilke, časovnega signala ali utišanja.
 
 Pri intervalu 20 minut se signal oglasi ob :00, :20 in :40 po času gradnika. Na zavihku Program Zvok časovnega signala ponuja Vgrajeni generator (privzeto) in Sistemski pisk. Izbira velja za vse gradnike, tudi za signale budilk.
 
-Glasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, največja nepopačena amplituda sinusoide; tišina je −∞ dB. Privzeto je −18 dB. Preizkusi ob izbiri zvoka začne neprekinjeni predogled, Ustavi preizkus pa ga konča. Preizkusiti je mogoče obe možnosti; preizkus se ne shrani. Držanje drsnika prav tako predvaja predogled do izpusta miške, razen če teče preizkus z gumbom. Predvajanje se začne ob naslednji polni sekundi: kratko vsako sekundo in dolgo ob :00, :05, :10 in tako naprej. Sočasni poskusni, gradniški in budilkini signali imajo skupen ton. Ob ustavitvi se trenutni pisk konča; dolg lahko traja še pol sekunde. Upoštevane so tudi stotinke odmikov. Prekrivajoči se toni trajajo neprekinjeno do konca zadnjega prekrivanja.
+Glasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, največja nepopačena amplituda sinusoide; tišina je −∞ dB. Privzeto je −18 dB. Preizkusi ob izbiri zvoka začne neprekinjeni predogled, Ustavi preizkus pa ga konča. Preizkusiti je mogoče obe možnosti; preizkus se ne shrani. Držanje drsnika prav tako predvaja predogled do izpusta miške, razen če teče preizkus z gumbom. Predvajanje se začne ob naslednji polni sekundi: kratko vsako sekundo in dolgo ob :00, :05, :10 in tako naprej. Ob ustavitvi se trenutni pisk konča; dolg lahko traja še pol sekunde. Upoštevane so tudi stotinke odmikov. Prekrivajoči se toni trajajo neprekinjeno do konca zadnjega prekrivanja na istem zvočnem izhodu.
+
+**Zvočni izhod**
+
+**Zvočni izhod** na zavihku **Signal** izbere napravo za redne časovne signale vsakega gradnika, ki podpira zvok.
+Časovni pas, odmik in interval gradnika ostanejo nespremenjeni. Izbira generatorja in glasnost signala sta še vedno
+skupni za ves program na zavihku **Program**. Pri možnosti **Sistemski pisk** polje ostane vidno, vendar je sivo in
+onemogočeno ter ohrani izbrano napravo; **Vgrajeni generator** ga znova omogoči. Windows Vista generator uporablja
+samodejno.
+
+**Privzeta naprava Windows** sledi trenutnemu privzetemu izhodu sistema Windows. Izrecno izbrana naprava ostane
+izbrana tudi po odklopu in je prikazana kot **Naprava ni na voljo**; njeni signali ostanejo neslišni, dokler ni na
+voljo ali izberete drugega izhoda. Seznam naprav se osveži ob odpiranju. Izbira se za vsak gradnik posebej shrani v
+register ali nastavitve XML.
+
+Signali se samodejno združujejo za vsak izhod posebej. Izrecno izbrana naprava in možnost **Privzeta naprava
+Windows**, ki kaže na isto napravo, uporabljata en izhod. Različne naprave delujejo neodvisno; ohranijo se sinusni
+val, zveznost faze ter začetek in konec tonov pri ničli. Budilke, vključno z datotekami, ki se predvajajo znotraj
+programa, in signali pred budilko, ter vsi preizkusi še naprej uporabljajo privzeti izhod sistema Windows. Z rednimi
+signali se združijo samo na skupnem izhodu.
 
 ## Dodatne ure
 
@@ -95,6 +118,10 @@ Kazalec se po kratki nedejavnosti nad uro na zaslonu ali zatemnjenimi zasloni sk
 Potrebujete Microsoft Visual Studio z orodji MSVC v145 in Windows SDK. Odprite `CalClock.slnx`, izberite `Release | x86` in zgradite rešitev. Izvedljiva datoteka nastane v `Release\CalClock.exe`. Podprta je samo konfiguracija Win32/x86, ker povezava s kontrolnikom ure Windows zahteva združljivost z x86.
 
 Po gradnji zaženite `.\PackageRelease.ps1`, da ustvarite arhiv `CalClock-<version>-win32.zip`. Različica se prebere iz `Release\CalClock.exe`. Arhiv vsebuje `CalClock.exe` in `license.txt` neposredno v korenu. Izbirne parametre za podpisovanje `-SignerName`, `-SignToolPath` in `-TimestampServer` podate ob zagonu. Obstoječi veljavni podpis Authenticode se preveri in se ne nadomesti. Prejšnji arhivi ZIP programa CalClock se odstranijo na začetku vsakega zagona. Napaka pri podpisovanju ali preverjanju ustavi pakiranje.
+
+Privzete vrednosti parametrov podpisovanja se berejo tudi iz uporabniških okoljskih spremenljivk sistema Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Izrecno podani
+argumenti ukazne vrstice imajo prednost.
 
 ## Licenca
 

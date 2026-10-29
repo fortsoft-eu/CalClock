@@ -21,22 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.7.0.0
  */
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include "CalClock.h"
 
 const size_t MAX_WIDGET_CLIPBOARD_BYTES = 4 * 1024 * 1024;
 
-using WidgetDefaultsFactory = WidgetConfig(*)(WidgetType type, int index, AppLanguage language, int fontAntialiasing);
+using WidgetDefaultsFactory = WidgetConfig(*)(WidgetType type, int index, AppLanguage language,
+    int fontAntialiasing);
 
 /// Returns the per-user CalClock settings.xml path, optionally creating its directories.
 /// Returns an empty string if the location cannot be obtained or created.
 std::wstring AutomaticXmlSettingsPath(bool createDirectory);
 
-/// Deletes the automatic XML settings file and attempts to remove its now-empty application and vendor directories.
+/// Deletes the automatic XML settings file and attempts to remove its now-empty application and vendor
+/// directories.
 void RemoveAutomaticXmlSettings();
 
 /// Deletes CalClock's per-user settings tree and attempts to remove the empty vendor key.
@@ -47,16 +49,16 @@ void RemoveRegistrySettings();
 bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot);
 
 /// Loads and validates a settings XML file no larger than 4 MiB, leaving snapshot unchanged on failure.
-bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage, WidgetDefaultsFactory createDefaults,
-    SettingsSnapshot* snapshot);
+bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
+    WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot);
 
-/// Loads per-user settings using supplied defaults and a widget-default factory, including the older single-widget
-/// layout. Returns false if arguments are invalid or the settings root cannot be opened.
+/// Loads per-user settings using supplied defaults and a widget-default factory, including the older
+/// single-widget layout. Returns false if arguments are invalid or the settings root cannot be opened.
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults,
     SettingsSnapshot* snapshot);
 
-/// Writes global settings and widget subkeys, removes obsolete widget keys, and deletes automatic XML after success.
-/// Reports key-creation failures; individual value writes do not return status.
+/// Writes global settings and widget subkeys, removes obsolete widget keys, and deletes automatic XML
+/// after success. Reports key-creation failures; individual value writes do not return status.
 bool WriteRegistrySettings(const SettingsSnapshot& snapshot);
 
 /// Serializes selected widgets to bounded XML bytes, replacing data only when serialization succeeds.

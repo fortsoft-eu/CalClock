@@ -8,7 +8,7 @@ CalClock er Win32/x86-forrit fyrir Windows Vista og nýrri útgáfur sem sýnir 
 
 - Allt að 32 græjur með sjálfstæðum stillingum
 - Sérstakt tungumál, tímabelti, tímahliðrun, sýnileiki og stilling um að vera alltaf efst fyrir hverja græju
-- Hliðrænar klukkur með valinni stærð skífu og valkvæðum sekúnduvísi
+- Vísaklukkur byggðar á Windows-stýringunni `ClockWndMain`, með sjálfvirkri greiningu á tiltækum stærðum og stuðningi við sekúnduvísi
 - Stafrænar klukkur með leturgerðum, litum, ógagnsæi, innri spássíum, römmum, valfrjálsu upphafsnúlli og gagnsæjum bakgrunni
 - Innbyggð Windows-dagatöl með dagsetningarvali, fjórum rammastílum, stillanlegum rammalit, vikunúmerum, vali á fyrsta vikudegi og 33 afritunarsniðum
 - Dagatals- og klukkuspjöld með allt að tveimur viðbótarklukkum með nöfnum og sjálfstæðum tímabeltum, sér stærðum skífa, fjórum rammastílum, stillanlegum lit, UTC-texta, upphafsnúlli og sér letri fyrir hverja textalínu
@@ -114,9 +114,26 @@ Hljóðmerki vekjarans miðast við raunverulegt augnablik næstu vekjarahringin
 
 Prófa sýnir sjónræna merkingu og prófar skrá, skipun, hljóð og slóð fjarskriftu ósamstillt. Ef tímamerki vekjarans er valið er öll sex-pípa runan líka spiluð; Stöðva prófun lýkur innri hljóðspilun og forskoðun merkisins.
 
-Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 eða 60 mínútna bil samkvæmt sýndum tíma græjunnar. Í upphafi er slökkt á merkinu og klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd græjunnar helst bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. 20 mínútna bilið gefur merki við :00, :20 og :40. Mynstrið er **Greenwich Time Signal (GTS)**: fimm stutt píp merkja síðustu fimm sekúndurnar og eitt lengra nákvæm tímamörk. Tímabelti, UTC, hliðrun og gildandi NTP-leiðrétting eru virt. Merki vekjarans og Tímamerki-flipinn eru óháð; ef tímar falla saman spilar CalClock eina sameiginlega runu. Brot úr sekúndu í hliðrun eru virt og skarandi tónar græja, vekjara og prófana hljóma samfellt þar til síðustu skörun lýkur.
+Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 eða 60 mínútna bil samkvæmt sýndum tíma græjunnar. Í upphafi er slökkt á merkinu og klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd græjunnar helst bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. 20 mínútna bilið gefur merki við :00, :20 og :40. Mynstrið er **Greenwich Time Signal (GTS)**: fimm stutt píp merkja síðustu fimm sekúndurnar og eitt lengra nákvæm tímamörk. Tímabelti, UTC, hliðrun og gildandi NTP-leiðrétting eru virt. Merki vekjarans og Tímamerki-flipinn eru óháð. Brot úr sekúndu í hliðrun eru virt og skarandi tónar græja, vekjara og prófana hljóma samfellt þar til síðustu skörun lýkur.
 
-**Hljóð tímamerkis** á Forrit býður **Innbyggðan hljóðgjafa** (sjálfgefið) og **Kerfispíp**. Valið gildir fyrir öll tímamerki, líka vekjara, og vistast almennt. Fyrir **Innbyggðan hljóðgjafa** sýnir **Hljóðstyrkur tímamerkis** styrkinn í dB fyrir allt forritið. Hægri endinn er **0 dB**, mesta óbjagaða sveifluvídd sínusbylgju; þögn er **−∞ dB**. Sjálfgefið gildi er **−18 dB**. Yfirstandandi píp fær að enda; langt píp getur tekið allt að hálfa sekúndu. **Prófa** við **Hljóð tímamerkis** ræsir samfellda forskoðun og **Stöðva prófun** lýkur henni. Báðar aðferðir má prófa og prófunarstaðan vistast ekki. Að halda hljóðstyrkssleðanum niðri ræsir einnig forskoðun þar til músinni er sleppt, nema hnappaprófun sé í gangi. Spilun byrjar á næstu heilu sekúndu, með stuttum tón hverja sekúndu og löngum við :00, :05, :10 o.s.frv. Forskoðun og samtímamerki græja eða vekjara deila einum tóni. Hljóðvalið er aðeins tiltækt ef kerfið styður báðar aðferðir.
+**Hljóð tímamerkis** á Forrit býður **Innbyggðan hljóðgjafa** (sjálfgefið) og **Kerfispíp**. Valið gildir fyrir öll tímamerki, líka vekjara, og vistast almennt. Fyrir **Innbyggðan hljóðgjafa** sýnir **Hljóðstyrkur tímamerkis** styrkinn í dB fyrir allt forritið. Hægri endinn er **0 dB**, mesta óbjagaða sveifluvídd sínusbylgju; þögn er **−∞ dB**. Sjálfgefið gildi er **−18 dB**. Yfirstandandi píp fær að enda; langt píp getur tekið allt að hálfa sekúndu. **Prófa** við **Hljóð tímamerkis** ræsir samfellda forskoðun og **Stöðva prófun** lýkur henni. Báðar aðferðir má prófa og prófunarstaðan vistast ekki. Að halda hljóðstyrkssleðanum niðri ræsir einnig forskoðun þar til músinni er sleppt, nema hnappaprófun sé í gangi. Spilun byrjar á næstu heilu sekúndu, með stuttum tón hverja sekúndu og löngum við :00, :05, :10 o.s.frv. Hljóðvalið er aðeins tiltækt ef kerfið styður báðar aðferðir.
+
+**Hljóðúttak**
+
+**Hljóðúttak** á flipanum **Tímamerki** velur tæki fyrir regluleg tímamerki hverrar græju sem styður hljóð. Tímabelti,
+hliðrun og bil græjunnar breytast ekki. Val á hljóðgjafa og hljóðstyrkur tímamerkja eru áfram sameiginleg á flipanum
+**Forrit**. Með **Kerfishljóð** er reiturinn áfram sýnilegur en grár og heldur völdu tæki; **Innbyggður hljóðgjafi**
+virkjar hann aftur. Windows Vista notar hljóðgjafann sjálfkrafa.
+
+**Sjálfgefið tæki Windows** fylgir núverandi sjálfgefnu hljóðúttaki Windows. Tæki sem er sérstaklega valið helst valið
+þegar það er aftengt og birtist sem **Tæki ekki tiltækt**; tímamerki þess eru hljóðlaus þar til það er tiltækt eða
+annað úttak er valið. Tækjalistinn uppfærist þegar hann er opnaður. Valið er vistað sérstaklega fyrir hverja græju í
+skrásetningunni eða XML-stillingum.
+
+Tímamerki eru sameinuð sjálfkrafa á hverju úttaki. Sérstaklega valið tæki og **Sjálfgefið tæki Windows** sem vísar á
+sama tæki deila einu úttaki. Mismunandi tæki vinna sjálfstætt; sínusbylgjan, samfelldur fasi og upphaf og endir tóna
+við núll haldast óbreytt. Vekjarar, þar á meðal skrár sem forritið spilar og tímamerki fyrir vekjara, ásamt öllum
+prófunum nota áfram sjálfgefið úttak Windows. Þau sameinast aðeins reglulegum tímamerkjum á sameiginlegu úttaki.
 
 Vekjara og tímamerki má líka kveikja og slökkva á í samhengisvalmynd hljóðgræju. Vekjarafærslan sýnir tímann og virka daga ef ekki allir eru valdir. Þöggun gildir fyrir græjuna og samsvarar valinu á Almennt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun. Skipunin á tilkynningasvæðinu er Þagga allt; `M` á hvaða græju sem er framkvæmir sömu almennu breytingu. Almenn afþöggun endurheimtir aðeins þær græjur sem síðasta almenna aðgerð þaggaði. Innri spilun heldur áfram hljóðlaust og verður aftur heyranleg þegar þöggun lýkur. Yfirstandandi píp getur klárast; seinni pípum er sleppt þar til hljóð er virkjað. Aðrar skipanir og fjarskriftur eru óbreyttar.
 
@@ -124,7 +141,7 @@ Vekjara og tímamerki má líka kveikja og slökkva á í samhengisvalmynd hljó
 
 Hver græjuvalmynd inniheldur viðeigandi skipanir — sýnileika, alltaf efst, sekúndur, stærð vísaklukku eða dagsetningarafritunarsnið — og síðan `Raða í hnitanet`, Stillingar, Hjálp, Um og Hætta. Tilkynningavalmyndin telur upp græjurnar með raðnúmerum og síðan Sýna allt, Fela allt og Þagga allt. Sérstaklega aðgreind skipun `Raða í hnitanet` kemur á undan forritsskipunum.
 
-Að sýna eða endurheimta græjur færir þær fram fyrir aðra glugga án breytingar á alltaf efst. CalClock tryggir að minnst ein græja sé sýnileg eftir ræsingu. Önnur ræsing virkjar fyrirliggjandi keyrslu og endurheimtir síðast földu græjurnar ef engin er sýnileg. Tilkynningatáknið skráist sjálfkrafa aftur þegar Windows Explorer endurræsist.
+Að sýna eða endurheimta græjur færir þær fram fyrir aðra glugga án breytingar á alltaf efst. CalClock tryggir að minnst ein græja sé sýnileg eftir ræsingu. Önnur ræsing virkjar fyrirliggjandi keyrslu og endurheimtir síðast földu græjurnar ef engin er sýnileg. Tilkynningatáknið skráist sjálfkrafa aftur þegar Windows Explorer endurræsist. Ef `ClockWndMain` styður ekki sekúnduvísi í valdri stærð er Sekúndur óvirkt, en valið varðveitist fyrir aðra studda stærð.
 
 ## Vistun stillinga
 
@@ -156,6 +173,13 @@ Release\CalClock.exe
 ```
 
 Aðeins Win32/x86 er stutt. Verkefnið býður vísvitandi ekki x64-stillingu því samþætting við Windows-klukkustýringuna krefst x86-samhæfni.
+
+Eftir smíði skaltu keyra `.\PackageRelease.ps1` til að búa til `CalClock-<version>-win32.zip` með forritinu og leyfi
+þess.
+
+Sjálfgefin gildi undirritunarfæribreyta eru einnig lesin úr umhverfisbreytum Windows-notandans: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Bein viðföng á skipanalínu hafa
+forgang.
 
 ## Leyfi
 

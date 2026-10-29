@@ -4,6 +4,10 @@
 
 Is feidhmchlár dúchasach Win32/x86 é CalClock do Windows Vista agus leaganacha níos nuaí, a thaispeánann cloig agus féilirí ar snámh is féidir a chumrú go neamhspleách. Ritheann sé sa limistéar fógraí agus tacaíonn sé le suas le 32 giuirléid agus 36 rogha teanga; roghnaítear teanga an fheidhmchláir agus gach giuirléide ar leith.
 
+Úsáideann cloig analógacha rialtán córais Windows `ClockWndMain`, agus braitear na méideanna atá ar fáil agus
+tacaíocht don lámh soicindí go huathoibríoch. Mura dtacaíonn an mhéid roghnaithe leis an lámh soicindí,
+díchumasaítear an t-ordú Soicindí, ach coimeádtar an rogha shábháilte le haghaidh méid eile a thacaíonn léi.
+
 ## Rialuithe
 
 Tarraing clog nó painéal leis an gcnaipe luiche ar chlé. Tarraing féilire neamhspleách ón achar saor. Osclaíonn deaschliceáil ar ghiuirléid nó ar dheilbhín an limistéir fógraí an roghchlár. Folaíonn clé-chliceáil ar an deilbhín na giuirléidí infheicthe; má tá siad uile i bhfolach, ní athchóirítear ach na cinn is déanaí a folaíodh.
@@ -58,9 +62,28 @@ Taispeánann roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcón
 
 ## Comhartha ama inchloiste
 
-Leanann an comhartha patrún Greenwich Time Signal (GTS): cúig bhíp ghearra sna cúig shoicind dheireanacha agus bíp fhada ag an teorainn ama go beacht. Tugann Comhartha an rogha Comhartha ama gníomhach agus eatraimh 1, 5, 10, 15, 20, 30 nó 60 nóiméad de réir am na giuirléide. Tá sé múchta ar dtús agus eatramh uair an chloig roghnaithe. Coinníonn an roghchlár an t-eatramh. Cuirtear UTC, crios ama, fritháireamh agus NTP san áireamh; le 20 nóiméad, seinntear ag :00, :20 agus :40. Cumaisctear comharthaí comhuaineacha. Tar éis balbhaithe, féadfaidh an ton reatha críochnú; scipeáiltear na chéad toin eile go dtí an chéad ton sceidealaithe tar éis díbhalbhaithe. Ní thacaíonn Féilire neamhspleách le haláram, comhartha ama ná balbhú.
+Leanann an comhartha patrún Greenwich Time Signal (GTS): cúig bhíp ghearra sna cúig shoicind dheireanacha agus bíp fhada ag an teorainn ama go beacht. Tugann Comhartha an rogha Comhartha ama gníomhach agus eatraimh 1, 5, 10, 15, 20, 30 nó 60 nóiméad de réir am na giuirléide. Tá sé múchta ar dtús agus eatramh uair an chloig roghnaithe. Coinníonn an roghchlár an t-eatramh. Cuirtear UTC, crios ama, fritháireamh agus NTP san áireamh; le 20 nóiméad, seinntear ag :00, :20 agus :40. Tar éis balbhaithe, féadfaidh an ton reatha críochnú; scipeáiltear na chéad toin eile go dtí an chéad ton sceidealaithe tar éis díbhalbhaithe. Ní thacaíonn Féilire neamhspleách le haláram, comhartha ama ná balbhú.
 
 Ar Feidhmchlár, tugann Fuaim an chomhartha ama Gineadóir ionsuite (réamhshocrú) agus Bíp an chórais do gach giuirléid agus aláram. Taispeánann Airde an chomhartha ama leibhéal an ghineadóra in dB: is é 0 dB ar dheis an aimplitiúid síneasóideach is mó gan saobhadh, −∞ dB tost agus −18 dB an réamhshocrú. Tosaíonn Tástáil réamhamharc leanúnach agus stopann Stop an tástáil é. Is féidir an dá chineál fuaime a thástáil; ní shábháiltear an tástáil. Seinneann coinneáil an tsleamhnáin fuaim go dtí go scaoiltear an luch, mura bhfuil tástáil an chnaipe ar siúl. Tosaíonn sí ar an gcéad soicind iomlán eile: ton gearr gach soicind agus ton fada ag :00, :05, :10 agus mar sin de. Roinneann comharthaí trialach, giuirléidí agus aláraim ton amháin. Ní dhíchumasaítear ach an sleamhnán airde do Bhíp an chórais. Ligtear don ton reatha críochnú nuair a stoptar an tástáil; d’fhéadfadh ton fada maireachtáil leathshoicind eile. Cuirtear céaduithe fritháirimh san áireamh agus seinntear toin fhorluiteacha go leanúnach go deireadh an fhorluí dheireanaigh.
+
+**Aschur fuaime**
+
+Roghnaíonn **Aschur fuaime** ar an gcluaisín **Comhartha** gléas do chomharthaí ama rialta gach giuirléide a thacaíonn
+le fuaim. Ní athraíonn sé crios ama, fritháireamh ná eatramh na giuirléide. Fanann rogha an ghineadóra agus airde
+fuaime an chomhartha mar shocruithe don fheidhmchlár ar fad ar an gcluaisín **Feidhmchlár**. Le **Bíp an chórais**,
+fanann an réimse le feiceáil ach tá sé liath agus díchumasaithe, agus coinnítear an gléas roghnaithe; cumasaíonn
+**Gineadóir ionsuite** arís é. Úsáideann Windows Vista an gineadóir go huathoibríoch.
+
+Leanann **Gléas réamhshocraithe Windows** aschur réamhshocraithe reatha Windows. Fanann gléas a roghnaítear go sonrach
+roghnaithe má dhícheanglaítear é agus taispeántar mar **Gléas nach bhfuil ar fáil** é; fanann a chomharthaí ina dtost
+go dtí go mbeidh sé ar fáil nó go roghnófar aschur eile. Athnuaitear liosta na ngléasanna nuair a osclaítear é.
+Sábháiltear an rogha ar leith do gach giuirléid sa chlárlann nó sna socruithe XML.
+
+Cumaisctear comharthaí go huathoibríoch do gach aschur. Roinneann gléas a roghnaítear go sonrach agus **Gléas
+réamhshocraithe Windows** a thagraíonn don ghléas céanna aon aschur amháin. Oibríonn gléasanna éagsúla go
+neamhspleách; caomhnaítear an tonn sínis, leanúnachas an phas agus tús agus deireadh na dton ag nialas. Úsáideann
+aláraim, lena n-áirítear comhaid a sheinntear san fheidhmchlár agus comharthaí ama roimh an aláram, agus gach tástáil
+aschur réamhshocraithe Windows fós. Ní chumaisctear iad le comharthaí rialta ach ar aschur comhroinnte.
 
 ## Cloig bhreise
 
@@ -95,6 +118,10 @@ Folaítear an pointeoir tar éis tréimhse ghairid gan ghníomhaíocht os cionn 
 Teastaíonn Microsoft Visual Studio leis an tacar uirlisí MSVC v145 agus Windows SDK. Oscail `CalClock.slnx`, roghnaigh `Release | x86` agus tiomsaigh an réiteach. Cruthaítear `Release\CalClock.exe`. Ní thacaítear ach le Win32/x86 mar éilíonn comhtháthú le rialtán cloig Windows comhoiriúnacht x86.
 
 Tar éis tiomsaithe, cruthaíonn `.\PackageRelease.ps1` `CalClock-<version>-win32.zip`, agus léitear an leagan ó `Release\CalClock.exe`. Tá `CalClock.exe` agus `license.txt` i bhfréamh na cartlainne. Tugtar na paraiméadair roghnacha sínithe `-SignerName`, `-SignToolPath` agus `-TimestampServer` ag am rite. Fíoraítear síniú bailí Authenticode atá ann agus ní athsholáthraítear é. Baintear seanphacáistí ZIP CalClock ag tús gach rite; stopann teip sínithe nó fíoraithe an pacáistiú.
+
+Léitear luachanna réamhshocraithe na bparaiméadar sínithe freisin ó athróga timpeallachta úsáideora Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Tugtar tús áite
+d’argóintí sainráite na líne ordaithe.
 
 ## Ceadúnas
 

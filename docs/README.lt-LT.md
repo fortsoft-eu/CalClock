@@ -4,6 +4,10 @@
 
 „CalClock“ – Win32/x86 programa, skirta „Windows Vista“ ir naujesnėms versijoms. Ji rodo nepriklausomai nustatomus slankiuosius laikrodžius ir kalendorius darbalaukyje bei veikia pranešimų srityje. Palaikomi iki 32 valdiklių ir 36 kalbų parinktys; programos ir kiekvieno valdiklio kalba pasirenkama atskirai.
 
+Analoginiai laikrodžiai naudoja sistemos „Windows“ valdiklį `ClockWndMain`, automatiškai nustatydami galimus
+dydžius ir sekundinės rodyklės palaikymą. Jei pasirinktas dydis nepalaiko sekundinės rodyklės, komanda
+„Sekundės“ išjungiama, tačiau išsaugota parinktis lieka kitam palaikomam dydžiui.
+
 ## Valdymas
 
 Vilkite laikrodį arba skydelį kairiuoju pelės mygtuku. Atskiras kalendorius velkamas už laisvos srities. Dešiniuoju mygtuku spustelėjus valdiklį arba pranešimų srities piktogramą atidaromas meniu. Kairysis piktogramos spustelėjimas paslepia matomus valdiklius; jei visi paslėpti, atkuriami tik paskutinį kartą paslėpti valdikliai.
@@ -58,9 +62,28 @@ Valdiklio meniu turi jam tinkamus matomumo, Visada viršuje, sekundžių, dydži
 
 ## Garsinis laiko signalas
 
-Signalas atitinka Grinvičo laiko signalą (GTS): penki trumpi tonai paskutines penkias sekundes ir ilgas tonas tiksliai nustatytu metu. Skirtuke Signalas yra Laiko signalas įjungtas ir 1, 5, 10, 15, 20, 30 arba 60 minučių intervalai pagal valdiklio laiką. Iš pradžių išjungta, pasirinktas valandos intervalas. Perjungimas meniu išlaiko intervalą. Atsižvelgiama į UTC, juostą, poslinkį ir NTP. 20 minučių intervalas skamba :00, :20 ir :40. Vienalaikiai valdiklių ir žadintuvų signalai sujungiami. Nutildžius dabartinis tonas gali baigtis, kiti praleidžiami, o įjungus garsą girdimas tik kitas suplanuotas tonas. Atskiras Kalendorius neturi žadintuvo, laiko signalo ar nutildymo.
+Signalas atitinka Grinvičo laiko signalą (GTS): penki trumpi tonai paskutines penkias sekundes ir ilgas tonas tiksliai nustatytu metu. Skirtuke Signalas yra Laiko signalas įjungtas ir 1, 5, 10, 15, 20, 30 arba 60 minučių intervalai pagal valdiklio laiką. Iš pradžių išjungta, pasirinktas valandos intervalas. Perjungimas meniu išlaiko intervalą. Atsižvelgiama į UTC, juostą, poslinkį ir NTP. 20 minučių intervalas skamba :00, :20 ir :40. Nutildžius dabartinis tonas gali baigtis, kiti praleidžiami, o įjungus garsą girdimas tik kitas suplanuotas tonas. Atskiras Kalendorius neturi žadintuvo, laiko signalo ar nutildymo.
 
-Skirtuko Programa Laiko signalo garsas siūlo Įtaisytasis generatorius (numatyta) ir Sistemos pyptelėjimas visiems valdikliams ir žadintuvams. Laiko signalo garsumas rodo generatoriaus lygį dB: dešinėje 0 dB – didžiausia neiškraipyta sinusoidės amplitudė, −∞ dB – tyla, numatyta −18 dB. Tikrinti pradeda nepertraukiamą peržiūrą, Stabdyti tikrinimą ją baigia. Tikrinami abu garsai; tikrinimas neįrašomas. Laikant slankiklį garsas taip pat leidžiamas iki pelės atleidimo, jei nevyksta mygtuko tikrinimas. Pradedama kitą pilną sekundę: trumpas tonas kas sekundę ir ilgas :00, :05, :10 ir toliau. Vienalaikiai bandomieji, valdiklių ir žadintuvų signalai naudoja vieną toną. Sustabdymas leidžia dabartiniam tonui baigtis; ilgas gali tęstis dar pusę sekundės. Įskaitomos poslinkių šimtosios dalys; persidengiantys tonai skamba nenutrūkstamai iki paskutinio persidengimo pabaigos.
+Skirtuko Programa Laiko signalo garsas siūlo Įtaisytasis generatorius (numatyta) ir Sistemos pyptelėjimas visiems valdikliams ir žadintuvams. Laiko signalo garsumas rodo generatoriaus lygį dB: dešinėje 0 dB – didžiausia neiškraipyta sinusoidės amplitudė, −∞ dB – tyla, numatyta −18 dB. Tikrinti pradeda nepertraukiamą peržiūrą, Stabdyti tikrinimą ją baigia. Tikrinami abu garsai; tikrinimas neįrašomas. Laikant slankiklį garsas taip pat leidžiamas iki pelės atleidimo, jei nevyksta mygtuko tikrinimas. Pradedama kitą pilną sekundę: trumpas tonas kas sekundę ir ilgas :00, :05, :10 ir toliau. Sustabdymas leidžia dabartiniam tonui baigtis; ilgas gali tęstis dar pusę sekundės. Įskaitomos poslinkių šimtosios dalys; persidengiantys tonai skamba nenutrūkstamai iki paskutinio persidengimo pabaigos toje pačioje garso išvestyje.
+
+**Garso išvestis**
+
+**Garso išvestis** skirtuke **Signalas** parenka įrenginį kiekvieno garsą palaikančio valdiklio reguliariems laiko
+signalams. Valdiklio laiko juosta, poslinkis ir intervalas nesikeičia. Generatoriaus pasirinkimas ir signalo garsumas
+tebėra bendri visai programai skirtuke **Programa**. Pasirinkus **Sistemos pyptelėjimas**, laukas lieka matomas, bet
+papilkėja ir išsaugo pasirinktą įrenginį; **Įtaisytasis generatorius** jį vėl įjungia. Windows Vista generatorių
+naudoja automatiškai.
+
+**Numatytasis Windows įrenginys** seka dabartinę numatytąją Windows garso išvestį. Atskirai pasirinktas įrenginys
+lieka pasirinktas ir atjungtas, o sąraše rodomas kaip **Įrenginys nepasiekiamas**; jo signalai nutyla, kol jis vėl
+pasiekiamas arba pasirenkama kita išvestis. Įrenginių sąrašas atnaujinamas jį išskleidžiant. Pasirinkimas kiekvienam
+valdikliui atskirai įrašomas į registrą arba XML parametrus.
+
+Signalai automatiškai sujungiami kiekvienoje išvestyje. Atskirai pasirinktas įrenginys ir į tą patį įrenginį
+nukreiptas **Numatytasis Windows įrenginys** naudoja vieną išvestį. Skirtingi įrenginiai veikia nepriklausomai;
+išlaikoma sinusoidė, fazės tolydumas ir tonų pradžia bei pabaiga ties nuliu. Žadintuvai, įskaitant programoje
+leidžiamus failus ir signalus prieš žadintuvą, bei visi bandymai tebenaudoja numatytąją Windows išvestį. Su
+reguliariais signalais jie sujungiami tik bendroje išvestyje.
 
 ## Papildomi laikrodžiai
 
@@ -95,6 +118,10 @@ Pelės žymeklis virš ekrano laikrodžio ir užtemdytų monitorių pasislepia p
 Reikalingi „Microsoft Visual Studio“ su MSVC v145 įrankių rinkiniu ir „Windows SDK“. Atidarykite `CalClock.slnx`, pasirinkite `Release | x86` ir sukompiliuokite sprendimą. Vykdomasis failas sukuriamas `Release\CalClock.exe`. Palaikoma tik Win32/x86 konfigūracija, nes integracija su „Windows“ laikrodžio valdikliu reikalauja x86 suderinamumo.
 
 Po kompiliavimo `.\PackageRelease.ps1` sukuria `CalClock-<version>-win32.zip`; versija nuskaitoma iš `Release\CalClock.exe`. Archyvo šaknyje yra `CalClock.exe` ir `license.txt`. Neprivalomi pasirašymo parametrai `-SignerName`, `-SignToolPath` ir `-TimestampServer` nurodomi paleidžiant. Esamas galiojantis Authenticode parašas tikrinamas ir nekeičiamas. Ankstesni „CalClock“ ZIP paketai pašalinami kiekvieno paleidimo pradžioje; pasirašymo arba tikrinimo klaida sustabdo pakavimą.
+
+Numatytosios pasirašymo parametrų reikšmės taip pat skaitomos iš Windows vartotojo aplinkos kintamųjų:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Aiškiai pateikti
+komandinės eilutės argumentai turi pirmenybę.
 
 ## Licencija
 

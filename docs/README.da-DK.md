@@ -8,7 +8,7 @@ CalClock er et Win32/x86-program til Windows Vista og nyere, som viser frit plac
 
 - Op til 32 widgets med uafhængige indstillinger
 - Eget sprog, tidszone, tidsforskydning, synlighed og altid øverst-indstilling for hver widget
-- Analoge ure med valgbar urskivestørrelse og valgfri sekundviser
+- Analoge ure baseret på Windows-kontrollen `ClockWndMain`, med automatisk registrering af tilgængelige størrelser og understøttelse af sekundviser
 - Digitale ure med skrifttyper, farver, uigennemsigtighed, indvendige margener, rammer, valgfrit foranstillet nul og gennemsigtig baggrund
 - Windows’ egne kalendere med datovalg, fire rammestile, justerbar rammefarve, ugenumre, valg af første ugedag og 33 kopiformater
 - Kalender- og urpaneler med op til to ekstra navngivne ure i egne tidszoner, separate urskivestørrelser, fire rammestile, justerbar farve, UTC-tekst, foranstillet nul og egen skrifttype til hver tekstlinje
@@ -114,17 +114,34 @@ Alarmtonerne planlægges efter det faktiske tidspunkt for den kommende alarm, ef
 
 Test viser den visuelle markering og afprøver fil, kommando, lyd og fjernscriptets adresse asynkront. Hvis alarmens tidssignal er valgt, afspilles også hele sekvensen på seks bip; Stop test afslutter intern lyd og signalforhåndsvisning.
 
-Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. eller 60. minut efter widgetens viste tid. 20-minuttersintervallet lyder ved :00, :20 og :40. Mønstret er **Greenwich Time Signal (GTS)**: fem korte bip markerer de sidste fem sekunder og et længere den nøjagtige grænse. Tidszoner, UTC, forskydninger og aktuel NTP-korrektion respekteres. Alarmens signal og Signal-fanen indstilles uafhængigt; falder tiderne sammen, spiller CalClock én fælles sekvens. Brøkdele af sekunder i forskydningen respekteres, og overlappende widget-, alarm- og testtoner fortsætter uafbrudt til den sidste overlapning slutter.
+Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. eller 60. minut efter widgetens viste tid. 20-minuttersintervallet lyder ved :00, :20 og :40. Mønstret er **Greenwich Time Signal (GTS)**: fem korte bip markerer de sidste fem sekunder og et længere den nøjagtige grænse. Tidszoner, UTC, forskydninger og aktuel NTP-korrektion respekteres. Alarmens signal og Signal-fanen indstilles uafhængigt. Brøkdele af sekunder i forskydningen respekteres, og overlappende widget-, alarm- og testtoner fortsætter uafbrudt til den sidste overlapning slutter på samme lydudgang.
 
-**Lyd for tidssignal** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Lydstyrke for tidssignal** niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude; stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et igangværende bip får lov at afslutte; et langt bip kan tage op til et halvt sekund. **Test** ved **Lyd for tidssignal** starter en kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Forhåndsvisning og samtidige widget- eller alarmsignaler deler én tone. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
+**Lyd for tidssignal** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Lydstyrke for tidssignal** niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude; stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et igangværende bip får lov at afslutte; et langt bip kan tage op til et halvt sekund. **Test** ved **Lyd for tidssignal** starter en kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
 
-Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. I meddelelsesområdet hedder kommandoen Slå al lyd fra; `M` på en widget udfører samme globale skift. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
+**Lydudgang**
+
+**Lydudgang** på fanen **Signal** vælger en enhed til de regelmæssige tidssignaler fra hver widget med lyd. Widgetens
+tidszone, forskydning og interval ændres ikke. Valget af generator og signalets lydstyrke er fortsat globale på fanen
+**Program**. Med **Systembip** er feltet stadig synligt, men nedtonet, og den valgte enhed bevares; **Indbygget
+generator** aktiverer det igen. Windows Vista bruger automatisk generatoren.
+
+**Windows-standardenhed** følger den aktuelle standardudgang i Windows. En bestemt enhed forbliver valgt, hvis den
+frakobles, og vises som **Enhed ikke tilgængelig**; dens signaler er tavse, indtil den er tilgængelig, eller en anden
+udgang vælges. Enhedslisten opdateres, når den åbnes. Valget gemmes særskilt for hver widget i registreringsdatabasen
+eller XML-indstillingerne.
+
+Signaler flettes automatisk for hver udgang. En bestemt enhed og **Windows-standardenhed**, som peger på samme enhed,
+deler én udgang. Forskellige enheder arbejder uafhængigt; sinuskurven, den sammenhængende fase samt tonernes
+begyndelse og afslutning ved nul bevares. Alarmer, herunder internt afspillede filer og tidssignaler før alarmen, samt
+alle test bruger fortsat Windows-standardudgangen. De flettes kun med regelmæssige signaler på en fælles udgang.
+
+Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
 
 ## Indstillinger og menuer
 
 Hver widgetmenu indeholder relevante kommandoer — synlighed, altid øverst, sekunder, analog størrelse eller datokopiformat — efterfulgt af `Arranger i gitter`, Indstillinger, Hjælp, Om og Afslut. Meddelelsesområdets menu viser alle widgets med nummer, derefter Vis alle, Skjul alle og Slå al lyd fra. Det særskilt grupperede `Arranger i gitter` følger før programkommandoerne.
 
-Visning eller gendannelse bringer widgets foran andre vinduer uden at ændre altid øverst. CalClock sørger for mindst én synlig widget efter start. En ny start aktiverer den eksisterende instans og gendanner sidst skjulte widgets, hvis ingen er synlige. Ikonet registreres automatisk igen, når Windows Stifinder genstarter.
+Visning eller gendannelse bringer widgets foran andre vinduer uden at ændre altid øverst. CalClock sørger for mindst én synlig widget efter start. En ny start aktiverer den eksisterende instans og gendanner sidst skjulte widgets, hvis ingen er synlige. Ikonet registreres automatisk igen, når Windows Stifinder genstarter. Hvis `ClockWndMain` ikke understøtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget bevares til en anden understøttet størrelse.
 
 ## Lagring af indstillinger
 
@@ -158,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Kun Win32/x86 understøttes. Projektet tilbyder bevidst ingen x64-konfiguration, fordi integrationen med Windows-urkontrollen kræver x86-kompatibilitet.
+
+Kør `.\PackageRelease.ps1` efter kompilering for at oprette `CalClock-<version>-win32.zip` med programmet og dets
+licens.
+
+Standardværdier for signeringsparametre læses også fra Windows-brugerens miljøvariabler: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Udtrykkelige kommandolinjeargumenter
+har forrang.
 
 ## Licens
 

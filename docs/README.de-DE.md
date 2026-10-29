@@ -8,7 +8,7 @@ CalClock ist eine native Win32/x86-Anwendung für Windows Vista und neuer, die u
 
 - Bis zu 32 unabhängig konfigurierbare Widgets
 - Sprache, Zeitzone, Zeitversatz, Sichtbarkeit und „Immer im Vordergrund“ für jedes Widget
-- Analoguhren mit wählbarer Zifferblattgröße und optionalem Sekundenzeiger
+- Analoguhren auf Basis des Windows-Steuerelements `ClockWndMain`, mit automatisch erkannten verfügbaren Größen und Unterstützung für den Sekundenzeiger
 - Konfigurierbare Digitaluhren mit Schriftarten, Farben, Deckkraft, Innenabständen, Rahmen, optionaler führender Null und optional transparentem Hintergrund
 - Native Windows-Kalender mit Datumsauswahl, vier Rahmenstilen, einstellbarer Rahmenfarbe, Wochennummern, wählbarem Wochenanfang und 33 Kopierformaten
 - Kalender-Uhr-Panels mit bis zu zwei zusätzlichen benannten Uhren in eigenen Zeitzonen, getrennten Zifferblattgrößen, vier Rahmenstilen, einstellbarer Rahmenfarbe, UTC-Text, führender Null und einer eigenen Schriftart für jede Textzeile
@@ -114,9 +114,28 @@ Die Weckertöne werden anhand des tatsächlich bevorstehenden Weckzeitpunkts nac
 
 Test zeigt die visuelle Weckeranzeige und prüft Datei, Befehl, Audio und entfernte Skriptadresse asynchron. Ist das Weckerzeitzeichen ausgewählt, spielt Test auch die gesamte Folge aus sechs Tönen; Test stoppen beendet interne Audiowiedergabe und Signalvorschau.
 
-Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und Optionsfelder für Intervalle von 1, 5, 10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten Widget-Zeit. Anfangs ist das Signal ausgeschaltet und das Stundenintervall ausgewählt. Aus- und Einschalten über Zeitzeichen im Widget-Menü behält das Intervall bei. Das Menü zeigt die Weckzeit und das Signalintervall in Klammern. Das 20-Minuten-Intervall ertönt zu :00, :20 und :40 dieser Zeit. Das Signal folgt dem **Greenwich Time Signal (GTS)**: Fünf kurze Töne markieren die letzten fünf Sekunden, ein längerer Ton den genauen Intervallbeginn. Zeitzonen, UTC-Modus, Versätze und aktuelle NTP-Korrektur werden berücksichtigt. Weckerzeitzeichen und Registerkarte Signal bleiben getrennt konfigurierbar; treffen Termine zusammen, spielt CalClock nur eine gemeinsame Folge. Auch Sekundenbruchteile im Widget-Versatz werden berücksichtigt. Überlappende Widget-, Wecker- und Testtöne erklingen durchgehend bis zum Ende der letzten Überlappung.
+Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und Optionsfelder für Intervalle von 1, 5, 10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten Widget-Zeit. Anfangs ist das Signal ausgeschaltet und das Stundenintervall ausgewählt. Aus- und Einschalten über Zeitzeichen im Widget-Menü behält das Intervall bei. Das Menü zeigt die Weckzeit und das Signalintervall in Klammern. Das 20-Minuten-Intervall ertönt zu :00, :20 und :40 dieser Zeit. Das Signal folgt dem **Greenwich Time Signal (GTS)**: Fünf kurze Töne markieren die letzten fünf Sekunden, ein längerer Ton den genauen Intervallbeginn. Zeitzonen, UTC-Modus, Versätze und aktuelle NTP-Korrektur werden berücksichtigt. Weckerzeitzeichen und Registerkarte Signal bleiben getrennt konfigurierbar. Auch Sekundenbruchteile im Widget-Versatz werden berücksichtigt. Überlappende Widget-, Wecker- und Testtöne erklingen durchgehend bis zum Ende der letzten Überlappung auf demselben Audioausgang.
 
-**Zeitzeichenklang** auf Anwendung bietet **Interner Generator** (Standard) und **Systemsignalton**. Die Auswahl gilt für alle Widget-Zeitzeichen einschließlich der Wecker und wird global gespeichert. Beim **Internen Generator** zeigt **Zeitzeichenlautstärke** den Pegel für die ganze Anwendung in dB. Ganz rechts liegen **0 dB**, die maximale unverzerrte Sinusamplitude; Stille entspricht **−∞ dB**. Die Vorgabe ist **−18 dB**. Der aktuelle Ton darf ausklingen; ein langer Ton kann dafür bis zu einer halben Sekunde benötigen. **Test** neben **Zeitzeichenklang** startet die fortlaufende Vorschau, **Test stoppen** beendet sie. Sowohl **Systemsignalton** als auch **Interner Generator** sind testbar; der Testzustand wird nicht gespeichert. Das Festhalten des Lautstärkereglers startet ebenfalls eine Vorschau bis zum Loslassen, sofern kein per Taste gestarteter Test läuft. Die Wiedergabe beginnt mit der nächsten vollen Sekunde: kurze Töne jede Sekunde und ein langer zu :00, :05, :10 usw. Vorschau und gleichzeitige Widget- oder Weckersignale teilen einen einzigen Ton. Die Klangwahl ist nur verfügbar, wenn das System beide Verfahren unterstützt.
+**Zeitzeichenklang** auf Anwendung bietet **Interner Generator** (Standard) und **Systemsignalton**. Die Auswahl gilt für alle Widget-Zeitzeichen einschließlich der Wecker und wird global gespeichert. Beim **Internen Generator** zeigt **Zeitzeichenlautstärke** den Pegel für die ganze Anwendung in dB. Ganz rechts liegen **0 dB**, die maximale unverzerrte Sinusamplitude; Stille entspricht **−∞ dB**. Die Vorgabe ist **−18 dB**. Der aktuelle Ton darf ausklingen; ein langer Ton kann dafür bis zu einer halben Sekunde benötigen. **Test** neben **Zeitzeichenklang** startet die fortlaufende Vorschau, **Test stoppen** beendet sie. Sowohl **Systemsignalton** als auch **Interner Generator** sind testbar; der Testzustand wird nicht gespeichert. Das Festhalten des Lautstärkereglers startet ebenfalls eine Vorschau bis zum Loslassen, sofern kein per Taste gestarteter Test läuft. Die Wiedergabe beginnt mit der nächsten vollen Sekunde: kurze Töne jede Sekunde und ein langer zu :00, :05, :10 usw. Die Klangwahl ist nur verfügbar, wenn das System beide Verfahren unterstützt.
+
+**Audioausgabe**
+
+**Audioausgabe** auf der Registerkarte **Zeitzeichen** legt das Gerät für die regelmäßigen Zeitzeichen jedes Widgets
+mit Tonunterstützung fest. Zeitzone, Offset und Intervall des Widgets bleiben unverändert. Generatorwahl und
+Zeitzeichenlautstärke gelten weiterhin global auf der Registerkarte **Anwendung**. Bei **Systemsignalton** bleibt die
+Auswahl sichtbar und gespeichert, ist aber ausgegraut; **Interner Generator** aktiviert sie wieder. Windows Vista
+verwendet den Generator automatisch.
+
+**Windows-Standardgerät** folgt dem aktuellen Windows-Standardausgang. Ein ausdrücklich gewähltes Gerät bleibt auch
+nach dem Trennen ausgewählt und erscheint als **Gerät nicht verfügbar**; seine Zeitzeichen bleiben stumm, bis es
+verfügbar ist oder ein anderer Ausgang gewählt wird. Die Geräteliste wird beim Aufklappen aktualisiert. Die Auswahl
+wird für jedes Widget getrennt in der Registrierung oder in den XML-Einstellungen gespeichert.
+
+Zeitzeichen werden je Ausgang automatisch zusammengeführt. Ein ausdrücklich gewähltes Gerät und
+**Windows-Standardgerät**, das auf dasselbe Gerät verweist, teilen einen Ausgang. Verschiedene Geräte arbeiten
+unabhängig; Sinuskurve, durchgehende Phase sowie Tonanfang und Tonende bei null bleiben erhalten. Wecker
+einschließlich intern abgespielter Dateien und vorangestellter Zeitzeichen sowie alle Tests verwenden weiterhin den
+Windows-Standardausgang. Sie werden nur auf einem gemeinsamen Ausgang mit regelmäßigen Zeitzeichen zusammengeführt.
 
 Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widgets umschalten. Der Weckereintrag zeigt die Zeit und, sofern nicht alle Tage aktiv sind, die ausgewählten Wochentage. Der markierte Befehl Stumm betrifft sein Widget und entspricht Stumm auf Allgemein. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Im Infobereich heißt der Befehl Alle stummschalten; `M` auf einem Widget führt dieselbe globale Aktion aus. Das globale Aufheben der Stummschaltung stellt nur die durch die vorherige globale Aktion stummgeschalteten Widgets wieder her. Interne Audiowiedergabe läuft lautlos weiter und wird danach wieder hörbar. Ein bereits laufender Ton darf enden; weitere Töne werden bis zur erneuten Freigabe übersprungen. Andere Befehle und entfernte Skripte bleiben unbeeinflusst.
 
@@ -124,7 +143,7 @@ Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widg
 
 Jedes Widget-Menü enthält die für den Typ passenden Befehle — Sichtbarkeit, Vordergrund, Sekunden, Analoggröße oder Datumskopierformat — gefolgt von `Am Raster ausrichten`, Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü führt alle Widgets mit ihrer laufenden Nummer auf, danach Alle anzeigen, Alle ausblenden und Alle stummschalten. Der getrennt gruppierte Befehl `Am Raster ausrichten` folgt vor den Anwendungsbefehlen.
 
-Anzeigen oder Wiederherstellen holt Widgets vor andere Fenster, ohne ihren Vordergrundstatus zu ändern. CalClock sorgt nach dem Start für mindestens ein sichtbares Widget. Ein zweiter Start aktiviert die vorhandene Instanz und stellt die zuletzt ausgeblendeten Widgets wieder her, falls keines sichtbar ist. Nach einem Neustart des Windows-Explorers wird das Infobereichssymbol automatisch neu registriert.
+Anzeigen oder Wiederherstellen holt Widgets vor andere Fenster, ohne ihren Vordergrundstatus zu ändern. CalClock sorgt nach dem Start für mindestens ein sichtbares Widget. Ein zweiter Start aktiviert die vorhandene Instanz und stellt die zuletzt ausgeblendeten Widgets wieder her, falls keines sichtbar ist. Nach einem Neustart des Windows-Explorers wird das Infobereichssymbol automatisch neu registriert. Unterstützt `ClockWndMain` bei der gewählten Größe keinen Sekundenzeiger, ist Sekunden deaktiviert; die gespeicherte Wahl bleibt für eine andere unterstützte Größe erhalten.
 
 ## Speicherung der Einstellungen
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Nur Win32/x86 wird unterstützt. Das Projekt bietet bewusst keine x64-Konfiguration, da die Integration des Windows-Uhr-Steuerelements x86-Kompatibilität voraussetzt.
+
+Nach dem Kompilieren erstellt `.\PackageRelease.ps1` das Paket `CalClock-<version>-win32.zip` mit dem Programm und
+seiner Lizenz.
+
+Standardwerte der Signaturparameter werden auch aus den Windows-Benutzerumgebungsvariablen gelesen:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Ausdrücklich
+übergebene Befehlszeilenargumente haben Vorrang.
 
 ## Lizenz
 

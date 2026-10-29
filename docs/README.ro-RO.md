@@ -4,6 +4,10 @@
 
 CalClock este o aplicație nativă Win32/x86 pentru Windows Vista și versiuni ulterioare, care afișează pe desktop ceasuri și calendare flotante configurabile independent. Rulează în zona de notificare și acceptă până la 32 de widgeturi și 36 de variante de limbă; limba aplicației și a fiecărui widget se aleg separat.
 
+Ceasurile analogice folosesc controlul de sistem Windows `ClockWndMain`, cu detectarea automată a
+dimensiunilor disponibile și a suportului pentru secundar. Dacă dimensiunea selectată nu acceptă secundarul,
+comanda Secunde este dezactivată, dar opțiunea salvată se păstrează pentru o altă dimensiune compatibilă.
+
 ## Comenzi
 
 Glisați ceasul sau panoul cu butonul stâng al mouse-ului. Un calendar separat se glisează din zona liberă. Un clic dreapta pe widget sau pe pictograma din zona de notificare deschide meniul. Un clic stânga pe pictogramă ascunde widgeturile vizibile; dacă toate sunt ascunse, le restabilește numai pe cele ascunse ultima dată.
@@ -58,9 +62,27 @@ Meniul widgetului conține alegerile aplicabile de vizibilitate, Întotdeauna de
 
 ## Semnal orar sonor
 
-Semnalul urmează Greenwich Time Signal (GTS): cinci tonuri scurte în ultimele cinci secunde și un ton lung exact la momentul stabilit. Semnal oferă Semnal orar activat și intervale de 1, 5, 10, 15, 20, 30 sau 60 de minute după ora widgetului. Inițial este dezactivat, cu interval orar selectat. Comutarea din meniu păstrează intervalul. Sunt respectate UTC, fusul, decalajul și NTP; la 20 de minute sună la :00, :20 și :40. Semnalele simultane ale widgeturilor și alarmelor se îmbină. După dezactivarea sunetului, tonul curent se poate încheia; următoarele sunt omise până la următorul ton programat după reactivare. Un Calendar separat nu are alarmă, semnal orar sau dezactivare de sunet.
+Semnalul urmează Greenwich Time Signal (GTS): cinci tonuri scurte în ultimele cinci secunde și un ton lung exact la momentul stabilit. Semnal oferă Semnal orar activat și intervale de 1, 5, 10, 15, 20, 30 sau 60 de minute după ora widgetului. Inițial este dezactivat, cu interval orar selectat. Comutarea din meniu păstrează intervalul. Sunt respectate UTC, fusul, decalajul și NTP; la 20 de minute sună la :00, :20 și :40. După dezactivarea sunetului, tonul curent se poate încheia; următoarele sunt omise până la următorul ton programat după reactivare. Un Calendar separat nu are alarmă, semnal orar sau dezactivare de sunet.
 
-Sunet semnal orar din Aplicație oferă Generator încorporat (implicit) și Bip de sistem pentru toate widgeturile și alarmele. Volum semnal orar arată nivelul generatorului în dB: 0 dB la dreapta este amplitudinea sinusoidală maximă nedistorsionată, −∞ dB liniște, iar −18 dB valoarea implicită. Testare începe o previzualizare continuă, Oprire test o încheie. Se pot testa ambele sunete; testul nu se salvează. Menținerea glisorului redă și ea sunet până la eliberarea mouse-ului, dacă nu rulează testul din buton. Redarea începe la următoarea secundă întreagă: ton scurt în fiecare secundă și lung la :00, :05, :10 etc. Semnalele simultane de test, widget și alarmă folosesc un singur ton. Oprirea lasă tonul curent să se încheie; unul lung poate dura încă o jumătate de secundă. Sunt luate în calcul sutimile decalajului; tonurile suprapuse sună continuu până la sfârșitul ultimei suprapuneri.
+Sunet semnal orar din Aplicație oferă Generator încorporat (implicit) și Bip de sistem pentru toate widgeturile și alarmele. Volum semnal orar arată nivelul generatorului în dB: 0 dB la dreapta este amplitudinea sinusoidală maximă nedistorsionată, −∞ dB liniște, iar −18 dB valoarea implicită. Testare începe o previzualizare continuă, Oprire test o încheie. Se pot testa ambele sunete; testul nu se salvează. Menținerea glisorului redă și ea sunet până la eliberarea mouse-ului, dacă nu rulează testul din buton. Redarea începe la următoarea secundă întreagă: ton scurt în fiecare secundă și lung la :00, :05, :10 etc. Oprirea lasă tonul curent să se încheie; unul lung poate dura încă o jumătate de secundă. Sunt luate în calcul sutimile decalajului; tonurile suprapuse sună continuu până la sfârșitul ultimei suprapuneri pe aceeași ieșire audio.
+
+**Ieșire audio**
+
+**Ieșire audio** din fila **Semnal** alege dispozitivul pentru semnalele orare regulate ale fiecărui widget cu sunet.
+Fusul orar, decalajul și intervalul widgetului nu se schimbă. Alegerea generatorului și volumul semnalului rămân
+globale în fila **Aplicație**. Cu **Bip de sistem**, câmpul rămâne vizibil, dar este dezactivat și afișat cu gri,
+păstrând dispozitivul ales; **Generator încorporat** îl reactivează. Windows Vista folosește automat generatorul.
+
+**Dispozitivul implicit Windows** urmărește ieșirea implicită curentă din Windows. Un dispozitiv ales explicit rămâne
+selectat după deconectare și apare ca **Dispozitiv indisponibil**; semnalele sale rămân mute până când devine
+disponibil sau se alege altă ieșire. Lista dispozitivelor se actualizează la deschidere. Alegerea este salvată separat
+pentru fiecare widget în registru sau în setările XML.
+
+Semnalele se combină automat pentru fiecare ieșire. Un dispozitiv ales explicit și **Dispozitivul implicit Windows**
+care indică același dispozitiv folosesc o singură ieșire. Dispozitivele diferite funcționează independent; se
+păstrează sinusoida, continuitatea fazei și începutul și sfârșitul tonurilor la zero. Alarmele, inclusiv fișierele
+redate intern și semnalele orare dinaintea alarmei, precum și toate testele folosesc în continuare ieșirea implicită
+Windows. Se combină cu semnalele regulate numai pe o ieșire comună.
 
 ## Ceasuri suplimentare
 
@@ -95,6 +117,10 @@ Indicatorul mouse-ului se ascunde după o scurtă inactivitate deasupra ceasului
 Sunt necesare Microsoft Visual Studio cu setul de instrumente MSVC v145 și Windows SDK. Deschideți `CalClock.slnx`, alegeți `Release | x86` și compilați soluția. Fișierul executabil este creat în `Release\CalClock.exe`. Este acceptată numai configurația Win32/x86 deoarece integrarea cu controlul de ceas Windows necesită compatibilitate x86.
 
 După compilare, `.\PackageRelease.ps1` creează `CalClock-<version>-win32.zip`; versiunea se citește din `Release\CalClock.exe`. Arhiva conține `CalClock.exe` și `license.txt` direct în rădăcină. Parametrii opționali de semnare `-SignerName`, `-SignToolPath` și `-TimestampServer` se dau la rulare. O semnătură Authenticode validă existentă este verificată și nu se înlocuiește. Pachetele ZIP CalClock anterioare se elimină la începutul fiecărei rulări; erorile de semnare sau verificare opresc împachetarea.
+
+Valorile implicite ale parametrilor de semnare sunt citite și din variabilele de mediu ale utilizatorului Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Argumentele
+explicite din linia de comandă au prioritate.
 
 ## Licență
 

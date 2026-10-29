@@ -4,6 +4,10 @@
 
 CalClock je izvorna aplikacija Win32/x86 za Windows Vista i noviji, s neovisno prilagodljivim plutajućim satovima i kalendarima. Radi u području obavijesti. Podržava do 32 widgeta i 36 jezičnih varijanti; jezik programa i svakog widgeta bira se zasebno.
 
+Analogni satovi koriste sistemsku kontrolu Windowsa `ClockWndMain`, uz automatsko otkrivanje dostupnih
+veličina i podrške za sekundnu kazaljku. Ako odabrana veličina ne podržava sekundnu kazaljku, naredba Sekunde
+je onemogućena, ali se spremljeni izbor zadržava za drugu podržanu veličinu.
+
 ## Upravljanje
 
 Povucite sat ili ploču lijevom tipkom miša. Samostalni kalendar povlači se za slobodno područje. Desnom tipkom kliknite widget ili ikonu u području obavijesti za otvaranje izbornika. Lijevi klik na ikonu skriva vidljive widgete; ako su svi skriveni, vraća samo posljednje skrivene widgete.
@@ -56,13 +60,32 @@ Izbornik widgeta sadrži primjenjive postavke vidljivosti, načina Uvijek na vrh
 
 ## Zvučni vremenski signal
 
-Signal slijedi obrazac Greenwich Time Signal (GTS). Kartica Signal sadrži opciju Vremenski signal uključen i odabir intervala od 1, 5, 10, 15, 20, 30 ili 60 minuta prema prikazanom vremenu widgeta. Signal je u početku isključen, a odabran je interval od jednog sata. Isključivanje i uključivanje u izborniku čuva interval. Izbornik prikazuje vrijeme alarma i interval signala u zagradama. Granica prati vrijeme widgeta, uključujući UTC, vremensku zonu, pomak i NTP sinkronizaciju. Pet kratkih tonova označava posljednjih pet sekundi, a dugi ton točnu granicu. Istodobni signali više widgeta spajaju se u jedan niz. Nakon isključivanja zvuka trenutačni ton može završiti; sljedeći se preskaču, a nakon uključivanja zvuka čuje se tek sljedeći planirani ton. Samostalni Kalendar nema alarm, vremenski signal ni isključivanje zvuka.
+Signal slijedi obrazac Greenwich Time Signal (GTS). Kartica Signal sadrži opciju Vremenski signal uključen i odabir intervala od 1, 5, 10, 15, 20, 30 ili 60 minuta prema prikazanom vremenu widgeta. Signal je u početku isključen, a odabran je interval od jednog sata. Isključivanje i uključivanje u izborniku čuva interval. Izbornik prikazuje vrijeme alarma i interval signala u zagradama. Granica prati vrijeme widgeta, uključujući UTC, vremensku zonu, pomak i NTP sinkronizaciju. Pet kratkih tonova označava posljednjih pet sekundi, a dugi ton točnu granicu. Nakon isključivanja zvuka trenutačni ton može završiti; sljedeći se preskaču, a nakon uključivanja zvuka čuje se tek sljedeći planirani ton. Samostalni Kalendar nema alarm, vremenski signal ni isključivanje zvuka.
 
 Pri intervalu od 20 minuta signal se čuje na :00, :20 i :40 prema vremenu widgeta.
 
 Na kartici Program opcija Zvuk vremenskog signala nudi Ugrađeni generator i Zvuk sustava. Izbor vrijedi za sve widgete, uključujući signale alarma. Zadani je Ugrađeni generator.
 
-Klizač Glasnoća vremenskog signala na kartici Program prikazuje razinu generatora u dB. Krajnji desni položaj je 0 dB, najveća neizobličena amplituda sinusoide; tišina je −∞ dB. Zadana je glasnoća −18 dB. Testiraj uz izbor zvuka pokreće neprekidni pretpregled, a Zaustavi test ga završava. Oba se zvuka mogu testirati; test se ne sprema. Držanje klizača glasnoće također pokreće pretpregled do otpuštanja miša, osim ako traje test pokrenut gumbom. Reprodukcija počinje na sljedećoj punoj sekundi: kratki ton svake sekunde i dugi na :00, :05, :10 i tako dalje. Istodobni probni signali i signali widgeta ili alarma dijele jedan ton. Zaustavljanje testa dopušta završetak trenutačnog tona; dugi ton može trajati još do pola sekunde. Pomaci widgeta poštuju se i u stotinkama sekunde. Tonovi widgeta, alarma i testova koji se preklapaju zvuče kao jedan neprekidan ton do kraja posljednjeg preklapanja.
+Klizač Glasnoća vremenskog signala na kartici Program prikazuje razinu generatora u dB. Krajnji desni položaj je 0 dB, najveća neizobličena amplituda sinusoide; tišina je −∞ dB. Zadana je glasnoća −18 dB. Testiraj uz izbor zvuka pokreće neprekidni pretpregled, a Zaustavi test ga završava. Oba se zvuka mogu testirati; test se ne sprema. Držanje klizača glasnoće također pokreće pretpregled do otpuštanja miša, osim ako traje test pokrenut gumbom. Reprodukcija počinje na sljedećoj punoj sekundi: kratki ton svake sekunde i dugi na :00, :05, :10 i tako dalje. Zaustavljanje testa dopušta završetak trenutačnog tona; dugi ton može trajati još do pola sekunde. Pomaci widgeta poštuju se i u stotinkama sekunde. Tonovi widgeta, alarma i testova koji se preklapaju zvuče kao jedan neprekidan ton do kraja posljednjeg preklapanja na istom audio izlazu.
+
+**Audio izlaz**
+
+**Audio izlaz** na kartici **Signal** odabire uređaj za redovite vremenske signale svakog widgeta koji podržava zvuk.
+Vremenska zona, pomak i interval widgeta ostaju nepromijenjeni. Odabir generatora i glasnoća signala i dalje su
+zajednički za cijeli program na kartici **Program**. Uz **Zvuk sustava**, polje ostaje vidljivo, ali je zasivljeno i
+onemogućeno te zadržava odabrani uređaj; **Ugrađeni generator** ponovno ga omogućuje. Windows Vista automatski
+upotrebljava generator.
+
+**Zadani uređaj sustava Windows** prati trenutačni zadani izlaz sustava Windows. Izričito odabrani uređaj ostaje
+odabran nakon odspajanja i prikazuje se kao **Uređaj nije dostupan**; njegovi signali ostaju nečujni dok ne postane
+dostupan ili se odabere drugi izlaz. Popis uređaja osvježava se pri otvaranju. Odabir se sprema zasebno za svaki
+widget u registar ili XML postavke.
+
+Signali se automatski spajaju za svaki izlaz. Izričito odabrani uređaj i **Zadani uređaj sustava Windows** koji
+upućuje na isti uređaj dijele jedan izlaz. Različiti uređaji rade neovisno; sinusni val, neprekidnost faze te početak
+i završetak tonova u nuli ostaju očuvani. Alarmi, uključujući interno reproducirane datoteke i vremenske signale prije
+alarma, te sva testiranja i dalje upotrebljavaju zadani izlaz sustava Windows. S redovitim signalima spajaju se samo
+na zajedničkom izlazu.
 
 ## Dodatni satovi
 
@@ -103,6 +126,10 @@ Pokazivač miša skriva se nakon kratke neaktivnosti iznad sata na zaslonu i zat
 Potrebni su Microsoft Visual Studio s alatima MSVC v145 i Windows SDK. Otvorite `CalClock.slnx`, odaberite `Release | x86` i izgradite rješenje. Izvršna datoteka nastaje u `Release\CalClock.exe`. Podržana je samo konfiguracija Win32/x86 jer integracija s kontrolom sata Windowsa zahtijeva kompatibilnost s x86.
 
 Nakon izgradnje pokrenite `.\PackageRelease.ps1` za stvaranje arhive `CalClock-<version>-win32.zip`. Verzija se čita iz `Release\CalClock.exe`. Arhiva sadrži `CalClock.exe` i `license.txt` izravno u korijenu. Neobavezni parametri potpisivanja su `-SignerName`, `-SignToolPath` i `-TimestampServer`; zadaju se pri pokretanju. Postojeći valjani potpis Authenticode provjerava se i ne zamjenjuje. Prethodne ZIP arhive CalClocka uklanjaju se na početku svakog pokretanja. Pogreška potpisivanja ili provjere zaustavlja pakiranje.
+
+Zadane vrijednosti parametara potpisivanja čitaju se i iz korisničkih varijabli okruženja sustava Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Izričito
+navedeni argumenti naredbenog retka imaju prednost.
 
 ## Licencija
 

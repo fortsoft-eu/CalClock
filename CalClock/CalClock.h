@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.5
+ * Last modified for version 1.7.0.0
  */
 
 #pragma once
@@ -54,6 +54,9 @@ const int DIGITAL_BORDER_WIDTH_MAX = 200;
 const unsigned int ALARM_DAYS_ALL = 0x7F;
 const int SETTINGS_TAB_COUNT = 6;
 const int MONITOR_COLUMN_COUNT = 8;
+
+/// Identifies the shared keyboard-navigation subclass for About and Help text controls.
+const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
 
 /// Identifies the supported widget kinds and indexes their localized names.
 enum WidgetType {
@@ -333,6 +336,9 @@ enum TextId {
     TXT_TIME_SIGNAL_EVERY_HALF_HOUR,
     TXT_TIME_SIGNAL_EVERY_HOUR,
     TXT_TIME_SIGNAL_NOTE,
+    TXT_AUDIO_OUTPUT_LABEL,
+    TXT_AUDIO_OUTPUT_DEFAULT,
+    TXT_AUDIO_OUTPUT_UNAVAILABLE,
     TXT_TIME_TAB_LABEL,
     TXT_TIME_SOURCE_LABEL,
     TXT_SYSTEM_TIME_LABEL,
@@ -472,6 +478,7 @@ struct WidgetConfig {
     bool weekNumbers = false;
     bool sundayFirst = false;
     int dateCopyFormat = DATE_LOCAL_SHORT;
+    std::wstring timeSignalOutputDevice;
     bool timeSignalEnabled = false;
     TimeSignalMode timeSignal = TIME_SIGNAL_EVERY_HOUR;
     bool soundsMuted = false;
@@ -514,7 +521,8 @@ struct SettingsSnapshot {
     std::vector<WidgetConfig> widgets;
 };
 
-/// Combines a widget's configuration with live window handles, drawing state, input tracking, and alarm resources.
+/// Combines a widget's configuration with live window handles, drawing state, input tracking, and alarm
+/// resources.
 struct Widget {
     WidgetConfig config;
     HWND window = nullptr;
@@ -569,3 +577,89 @@ struct Widget {
     ULONGLONG lastAnalogClickTick = 0;
     POINT lastAnalogClickPoint = {};
 };
+
+/// Stores the global setting that disables visual styles for the application.
+extern bool themesDisabled;
+
+/// Returns a borrowed localized UI string in the current application language.
+const wchar_t* T(TextId id);
+
+/// Prefixes the localized common caption with a mnemonic marker.
+std::wstring Mnemonic(TextId id);
+
+/// Captures current settings and saves them to the selected XML or registry backend. Removes registry settings
+/// after a successful switch to XML storage.
+void SaveAllSettings();
+
+/// Reports whether the effective application font overrides the native system face or style.
+bool HasApplicationUiFont();
+
+/// Creates the effective application face and style at the native system font size and window DPI. The caller
+/// owns the returned font; null indicates failure.
+HFONT CreateApplicationUiFont(HWND window);
+
+/// Creates the application font if needed, applies font and theme settings to a form and its children, and
+/// requests repainting.
+void ApplyUiStyle(HWND window);
+
+/// Updates each open information form through its own content and layout implementation.
+void RefreshInformationWindows();
+
+/// Replaces clipboard contents with Unicode text, transferring the allocation to Windows only on success.
+bool CopyTextToClipboard(HWND owner, const std::wstring& text);
+
+/// Recognizes Unicode whitespace for license text and descriptive-text layout.
+bool IsUnicodeWhitespace(wchar_t character);
+
+/// Returns an owned copy of a control's current Unicode text.
+std::wstring GetControlText(HWND control);
+
+/// Creates a tooltip attached to a control, destroying it if registration fails. The supplied text must remain
+/// valid while the tooltip uses it.
+HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text);
+
+/// Aligns a settings label, edit, combo, push button, or checkbox to adjacent text plus an optional baseline
+/// distance. Uses native content rectangles and preserves size, horizontal position, and Z order.
+void AlignSettingsControl(HWND control, HWND reference, LONG baselineDistance = 0);
+
+/// Draws a wrapped label over its parent background using the selected font and native text colors.
+INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item);
+
+/// Measures a label's wrapped height at the requested width using its actual font, or returns zero if a DC is
+/// unavailable.
+int InformationLabelHeight(HWND control, int width);
+
+/// Measures native dialog base units from the supplied interface font.
+bool GetDialogFontBaseUnits(HFONT font, SIZE* units);
+
+/// Converts vertical dialog units to pixels using the font base unit, capped so a standard button is at most
+/// 28 pixels.
+int DialogHeightFromUnits(int value, int baseUnit);
+
+/// Caps initial dialog and child Y dimensions using the standard button height limit, preserving X dimensions
+/// and fonts. Uses the original extended resource height when available to avoid retaining Windows initial
+/// work-area clipping.
+void LimitDialogVerticalUnits(HWND window, int resourceId = 0);
+
+/// Obtains native CW_USEDEFAULT placement from an invisible overlapped window and moves the hidden dialog
+/// there.
+bool PositionInformationWindowByWindowsDefault(HWND window);
+
+/// Positions an information-window child without activation or Z-order changes, enforcing positive dimensions.
+void PlaceInformationControl(HWND window, int id, int x, int y, int width, int height);
+
+/// Converts current information-dialog font units to native pixel dimensions.
+SIZE InformationDialogUnits(HFONT font, int x, int y);
+
+/// Measures the common native Close button using its current font and existing dialog-unit minimum and padding.
+SIZE InformationButtonSize(HWND window, HFONT font);
+
+/// Releases the cached Unicode boundary analysis and its retained text.
+void ResetInformationWordBreak();
+
+/// Supplies the same native Unicode word and cluster boundaries to the Help and About edits.
+int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int length, int code);
+
+/// Lets information windows handle Enter, Escape and Tab from their read-only text fields.
+LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);

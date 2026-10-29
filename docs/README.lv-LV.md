@@ -4,6 +4,10 @@
 
 CalClock ir Win32/x86 programma Windows Vista un jaunākām versijām ar atsevišķi iestatāmiem peldošiem pulksteņiem un kalendāriem darbvirsmā. Tā darbojas paziņojumu apgabalā un atbalsta līdz 32 logrīkiem un 36 valodu izvēlēm; programmas un katra logrīka valodu izvēlas atsevišķi.
 
+Analogie pulksteņi izmanto Windows sistēmas vadīklu `ClockWndMain`, automātiski nosakot pieejamos izmērus un
+sekunžu rādītāja atbalstu. Ja izvēlētais izmērs neatbalsta sekunžu rādītāju, komanda Sekundes ir atspējota,
+taču saglabātā izvēle paliek spēkā citam atbalstītam izmēram.
+
 ## Vadība
 
 Velciet pulksteni vai paneli ar peles kreiso pogu. Atsevišķu kalendāru velciet aiz brīvās zonas. Labais klikšķis uz logrīka vai paziņojumu apgabala ikonas atver izvēlni. Kreisais klikšķis uz ikonas paslēpj redzamos logrīkus; ja visi ir paslēpti, atjauno tikai pēdējos paslēptos.
@@ -58,9 +62,27 @@ Logrīka izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu
 
 ## Skaņas laika signāls
 
-Signāls atbilst Griničas laika signālam (GTS): pieci īsi toņi pēdējās piecās sekundēs un garš tonis precīzi noteiktajā brīdī. Cilnē Signāls ir Laika signāls ieslēgts un 1, 5, 10, 15, 20, 30 vai 60 minūšu intervāli pēc logrīka laika. Sākumā izslēgts, atlasīts stundas intervāls. Pārslēgšana izvēlnē saglabā intervālu. Ņem vērā UTC, joslu, nobīdi un NTP; 20 minūšu intervālā skan :00, :20 un :40. Vienlaicīgie logrīku un modinātāju signāli apvienojas. Izslēdzot skaņu, pašreizējais tonis var beigties; nākamie tiek izlaisti līdz nākamajam plānotajam tonim pēc skaņas ieslēgšanas. Atsevišķam Kalendāram nav modinātāja, laika signāla vai skaņas izslēgšanas.
+Signāls atbilst Griničas laika signālam (GTS): pieci īsi toņi pēdējās piecās sekundēs un garš tonis precīzi noteiktajā brīdī. Cilnē Signāls ir Laika signāls ieslēgts un 1, 5, 10, 15, 20, 30 vai 60 minūšu intervāli pēc logrīka laika. Sākumā izslēgts, atlasīts stundas intervāls. Pārslēgšana izvēlnē saglabā intervālu. Ņem vērā UTC, joslu, nobīdi un NTP; 20 minūšu intervālā skan :00, :20 un :40. Izslēdzot skaņu, pašreizējais tonis var beigties; nākamie tiek izlaisti līdz nākamajam plānotajam tonim pēc skaņas ieslēgšanas. Atsevišķam Kalendāram nav modinātāja, laika signāla vai skaņas izslēgšanas.
 
-Cilnē Programma Laika signāla skaņa piedāvā Iebūvēts ģenerators (noklusējums) un Sistēmas pīkstiens visiem logrīkiem un modinātājiem. Laika signāla skaļums rāda ģeneratora līmeni dB: labajā galā 0 dB ir maksimālā neizkropļotā sinusoīdas amplitūda, −∞ dB klusums, noklusējums −18 dB. Pārbaudīt sāk nepārtrauktu priekšskatījumu, Apturēt pārbaudi to beidz. Pārbaudāmas abas skaņas; pārbaude netiek saglabāta. Turot slīdni, skaņa skan līdz peles atlaišanai, ja nenotiek pogas pārbaude. Atskaņošana sākas nākamajā veselajā sekundē: īss tonis katru sekundi un garš :00, :05, :10 utt. Vienlaicīgie pārbaudes, logrīku un modinātāju signāli izmanto vienu toni. Apturot pašreizējais tonis drīkst beigties; garais var turpināties vēl pussekundi. Ņem vērā nobīdes simtdaļas; pārklājušies toņi skan nepārtraukti līdz pēdējā pārklājuma beigām.
+Cilnē Programma Laika signāla skaņa piedāvā Iebūvēts ģenerators (noklusējums) un Sistēmas pīkstiens visiem logrīkiem un modinātājiem. Laika signāla skaļums rāda ģeneratora līmeni dB: labajā galā 0 dB ir maksimālā neizkropļotā sinusoīdas amplitūda, −∞ dB klusums, noklusējums −18 dB. Pārbaudīt sāk nepārtrauktu priekšskatījumu, Apturēt pārbaudi to beidz. Pārbaudāmas abas skaņas; pārbaude netiek saglabāta. Turot slīdni, skaņa skan līdz peles atlaišanai, ja nenotiek pogas pārbaude. Atskaņošana sākas nākamajā veselajā sekundē: īss tonis katru sekundi un garš :00, :05, :10 utt. Apturot pašreizējais tonis drīkst beigties; garais var turpināties vēl pussekundi. Ņem vērā nobīdes simtdaļas; pārklājušies toņi skan nepārtraukti līdz pēdējā pārklājuma beigām tajā pašā audio izvadē.
+
+**Audio izvade**
+
+**Audio izvade** cilnē **Signāls** izvēlas ierīci katra skaņu atbalstoša logrīka regulārajiem laika signāliem. Logrīka
+laika josla, nobīde un intervāls nemainās. Ģeneratora izvēle un signāla skaļums joprojām ir kopīgi visai lietotnei
+cilnē **Programma**. Izvēloties **Sistēmas pīkstiens**, lauks paliek redzams, bet ir pelēkots un saglabā izvēlēto
+ierīci; **Iebūvēts ģenerators** to atkal iespējo. Windows Vista ģeneratoru izmanto automātiski.
+
+**Windows noklusējuma ierīce** seko pašreizējai Windows noklusējuma audio izvadei. Atsevišķi izvēlēta ierīce paliek
+izvēlēta arī pēc atvienošanas un sarakstā tiek parādīta kā **Ierīce nav pieejama**; tās signāli ir klusi, līdz ierīce
+ir pieejama vai izvēlēta cita izvade. Ierīču saraksts tiek atjaunināts, to izvēršot. Izvēle katram logrīkam tiek
+saglabāta atsevišķi reģistrā vai XML iestatījumos.
+
+Signāli tiek automātiski apvienoti katrā izvadē. Atsevišķi izvēlēta ierīce un uz to pašu ierīci norādoša izvēle
+**Windows noklusējuma ierīce** izmanto vienu izvadi. Dažādas ierīces darbojas neatkarīgi; tiek saglabāta sinusoīda,
+fāzes nepārtrauktība un toņu sākums un beigas nullē. Modinātāji, tostarp lietotnē atskaņotie faili un signāli pirms
+modinātāja, kā arī visas pārbaudes turpina izmantot Windows noklusējuma izvadi. Tie tiek apvienoti ar regulārajiem
+signāliem tikai kopīgā izvadē.
 
 ## Papildu pulksteņi
 
@@ -95,6 +117,10 @@ Peles rādītājs virs ekrāna pulksteņa un aptumšotajiem monitoriem pēc īsa
 Nepieciešams Microsoft Visual Studio ar MSVC v145 rīkkopu un Windows SDK. Atveriet `CalClock.slnx`, atlasiet `Release | x86` un būvējiet risinājumu. Izpildāmais fails tiek izveidots `Release\CalClock.exe`. Atbalstīta tikai Win32/x86 konfigurācija, jo integrācijai ar Windows pulksteņa vadīklu nepieciešama x86 saderība.
 
 Pēc būvēšanas `.\PackageRelease.ps1` izveido `CalClock-<version>-win32.zip`; versiju nolasa no `Release\CalClock.exe`. Arhīva saknē ir `CalClock.exe` un `license.txt`. Neobligātie parakstīšanas parametri `-SignerName`, `-SignToolPath` un `-TimestampServer` tiek norādīti palaižot. Esošs derīgs Authenticode paraksts tiek pārbaudīts un netiek aizstāts. Iepriekšējie CalClock ZIP arhīvi tiek noņemti katras palaišanas sākumā; parakstīšanas vai pārbaudes kļūda aptur pakošanu.
+
+Parakstīšanas parametru noklusējuma vērtības tiek lasītas arī no Windows lietotāja vides mainīgajiem:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Skaidri
+norādītiem komandrindas argumentiem ir priekšroka.
 
 ## Licence
 

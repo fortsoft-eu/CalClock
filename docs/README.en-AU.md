@@ -8,12 +8,12 @@ CalClock is a native Win32/x86 application for Windows Vista and later that disp
 
 - Up to 32 independently configured widgets
 - Per-widget language, time zone, time offset, visibility, and always-on-top state
-- Analog clocks with selectable face sizes and an optional second hand
+- Analog clocks based on the Windows `ClockWndMain` control, with platform-detected sizes and second-hand support
 - Configurable digital clocks with fonts, colours, opacity, padding, borders, an optional leading zero, and an optional transparent background
 - Native Windows calendars with selectable dates, four border styles, configurable border colour, week numbers, first-day settings, and 33 clipboard formats
 - Calendar-and-clock panels with up to two additional named clocks in independent time zones, separate clock-face sizes, four border styles, configurable border colour, UTC text, a leading-zero option, and separate fonts for each text row
 - Alarms with selectable weekdays, visual indication, internal audio playback, looping, local commands, and HTTP/HTTPS script calls
-- Per-clock audible time signals at 1, 5, 10, 15, 20, 30, or 60-minute intervals, with coincident signals merged into one sequence
+- Per-clock audible time signals at 1, 5, 10, 15, 20, 30, or 60-minute intervals, with coincident signals merged into one sequence on the same audio output
 - Per-clock Mute commands and a checked Mute all command in the notification-area menu
 - Optional automatic startup with Windows
 - Optional five-pixel snapping to work-area edges while dragging widgets, enabled by default, with edge attachment preserved when a widget changes size
@@ -114,9 +114,26 @@ Alarm pips are scheduled from the actual upcoming alarm time after time-zone con
 
 The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
 
-The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The 20-minute interval signals at :00, :20, and :40 according to that displayed time. The signal follows the **Greenwich Time Signal (GTS)** pattern: five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured; if any of their schedules meet at the same instant, CalClock plays only one shared sequence. Fractional widget offsets are respected, and overlapping widget, alarm, and test tones play continuously until the last overlap ends.
+The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The 20-minute interval signals at :00, :20, and :40 according to that displayed time. The signal follows the **Greenwich Time Signal (GTS)** pattern: five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured. Fractional widget offsets are respected. On each audio output, overlapping widget, alarm, and test tones play continuously until the last overlap ends.
 
-**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and **System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved. Holding the volume slider also plays a preview until the mouse is released, unless the button test is running. Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and so on. The preview and simultaneous widget or alarm time signals share a single tone. The sound choice is available only when the system supports both options.
+**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and **System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved. Holding the volume slider also plays a preview until the mouse is released, unless the button test is running. Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and so on. The sound choice is available only when the system supports both options.
+
+**Audio output**
+
+**Audio output** on the **Signal** tab selects a device for each sound-capable widget's regular time signals. This
+does not change the widget's time zone, offset, or interval. The generator choice and signal volume remain global on
+the **Application** tab. With **System beep**, the selector stays visible but greyed out and retains its device;
+**Built-in generator** enables it again. Windows Vista uses the generator automatically.
+
+**Windows default device** follows the current Windows default output. A specifically selected device remains selected
+if disconnected and appears as **Unavailable device**; its signals stay silent until it becomes available or another
+output is selected. The device list refreshes when opened. The selection is saved separately for each widget in
+registry or XML settings.
+
+Signals merge automatically for each output. An explicit device choice and **Windows default device** pointing to that
+same device share one output. Different devices operate independently; the sine waveform, continuous phase, and starts
+and ends at zero amplitude are preserved. Alarms, including internally played files and alarm time signals, and all
+tests continue to use the Windows default output. They merge with regular signals only on a shared output.
 
 Alarm and time-signal enablement can also be toggled in each sound-capable widget's context menu. The alarm item shows its time and, unless all days are selected, its active weekdays. The checked Mute command affects its widget and is reflected by Muted on the General tab. A standalone Calendar supports neither alarms, time signals nor muting. The notification-area command is named Mute all; pressing `M` on any widget performs the same global toggle. Global unmute restores only the widgets muted by the preceding global action. Internal audio continues silently and resumes when unmuted. A pip already in progress may finish, while subsequent pips are skipped until sound is enabled again. Non-audio commands and remote scripts are unaffected.
 
@@ -124,7 +141,7 @@ Alarm and time-signal enablement can also be toggled in each sound-capable widge
 
 Each widget menu contains the commands applicable to that type—visibility, always-on-top state, seconds, analog size, or date-copy format—followed by `Arrange in a grid`, Settings, Help, About, and Exit. The notification-area menu lists every widget with its ordinal number, then provides Show all, Hide all, and Mute all. The separately grouped `Arrange in a grid` command follows before the application commands.
 
-Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. CalClock ensures that at least one widget is visible after startup. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. The notification icon is registered again automatically if Windows Explorer restarts.
+Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. CalClock ensures that at least one widget is visible after startup. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. The notification icon is registered again automatically if Windows Explorer restarts. If the system `ClockWndMain` control does not support a second hand at the selected size, the Seconds command is disabled while the stored preference is retained for another supported size.
 
 ## Settings storage
 
@@ -156,6 +173,13 @@ Release\CalClock.exe
 ```
 
 Only the Win32/x86 configuration is supported. The project intentionally does not provide an x64 configuration because its integration with the Windows clock control requires x86 compatibility.
+
+After building, run `.\PackageRelease.ps1` to create `CalClock-<version>-win32.zip` containing the program and its
+licence.
+
+Signing parameters also take their defaults from Windows user environment variables: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Explicit command-line arguments take
+precedence.
 
 ## Licence
 

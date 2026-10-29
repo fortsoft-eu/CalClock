@@ -4,6 +4,10 @@
 
 CalClock on Windows Vista ja uuemate versioonide Win32/x86-rakendus, mis kuvab töölaual eraldi seadistatavaid hõljuvaid kelli ja kalendreid. See töötab olekualal ning toetab kuni 32 vidinat ja 36 keelevalikut; rakenduse ja iga vidina keel valitakse eraldi.
 
+Analoogkellad kasutavad Windowsi süsteemset juhtelementi `ClockWndMain`, tuvastades automaatselt saadaolevad
+suurused ja sekundiosuti toe. Kui valitud suurus ei toeta sekundiosutit, on käsk Sekundid keelatud, kuid
+salvestatud valik säilib mõne teise toetatud suuruse jaoks.
+
 ## Juhtimine
 
 Lohistage kella või paneeli hiire vasaku nupuga. Eraldi kalendrit saab lohistada vabast alast. Paremklõps vidinal või olekuala ikoonil avab menüü. Vasakklõps ikoonil peidab nähtavad vidinad; kui kõik on peidetud, taastab see ainult viimati peidetud vidinad.
@@ -58,9 +62,28 @@ Vidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, seku
 
 ## Kuuldav ajasignaal
 
-Signaal järgib Greenwichi ajasignaali (GTS): viis lühikest tooni viimase viie sekundi jooksul ja pikk toon täpsel ajahetkel. Vahekaardil Signaal on Ajasignaal lubatud ja intervallid 1, 5, 10, 15, 20, 30 või 60 minutit vidina kuvatava aja järgi. Vaikimisi on signaal väljas ja valitud tunnine intervall. Menüü lülitus säilitab intervalli. Ajapiir arvestab UTC-d, ajavööndit, nihet ja NTP-d. 20-minutilise intervalliga kõlab signaal :00, :20 ja :40. Samaaegsed vidina- ja äratussignaalid ühendatakse. Vaigistamisel võib praegune toon lõppeda; järgmised jäetakse vahele ja heli taastamisel kõlab alles järgmine kavandatud toon. Eraldi Kalender ei toeta äratust, ajasignaali ega vaigistamist.
+Signaal järgib Greenwichi ajasignaali (GTS): viis lühikest tooni viimase viie sekundi jooksul ja pikk toon täpsel ajahetkel. Vahekaardil Signaal on Ajasignaal lubatud ja intervallid 1, 5, 10, 15, 20, 30 või 60 minutit vidina kuvatava aja järgi. Vaikimisi on signaal väljas ja valitud tunnine intervall. Menüü lülitus säilitab intervalli. Ajapiir arvestab UTC-d, ajavööndit, nihet ja NTP-d. 20-minutilise intervalliga kõlab signaal :00, :20 ja :40. Vaigistamisel võib praegune toon lõppeda; järgmised jäetakse vahele ja heli taastamisel kõlab alles järgmine kavandatud toon. Eraldi Kalender ei toeta äratust, ajasignaali ega vaigistamist.
 
-Vahekaardi Rakendus Ajasignaali heli pakub Sisseehitatud generaatorit (vaikimisi) ja Süsteemi helisignaali. Valik kehtib kõigile vidinatele ja äratustele. Ajasignaali helitugevus näitab generaatori taset dB-des: parempoolne 0 dB on suurim moonutuseta siinusamplituud, −∞ dB vaikus ja vaikesäte −18 dB. Testi käivitab pideva prooviesituse ning Peata test lõpetab selle. Testida saab mõlemat heli; testi ei salvestata. Liuguri hoidmine esitab samuti heli kuni hiire vabastamiseni, kui nuputest pole käimas. Esitus algab järgmisel täissekundil: lühike toon igal sekundil ja pikk toon :00, :05, :10 jne. Kõik samaaegsed proovi-, vidina- ja äratussignaalid jagavad ühte tooni. Peatamine lubab praegusel toonil lõppeda; pikk toon võib kesta veel pool sekundit. Arvestatakse ka nihke sajandikke ning kattuvad toonid kõlavad katkestuseta viimase kattumise lõpuni.
+Vahekaardi Rakendus Ajasignaali heli pakub Sisseehitatud generaatorit (vaikimisi) ja Süsteemi helisignaali. Valik kehtib kõigile vidinatele ja äratustele. Ajasignaali helitugevus näitab generaatori taset dB-des: parempoolne 0 dB on suurim moonutuseta siinusamplituud, −∞ dB vaikus ja vaikesäte −18 dB. Testi käivitab pideva prooviesituse ning Peata test lõpetab selle. Testida saab mõlemat heli; testi ei salvestata. Liuguri hoidmine esitab samuti heli kuni hiire vabastamiseni, kui nuputest pole käimas. Esitus algab järgmisel täissekundil: lühike toon igal sekundil ja pikk toon :00, :05, :10 jne. Peatamine lubab praegusel toonil lõppeda; pikk toon võib kesta veel pool sekundit. Arvestatakse ka nihke sajandikke ning kattuvad toonid kõlavad katkestuseta viimase kattumise lõpuni samal heliväljundil.
+
+**Heliväljund**
+
+**Heliväljund** vahekaardil **Signaal** valib seadme iga helitoega vidina korrapäraste ajasignaalide jaoks. Vidina
+ajavöönd, nihe ja intervall ei muutu. Generaatori valik ja signaali helitugevus jäävad vahekaardil **Rakendus** kogu
+rakenduse jaoks ühisteks. Valikuga **Süsteemi helisignaal** jääb väli nähtavaks, kuid on hall ja keelatud ning
+säilitab valitud seadme; **Sisseehitatud generaator** lubab selle uuesti. Windows Vista kasutab generaatorit
+automaatselt.
+
+**Windowsi vaikeseade** järgib Windowsi praegust vaikeheliväljundit. Eraldi valitud seade jääb valituks ka
+lahtiühendamisel ja kuvatakse nimega **Seade pole saadaval**; selle signaalid on vaiksed, kuni seade on saadaval või
+valitakse teine väljund. Seadmeloendit värskendatakse selle avamisel. Valik salvestatakse iga vidina jaoks eraldi
+registrisse või XML-sätetesse.
+
+Signaalid ühendatakse automaatselt iga väljundi jaoks. Eraldi valitud seade ja samale seadmele viitav **Windowsi
+vaikeseade** kasutavad ühist väljundit. Erinevad seadmed töötavad sõltumatult; siinuslaine, faasi pidevus ning toonide
+algus ja lõpp nullis säilivad. Äratused, sealhulgas rakenduses esitatavad failid ja äratusele eelnevad ajasignaalid,
+ning kõik proovid kasutavad endiselt Windowsi vaikeväljundit. Need ühendatakse korrapäraste signaalidega ainult ühisel
+väljundil.
 
 ## Lisakellad
 
@@ -95,6 +118,10 @@ Hiirekursor peitub ekraanikella või tumendatud kuvarite kohal pärast lühikest
 Vaja on Microsoft Visual Studiot MSVC v145 tööriistakomplektiga ja Windows SDK-d. Avage `CalClock.slnx`, valige `Release | x86` ja koostage lahendus. Käivitatav fail tekib asukohta `Release\CalClock.exe`. Toetatakse ainult Win32/x86 konfiguratsiooni, sest Windowsi kellajuhtelemendi kasutamine nõuab x86-ühilduvust.
 
 Pärast koostamist loob `.\PackageRelease.ps1` arhiivi `CalClock-<version>-win32.zip`; versioon loetakse failist `Release\CalClock.exe`. Arhiivi juures on `CalClock.exe` ja `license.txt`. Soovi korral antakse allkirjastamisparameetrid `-SignerName`, `-SignToolPath` ja `-TimestampServer` käivitamisel. Olemasolevat sobivat Authenticode-allkirja kontrollitakse ja seda ei asendata. Varasemad CalClocki ZIP-arhiivid eemaldatakse iga käivituse alguses; allkirjastamis- või kontrollitõrge peatab pakkimise.
+
+Allkirjastamisparameetrite vaikeväärtused loetakse ka Windowsi kasutaja keskkonnamuutujatest: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Selgesõnalised käsureaargumendid on
+ülimuslikud.
 
 ## Litsents
 

@@ -4,6 +4,11 @@
 
 CalClock is een native Win32/x86-toepassing voor Windows Vista en nieuwer met afzonderlijk instelbare zwevende klokken en kalenders op het bureaublad. Het programma werkt vanuit het systeemvak en ondersteunt maximaal 32 widgets en 36 taalkeuzes; de taal van de toepassing en elke widget is apart instelbaar.
 
+Analoge klokken gebruiken het Windows-systeembesturingselement `ClockWndMain`, met automatische detectie van
+de beschikbare afmetingen en ondersteuning voor de secondewijzer. Als de gekozen afmeting geen secondewijzer
+ondersteunt, is de opdracht Seconden uitgeschakeld, maar blijft de opgeslagen keuze behouden voor een andere
+ondersteunde afmeting.
+
 ## Bediening
 
 Sleep een klok of paneel met de linkermuisknop. Sleep een losse kalender via de vrije ruimte. Klik met rechts op een widget of het pictogram in het systeemvak voor het menu. Klik met links op het pictogram om zichtbare widgets te verbergen; als alles verborgen is, worden alleen de laatst verborgen widgets hersteld.
@@ -58,9 +63,29 @@ Een widgetmenu bevat toepasselijke keuzes voor zichtbaarheid, Altijd op voorgron
 
 ## Hoorbaar tijdsignaal
 
-Het signaal volgt Greenwich Time Signal (GTS): vijf korte tonen tijdens de laatste vijf seconden en een lange toon precies op de tijdgrens. Signaal biedt Tijdsignaal ingeschakeld en intervallen van 1, 5, 10, 15, 20, 30 of 60 minuten volgens de widgettijd. Aanvankelijk staat het uit met een uurinterval geselecteerd. Schakelen via het menu behoudt het interval. UTC, tijdzone, verschuiving en NTP tellen mee; bij 20 minuten klinkt het op :00, :20 en :40. Gelijktijdige widget- en alarmsignalen worden samengevoegd. Na dempen mag de huidige toon eindigen; volgende tonen worden overgeslagen tot de eerstvolgende geplande toon na opheffen. Een losse Kalender heeft geen alarm, tijdsignaal of demping.
+Het signaal volgt Greenwich Time Signal (GTS): vijf korte tonen tijdens de laatste vijf seconden en een lange toon precies op de tijdgrens. Signaal biedt Tijdsignaal ingeschakeld en intervallen van 1, 5, 10, 15, 20, 30 of 60 minuten volgens de widgettijd. Aanvankelijk staat het uit met een uurinterval geselecteerd. Schakelen via het menu behoudt het interval. UTC, tijdzone, verschuiving en NTP tellen mee; bij 20 minuten klinkt het op :00, :20 en :40. Na dempen mag de huidige toon eindigen; volgende tonen worden overgeslagen tot de eerstvolgende geplande toon na opheffen. Een losse Kalender heeft geen alarm, tijdsignaal of demping.
 
-Geluid tijdsignaal op Toepassing biedt Ingebouwde generator (standaard) en Systeempiep voor alle widgets en alarmen. Volume tijdsignaal toont het generatorniveau in dB: rechts is 0 dB de maximale onvervormde sinusamplitude, −∞ dB is stilte en −18 dB de standaard. Testen start een voortdurend voorbeeld, Test stoppen beëindigt dit. Beide geluiden zijn te testen; de test wordt niet opgeslagen. De schuifregelaar vasthouden geeft ook een voorbeeld tot de muis wordt losgelaten, tenzij de knoptest loopt. Het afspelen begint op de volgende hele seconde: een korte toon elke seconde en een lange op :00, :05, :10 enzovoort. Gelijktijdige test-, widget- en alarmsignalen delen één toon. Stoppen laat de huidige toon eindigen; een lange kan nog een halve seconde duren. Honderdsten in de verschuiving tellen mee; overlappende tonen klinken onafgebroken tot de laatste overlap eindigt.
+Geluid tijdsignaal op Toepassing biedt Ingebouwde generator (standaard) en Systeempiep voor alle widgets en alarmen. Volume tijdsignaal toont het generatorniveau in dB: rechts is 0 dB de maximale onvervormde sinusamplitude, −∞ dB is stilte en −18 dB de standaard. Testen start een voortdurend voorbeeld, Test stoppen beëindigt dit. Beide geluiden zijn te testen; de test wordt niet opgeslagen. De schuifregelaar vasthouden geeft ook een voorbeeld tot de muis wordt losgelaten, tenzij de knoptest loopt. Het afspelen begint op de volgende hele seconde: een korte toon elke seconde en een lange op :00, :05, :10 enzovoort. Stoppen laat de huidige toon eindigen; een lange kan nog een halve seconde duren. Honderdsten in de verschuiving tellen mee; overlappende tonen klinken onafgebroken tot de laatste overlap eindigt op dezelfde audio-uitgang.
+
+**Audio-uitgang**
+
+**Audio-uitgang** op het tabblad **Signaal** kiest een apparaat voor de regelmatige tijdsignalen van elke widget met
+geluid. Tijdzone, verschuiving en interval van de widget veranderen niet. De generatorkeuze en het signaalvolume
+blijven algemeen ingesteld op het tabblad **Toepassing**. Bij **Systeempiep** blijft het veld zichtbaar maar grijs en
+uitgeschakeld, met behoud van het gekozen apparaat; **Ingebouwde generator** schakelt het weer in. Windows Vista
+gebruikt de generator automatisch.
+
+**Windows-standaardapparaat** volgt de huidige standaarduitgang van Windows. Een uitdrukkelijk gekozen apparaat blijft
+na loskoppelen geselecteerd en verschijnt als **Apparaat niet beschikbaar**; de signalen blijven stil totdat het
+beschikbaar is of een andere uitgang wordt gekozen. De apparatenlijst wordt bij het openen vernieuwd. De keuze wordt
+per widget afzonderlijk opgeslagen in het register of de XML-instellingen.
+
+Signalen worden automatisch per uitgang samengevoegd. Een uitdrukkelijk gekozen apparaat en
+**Windows-standaardapparaat** dat naar hetzelfde apparaat verwijst, delen één uitgang. Verschillende apparaten werken
+onafhankelijk; de sinusgolf, doorlopende fase en het begin en einde van tonen bij nul blijven behouden. Alarmen,
+inclusief intern afgespeelde bestanden en tijdsignalen vóór het alarm, en alle tests blijven de
+Windows-standaarduitgang gebruiken. Ze worden alleen op een gemeenschappelijke uitgang met regelmatige signalen
+samengevoegd.
 
 ## Extra klokken
 
@@ -95,6 +120,10 @@ De muisaanwijzer verdwijnt na korte inactiviteit boven de schermklok en verduist
 Microsoft Visual Studio met de MSVC v145-toolset en Windows SDK zijn vereist. Open `CalClock.slnx`, kies `Release | x86` en bouw de oplossing. Het uitvoerbare bestand staat in `Release\CalClock.exe`. Alleen Win32/x86 wordt ondersteund omdat de integratie met de Windows-klokbesturing x86-compatibiliteit vereist.
 
 Na het bouwen maakt `.\PackageRelease.ps1` `CalClock-<version>-win32.zip`; de versie wordt uit `Release\CalClock.exe` gelezen. Het archief bevat `CalClock.exe` en `license.txt` direct in de hoofdmap. Optionele ondertekeningsparameters `-SignerName`, `-SignToolPath` en `-TimestampServer` worden bij uitvoering opgegeven. Een bestaande geldige Authenticode-handtekening wordt gecontroleerd en niet vervangen. Eerdere CalClock-ZIP-pakketten worden aan het begin van elke uitvoering verwijderd; fouten bij ondertekenen of controleren stoppen het verpakken.
+
+Standaardwaarden voor ondertekeningsparameters worden ook uit de Windows-gebruikersomgevingsvariabelen gelezen:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Expliciete
+opdrachtregelargumenten hebben voorrang.
 
 ## Licentie
 

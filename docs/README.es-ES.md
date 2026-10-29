@@ -8,7 +8,7 @@ CalClock es una aplicación nativa Win32/x86 para Windows Vista y versiones post
 
 - Hasta 32 widgets configurables de forma independiente
 - Idioma, zona horaria, desfase, visibilidad y opción de mantener siempre encima por widget
-- Relojes analógicos con tamaño de esfera seleccionable y segundero opcional
+- Relojes analógicos basados en el control `ClockWndMain` de Windows, con detección de tamaños compatibles y soporte de segundero
 - Relojes digitales con fuentes, colores, opacidad, márgenes interiores, bordes, cero inicial opcional y fondo transparente opcional
 - Calendarios nativos de Windows con selección de fechas, cuatro estilos de borde, color de borde configurable, números de semana, elección del primer día y 33 formatos de copia
 - Paneles de calendario y reloj con hasta dos relojes adicionales con nombre y zonas independientes, tamaños de esfera separados, cuatro estilos de borde, color configurable, texto UTC, cero inicial y una fuente distinta por línea de texto
@@ -114,17 +114,36 @@ Los pitidos de la alarma se programan según el instante real de la próxima ala
 
 Prueba muestra la indicación visual y prueba asíncronamente el archivo, comando, audio y URL del script remoto. Si está seleccionada la señal horaria de alarma, reproduce también la secuencia completa de seis pitidos; Detener prueba termina el audio interno y la vista previa de señal.
 
-La pestaña Señal incluye la casilla Señal horaria activa y botones de opción para intervalos de 1, 5, 10, 15, 20, 30 o 60 minutos según la hora mostrada por el widget. La señal está inicialmente desactivada y el intervalo seleccionado es de una hora. Desactivar y activar Señal en el menú del widget conserva el intervalo. El menú muestra la hora de la alarma y el intervalo de la señal entre paréntesis. El intervalo de 20 minutos señala :00, :20 y :40 de esa hora. El patrón es el **Greenwich Time Signal (GTS)**: cinco pitidos cortos marcan los últimos cinco segundos y uno más largo el límite exacto. Se respetan zona, UTC, desfases y corrección NTP actual. La señal de alarma y la pestaña Señal se configuran por separado; si sus horarios coinciden, CalClock reproduce una única secuencia compartida. Se respetan desfases fraccionarios, y los tonos superpuestos de widgets, alarmas y pruebas suenan continuamente hasta el fin del último solapamiento.
+La pestaña Señal incluye la casilla Señal horaria activa y botones de opción para intervalos de 1, 5, 10, 15, 20, 30 o 60 minutos según la hora mostrada por el widget. La señal está inicialmente desactivada y el intervalo seleccionado es de una hora. Desactivar y activar Señal en el menú del widget conserva el intervalo. El menú muestra la hora de la alarma y el intervalo de la señal entre paréntesis. El intervalo de 20 minutos señala :00, :20 y :40 de esa hora. El patrón es el **Greenwich Time Signal (GTS)**: cinco pitidos cortos marcan los últimos cinco segundos y uno más largo el límite exacto. Se respetan zona, UTC, desfases y corrección NTP actual. La señal de alarma y la pestaña Señal se configuran por separado. Se respetan desfases fraccionarios, y los tonos superpuestos de widgets, alarmas y pruebas suenan continuamente hasta el fin del último solapamiento en la misma salida de audio.
 
-**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o **Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor predeterminado es **−18 dB**. El pitido actual termina normalmente; uno largo puede tardar hasta medio segundo. **Prueba**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05, :10, etc. La prueba y las señales simultáneas comparten un único tono. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
+**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o **Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor predeterminado es **−18 dB**. El pitido actual termina normalmente; uno largo puede tardar hasta medio segundo. **Prueba**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05, :10, etc. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
 
-La alarma y señal también se activan desde el menú contextual de cada widget con sonido. La entrada de alarma muestra su hora y, si no están seleccionados todos, sus días activos. Silenciado afecta al widget y coincide con la opción de General. Un Calendario independiente no admite alarma, señal horaria ni silencio. El comando del área de notificación es Silenciar todo; `M` sobre cualquier widget hace lo mismo. Desactivar la sordina global solo restaura los widgets silenciados por la acción global anterior. El audio interno continúa en silencio y vuelve a oírse al reactivarlo. Un pitido iniciado puede terminar; los siguientes se omiten hasta habilitar el sonido. Los comandos no sonoros y los scripts remotos no se ven afectados.
+**Salida de audio**
+
+**Salida de audio** en la pestaña **Señal** selecciona el dispositivo para las señales horarias periódicas de cada
+widget con sonido. No cambia la zona horaria, el desfase ni el intervalo del widget. La elección del generador y el
+volumen siguen siendo globales en la pestaña **Aplicación**. Con **Pitido del sistema**, el selector permanece visible
+pero deshabilitado y conserva el dispositivo elegido; **Generador integrado** lo habilita de nuevo. Windows Vista
+utiliza el generador automáticamente.
+
+**Dispositivo predeterminado de Windows** sigue la salida predeterminada actual de Windows. Un dispositivo elegido
+expresamente permanece seleccionado al desconectarse y aparece como **Dispositivo no disponible**; sus señales quedan
+en silencio hasta que esté disponible o se elija otra salida. La lista de dispositivos se actualiza al abrirla. La
+selección se guarda por separado para cada widget en el Registro o en los ajustes XML.
+
+Las señales se combinan automáticamente por salida. Un dispositivo elegido expresamente y **Dispositivo predeterminado
+de Windows** que apunte a ese mismo dispositivo comparten una salida. Los dispositivos distintos funcionan de forma
+independiente; se conservan la onda sinusoidal, la continuidad de fase y el inicio y final de los tonos en cero. Las
+alarmas, incluidos los archivos reproducidos internamente y las señales previas a la alarma, y todas las pruebas
+siguen usando la salida predeterminada de Windows. Solo se combinan con señales periódicas en una salida común.
+
+La alarma y señal también se activan desde el menú contextual de cada widget con sonido. La entrada de alarma muestra su hora y, si no están seleccionados todos, sus días activos. Un Calendario independiente no admite alarma, señal horaria ni silencio. El comando del área de notificación es Silenciar todo; `M` sobre cualquier widget hace lo mismo. Desactivar la sordina global solo restaura los widgets silenciados por la acción global anterior. El audio interno continúa en silencio y vuelve a oírse al reactivarlo. Un pitido iniciado puede terminar; los siguientes se omiten hasta habilitar el sonido. Los comandos no sonoros y los scripts remotos no se ven afectados.
 
 ## Configuración y menús
 
 Cada menú contiene los comandos pertinentes al tipo —visibilidad, siempre encima, segundos, tamaño analógico o formato de fecha copiada— y luego `Alinear en cuadrícula`, Configuración, Ayuda, Acerca de y Salir. El menú de notificación enumera los widgets con su número y ofrece Mostrar todo, Ocultar todo y Silenciar todo. `Alinear en cuadrícula` aparece en un grupo separado antes de los comandos de la aplicación.
 
-Mostrar o restaurar widgets los sitúa delante de otras ventanas sin cambiar su opción de estar siempre encima. CalClock garantiza al menos un widget visible al inicio. Un segundo lanzamiento activa la instancia existente y restaura los widgets ocultados más recientemente si ninguno está visible. El icono de notificación se registra de nuevo automáticamente al reiniciar el Explorador Windows.
+Mostrar o restaurar widgets los sitúa delante de otras ventanas sin cambiar su opción de estar siempre encima. CalClock garantiza al menos un widget visible al inicio. Un segundo lanzamiento activa la instancia existente y restaura los widgets ocultados más recientemente si ninguno está visible. El icono de notificación se registra de nuevo automáticamente al reiniciar el Explorador Windows. Si `ClockWndMain` no admite segundero en el tamaño seleccionado, Segundos se desactiva, pero la preferencia se conserva para otro tamaño compatible.
 
 ## Almacenamiento de ajustes
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Solo se admite Win32/x86. El proyecto no proporciona deliberadamente una configuración x64, porque la integración con el control de reloj Windows requiere compatibilidad x86.
+
+Después de compilar, ejecute `.\PackageRelease.ps1` para crear `CalClock-<version>-win32.zip` con el programa y su
+licencia.
+
+Los parámetros de firma también toman sus valores predeterminados de las variables de entorno de usuario de Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Los argumentos
+explícitos de la línea de comandos tienen prioridad.
 
 ## Licencia
 

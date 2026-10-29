@@ -8,7 +8,7 @@ CalClock er et Win32/x86-program for Windows Vista og nyere som viser flyttbare 
 
 - Opptil 32 uavhengig konfigurerbare widgeter
 - Eget språk, tidssone, tidsforskyvning, synlighet og alltid øverst-innstilling for hver widget
-- Analoge klokker med valgbare urskivestørrelser og valgfri sekundviser
+- Analoge klokker basert på Windows-kontrollen `ClockWndMain`, med automatisk gjenkjenning av tilgjengelige størrelser og støtte for sekundviser
 - Digitale klokker med skrifter, farger, ugjennomsiktighet, innvendig avstand, rammer, valgfri innledende null og valgfri gjennomsiktig bakgrunn
 - Innebygde Windows-kalendere med datovalg, fire rammestiler, justerbar rammefarge, ukenumre, valg av første ukedag og 33 kopieringsformater
 - Kalender- og klokkepaneler med opptil to ekstra navngitte klokker i egne tidssoner, separate urskivestørrelser, fire rammestiler, justerbar farge, UTC-tekst, innledende null og egen skrift for hver tekstlinje
@@ -114,17 +114,34 @@ Alarmtonene planlegges ut fra det faktiske tidspunktet for neste alarm etter tid
 
 Test viser den visuelle indikasjonen og tester fil, kommando, lyd og ekstern skriptadresse asynkront. Hvis alarmens tidssignal er valgt, spilles også hele sekvensen med seks toner; Stopp test avslutter intern lyd og signalforhåndsvisning.
 
-Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter etter widgetens viste tid. Signalet er først slått av, med et intervall på én time valgt. Å slå Signal av og på i widgetmenyen beholder intervallet. Menyen viser alarmtid og signalintervall i parentes. eller 60. minutt etter widgetens viste tid. 20-minuttersintervallet gir signal ved :00, :20 og :40. Mønsteret er **Greenwich Time Signal (GTS)**: fem korte toner markerer de siste fem sekundene og én lengre den nøyaktige grensen. Tidssoner, UTC, forskyvninger og gjeldende NTP-korreksjon tas med. Alarmens signal og Signal-fanen er uavhengige; hvis tidspunkter sammenfaller, spiller CalClock én felles sekvens. Forskyvninger på deler av sekunder tas med, og overlappende widget-, alarm- og testtoner fortsetter uten avbrudd til siste overlapping er ferdig.
+Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter etter widgetens viste tid. Signalet er først slått av, med et intervall på én time valgt. Å slå Signal av og på i widgetmenyen beholder intervallet. Menyen viser alarmtid og signalintervall i parentes. eller 60. minutt etter widgetens viste tid. 20-minuttersintervallet gir signal ved :00, :20 og :40. Mønsteret er **Greenwich Time Signal (GTS)**: fem korte toner markerer de siste fem sekundene og én lengre den nøyaktige grensen. Tidssoner, UTC, forskyvninger og gjeldende NTP-korreksjon tas med. Alarmens signal og Signal-fanen er uavhengige. Forskyvninger på deler av sekunder tas med, og overlappende widget-, alarm- og testtoner fortsetter uten avbrudd til siste overlapping er ferdig på samme lydutgang.
 
-**Lyd for tidssignal** på Program tilbyr **Innebygd generator** (standard) og **Systempip**. Valget gjelder alle tidssignaler, også alarmene, og lagres globalt. For **Innebygd generator** viser **Volum for tidssignal** nivået i dB for hele programmet. Høyre endepunkt er **0 dB**, maksimal uforvrengt sinusamplitude; stillhet er **−∞ dB**. Standardvolumet er **−18 dB**. Desibelskalaen har −18 dB i midten. Pågående tone får avsluttes; en lang tone kan bruke opptil et halvt sekund. **Test** ved **Lyd for tidssignal** starter kontinuerlig forhåndsvisning; **Stopp test** avslutter den. Begge lydmåter kan testes, og testtilstanden lagres ikke. Å holde volumglidebryteren nede starter også forhåndsvisning til musen slippes, med mindre knappetesten kjører. Avspilling begynner på neste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Forhåndsvisning og samtidige widget- eller alarmsignaler deler én tone. Lydvalget er bare tilgjengelig hvis systemet støtter begge metodene.
+**Lyd for tidssignal** på Program tilbyr **Innebygd generator** (standard) og **Systempip**. Valget gjelder alle tidssignaler, også alarmene, og lagres globalt. For **Innebygd generator** viser **Volum for tidssignal** nivået i dB for hele programmet. Høyre endepunkt er **0 dB**, maksimal uforvrengt sinusamplitude; stillhet er **−∞ dB**. Standardvolumet er **−18 dB**. Desibelskalaen har −18 dB i midten. Pågående tone får avsluttes; en lang tone kan bruke opptil et halvt sekund. **Test** ved **Lyd for tidssignal** starter kontinuerlig forhåndsvisning; **Stopp test** avslutter den. Begge lydmåter kan testes, og testtilstanden lagres ikke. Å holde volumglidebryteren nede starter også forhåndsvisning til musen slippes, med mindre knappetesten kjører. Avspilling begynner på neste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Lydvalget er bare tilgjengelig hvis systemet støtter begge metodene.
 
-Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med lyd. Alarmoppføringen viser tiden og aktive ukedager hvis ikke alle er valgt. Demp gjelder widgeten og gjenspeiles på Generelt. En frittstående Kalender støtter ikke alarm, tidssignal eller demping. I systemstatusfeltet heter kommandoen Demp alle; `M` på en widget gjør samme globale endring. Global oppheving gjenoppretter bare widgeter dempet av forrige globale handling. Intern lyd fortsetter lydløst og blir hørbar igjen når dempingen oppheves. En pågående tone kan fullføres; senere toner hoppes over til lyden aktiveres. Andre kommandoer og eksterne skript påvirkes ikke.
+**Lydutgang**
+
+**Lydutgang** på fanen **Signal** velger enhet for de regelmessige tidssignalene fra hver widget med lydstøtte.
+Widgetens tidssone, forskyvning og intervall endres ikke. Valg av generator og signalvolum er fortsatt globale på
+fanen **Program**. Med **Systempip** forblir feltet synlig, men nedtonet, og beholder valgt enhet; **Innebygd
+generator** aktiverer det igjen. Windows Vista bruker generatoren automatisk.
+
+**Windows-standardenhet** følger den gjeldende standardutgangen i Windows. En bestemt enhet forblir valgt hvis den
+kobles fra, og vises som **Enheten er ikke tilgjengelig**; signalene er stille til den er tilgjengelig eller en annen
+utgang velges. Enhetslisten oppdateres når den åpnes. Valget lagres separat for hver widget i registeret eller
+XML-innstillingene.
+
+Signaler slås automatisk sammen for hver utgang. En bestemt enhet og **Windows-standardenhet** som peker på samme
+enhet, deler én utgang. Ulike enheter arbeider uavhengig; sinuskurven, sammenhengende fase og tonenes start og slutt
+ved null bevares. Alarmer, inkludert internt avspilte filer og tidssignaler før alarmen, samt alle tester bruker
+fortsatt Windows-standardutgangen. De slås bare sammen med regelmessige signaler på en felles utgang.
+
+Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med lyd. Alarmoppføringen viser tiden og aktive ukedager hvis ikke alle er valgt. Demp gjelder widgeten og gjenspeiles på Generelt. En frittstående Kalender støtter ikke alarm, tidssignal eller demping. I systemstatusfeltet heter kommandoen Demp alle. Global oppheving gjenoppretter bare widgeter dempet av forrige globale handling. Intern lyd fortsetter lydløst og blir hørbar igjen når dempingen oppheves. En pågående tone kan fullføres; senere toner hoppes over til lyden aktiveres. Andre kommandoer og eksterne skript påvirkes ikke.
 
 ## Innstillinger og menyer
 
 Hver widgetmeny inneholder relevante kommandoer — synlighet, alltid øverst, sekunder, analog størrelse eller datokopieringsformat — etterfulgt av `Plasser i rutenett`, Innstillinger, Hjelp, Om og Avslutt. Systemstatusmenyen viser alle widgeter med nummer, deretter Vis alle, Skjul alle og Demp alle. Den separat grupperte `Plasser i rutenett` følger før programkommandoene.
 
-Visning eller gjenoppretting bringer widgeter foran andre vinduer uten å endre alltid øverst. CalClock sørger for minst én synlig widget etter oppstart. En ny oppstart aktiverer eksisterende instans og gjenoppretter sist skjulte widgeter hvis ingen er synlige. Ikonet registreres automatisk på nytt når Windows Utforsker starter på nytt.
+Visning eller gjenoppretting bringer widgeter foran andre vinduer uten å endre alltid øverst. CalClock sørger for minst én synlig widget etter oppstart. En ny oppstart aktiverer eksisterende instans og gjenoppretter sist skjulte widgeter hvis ingen er synlige. Ikonet registreres automatisk på nytt når Windows Utforsker starter på nytt. Hvis `ClockWndMain` ikke støtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget beholdes for en annen støttet størrelse.
 
 ## Lagring av innstillinger
 
@@ -158,6 +175,12 @@ Release\CalClock.exe
 ```
 
 Bare Win32/x86 støttes. Prosjektet tilbyr med hensikt ingen x64-konfigurasjon fordi integrasjonen med Windows-klokkekontrollen krever x86-kompatibilitet.
+
+Kjør `.\PackageRelease.ps1` etter bygging for å opprette `CalClock-<version>-win32.zip` med programmet og lisensen.
+
+Standardverdier for signeringsparametere leses også fra Windows-brukerens miljøvariabler: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Uttrykkelige kommandolinjeargumenter
+har forrang.
 
 ## Lisens
 

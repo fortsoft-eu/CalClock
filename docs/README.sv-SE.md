@@ -8,7 +8,7 @@ CalClock är ett nativt Win32/x86-program för Windows Vista och senare som visa
 
 - Upp till 32 widgetar med oberoende inställningar
 - Eget språk, tidszon, tidsförskjutning, synlighet och läge alltid överst för varje widget
-- Analoga klockor med valbar urtavlestorlek och valfri sekundvisare
+- Analoga klockor baserade på Windows-kontrollen `ClockWndMain`, med automatisk identifiering av tillgängliga storlekar och stöd för sekundvisare
 - Digitala klockor med teckensnitt, färger, opacitet, inre marginaler, ramar, valfri inledande nolla och genomskinlig bakgrund
 - Inbyggda Windows-kalendrar med datumval, fyra ramstilar, justerbar ramfärg, veckonummer, val av första veckodag och 33 kopieringsformat
 - Kalender- och klockpaneler med upp till två extra namngivna klockor i egna tidszoner, separata urtavlestorlekar, fyra ramstilar, justerbar färg, UTC-text, inledande nolla och eget teckensnitt för varje textrad
@@ -114,9 +114,26 @@ Alarmtonerna planeras efter den faktiska tidpunkten för nästa alarm, efter tid
 
 Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrskriptadress asynkront. Om alarmets tidssignal valts spelas också hela sekvensen med sex toner; Stoppa test avslutar internt ljud och signalens förhandsvisning.
 
-Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. 20-minutersintervallet ljuder vid :00, :20 och :40. Mönstret är **Greenwich Time Signal (GTS)**: fem korta toner markerar de sista fem sekunderna och en längre den exakta gränsen. Tidszoner, UTC, förskjutningar och aktuell NTP-korrigering beaktas. Alarmets signal och Signal-fliken är oberoende; sammanfaller tiderna spelar CalClock en gemensam sekvens. Även förskjutningar med delar av sekunder beaktas, och överlappande widget-, alarm- och testtoner fortsätter oavbrutet tills sista överlappningen slutar.
+Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. 20-minutersintervallet ljuder vid :00, :20 och :40. Mönstret är **Greenwich Time Signal (GTS)**: fem korta toner markerar de sista fem sekunderna och en längre den exakta gränsen. Tidszoner, UTC, förskjutningar och aktuell NTP-korrigering beaktas. Alarmets signal och Signal-fliken är oberoende. Även förskjutningar med delar av sekunder beaktas, och överlappande widget-, alarm- och testtoner fortsätter oavbrutet tills sista överlappningen slutar på samma ljudutgång.
 
-**Ljud för tidssignal** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Volym för tidssignal** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Ljud för tidssignal** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. Förhandsvisning och samtidiga widget- eller alarmsignaler delar en enda ton. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
+**Ljud för tidssignal** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Volym för tidssignal** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Ljud för tidssignal** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
+
+**Ljudutgång**
+
+**Ljudutgång** på fliken **Signal** väljer enhet för de regelbundna tidssignalerna från varje widget med ljudstöd.
+Widgetens tidszon, förskjutning och intervall ändras inte. Valet av generator och signalvolym är fortfarande globala
+på fliken **Program**. Med **Systempip** är fältet fortfarande synligt men nedtonat och behåller vald enhet; **Inbyggd
+generator** aktiverar det igen. Windows Vista använder generatorn automatiskt.
+
+**Windows standardenhet** följer den aktuella standardutgången i Windows. En särskilt vald enhet förblir vald om den
+kopplas bort och visas som **Enheten är inte tillgänglig**; dess signaler är tysta tills den är tillgänglig eller en
+annan utgång väljs. Enhetslistan uppdateras när den öppnas. Valet sparas separat för varje widget i registret eller
+XML-inställningarna.
+
+Signaler slås automatiskt samman för varje utgång. En särskilt vald enhet och **Windows standardenhet** som pekar på
+samma enhet delar en utgång. Olika enheter arbetar oberoende; sinusvågen, sammanhängande fas samt tonernas början och
+slut vid noll bevaras. Alarm, inklusive internt spelade filer och tidssignaler före alarmet, och alla tester använder
+fortfarande Windows standardutgång. De slås bara samman med regelbundna signaler på en gemensam utgång.
 
 Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 
@@ -124,7 +141,7 @@ Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Ala
 
 Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller datumkopieringsformat — följt av `Ordna i rutnät`, Inställningar, Hjälp, Om och Avsluta. Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat grupperade `Ordna i rutnät` följer före programkommandona.
 
-Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om.
+Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om. Om `ClockWndMain` inte stöder sekundvisare vid vald storlek inaktiveras Sekunder, men det sparade valet behålls för en annan kompatibel storlek.
 
 ## Lagring av inställningar
 
@@ -156,6 +173,13 @@ Release\CalClock.exe
 ```
 
 Endast Win32/x86 stöds. Projektet erbjuder avsiktligt ingen x64-konfiguration eftersom integrationen med Windows klockkontroll kräver x86-kompatibilitet.
+
+Kör `.\PackageRelease.ps1` efter kompileringen för att skapa `CalClock-<version>-win32.zip` med programmet och
+licensen.
+
+Standardvärden för signeringsparametrar läses också från Windows-användarens miljövariabler: `BUILD_SIGNER_NAME`,
+`BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Uttryckliga kommandoradsargument har
+företräde.
 
 ## Licens
 

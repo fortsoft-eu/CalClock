@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.6.3.1
+Last modified for version 1.7.0.0
 #>
 
 [CmdletBinding()]
@@ -57,7 +57,8 @@ $projects = @(
 
 # Remove archives from previous runs before packaging. A later failure must not leave a stale ZIP behind.
 $staleArchives = @($archive)
-$versionedArchivePattern = "^{0}-\d+\.\d+\.\d+\.\d+-{1}\.zip`$" -f [regex]::Escape($solutionName), [regex]::Escape($platform)
+$versionedArchivePattern = "^{0}-\d+\.\d+\.\d+\.\d+-{1}\.zip`$" -f
+    [regex]::Escape($solutionName), [regex]::Escape($platform)
 $versionedArchives = Get-ChildItem -LiteralPath $root -Filter "$solutionName-*-$platform.zip" -File
 foreach ($versionedArchive in $versionedArchives) {
     if ($versionedArchive.Name -match $versionedArchivePattern) {
@@ -86,11 +87,12 @@ function Get-PackageVersion {
         throw "The Release executable has no file version: $Path"
     }
 
-    return "{0}.{1}.{2}.{3}" -f $versionInfo.FileMajorPart, $versionInfo.FileMinorPart, $versionInfo.FileBuildPart, $versionInfo.FilePrivatePart
+    return "{0}.{1}.{2}.{3}" -f $versionInfo.FileMajorPart, $versionInfo.FileMinorPart,
+        $versionInfo.FileBuildPart, $versionInfo.FilePrivatePart
 }
 
-# Returns the newest valid current-user code-signing certificate with a private key that matches the supplied name
-# or thumbprint; returns null when no signer was requested or no matching certificate exists.
+# Returns the newest valid current-user code-signing certificate with a private key that matches the supplied
+# name or thumbprint; returns null when no signer was requested or no matching certificate exists.
 function Find-SignerCertificate {
     param (
         [string]$Name,
@@ -113,14 +115,16 @@ function Find-SignerCertificate {
             $_.NotBefore -le $now -and
             $_.NotAfter -gt $now -and
             (-not $normalizedThumbprint -or $_.Thumbprint -ieq $normalizedThumbprint) -and
-            (-not $Name -or $_.GetNameInfo([Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false) -ieq $Name)
+            (-not $Name -or $_.GetNameInfo(
+                [Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false) -ieq $Name)
         } |
         Sort-Object NotAfter -Descending)
 
     return $certificates | Select-Object -First 1
 }
 
-# Resolves the requested signing tool or searches PATH and installed Windows SDK versions; returns null if unavailable.
+# Resolves the requested signing tool or searches PATH and installed Windows SDK versions; returns null if
+# unavailable.
 function Find-SignTool {
     param (
         [string]$RequestedPath
@@ -195,8 +199,9 @@ function Test-BinaryHasSignature {
     return $null -ne $signature.SignerCertificate
 }
 
-# Signs a staged copy with SHA-256, retries without timestamping if that request fails, and verifies the resulting signature.
-# Throws on signing or verification failure so an invalid package cannot be reported as successfully signed.
+# Signs a staged copy with SHA-256, retries without timestamping if that request fails, and verifies the
+# resulting signature. Throws on signing or verification failure so an invalid package cannot be reported
+# as successfully signed.
 function Sign-Binary {
     param (
         [Parameter(Mandatory)][string]$Path,
@@ -248,14 +253,18 @@ function Confirm-BinarySignature {
     Write-Host "Signature verified successfully: $Path"
 }
 
-# Searches PATH and standard installation directories for 7-Zip; returns null to select ZIP creation through .NET.
+# Searches PATH and standard installation directories for 7-Zip; returns null to select ZIP creation through
+# .NET.
 function Find-SevenZip {
     $command = Get-Command 7z.exe -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($command) {
         return $command.Source
     }
 
-    foreach ($candidate in @((Join-Path $env:ProgramFiles "7-Zip\7z.exe"), (Join-Path ${env:ProgramFiles(x86)} "7-Zip\7z.exe"))) {
+    foreach ($candidate in @(
+        (Join-Path $env:ProgramFiles "7-Zip\7z.exe"),
+        (Join-Path ${env:ProgramFiles(x86)} "7-Zip\7z.exe")
+    )) {
         if (Test-Path -LiteralPath $candidate -PathType Leaf) {
             return $candidate
         }
@@ -271,16 +280,19 @@ $certificate = Find-SignerCertificate -Name $SignerName -Thumbprint $Certificate
 $resolvedSignTool = Find-SignTool -RequestedPath $SignToolPath
 if ($SignerName -or $CertificateThumbprint) {
     if (-not $certificate) {
-        Write-Warning "The requested valid code-signing certificate with a private key was not found. Unsigned binaries will remain unsigned."
+        Write-Warning ("The requested valid code-signing certificate with a private key was not found. " +
+            "Unsigned binaries will remain unsigned.")
     } elseif (-not $resolvedSignTool) {
         Write-Warning "signtool.exe was not found. Unsigned binaries will remain unsigned."
         $certificate = $null
     }
 } else {
-    Write-Host "No signer was specified. Existing valid signatures will be preserved; unsigned binaries will remain unsigned."
+    Write-Host ("No signer was specified. Existing valid signatures will be preserved; " +
+        "unsigned binaries will remain unsigned.")
 }
 
-$staging = Join-Path ([IO.Path]::GetTempPath()) ($solutionName + "-package-" + [guid]::NewGuid().ToString("N"))
+$staging = Join-Path ([IO.Path]::GetTempPath()) `
+    ($solutionName + "-package-" + [guid]::NewGuid().ToString("N"))
 $unsignedBinaries = [Collections.Generic.List[string]]::new()
 
 try {
@@ -303,12 +315,15 @@ try {
             $hasExistingSignature = Test-BinaryHasSignature -Path $stagedFile
             $hasValidSignature = Test-BinarySignature -Path $stagedFile -ToolPath $resolvedSignTool
             if ($hasExistingSignature) {
-                Write-Host "Existing signature detected; it will not be replaced: $([IO.Path]::GetFileName($file))"
+                Write-Host `
+                    "Existing signature detected; it will not be replaced: $([IO.Path]::GetFileName($file))"
                 if (-not $hasValidSignature) {
-                    throw "The existing Authenticode signature could not be verified and will not be replaced: '$stagedFile'."
+                    throw "The existing Authenticode signature could not be verified " +
+                        "and will not be replaced: '$stagedFile'."
                 }
             } elseif ($certificate -and $resolvedSignTool) {
-                Sign-Binary -Path $stagedFile -Certificate $certificate -ToolPath $resolvedSignTool -RequestedSignerName $SignerName -TimestampUrl $TimestampServer
+                Sign-Binary -Path $stagedFile -Certificate $certificate -ToolPath $resolvedSignTool `
+                    -RequestedSignerName $SignerName -TimestampUrl $TimestampServer
                 $hasValidSignature = $true
             } else {
                 $unsignedBinaries.Add([IO.Path]::GetFileName($file)) | Out-Null
@@ -338,7 +353,8 @@ try {
         }
     } else {
         Add-Type -AssemblyName System.IO.Compression.FileSystem
-        [IO.Compression.ZipFile]::CreateFromDirectory($staging, $archive, [IO.Compression.CompressionLevel]::Optimal, $false)
+        [IO.Compression.ZipFile]::CreateFromDirectory(
+            $staging, $archive, [IO.Compression.CompressionLevel]::Optimal, $false)
     }
 
     Write-Host "Created solution package: $archive"
@@ -350,7 +366,8 @@ try {
 } finally {
     if (Test-Path -LiteralPath $staging) {
         $resolvedStaging = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $staging).ProviderPath)
-        $temporaryDirectory = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([IO.Path]::DirectorySeparatorChar)
+        $temporaryDirectory = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd(
+            [IO.Path]::DirectorySeparatorChar)
         if ([IO.Path]::GetDirectoryName($resolvedStaging) -ine $temporaryDirectory) {
             throw "The staging directory is outside the temporary directory: $resolvedStaging"
         }

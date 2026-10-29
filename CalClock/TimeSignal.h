@@ -21,19 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.7.0.0
  */
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include "CalClock.h"
 #include <windows.h>
 
 /// Reports whether a displayed FILETIME value is an exact boundary of the enabled signal interval.
 bool IsTimeSignalBoundary(ULONGLONG displayedFileTime, TimeSignalMode mode);
 
-/// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget offsets.
-/// Returns false for a disabled or invalid interval or a null output pointer.
+/// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget
+/// offsets. Returns false for a disabled or invalid interval or a null output pointer.
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
     ULONGLONG* targetTimelineFileTime);
 
@@ -48,14 +48,14 @@ double TimeSignalVolumeDecibels(double volume);
 double TimeSignalVolumeFromDecibels(double decibels);
 
 /// Schedules a six-pip sequence whose final pip starts at targetTimelineFileTime in continuous FILETIME ticks.
-/// Deduplicates identical targets and starts the worker as needed; returns false for invalid notification data or
+/// Deduplicates identical targets on the same endpoint; returns false for invalid notification data or
 /// startup failure.
 bool StartTimeSignalPlayback(ULONGLONG targetTimelineFileTime, bool muted, bool generatedTone, double volume,
-    HWND notifyWindow, UINT notifyMessage);
+    HWND notifyWindow, UINT notifyMessage, const std::wstring& outputDevice);
 
-/// Starts or updates a preview merged with scheduled pips, beginning on the next whole continuous-clock second.
-/// Uses a long pip every fifth second and returns false if the playback worker cannot start.
-bool StartTimeSignalVolumePreview(bool generatedTone, double volume);
+/// Starts or updates a Windows-default preview on the applied sound mode's route to merge with its scheduled
+/// pips. Uses a long pip every fifth second and returns false if the playback worker cannot start.
+bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone);
 
 /// Atomically updates the preview volume after clamping it to the stored generator-volume range.
 void SetTimeSignalPreviewVolume(double volume);
@@ -63,15 +63,16 @@ void SetTimeSignalPreviewVolume(double volume);
 /// Disables preview pips and releases the worker when no scheduled sequences remain.
 void StopTimeSignalVolumePreview();
 
-/// Shifts scheduled widget and alarm targets by a signed FILETIME adjustment after an application-clock correction.
-/// Updates all targets under one lock, preserves preview timing, and wakes the worker to replan pending pips.
+/// Shifts scheduled widget and alarm targets by a signed FILETIME adjustment after an application-clock
+/// correction. Locks each output's schedule separately, preserves preview timing, and wakes its worker
+/// to replan pips.
 void AdjustTimeSignalPlaybackTime(LONGLONG adjustment);
 
-/// Changes the mute state of the matching sequence and wakes the playback worker only when that state changes.
-void SetTimeSignalMuted(ULONGLONG target, bool muted);
+/// Changes the matching endpoint sequence's mute state and wakes its worker only when that state changes.
+void SetTimeSignalMuted(ULONGLONG target, bool muted, const std::wstring& outputDevice);
 
-/// Removes matching scheduled sequences and releases the worker if no other playback work remains.
-void CancelTimeSignalPlayback(ULONGLONG target);
+/// Removes the target from one endpoint and releases idle workers without affecting other output sequences.
+void CancelTimeSignalPlayback(ULONGLONG target, const std::wstring& outputDevice);
 
 /// Releases an idle playback worker after sequence completion has been reported.
 void FinishTimeSignalPlayback();

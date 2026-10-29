@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.1
+ * Last modified for version 1.7.0.0
  */
 
 #define NOMINMAX
@@ -74,7 +74,8 @@ static void ReadLegacyMonitorDetails(const std::wstring& device, MonitorDetails&
 
 /// Reads current target metadata without interpreting advanced-color support as an active color space.
 static void ReadDisplayConfigTargetDetails(const DISPLAYCONFIG_PATH_INFO& path,
-        const std::vector<DISPLAYCONFIG_MODE_INFO>& modes, GetDisplayConfigInfo getDeviceInfo, MonitorDetails& details) {
+        const std::vector<DISPLAYCONFIG_MODE_INFO>& modes, GetDisplayConfigInfo getDeviceInfo,
+        MonitorDetails& details) {
     DISPLAYCONFIG_TARGET_DEVICE_NAME target{};
     target.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
     target.header.size = sizeof(target);
@@ -126,8 +127,8 @@ static void ReadDisplayConfigMonitorDetails(const std::vector<DisplayMonitor>& m
         }
         std::vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
         std::vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
-        const LONG result =
-            queryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr);
+        const LONG result = queryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount,
+            modes.data(), nullptr);
         if (result == ERROR_INSUFFICIENT_BUFFER) {
             continue;
         }
@@ -160,7 +161,8 @@ static void ReadDisplayConfigMonitorDetails(const std::vector<DisplayMonitor>& m
 }
 
 /// Reads current output color-space metadata through an optional COM interface, including on mixed adapters.
-static void ReadDxgiMonitorDetails(const std::vector<DisplayMonitor>& monitors, std::vector<MonitorDetails>& details) {
+static void ReadDxgiMonitorDetails(const std::vector<DisplayMonitor>& monitors,
+        std::vector<MonitorDetails>& details) {
     Microsoft::WRL::ComPtr<IDXGIFactory> factory;
     if (FAILED(CreateDXGIFactory(IID_PPV_ARGS(factory.GetAddressOf())))) {
         return;

@@ -80,15 +80,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AboutForm.cpp" />
     <ClCompile Include="AlarmActions.cpp" />
     <ClCompile Include="AnalogClockHost.cpp" />
     <ClCompile Include="AudioDecoder.cpp" />
     <ClCompile Include="AudioGainCallback.cpp" />
+    <ClCompile Include="AudioOutput.cpp" />
     <ClCompile Include="AudioProcessing.cpp" />
     <ClCompile Include="CalendarLocaleScope.cpp" />
     <ClCompile Include="CalClock.cpp" />
     <ClCompile Include="ClockTime.cpp" />
     <ClCompile Include="DateFormats.cpp" />
+    <ClCompile Include="HelpForm.cpp" />
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="MonitorInfo.cpp" />
     <ClCompile Include="NtpClient.cpp" />
@@ -105,17 +108,20 @@
     <ClCompile Include="WindowRedrawScope.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutForm.h" />
     <ClInclude Include="AlarmActions.h" />
     <ClInclude Include="AnalogClockHost.h" />
     <ClInclude Include="AudioDecoder.h" />
     <ClInclude Include="AudioGainCallback.h" />
+    <ClInclude Include="AudioOutput.h" />
     <ClInclude Include="AudioProcessing.h" />
-    <ClInclude Include="CalClockTypes.h" />
+    <ClInclude Include="CalClock.h" />
     <ClInclude Include="ClockTime.h" />
     <ClInclude Include="CalendarLocaleScope.h" />
     <ClInclude Include="DateFormats.h" />
     <ClInclude Include="IAudioSampleCallback.h" />
     <ClInclude Include="IAudioSampleGrabber.h" />
+    <ClInclude Include="HelpForm.h" />
     <ClInclude Include="Localization.h" />
     <ClInclude Include="MonitorInfo.h" />
     <ClInclude Include="NtpClient.h" />

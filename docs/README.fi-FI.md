@@ -8,7 +8,7 @@ CalClock on natiivi Win32/x86-sovellus Windows Vistalle ja uudemmille Windows-ve
 
 - Enintään 32 erikseen määritettävää pienoisohjelmaa
 - Oma kieli, aikavyöhyke, aikasiirtymä, näkyvyys ja aina päällimmäisenä -asetus jokaiselle pienoisohjelmalle
-- Analogiset kellot valittavalla kellotaulun koolla ja valinnaisella sekuntiviisarilla
+- Windowsin `ClockWndMain`-ohjaimeen perustuvat analogiset kellot, käytettävissä olevien kokojen automaattinen tunnistus ja sekuntiviisarin tuki
 - Digitaaliset kellot, joissa voi valita fontit, värit, peittävyyden, sisämarginaalit, reunukset, etunollan ja läpinäkyvän taustan
 - Windowsin omat kalenterit, joissa on päivämäärän valinta, neljä reunustyyliä, säädettävä reunusväri, viikkonumerot, viikon ensimmäisen päivän valinta ja 33 kopiointimuotoa
 - Kalenterin ja kellon yhdistelmäpaneelit, joissa voi olla kaksi nimettyä lisäkelloa omilla aikavyöhykkeillään, erilliset kellotaulujen koot, neljä reunustyyliä, säädettävä väri, UTC-teksti, etunolla ja oma fontti jokaiselle tekstiriville
@@ -114,9 +114,28 @@ Herätyksen äänimerkit ajoitetaan seuraavan herätyksen todellisen ajankohdan 
 
 Testaa näyttää visuaalisen ilmoituksen ja kokeilee tiedostoa, komentoa, ääntä ja etäkomentosarjan osoitetta asynkronisesti. Jos herätyksen aikamerkki on valittu, se toistaa myös kaikki kuusi piippausta; Lopeta testi päättää sisäisen äänen ja aikamerkin esikatselun.
 
-Aikamerkki-välilehdellä on Äänimerkki käytössä -valintaruutu ja valintanapit 1, 5, 10, 15, 20, 30 tai 60 minuutin väleille pienoisohjelman näyttämän ajan mukaan. Äänimerkki on aluksi pois käytöstä, ja valittuna on tunnin väli. Aikamerkin poistaminen käytöstä ja ottaminen uudelleen käyttöön pienoisohjelman valikosta säilyttää aikavälin. Valikko näyttää herätysajan ja aikamerkin välin sulkeissa. 20 minuutin väli tarkoittaa :00, :20 ja :40 kyseistä aikaa. Malli on **Greenwich Time Signal (GTS)**: viisi lyhyttä piippausta merkitsee viisi viimeistä sekuntia ja pidempi piippaus täsmällisen rajan. Vyöhykkeet, UTC, siirtymät ja nykyinen NTP-korjaus huomioidaan. Herätyksen aikamerkki ja Aikamerkki-välilehti ovat riippumattomia; aikataulujen osuessa yhteen CalClock toistaa yhden yhteisen sarjan. Sekunnin osien siirtymät huomioidaan. Päällekkäiset pienoisohjelmien, herätysten ja testien äänet soivat keskeytyksettä viimeisen päällekkäisyyden loppuun asti.
+Aikamerkki-välilehdellä on Äänimerkki käytössä -valintaruutu ja valintanapit 1, 5, 10, 15, 20, 30 tai 60 minuutin väleille pienoisohjelman näyttämän ajan mukaan. Äänimerkki on aluksi pois käytöstä, ja valittuna on tunnin väli. Aikamerkin poistaminen käytöstä ja ottaminen uudelleen käyttöön pienoisohjelman valikosta säilyttää aikavälin. Valikko näyttää herätysajan ja aikamerkin välin sulkeissa. 20 minuutin väli tarkoittaa :00, :20 ja :40 kyseistä aikaa. Malli on **Greenwich Time Signal (GTS)**: viisi lyhyttä piippausta merkitsee viisi viimeistä sekuntia ja pidempi piippaus täsmällisen rajan. Vyöhykkeet, UTC, siirtymät ja nykyinen NTP-korjaus huomioidaan. Herätyksen aikamerkki ja Aikamerkki-välilehti ovat riippumattomia; aikataulujen osuessa yhteen CalClock toistaa yhden yhteisen sarjan. Sekunnin osien siirtymät huomioidaan. Päällekkäiset pienoisohjelmien, herätysten ja testien äänet soivat keskeytyksettä viimeisen päällekkäisyyden loppuun asti samassa äänilähdössä.
 
-Sovellus-välilehden **Aikamerkin ääni** tarjoaa **Sisäisen generaattorin** (oletus) ja **Järjestelmäpiippauksen**. Valinta koskee kaikkia aikamerkkejä, myös herätyksiä, ja tallennetaan yleisiin asetuksiin. **Sisäisen generaattorin** **Aikamerkin äänenvoimakkuus** näyttää koko sovelluksen tason dB-yksiköissä. Oikea ääriasento **0 dB** on suurin särötön siniaallon amplitudi; hiljaisuus on **−∞ dB**. Oletus on **−18 dB**. Generaattori aloittaa ja lopettaa äänet nollakohdassa myös testiä pysäytettäessä. Käynnissä oleva piippaus saa päättyä; pitkä piippaus voi kestää vielä puoli sekuntia. **Testaa** kohdassa **Aikamerkin ääni** aloittaa jatkuvan esikatselun ja **Pysäytä testi** päättää sen. Molempia tapoja voi testata, eikä testin tilaa tallenneta. Myös äänenvoimakkuussäätimen pitäminen painettuna soittaa esikatselua hiiren vapauttamiseen asti, ellei painikkeella käynnistetty testi ole jo käytössä. Toisto alkaa seuraavalla tasasekunnilla: lyhyt ääni joka sekunti ja pitkä kohdissa :00, :05, :10 jne. Esikatselu ja samanaikaiset pienoisohjelmien tai herätysten merkit jakavat yhden äänen. Äänen valinta on mahdollinen vain järjestelmän tukiessa molempia tapoja.
+Sovellus-välilehden **Aikamerkin ääni** tarjoaa **Sisäisen generaattorin** (oletus) ja **Järjestelmäpiippauksen**. Valinta koskee kaikkia aikamerkkejä, myös herätyksiä, ja tallennetaan yleisiin asetuksiin. **Sisäisen generaattorin** **Aikamerkin äänenvoimakkuus** näyttää koko sovelluksen tason dB-yksiköissä. Oikea ääriasento **0 dB** on suurin särötön siniaallon amplitudi; hiljaisuus on **−∞ dB**. Oletus on **−18 dB**. Generaattori aloittaa ja lopettaa äänet nollakohdassa myös testiä pysäytettäessä. Käynnissä oleva piippaus saa päättyä; pitkä piippaus voi kestää vielä puoli sekuntia. **Testaa** kohdassa **Aikamerkin ääni** aloittaa jatkuvan esikatselun ja **Pysäytä testi** päättää sen. Molempia tapoja voi testata, eikä testin tilaa tallenneta. Myös äänenvoimakkuussäätimen pitäminen painettuna soittaa esikatselua hiiren vapauttamiseen asti, ellei painikkeella käynnistetty testi ole jo käytössä. Toisto alkaa seuraavalla tasasekunnilla: lyhyt ääni joka sekunti ja pitkä kohdissa :00, :05, :10 jne. Äänen valinta on mahdollinen vain järjestelmän tukiessa molempia tapoja.
+
+**Äänilähtö**
+
+**Äänilähtö** välilehdellä **Aikamerkki** valitsee laitteen kunkin ääntä tukevan pienoisohjelman säännöllisille
+aikamerkeille. Pienoisohjelman aikavyöhyke, poikkeama ja aikaväli eivät muutu. Generaattorin valinta ja aikamerkin
+äänenvoimakkuus ovat edelleen yhteisiä välilehdellä **Sovellus**. Kun valittuna on **Järjestelmän äänimerkki**, kenttä
+pysyy näkyvissä mutta harmaana ja säilyttää valitun laitteen; **Sisäinen generaattori** ottaa sen jälleen käyttöön.
+Windows Vista käyttää generaattoria automaattisesti.
+
+**Windowsin oletuslaite** seuraa Windowsin nykyistä oletusäänilähtöä. Erikseen valittu laite pysyy valittuna myös
+irrotettuna ja näkyy nimellä **Laite ei ole käytettävissä**; sen aikamerkit pysyvät äänettöminä, kunnes laite on
+käytettävissä tai valitaan toinen lähtö. Laiteluettelo päivittyy avattaessa. Valinta tallennetaan erikseen jokaiselle
+pienoisohjelmalle rekisteriin tai XML-asetuksiin.
+
+Aikamerkit yhdistetään automaattisesti kussakin äänilähdössä. Erikseen valittu laite ja samaan laitteeseen viittaava
+**Windowsin oletuslaite** käyttävät yhtä lähtöä. Eri laitteet toimivat itsenäisesti; siniaalto, vaiheen jatkuvuus sekä
+äänten alkaminen ja päättyminen nollassa säilyvät. Herätykset, myös sisäisesti toistettavat tiedostot ja herätystä
+edeltävät aikamerkit, sekä kaikki testit käyttävät edelleen Windowsin oletusäänilähtöä. Ne yhdistetään säännöllisiin
+aikamerkkeihin vain yhteisessä äänilähdössä.
 
 Herätyksen ja aikamerkin voi vaihtaa myös ääntä tukevan pienoisohjelman pikavalikossa. Herätyskohta näyttää ajan ja aktiiviset päivät, jos kaikkia päiviä ei ole valittu. Mykistä koskee kyseistä pienoisohjelmaa ja vastaa Yleiset-välilehden valintaa. Erillinen Kalenteri ei tue herätystä, aikamerkkiä eikä mykistystä. Ilmoitusalueen komento on Mykistä kaikki; `M` missä tahansa pienoisohjelmassa tekee saman yleisen vaihdon. Yleinen mykistyksen poisto palauttaa vain edellisen yleisen toiminnon mykistämät pienoisohjelmat. Sisäinen ääni jatkuu hiljaisena ja kuuluu taas mykistyksen poistuttua. Jo alkanut piippaus voi päättyä; seuraavat jätetään pois, kunnes ääni otetaan käyttöön. Muut komennot ja etäkomentosarjat eivät muutu.
 
@@ -124,7 +143,7 @@ Herätyksen ja aikamerkin voi vaihtaa myös ääntä tukevan pienoisohjelman pik
 
 Jokaisessa pienoisohjelmavalikossa on tyypille sopivat komennot — näkyvyys, aina päällimmäisenä, sekunnit, analoginen koko tai päivämäärän kopiointimuoto — ja sitten `Järjestä ruudukkoon`, Asetukset, Ohje, Tietoja ja Lopeta. Ilmoitusalueen valikko luettelee pienoisohjelmat järjestysnumeroineen ja tarjoaa Näytä kaikki, Piilota kaikki ja Mykistä kaikki. Erikseen ryhmitelty `Järjestä ruudukkoon` seuraa ennen sovelluksen komentoja.
 
-Näyttäminen tai palauttaminen nostaa pienoisohjelmat muiden ikkunoiden eteen muuttamatta aina päällimmäisenä -asetusta. CalClock varmistaa ainakin yhden näkyvän pienoisohjelman käynnistyksen jälkeen. Toinen käynnistys aktivoi olemassa olevan sovellusinstanssin ja palauttaa viimeksi piilotetut pienoisohjelmat, jos yhtään ei näy. Ilmoituskuvake rekisteröidään automaattisesti uudelleen Resurssienhallinnan käynnistyessä uudelleen.
+Näyttäminen tai palauttaminen nostaa pienoisohjelmat muiden ikkunoiden eteen muuttamatta aina päällimmäisenä -asetusta. CalClock varmistaa ainakin yhden näkyvän pienoisohjelman käynnistyksen jälkeen. Toinen käynnistys aktivoi olemassa olevan sovellusinstanssin ja palauttaa viimeksi piilotetut pienoisohjelmat, jos yhtään ei näy. Ilmoituskuvake rekisteröidään automaattisesti uudelleen Resurssienhallinnan käynnistyessä uudelleen. Jos `ClockWndMain` ei tue sekuntiviisaria valitussa koossa, Sekunnit-komento poistuu käytöstä, mutta valinta säilytetään muuta tuettua kokoa varten.
 
 ## Asetusten tallennus
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Vain Win32/x86-kokoonpanoa tuetaan. Projekti ei tarkoituksella tarjoa x64-kokoonpanoa, koska Windows-kello-ohjaimen integrointi vaatii x86-yhteensopivuuden.
+
+Suorita kääntämisen jälkeen `.\PackageRelease.ps1`, joka luo ohjelman ja lisenssin sisältävän paketin
+`CalClock-<version>-win32.zip`.
+
+Allekirjoitusparametrien oletusarvot luetaan myös Windowsin käyttäjäkohtaisista ympäristömuuttujista:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Erikseen annetut
+komentoriviargumentit ovat etusijalla.
 
 ## Lisenssi
 

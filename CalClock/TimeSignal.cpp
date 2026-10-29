@@ -21,11 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.7.0.0
  */
 
 #define NOMINMAX
 #include "TimeSignal.h"
+#include "AudioOutput.h"
 #include "ClockTime.h"
 #include <algorithm>
 #include <atomic>
@@ -40,7 +41,8 @@
 
 using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW*);
 
-/// Stores one six-pip sequence anchored to a continuous FILETIME target, with sound settings and completion notification.
+/// Stores one six-pip sequence anchored to a continuous FILETIME target, with sound settings and completion
+/// notification.
 struct TimeSignalSequence {
     ULONGLONG target = 0;
     bool muted = false;
@@ -50,7 +52,8 @@ struct TimeSignalSequence {
     UINT notifyMessage = 0;
 };
 
-/// Describes a scheduled tone interval in 100-nanosecond continuous-clock ticks with normalized amplitude and output mode.
+/// Describes a scheduled tone interval in 100-nanosecond continuous-clock ticks with normalized amplitude
+/// and output mode.
 struct TimeSignalTone {
     ULONGLONG start = 0;
     ULONGLONG end = 0;
@@ -73,6 +76,22 @@ struct TimeSignalPhase {
     bool active = false;
 };
 
+/// Owns one endpoint's original scheduler, PCM phase, preview state and worker lifetime independently of other
+/// outputs.
+struct TimeSignalOutputRoute {
+    std::wstring device;
+    HANDLE thread = nullptr;
+    HANDLE stopEvent = nullptr;
+    HANDLE wakeEvent = nullptr;
+    SRWLOCK lock = SRWLOCK_INIT;
+    std::vector<TimeSignalSequence> sequences;
+    bool previewActive = false;
+    bool previewGeneratedTone = true;
+    ULONGLONG previewStart = 0;
+    std::atomic<double> previewVolume = TIME_SIGNAL_VOLUME_DEFAULT;
+    std::atomic<bool> beepActive = false;
+};
+
 static const ULONGLONG FILE_TIME_TICKS_PER_MILLISECOND = 10000;
 static const ULONGLONG FILE_TIME_TICKS_PER_SECOND = 10000000;
 static const ULONGLONG FILE_TIME_TICKS_PER_MINUTE = 60 * FILE_TIME_TICKS_PER_SECOND;
@@ -90,15 +109,7 @@ static const double GENERATOR_TONE_AMPLITUDE = 0.28;
 static const double PI = 3.14159265358979323846;
 static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = { 0, 1, 5, 10, 15, 20, 30, 60 };
 
-static HANDLE hTimeSignalThread = nullptr;
-static HANDLE hTimeSignalStopEvent = nullptr;
-static HANDLE hTimeSignalWakeEvent = nullptr;
-static SRWLOCK timeSignalScheduleLock = SRWLOCK_INIT;
-static std::vector<TimeSignalSequence> timeSignalSequences;
-static bool timeSignalPreviewActive = false;
-static bool timeSignalPreviewGeneratedTone = true;
-static ULONGLONG timeSignalPreviewStart = 0;
-static std::atomic<double> timeSignalPreviewVolume = TIME_SIGNAL_VOLUME_DEFAULT;
+static std::vector<std::unique_ptr<TimeSignalOutputRoute>> timeSignalOutputs;
 
 /// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
 /// Tracks completed time to avoid replaying already rendered portions.
@@ -114,8 +125,8 @@ bool IsTimeSignalBoundary(ULONGLONG displayedFileTime, TimeSignalMode mode) {
     return displayedFileTime % interval == 0;
 }
 
-/// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget offsets.
-/// Returns false for a disabled or invalid interval or a null output pointer.
+/// Maps the next displayed interval boundary to continuous FILETIME ticks, preserving fractional widget
+/// offsets. Returns false for a disabled or invalid interval or a null output pointer.
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
         ULONGLONG* targetTimelineFileTime) {
     int modeIndex = static_cast<int>(mode);
@@ -151,7 +162,8 @@ bool IsTimeSignalGeneratorRequired() {
     return result != 0;
 }
 
-/// Maps an integer stored volume step to normalized amplitude, preserving the default -18 dB and full-scale endpoints.
+/// Maps an integer stored volume step to normalized amplitude, preserving the default -18 dB and full-scale
+/// endpoints.
 static double TimeSignalAmplitudeAtStep(int volume) {
     if (volume == TIME_SIGNAL_VOLUME_MAX) {
         return 1.0;
@@ -213,26 +225,28 @@ static DWORD TimeSignalToneDuration(bool longTone, bool generatedTone) {
     return longTone ? BEEP_LONG_PIP_DURATION : BEEP_SHORT_PIP_DURATION;
 }
 
-/// Collects scheduled and preview pips intersecting the requested continuous-clock range under the schedule lock.
-/// Removes completed sequences and posts their completion notifications; preview pips follow whole seconds.
-static std::vector<TimeSignalTone> CollectTimeSignalTones(ULONGLONG from, ULONGLONG through) {
+/// Collects scheduled and preview pips intersecting the requested continuous-clock range under the schedule
+/// lock. Removes completed sequences and posts their completion notifications; preview pips follow whole
+/// seconds.
+static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute& route,
+        ULONGLONG from, ULONGLONG through) {
     std::vector<TimeSignalTone> tones;
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    bool stopping = WaitForSingleObject(hTimeSignalStopEvent, 0) == WAIT_OBJECT_0;
-    for (size_t index = 0; index < timeSignalSequences.size();) {
-        const TimeSignalSequence& sequence = timeSignalSequences[index];
-        ULONGLONG end =
-            sequence.target + TimeSignalToneDuration(true, sequence.generatedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
+    AcquireSRWLockExclusive(&route.lock);
+    bool stopping = WaitForSingleObject(route.stopEvent, 0) == WAIT_OBJECT_0;
+    for (size_t index = 0; index < route.sequences.size();) {
+        const TimeSignalSequence& sequence = route.sequences[index];
+        ULONGLONG end = sequence.target + TimeSignalToneDuration(true, sequence.generatedTone)
+            * FILE_TIME_TICKS_PER_MILLISECOND;
         if (end < from) {
             PostMessageW(sequence.notifyWindow, sequence.notifyMessage, 0, 0);
-            timeSignalSequences.erase(timeSignalSequences.begin() + index);
+            route.sequences.erase(route.sequences.begin() + index);
             continue;
         }
         if (!sequence.muted && !stopping) {
             for (int pip = 0; pip <= 5; pip++) {
                 ULONGLONG start = sequence.target - (5ULL - pip) * FILE_TIME_TICKS_PER_SECOND;
-                bool generatedTone = timeSignalPreviewActive ? timeSignalPreviewGeneratedTone : sequence.generatedTone;
-                double volume = timeSignalPreviewActive ? timeSignalPreviewVolume.load() : sequence.volume;
+                bool generatedTone = route.previewActive ? route.previewGeneratedTone : sequence.generatedTone;
+                double volume = route.previewActive ? route.previewVolume.load() : sequence.volume;
                 ULONGLONG finish =
                     start + TimeSignalToneDuration(pip == 5, generatedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
                 if (finish >= from && start <= through) {
@@ -243,23 +257,24 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(ULONGLONG from, ULONGL
         }
         index++;
     }
-    if (timeSignalPreviewActive && !stopping) {
-        ULONGLONG start = std::max(timeSignalPreviewStart, from / FILE_TIME_TICKS_PER_SECOND * FILE_TIME_TICKS_PER_SECOND);
+    if (route.previewActive && !stopping) {
+        ULONGLONG start =
+            std::max(route.previewStart, from / FILE_TIME_TICKS_PER_SECOND * FILE_TIME_TICKS_PER_SECOND);
         for (; start <= through; start += FILE_TIME_TICKS_PER_SECOND) {
             bool longTone = start / FILE_TIME_TICKS_PER_SECOND % 5 == 0;
-            ULONGLONG end =
-                start + TimeSignalToneDuration(longTone, timeSignalPreviewGeneratedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
+            ULONGLONG end = start + TimeSignalToneDuration(longTone, route.previewGeneratedTone)
+                * FILE_TIME_TICKS_PER_MILLISECOND;
             if (end >= from) {
                 tones.push_back(TimeSignalTone{
                     start,
                     end,
-                    TimeSignalAmplitude(timeSignalPreviewVolume.load()),
-                    timeSignalPreviewGeneratedTone
+                    TimeSignalAmplitude(route.previewVolume.load()),
+                    route.previewGeneratedTone
                 });
             }
         }
     }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
+    ReleaseSRWLockExclusive(&route.lock);
     return tones;
 }
 
@@ -281,23 +296,27 @@ static std::vector<TimeSignalTone> MergeTimeSignalTones(std::vector<TimeSignalTo
     return merged;
 }
 
-/// Converts a continuous FILETIME timestamp to a signed sample offset from base, rounding toward the next sample.
+/// Converts a continuous FILETIME timestamp to a signed sample offset from base, rounding toward the next
+/// sample.
 static LONGLONG TimeSignalSamplePosition(ULONGLONG time, ULONGLONG base) {
-    LONGLONG difference = time >= base ? static_cast<LONGLONG>(time - base) : -static_cast<LONGLONG>(base - time);
+    LONGLONG difference = time >= base
+        ? static_cast<LONGLONG>(time - base)
+        : -static_cast<LONGLONG>(base - time);
     return static_cast<LONGLONG>(std::ceil(static_cast<double>(difference) * GENERATOR_SAMPLE_RATE
         / FILE_TIME_TICKS_PER_SECOND));
 }
 
 /// Fills a PCM buffer from merged intervals while retaining oscillator phase across uninterrupted sound.
 /// Starts at zero, extends each continuous segment to a full cycle, and applies a short endpoint envelope.
-static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals, ULONGLONG base, LONGLONG firstSample,
-        std::vector<short>* samples, TimeSignalPhase* phase) {
+static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals, ULONGLONG base,
+        LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase) {
     const LONGLONG cycle = GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
     const LONGLONG fade = GENERATOR_SAMPLE_RATE * GENERATOR_FADE_DURATION / 1000;
     size_t intervalIndex = 0;
     for (size_t index = 0; index < samples->size(); index++) {
         LONGLONG sample = firstSample + index;
-        while (intervalIndex < intervals.size() && TimeSignalSamplePosition(intervals[intervalIndex].end, base) < sample) {
+        while (intervalIndex < intervals.size()
+                && TimeSignalSamplePosition(intervals[intervalIndex].end, base) < sample) {
             if (phase->active && sample <= phase->end) {
                 break;
             }
@@ -315,11 +334,11 @@ static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals
                 }
                 phase->end = phase->origin + (end - phase->origin + cycle - 1) / cycle * cycle;
                 if (sample <= phase->end) {
-                    double envelope = std::clamp(
-                        static_cast<double>(std::min(sample - phase->origin, phase->end - sample)) / fade, 0.0, 1.0);
+                    double envelope = std::clamp(static_cast<double>(std::min(sample - phase->origin,
+                        phase->end - sample)) / fade, 0.0, 1.0);
                     double angle = 2.0 * PI * ((sample - phase->origin) % cycle) / cycle;
-                    value = static_cast<short>(
-                        std::lround(32767.0 * std::clamp(interval.amplitude, 0.0, 1.0) * envelope * std::sin(angle)));
+                    value = static_cast<short>(std::lround(32767.0 * std::clamp(interval.amplitude, 0.0, 1.0)
+                        * envelope * std::sin(angle)));
                 }
             }
         }
@@ -331,24 +350,30 @@ static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals
 }
 
 /// Tests under the schedule lock whether sequences or a preview remain and no stop has been requested.
-static bool HasTimeSignalWork() {
-    AcquireSRWLockShared(&timeSignalScheduleLock);
-    bool work = !timeSignalSequences.empty() || timeSignalPreviewActive;
-    ReleaseSRWLockShared(&timeSignalScheduleLock);
-    return work && WaitForSingleObject(hTimeSignalStopEvent, 0) != WAIT_OBJECT_0;
+static bool HasTimeSignalWork(TimeSignalOutputRoute& route) {
+    AcquireSRWLockShared(&route.lock);
+    bool work = !route.sequences.empty() || route.previewActive;
+    ReleaseSRWLockShared(&route.lock);
+    return work && WaitForSingleObject(route.stopEvent, 0) != WAIT_OBJECT_0;
 }
 
 /// Returns the active preview's output choice, or fallback when no preview is running.
-static bool TimeSignalOutputUsesGenerator(bool fallback) {
-    AcquireSRWLockShared(&timeSignalScheduleLock);
-    bool generated = timeSignalPreviewActive ? timeSignalPreviewGeneratedTone : fallback;
-    ReleaseSRWLockShared(&timeSignalScheduleLock);
+static bool TimeSignalOutputUsesGenerator(TimeSignalOutputRoute& route, bool fallback) {
+    AcquireSRWLockShared(&route.lock);
+    bool generated = route.previewActive ? route.previewGeneratedTone : fallback;
+    ReleaseSRWLockShared(&route.lock);
     return generated;
 }
 
-/// Streams merged pips through waveOut, retaining phase and held intervals across output buffers.
-/// Drains and releases audio resources before returning; optionally reports the continuous time rendered through.
-static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = nullptr) {
+/// Streams merged pips through waveOut, retaining phase and held intervals across output buffers. Drains
+/// and releases audio resources before returning; optionally reports the continuous time rendered through.
+static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG base,
+        ULONGLONG* playedThrough = nullptr) {
+    std::wstring endpoint;
+    UINT deviceId = WAVE_MAPPER;
+    if (!ResolveAudioOutputDevice(route.device, &endpoint, &deviceId)) {
+        return false;
+    }
     HANDLE completedEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
     if (completedEvent == nullptr) {
         return false;
@@ -361,7 +386,7 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
     format.nBlockAlign = 2;
     format.nAvgBytesPerSec = GENERATOR_SAMPLE_RATE * 2;
     HWAVEOUT output = nullptr;
-    if (waveOutOpen(&output, WAVE_MAPPER, &format, reinterpret_cast<DWORD_PTR>(completedEvent), 0, CALLBACK_EVENT)
+    if (waveOutOpen(&output, deviceId, &format, reinterpret_cast<DWORD_PTR>(completedEvent), 0, CALLBACK_EVENT)
             != MMSYSERR_NOERROR) {
         CloseHandle(completedEvent);
         return false;
@@ -372,7 +397,8 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
         buffer.samples.resize(GENERATOR_BUFFER_SAMPLES);
         buffer.header.lpData = reinterpret_cast<LPSTR>(buffer.samples.data());
         buffer.header.dwBufferLength = static_cast<DWORD>(buffer.samples.size() * sizeof(short));
-        buffer.prepared = waveOutPrepareHeader(output, &buffer.header, sizeof(buffer.header)) == MMSYSERR_NOERROR;
+        buffer.prepared =
+            waveOutPrepareHeader(output, &buffer.header, sizeof(buffer.header)) == MMSYSERR_NOERROR;
         ready = ready && buffer.prepared;
     }
     LONGLONG nextSample = 0;
@@ -386,7 +412,8 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
         }
         buffer.queued = false;
         ULONGLONG from = base + nextSample * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
-        std::vector<TimeSignalTone> tones = CollectTimeSignalTones(from, from + FILE_TIME_TICKS_PER_SECOND);
+        std::vector<TimeSignalTone> tones =
+            CollectTimeSignalTones(route, from, from + FILE_TIME_TICKS_PER_SECOND);
         size_t toneCount = 0;
         for (const TimeSignalTone& tone : tones) {
             if (tone.start >= from) {
@@ -404,7 +431,8 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
         }
         held.resize(heldCount);
         tones.insert(tones.end(), held.begin(), held.end());
-        ULONGLONG bufferEnd = from + GENERATOR_BUFFER_SAMPLES * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
+        ULONGLONG bufferEnd =
+            from + GENERATOR_BUFFER_SAMPLES * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
         for (const TimeSignalTone& tone : tones) {
             bool shouldHoldTone = tone.start < bufferEnd && tone.end >= bufferEnd;
             if (shouldHoldTone) {
@@ -421,10 +449,11 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
         }
         std::vector<TimeSignalTone> intervals = MergeTimeSignalTones(tones);
         if (!phase.active || nextSample > phase.end) {
-            ULONGLONG bufferedDuration =
-                GENERATOR_BUFFER_COUNT * GENERATOR_BUFFER_SAMPLES * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
-            bool gap = held.empty() && (intervals.empty() || intervals.front().start > bufferEnd + bufferedDuration);
-            if (gap || !TimeSignalOutputUsesGenerator(true)) {
+            ULONGLONG bufferedDuration = GENERATOR_BUFFER_COUNT * GENERATOR_BUFFER_SAMPLES
+                * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
+            bool gap = held.empty() && (intervals.empty()
+                || intervals.front().start > bufferEnd + bufferedDuration);
+            if (gap || !TimeSignalOutputUsesGenerator(route, true)) {
                 break;
             }
         }
@@ -452,11 +481,13 @@ static bool PlayGeneratedTimeSignals(ULONGLONG base, ULONGLONG* playedThrough = 
     return ready;
 }
 
-/// Extends the planning horizon until the first merged tone's end is known, avoiding premature Beep interruptions.
-static std::vector<TimeSignalTone> PlanTimeSignalIntervals(ULONGLONG now) {
+/// Extends the planning horizon until the first merged tone's end is known, avoiding premature Beep
+/// interruptions.
+static std::vector<TimeSignalTone> PlanTimeSignalIntervals(TimeSignalOutputRoute& route, ULONGLONG now) {
     ULONGLONG through = now + 7 * FILE_TIME_TICKS_PER_SECOND;
     while (true) {
-        std::vector<TimeSignalTone> intervals = MergeTimeSignalTones(CollectTimeSignalTones(now, through));
+        std::vector<TimeSignalTone> intervals =
+            MergeTimeSignalTones(CollectTimeSignalTones(route, now, through));
         if (intervals.empty() || intervals.front().end + FILE_TIME_TICKS_PER_SECOND < through) {
             return intervals;
         }
@@ -466,12 +497,13 @@ static std::vector<TimeSignalTone> PlanTimeSignalIntervals(ULONGLONG now) {
 
 /// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
 /// Tracks completed time to avoid replaying already rendered portions.
-static DWORD WINAPI TimeSignalThreadProc(void*) {
-    HANDLE events[] = { hTimeSignalStopEvent, hTimeSignalWakeEvent };
+static DWORD WINAPI TimeSignalThreadProc(void* parameter) {
+    TimeSignalOutputRoute& route = *static_cast<TimeSignalOutputRoute*>(parameter);
+    HANDLE events[] = { route.stopEvent, route.wakeEvent };
     ULONGLONG playedUntil = 0;
-    while (WaitForSingleObject(hTimeSignalStopEvent, 0) != WAIT_OBJECT_0) {
+    while (WaitForSingleObject(route.stopEvent, 0) != WAIT_OBJECT_0) {
         ULONGLONG now = MonotonicFileTimeValue();
-        std::vector<TimeSignalTone> intervals = PlanTimeSignalIntervals(now);
+        std::vector<TimeSignalTone> intervals = PlanTimeSignalIntervals(route, now);
         size_t intervalCount = 0;
         for (const TimeSignalTone& tone : intervals) {
             if (tone.end > playedUntil) {
@@ -487,7 +519,8 @@ static DWORD WINAPI TimeSignalThreadProc(void*) {
         TimeSignalTone tone = intervals.front();
         if (tone.start > now) {
             ULONGLONG remaining = tone.start - now;
-            DWORD milliseconds = static_cast<DWORD>(std::min<ULONGLONG>(remaining / FILE_TIME_TICKS_PER_MILLISECOND, 50));
+            DWORD milliseconds =
+                static_cast<DWORD>(std::min<ULONGLONG>(remaining / FILE_TIME_TICKS_PER_MILLISECOND, 50));
             if (milliseconds > 1) {
                 WaitForMultipleObjects(ARRAYSIZE(events), events, FALSE, milliseconds - 1);
             } else {
@@ -496,187 +529,283 @@ static DWORD WINAPI TimeSignalThreadProc(void*) {
             continue;
         }
         ULONGLONG playedThrough = now;
-        if (TimeSignalOutputUsesGenerator(tone.generatedTone)) {
-            if (!PlayGeneratedTimeSignals(tone.start, &playedThrough)) {
+        if (TimeSignalOutputUsesGenerator(route, tone.generatedTone)) {
+            if (!PlayGeneratedTimeSignals(route, tone.start, &playedThrough)) {
                 WaitForMultipleObjects(ARRAYSIZE(events), events, FALSE, 100);
             }
         } else {
-            DWORD duration = static_cast<DWORD>(std::max<ULONGLONG>(1,
-                (tone.end - now + FILE_TIME_TICKS_PER_MILLISECOND - 1) / FILE_TIME_TICKS_PER_MILLISECOND));
-            Beep(BEEP_PIP_FREQUENCY, duration);
-            playedThrough = tone.end;
+            route.beepActive.store(true);
+            ULONGLONG beepNow = MonotonicFileTimeValue();
+            std::vector<TimeSignalTone> pending = PlanTimeSignalIntervals(route, beepNow);
+            if (!pending.empty() && pending.front().start <= beepNow && pending.front().end > beepNow
+                    && pending.front().end > playedUntil && !pending.front().generatedTone
+                    && WaitForSingleObject(route.stopEvent, 0) != WAIT_OBJECT_0) {
+                ULONGLONG end = pending.front().end;
+                DWORD duration = static_cast<DWORD>(std::max<ULONGLONG>(1,
+                    (end - beepNow + FILE_TIME_TICKS_PER_MILLISECOND - 1) / FILE_TIME_TICKS_PER_MILLISECOND));
+                Beep(BEEP_PIP_FREQUENCY, duration);
+                playedThrough = end;
+            }
+            route.beepActive.store(false);
         }
         playedUntil = std::max(playedUntil, playedThrough);
     }
     return 0;
 }
 
-/// Creates the shared playback worker and its events if needed, cleaning up handles on failure.
-static bool EnsureTimeSignalThread() {
-    if (hTimeSignalThread != nullptr) {
+/// Creates one endpoint's playback worker and its events, cleaning up handles on failure.
+static bool EnsureTimeSignalThread(TimeSignalOutputRoute& route) {
+    if (route.thread != nullptr) {
         return true;
     }
-    hTimeSignalStopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-    hTimeSignalWakeEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-    if (hTimeSignalStopEvent != nullptr && hTimeSignalWakeEvent != nullptr) {
-        hTimeSignalThread = CreateThread(nullptr, 0, TimeSignalThreadProc, nullptr, 0, nullptr);
+    route.stopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    route.wakeEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    if (route.stopEvent != nullptr && route.wakeEvent != nullptr) {
+        route.thread = CreateThread(nullptr, 0, TimeSignalThreadProc, &route, 0, nullptr);
     }
-    if (hTimeSignalThread != nullptr) {
+    if (route.thread != nullptr) {
         return true;
     }
-    if (hTimeSignalStopEvent != nullptr) {
-        CloseHandle(hTimeSignalStopEvent);
+    if (route.stopEvent != nullptr) {
+        CloseHandle(route.stopEvent);
     }
-    if (hTimeSignalWakeEvent != nullptr) {
-        CloseHandle(hTimeSignalWakeEvent);
+    if (route.wakeEvent != nullptr) {
+        CloseHandle(route.wakeEvent);
     }
-    hTimeSignalStopEvent = nullptr;
-    hTimeSignalWakeEvent = nullptr;
+    route.stopEvent = nullptr;
+    route.wakeEvent = nullptr;
     return false;
 }
 
-/// Stops, joins, and releases the shared worker only when neither scheduled sequences nor a preview remain.
-static void StopIdleTimeSignalThread() {
-    if (hTimeSignalThread == nullptr || HasTimeSignalWork()) {
+/// Stops, joins, and releases an endpoint worker when neither scheduled sequences nor a preview remain.
+static void StopIdleTimeSignalThread(TimeSignalOutputRoute& route) {
+    if (route.thread == nullptr || HasTimeSignalWork(route)) {
         return;
     }
-    SetEvent(hTimeSignalStopEvent);
-    WaitForSingleObject(hTimeSignalThread, INFINITE);
-    CloseHandle(hTimeSignalThread);
-    CloseHandle(hTimeSignalStopEvent);
-    CloseHandle(hTimeSignalWakeEvent);
-    hTimeSignalThread = nullptr;
-    hTimeSignalStopEvent = nullptr;
-    hTimeSignalWakeEvent = nullptr;
+    SetEvent(route.stopEvent);
+    WaitForSingleObject(route.thread, INFINITE);
+    CloseHandle(route.thread);
+    CloseHandle(route.stopEvent);
+    CloseHandle(route.wakeEvent);
+    route.thread = nullptr;
+    route.stopEvent = nullptr;
+    route.wakeEvent = nullptr;
 }
 
-/// Schedules a six-pip sequence whose final pip starts at targetTimelineFileTime in continuous FILETIME ticks.
-/// Deduplicates identical targets and starts the worker as needed; returns false for invalid notification data or
-/// startup failure.
+/// Finds the scheduler already associated with a canonical endpoint ID.
+static TimeSignalOutputRoute* FindTimeSignalOutput(const std::wstring& device) {
+    for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
+        if (route->device == device) {
+            return route.get();
+        }
+    }
+    return nullptr;
+}
+
+/// Resolves generated selections to physical endpoints and keeps all system Beep work on one logical default
+/// route.
+static TimeSignalOutputRoute* GetTimeSignalOutput(const std::wstring& requested, bool generatedTone) {
+    std::wstring device;
+    UINT deviceId = WAVE_MAPPER;
+    if (generatedTone && !ResolveAudioOutputDevice(requested, &device, &deviceId)) {
+        return nullptr;
+    }
+    TimeSignalOutputRoute* route = FindTimeSignalOutput(device);
+    if (route == nullptr) {
+        std::unique_ptr<TimeSignalOutputRoute> created = std::make_unique<TimeSignalOutputRoute>();
+        created->device = std::move(device);
+        route = created.get();
+        timeSignalOutputs.push_back(std::move(created));
+    }
+    return route;
+}
+
+/// Stops completed output workers and releases their schedulers after the worker has returned.
+static void ReleaseIdleTimeSignalOutputs() {
+    for (auto route = timeSignalOutputs.begin(); route != timeSignalOutputs.end();) {
+        StopIdleTimeSignalThread(**route);
+        if ((*route)->thread == nullptr) {
+            route = timeSignalOutputs.erase(route);
+        } else {
+            route++;
+        }
+    }
+}
+
+/// Schedules a six-pip sequence on one endpoint, merging identical targets only within that physical output.
 bool StartTimeSignalPlayback(ULONGLONG targetTimelineFileTime, bool muted, bool generatedTone, double volume,
-        HWND notifyWindow, UINT notifyMessage) {
+        HWND notifyWindow, UINT notifyMessage, const std::wstring& outputDevice) {
     if (targetTimelineFileTime < 5 * FILE_TIME_TICKS_PER_SECOND
             || notifyWindow == nullptr
-            || notifyMessage == 0
-            || !EnsureTimeSignalThread()) {
+            || notifyMessage == 0) {
         return false;
     }
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    std::vector<TimeSignalSequence>::iterator existing = timeSignalSequences.begin();
-    while (existing != timeSignalSequences.end()) {
+    generatedTone = IsTimeSignalGeneratorRequired() || generatedTone;
+    TimeSignalOutputRoute* output = GetTimeSignalOutput(generatedTone ? outputDevice : L"", generatedTone);
+    if (output == nullptr || !EnsureTimeSignalThread(*output)) {
+        return false;
+    }
+    TimeSignalOutputRoute& route = *output;
+    AcquireSRWLockExclusive(&route.lock);
+    auto existing = route.sequences.begin();
+    while (existing != route.sequences.end()) {
         if (existing->target == targetTimelineFileTime) {
             break;
         }
         existing++;
     }
-    if (existing == timeSignalSequences.end()) {
-        timeSignalSequences.push_back(TimeSignalSequence{
+    if (existing == route.sequences.end()) {
+        route.sequences.push_back(TimeSignalSequence{
             targetTimelineFileTime,
             muted,
-            IsTimeSignalGeneratorRequired() || generatedTone,
+            generatedTone,
             std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX),
             notifyWindow,
             notifyMessage
         });
     }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    SetEvent(hTimeSignalWakeEvent);
+    ReleaseSRWLockExclusive(&route.lock);
+    SetEvent(route.wakeEvent);
     return true;
 }
 
-/// Shifts scheduled widget and alarm targets by a signed FILETIME adjustment after an application-clock correction.
-/// Updates all targets under one lock, preserves preview timing, and wakes the worker to replan pending pips.
+/// Shifts all endpoint schedules by the application-clock correction while preserving independent preview
+/// timing.
 void AdjustTimeSignalPlaybackTime(LONGLONG adjustment) {
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    for (TimeSignalSequence& sequence : timeSignalSequences) {
-        sequence.target = static_cast<ULONGLONG>(static_cast<LONGLONG>(sequence.target) + adjustment);
-    }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    if (hTimeSignalWakeEvent != nullptr) {
-        SetEvent(hTimeSignalWakeEvent);
+    for (const std::unique_ptr<TimeSignalOutputRoute>& output : timeSignalOutputs) {
+        TimeSignalOutputRoute& route = *output;
+        AcquireSRWLockExclusive(&route.lock);
+        for (TimeSignalSequence& sequence : route.sequences) {
+            sequence.target = static_cast<ULONGLONG>(static_cast<LONGLONG>(sequence.target) + adjustment);
+        }
+        ReleaseSRWLockExclusive(&route.lock);
+        if (route.wakeEvent != nullptr) {
+            SetEvent(route.wakeEvent);
+        }
     }
 }
 
-/// Changes the mute state of the matching sequence and wakes the playback worker only when that state changes.
-void SetTimeSignalMuted(ULONGLONG target, bool muted) {
+/// Changes one endpoint's sequence mute state without affecting the same target on other outputs.
+void SetTimeSignalMuted(ULONGLONG target, bool muted, const std::wstring& outputDevice) {
+    TimeSignalOutputRoute* output = FindTimeSignalOutput(outputDevice);
+    if (output == nullptr) {
+        return;
+    }
+    TimeSignalOutputRoute& route = *output;
     bool changed = false;
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    for (TimeSignalSequence& sequence : timeSignalSequences) {
+    AcquireSRWLockExclusive(&route.lock);
+    for (TimeSignalSequence& sequence : route.sequences) {
         if (sequence.target == target) {
             changed = sequence.muted != muted;
             sequence.muted = muted;
             break;
         }
     }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    if (changed && hTimeSignalWakeEvent != nullptr) {
-        SetEvent(hTimeSignalWakeEvent);
+    ReleaseSRWLockExclusive(&route.lock);
+    if (changed && route.wakeEvent != nullptr) {
+        SetEvent(route.wakeEvent);
     }
 }
 
-/// Removes matching scheduled sequences and releases the worker if no other playback work remains.
-void CancelTimeSignalPlayback(ULONGLONG target) {
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    for (std::vector<TimeSignalSequence>::iterator sequence = timeSignalSequences.begin();
-            sequence != timeSignalSequences.end();) {
+/// Cancels the matching target only on the requested endpoint and releases workers that have become idle.
+void CancelTimeSignalPlayback(ULONGLONG target, const std::wstring& outputDevice) {
+    TimeSignalOutputRoute* output = FindTimeSignalOutput(outputDevice);
+    if (output == nullptr) {
+        return;
+    }
+    AcquireSRWLockExclusive(&output->lock);
+    for (auto sequence = output->sequences.begin(); sequence != output->sequences.end();) {
         if (sequence->target == target) {
-            sequence = timeSignalSequences.erase(sequence);
+            sequence = output->sequences.erase(sequence);
         } else {
             sequence++;
         }
     }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    StopIdleTimeSignalThread();
+    ReleaseSRWLockExclusive(&output->lock);
+    ReleaseIdleTimeSignalOutputs();
 }
 
-/// Atomically updates the preview volume after clamping it to the stored generator-volume range.
+/// Updates the existing preview on the Windows default output without changing other output streams.
 void SetTimeSignalPreviewVolume(double volume) {
-    timeSignalPreviewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX));
+    for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
+        route->previewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX));
+    }
 }
 
-/// Starts or updates a preview merged with scheduled pips, beginning on the next whole continuous-clock second.
-/// Uses a long pip every fifth second and returns false if the playback worker cannot start.
-bool StartTimeSignalVolumePreview(bool generatedTone, double volume) {
-    if (!EnsureTimeSignalThread()) {
+/// Starts a Windows-default preview on the applied sound mode's route, including when previewing the other
+/// mode. Defers migration while another route's system Beep is in progress; subsequent preview updates retry
+/// it.
+bool StartTimeSignalVolumePreview(bool generatedTone, double volume, bool scheduledGeneratedTone) {
+    generatedTone = IsTimeSignalGeneratorRequired() || generatedTone;
+    scheduledGeneratedTone = IsTimeSignalGeneratorRequired() || scheduledGeneratedTone;
+    TimeSignalOutputRoute* output = GetTimeSignalOutput(L"", scheduledGeneratedTone);
+    if (output == nullptr || !EnsureTimeSignalThread(*output)) {
+        StopTimeSignalVolumePreview();
         return false;
     }
     SetTimeSignalPreviewVolume(volume);
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    timeSignalPreviewGeneratedTone = IsTimeSignalGeneratorRequired() || generatedTone;
-    if (!timeSignalPreviewActive) {
-        timeSignalPreviewStart = (MonotonicFileTimeValue() / FILE_TIME_TICKS_PER_SECOND + 1) * FILE_TIME_TICKS_PER_SECOND;
-        timeSignalPreviewActive = true;
+    bool pendingBeep = false;
+    for (const std::unique_ptr<TimeSignalOutputRoute>& item : timeSignalOutputs) {
+        TimeSignalOutputRoute& route = *item;
+        if (&route == output) {
+            continue;
+        }
+        AcquireSRWLockExclusive(&route.lock);
+        route.previewActive = false;
+        ReleaseSRWLockExclusive(&route.lock);
+        pendingBeep = pendingBeep || route.beepActive.load();
+        if (route.wakeEvent != nullptr) {
+            SetEvent(route.wakeEvent);
+        }
     }
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    SetEvent(hTimeSignalWakeEvent);
+    if (pendingBeep) {
+        return true;
+    }
+    AcquireSRWLockExclusive(&output->lock);
+    output->previewGeneratedTone = generatedTone;
+    if (!output->previewActive) {
+        output->previewStart =
+            (MonotonicFileTimeValue() / FILE_TIME_TICKS_PER_SECOND + 1) * FILE_TIME_TICKS_PER_SECOND;
+        output->previewActive = true;
+    }
+    ReleaseSRWLockExclusive(&output->lock);
+    SetEvent(output->wakeEvent);
+    ReleaseIdleTimeSignalOutputs();
     return true;
 }
 
-/// Disables preview pips and releases the worker when no scheduled sequences remain.
+/// Stops test pips while retaining scheduled widget signals on every output.
 void StopTimeSignalVolumePreview() {
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    timeSignalPreviewActive = false;
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    StopIdleTimeSignalThread();
+    for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
+        AcquireSRWLockExclusive(&route->lock);
+        route->previewActive = false;
+        ReleaseSRWLockExclusive(&route->lock);
+    }
+    ReleaseIdleTimeSignalOutputs();
 }
 
-/// Releases an idle playback worker after sequence completion has been reported.
+/// Releases output workers after their sequence-completion notifications have been processed.
 void FinishTimeSignalPlayback() {
-    StopIdleTimeSignalThread();
+    ReleaseIdleTimeSignalOutputs();
 }
 
-/// Clears all scheduled sequences and releases the worker if no preview remains active.
+/// Clears all widget schedules while allowing an active Windows-default preview to finish independently.
 void StopTimeSignalPlayback() {
-    AcquireSRWLockExclusive(&timeSignalScheduleLock);
-    timeSignalSequences.clear();
-    ReleaseSRWLockExclusive(&timeSignalScheduleLock);
-    StopIdleTimeSignalThread();
+    for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
+        AcquireSRWLockExclusive(&route->lock);
+        route->sequences.clear();
+        ReleaseSRWLockExclusive(&route->lock);
+    }
+    ReleaseIdleTimeSignalOutputs();
 }
 
-/// Reports whether scheduled sequences remain, excluding preview-only playback.
+/// Reports scheduled widget playback across all output endpoints, excluding preview-only streams.
 bool IsTimeSignalPlaybackRunning() {
-    AcquireSRWLockShared(&timeSignalScheduleLock);
-    bool running = !timeSignalSequences.empty();
-    ReleaseSRWLockShared(&timeSignalScheduleLock);
+    bool running = false;
+    for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
+        AcquireSRWLockShared(&route->lock);
+        running = running || !route->sequences.empty();
+        ReleaseSRWLockShared(&route->lock);
+    }
     return running;
 }

@@ -4,6 +4,11 @@
 
 A CalClock natív Win32/x86-alkalmazás Windows Vista és újabb rendszerekhez, amely egymástól függetlenül beállítható lebegő órákat és naptárakat jelenít meg az asztalon. Az értesítési területen fut, legfeljebb 32 minialkalmazást és 36 nyelvi változatot támogat; a program és minden minialkalmazás nyelve külön választható.
 
+Az analóg órák a Windows `ClockWndMain` rendszervezérlőjét használják, az elérhető méretek és a
+másodpercmutató támogatásának automatikus felismerésével. Ha a kiválasztott méret nem támogatja a
+másodpercmutatót, a Másodpercek parancs letiltódik, de a mentett beállítás megmarad egy másik támogatott
+mérethez.
+
 ## Kezelés
 
 Az órát vagy panelt a bal egérgombbal húzhatja. Az önálló naptárt a szabad területénél fogva mozgathatja. A minialkalmazásra vagy az értesítési terület ikonjára kattintva a jobb gombbal menüt nyithat. Az ikonra kattintva a bal gombbal elrejtheti a látható minialkalmazásokat; ha mind rejtett, csak a legutóbb elrejtettek térnek vissza.
@@ -58,9 +63,28 @@ A minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, máso
 
 ## Hallható időjelzés
 
-A jelzés a Greenwich Time Signal (GTS) mintáját követi: öt rövid hang az utolsó öt másodpercben, majd hosszú hang a pontos időhatáron. Az Időjelzés fülön az Időjelzés engedélyezve és 1, 5, 10, 15, 20, 30 vagy 60 perces intervallum választható a minialkalmazás ideje szerint. Kezdetben kikapcsolt, órás intervallummal. A menübeli kapcsolás megőrzi az intervallumot. Figyelembe veszi az UTC-t, időzónát, eltolást és NTP-t; 20 percnél :00, :20 és :40 időpontban szól. Az egyidejű óra- és ébresztési jelzések egyesülnek. Némítás után az aktuális hang befejeződhet; a következők kimaradnak, és feloldáskor csak a következő ütemezett hang szól. Az önálló Naptárnak nincs ébresztése, időjelzése vagy némítása.
+A jelzés a Greenwich Time Signal (GTS) mintáját követi: öt rövid hang az utolsó öt másodpercben, majd hosszú hang a pontos időhatáron. Az Időjelzés fülön az Időjelzés engedélyezve és 1, 5, 10, 15, 20, 30 vagy 60 perces intervallum választható a minialkalmazás ideje szerint. Kezdetben kikapcsolt, órás intervallummal. A menübeli kapcsolás megőrzi az intervallumot. Figyelembe veszi az UTC-t, időzónát, eltolást és NTP-t; 20 percnél :00, :20 és :40 időpontban szól. Némítás után az aktuális hang befejeződhet; a következők kimaradnak, és feloldáskor csak a következő ütemezett hang szól. Az önálló Naptárnak nincs ébresztése, időjelzése vagy némítása.
 
-Az Alkalmazás fül Időjelzés hangja beállítása Beépített generátor (alapértelmezett) vagy Rendszerhang lehet minden órához és ébresztéshez. Az Időjelzés hangereje dB-ben mutatja a generátor szintjét: a jobb szélső 0 dB a legnagyobb torzítatlan szinuszamplitúdó, −∞ dB a csend, −18 dB az alapérték. A Tesztelés folyamatos próbát indít, a Teszt leállítása befejezi. Mindkét hang tesztelhető; a teszt nem mentődik. A csúszka nyomva tartása is szól az egér felengedéséig, ha nincs gombbal indított teszt. A lejátszás a következő egész másodpercnél indul: rövid hang másodpercenként és hosszú :00, :05, :10 stb. időpontban. Az egyidejű teszt-, óra- és ébresztési hangok egyetlen hangot használnak. A rendszerhangnál csak a hangerőcsúszka tiltott. Leállításkor az aktuális hang befejeződik; a hosszú még fél másodpercig tarthat. A századmásodperces eltolás is számít; az átfedő hangok az utolsó átfedés végéig megszakítás nélkül szólnak.
+Az Alkalmazás fül Időjelzés hangja beállítása Beépített generátor (alapértelmezett) vagy Rendszerhang lehet minden órához és ébresztéshez. Az Időjelzés hangereje dB-ben mutatja a generátor szintjét: a jobb szélső 0 dB a legnagyobb torzítatlan szinuszamplitúdó, −∞ dB a csend, −18 dB az alapérték. A Tesztelés folyamatos próbát indít, a Teszt leállítása befejezi. Mindkét hang tesztelhető; a teszt nem mentődik. A csúszka nyomva tartása is szól az egér felengedéséig, ha nincs gombbal indított teszt. A lejátszás a következő egész másodpercnél indul: rövid hang másodpercenként és hosszú :00, :05, :10 stb. időpontban. A rendszerhangnál csak a hangerőcsúszka tiltott. Leállításkor az aktuális hang befejeződik; a hosszú még fél másodpercig tarthat. A századmásodperces eltolás is számít; az átfedő hangok az utolsó átfedés végéig megszakítás nélkül szólnak ugyanazon a hangkimeneten.
+
+**Hangkimenet**
+
+Az **Időjelzés** lapon lévő **Hangkimenet** minden hangot támogató minialkalmazás rendszeres időjelzéseihez külön
+eszközt választ. A minialkalmazás időzónája, időeltolása és időköze nem változik. A generátor kiválasztása és a jelzés
+hangereje továbbra is az egész alkalmazásra érvényes az **Alkalmazás** lapon. A **Rendszerhang** kiválasztásakor a
+mező látható marad, de szürkén, letiltva jelenik meg, és megőrzi a kiválasztott eszközt; a **Beépített generátor**
+újra engedélyezi. A Windows Vista automatikusan a generátort használja.
+
+A **Windows alapértelmezett eszköze** a Windows aktuális alapértelmezett hangkimenetét követi. A külön kiválasztott
+eszköz leválasztás után is kiválasztva marad, és **Az eszköz nem érhető el** néven jelenik meg; jelzései némák
+maradnak, amíg az eszköz elérhetővé nem válik, vagy másik kimenetet nem választ. Az eszközlista a lenyitásakor
+frissül. A választás minden minialkalmazáshoz külön mentődik a beállításjegyzékbe vagy az XML-beállításokba.
+
+A jelzések kimenetenként automatikusan egyesülnek. A külön kiválasztott eszköz és az ugyanarra mutató **Windows
+alapértelmezett eszköze** egyetlen kimenetet használ. A különböző eszközök egymástól függetlenül működnek; a
+szinuszhullám, a fázis folytonossága és a hangok nullán való kezdete és vége megmarad. Az ébresztések, beleértve az
+alkalmazáson belül lejátszott fájlokat és az ébresztést megelőző időjelzéseket, valamint minden teszt továbbra is a
+Windows alapértelmezett kimenetét használják. Csak közös kimeneten egyesülnek a rendszeres jelzésekkel.
 
 ## További órák
 
@@ -95,6 +119,10 @@ Az egérmutató rövid tétlenség után eltűnik a képernyőóra és az elsöt
 Microsoft Visual Studio, MSVC v145 eszközkészlet és Windows SDK szükséges. Nyissa meg a `CalClock.slnx` fájlt, válassza a `Release | x86` konfigurációt, és fordítsa le a megoldást. A program a `Release\CalClock.exe` helyen készül el. Csak Win32/x86 támogatott, mert a Windows óravezérlőjének használata x86-kompatibilitást igényel.
 
 Fordítás után a `.\PackageRelease.ps1` létrehozza a `CalClock-<version>-win32.zip` archívumot; a verziót a `Release\CalClock.exe` fájlból olvassa. A gyökérben `CalClock.exe` és `license.txt` található. Az opcionális `-SignerName`, `-SignToolPath` és `-TimestampServer` aláírási paraméterek futtatáskor adhatók meg. A meglévő érvényes Authenticode-aláírást ellenőrzi és nem cseréli le. A régi CalClock ZIP-csomagokat minden futtatás elején eltávolítja; aláírási vagy ellenőrzési hiba leállítja a csomagolást.
+
+Az aláírási paraméterek alapértékei a Windows felhasználói környezeti változóiból is beolvashatók:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. A kifejezetten
+megadott parancssori argumentumok elsőbbséget élveznek.
 
 ## Licenc
 

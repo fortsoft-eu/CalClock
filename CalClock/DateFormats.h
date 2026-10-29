@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.7.0.0
  */
 
 #pragma once
 
-#include "CalClockTypes.h"
+#include "CalClock.h"
 
 /// Formats a date with the selected copy format and widget language, falling back to yyyy-MM-dd on failure.
 std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex);

@@ -8,7 +8,7 @@ CalClock je natívna aplikácia Win32/x86 pre Windows Vista a novšie verzie, kt
 
 - Až 32 samostatne nastaviteľných widgetov
 - Vlastný jazyk, časové pásmo, časový posun, viditeľnosť a stav vždy navrchu pre každý widget
-- Ručičkové hodiny s voliteľnou veľkosťou ciferníka a sekundovou ručičkou
+- Ručičkové hodiny využívajúce ovládací prvok Windows `ClockWndMain`, s automaticky zistenými podporovanými veľkosťami a podporou sekundovej ručičky
 - Nastaviteľné digitálne hodiny s písmom, farbami, nepriehľadnosťou, vnútorným odsadením, rámčekom, voliteľnou úvodnou nulou a priehľadným pozadím
 - Natívne kalendáre Windows s výberom dátumu, štyrmi štýlmi rámčeka, nastaviteľnou farbou rámčeka, číslami týždňov, prvým dňom týždňa a 33 formátmi kopírovania
 - Kalendáre s hodinami a až dvomi ďalšími pomenovanými hodinami v samostatných pásmach, samostatnými veľkosťami ciferníkov, štyrmi štýlmi rámčeka, nastaviteľnou farbou, textom UTC, úvodnou nulou a samostatným písmom každého textového riadka
@@ -114,9 +114,28 @@ Pípanie budíka sa plánuje podľa skutočného nadchádzajúceho času budíka
 
 Test zobrazí vizuálnu signalizáciu a asynchrónne otestuje súbor, príkaz, zvuk a adresu vzdialeného skriptu. Pri zvolenom znamení budíka prehrá aj celú šesťpípovú sekvenciu; Zastaviť test ukončí interný zvuk aj náhľad znamenia.
 
-Na karte Znamenie je začiarkavacie políčko Časové znamenie aktívne a prepínače intervalov 1, 5, 10, 15, 20, 30 alebo 60 minút podľa času zobrazovaného widgetom. Znamenie je spočiatku vypnuté a je zvolený hodinový interval. Vypnutie a zapnutie príkazom Signál v menu widgetu zachováva interval. Menu zobrazuje čas budíka a interval znamenia v zátvorkách. Interval 20 minút znamená :00, :20 a :40 daného času. Vzorom je **Greenwich Time Signal (GTS)**: päť krátkych pípnutí označuje posledných päť sekúnd a dlhšie presnú hranicu. Zohľadňujú sa pásma, UTC, posuny a aktuálna korekcia NTP. Znamenie budíka a karta Znamenie zostávajú nezávislé; pri rovnakom okamihu CalClock prehrá jedinú spoločnú sekvenciu. Zohľadňujú sa zlomkové posuny a prekrývajúce sa tóny widgetov, budíkov a testov znejú súvisle do konca posledného prekryvu.
+Na karte Znamenie je začiarkavacie políčko Časové znamenie aktívne a prepínače intervalov 1, 5, 10, 15, 20, 30 alebo 60 minút podľa času zobrazovaného widgetom. Znamenie je spočiatku vypnuté a je zvolený hodinový interval. Vypnutie a zapnutie príkazom Signál v menu widgetu zachováva interval. Menu zobrazuje čas budíka a interval znamenia v zátvorkách. Interval 20 minút znamená :00, :20 a :40 daného času. Vzorom je **Greenwich Time Signal (GTS)**: päť krátkych pípnutí označuje posledných päť sekúnd a dlhšie presnú hranicu. Zohľadňujú sa pásma, UTC, posuny a aktuálna korekcia NTP. Znamenie budíka a karta Znamenie zostávajú nezávislé. Zohľadňujú sa zlomkové posuny a prekrývajúce sa tóny widgetov, budíkov a testov znejú súvisle do konca posledného prekryvu na rovnakom zvukovom výstupe.
 
-**Zvuk časového znamenia** na karte Aplikácia ponúka **Vlastný generátor** (predvolený) a **Systémové pípanie**. Platí pre všetky znamenia vrátane budíkov a ukladá sa globálne. Pri **Vlastnom generátore** jazdec **Hlasitosť časového znamenia** ukazuje úroveň v dB pre celú aplikáciu. Pravá krajná poloha je **0 dB**, maximálna neskreslená amplitúda sínusovky; ticho je **−∞ dB**. Predvolená hlasitosť je **−18 dB**. Generátor začína aj končí tóny v priechode nulou vrátane zastavenia testu. Aktuálne pípnutie nechá doznieť; dlhé môže končiť až pol sekundy. **Test** vedľa **Zvuku časového znamenia** zapne súvislý náhľad, **Zastaviť test** ho ukončí. Testovať možno oba spôsoby a stav testu sa neukladá. Držanie jazdca hlasitosti tiež spúšťa náhľad do uvoľnenia myši, pokiaľ nebeží test zapnutý tlačidlom. Prehrávanie začína v nasledujúcej celej sekunde, s krátkymi tónmi každú sekundu a dlhým v :00, :05, :10 atď. Náhľad a súčasné znamenia widgetov či budíkov zdieľajú jediný tón. Voľba zvuku je dostupná len v systéme podporujúcom oba spôsoby.
+**Zvuk časového znamenia** na karte Aplikácia ponúka **Vlastný generátor** (predvolený) a **Systémové pípanie**. Platí pre všetky znamenia vrátane budíkov a ukladá sa globálne. Pri **Vlastnom generátore** jazdec **Hlasitosť časového znamenia** ukazuje úroveň v dB pre celú aplikáciu. Pravá krajná poloha je **0 dB**, maximálna neskreslená amplitúda sínusovky; ticho je **−∞ dB**. Predvolená hlasitosť je **−18 dB**. Generátor začína aj končí tóny v priechode nulou vrátane zastavenia testu. Aktuálne pípnutie nechá doznieť; dlhé môže končiť až pol sekundy. **Test** vedľa **Zvuku časového znamenia** zapne súvislý náhľad, **Zastaviť test** ho ukončí. Testovať možno oba spôsoby a stav testu sa neukladá. Držanie jazdca hlasitosti tiež spúšťa náhľad do uvoľnenia myši, pokiaľ nebeží test zapnutý tlačidlom. Prehrávanie začína v nasledujúcej celej sekunde, s krátkymi tónmi každú sekundu a dlhým v :00, :05, :10 atď. Voľba zvuku je dostupná len v systéme podporujúcom oba spôsoby.
+
+**Zvukový výstup**
+
+Voľba **Zvukový výstup** na karte **Znamenie** určuje zariadenie pre pravidelné časové znamenia každého widgetu so
+zvukom. Časové pásmo, offset a interval widgetu zostávajú nezmenené. Voľba generátora a hlasitosť znamení zostávajú
+spoločné pre celú aplikáciu na karte **Aplikácia**. Pri voľbe **Systémové pípanie** pole zosivie, zostane viditeľné a
+zachová vybrané zariadenie; voľba **Vlastný generátor** ho znovu sprístupní. Windows Vista používa generátor
+automaticky.
+
+Voľba **Predvolené zariadenie Windows** sleduje aktuálny predvolený výstup Windows. Konkrétne zariadenie zostane
+vybrané aj po odpojení a zobrazí sa ako **Nedostupné zariadenie**; jeho znamenia zostanú bez zvuku, kým nebude
+dostupné alebo nezvolíte iný výstup. Zoznam zariadení sa obnovuje pri rozbalení. Voľba sa ukladá samostatne pre každý
+widget do registra alebo XML.
+
+Zlučovanie prebieha automaticky pre každý výstup zvlášť. Výslovne zvolené zariadenie a voľba **Predvolené zariadenie
+Windows**, ktorá práve odkazuje na to isté zariadenie, zdieľajú jeden výstup. Rôzne zariadenia pracujú nezávisle;
+výpočet sínusovky, nadväznosť fázy a začiatky aj konce tónov v nule zostávajú zachované. Budíky vrátane interne
+prehrávaných súborov a predpípania aj všetky testy naďalej používajú predvolený výstup Windows. S pravidelnými
+znameniami sa zlúčia len na spoločnom výstupe.
 
 Budík a znamenie možno zapínať aj v ponuke každého widgetu so zvukom. Položka budíka zobrazuje čas a, ak nie sú zvolené všetky dni, aktívne dni. Zaškrtnuté Stlmené ovplyvňuje widget a zodpovedá voľbe na karte Všeobecné. Samostatný Kalendár nepodporuje budík, časové znamenie ani stlmenie. V oblasti oznámení sa príkaz nazýva Stlmiť všetko; `M` na ľubovoľnom widgete vykoná rovnaké globálne prepnutie. Globálne zrušenie stlmenia obnoví iba widgety stlmené predchádzajúcou globálnou akciou. Interný zvuk pokračuje potichu a po obnovení je znovu počuteľný. Rozbehnuté pípnutie môže doznieť; ďalšie sa vynechávajú do povolenia zvuku. Nezvukové príkazy a vzdialené skripty nie sú ovplyvnené.
 
@@ -124,7 +143,7 @@ Budík a znamenie možno zapínať aj v ponuke každého widgetu so zvukom. Polo
 
 Ponuka widgetu obsahuje príkazy platné pre daný typ — viditeľnosť, vždy navrchu, sekundy, veľkosť ručičkových hodín či formát kopírovania dátumu — a potom `Zarovnať do mriežky`, Nastavenia, Pomocníka, O programe a Koniec. Ponuka oblasti oznámení uvádza widgety s poradovými číslami, potom Zobraziť všetko, Skryť všetko a Stlmiť všetko. Oddelené `Zarovnať do mriežky` nasleduje pred príkazmi aplikácie.
 
-Zobrazenie alebo obnovenie widgetov ich prenesie pred ostatné okná bez zmeny stavu vždy navrchu. CalClock zabezpečuje aspoň jeden viditeľný widget po spustení. Druhé spustenie aktivuje existujúcu inštanciu a, ak nič nie je viditeľné, obnoví naposledy skryté widgety. Po reštarte Prieskumníka Windows sa ikona oznámení automaticky znovu zaregistruje.
+Zobrazenie alebo obnovenie widgetov ich prenesie pred ostatné okná bez zmeny stavu vždy navrchu. CalClock zabezpečuje aspoň jeden viditeľný widget po spustení. Druhé spustenie aktivuje existujúcu inštanciu a, ak nič nie je viditeľné, obnoví naposledy skryté widgety. Po reštarte Prieskumníka Windows sa ikona oznámení automaticky znovu zaregistruje. Ak `ClockWndMain` nepodporuje sekundovú ručičku pri vybranej veľkosti, Sekundy sú neaktívne, ale voľba zostáva uložená pre inú podporovanú veľkosť.
 
 ## Ukladanie nastavení
 
@@ -156,6 +175,12 @@ Release\CalClock.exe
 ```
 
 Podporovaná je iba konfigurácia Win32/x86. Projekt zámerne neposkytuje x64, pretože integrácia s ovládacím prvkom hodín Windows vyžaduje kompatibilitu x86.
+
+Po zostavení spustite `.\PackageRelease.ps1`; vytvorí balíček `CalClock-<version>-win32.zip` s programom a licenciou.
+
+Predvolené hodnoty parametrov podpisovania sa načítavajú aj z používateľských premenných prostredia Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Výslovne zadané
+parametre príkazu majú prednosť.
 
 ## Licencia
 

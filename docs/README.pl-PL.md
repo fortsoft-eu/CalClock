@@ -8,7 +8,7 @@ CalClock to natywna aplikacja Win32/x86 dla Windows Vista i nowszych wersji, wy�
 
 - Do 32 niezależnie konfigurowanych widżetów
 - Osobny język, strefa czasowa, przesunięcie czasu, widoczność i tryb zawsze na wierzchu dla każdego widżetu
-- Zegary analogowe z wyborem rozmiaru tarczy i opcjonalnym sekundnikiem
+- Zegary analogowe oparte na kontrolce Windows `ClockWndMain`, z wykrywaniem dostępnych rozmiarów i obsługą wskazówki sekundowej
 - Zegary cyfrowe z ustawieniami czcionek, kolorów, nieprzezroczystości, odstępów wewnętrznych, ramek, opcjonalnego zera wiodącego i przezroczystego tła
 - Natywne kalendarze Windows z wyborem daty, czterema stylami ramki, konfigurowalnym kolorem ramki, numerami tygodni, pierwszym dniem tygodnia i 33 formatami kopiowania
 - Panele kalendarza z zegarem i maksymalnie dwoma dodatkowymi nazwanymi zegarami w osobnych strefach, niezależnymi rozmiarami tarcz, czterema stylami ramki, kolorem ramki, tekstem UTC, zerem wiodącym i osobną czcionką każdego wiersza tekstu
@@ -114,9 +114,28 @@ Sygnały dźwiękowe budzika są planowane według rzeczywistego momentu najbli�
 
 Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Jeśli wybrano sygnał czasu alarmu, odtwarza także pełną sekwencję sześciu tonów; Zatrzymaj test kończy wewnętrzne audio i podgląd sygnału.
 
-Karta Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, 20, 30 lub 60 minut według czasu wyświetlanego przez widżet. Początkowo sygnał jest wyłączony i wybrany jest odstęp jednej godziny. Wyłączenie i włączenie opcji Sygnał w menu widżetu zachowuje odstęp. Menu pokazuje godzinę alarmu i odstęp sygnału w nawiasach. Interwał 20 minut oznacza :00, :20 i :40 tego czasu. Wzorem jest **Greenwich Time Signal (GTS)**: pięć krótkich tonów wyznacza ostatnie pięć sekund, a dłuższy dokładną granicę. Uwzględniane są strefy, UTC, przesunięcia i bieżąca korekta NTP. Sygnał alarmu i karta Sygnał pozostają niezależne; gdy terminy się pokrywają, CalClock odtwarza jedną wspólną sekwencję. Uwzględniane są ułamkowe przesunięcia, a nakładające się tony widżetów, alarmów i testów brzmią nieprzerwanie do końca ostatniego nałożenia.
+Karta Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, 20, 30 lub 60 minut według czasu wyświetlanego przez widżet. Początkowo sygnał jest wyłączony i wybrany jest odstęp jednej godziny. Wyłączenie i włączenie opcji Sygnał w menu widżetu zachowuje odstęp. Menu pokazuje godzinę alarmu i odstęp sygnału w nawiasach. Interwał 20 minut oznacza :00, :20 i :40 tego czasu. Wzorem jest **Greenwich Time Signal (GTS)**: pięć krótkich tonów wyznacza ostatnie pięć sekund, a dłuższy dokładną granicę. Uwzględniane są strefy, UTC, przesunięcia i bieżąca korekta NTP. Sygnał alarmu i karta Sygnał pozostają niezależne. Uwzględniane są ułamkowe przesunięcia, a nakładające się tony widżetów, alarmów i testów brzmią nieprzerwanie do końca ostatniego nałożenia na tym samym wyjściu dźwięku.
 
-**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Bieżący ton może się zakończyć; długi może trwać jeszcze do pół sekundy. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Podgląd i jednoczesne sygnały widżetów lub alarmów dzielą jeden ton. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
+**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Bieżący ton może się zakończyć; długi może trwać jeszcze do pół sekundy. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
+
+**Wyjście dźwięku**
+
+**Wyjście dźwięku** na karcie **Sygnał** wybiera urządzenie dla regularnych sygnałów czasu każdego widżetu
+obsługującego dźwięk. Strefa czasowa, przesunięcie i interwał widżetu pozostają bez zmian. Wybór generatora i głośność
+nadal są globalne na karcie **Aplikacja**. Przy opcji **Sygnał systemowy** pole pozostaje widoczne, ale wyszarzone i
+zachowuje wybrane urządzenie; **Wbudowany generator** ponownie je uaktywnia. Windows Vista automatycznie używa
+generatora.
+
+**Domyślne urządzenie Windows** śledzi bieżące domyślne wyjście Windows. Urządzenie wybrane bezpośrednio pozostaje
+wybrane po odłączeniu i jest oznaczone jako **Urządzenie niedostępne**; jego sygnały pozostają wyciszone, dopóki nie
+będzie dostępne lub nie zostanie wybrane inne wyjście. Lista urządzeń jest odświeżana po rozwinięciu. Wybór jest
+zapisywany osobno dla każdego widżetu w rejestrze lub ustawieniach XML.
+
+Sygnały są automatycznie łączone na każdym wyjściu. Urządzenie wybrane bezpośrednio i wskazująca je opcja **Domyślne
+urządzenie Windows** współdzielą jedno wyjście. Różne urządzenia działają niezależnie; zachowane są sinusoida,
+ciągłość fazy oraz początek i koniec tonów w zerze. Alarmy, w tym pliki odtwarzane wewnętrznie i poprzedzające alarm
+sygnały czasu, oraz wszystkie testy nadal korzystają z domyślnego wyjścia Windows. Łączą się z regularnymi sygnałami
+tylko na wspólnym wyjściu.
 
 Alarm i sygnał można także przełączać w menu widżetu obsługującego dźwięk. Pozycja alarmu pokazuje godzinę oraz aktywne dni, jeśli nie wybrano wszystkich. Zaznaczone Wycisz dotyczy widżetu i odpowiada polu na karcie Ogólne. Samodzielny Kalendarz nie obsługuje alarmu, sygnału czasu ani wyciszenia. W obszarze powiadomień polecenie nazywa się Wycisz wszystko; `M` na dowolnym widżecie wykonuje tę samą globalną zmianę. Globalne przywrócenie dźwięku dotyczy tylko widżetów wyciszonych poprzednią akcją globalną. Wewnętrzne audio trwa bezgłośnie i staje się słyszalne po wyłączeniu wyciszenia. Rozpoczęty ton może się skończyć; następne są pomijane do włączenia dźwięku. Polecenia niedźwiękowe i zdalne skrypty pozostają bez zmian.
 
@@ -124,7 +143,7 @@ Alarm i sygnał można także przełączać w menu widżetu obsługującego dźw
 
 Każde menu widżetu zawiera polecenia właściwe dla typu — widoczność, zawsze na wierzchu, sekundy, rozmiar analogowy lub format kopiowanej daty — a potem `Wyrównaj do siatki`, Ustawienia, Pomoc, Informacje i Zakończ. Menu powiadomień wymienia widżety z numerami, a następnie Pokaż wszystko, Ukryj wszystko i Wycisz wszystko. Oddzielona pozycja `Wyrównaj do siatki` poprzedza polecenia aplikacji.
 
-Pokazanie lub przywrócenie widżetów przenosi je przed inne okna bez zmiany stanu zawsze na wierzchu. CalClock zapewnia co najmniej jeden widoczny widżet po starcie. Drugie uruchomienie aktywuje istniejącą instancję i przywraca ostatnio ukryte widżety, jeśli żaden nie jest widoczny. Po restarcie Eksploratora Windows ikona powiadomień rejestruje się automatycznie ponownie.
+Pokazanie lub przywrócenie widżetów przenosi je przed inne okna bez zmiany stanu zawsze na wierzchu. CalClock zapewnia co najmniej jeden widoczny widżet po starcie. Drugie uruchomienie aktywuje istniejącą instancję i przywraca ostatnio ukryte widżety, jeśli żaden nie jest widoczny. Po restarcie Eksploratora Windows ikona powiadomień rejestruje się automatycznie ponownie. Jeśli `ClockWndMain` nie obsługuje sekundnika w danym rozmiarze, Sekundy są nieaktywne, ale wybór pozostaje zapisany dla innego obsługiwanego rozmiaru.
 
 ## Zapis ustawień
 
@@ -156,6 +175,13 @@ Release\CalClock.exe
 ```
 
 Obsługiwana jest tylko konfiguracja Win32/x86. Projekt celowo nie udostępnia x64, ponieważ integracja z kontrolką zegara Windows wymaga zgodności x86.
+
+Po kompilacji uruchom `.\PackageRelease.ps1`, aby utworzyć pakiet `CalClock-<version>-win32.zip` zawierający program i
+jego licencję.
+
+Domyślne wartości parametrów podpisywania są również odczytywane ze zmiennych środowiskowych użytkownika Windows:
+`BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Jawne argumenty
+wiersza poleceń mają pierwszeństwo.
 
 ## Licencja
 

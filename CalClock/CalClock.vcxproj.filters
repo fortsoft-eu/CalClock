@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AboutForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="AlarmActions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -25,6 +28,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AudioGainCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AudioProcessing.cpp">
@@ -40,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DateFormats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HelpForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Localization.cpp">
@@ -86,6 +95,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AlarmActions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,10 +110,13 @@
     <ClInclude Include="AudioGainCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AudioOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AudioProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CalClockTypes.h">
+    <ClInclude Include="CalClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalendarLocaleScope.h">
@@ -117,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IAudioSampleGrabber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Localization.h">
