@@ -174,7 +174,7 @@ static std::wstring BuildAboutProductText() {
     result += T(TXT_ABOUT_VERSION_LABEL);
     result += L" ";
     result += GetApplicationVersion(data);
-    result += L"\r\nCopyright © Petr Červinka – FortSoft 2026\r\n";
+    result += L"\r\nCopyright © Petr Červinka — FortSoft 2026\r\n";
     result += T(TXT_ABOUT_PLATFORM_LABEL);
     result += L" Win32 (x86)";
     return result;
