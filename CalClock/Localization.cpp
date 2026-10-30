@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.2
  */
 
 #include "Localization.h"
@@ -32,6 +32,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_CS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Hodiny a kalendáře" },
         LocalizedText{ TXT_SETTINGS, L"Nastavení" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavení" },
         LocalizedText{ TXT_ADD, L"Přidat" },
         LocalizedText{ TXT_REMOVE, L"Odebrat…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplikovat" },
@@ -422,7 +423,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verze:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cílová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Nápověda" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Nápověda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Navštívit web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web nelze otevřít ve výchozím prohlížeči." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Adresu URL nelze zkopírovat do schránky." },
@@ -442,6 +443,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_EN_US, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
         LocalizedText{ TXT_ADD, L"Add" },
         LocalizedText{ TXT_REMOVE, L"Remove…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicate" },
@@ -836,7 +838,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock Help" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"The URL could not be copied to the clipboard." },
@@ -858,6 +860,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_EN_GB, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
         LocalizedText{ TXT_ADD, L"Add" },
         LocalizedText{ TXT_REMOVE, L"Remove…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicate" },
@@ -1252,7 +1255,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock Help" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"The URL could not be copied to the clipboard." },
@@ -1274,6 +1277,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_EN_AU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
         LocalizedText{ TXT_ADD, L"Add" },
         LocalizedText{ TXT_REMOVE, L"Remove…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicate" },
@@ -1668,7 +1672,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock Help" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"The URL could not be copied to the clipboard." },
@@ -1690,6 +1694,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_DE, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Uhren und Kalender" },
         LocalizedText{ TXT_SETTINGS, L"Einstellungen" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Einstellungen" },
         LocalizedText{ TXT_ADD, L"Hinzufügen" },
         LocalizedText{ TXT_REMOVE, L"Entfernen…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplizieren" },
@@ -2111,7 +2116,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Zielplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Hilfe" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hilfe" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Website %ls besuchen" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Die Website kann nicht im Standardbrowser geöffnet werden."
@@ -2137,6 +2142,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_FR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Horloges et calendriers" },
         LocalizedText{ TXT_SETTINGS, L"Paramètres" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Paramètres" },
         LocalizedText{ TXT_ADD, L"Ajouter" },
         LocalizedText{ TXT_REMOVE, L"Supprimer…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliquer" },
@@ -2558,7 +2564,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version :" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plateforme cible :" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web :" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Aide" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Aide" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visiter le site web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Impossible d’ouvrir le site dans le navigateur par défaut."
@@ -2582,6 +2588,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_ES, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Relojes y calendarios" },
         LocalizedText{ TXT_SETTINGS, L"Configuración" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Configuración" },
         LocalizedText{ TXT_ADD, L"Añadir" },
         LocalizedText{ TXT_REMOVE, L"Quitar…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicar" },
@@ -2993,7 +3000,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versión:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sitio web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Ayuda" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ayuda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visitar el sitio web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"No se puede abrir el sitio en el navegador predeterminado."
@@ -3017,6 +3024,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_IT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Orologi e calendari" },
         LocalizedText{ TXT_SETTINGS, L"Impostazioni" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Impostazioni" },
         LocalizedText{ TXT_ADD, L"Aggiungi" },
         LocalizedText{ TXT_REMOVE, L"Rimuovi…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplica" },
@@ -3430,7 +3438,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versione:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Piattaforma di destinazione:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sito web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Guida" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Guida" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visita il sito web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Impossibile aprire il sito nel browser predefinito." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Impossibile copiare l’URL negli Appunti." },
@@ -3452,6 +3460,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_PT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Relógios e calendários" },
         LocalizedText{ TXT_SETTINGS, L"Definições" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Definições" },
         LocalizedText{ TXT_ADD, L"Adicionar" },
         LocalizedText{ TXT_REMOVE, L"Remover…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicar" },
@@ -3821,7 +3830,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versão:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Ajuda" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ajuda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visitar o site %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Não é possível abrir o sítio no navegador predefinido." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED,
@@ -3845,6 +3854,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_PL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Zegary i kalendarze" },
         LocalizedText{ TXT_SETTINGS, L"Ustawienia" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ustawienia" },
         LocalizedText{ TXT_ADD, L"Dodaj" },
         LocalizedText{ TXT_REMOVE, L"Usuń…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplikuj" },
@@ -4244,7 +4254,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Wersja:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platforma docelowa:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Witryna:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoc" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoc" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Odwiedź witrynę %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nie można otworzyć witryny w domyślnej przeglądarce." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Nie można skopiować adresu URL do schowka." },
@@ -4264,6 +4274,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_SK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Hodiny a kalendáre" },
         LocalizedText{ TXT_SETTINGS, L"Nastavenia" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavenia" },
         LocalizedText{ TXT_ADD, L"Pridať" },
         LocalizedText{ TXT_REMOVE, L"Odobrať…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplikovať" },
@@ -4652,7 +4663,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzia:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cieľová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoc" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoc" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Navštíviť web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web nemožno otvoriť v predvolenom prehliadači." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Adresu URL nemožno skopírovať do schránky." },
@@ -4672,6 +4683,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_DA, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Ure og kalendere" },
         LocalizedText{ TXT_SETTINGS, L"Indstillinger" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Indstillinger" },
         LocalizedText{ TXT_ADD, L"Tilføj" },
         LocalizedText{ TXT_REMOVE, L"Fjern…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliker" },
@@ -5022,7 +5034,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Websted:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Hjælp" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjælp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besøg webstedet %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Webstedet kan ikke åbnes i standardbrowseren." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-adressen kunne ikke kopieres til udklipsholderen." },
@@ -5044,6 +5056,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_FI, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Kellot ja kalenterit" },
         LocalizedText{ TXT_SETTINGS, L"Asetukset" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Asetukset" },
         LocalizedText{ TXT_ADD, L"Lisää" },
         LocalizedText{ TXT_REMOVE, L"Poista…" },
         LocalizedText{ TXT_DUPLICATE, L"Monista" },
@@ -5416,7 +5429,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versio:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Kohdealusta:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Verkkosivusto:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Ohje" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ohje" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Käy verkkosivustolla %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Sivustoa ei voi avata oletusselaimessa." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-osoitetta ei voitu kopioida leikepöydälle." },
@@ -5436,6 +5449,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_IS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Klukkur og dagatöl" },
         LocalizedText{ TXT_SETTINGS, L"Stillingar" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Stillingar" },
         LocalizedText{ TXT_ADD, L"Bæta við" },
         LocalizedText{ TXT_REMOVE, L"Fjarlægja…" },
         LocalizedText{ TXT_DUPLICATE, L"Afrita" },
@@ -5789,7 +5803,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Útgáfa:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Markvettvangur:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Vefsvæði:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Hjálp" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjálp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Heimsækja vefsvæði %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Ekki er hægt að opna vefsvæðið í sjálfgefnum vafra." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Ekki tókst að afrita vefslóðina á klippispjaldið." },
@@ -5811,6 +5825,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_NB, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Klokker og kalendere" },
         LocalizedText{ TXT_SETTINGS, L"Innstillinger" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Innstillinger" },
         LocalizedText{ TXT_ADD, L"Legg til" },
         LocalizedText{ TXT_REMOVE, L"Fjern…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliser" },
@@ -6166,7 +6181,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versjon:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Nettsted:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Hjelp" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjelp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besøk nettstedet %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nettstedet kan ikke åpnes i standardnettleseren." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-adressen kunne ikke kopieres til utklippstavlen." },
@@ -6188,6 +6203,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_SV, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Klockor och kalendrar" },
         LocalizedText{ TXT_SETTINGS, L"Inställningar" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Inställningar" },
         LocalizedText{ TXT_ADD, L"Lägg till" },
         LocalizedText{ TXT_REMOVE, L"Ta bort…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplicera" },
@@ -6546,7 +6562,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webbplats:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Hjälp" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjälp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besök webbplatsen %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Webbplatsen kan inte öppnas i standardwebbläsaren." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-adressen kunde inte kopieras till Urklipp." },
@@ -6568,6 +6584,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_TR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Saatler ve takvimler" },
         LocalizedText{ TXT_SETTINGS, L"Ayarlar" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ayarlar" },
         LocalizedText{ TXT_ADD, L"Ekle" },
         LocalizedText{ TXT_REMOVE, L"Kaldır…" },
         LocalizedText{ TXT_DUPLICATE, L"Çoğalt" },
@@ -6928,7 +6945,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Sürüm:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Hedef platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web sitesi:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Yardım" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Yardım" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"%ls web sitesini ziyaret et" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web sitesi varsayılan tarayıcıda açılamıyor." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL panoya kopyalanamadı." },
@@ -6948,6 +6965,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_ET, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Kellad ja kalendrid" },
         LocalizedText{ TXT_SETTINGS, L"Sätted" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Sätted" },
         LocalizedText{ TXT_ADD, L"Lisa" },
         LocalizedText{ TXT_REMOVE, L"Eemalda…" },
         LocalizedText{ TXT_DUPLICATE, L"Dubleeri" },
@@ -7323,7 +7341,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versioon:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sihtplatvorm:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veebisait:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Spikker" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Spikker" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Ava veebisait %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Veebisaiti ei saa vaikebrauseris avada." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-i ei saanud lõikelauale kopeerida." },
@@ -7343,6 +7361,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_GA, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Cloig agus féilirí" },
         LocalizedText{ TXT_SETTINGS, L"Socruithe" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Socruithe" },
         LocalizedText{ TXT_ADD, L"Cuir leis" },
         LocalizedText{ TXT_REMOVE, L"Bain…" },
         LocalizedText{ TXT_DUPLICATE, L"Dúblaigh" },
@@ -7748,7 +7767,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Leagan:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sprioc-ardán:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Suíomh gréasáin:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Cabhair" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Cabhair" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Oscail an suíomh gréasáin %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Ní féidir an suíomh a oscailt sa bhrabhsálaí réamhshocraithe."
@@ -7774,6 +7793,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_LT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Laikrodžiai ir kalendoriai" },
         LocalizedText{ TXT_SETTINGS, L"Parametrai" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Parametrai" },
         LocalizedText{ TXT_ADD, L"Įtraukti" },
         LocalizedText{ TXT_REMOVE, L"Pašalinti…" },
         LocalizedText{ TXT_DUPLICATE, L"Kurti dublikatą" },
@@ -8166,7 +8186,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Tikslinė platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Svetainė:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Žinynas" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Žinynas" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Atidaryti svetainę %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nepavyko atverti svetainės numatytojoje naršyklėje." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Nepavyko nukopijuoti URL į iškarpinę." },
@@ -8186,6 +8206,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_LV, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Pulksteņi un kalendāri" },
         LocalizedText{ TXT_SETTINGS, L"Iestatījumi" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Iestatījumi" },
         LocalizedText{ TXT_ADD, L"Pievienot" },
         LocalizedText{ TXT_REMOVE, L"Noņemt…" },
         LocalizedText{ TXT_DUPLICATE, L"Dublēt" },
@@ -8565,7 +8586,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Mērķa platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Tīmekļa vietne:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Palīdzība" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Palīdzība" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Atvērt tīmekļa vietni %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nevar atvērt vietni noklusējuma pārlūkā." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Neizdevās kopēt URL starpliktuvē." },
@@ -8585,6 +8606,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_HU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Órák és naptárak" },
         LocalizedText{ TXT_SETTINGS, L"Beállítások" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Beállítások" },
         LocalizedText{ TXT_ADD, L"Hozzáadás" },
         LocalizedText{ TXT_REMOVE, L"Eltávolítás…" },
         LocalizedText{ TXT_DUPLICATE, L"Duplikálás" },
@@ -8980,7 +9002,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzió:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Célplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webhely:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Súgó" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Súgó" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Webhely megnyitása: %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"A webhely nem nyitható meg az alapértelmezett böngészőben."
@@ -9002,6 +9024,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_MT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Arloġġi u kalendarji" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
         LocalizedText{ TXT_ADD, L"Żid" },
         LocalizedText{ TXT_REMOVE, L"Neħħi…" },
         LocalizedText{ TXT_DUPLICATE, L"Idduplika" },
@@ -9395,7 +9418,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verżjoni:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Pjattaforma fil-mira:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sit web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Għajnuna" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Għajnuna" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Iftaħ is-sit web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Is-sit ma jistax jinfetaħ fil-brawżer predefinit." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Il-URL ma setax jiġi kkupjat fil-clipboard." },
@@ -9417,6 +9440,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_NL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Klokken en kalenders" },
         LocalizedText{ TXT_SETTINGS, L"Instellingen" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Instellingen" },
         LocalizedText{ TXT_ADD, L"Toevoegen" },
         LocalizedText{ TXT_REMOVE, L"Verwijderen…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliceren" },
@@ -9812,7 +9836,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versie:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Doelplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Help" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Website %ls openen" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Kan de website niet in de standaardbrowser openen." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"De URL kon niet naar het klembord worden gekopieerd." },
@@ -9834,6 +9858,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_RO, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Ceasuri și calendare" },
         LocalizedText{ TXT_SETTINGS, L"Setări" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Setări" },
         LocalizedText{ TXT_ADD, L"Adăugare" },
         LocalizedText{ TXT_REMOVE, L"Eliminare…" },
         LocalizedText{ TXT_DUPLICATE, L"Dublare" },
@@ -10224,7 +10249,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versiune:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platformă țintă:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Ajutor" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ajutor" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Deschidere site web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Site-ul nu poate fi deschis în browserul implicit." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL-ul nu a putut fi copiat în clipboard." },
@@ -10246,6 +10271,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_EL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Ρολόγια και ημερολόγια" },
         LocalizedText{ TXT_SETTINGS, L"Ρυθμίσεις" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ρυθμίσεις" },
         LocalizedText{ TXT_ADD, L"Προσθήκη" },
         LocalizedText{ TXT_REMOVE, L"Κατάργηση…" },
         LocalizedText{ TXT_DUPLICATE, L"Δημιουργία αντιγράφου" },
@@ -10650,7 +10676,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Έκδοση:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Πλατφόρμα προορισμού:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Τοποθεσία web:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Βοήθεια" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Βοήθεια" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Άνοιγμα τοποθεσίας web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Αδυναμία ανοίγματος του ιστοτόπου στον προεπιλεγμένο περιηγητή."
@@ -10674,6 +10700,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_BS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Postavke" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Postavke" },
         LocalizedText{ TXT_ADD, L"Dodaj" },
         LocalizedText{ TXT_REMOVE, L"Ukloni…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliciraj" },
@@ -11069,7 +11096,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoć" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Posjeti web-mjesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Nije moguće otvoriti stranicu u podrazumijevanom pregledniku."
@@ -11093,6 +11120,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_HR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Postavke" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Postavke" },
         LocalizedText{ TXT_ADD, L"Dodaj" },
         LocalizedText{ TXT_REMOVE, L"Ukloni…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliciraj" },
@@ -11490,7 +11518,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoć" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Posjeti web-mjesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nije moguće otvoriti stranicu u zadanom pregledniku." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Nije moguće kopirati URL u međuspremnik." },
@@ -11512,6 +11540,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_SL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Ure in koledarji" },
         LocalizedText{ TXT_SETTINGS, L"Nastavitve" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavitve" },
         LocalizedText{ TXT_ADD, L"Dodaj" },
         LocalizedText{ TXT_REMOVE, L"Odstrani…" },
         LocalizedText{ TXT_DUPLICATE, L"Podvoji" },
@@ -11889,7 +11918,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Različica:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Spletno mesto:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoč" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoč" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Obišči spletno mesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Spletnega mesta ni mogoče odpreti v privzetem brskalniku."
@@ -11911,6 +11940,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_CNR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Podešavanja" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Podešavanja" },
         LocalizedText{ TXT_ADD, L"Dodaj" },
         LocalizedText{ TXT_REMOVE, L"Ukloni…" },
         LocalizedText{ TXT_DUPLICATE, L"Dupliraj" },
@@ -12292,7 +12322,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veb-sajt:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Pomoć" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Otvori veb-sajt %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Nije moguće otvoriti stranicu u podrazumijevanom pregledaču."
@@ -12314,6 +12344,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_BE, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Гадзіннікі і календары" },
         LocalizedText{ TXT_SETTINGS, L"Налады" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Налады" },
         LocalizedText{ TXT_ADD, L"Дадаць" },
         LocalizedText{ TXT_REMOVE, L"Выдаліць…" },
         LocalizedText{ TXT_DUPLICATE, L"Дубляваць" },
@@ -12703,7 +12734,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версія:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Мэтавая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вэб-сайт:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Даведка" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Даведка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Адкрыць вэб-сайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Немагчыма адкрыць сайт у прадвызначаным браўзеры." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Не ўдалося скапіяваць URL у буфер абмену." },
@@ -12723,6 +12754,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_BG, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Часовници и календари" },
         LocalizedText{ TXT_SETTINGS, L"Настройки" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Настройки" },
         LocalizedText{ TXT_ADD, L"Добави" },
         LocalizedText{ TXT_REMOVE, L"Премахни…" },
         LocalizedText{ TXT_DUPLICATE, L"Дублирай" },
@@ -13123,7 +13155,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версия:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целева платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Уебсайт:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Помощ" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помощ" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори уебсайта %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Сайтът не може да се отвори в браузъра по подразбиране." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"URL адресът не можа да се копира в клипборда." },
@@ -13143,6 +13175,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_MK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Часовници и календари" },
         LocalizedText{ TXT_SETTINGS, L"Поставки" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Поставки" },
         LocalizedText{ TXT_ADD, L"Додај" },
         LocalizedText{ TXT_REMOVE, L"Отстрани…" },
         LocalizedText{ TXT_DUPLICATE, L"Дуплирај" },
@@ -13542,7 +13575,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Верзија:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-страница:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Помош" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помош" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори ја веб-страницата %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Веб-страницата не може да се отвори во стандардниот прелистувач."
@@ -13568,6 +13601,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_SR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Сатови и календари" },
         LocalizedText{ TXT_SETTINGS, L"Подешавања" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Подешавања" },
         LocalizedText{ TXT_ADD, L"Додај" },
         LocalizedText{ TXT_REMOVE, L"Уклони…" },
         LocalizedText{ TXT_DUPLICATE, L"Дуплирај" },
@@ -13944,7 +13978,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Верзија:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Циљна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сајт:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Помоћ" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помоћ" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори веб-сајт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
             L"Није могуће отворити страницу у подразумеваном прегледачу."
@@ -13966,6 +14000,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_UK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Годинники та календарі" },
         LocalizedText{ TXT_SETTINGS, L"Налаштування" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Налаштування" },
         LocalizedText{ TXT_ADD, L"Додати" },
         LocalizedText{ TXT_REMOVE, L"Видалити…" },
         LocalizedText{ TXT_DUPLICATE, L"Дублювати" },
@@ -14376,7 +14411,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версія:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Цільова платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вебсайт:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Довідка" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Довідка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Відкрити вебсайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Не вдається відкрити сайт у типовому браузері." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Не вдалося скопіювати URL у буфер обміну." },
@@ -14398,6 +14433,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_RU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_APP, L"Часы и календари" },
         LocalizedText{ TXT_SETTINGS, L"Настройки" },
+        LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Настройки" },
         LocalizedText{ TXT_ADD, L"Добавить" },
         LocalizedText{ TXT_REMOVE, L"Удалить…" },
         LocalizedText{ TXT_DUPLICATE, L"Дублировать" },
@@ -14815,7 +14851,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версия:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целевая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сайт:" },
-        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"CalClock — Справка" },
+        LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Справка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Открыть веб-сайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Не удаётся открыть сайт в браузере по умолчанию." },
         LocalizedText{ TXT_ABOUT_COPY_URL_FAILED, L"Не удалось скопировать URL в буфер обмена." },

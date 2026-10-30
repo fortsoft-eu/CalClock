@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.2
  */
 
 #pragma once
@@ -208,6 +208,7 @@ enum DateCopyFormat {
 enum TextId {
     TXT_APP,
     TXT_SETTINGS,
+    TXT_SETTINGS_WINDOW_TITLE,
     TXT_ADD,
     TXT_REMOVE,
     TXT_DUPLICATE,
@@ -585,6 +586,15 @@ extern bool themesDisabled;
 
 /// Returns a borrowed localized UI string in the current application language.
 const wchar_t* T(TextId id);
+
+/// Returns ProductName from the executable's version resource, or a question mark if unavailable.
+std::wstring GetApplicationName();
+
+/// Returns the executable's four-part product version, or a question mark if unavailable.
+std::wstring GetApplicationVersion();
+
+/// Inserts ProductName into a localized window-title template, preserving its language-specific word order.
+std::wstring BuildApplicationWindowTitle(TextId formatId);
 
 /// Prefixes the localized common caption with a mnemonic marker.
 std::wstring Mnemonic(TextId id);

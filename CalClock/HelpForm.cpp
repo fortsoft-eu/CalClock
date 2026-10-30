@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.2
  */
 
 #define NOMINMAX
@@ -52,7 +52,8 @@ void HelpForm::Refresh() const {
     if (window == nullptr || !IsWindow(window)) {
         return;
     }
-    SetWindowTextW(window, T(TXT_HELP_WINDOW_TITLES));
+    std::wstring title = BuildApplicationWindowTitle(TXT_HELP_WINDOW_TITLES);
+    SetWindowTextW(window, title.c_str());
     const wchar_t* helpText = T(TXT_HELP_TEXT);
     SetDlgItemTextW(window, ID_INFO_TEXT, helpText);
     SetDlgItemTextW(window, ID_INFO_CLOSE, Mnemonic(TXT_CLOSE).c_str());

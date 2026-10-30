@@ -35,10 +35,8 @@
 #include <commctrl.h>
 #include <uxtheme.h>
 #include <windowsx.h>
-#include <winver.h>
 #include <shellapi.h>
 #include <climits>
-#include <vector>
 
 const wchar_t ABOUT_WEBSITE_ROOT[] = L"https://fortsoft.eu/";
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
@@ -86,94 +84,22 @@ static SIZE InformationTextSize(HWND control) {
     return size;
 }
 
-/// Loads the executable's version resource for product-name and version queries.
-static std::vector<BYTE> LoadApplicationVersionInfo() {
-    wchar_t path[MAX_PATH] = {};
-    DWORD length = GetModuleFileNameW(nullptr, path, ARRAYSIZE(path));
-    if (length == 0 || length >= ARRAYSIZE(path)) {
-        return {};
-    }
-    DWORD ignored = 0;
-    DWORD size = GetFileVersionInfoSizeW(path, &ignored);
-    if (size == 0) {
-        return {};
-    }
-    std::vector<BYTE> data(size);
-    if (!GetFileVersionInfoW(path, 0, size, data.data())) {
-        return {};
-    }
-    return data;
-}
-
-/// Returns ProductName from the executable's declared translation tables, or a question mark if unavailable.
-static std::wstring GetApplicationName(const std::vector<BYTE>& data) {
-    WORD* translations = nullptr;
-    UINT translationBytes = 0;
-    if (data.empty()
-            || !VerQueryValueW(data.data(), L"\\VarFileInfo\\Translation",
-                reinterpret_cast<void**>(&translations), &translationBytes)
-            || translations == nullptr) {
-        return L"?";
-    }
-    for (UINT index = 0; index + 1 < translationBytes / sizeof(WORD); index += 2) {
-        wchar_t query[64] = {};
-        swprintf_s(query, L"\\StringFileInfo\\%04X%04X\\ProductName", translations[index],
-            translations[index + 1]);
-        wchar_t* name = nullptr;
-        UINT length = 0;
-        if (VerQueryValueW(data.data(), query, reinterpret_cast<void**>(&name), &length)
-                && name != nullptr
-                && length > 1
-                && name[0] != L'\0') {
-            return name;
-        }
-    }
-    return L"?";
-}
-
-/// Returns the executable's four-part product version, or a question mark if version information cannot be
-/// read.
-static std::wstring GetApplicationVersion(const std::vector<BYTE>& data) {
-    if (data.empty()) {
-        return L"?";
-    }
-    VS_FIXEDFILEINFO* information = nullptr;
-    UINT informationSize = 0;
-    bool invalidVersionInfo =
-        !VerQueryValueW(data.data(), L"\\", reinterpret_cast<void**>(&information), &informationSize)
-        || information == nullptr
-        || informationSize < sizeof(VS_FIXEDFILEINFO)
-        || information->dwSignature != VS_FFI_SIGNATURE;
-    if (invalidVersionInfo) {
-        return L"?";
-    }
-    wchar_t version[48] = {};
-    swprintf_s(version, L"%u.%u.%u.%u",
-        HIWORD(information->dwProductVersionMS),
-        LOWORD(information->dwProductVersionMS),
-        HIWORD(information->dwProductVersionLS),
-        LOWORD(information->dwProductVersionLS));
-    return version;
-}
-
 /// Builds the About window title from its localized caption and the application name.
 static std::wstring BuildAboutTitle() {
-    std::vector<BYTE> data = LoadApplicationVersionInfo();
-    return std::wstring(T(TXT_ABOUT)) + L" " + GetApplicationName(data);
+    return std::wstring(T(TXT_ABOUT)) + L" " + GetApplicationName();
 }
 
 /// Builds localized product information including description, version, copyright, and target platform.
 static std::wstring BuildAboutProductText() {
-    std::vector<BYTE> data = LoadApplicationVersionInfo();
     std::wstring description = T(TXT_ABOUT_TEXT);
     size_t separator = description.find(L"\r\n\r\n");
     if (separator != std::wstring::npos) {
         description.erase(0, separator + 4);
     }
-    std::wstring result = GetApplicationName(data) + L"\r\n" + description + L"\r\n\r\n";
+    std::wstring result = GetApplicationName() + L"\r\n" + description + L"\r\n\r\n";
     result += T(TXT_ABOUT_VERSION_LABEL);
     result += L" ";
-    result += GetApplicationVersion(data);
+    result += GetApplicationVersion();
     result += L"\r\nCopyright © Petr Červinka — FortSoft 2026\r\n";
     result += T(TXT_ABOUT_PLATFORM_LABEL);
     result += L" Win32 (x86)";
@@ -182,8 +108,7 @@ static std::wstring BuildAboutProductText() {
 
 /// Builds the product website URL from the executable's product name using a lowercase path.
 static std::wstring BuildAboutWebsiteUrl() {
-    std::vector<BYTE> data = LoadApplicationVersionInfo();
-    std::wstring name = GetApplicationName(data);
+    std::wstring name = GetApplicationName();
     CharLowerBuffW(name.data(), static_cast<DWORD>(name.size()));
     return std::wstring(ABOUT_WEBSITE_ROOT) + name + L"/";
 }

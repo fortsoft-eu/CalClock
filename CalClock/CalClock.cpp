@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.1
+ * Last modified for version 1.7.0.2
  */
 
 #define NOMINMAX
@@ -868,6 +868,92 @@ static std::wstring FormatNtpLogOffset(LONGLONG offset100Nanoseconds);
 /// Returns a borrowed localized UI string in the current application language.
 const wchar_t* T(TextId id) {
     return GetLocalizedText(appLanguage, id);
+}
+
+/// Loads the executable's version resource for product-name and version queries.
+static std::vector<BYTE> LoadApplicationVersionInfo() {
+    wchar_t path[MAX_PATH] = {};
+    DWORD length = GetModuleFileNameW(nullptr, path, ARRAYSIZE(path));
+    if (length == 0 || length >= ARRAYSIZE(path)) {
+        return {};
+    }
+    DWORD ignored = 0;
+    DWORD size = GetFileVersionInfoSizeW(path, &ignored);
+    if (size == 0) {
+        return {};
+    }
+    std::vector<BYTE> data(size);
+    if (!GetFileVersionInfoW(path, 0, size, data.data())) {
+        return {};
+    }
+    return data;
+}
+
+/// Returns ProductName from the executable's declared translation tables, or a question mark if unavailable.
+std::wstring GetApplicationName() {
+    std::vector<BYTE> data = LoadApplicationVersionInfo();
+    WORD* translations = nullptr;
+    UINT translationBytes = 0;
+    if (data.empty()
+            || !VerQueryValueW(data.data(), L"\\VarFileInfo\\Translation",
+                reinterpret_cast<void**>(&translations), &translationBytes)
+            || translations == nullptr) {
+        return L"?";
+    }
+    for (UINT index = 0; index + 1 < translationBytes / sizeof(WORD); index += 2) {
+        wchar_t query[64] = {};
+        swprintf_s(query, L"\\StringFileInfo\\%04X%04X\\ProductName", translations[index],
+            translations[index + 1]);
+        wchar_t* name = nullptr;
+        UINT length = 0;
+        if (VerQueryValueW(data.data(), query, reinterpret_cast<void**>(&name), &length)
+                && name != nullptr
+                && length > 1
+                && name[0] != L'\0') {
+            return name;
+        }
+    }
+    return L"?";
+}
+
+/// Returns the executable's four-part product version, or a question mark if version information cannot be
+/// read.
+std::wstring GetApplicationVersion() {
+    std::vector<BYTE> data = LoadApplicationVersionInfo();
+    if (data.empty()) {
+        return L"?";
+    }
+    VS_FIXEDFILEINFO* information = nullptr;
+    UINT informationSize = 0;
+    bool invalidVersionInfo =
+        !VerQueryValueW(data.data(), L"\\", reinterpret_cast<void**>(&information), &informationSize)
+        || information == nullptr
+        || informationSize < sizeof(VS_FIXEDFILEINFO)
+        || information->dwSignature != VS_FFI_SIGNATURE;
+    if (invalidVersionInfo) {
+        return L"?";
+    }
+    wchar_t version[48] = {};
+    swprintf_s(version, L"%u.%u.%u.%u",
+        HIWORD(information->dwProductVersionMS),
+        LOWORD(information->dwProductVersionMS),
+        HIWORD(information->dwProductVersionLS),
+        LOWORD(information->dwProductVersionLS));
+    return version;
+}
+
+/// Inserts ProductName into a localized window-title template, preserving its language-specific word order.
+std::wstring BuildApplicationWindowTitle(TextId formatId) {
+    const wchar_t* format = T(formatId);
+    std::wstring name = GetApplicationName();
+    int length = _scwprintf(format, name.c_str());
+    if (length < 0) {
+        return name;
+    }
+    std::wstring title(static_cast<size_t>(length) + 1, L'\0');
+    swprintf_s(title.data(), title.size(), format, name.c_str());
+    title.resize(length);
+    return title;
 }
 
 /// Reports whether a widget type supports alarms and time signals; standalone calendars do not.
@@ -14486,7 +14572,8 @@ static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
         bool applyEnabled) {
     settingsLayoutSuspended = true;
     DestroySettingsChildControls();
-    SetWindowTextW(hSettings, T(TXT_SETTINGS));
+    std::wstring title = BuildApplicationWindowTitle(TXT_SETTINGS_WINDOW_TITLE);
+    SetWindowTextW(hSettings, title.c_str());
     bool controlsCreated = RestoreSettingsRootControls() && CreateSettingsControls(selectedTab);
     if (controlsCreated) {
         RefreshWidgetList(true, false);
@@ -14742,7 +14829,8 @@ static void CreateSettingsWindow(int widgetId) {
     HICON windowIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK));
     SendMessageW(hSettings, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(windowIcon));
     SendMessageW(hSettings, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(windowIcon));
-    SetWindowTextW(hSettings, T(TXT_SETTINGS));
+    std::wstring title = BuildApplicationWindowTitle(TXT_SETTINGS_WINDOW_TITLE);
+    SetWindowTextW(hSettings, title.c_str());
     RECT content = {};
     GetClientRect(hSettings, &content);
     settingsContentWidth = content.right;
