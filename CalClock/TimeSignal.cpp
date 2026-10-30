@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.1
  */
 
 #define NOMINMAX
@@ -30,6 +30,7 @@
 #include "ClockTime.h"
 #include <algorithm>
 #include <atomic>
+#include <avrt.h>
 #include <cmath>
 #include <limits>
 #include <memory>
@@ -38,6 +39,7 @@
 #include <vector>
 
 #pragma comment(lib, "Winmm.lib")
+#pragma comment(lib, "Avrt.lib")
 
 using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW*);
 
@@ -69,10 +71,14 @@ struct TimeSignalWaveBuffer {
     bool queued = false;
 };
 
-/// Tracks a continuous sine wave's sample origin and zero-crossing end across successive output buffers.
+/// Tracks a continuous sine wave, its zero-crossing end, and gain changes aligned to complete cycles.
 struct TimeSignalPhase {
     LONGLONG origin = 0;
+    LONGLONG attackOrigin = 0;
     LONGLONG end = 0;
+    double amplitude = 0.0;
+    double targetAmplitude = 0.0;
+    double envelope = 0.0;
     bool active = false;
 };
 
@@ -105,6 +111,8 @@ static const DWORD GENERATOR_FADE_DURATION = 1;
 static const DWORD GENERATOR_SAMPLE_RATE = 48000;
 static const size_t GENERATOR_BUFFER_SAMPLES = 960;
 static const size_t GENERATOR_BUFFER_COUNT = 3;
+static const size_t GENERATOR_MAX_BUFFER_SAMPLES = GENERATOR_BUFFER_SAMPLES
+    + GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
 static const double GENERATOR_TONE_AMPLITUDE = 0.28;
 static const double PI = 3.14159265358979323846;
 static const int TIME_SIGNAL_MINUTES[TIME_SIGNAL_COUNT] = { 0, 1, 5, 10, 15, 20, 30, 60 };
@@ -233,6 +241,7 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute&
     std::vector<TimeSignalTone> tones;
     AcquireSRWLockExclusive(&route.lock);
     bool stopping = WaitForSingleObject(route.stopEvent, 0) == WAIT_OBJECT_0;
+    double previewVolume = route.previewVolume.load();
     for (size_t index = 0; index < route.sequences.size();) {
         const TimeSignalSequence& sequence = route.sequences[index];
         ULONGLONG end = sequence.target + TimeSignalToneDuration(true, sequence.generatedTone)
@@ -246,7 +255,7 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute&
             for (int pip = 0; pip <= 5; pip++) {
                 ULONGLONG start = sequence.target - (5ULL - pip) * FILE_TIME_TICKS_PER_SECOND;
                 bool generatedTone = route.previewActive ? route.previewGeneratedTone : sequence.generatedTone;
-                double volume = route.previewActive ? route.previewVolume.load() : sequence.volume;
+                double volume = route.previewActive ? previewVolume : sequence.volume;
                 ULONGLONG finish =
                     start + TimeSignalToneDuration(pip == 5, generatedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
                 if (finish >= from && start <= through) {
@@ -268,7 +277,7 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute&
                 tones.push_back(TimeSignalTone{
                     start,
                     end,
-                    TimeSignalAmplitude(route.previewVolume.load()),
+                    TimeSignalAmplitude(previewVolume),
                     route.previewGeneratedTone
                 });
             }
@@ -276,6 +285,22 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute&
     }
     ReleaseSRWLockExclusive(&route.lock);
     return tones;
+}
+
+/// Refreshes held tones from the current snapshot so an active preview also controls already started pips.
+/// Retains absent tones long enough to finish and restores scheduled gain when the preview stops.
+static void RefreshHeldTimeSignalTones(const std::vector<TimeSignalTone>& current,
+        std::vector<TimeSignalTone>* held) {
+    for (TimeSignalTone& item : *held) {
+        bool found = false;
+        for (const TimeSignalTone& tone : current) {
+            if (tone.start == item.start && tone.end == item.end) {
+                item.amplitude = found ? std::max(item.amplitude, tone.amplitude) : tone.amplitude;
+                item.generatedTone = found ? item.generatedTone || tone.generatedTone : tone.generatedTone;
+                found = true;
+            }
+        }
+    }
 }
 
 /// Unions overlapping or touching tone intervals, keeping the greatest amplitude and any generator requirement.
@@ -306,10 +331,11 @@ static LONGLONG TimeSignalSamplePosition(ULONGLONG time, ULONGLONG base) {
         / FILE_TIME_TICKS_PER_SECOND));
 }
 
-/// Fills a PCM buffer from merged intervals while retaining oscillator phase across uninterrupted sound.
-/// Starts at zero, extends each continuous segment to a full cycle, and applies a short endpoint envelope.
+/// Fills merged PCM intervals with one continuous oscillator across buffers and overlapping sources.
+/// Starts gain changes at zero crossings and ramps them over one cycle; missing input drains safely to zero.
+/// Output blocks can extend by less than one cycle so the device never runs out of data at a nonzero sample.
 static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals, ULONGLONG base,
-        LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase) {
+        LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase, bool finishAtZero = false) {
     const LONGLONG cycle = GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
     const LONGLONG fade = GENERATOR_SAMPLE_RATE * GENERATOR_FADE_DURATION / 1000;
     size_t intervalIndex = 0;
@@ -322,30 +348,56 @@ static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals
             }
             intervalIndex++;
         }
-        short value = 0;
+        double amplitude = phase->targetAmplitude;
+        LONGLONG end = sample - 1;
         if (intervalIndex < intervals.size()) {
             const TimeSignalTone& interval = intervals[intervalIndex];
             LONGLONG start = TimeSignalSamplePosition(interval.start, base);
-            LONGLONG end = TimeSignalSamplePosition(interval.end, base);
             if (sample >= start) {
+                amplitude = std::clamp(interval.amplitude, 0.0, 1.0);
                 if (!phase->active || start > phase->end) {
                     phase->origin = start;
+                    phase->attackOrigin = start;
+                    phase->amplitude = amplitude;
+                    phase->targetAmplitude = amplitude;
+                    phase->envelope = 0.0;
                     phase->active = true;
                 }
-                phase->end = phase->origin + (end - phase->origin + cycle - 1) / cycle * cycle;
-                if (sample <= phase->end) {
-                    double envelope = std::clamp(static_cast<double>(std::min(sample - phase->origin,
-                        phase->end - sample)) / fade, 0.0, 1.0);
-                    double angle = 2.0 * PI * ((sample - phase->origin) % cycle) / cycle;
-                    value = static_cast<short>(std::lround(32767.0 * std::clamp(interval.amplitude, 0.0, 1.0)
-                        * envelope * std::sin(angle)));
-                }
+                end = TimeSignalSamplePosition(interval.end, base);
+                end = phase->origin + (end - phase->origin + cycle - 1) / cycle * cycle;
             }
         }
-        if (phase->active && sample > phase->end) {
-            phase->active = false;
+        short value = 0;
+        if (phase->active) {
+            if (end < sample + fade && end < phase->end) {
+                end = phase->origin + (sample - phase->origin + fade + cycle - 1) / cycle * cycle;
+                end = std::min(end, phase->end);
+            }
+            phase->end = end;
+            if (sample <= phase->end) {
+                LONGLONG offset = (sample - phase->origin) % cycle;
+                if (offset == 0) {
+                    phase->amplitude = phase->targetAmplitude;
+                    phase->targetAmplitude = amplitude;
+                }
+                double gain = phase->amplitude + (phase->targetAmplitude - phase->amplitude)
+                    * static_cast<double>(offset) / cycle;
+                double envelope = std::clamp(static_cast<double>(std::min(sample - phase->attackOrigin,
+                    phase->end - sample)) / fade, 0.0, 1.0);
+                phase->envelope += std::clamp(envelope - phase->envelope, -1.0 / fade, 1.0 / fade);
+                double angle = 2.0 * PI * offset / cycle;
+                value = static_cast<short>(std::lround(32767.0 * gain * phase->envelope * std::sin(angle)));
+            } else {
+                phase->active = false;
+            }
         }
         (*samples)[index] = value;
+        if (finishAtZero
+                && index + 1 == samples->size()
+                && phase->active
+                && (sample - phase->origin) % cycle != 0) {
+            samples->push_back(0);
+        }
     }
 }
 
@@ -365,8 +417,8 @@ static bool TimeSignalOutputUsesGenerator(TimeSignalOutputRoute& route, bool fal
     return generated;
 }
 
-/// Streams merged pips through waveOut, retaining phase and held intervals across output buffers. Drains
-/// and releases audio resources before returning; optionally reports the continuous time rendered through.
+/// Keeps one waveOut stream per active output, retaining phase and ending every buffer at zero.
+/// Reattacks smoothly after queue starvation without resetting phase; drains queued audio before closing.
 static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG base,
         ULONGLONG* playedThrough = nullptr) {
     std::wstring endpoint;
@@ -394,7 +446,7 @@ static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG bas
     TimeSignalWaveBuffer buffers[GENERATOR_BUFFER_COUNT];
     bool ready = true;
     for (TimeSignalWaveBuffer& buffer : buffers) {
-        buffer.samples.resize(GENERATOR_BUFFER_SAMPLES);
+        buffer.samples.resize(GENERATOR_MAX_BUFFER_SAMPLES);
         buffer.header.lpData = reinterpret_cast<LPSTR>(buffer.samples.data());
         buffer.header.dwBufferLength = static_cast<DWORD>(buffer.samples.size() * sizeof(short));
         buffer.prepared =
@@ -411,12 +463,21 @@ static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG bas
             WaitForSingleObject(completedEvent, INFINITE);
         }
         buffer.queued = false;
+        bool queuedAudio = false;
+        for (const TimeSignalWaveBuffer& queued : buffers) {
+            queuedAudio = queuedAudio || queued.queued && (queued.header.dwFlags & WHDR_DONE) == 0;
+        }
+        if (!queuedAudio && phase.active) {
+            phase.attackOrigin = nextSample;
+            phase.envelope = 0.0;
+        }
         ULONGLONG from = base + nextSample * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
         std::vector<TimeSignalTone> tones =
             CollectTimeSignalTones(route, from, from + FILE_TIME_TICKS_PER_SECOND);
+        RefreshHeldTimeSignalTones(tones, &held);
         size_t toneCount = 0;
         for (const TimeSignalTone& tone : tones) {
-            if (tone.start >= from) {
+            if (TimeSignalSamplePosition(tone.start, base) >= nextSample) {
                 tones[toneCount] = tone;
                 toneCount++;
             }
@@ -431,10 +492,18 @@ static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG bas
         }
         held.resize(heldCount);
         tones.insert(tones.end(), held.begin(), held.end());
-        ULONGLONG bufferEnd =
-            from + GENERATOR_BUFFER_SAMPLES * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
+        std::vector<TimeSignalTone> intervals = MergeTimeSignalTones(tones);
+        if (!phase.active || nextSample > phase.end) {
+            if (!HasTimeSignalWork(route) || !TimeSignalOutputUsesGenerator(route, !route.device.empty())) {
+                break;
+            }
+        }
+        buffer.samples.resize(GENERATOR_BUFFER_SAMPLES);
+        RenderTimeSignalSamples(intervals, base, nextSample, &buffer.samples, &phase, true);
+        LONGLONG bufferEnd = nextSample + buffer.samples.size();
         for (const TimeSignalTone& tone : tones) {
-            bool shouldHoldTone = tone.start < bufferEnd && tone.end >= bufferEnd;
+            bool shouldHoldTone = TimeSignalSamplePosition(tone.start, base) < bufferEnd
+                && TimeSignalSamplePosition(tone.end, base) >= bufferEnd;
             if (shouldHoldTone) {
                 for (const TimeSignalTone& item : held) {
                     if (item.start == tone.start && item.end == tone.end) {
@@ -447,17 +516,7 @@ static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG bas
                 held.push_back(tone);
             }
         }
-        std::vector<TimeSignalTone> intervals = MergeTimeSignalTones(tones);
-        if (!phase.active || nextSample > phase.end) {
-            ULONGLONG bufferedDuration = GENERATOR_BUFFER_COUNT * GENERATOR_BUFFER_SAMPLES
-                * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
-            bool gap = held.empty() && (intervals.empty()
-                || intervals.front().start > bufferEnd + bufferedDuration);
-            if (gap || !TimeSignalOutputUsesGenerator(route, true)) {
-                break;
-            }
-        }
-        RenderTimeSignalSamples(intervals, base, nextSample, &buffer.samples, &phase);
+        buffer.header.dwBufferLength = static_cast<DWORD>(buffer.samples.size() * sizeof(short));
         ready = waveOutWrite(output, &buffer.header, sizeof(buffer.header)) == MMSYSERR_NOERROR;
         buffer.queued = ready;
         if (ready) {
@@ -498,6 +557,8 @@ static std::vector<TimeSignalTone> PlanTimeSignalIntervals(TimeSignalOutputRoute
 /// Waits for scheduled intervals and plays each merged interval once through the generator or system Beep.
 /// Tracks completed time to avoid replaying already rendered portions.
 static DWORD WINAPI TimeSignalThreadProc(void* parameter) {
+    DWORD taskIndex = 0;
+    HANDLE audioTask = AvSetMmThreadCharacteristicsW(L"Audio", &taskIndex);
     TimeSignalOutputRoute& route = *static_cast<TimeSignalOutputRoute*>(parameter);
     HANDLE events[] = { route.stopEvent, route.wakeEvent };
     ULONGLONG playedUntil = 0;
@@ -549,6 +610,9 @@ static DWORD WINAPI TimeSignalThreadProc(void* parameter) {
             route.beepActive.store(false);
         }
         playedUntil = std::max(playedUntil, playedThrough);
+    }
+    if (audioTask != nullptr) {
+        AvRevertMmThreadCharacteristics(audioTask);
     }
     return 0;
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.1
  */
 
 #define NOMINMAX
@@ -232,6 +232,20 @@ struct InformationWordBreakState {
     std::wstring text;
 };
 
+/// Owns request snapshots and worker results until Settings has consumed them.
+struct SettingsOpenData {
+    HWND notifyWindow = nullptr;
+    int widgetId = -1;
+    SYSTEMTIME utc = {};
+    std::atomic<bool> cancelled = false;
+    std::wstring systemTimeZoneLabel;
+    std::vector<DisplayMonitor> monitors;
+    std::vector<DYNAMIC_TIME_ZONE_INFORMATION> zones;
+    std::vector<MonitorDetails> monitorDetails;
+    std::vector<AudioOutputDevice> audioOutputs;
+    std::vector<std::wstring> timeZoneLabels;
+};
+
 /// Window classes and product constants
 const wchar_t CLASS_NAME[] = L"CalClockMultiWidgetWindow";
 const wchar_t BLACKOUT_CLASS_NAME[] = L"CalClockBlackoutWindow";
@@ -251,6 +265,7 @@ const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
 const UINT WM_ALIGN_SETTINGS_FONT_BUTTON = WM_APP + 10;
+const UINT WM_SETTINGS_DATA_READY = WM_APP + 11;
 const UINT_PTR TIMER_REFRESH = 1;
 const UINT REFRESH_MAX_INTERVAL = 100;
 const LONGLONG REFRESH_SECOND_TICKS = 10000000;
@@ -267,8 +282,6 @@ const int MAX_DIALOG_BUTTON_HEIGHT = 28;
 const int ALARM_DAY_COUNT = 7;
 const int SETTINGS_COMBO_VISIBLE_ITEMS = 13;
 const int TIME_SIGNAL_VOLUME_SLIDER_MIN = 0;
-const int TIME_SIGNAL_VOLUME_SLIDER_MAX = 2000;
-const int TIME_SIGNAL_VOLUME_SLIDER_MIDDLE = 1000;
 const double TIME_SIGNAL_VOLUME_SLIDER_MIN_DB = -60.0;
 const double TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB = -18.0;
 static const int WORK_AREA_SNAP_DISTANCE = 5;
@@ -309,6 +322,7 @@ HINSTANCE hInstance = nullptr;
 
 /// Thread, mutex and event handles
 HANDLE hNtpThread = nullptr;
+static HANDLE hSettingsOpenThread = nullptr;
 HANDLE hSingleInstanceMutex = nullptr;
 HANDLE settingsPreviewMuteEvent = nullptr;
 HANDLE settingsPreviewStopEvent = nullptr;
@@ -481,6 +495,7 @@ NOTIFYICONDATAW trayIcon = {};
 static HelpForm helpForm;
 static AboutForm aboutForm;
 static InformationWordBreakState informationWordBreakState;
+static std::unique_ptr<SettingsOpenData> settingsOpenData;
 
 /// Persistent form placement
 static PersistWindowState settingsWindowState;
@@ -546,6 +561,7 @@ int settingsTab = 0;
 int settingsVisualPreviewWidgetId = -1;
 int settingsWidgetId = -1;
 double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
+double settingsTimeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 std::shared_ptr<std::atomic<int>> settingsPreviewVolume;
 
 /// Message and generation identifiers
@@ -799,6 +815,9 @@ static bool IsSettingsPageWindow(HWND window);
 
 /// Aligns Appearance fields and buttons to a common width and reserves border-slider space.
 static void UpdateSettingsColorControlLayout();
+
+/// Matches volume-slider positions to native thumb-travel pixels while retaining pending volume values.
+static void UpdateSettingsVolumeSliderRange(HWND trackBar);
 
 /// Matches Application field gaps to the current root action-button gap.
 static void UpdateApplicationControlWidths();
@@ -4100,6 +4119,7 @@ static void AlignSettingsVolumeControls(HWND label, HWND value, HWND trackBar) {
     if (GetWindowRect(value, &current)) {
         OffsetSettingsControl(trackBar, current.top - previous.top);
     }
+    UpdateSettingsVolumeSliderRange(trackBar);
 }
 
 /// Positions an Appearance slider at the Application volume slider's verified distance from its label's text
@@ -9782,6 +9802,12 @@ static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT msg, WPARAM wParam, L
 
 /// Routes settings actions while retaining native dialog painting, navigation and default-button behavior.
 static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    if (window == hSettings && settingsLayoutSuspended && (message == WM_PAINT || message == WM_ERASEBKGND)) {
+        if (message == WM_PAINT) {
+            ValidateRect(window, nullptr);
+        }
+        return TRUE;
+    }
     if (message == WM_INITDIALOG) {
         LimitDialogVerticalUnits(window, IDD_SETTINGS);
         return FALSE;
@@ -9905,41 +9931,41 @@ static void ApplySelectedNtpPresetToEdit() {
 
 /// Maps stored generator volume to the piecewise decibel slider with -18 dB at its midpoint and silence
 /// at the left endpoint.
-static int TimeSignalVolumeSliderPosition(double volume) {
+static int TimeSignalVolumeSliderPosition(double volume, HWND trackBar = hTimeSignalVolumeTrackBar) {
+    int maximum = static_cast<int>(SendMessageW(trackBar, TBM_GETRANGEMAX, 0, 0));
+    int middle = maximum / 2;
     if (volume <= TIME_SIGNAL_VOLUME_MIN) {
         return TIME_SIGNAL_VOLUME_SLIDER_MIN;
     }
     double decibels = TimeSignalVolumeDecibels(volume);
     double position = 0.0;
     if (decibels < TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB) {
-        position = 1.0 + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1)
+        position = 1.0 + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB) * (middle - 1)
             / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB);
     } else {
-        position = TIME_SIGNAL_VOLUME_SLIDER_MIDDLE + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MAX - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE)
+        position = middle + (decibels - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB) * (maximum - middle)
             / -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB;
     }
     return std::clamp(static_cast<int>(std::lround(position)), TIME_SIGNAL_VOLUME_SLIDER_MIN + 1,
-        TIME_SIGNAL_VOLUME_SLIDER_MAX);
+        maximum);
 }
 
 /// Maps the slider's two decibel segments back to stored generator volume, reserving the left endpoint for
 /// silence.
-static double TimeSignalVolumeFromSliderPosition(int position) {
-    position = std::clamp(position, TIME_SIGNAL_VOLUME_SLIDER_MIN, TIME_SIGNAL_VOLUME_SLIDER_MAX);
+static double TimeSignalVolumeFromSliderPosition(int position, HWND trackBar = hTimeSignalVolumeTrackBar) {
+    int maximum = static_cast<int>(SendMessageW(trackBar, TBM_GETRANGEMAX, 0, 0));
+    int middle = maximum / 2;
+    position = std::clamp(position, TIME_SIGNAL_VOLUME_SLIDER_MIN, maximum);
     if (position == TIME_SIGNAL_VOLUME_SLIDER_MIN) {
         return TIME_SIGNAL_VOLUME_MIN;
     }
     double decibels = 0.0;
-    if (position < TIME_SIGNAL_VOLUME_SLIDER_MIDDLE) {
+    if (position < middle) {
         decibels = TIME_SIGNAL_VOLUME_SLIDER_MIN_DB + static_cast<double>(position - 1)
-            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB)
-            / (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE - 1);
+            * (TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB - TIME_SIGNAL_VOLUME_SLIDER_MIN_DB) / (middle - 1);
     } else {
-        decibels = TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB + static_cast<double>(position
-            - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE) * -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB
-            / (TIME_SIGNAL_VOLUME_SLIDER_MAX - TIME_SIGNAL_VOLUME_SLIDER_MIDDLE);
+        decibels = TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB + static_cast<double>(position - middle)
+            * -TIME_SIGNAL_VOLUME_SLIDER_MIDDLE_DB / (maximum - middle);
     }
     return TimeSignalVolumeFromDecibels(decibels);
 }
@@ -9951,20 +9977,23 @@ static int AlarmVolumeFromSliderPosition(int position) {
         return ALARM_VOLUME_MIN;
     }
     return static_cast<int>(std::lround(100.0
-        * TimeSignalVolumeDecibels(TimeSignalVolumeFromSliderPosition(position))));
+        * TimeSignalVolumeDecibels(TimeSignalVolumeFromSliderPosition(position, hAlarmVolumeTrackBar))));
 }
 
 /// Maps alarm hundredths of a decibel to the shared volume slider, placing silence at its left endpoint.
 static int AlarmVolumeSliderPosition(int volume) {
     return volume == ALARM_VOLUME_MIN
         ? 0
-        : TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(volume / 100.0));
+        : TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(volume / 100.0), hAlarmVolumeTrackBar);
 }
 
-/// Returns the draft's exact alarm volume while its slider position is unchanged, otherwise converting the
-/// new position.
+/// Returns exact -18 dB at the midpoint, otherwise preserving the draft volume while its position is unchanged.
 static int SelectedAlarmVolume() {
     int position = static_cast<int>(SendMessageW(hAlarmVolumeTrackBar, TBM_GETPOS, 0, 0));
+    int maximum = static_cast<int>(SendMessageW(hAlarmVolumeTrackBar, TBM_GETRANGEMAX, 0, 0));
+    if (position == maximum / 2) {
+        return ALARM_VOLUME_UNITY;
+    }
     if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         int volume = settingsDraft[selectedDraftIndex].alarmVolume;
         if (position == AlarmVolumeSliderPosition(volume)) {
@@ -9989,13 +10018,51 @@ static void UpdateAlarmVolumeControls() {
     }
 }
 
-/// Preserves the exact saved generator volume when its slider position is unchanged, otherwise converting
-/// the new position.
+/// Returns exact -18 dB at the midpoint, otherwise preserving saved generator volume at its unchanged
+/// position.
 static double SelectedTimeSignalVolume() {
     int position = static_cast<int>(SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0));
-    return position == TimeSignalVolumeSliderPosition(timeSignalVolume)
-        ? timeSignalVolume
+    int maximum = static_cast<int>(SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETRANGEMAX, 0, 0));
+    if (position == maximum / 2) {
+        return TIME_SIGNAL_VOLUME_DEFAULT;
+    }
+    return position == TimeSignalVolumeSliderPosition(settingsTimeSignalVolume)
+        ? settingsTimeSignalVolume
         : TimeSignalVolumeFromSliderPosition(position);
+}
+
+/// Uses one native thumb-travel pixel per position, with no snapping or ignored mouse positions.
+/// Retains pending gain when font, theme, or DPI changes the available travel.
+static void UpdateSettingsVolumeSliderRange(HWND trackBar) {
+    RECT channel = {};
+    RECT thumb = {};
+    SendMessageW(trackBar, TBM_GETCHANNELRECT, 0, reinterpret_cast<LPARAM>(&channel));
+    SendMessageW(trackBar, TBM_GETTHUMBRECT, 0, reinterpret_cast<LPARAM>(&thumb));
+    int maximum = channel.right - channel.left - (thumb.right - thumb.left);
+    if (maximum < 4 || maximum == SendMessageW(trackBar, TBM_GETRANGEMAX, 0, 0)) {
+        return;
+    }
+    bool alarm = trackBar == hAlarmVolumeTrackBar;
+    int alarmVolume = ALARM_VOLUME_MIN;
+    if (alarm) {
+        alarmVolume = SelectedAlarmVolume();
+        if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+            settingsDraft[selectedDraftIndex].alarmVolume = alarmVolume;
+        }
+    } else {
+        settingsTimeSignalVolume = SelectedTimeSignalVolume();
+    }
+    SendMessageW(trackBar, TBM_SETRANGEMAX, FALSE, maximum);
+    SendMessageW(trackBar, TBM_CLEARTICS, FALSE, 0);
+    for (int decibels = -54; decibels < 0; decibels += 6) {
+        int position = TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(decibels), trackBar);
+        SendMessageW(trackBar, TBM_SETTIC, 0, position);
+    }
+    SendMessageW(trackBar, TBM_SETPAGESIZE, 0, std::max(1, maximum / 20));
+    int position = alarm
+        ? AlarmVolumeSliderPosition(alarmVolume)
+        : TimeSignalVolumeSliderPosition(settingsTimeSignalVolume);
+    SetTrackBarPosition(trackBar, position);
 }
 
 /// Reads the selected persistent endpoint ID; the first combo item always means the Windows default output.
@@ -10007,7 +10074,8 @@ static std::wstring SelectedAudioOutputDevice(HWND combo, const std::vector<Audi
 /// Refreshes available output names while preserving a saved endpoint that is temporarily disconnected.
 static void FillAudioOutputCombo(HWND combo, std::vector<AudioOutputDevice>& devices,
         const std::wstring& selected) {
-    devices = EnumerateAudioOutputDevices();
+    devices = settingsOpenData != nullptr
+        && hSettingsOpenThread == nullptr ? settingsOpenData->audioOutputs : EnumerateAudioOutputDevices();
     bool found = selected.empty();
     for (const AudioOutputDevice& device : devices) {
         found = found || device.id == selected;
@@ -10037,8 +10105,8 @@ static void UpdateTimeSignalVolumePreview() {
         && hTimeSignalVolumeTrackBar != nullptr
         && IsWindowEnabled(hTimeSignalVolumeTrackBar);
     if (settingsTimeSignalTestActive || dragging) {
-        bool generatedTone =
-            IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+        bool generatedTone = IsTimeSignalGeneratorRequired()
+            || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
         double volume = SelectedTimeSignalVolume();
         if (!StartTimeSignalVolumePreview(generatedTone, volume, generatedTimeSignal,
             settingsTestAudioOutputDevice)) {
@@ -11144,7 +11212,15 @@ static void PopulateMonitorList() {
         }
     }
     ListView_DeleteAllItems(hMonitorList);
-    const std::vector<MonitorDetails> details = ReadMonitorDetails(displayMonitors);
+    bool prepared = settingsOpenData != nullptr
+        && hSettingsOpenThread == nullptr
+        && settingsOpenData->monitors.size() == displayMonitors.size();
+    for (size_t index = 0; prepared && index < displayMonitors.size(); index++) {
+        prepared = settingsOpenData->monitors[index].device == displayMonitors[index].device;
+    }
+    const std::vector<MonitorDetails> details = prepared
+        ? settingsOpenData->monitorDetails
+        : ReadMonitorDetails(displayMonitors);
     monitorListEntries.resize(displayMonitors.size());
     for (size_t index = 0; index < displayMonitors.size(); index++) {
         MonitorListEntry& entry = monitorListEntries[index];
@@ -11757,6 +11833,22 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPAR
     return DefSubclassProc(window, msg, wParam, lParam);
 }
 
+/// Calculates current time-zone captions once for reuse across the three Settings selectors.
+static std::vector<std::wstring> BuildSettingsTimeZoneLabels(
+        const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones, const SYSTEMTIME& utc,
+        const std::wstring& systemLabel) {
+    std::vector<std::wstring> labels;
+    labels.reserve(zones.size());
+    for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : zones) {
+        std::wstring label = TimeZoneDisplayName(zone, utc);
+        if (_wcsicmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
+            label = systemLabel + L" (" + label + L")";
+        }
+        labels.push_back(std::move(label));
+    }
+    return labels;
+}
+
 /// Refreshes time-zone captions and current UTC offsets only when changed, retaining selection by stored
 /// zone index.
 static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
@@ -11765,14 +11857,15 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
     }
     SYSTEMTIME utc = {};
     GetApplicationUtcTime(&utc);
-    std::vector<std::wstring> labels;
-    labels.reserve(timeZones.size());
-    bool changed = SendMessageW(combo, CB_GETCOUNT, 0, 0) != static_cast<LRESULT>(timeZones.size());
-    for (size_t index = 0; index < timeZones.size(); index++) {
-        std::wstring label = TimeZoneDisplayName(timeZones[index], utc);
-        if (_wcsicmp(timeZones[index].TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
-            label = std::wstring(T(TXT_SYSTEM_TIME_ZONE_LABEL)) + L" (" + label + L")";
-        }
+    std::vector<std::wstring> currentLabels;
+    bool prepared = settingsOpenData != nullptr && hSettingsOpenThread == nullptr;
+    if (!prepared) {
+        currentLabels = BuildSettingsTimeZoneLabels(timeZones, utc, T(TXT_SYSTEM_TIME_ZONE_LABEL));
+    }
+    const std::vector<std::wstring>& labels = prepared ? settingsOpenData->timeZoneLabels : currentLabels;
+    bool changed = SendMessageW(combo, CB_GETCOUNT, 0, 0) != static_cast<LRESULT>(labels.size());
+    for (size_t index = 0; index < labels.size(); index++) {
+        const std::wstring& label = labels[index];
         if (!changed) {
             int length = static_cast<int>(SendMessageW(combo, CB_GETLBTEXTLEN, index, 0));
             if (length != static_cast<int>(label.size())
@@ -11784,7 +11877,6 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
                     reinterpret_cast<LPARAM>(current.data())) != length || label != current.c_str();
             }
         }
-        labels.push_back(std::move(label));
     }
     if (!changed) {
         return;
@@ -12423,8 +12515,7 @@ static bool HasPendingSettingsChanges() {
             || settingsAppFontItalic != appFontItalic
             || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) != (IsTimeSignalGeneratorRequired()
                 || generatedTimeSignal ? 0 : 1)
-            || SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0)
-                != TimeSignalVolumeSliderPosition(timeSignalVolume)
+            || SelectedTimeSignalVolume() != timeSignalVolume
             || SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) != (useNtpTime ? 1 : 0)
             || SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0) != ntpPreset) {
         return true;
@@ -13051,6 +13142,7 @@ static void ApplySettingsDraft() {
     warnOnUnsavedChanges = GetCheck(hWarnUnsavedChangesCheck);
     generatedTimeSignal = SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
     timeSignalVolume = SelectedTimeSignalVolume();
+    settingsTimeSignalVolume = timeSignalVolume;
     testAudioOutputDevice = settingsTestAudioOutputDevice;
     std::vector<int> hiddenWidgetIds;
     for (size_t widgetIndex = 0; widgetIndex < widgets.size(); widgetIndex++) {
@@ -13767,7 +13859,6 @@ static void BrowseForCommand() {
 /// scrolling, fonts, and themes. Returns false when a required control or its text-selection handler
 /// could not be created.
 static bool CreateSettingsControls() {
-    WindowRedrawScope redraw(hSettings);
     if (hUiFont == nullptr) {
         hUiFont = CreateApplicationUiFont(hSettings);
         if (hUiFont == nullptr) {
@@ -14052,13 +14143,15 @@ static bool CreateSettingsControls() {
     hAlarmVolumeLabel = BindSettingsLabel(hAlarmPage, IDC_ALARM_VOLUME_LABEL, T(TXT_ALARM_VOLUME_LABEL),
         &alarmControls);
     hAlarmVolumeTrackBar = BindSettingsControl(hAlarmPage, ID_ALARM_VOLUME, L"", &alarmControls);
-    SendMessageW(hAlarmVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
-        TIME_SIGNAL_VOLUME_SLIDER_MAX));
+    if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+        SetTrackBarPosition(hAlarmVolumeTrackBar,
+            AlarmVolumeSliderPosition(settingsDraft[selectedDraftIndex].alarmVolume));
+    }
     for (int decibels = -54; decibels < 0; decibels += 6) {
         SendMessageW(hAlarmVolumeTrackBar, TBM_SETTIC, 0, AlarmVolumeSliderPosition(decibels * 100));
     }
-    SendMessageW(hAlarmVolumeTrackBar, TBM_SETLINESIZE, 0, 10);
-    SendMessageW(hAlarmVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
+    SendMessageW(hAlarmVolumeTrackBar, TBM_SETLINESIZE, 0, 1);
+    SendMessageW(hAlarmVolumeTrackBar, TBM_SETPAGESIZE, 0, 5);
     hAlarmVolumeValue = BindSettingsControl(hAlarmPage, IDC_ALARM_VOLUME_VALUE, L"", &alarmControls);
     hRemoteScriptCheck = BindSettingsControl(hAlarmPage, ID_REMOTE_SCRIPT, T(TXT_REMOTE_SCRIPT_LABEL),
         &alarmControls);
@@ -14153,16 +14246,14 @@ static bool CreateSettingsControls() {
         T(TXT_TIME_SIGNAL_VOLUME_LABEL), &applicationControls);
     hTimeSignalVolumeTrackBar = BindSettingsControl(hApplicationPage, ID_TIME_SIGNAL_VOLUME, L"",
         &applicationControls);
-    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETRANGE, TRUE, MAKELPARAM(TIME_SIGNAL_VOLUME_SLIDER_MIN,
-        TIME_SIGNAL_VOLUME_SLIDER_MAX));
     for (int decibels = -54; decibels < 0; decibels += 6) {
         SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETTIC, 0,
             TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(decibels)));
     }
-    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETLINESIZE, 0, 10);
-    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPAGESIZE, 0, 100);
+    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETLINESIZE, 0, 1);
+    SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPAGESIZE, 0, 5);
     SendMessageW(hTimeSignalVolumeTrackBar, TBM_SETPOS, TRUE,
-        TimeSignalVolumeSliderPosition(timeSignalVolume));
+        TimeSignalVolumeSliderPosition(settingsTimeSignalVolume));
     SetWindowSubclass(hTimeSignalVolumeTrackBar, TimeSignalVolumeSubclassProc, ID_TIME_SIGNAL_VOLUME, 0);
     hTimeSignalVolumeValue = BindSettingsControl(hApplicationPage, IDC_TIME_SIGNAL_VOLUME_VALUE, L"",
         &applicationControls);
@@ -14242,7 +14333,9 @@ static void CaptureSettingsControlValue(HWND control, int page,
             SettingsControlValue savedButtonCheckState{ page, id, BM_SETCHECK, savedCheckState, 0, {} };
             values->push_back(savedButtonCheckState);
         }
-    } else if (_wcsicmp(className, TRACKBAR_CLASSW) == 0) {
+    } else if (_wcsicmp(className, TRACKBAR_CLASSW) == 0
+            && control != hAlarmVolumeTrackBar
+            && control != hTimeSignalVolumeTrackBar) {
         LPARAM position = SendMessageW(control, TBM_GETPOS, 0, 0);
         SettingsControlValue sliderState{ page, id, TBM_SETPOS, TRUE, position, {} };
         values->push_back(sliderState);
@@ -14392,7 +14485,6 @@ static void RestoreSettingsControlValues(const std::vector<SettingsControlValue>
 static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
         const std::vector<SettingsControlValue>& values, const std::vector<int>& selectedWidgets,
         bool applyEnabled) {
-    WindowRedrawScope redraw(hSettings);
     settingsLayoutSuspended = true;
     DestroySettingsChildControls();
     SetWindowTextW(hSettings, T(TXT_SETTINGS));
@@ -14409,6 +14501,7 @@ static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
         }
     }
     settingsLayoutSuspended = false;
+    RedrawWindow(hSettings, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
     return controlsCreated;
 }
 
@@ -14427,6 +14520,7 @@ static void RebuildSettingsControls(bool preserveValues = false) {
     std::vector<int> selectedWidgets;
     if (preserveValues) {
         SaveControlsToDraft(false);
+        settingsTimeSignalVolume = SelectedTimeSignalVolume();
         selectedWidgets = GetSelectedWidgetIndices();
         values = CaptureSettingsControlValues();
     }
@@ -14610,22 +14704,8 @@ static void ImportSettings() {
     ShowSettingsWindow();
 }
 
-/// Opens or activates the non-topmost settings form, selecting an explicit widget or restoring the last
-/// closed selection. Creates draft snapshots and fullscreen previews when opening a new form; a missing
-/// widget falls back to the first.
-static void ShowSettingsWindow(int widgetId) {
-    if (hSettings != nullptr && IsWindow(hSettings)) {
-        if (!IsWindowEnabled(hSettings)) {
-            HWND dialog = GetLastActivePopup(hSettings);
-            if (dialog != hSettings && IsWindow(dialog)) {
-                SetForegroundWindow(dialog);
-            }
-            return;
-        }
-        SelectDraftWidgetById(widgetId);
-        settingsWindowState.BringToFront();
-        return;
-    }
+/// Creates the settings controls on the UI thread after slow system queries have completed.
+static void CreateSettingsWindow(int widgetId) {
     settingsDraft.clear();
     for (size_t index = 0; index < widgets.size(); index++) {
         settingsDraft.push_back(widgets[index]->config);
@@ -14636,6 +14716,7 @@ static void ShowSettingsWindow(int widgetId) {
     settingsAppearancePreviewActive = false;
     settingsAppFontFace = appFontFace;
     settingsTestAudioOutputDevice = testAudioOutputDevice;
+    settingsTimeSignalVolume = timeSignalVolume;
     settingsAppFontDialogSize = appFontDialogSize;
     settingsAppFontWeight = appFontWeight;
     settingsAppFontItalic = appFontItalic;
@@ -14697,6 +14778,58 @@ static void ShowSettingsWindow(int widgetId) {
     settingsWindowState.Show();
     SetActiveWindow(hSettings);
     SetFocus(hAddType);
+}
+
+/// Loads monitor metadata, audio endpoints and time-zone captions without accessing live UI state.
+static DWORD WINAPI PrepareSettingsOpenData(void* parameter) {
+    SettingsOpenData* data = static_cast<SettingsOpenData*>(parameter);
+    data->monitorDetails = ReadMonitorDetails(data->monitors);
+    if (data->cancelled) {
+        return 0;
+    }
+    data->audioOutputs = EnumerateAudioOutputDevices();
+    if (data->cancelled) {
+        return 0;
+    }
+    data->timeZoneLabels = BuildSettingsTimeZoneLabels(data->zones, data->utc, data->systemTimeZoneLabel);
+    if (!data->cancelled) {
+        PostMessageW(data->notifyWindow, WM_SETTINGS_DATA_READY, 0, 0);
+    }
+    return 0;
+}
+
+/// Activates existing Settings or prepares a new form while widget timers continue on the UI thread.
+/// Repeated requests during preparation retain only the latest requested widget.
+static void ShowSettingsWindow(int widgetId) {
+    if (hSettings != nullptr && IsWindow(hSettings)) {
+        if (!IsWindowEnabled(hSettings)) {
+            HWND dialog = GetLastActivePopup(hSettings);
+            if (dialog != hSettings && IsWindow(dialog)) {
+                SetForegroundWindow(dialog);
+            }
+            return;
+        }
+        SelectDraftWidgetById(widgetId);
+        settingsWindowState.BringToFront();
+        return;
+    }
+    if (settingsOpenData != nullptr) {
+        settingsOpenData->widgetId = widgetId;
+        return;
+    }
+    RefreshDisplayMonitors();
+    settingsOpenData = std::make_unique<SettingsOpenData>();
+    settingsOpenData->notifyWindow = hController;
+    settingsOpenData->widgetId = widgetId;
+    GetApplicationUtcTime(&settingsOpenData->utc);
+    settingsOpenData->systemTimeZoneLabel = T(TXT_SYSTEM_TIME_ZONE_LABEL);
+    settingsOpenData->monitors = displayMonitors;
+    settingsOpenData->zones = timeZones;
+    hSettingsOpenThread =
+        CreateThread(nullptr, 0, PrepareSettingsOpenData, settingsOpenData.get(), 0, nullptr);
+    if (hSettingsOpenThread == nullptr) {
+        settingsOpenData.reset();
+    }
 }
 
 /// Lets information windows handle Enter, Escape and Tab from their read-only text fields.
@@ -15949,6 +16082,16 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             break;
+        case WM_SETTINGS_DATA_READY:
+            if (window == hController && hSettingsOpenThread != nullptr) {
+                WaitForSingleObject(hSettingsOpenThread, INFINITE);
+                CloseHandle(hSettingsOpenThread);
+                hSettingsOpenThread = nullptr;
+                CreateSettingsWindow(settingsOpenData->widgetId);
+                settingsOpenData.reset();
+                return 0;
+            }
+            break;
         case WM_NTP_RESULT:
             if (window == hController) {
                 std::unique_ptr<NtpThreadResult> result(reinterpret_cast<NtpThreadResult*>(lParam));
@@ -16609,6 +16752,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }
+    if (hSettingsOpenThread != nullptr) {
+        settingsOpenData->cancelled = true;
+        WaitForSingleObject(hSettingsOpenThread, INFINITE);
+        CloseHandle(hSettingsOpenThread);
+        hSettingsOpenThread = nullptr;
+    }
+    settingsOpenData.reset();
     ShutdownAnalogClockHost();
     if (hUiFont != nullptr) {
         DeleteObject(hUiFont);
