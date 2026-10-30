@@ -197,7 +197,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="CalClock.manifest.xml">
+    <Manifest Include="CalClock.manifest">
       <Filter>Resource Files</Filter>
     </Manifest>
   </ItemGroup>

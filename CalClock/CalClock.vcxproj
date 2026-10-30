@@ -142,7 +142,7 @@
     <ResourceCompile Include="CalClock.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="CalClock.manifest.xml" />
+    <Manifest Include="CalClock.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CalClock.ico" />
