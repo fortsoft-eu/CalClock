@@ -9987,20 +9987,17 @@ static int AlarmVolumeSliderPosition(int volume) {
         : TimeSignalVolumeSliderPosition(TimeSignalVolumeFromDecibels(volume / 100.0), hAlarmVolumeTrackBar);
 }
 
-/// Returns exact -18 dB at the midpoint, otherwise preserving the draft volume while its position is unchanged.
+/// Preserves the exact draft volume at its unchanged position; a move to the midpoint selects -18 dB.
 static int SelectedAlarmVolume() {
     int position = static_cast<int>(SendMessageW(hAlarmVolumeTrackBar, TBM_GETPOS, 0, 0));
     int maximum = static_cast<int>(SendMessageW(hAlarmVolumeTrackBar, TBM_GETRANGEMAX, 0, 0));
-    if (position == maximum / 2) {
-        return ALARM_VOLUME_UNITY;
-    }
     if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         int volume = settingsDraft[selectedDraftIndex].alarmVolume;
         if (position == AlarmVolumeSliderPosition(volume)) {
             return volume;
         }
     }
-    return AlarmVolumeFromSliderPosition(position);
+    return position == maximum / 2 ? ALARM_VOLUME_UNITY : AlarmVolumeFromSliderPosition(position);
 }
 
 /// Refreshes the alarm's decibel label and atomically updates the active audio preview volume.
@@ -10018,16 +10015,15 @@ static void UpdateAlarmVolumeControls() {
     }
 }
 
-/// Returns exact -18 dB at the midpoint, otherwise preserving saved generator volume at its unchanged
-/// position.
+/// Preserves exact generator volume at its unchanged position; a move to the midpoint selects -18 dB.
 static double SelectedTimeSignalVolume() {
     int position = static_cast<int>(SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETPOS, 0, 0));
     int maximum = static_cast<int>(SendMessageW(hTimeSignalVolumeTrackBar, TBM_GETRANGEMAX, 0, 0));
-    if (position == maximum / 2) {
-        return TIME_SIGNAL_VOLUME_DEFAULT;
+    if (position == TimeSignalVolumeSliderPosition(settingsTimeSignalVolume)) {
+        return settingsTimeSignalVolume;
     }
-    return position == TimeSignalVolumeSliderPosition(settingsTimeSignalVolume)
-        ? settingsTimeSignalVolume
+    return position == maximum / 2
+        ? TIME_SIGNAL_VOLUME_DEFAULT
         : TimeSignalVolumeFromSliderPosition(position);
 }
 
@@ -16214,11 +16210,19 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                     break;
                 }
                 if (trackBar == hAlarmVolumeTrackBar) {
+                    if (!updatingSettingsControls
+                            && selectedDraftIndex >= 0
+                            && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
+                        settingsDraft[selectedDraftIndex].alarmVolume = SelectedAlarmVolume();
+                    }
                     UpdateAlarmVolumeControls();
                     UpdateSettingsApplyButton();
                     return 0;
                 }
                 if (trackBar == hTimeSignalVolumeTrackBar) {
+                    if (!updatingSettingsControls) {
+                        settingsTimeSignalVolume = SelectedTimeSignalVolume();
+                    }
                     UpdateTimeSignalVolumeControls();
                     UpdateSettingsApplyButton();
                     return 0;
