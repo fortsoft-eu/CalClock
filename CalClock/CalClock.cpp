@@ -9879,6 +9879,8 @@ static bool RestoreSettingsRootControls() {
         std::wstring text = GetControlText(child);
         if (GetDlgCtrlID(child) == ID_LIST_WIDGETS) {
             style |= WS_VSCROLL;
+        } else if (GetDlgCtrlID(child) == ID_TABS) {
+            style &= ~WS_VISIBLE;
         }
         HWND control = CreateWindowExW(extendedStyle, className, text.c_str(), style, bounds.left,
             bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top, hSettings,
@@ -13854,7 +13856,7 @@ static void BrowseForCommand() {
 /// Creates all settings pages and controls, populates selectors, and applies shared layout, clipping,
 /// scrolling, fonts, and themes. Returns false when a required control or its text-selection handler
 /// could not be created.
-static bool CreateSettingsControls() {
+static bool CreateSettingsControls(int selectedTab) {
     if (hUiFont == nullptr) {
         hUiFont = CreateApplicationUiFont(hSettings);
         if (hUiFont == nullptr) {
@@ -13900,6 +13902,7 @@ static bool CreateSettingsControls() {
     TabCtrl_InsertItem(hTabs, 4, &tab);
     tab.pszText = const_cast<wchar_t*>(T(TXT_APPLICATION_TAB_LABEL));
     TabCtrl_InsertItem(hTabs, 5, &tab);
+    TabCtrl_SetCurSel(hTabs, std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1));
     hGeneralPage = CreateSettingsPage(IDD_SETTINGS_GENERAL);
     hAppearancePage = CreateSettingsPage(IDD_SETTINGS_APPEARANCE);
     hAlarmPage = CreateSettingsPage(IDD_SETTINGS_ALARM);
@@ -14484,7 +14487,7 @@ static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
     settingsLayoutSuspended = true;
     DestroySettingsChildControls();
     SetWindowTextW(hSettings, T(TXT_SETTINGS));
-    bool controlsCreated = RestoreSettingsRootControls() && CreateSettingsControls();
+    bool controlsCreated = RestoreSettingsRootControls() && CreateSettingsControls(selectedTab);
     if (controlsCreated) {
         RefreshWidgetList(true, false);
         LoadDraftIntoControls();
@@ -14492,8 +14495,8 @@ static bool RecreateSettingsChildControls(bool preserveValues, int selectedTab,
             if (preserveValues) {
                 RestoreSettingsControlValues(values, selectedWidgets, applyEnabled);
             }
-            TabCtrl_SetCurSel(hTabs, std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1));
             ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
+            SetControlVisible(hTabs, true);
         }
     }
     settingsLayoutSuspended = false;
@@ -14756,14 +14759,13 @@ static void CreateSettingsWindow(int widgetId) {
         PositionInformationWindowByWindowsDefault(hSettings);
     }
     RefreshFullscreenPresentation();
-    if (!CreateSettingsControls()) {
+    if (!CreateSettingsControls(settingsTab)) {
         CloseSettingsWindow();
         return;
     }
     RefreshWidgetList(true, false);
     LoadDraftIntoControls();
     if (hTabs != nullptr) {
-        TabCtrl_SetCurSel(hTabs, std::clamp(settingsTab, 0, SETTINGS_TAB_COUNT - 1));
         ShowSettingsTab(TabCtrl_GetCurSel(hTabs));
     }
     UpdateSettingsApplyButton();
