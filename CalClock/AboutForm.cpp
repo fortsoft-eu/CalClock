@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.2
  */
 
 #define NOMINMAX
@@ -40,7 +40,7 @@
 #include <climits>
 #include <vector>
 
-const wchar_t ABOUT_WEBSITE_URL[] = L"https://fortsoft.eu/calclock/";
+const wchar_t ABOUT_WEBSITE_ROOT[] = L"https://fortsoft.eu/";
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
 const int ABOUT_ICON_SIZE = 32;
 const int ABOUT_LARGE_ICON_SIZE = 48;
@@ -86,20 +86,55 @@ static SIZE InformationTextSize(HWND control) {
     return size;
 }
 
-/// Returns the executable's four-part product version, or a question mark if version information cannot be
-/// read.
-static std::wstring GetApplicationVersion() {
+/// Loads the executable's version resource for product-name and version queries.
+static std::vector<BYTE> LoadApplicationVersionInfo() {
     wchar_t path[MAX_PATH] = {};
-    if (GetModuleFileNameW(nullptr, path, ARRAYSIZE(path)) == 0) {
-        return L"?";
+    DWORD length = GetModuleFileNameW(nullptr, path, ARRAYSIZE(path));
+    if (length == 0 || length >= ARRAYSIZE(path)) {
+        return {};
     }
     DWORD ignored = 0;
     DWORD size = GetFileVersionInfoSizeW(path, &ignored);
     if (size == 0) {
-        return L"?";
+        return {};
     }
     std::vector<BYTE> data(size);
     if (!GetFileVersionInfoW(path, 0, size, data.data())) {
+        return {};
+    }
+    return data;
+}
+
+/// Returns ProductName from the executable's declared translation tables, or a question mark if unavailable.
+static std::wstring GetApplicationName(const std::vector<BYTE>& data) {
+    WORD* translations = nullptr;
+    UINT translationBytes = 0;
+    if (data.empty()
+            || !VerQueryValueW(data.data(), L"\\VarFileInfo\\Translation",
+                reinterpret_cast<void**>(&translations), &translationBytes)
+            || translations == nullptr) {
+        return L"?";
+    }
+    for (UINT index = 0; index + 1 < translationBytes / sizeof(WORD); index += 2) {
+        wchar_t query[64] = {};
+        swprintf_s(query, L"\\StringFileInfo\\%04X%04X\\ProductName", translations[index],
+            translations[index + 1]);
+        wchar_t* name = nullptr;
+        UINT length = 0;
+        if (VerQueryValueW(data.data(), query, reinterpret_cast<void**>(&name), &length)
+                && name != nullptr
+                && length > 1
+                && name[0] != L'\0') {
+            return name;
+        }
+    }
+    return L"?";
+}
+
+/// Returns the executable's four-part product version, or a question mark if version information cannot be
+/// read.
+static std::wstring GetApplicationVersion(const std::vector<BYTE>& data) {
+    if (data.empty()) {
         return L"?";
     }
     VS_FIXEDFILEINFO* information = nullptr;
@@ -123,34 +158,45 @@ static std::wstring GetApplicationVersion() {
 
 /// Builds the About window title from its localized caption and the application name.
 static std::wstring BuildAboutTitle() {
-    return std::wstring(T(TXT_ABOUT)) + L" CalClock";
+    std::vector<BYTE> data = LoadApplicationVersionInfo();
+    return std::wstring(T(TXT_ABOUT)) + L" " + GetApplicationName(data);
 }
 
 /// Builds localized product information including description, version, copyright, and target platform.
 static std::wstring BuildAboutProductText() {
+    std::vector<BYTE> data = LoadApplicationVersionInfo();
     std::wstring description = T(TXT_ABOUT_TEXT);
     size_t separator = description.find(L"\r\n\r\n");
     if (separator != std::wstring::npos) {
         description.erase(0, separator + 4);
     }
-    std::wstring result = L"CalClock\r\n" + description + L"\r\n\r\n";
+    std::wstring result = GetApplicationName(data) + L"\r\n" + description + L"\r\n\r\n";
     result += T(TXT_ABOUT_VERSION_LABEL);
     result += L" ";
-    result += GetApplicationVersion();
+    result += GetApplicationVersion(data);
     result += L"\r\nCopyright © Petr Červinka – FortSoft 2026\r\n";
     result += T(TXT_ABOUT_PLATFORM_LABEL);
     result += L" Win32 (x86)";
     return result;
 }
 
+/// Builds the product website URL from the executable's product name using a lowercase path.
+static std::wstring BuildAboutWebsiteUrl() {
+    std::vector<BYTE> data = LoadApplicationVersionInfo();
+    std::wstring name = GetApplicationName(data);
+    CharLowerBuffW(name.data(), static_cast<DWORD>(name.size()));
+    return std::wstring(ABOUT_WEBSITE_ROOT) + name + L"/";
+}
+
 /// Builds SysLink markup for the product website URL.
 static std::wstring BuildAboutLinkText() {
-    return std::wstring(L"<a href=\"") + ABOUT_WEBSITE_URL + L"\">" + ABOUT_WEBSITE_URL + L"</a>";
+    std::wstring website = BuildAboutWebsiteUrl();
+    return std::wstring(L"<a href=\"") + website + L"\">" + website + L"</a>";
 }
 
 /// Combines product information and the labeled website URL as plain text for copying.
 static std::wstring BuildAboutClipboardText() {
-    return BuildAboutProductText() + L"\r\n" + T(TXT_ABOUT_WEBSITE_LABEL) + L" " + ABOUT_WEBSITE_URL;
+    return BuildAboutProductText() + L"\r\n" + T(TXT_ABOUT_WEBSITE_LABEL) + L" " + BuildAboutWebsiteUrl();
 }
 
 /// Decodes the embedded UTF-8 license, removes an optional BOM and a case-insensitive MIT License heading,
@@ -223,7 +269,8 @@ std::wstring AboutForm::LoadLicenseText() const {
 
 /// Opens the About website and reports failures in the selected application language.
 void AboutForm::OpenWebsite() const {
-    HINSTANCE result = ShellExecuteW(window, L"open", ABOUT_WEBSITE_URL, nullptr, nullptr, SW_SHOWNORMAL);
+    std::wstring website = BuildAboutWebsiteUrl();
+    HINSTANCE result = ShellExecuteW(window, L"open", website.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
     if (reinterpret_cast<INT_PTR>(result) <= 32) {
         MessageBoxW(window, T(TXT_ABOUT_WEBSITE_FAILED), T(TXT_APP), MB_OK | MB_ICONERROR);
     }
@@ -258,7 +305,7 @@ void AboutForm::ShowContextMenu(HWND source, LPARAM location) const {
     if (command == ID_MENU_ABOUT_OPEN_LINK) {
         OpenWebsite();
     } else if (command == ID_MENU_ABOUT_COPY_URL) {
-        if (!CopyTextToClipboard(window, ABOUT_WEBSITE_URL)) {
+        if (!CopyTextToClipboard(window, BuildAboutWebsiteUrl())) {
             MessageBoxW(window, T(TXT_ABOUT_COPY_URL_FAILED), T(TXT_APP), MB_OK | MB_ICONERROR);
         }
     } else if (command == ID_MENU_ABOUT_COPY_INFORMATION) {
@@ -484,7 +531,8 @@ INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
         NMHDR* notification = reinterpret_cast<NMHDR*>(lParam);
         if (notification->hwndFrom == tooltip && notification->code == TTN_GETDISPINFOW) {
             NMTTDISPINFOW* information = reinterpret_cast<NMTTDISPINFOW*>(lParam);
-            swprintf_s(tooltipText, T(TXT_ABOUT_VISIT_TOOLTIP), ABOUT_WEBSITE_URL);
+            std::wstring website = BuildAboutWebsiteUrl();
+            swprintf_s(tooltipText, T(TXT_ABOUT_VISIT_TOOLTIP), website.c_str());
             information->lpszText = tooltipText;
             SetWindowLongPtrW(window, DWLP_MSGRESULT, 0);
             return TRUE;
@@ -626,4 +674,3 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
     SetFocus(GetDlgItem(window, ID_INFO_CLOSE));
     placement->Show();
 }
-
