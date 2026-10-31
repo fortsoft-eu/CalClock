@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.3.1
+ * Last modified for version 1.7.0.3
  */
 
 #include "SelectionEdit.h"
@@ -205,7 +205,10 @@ static void SelectionWordBounds(const SelectionState& state, int position, int& 
 
 /// Returns the entire logical line and excludes only its final CR, LF or CRLF.
 static void SelectionLineBounds(const SelectionState& state, int position, int& start, int& end) {
-    if (position > 0 && position < state.length && state.text[position] == L'\n' && state.text[position - 1] == L'\r') {
+    if (position > 0
+            && position < state.length
+            && state.text[position] == L'\n'
+            && state.text[position - 1] == L'\r') {
         --position;
     }
     start = position;
@@ -278,7 +281,8 @@ static bool BeginSelection(HWND window, SelectionState& state, POINT point) {
 }
 
 /// Handles a mouse press using system click tolerance and preserves native modifier, word, and line gestures.
-static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        SelectionState& state) {
     EndSelection(window, state);
     if (wParam & (MK_SHIFT | MK_CONTROL)) {
         state.clickCount = 0;
@@ -304,7 +308,8 @@ static LRESULT HandleSelectionPress(HWND window, UINT msg, WPARAM wParam, LPARAM
 }
 
 /// Preserves native dialog-key handling while enabling Tab navigation and Ctrl+A selection.
-static LRESULT HandleSelectionDialogCode(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+static LRESULT HandleSelectionDialogCode(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        SelectionState& state) {
     LRESULT result = CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
     if (wParam == VK_TAB) {
         result &= ~(DLGC_WANTTAB | DLGC_WANTALLKEYS);
@@ -318,7 +323,8 @@ static LRESULT HandleSelectionDialogCode(HWND window, UINT msg, WPARAM wParam, L
 }
 
 /// Releases the gesture state, restores the original procedure and forwards window destruction.
-static LRESULT HandleSelectionDestroy(HWND window, UINT msg, WPARAM wParam, LPARAM lParam, SelectionState& state) {
+static LRESULT HandleSelectionDestroy(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+        SelectionState& state) {
     WNDPROC originalProc = state.originalProc;
     EndSelection(window, state);
     SetWindowLongPtrW(window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalProc));
@@ -327,7 +333,8 @@ static LRESULT HandleSelectionDestroy(HWND window, UINT msg, WPARAM wParam, LPAR
     return CallWindowProcW(originalProc, window, msg, wParam, lParam);
 }
 
-/// Adds system-sized repeated clicks and anchored selection while preserving native ordinary and modifier gestures.
+/// Adds system-sized repeated clicks and anchored selection while preserving native ordinary and modifier
+/// gestures.
 static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     SelectionState& state = *reinterpret_cast<SelectionState*>(GetPropW(window, selectionProperty));
     switch (msg) {
@@ -358,7 +365,8 @@ static LRESULT CALLBACK SelectionEditProc(HWND window, UINT msg, WPARAM wParam, 
                 const LRESULT result = CallWindowProcW(state.originalProc, window, msg, wParam, lParam);
                 DWORD start = 0;
                 DWORD end = 0;
-                SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
+                SendMessageW(window, EM_GETSEL, reinterpret_cast<WPARAM>(&start),
+                    reinterpret_cast<LPARAM>(&end));
                 if (start != end) {
                     state.clickCount = 0;
                 }
@@ -421,9 +429,11 @@ bool InstallSelectionEditHandler(HWND window) {
     }
     HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
     if (kernel) {
-        state->tickCount64 = reinterpret_cast<SelectionTickCount64Function>(GetProcAddress(kernel, "GetTickCount64"));
+        state->tickCount64 =
+            reinterpret_cast<SelectionTickCount64Function>(GetProcAddress(kernel, "GetTickCount64"));
         if (!state->tickCount64) {
-            state->tickCount = reinterpret_cast<SelectionTickCountFunction>(GetProcAddress(kernel, "GetTickCount"));
+            state->tickCount =
+                reinterpret_cast<SelectionTickCountFunction>(GetProcAddress(kernel, "GetTickCount"));
         }
     }
     if (!state->tickCount64 && !state->tickCount) {

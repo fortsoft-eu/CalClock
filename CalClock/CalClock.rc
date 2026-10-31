@@ -289,7 +289,7 @@ BEGIN
     CONTROL         "",ID_INFO_PRODUCT,"Static",SS_OWNERDRAW | SS_NOPREFIX | SS_NOTIFY,33,4,269,70
     LTEXT           "",ID_INFO_WEBSITE,33,78,40,12,SS_NOPREFIX | SS_NOTIFY
     CONTROL         "",ID_INFO_LINK,"SysLink",WS_CLIPSIBLINGS | WS_TABSTOP,77,78,225,12
-    EDITTEXT        ID_INFO_TEXT,8,96,294,143,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL,WS_EX_CLIENTEDGE
+    EDITTEXT        ID_INFO_TEXT,8,96,294,143,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL,WS_EX_CLIENTEDGE
     DEFPUSHBUTTON   "",ID_INFO_CLOSE,259,245,43,12
 END
 
@@ -337,8 +337,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,0,2
- PRODUCTVERSION 1,7,0,2
+ FILEVERSION 1,7,0,3
+ PRODUCTVERSION 1,7,0,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -355,12 +355,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FortSoft"
             VALUE "FileDescription", "CalClock"
-            VALUE "FileVersion", "1.7.0.2"
+            VALUE "FileVersion", "1.7.0.3"
             VALUE "InternalName", "CalClock.exe"
             VALUE "LegalCopyright", "Copyright © Petr Červinka — FortSoft 2026"
             VALUE "OriginalFilename", "CalClock.exe"
             VALUE "ProductName", "CalClock"
-            VALUE "ProductVersion", "1.7.0.2"
+            VALUE "ProductVersion", "1.7.0.3"
         END
     END
     BLOCK "VarFileInfo"
