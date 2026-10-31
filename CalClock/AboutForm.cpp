@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.2
+ * Last modified for version 1.7.0.3
  */
 
 #define NOMINMAX
@@ -40,6 +40,7 @@
 
 const wchar_t ABOUT_WEBSITE_ROOT[] = L"https://fortsoft.eu/";
 const UINT_PTR ABOUT_CONTROL_SUBCLASS_ID = 0xCC03;
+const UINT_PTR ABOUT_LICENSE_SUBCLASS_ID = 0xCC06;
 const int ABOUT_ICON_SIZE = 32;
 const int ABOUT_LARGE_ICON_SIZE = 48;
 const int ABOUT_LARGE_ICON_DPI = 130;
@@ -82,6 +83,52 @@ static SIZE InformationTextSize(HWND control) {
         ReleaseDC(control, dc);
     }
     return size;
+}
+
+/// Measures unwrapped license text in the edit's current font and toggles the horizontal scrollbar only when
+/// needed. Restores horizontal position to the start before hiding the bar; measurement also works while the
+/// bar is hidden.
+static void UpdateAboutLicenseScrollBar(HWND window) {
+    HDC dc = GetDC(window);
+    if (dc == nullptr) {
+        return;
+    }
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(window, WM_GETFONT, 0, 0));
+    HGDIOBJ previousFont = font == nullptr ? nullptr : SelectObject(dc, font);
+    std::wstring text = GetControlText(window);
+    RECT textBounds = {};
+    DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &textBounds,
+        DT_CALCRECT | DT_NOPREFIX | DT_EXPANDTABS);
+    if (previousFont != nullptr) {
+        SelectObject(dc, previousFont);
+    }
+    ReleaseDC(window, dc);
+    RECT format = {};
+    SendMessageW(window, EM_GETRECT, 0, reinterpret_cast<LPARAM>(&format));
+    bool needed = textBounds.right - textBounds.left > format.right - format.left;
+    bool visible = (GetWindowLongPtrW(window, GWL_STYLE) & WS_HSCROLL) != 0;
+    if (needed != visible) {
+        if (!needed) {
+            SendMessageW(window, WM_HSCROLL, SB_LEFT, 0);
+        }
+        ShowScrollBar(window, SB_HORZ, needed);
+    }
+}
+
+/// Recalculates horizontal scrollbar visibility after native size, font, text, or theme updates and removes the
+/// subclass on destruction.
+static LRESULT CALLBACK AboutLicenseSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+        UINT_PTR subclassId, DWORD_PTR referenceData) {
+    UNREFERENCED_PARAMETER(referenceData);
+    if (message == WM_SIZE || message == WM_SETFONT || message == WM_SETTEXT || message == WM_THEMECHANGED) {
+        LRESULT result = DefSubclassProc(window, message, wParam, lParam);
+        UpdateAboutLicenseScrollBar(window);
+        return result;
+    }
+    if (message == WM_NCDESTROY) {
+        RemoveWindowSubclass(window, AboutLicenseSubclassProc, subclassId);
+    }
+    return DefSubclassProc(window, message, wParam, lParam);
 }
 
 /// Builds the About window title from its localized caption and the application name.
@@ -565,7 +612,8 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
         IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED));
     SendMessageW(window, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(largeIcon));
     SendMessageW(window, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(smallIcon));
-    if (!SetWindowSubclass(text, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0)) {
+    if (!SetWindowSubclass(text, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0)
+            || !SetWindowSubclass(text, AboutLicenseSubclassProc, ABOUT_LICENSE_SUBCLASS_ID, 0)) {
         DestroyWindow(window);
         return;
     }
