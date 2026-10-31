@@ -1374,19 +1374,16 @@ LRESULT CALLBACK PersistWindowState::WindowSubclassProc(HWND window, UINT messag
         return result;
     }
     if (message == WM_GETMINMAXINFO && (owner->fixWidth || owner->fixHeight)) {
-        RECT bounds = RECT{};
-        if (GetWindowRect(window, &bounds)) {
-            MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
-            if (owner->fixWidth) {
-                info->ptMinTrackSize.x = bounds.right - bounds.left;
-                info->ptMaxTrackSize.x = bounds.right - bounds.left;
-                info->ptMaxSize.x = bounds.right - bounds.left;
-            }
-            if (owner->fixHeight) {
-                info->ptMinTrackSize.y = bounds.bottom - bounds.top;
-                info->ptMaxTrackSize.y = bounds.bottom - bounds.top;
-                info->ptMaxSize.y = bounds.bottom - bounds.top;
-            }
+        MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+        if (owner->fixWidth) {
+            info->ptMinTrackSize.x = owner->state.width;
+            info->ptMaxTrackSize.x = owner->state.width;
+            info->ptMaxSize.x = owner->state.width;
+        }
+        if (owner->fixHeight) {
+            info->ptMinTrackSize.y = owner->state.height;
+            info->ptMaxTrackSize.y = owner->state.height;
+            info->ptMaxSize.y = owner->state.height;
         }
     } else if (message == WM_WINDOWPOSCHANGED) {
         owner->Capture();
