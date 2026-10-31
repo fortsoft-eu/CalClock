@@ -115,8 +115,8 @@ static void UpdateAboutLicenseScrollBar(HWND window) {
     }
 }
 
-/// Recalculates horizontal scrollbar visibility after native size, font, text, or theme updates and removes the
-/// subclass on destruction.
+/// Recalculates horizontal scrollbar visibility after native size, font, text, or theme updates and removes
+/// the subclass on destruction.
 static LRESULT CALLBACK AboutLicenseSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     UNREFERENCED_PARAMETER(referenceData);
@@ -188,8 +188,8 @@ std::wstring AboutForm::LoadLicenseText() const {
     if (bytes == nullptr || byteCount == 0 || byteCount > static_cast<DWORD>(INT_MAX)) {
         return std::wstring();
     }
-    int characterCount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes, static_cast<int>(byteCount),
-        nullptr, 0);
+    int characterCount = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes,
+        static_cast<int>(byteCount), nullptr, 0);
     if (characterCount <= 0) {
         return std::wstring();
     }
@@ -415,7 +415,8 @@ void AboutForm::FitToWorkArea() const {
 }
 
 /// Builds the natural About layout from its fixed license dimensions, then fits it to the monitor work area.
-/// Resize notifications anchor the edit to the right and bottom edges and the Close button to the bottom right.
+/// Resize notifications anchor the edit to the right and bottom edges and the Close button to the bottom
+/// right.
 void AboutForm::Layout(bool resize) const {
     if (!initialized || IsIconic(window)) {
         return;
@@ -445,7 +446,8 @@ void AboutForm::Layout(bool resize) const {
             productHeight);
         SIZE website = InformationTextSize(GetDlgItem(window, ID_INFO_WEBSITE));
         int websiteY = productPosition.cy + productHeight + gap.cy;
-        PlaceInformationControl(window, ID_INFO_WEBSITE, productPosition.cx, websiteY, website.cx, website.cy);
+        PlaceInformationControl(window, ID_INFO_WEBSITE, productPosition.cx, websiteY, website.cx,
+            website.cy);
         int linkX = productPosition.cx + website.cx + gap.cx;
         int linkWidth = client.right - margin.cx - linkX;
         SIZE idealLink = {};
