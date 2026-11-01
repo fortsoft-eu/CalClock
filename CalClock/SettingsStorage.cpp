@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.4
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -279,6 +279,10 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"disableThemes", snapshot.themesDisabled);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"windows2000Style",
+            snapshot.themesDisabled && snapshot.windows2000Style);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal",
@@ -1124,6 +1128,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
             if (ReadXmlNumberAttribute(reader, L"disableThemes", &number)) {
                 loaded.themesDisabled = number != 0;
             }
+            if (ReadXmlNumberAttribute(reader, L"windows2000Style", &number)) {
+                loaded.windows2000Style = loaded.themesDisabled && number != 0;
+            }
             if (ReadXmlNumberAttribute(reader, L"generatedTimeSignal", &number)) {
                 loaded.generatedTimeSignal = number == 0;
             }
@@ -1748,6 +1755,9 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     } else if (ReadDword(root, L"VisualStyles", &value)) {
         loaded.themesDisabled = value == 0;
     }
+    loaded.windows2000Style = loaded.themesDisabled
+        && ReadDword(root, L"Windows2000Style", &value)
+        && value != 0;
     if (ReadDword(root, L"GeneratedTimeSignal", &value)) {
         loaded.generatedTimeSignal = value == 0;
     }
@@ -1912,6 +1922,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"SchemaVersion", 15);
     WriteDword(root, L"Language", snapshot.language);
     WriteDword(root, L"DisableThemes", snapshot.themesDisabled);
+    WriteDword(root, L"Windows2000Style", snapshot.themesDisabled && snapshot.windows2000Style);
     WriteDword(root, L"VisualStyles", !snapshot.themesDisabled);
     WriteDword(root, L"GeneratedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
     WriteTimeSignalVolume(root, snapshot.timeSignalVolume);

@@ -106,6 +106,7 @@
 #define ID_VISIBLE                              3012
 #define ID_VISUAL_STYLES                        3041
 #define ID_WARN_UNSAVED_CHANGES                 3104
+#define ID_WINDOWS_2000_STYLE                   3105
 #define ID_WEEK_NUMBERS                         3027
 #define ID_WIDGET_ANTIALIAS                     3072
 #define ID_WIDGET_DISABLE_THEMES                3057

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.1
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -82,8 +82,8 @@ struct TimeSignalPhase {
     bool active = false;
 };
 
-/// Owns one endpoint's original scheduler, PCM phase, preview state and worker lifetime independently of other
-/// outputs.
+/// Owns one endpoint's original scheduler, PCM phase, preview state and worker lifetime independently
+/// of other outputs.
 struct TimeSignalOutputRoute {
     std::wstring device;
     HANDLE thread = nullptr;
@@ -138,7 +138,9 @@ bool IsTimeSignalBoundary(ULONGLONG displayedFileTime, TimeSignalMode mode) {
 bool CalculateTimeSignalTarget(ULONGLONG displayedFileTime, ULONGLONG timelineFileTime, TimeSignalMode mode,
         ULONGLONG* targetTimelineFileTime) {
     int modeIndex = static_cast<int>(mode);
-    if (targetTimelineFileTime == nullptr || modeIndex <= TIME_SIGNAL_NONE || modeIndex >= TIME_SIGNAL_COUNT) {
+    if (targetTimelineFileTime == nullptr
+            || modeIndex <= TIME_SIGNAL_NONE
+            || modeIndex >= TIME_SIGNAL_COUNT) {
         return false;
     }
     ULONGLONG interval = static_cast<ULONGLONG>(TIME_SIGNAL_MINUTES[modeIndex]) * FILE_TIME_TICKS_PER_MINUTE;
@@ -182,7 +184,8 @@ static double TimeSignalAmplitudeAtStep(int volume) {
     return GENERATOR_TONE_AMPLITUDE * volume / 100.0;
 }
 
-/// Interpolates stored volume steps into normalized amplitude; clamps the range and silences nonfinite values.
+/// Interpolates stored volume steps into normalized amplitude; clamps the range and silences nonfinite
+/// values.
 static double TimeSignalAmplitude(double volume) {
     if (!std::isfinite(volume)) {
         return 0.0;
@@ -204,7 +207,8 @@ double TimeSignalVolumeDecibels(double volume) {
     return 20.0 * std::log10(amplitude);
 }
 
-/// Converts generator decibels to the interpolated stored volume scale, limiting positive levels to full scale.
+/// Converts generator decibels to the interpolated stored volume scale, limiting positive levels to full
+/// scale.
 double TimeSignalVolumeFromDecibels(double decibels) {
     if (std::isnan(decibels)) {
         return TIME_SIGNAL_VOLUME_MIN;
@@ -254,10 +258,12 @@ static std::vector<TimeSignalTone> CollectTimeSignalTones(TimeSignalOutputRoute&
         if (!sequence.muted && !stopping) {
             for (int pip = 0; pip <= 5; pip++) {
                 ULONGLONG start = sequence.target - (5ULL - pip) * FILE_TIME_TICKS_PER_SECOND;
-                bool generatedTone = route.previewActive ? route.previewGeneratedTone : sequence.generatedTone;
+                bool generatedTone = route.previewActive
+                    ? route.previewGeneratedTone
+                    : sequence.generatedTone;
                 double volume = route.previewActive ? previewVolume : sequence.volume;
-                ULONGLONG finish =
-                    start + TimeSignalToneDuration(pip == 5, generatedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
+                ULONGLONG finish = start +
+                    TimeSignalToneDuration(pip == 5, generatedTone) * FILE_TIME_TICKS_PER_MILLISECOND;
                 if (finish >= from && start <= through) {
                     TimeSignalTone tone = { start, finish, TimeSignalAmplitude(volume), generatedTone };
                     tones.push_back(std::move(tone));
@@ -303,7 +309,8 @@ static void RefreshHeldTimeSignalTones(const std::vector<TimeSignalTone>& curren
     }
 }
 
-/// Unions overlapping or touching tone intervals, keeping the greatest amplitude and any generator requirement.
+/// Unions overlapping or touching tone intervals, keeping the greatest amplitude and any generator
+/// requirement.
 static std::vector<TimeSignalTone> MergeTimeSignalTones(std::vector<TimeSignalTone> tones) {
     std::sort(tones.begin(), tones.end(), [](const TimeSignalTone& left, const TimeSignalTone& right) {
         return left.start < right.start;
@@ -335,7 +342,8 @@ static LONGLONG TimeSignalSamplePosition(ULONGLONG time, ULONGLONG base) {
 /// Starts gain changes at zero crossings and ramps them over one cycle; missing input drains safely to zero.
 /// Output blocks can extend by less than one cycle so the device never runs out of data at a nonzero sample.
 static void RenderTimeSignalSamples(const std::vector<TimeSignalTone>& intervals, ULONGLONG base,
-        LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase, bool finishAtZero = false) {
+        LONGLONG firstSample, std::vector<short>* samples, TimeSignalPhase* phase,
+        bool finishAtZero = false) {
     const LONGLONG cycle = GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
     const LONGLONG fade = GENERATOR_SAMPLE_RATE * GENERATOR_FADE_DURATION / 1000;
     size_t intervalIndex = 0;
@@ -438,8 +446,8 @@ static bool PlayGeneratedTimeSignals(TimeSignalOutputRoute& route, ULONGLONG bas
     format.nBlockAlign = 2;
     format.nAvgBytesPerSec = GENERATOR_SAMPLE_RATE * 2;
     HWAVEOUT output = nullptr;
-    if (waveOutOpen(&output, deviceId, &format, reinterpret_cast<DWORD_PTR>(completedEvent), 0, CALLBACK_EVENT)
-            != MMSYSERR_NOERROR) {
+    if (waveOutOpen(&output, deviceId, &format, reinterpret_cast<DWORD_PTR>(completedEvent),
+            0, CALLBACK_EVENT) != MMSYSERR_NOERROR) {
         CloseHandle(completedEvent);
         return false;
     }
@@ -686,7 +694,8 @@ static TimeSignalOutputRoute* GetTimeSignalOutput(const std::wstring& requested,
 
 /// Stops completed output workers and releases their schedulers after the worker has returned.
 static void ReleaseIdleTimeSignalOutputs() {
-    for (auto route = timeSignalOutputs.begin(); route != timeSignalOutputs.end();) {
+    for (std::vector<std::unique_ptr<TimeSignalOutputRoute>>::iterator route = timeSignalOutputs.begin();
+            route != timeSignalOutputs.end();) {
         StopIdleTimeSignalThread(**route);
         if ((*route)->thread == nullptr) {
             route = timeSignalOutputs.erase(route);
@@ -711,7 +720,7 @@ bool StartTimeSignalPlayback(ULONGLONG targetTimelineFileTime, bool muted, bool 
     }
     TimeSignalOutputRoute& route = *output;
     AcquireSRWLockExclusive(&route.lock);
-    auto existing = route.sequences.begin();
+    std::vector<TimeSignalSequence>::iterator existing = route.sequences.begin();
     while (existing != route.sequences.end()) {
         if (existing->target == targetTimelineFileTime) {
             break;
@@ -778,7 +787,8 @@ void CancelTimeSignalPlayback(ULONGLONG target, const std::wstring& outputDevice
         return;
     }
     AcquireSRWLockExclusive(&output->lock);
-    for (auto sequence = output->sequences.begin(); sequence != output->sequences.end();) {
+    for (std::vector<TimeSignalSequence>::iterator sequence = output->sequences.begin();
+            sequence != output->sequences.end();) {
         if (sequence->target == target) {
             sequence = output->sequences.erase(sequence);
         } else {
@@ -792,7 +802,8 @@ void CancelTimeSignalPlayback(ULONGLONG target, const std::wstring& outputDevice
 /// Updates preview volume without changing the selected output or scheduled signal volumes.
 void SetTimeSignalPreviewVolume(double volume) {
     for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
-        route->previewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX));
+        route->previewVolume.store(std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN,
+            TIME_SIGNAL_VOLUME_MAX));
     }
 }
 

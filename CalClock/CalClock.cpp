@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.4
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -39,6 +39,7 @@
 #include "CalClock.h"
 #include "ClockTime.h"
 #include "DateFormats.h"
+#include "DialogFrame.h"
 #include "HelpForm.h"
 #include "Localization.h"
 #include "MonitorInfo.h"
@@ -464,6 +465,7 @@ HWND hAppFontButton = nullptr;
 HWND hAppFontDefaultButton = nullptr;
 HWND hAppFontLabel = nullptr;
 HWND hDisableThemesCheck = nullptr;
+HWND hWindows2000StyleCheck = nullptr;
 HWND hLanguageCombo = nullptr;
 HWND hSnapToWorkAreaCheck = nullptr;
 HWND hTimeSignalSoundCombo = nullptr;
@@ -522,6 +524,7 @@ static bool ntpLogSortAscending = true;
 static bool settingsComboAccepted = false;
 static bool settingsGeneralCheckboxReferenceValid = false;
 static bool settingsLayoutSuspended = false;
+static bool windows2000Style = false;
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 bool ntpHasSynchronized = false;
@@ -722,6 +725,7 @@ static void SaveSettingsWithoutAppearancePreviews();
 /// Stops tests, restores uncommitted previews, remembers the form position, tab and widget, and destroys
 /// settings controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow();
+static void RecreateStyledDialogs(bool reopenSettings);
 
 /// Prompts before user-requested settings closure when warning is enabled and Apply is active.
 /// Saves through the existing validation path, discards on No, and keeps the form open on Cancel.
@@ -1635,6 +1639,7 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     SettingsSnapshot snapshot = {};
     snapshot.language = appLanguage;
     snapshot.themesDisabled = themesDisabled;
+    snapshot.windows2000Style = windows2000Style;
     snapshot.snapWidgetsToWorkArea = snapWidgetsToWorkArea;
     snapshot.warnOnUnsavedChanges = warnOnUnsavedChanges;
     snapshot.generatedTimeSignal = generatedTimeSignal;
@@ -1668,6 +1673,7 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
 static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     appLanguage = snapshot.language;
     themesDisabled = snapshot.themesDisabled;
+    windows2000Style = themesDisabled && snapshot.windows2000Style;
     snapWidgetsToWorkArea = snapshot.snapWidgetsToWorkArea;
     warnOnUnsavedChanges = snapshot.warnOnUnsavedChanges;
     generatedTimeSignal = snapshot.generatedTimeSignal;
@@ -2413,7 +2419,7 @@ static std::wstring TimeSignalMenuLabel(const WidgetConfig& config) {
 static void RetainCurrentTimeSignalSources(TimeSignalSourceGroup& group,
         const std::vector<TimeSignalCandidate>& candidates, bool regular) {
     std::vector<int>& sources = regular ? group.regularWidgetIds : group.alarmWidgetIds;
-    for (auto source = sources.begin(); source != sources.end();) {
+    for (std::vector<int>::iterator source = sources.begin(); source != sources.end();) {
         bool retained = false;
         for (const TimeSignalCandidate& candidate : candidates) {
             if (candidate.target == group.target
@@ -4614,6 +4620,7 @@ static void LayoutSettingsControlGrids() {
     };
     const HWND applicationChecks[] = {
         hDisableThemesCheck,
+        hWindows2000StyleCheck,
         hUseXmlSettingsCheck,
         hSnapToWorkAreaCheck,
         hStartWithWindowsCheck,
@@ -4651,7 +4658,7 @@ static void LayoutSettingsControlGrids() {
         AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
     }
     for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
-        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 2) * applicationStep);
+        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 1) * applicationStep);
     }
     SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_FIELDS, 5, false, timeFields,
         ARRAYSIZE(timeFields));
@@ -4770,6 +4777,7 @@ void ApplyUiStyle(HWND window) {
     if (window == helpForm.GetWindow() || window == aboutForm.GetWindow()) {
         const wchar_t* theme = themesDisabled ? L"" : nullptr;
         SetWindowTheme(window, theme, theme);
+        DialogFrame::Apply(window, themesDisabled, windows2000Style);
         return;
     }
     if (hUiFont == nullptr) {
@@ -4779,6 +4787,7 @@ void ApplyUiStyle(HWND window) {
     SetWindowTheme(window, themeName, themeName);
     EnumChildWindows(window, ApplyFontAndTheme, 0);
     if (window == hSettings) {
+        DialogFrame::Apply(window, themesDisabled, windows2000Style);
         SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(hUiFont), FALSE);
         UpdateSettingsControlMetrics();
     }
@@ -8476,7 +8485,7 @@ static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* widt
     DWORD baseStyle = static_cast<DWORD>(
         GetWindowLongPtrW(hSettings, GWL_STYLE)) & ~(WS_VISIBLE | WS_HSCROLL | WS_VSCROLL);
     RECT frame = {};
-    AdjustWindowRectEx(&frame, baseStyle, FALSE, extendedStyle);
+    DialogFrame::AdjustRect(hSettings, &frame, baseStyle, extendedStyle);
     int desiredWidth = settingsContentWidth + frame.right - frame.left;
     int desiredHeight = settingsContentHeight + frame.bottom - frame.top;
     const PersistWindowStateData& placement = settingsWindowState.GetState();
@@ -11838,6 +11847,13 @@ static void UpdateSettingControlVisibility() {
 /// Updates control enabled states for the selected widget and temporarily clears inapplicable checkbox
 /// values. When requested, prepares the final layout before replacing the visible controls.
 static void UpdateSettingControlAvailability(bool updateLayout) {
+    bool globalThemesDisabled = hDisableThemesCheck == nullptr
+        ? themesDisabled
+        : GetCheck(hDisableThemesCheck);
+    if (!globalThemesDisabled) {
+        SetCheck(hWindows2000StyleCheck, false);
+    }
+    EnableWindow(hWindows2000StyleCheck, globalThemesDisabled);
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
     }
@@ -11862,9 +11878,6 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     bool utc = GetCheck(hUtcCheck);
     bool hasSize = type == WIDGET_ANALOG || type == WIDGET_PANEL;
     bool hasTextFont = digital || calendar;
-    bool globalThemesDisabled = hDisableThemesCheck == nullptr
-        ? themesDisabled
-        : GetCheck(hDisableThemesCheck);
     bool widgetThemesDisabled = hWidgetDisableThemesCheck == nullptr
         ? settingsDraft[selectedDraftIndex].disableThemes
         : GetCheck(hWidgetDisableThemesCheck);
@@ -12791,6 +12804,7 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
 static bool HasPendingSettingsChanges() {
     if (LanguageFromCombo(hLanguageCombo) != appLanguage
             || GetCheck(hDisableThemesCheck) != themesDisabled
+            || GetCheck(hWindows2000StyleCheck) != windows2000Style
             || GetCheck(hStartWithWindowsCheck) != startWithWindows
             || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
             || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
@@ -12940,8 +12954,8 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
         positions = DeferWindowPos(positions, replacement.window, widget->window, replacement.config.x,
             replacement.config.y, 0, 0, flags);
         if (positions != nullptr) {
-            positions = DeferWindowPos(positions, widget->window, nullptr, 0, 0, 0, 0,
-                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_HIDEWINDOW);
+            positions = DeferWindowPos(positions, widget->window, nullptr, 0, 0, 0, 0, SWP_NOMOVE
+                | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_HIDEWINDOW);
         }
     }
     if (positions == nullptr || !EndDeferWindowPos(positions)) {
@@ -13428,8 +13442,8 @@ static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configu
 }
 
 /// Commits global controls and widget drafts, reconciles live widgets and previews, saves settings,
-/// and refreshes affected UI and time services.
-static void ApplySettingsDraft() {
+/// refreshes affected UI and time services, and reports whether native styled dialogs must be recreated.
+static bool ApplySettingsDraft() {
     bool previousUpdating = updatingSettingsControls;
     updatingSettingsControls = true;
     timeSignalVolumeDragging = false;
@@ -13524,6 +13538,8 @@ static void ApplySettingsDraft() {
     }
     bool previousThemesDisabled = themesDisabled;
     themesDisabled = GetCheck(hDisableThemesCheck);
+    bool previousWindows2000Style = windows2000Style;
+    windows2000Style = themesDisabled && GetCheck(hWindows2000StyleCheck);
     int previousAppFontAntialiasing = appFontAntialiasing;
     appFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
     appFontFace = settingsAppFontFace;
@@ -13614,6 +13630,13 @@ static void ApplySettingsDraft() {
         || previousAppFontAntialiasing != appFontAntialiasing;
     if (uiStyleChanged) {
         RefreshApplicationFonts(false);
+    } else if (previousWindows2000Style != windows2000Style) {
+        const HWND dialogs[] = { hSettings, helpForm.GetWindow(), aboutForm.GetWindow() };
+        for (HWND dialog : dialogs) {
+            if (dialog != nullptr) {
+                DialogFrame::Apply(dialog, themesDisabled, windows2000Style);
+            }
+        }
     }
     settingsAppliedWidgets.clear();
     for (const std::unique_ptr<Widget>& widget : widgets) {
@@ -13660,6 +13683,7 @@ static void ApplySettingsDraft() {
     }
     updatingSettingsControls = previousUpdating;
     UpdateSettingsApplyButton();
+    return previousThemesDisabled && !themesDisabled;
 }
 
 /// Copies placement and the field affected by a context-menu command into a settings snapshot without
@@ -14579,6 +14603,10 @@ static bool CreateSettingsControls(int selectedTab) {
     hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES,
         Mnemonic(TXT_VISUAL_STYLES).c_str(), &applicationControls);
     SetCheck(hDisableThemesCheck, themesDisabled);
+    hWindows2000StyleCheck = BindSettingsControl(hApplicationPage, ID_WINDOWS_2000_STYLE,
+        T(TXT_WINDOWS_2000_STYLE), &applicationControls);
+    SetCheck(hWindows2000StyleCheck, windows2000Style);
+    EnableWindow(hWindows2000StyleCheck, themesDisabled);
     hUseXmlSettingsCheck = BindSettingsControl(hApplicationPage, ID_USE_XML_SETTINGS,
         T(TXT_XML_STORAGE_LABEL), &applicationControls);
     SetCheck(hUseXmlSettingsCheck, storageUsesXml);
@@ -14720,6 +14748,7 @@ static void DestroySettingsChildControls() {
     hAppAntialiasCombo = nullptr;
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
+    hWindows2000StyleCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
     hSnapToWorkAreaCheck = nullptr;
     hWarnUnsavedChangesCheck = nullptr;
@@ -14897,6 +14926,7 @@ static void CloseSettingsWindow() {
     hAppAntialiasCombo = nullptr;
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
+    hWindows2000StyleCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
     hSnapToWorkAreaCheck = nullptr;
     hWarnUnsavedChangesCheck = nullptr;
@@ -14948,6 +14978,25 @@ static void CloseSettingsWindow() {
     RefreshFullscreenPresentation();
 }
 
+/// Recreates open dialogs when restoring native styles, retaining their saved placement and Settings
+/// selection.
+static void RecreateStyledDialogs(bool reopenSettings) {
+    bool reopenHelp = helpForm.GetWindow() != nullptr;
+    bool reopenAbout = aboutForm.GetWindow() != nullptr;
+    CloseSettingsWindow();
+    if (reopenHelp) {
+        helpForm.Close();
+        helpForm.Show(hInstance, helpWindowState);
+    }
+    if (reopenAbout) {
+        aboutForm.Close();
+        aboutForm.Show(hInstance, aboutWindowState);
+    }
+    if (reopenSettings) {
+        ShowSettingsWindow();
+    }
+}
+
 /// Shows an XML open or save dialog in the shared remembered directory and returns the accepted path.
 static bool ChooseSettingsXmlFile(bool save, std::wstring* path) {
     if (path == nullptr) {
@@ -14973,9 +15022,12 @@ static void ExportSettings() {
     if (!SaveControlsToDraft(true)) {
         return;
     }
-    ApplySettingsDraft();
+    bool recreateDialogs = ApplySettingsDraft();
     if (!WriteSettingsXml(path, CaptureSettingsSnapshot())) {
         MessageBoxW(hSettings, T(TXT_SETTINGS_EXPORT_FAILED), T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
+    }
+    if (recreateDialogs) {
+        RecreateStyledDialogs(true);
     }
 }
 
@@ -15008,12 +15060,16 @@ static void ImportSettings() {
         CreateWidgetWindow(widgets[index].get());
     }
     RefreshFullscreenPresentation();
-    RefreshInformationWindows();
-    if (helpForm.GetWindow() != nullptr) {
-        ApplyUiStyle(helpForm.GetWindow());
-    }
-    if (aboutForm.GetWindow() != nullptr) {
-        ApplyUiStyle(aboutForm.GetWindow());
+    if (previousThemesDisabled && !themesDisabled) {
+        RecreateStyledDialogs(false);
+    } else {
+        RefreshInformationWindows();
+        if (helpForm.GetWindow() != nullptr) {
+            ApplyUiStyle(helpForm.GetWindow());
+        }
+        if (aboutForm.GetWindow() != nullptr) {
+            ApplyUiStyle(aboutForm.GetWindow());
+        }
     }
     UpdateTrayIcon();
     SaveAllSettings();
@@ -15742,7 +15798,11 @@ static void HandleSettingsCommand(int id, int notification) {
             }
         }
         AppLanguage previousLanguage = appLanguage;
-        ApplySettingsDraft();
+        bool recreateDialogs = ApplySettingsDraft();
+        if (recreateDialogs) {
+            RecreateStyledDialogs(id == ID_APPLY);
+            return;
+        }
         if (id == ID_SAVE) {
             CloseSettingsWindow();
         } else {

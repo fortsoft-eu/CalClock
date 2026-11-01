@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.4
+ * Last modified for version 1.7.0.5
  */
 
 #pragma once
@@ -239,6 +239,7 @@ enum TextId {
     TXT_BROWSE,
     TXT_LANGUAGE,
     TXT_VISUAL_STYLES,
+    TXT_WINDOWS_2000_STYLE,
     TXT_SAVE,
     TXT_APPLY,
     TXT_CANCEL,
@@ -505,6 +506,7 @@ struct WidgetConfig {
 struct SettingsSnapshot {
     AppLanguage language = LANG_EN_US;
     bool themesDisabled = false;
+    bool windows2000Style = false;
     bool snapWidgetsToWorkArea = true;
     bool warnOnUnsavedChanges = true;
     bool generatedTimeSignal = true;
@@ -664,7 +666,8 @@ void LimitDialogVerticalUnits(HWND window, int resourceId = 0);
 /// there.
 bool PositionInformationWindowByWindowsDefault(HWND window);
 
-/// Positions an information-window child without activation or Z-order changes, enforcing positive dimensions.
+/// Positions an information-window child without activation or Z-order changes, enforcing positive
+/// dimensions.
 void PlaceInformationControl(HWND window, int id, int x, int y, int width, int height);
 
 /// Converts current information-dialog font units to native pixel dimensions.
