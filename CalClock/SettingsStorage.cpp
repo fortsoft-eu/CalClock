@@ -21,13 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.4
  */
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "SettingsStorage.h"
 #include "Localization.h"
+#include "WidgetLayout.h"
 #include <windows.h>
 #include <algorithm>
 #include <climits>
@@ -50,6 +51,16 @@
 
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
+
+/// Accepts no attachment or at most one remembered edge per axis.
+static bool ValidWidgetWorkAreaEdges(LONGLONG edges) {
+    const int horizontal = WIDGET_EDGE_LEFT | WIDGET_EDGE_RIGHT;
+    const int vertical = WIDGET_EDGE_TOP | WIDGET_EDGE_BOTTOM;
+    return edges >= 0
+        && edges <= horizontal + vertical
+        && (edges & horizontal) != horizontal
+        && (edges & vertical) != vertical;
+}
 
 /// Reports whether the remembered settings selection still names a widget in the stored collection.
 static bool HasStoredSettingsWidget(const SettingsSnapshot& snapshot) {
@@ -90,7 +101,8 @@ static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
     return true;
 }
 
-/// Reads a registry string without expanding environment variables, replacing the destination only on success.
+/// Reads a registry string without expanding environment variables, replacing the destination only on
+/// success.
 static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
     DWORD type = 0;
     DWORD size = 0;
@@ -101,7 +113,8 @@ static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
         return false;
     }
     std::vector<wchar_t> buffer(size / sizeof(wchar_t) + 1, 0);
-    LSTATUS result = RegQueryValueExW(key, name, nullptr, &type, reinterpret_cast<BYTE*>(buffer.data()), &size);
+    LSTATUS result = RegQueryValueExW(key, name, nullptr, &type,
+        reinterpret_cast<BYTE*>(buffer.data()), &size);
     if (result != ERROR_SUCCESS || type != REG_SZ && type != REG_EXPAND_SZ || size % sizeof(wchar_t) != 0) {
         return false;
     }
@@ -133,8 +146,8 @@ static std::wstring FormatRealNumber(double value) {
     return stream.str();
 }
 
-/// Parses a finite, locale-independent double, allowing surrounding whitespace but rejecting trailing nonspace
-/// text.
+/// Parses a finite, locale-independent double, allowing surrounding whitespace but rejecting trailing
+/// nonspace text.
 static bool ParseRealNumber(const std::wstring& text, double* value) {
     std::wistringstream stream(text);
     stream.imbue(std::locale::classic());
@@ -241,7 +254,8 @@ static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
     return selection;
 }
 
-/// Serializes global settings and widgets to an XML stream and reports whether writing and flushing succeeded.
+/// Serializes global settings and widgets to an XML stream and reports whether writing and flushing
+/// succeeded.
 static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snapshot) {
     IXmlWriter* writer = nullptr;
     HRESULT result = CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), nullptr);
@@ -267,14 +281,15 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlNumberAttribute(writer, L"disableThemes", snapshot.themesDisabled);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
+        result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal",
+            snapshot.generatedTimeSignal ? 0 : 1);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlTextAttribute(writer, L"testAudioOutputDevice", snapshot.testAudioOutputDevice);
     }
     if (SUCCEEDED(result)) {
-        result =
-            WriteXmlTextAttribute(writer, L"timeSignalVolume", FormatRealNumber(snapshot.timeSignalVolume));
+        result = WriteXmlTextAttribute(writer, L"timeSignalVolume",
+            FormatRealNumber(snapshot.timeSignalVolume));
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"snapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
@@ -411,10 +426,22 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"y", config.y);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"workAreaEdges", config.workAreaEdges);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlTextAttribute(writer, L"workAreaMonitor", config.workAreaMonitor);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"previewX", config.previewX);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"previewY", config.previewY);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"previewWorkAreaEdges", config.previewWorkAreaEdges);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlTextAttribute(writer, L"previewWorkAreaMonitor", config.previewWorkAreaMonitor);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"size", config.size);
@@ -498,10 +525,12 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"panelTimeFontItalic", config.panelTimeFont.italic);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"panelTimeFontUnderline", config.panelTimeFont.underline);
+            result = WriteXmlNumberAttribute(writer, L"panelTimeFontUnderline",
+                config.panelTimeFont.underline);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"panelTimeFontStrikeOut", config.panelTimeFont.strikeOut);
+            result = WriteXmlNumberAttribute(writer, L"panelTimeFontStrikeOut",
+                config.panelTimeFont.strikeOut);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"panelTimeFontCharSet", config.panelTimeFont.charSet);
@@ -510,7 +539,8 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlTextAttribute(writer, L"panelBottomFontFace", config.panelBottomFont.face);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"panelBottomFontSize", config.panelBottomFont.dialogSize);
+            result = WriteXmlNumberAttribute(writer, L"panelBottomFontSize",
+                config.panelBottomFont.dialogSize);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"panelBottomFontWeight", config.panelBottomFont.weight);
@@ -519,15 +549,16 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"panelBottomFontItalic", config.panelBottomFont.italic);
         }
         if (SUCCEEDED(result)) {
-            result =
-                WriteXmlNumberAttribute(writer, L"panelBottomFontUnderline", config.panelBottomFont.underline);
+            result = WriteXmlNumberAttribute(writer, L"panelBottomFontUnderline",
+                config.panelBottomFont.underline);
         }
         if (SUCCEEDED(result)) {
-            result =
-                WriteXmlNumberAttribute(writer, L"panelBottomFontStrikeOut", config.panelBottomFont.strikeOut);
+            result = WriteXmlNumberAttribute(writer, L"panelBottomFontStrikeOut",
+                config.panelBottomFont.strikeOut);
         }
         if (SUCCEEDED(result)) {
-            result = WriteXmlNumberAttribute(writer, L"panelBottomFontCharSet", config.panelBottomFont.charSet);
+            result = WriteXmlNumberAttribute(writer, L"panelBottomFontCharSet",
+                config.panelBottomFont.charSet);
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"panelTimeNotices", config.panelTimeNotices);
@@ -548,12 +579,12 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"textColor", static_cast<DWORD>(config.textColor));
         }
         if (SUCCEEDED(result)) {
-            result =
-                WriteXmlNumberAttribute(writer, L"backgroundColor", static_cast<DWORD>(config.backgroundColor));
+            result = WriteXmlNumberAttribute(writer, L"backgroundColor",
+                static_cast<DWORD>(config.backgroundColor));
         }
         if (SUCCEEDED(result)) {
-            result =
-                WriteXmlNumberAttribute(writer, L"alarmTextColor", static_cast<DWORD>(config.alarmTextColor));
+            result = WriteXmlNumberAttribute(writer, L"alarmTextColor",
+                static_cast<DWORD>(config.alarmTextColor));
         }
         if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmBackgroundColor",
@@ -811,17 +842,30 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"y", &number) && number >= INT_MIN && number <= INT_MAX) {
         config->y = static_cast<int>(number);
     }
+    if (ReadXmlNumberAttribute(reader, L"workAreaEdges", &number) && ValidWidgetWorkAreaEdges(number)) {
+        config->workAreaEdges = static_cast<int>(number);
+    }
+    if (ReadXmlAttribute(reader, L"workAreaMonitor", &text)) {
+        config->workAreaMonitor = text;
+    }
     if (ReadXmlNumberAttribute(reader, L"previewX", &number) && number >= INT_MIN && number <= INT_MAX) {
         config->previewX = static_cast<int>(number);
     }
     if (ReadXmlNumberAttribute(reader, L"previewY", &number) && number >= INT_MIN && number <= INT_MAX) {
         config->previewY = static_cast<int>(number);
     }
+    if (ReadXmlNumberAttribute(reader, L"previewWorkAreaEdges", &number) && ValidWidgetWorkAreaEdges(number)) {
+        config->previewWorkAreaEdges = static_cast<int>(number);
+    }
+    if (ReadXmlAttribute(reader, L"previewWorkAreaMonitor", &text)) {
+        config->previewWorkAreaMonitor = text;
+    }
     if (ReadXmlNumberAttribute(reader, L"size", &number)) {
         config->size = static_cast<int>(std::clamp<LONGLONG>(number, 104, 198));
     }
     if (ReadXmlNumberAttribute(reader, L"opacity", &number)) {
-        config->opacity = static_cast<int>(std::clamp<LONGLONG>(number, WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX));
+        config->opacity = static_cast<int>(std::clamp<LONGLONG>(number,
+            WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX));
     }
     if (ReadXmlNumberAttribute(reader, L"fontSize", &number)) {
         int minimumFontSize = config->type == WIDGET_FULLSCREEN
@@ -948,14 +992,18 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
         config->panelTimeNotices = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"padding", &number)) {
-        int maximumPadding = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
+        int maximumPadding = config->type == WIDGET_FULLSCREEN
+            ? FULLSCREEN_PADDING_MAX
+            : DIGITAL_PADDING_MAX;
         config->padding = static_cast<int>(std::clamp<LONGLONG>(number, 0, maximumPadding));
     }
     if (ReadXmlNumberAttribute(reader, L"borderStyle", &number)) {
-        config->borderStyle = static_cast<int>(std::clamp<LONGLONG>(number, 0, DIGITAL_BORDER_STYLE_COUNT - 1));
+        config->borderStyle = static_cast<int>(std::clamp<LONGLONG>(number,
+            0, DIGITAL_BORDER_STYLE_COUNT - 1));
     }
     if (ReadXmlNumberAttribute(reader, L"borderWidth", &number)) {
-        config->borderWidth = static_cast<int>(std::clamp<LONGLONG>(number, 0, DIGITAL_BORDER_WIDTH_MAX));
+        config->borderWidth = static_cast<int>(std::clamp<LONGLONG>(number,
+            0, DIGITAL_BORDER_WIDTH_MAX));
     }
     if (ReadXmlNumberAttribute(reader, L"borderColor", &number)) {
         config->borderColor = static_cast<COLORREF>(number & 0xFFFFFF);
@@ -1068,7 +1116,9 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                 break;
             }
             rootFound = true;
-            if (ReadXmlNumberAttribute(reader, L"language", &number) && number >= 0 && number < LANG_COUNT) {
+            if (ReadXmlNumberAttribute(reader, L"language", &number)
+                    && number >= 0
+                    && number < LANG_COUNT) {
                 loaded.language = static_cast<AppLanguage>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"disableThemes", &number)) {
@@ -1082,8 +1132,8 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
             double volume = 0.0;
             if (ReadXmlAttribute(reader, L"timeSignalVolume", &volumeText)
                     && ParseRealNumber(volumeText, &volume)) {
-                loaded.timeSignalVolume =
-                    std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
+                loaded.timeSignalVolume = std::clamp<double>(volume,
+                    TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
             }
             if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
                 loaded.snapWidgetsToWorkArea = number != 0;
@@ -1120,7 +1170,8 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                 loaded.ntpPreset = static_cast<int>(number);
             }
             std::wstring text;
-            if (ReadXmlAttribute(reader, L"ntpServers", &text) && text.size() <= 1024) {
+            if (ReadXmlAttribute(reader, L"ntpServers", &text)
+                    && text.size() <= 1024) {
                 loaded.ntpServers = text;
             }
             ReadXmlAttribute(reader, L"fileDialogDirectory", &loaded.fileDialogDirectory);
@@ -1149,25 +1200,37 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                     && number < WIDGET_TYPE_COUNT) {
                 loaded.lastAddedWidgetType = static_cast<WidgetType>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"helpX", &number) && number >= INT_MIN && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"helpX", &number)
+                    && number >= INT_MIN
+                    && number <= INT_MAX) {
                 loaded.helpWindowState.x = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"helpY", &number) && number >= INT_MIN && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"helpY", &number)
+                    && number >= INT_MIN
+                    && number <= INT_MAX) {
                 loaded.helpWindowState.y = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"helpWidth", &number) && number > 0 && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"helpWidth", &number)
+                    && number > 0
+                    && number <= INT_MAX) {
                 loaded.helpWindowState.width = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"helpHeight", &number) && number > 0 && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"helpHeight", &number)
+                    && number > 0
+                    && number <= INT_MAX) {
                 loaded.helpWindowState.height = static_cast<int>(number);
             }
             if (ReadXmlNumberAttribute(reader, L"helpMaximized", &number)) {
                 loaded.helpWindowState.maximized = number != 0;
             }
-            if (ReadXmlNumberAttribute(reader, L"aboutX", &number) && number >= INT_MIN && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"aboutX", &number)
+                    && number >= INT_MIN
+                    && number <= INT_MAX) {
                 loaded.aboutWindowState.x = static_cast<int>(number);
             }
-            if (ReadXmlNumberAttribute(reader, L"aboutY", &number) && number >= INT_MIN && number <= INT_MAX) {
+            if (ReadXmlNumberAttribute(reader, L"aboutY", &number)
+                    && number >= INT_MIN
+                    && number <= INT_MAX) {
                 loaded.aboutWindowState.y = static_cast<int>(number);
             }
         } else if (element == L"Widget" && rootFound) {
@@ -1238,8 +1301,8 @@ bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage d
     return success;
 }
 
-/// Overlays recognized registry values on an initialized widget configuration, validating or clamping bounded
-/// options.
+/// Overlays recognized registry values on an initialized widget configuration, validating or clamping
+/// bounded options.
 static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     DWORD value = 0;
     if (ReadDword(key, L"Id", &value) && value > 0 && value <= INT_MAX) {
@@ -1293,17 +1356,28 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"Y", &value)) {
         config->y = static_cast<int>(value);
     }
+    if (ReadDword(key, L"WorkAreaEdges", &value)
+            && ValidWidgetWorkAreaEdges(static_cast<int>(value))) {
+        config->workAreaEdges = static_cast<int>(value);
+    }
+    ReadString(key, L"WorkAreaMonitor", &config->workAreaMonitor);
     if (ReadDword(key, L"PreviewX", &value)) {
         config->previewX = static_cast<int>(value);
     }
     if (ReadDword(key, L"PreviewY", &value)) {
         config->previewY = static_cast<int>(value);
     }
+    if (ReadDword(key, L"PreviewWorkAreaEdges", &value)
+            && ValidWidgetWorkAreaEdges(static_cast<int>(value))) {
+        config->previewWorkAreaEdges = static_cast<int>(value);
+    }
+    ReadString(key, L"PreviewWorkAreaMonitor", &config->previewWorkAreaMonitor);
     if (ReadDword(key, L"Size", &value)) {
         config->size = static_cast<int>(value);
     }
     if (ReadDword(key, L"Opacity", &value)) {
-        config->opacity = std::clamp(static_cast<int>(value), WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX);
+        config->opacity = std::clamp(static_cast<int>(value),
+            WIDGET_OPACITY_MIN, WIDGET_OPACITY_MAX);
     }
     if (ReadDword(key, L"FontSize", &value)) {
         int minimumFontSize = config->type == WIDGET_FULLSCREEN
@@ -1321,17 +1395,20 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         int savedSize = static_cast<int>(std::min<DWORD>(value, 9990));
         config->fontDialogSize = std::clamp(savedSize < 10 ? savedSize * 10 : savedSize, 10, 9990);
     }
-    if (ReadDword(key, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
+    if (ReadDword(key, L"FontAntialiasing", &value)
+            && value < FONT_ANTIALIAS_COUNT) {
         config->fontAntialiasing = static_cast<int>(value);
     }
-    if (ReadDword(key, L"TimeFormat", &value) && value < TIME_FORMAT_COUNT) {
+    if (ReadDword(key, L"TimeFormat", &value)
+            && value < TIME_FORMAT_COUNT) {
         config->timeFormat = static_cast<int>(value);
     }
     if (ReadDword(key, L"ShowAmPm", &value)) {
         config->showAmPm = value != 0;
     }
     if (ReadDword(key, L"LeadingZero", &value)) {
-        config->leadingZeroMode = std::clamp(static_cast<int>(value), 0, LEADING_ZERO_MODE_COUNT - 1);
+        config->leadingZeroMode = std::clamp(static_cast<int>(value),
+            0, LEADING_ZERO_MODE_COUNT - 1);
     }
     if (ReadDword(key, L"TransparentBackground", &value)) {
         config->transparentBackground = value != 0;
@@ -1423,7 +1500,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         config->panelTimeNotices = value != 0;
     }
     if (ReadDword(key, L"Padding", &value)) {
-        int maximumPadding = config->type == WIDGET_FULLSCREEN ? FULLSCREEN_PADDING_MAX : DIGITAL_PADDING_MAX;
+        int maximumPadding = config->type == WIDGET_FULLSCREEN
+            ? FULLSCREEN_PADDING_MAX
+            : DIGITAL_PADDING_MAX;
         config->padding = std::clamp(static_cast<int>(value), 0, maximumPadding);
     }
     if (ReadDword(key, L"BorderStyle", &value)) {
@@ -1456,10 +1535,13 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"SundayFirst", &value)) {
         config->sundayFirst = value != 0;
     }
-    if (ReadDword(key, L"DateCopyFormat", &value) && value < DATE_FORMAT_COUNT) {
+    if (ReadDword(key, L"DateCopyFormat", &value)
+            && value < DATE_FORMAT_COUNT) {
         config->dateCopyFormat = static_cast<int>(value);
     }
-    if (ReadDword(key, L"TimeSignal", &value) && value > TIME_SIGNAL_NONE && value < TIME_SIGNAL_COUNT) {
+    if (ReadDword(key, L"TimeSignal", &value)
+            && value > TIME_SIGNAL_NONE
+            && value < TIME_SIGNAL_COUNT) {
         config->timeSignal = static_cast<TimeSignalMode>(value);
         config->timeSignalEnabled = true;
     }
@@ -1492,7 +1574,8 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
         config->loopAudio = value != 0;
     }
     if (ReadDword(key, L"AlarmVolume", &value)) {
-        config->alarmVolume = std::clamp(static_cast<int>(value), ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
+        config->alarmVolume = std::clamp(static_cast<int>(value),
+            ALARM_VOLUME_MIN, ALARM_VOLUME_MAX);
     }
     ReadString(key, L"Command", &config->command);
     if (ReadDword(key, L"CallRemoteScript", &value)) {
@@ -1527,8 +1610,12 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteQword(key, L"OffsetMilliseconds", config.offsetMilliseconds);
     WriteDword(key, L"X", config.x);
     WriteDword(key, L"Y", config.y);
+    WriteDword(key, L"WorkAreaEdges", config.workAreaEdges);
+    WriteString(key, L"WorkAreaMonitor", config.workAreaMonitor);
     WriteDword(key, L"PreviewX", config.previewX);
     WriteDword(key, L"PreviewY", config.previewY);
+    WriteDword(key, L"PreviewWorkAreaEdges", config.previewWorkAreaEdges);
+    WriteString(key, L"PreviewWorkAreaMonitor", config.previewWorkAreaMonitor);
     WriteDword(key, L"Size", config.size);
     WriteDword(key, L"Opacity", config.opacity);
     WriteDword(key, L"FontSize", config.fontSize);
@@ -1621,8 +1708,8 @@ static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount
     for (DWORD keyIndex = 0;; keyIndex++) {
         wchar_t name[256] = {};
         DWORD nameLength = ARRAYSIZE(name);
-        LSTATUS result =
-            RegEnumKeyExW(collection, keyIndex, name, &nameLength, nullptr, nullptr, nullptr, nullptr);
+        LSTATUS result = RegEnumKeyExW(collection, keyIndex, name, &nameLength,
+            nullptr, nullptr, nullptr, nullptr);
         if (result == ERROR_NO_MORE_ITEMS) {
             break;
         }
@@ -1667,7 +1754,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     ReadString(root, L"TestAudioOutputDevice", &loaded.testAudioOutputDevice);
     double volume = 0.0;
     if (ReadTimeSignalVolume(root, &volume)) {
-        loaded.timeSignalVolume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
+        loaded.timeSignalVolume = std::clamp<double>(volume,
+            TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
     }
     if (ReadDword(root, L"SnapWidgetsToWorkArea", &value)) {
         loaded.snapWidgetsToWorkArea = value != 0;
@@ -1738,7 +1826,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     }
     HKEY collection = nullptr;
     DWORD count = 0;
-    LSTATUS result = RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &collection);
+    LSTATUS result = RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
+        &collection);
     if (result == ERROR_SUCCESS && ReadDword(collection, L"Count", &count)) {
         count = std::min<DWORD>(count, MAX_WIDGET_COUNT);
         for (DWORD index = 0; index < count; index++) {
@@ -1746,8 +1835,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
             swprintf_s(subkey, L"%u", index);
             HKEY item = nullptr;
             if (RegOpenKeyExW(collection, subkey, 0, KEY_QUERY_VALUE, &item) == ERROR_SUCCESS) {
-                WidgetConfig config = createDefaults(WIDGET_ANALOG, static_cast<int>(index), loaded.language,
-                    loaded.fontAntialiasing);
+                WidgetConfig config = createDefaults(WIDGET_ANALOG, static_cast<int>(index),
+                    loaded.language, loaded.fontAntialiasing);
                 ReadWidgetConfig(item, &config);
                 loaded.widgets.push_back(config);
                 RegCloseKey(item);
@@ -1867,8 +1956,8 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
             wchar_t subkey[24] = {};
             swprintf_s(subkey, L"%zu", index);
             HKEY item = nullptr;
-            LSTATUS itemResult = RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE, nullptr,
-                &item, &disposition);
+            LSTATUS itemResult = RegCreateKeyExW(collection, subkey, 0, nullptr, 0, KEY_SET_VALUE,
+                nullptr, &item, &disposition);
             if (itemResult == ERROR_SUCCESS) {
                 WriteWidgetConfig(item, snapshot.widgets[index]);
                 RegCloseKey(item);

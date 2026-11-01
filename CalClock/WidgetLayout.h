@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.7.0.4
  */
 
 #pragma once
@@ -29,18 +29,35 @@
 #include <windows.h>
 #include <vector>
 
+/// Identifies the work-area edges retained when a widget or its monitor changes size.
+enum WidgetWorkAreaEdge {
+    WIDGET_EDGE_NONE = 0,
+    WIDGET_EDGE_LEFT = 1,
+    WIDGET_EDGE_RIGHT = 2,
+    WIDGET_EDGE_TOP = 4,
+    WIDGET_EDGE_BOTTOM = 8
+};
+
 /// Associates a widget ID with its screen-space rectangle for arrangement without moving live windows.
 struct WidgetPlacement {
     int id = 0;
     RECT rect = {};
 };
 
-/// Arranges widget rectangles on a common grid inside the work area.
-/// Leaves items unchanged on failure; anchorId identifies a fixed widget or uses the work-area origin when absent.
+/// Arranges widget rectangles on a common grid inside the work area. Leaves items unchanged on failure;
+/// anchorId identifies a fixed widget or uses the work-area origin when absent.
 bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& work, int anchorId = -1);
 
 /// Snaps a proposed widget position to nearby work-area edges within snapDistance pixels.
-POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position, int snapDistance);
+POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position,
+    int snapDistance);
+
+/// Detects nearby work-area edges, preferring left and top when both opposite edges qualify.
+int GetWidgetWorkAreaEdges(const RECT& widgetRect, const RECT& work, int snapDistance);
+
+/// Positions a resized widget at its remembered edges, retaining the origin on unattached axes.
+POINT PositionWidgetAtWorkAreaEdges(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight,
+    int edges);
 
 /// Calculates a resized widget's position while preserving its attachment to nearby work-area edges.
 /// Optionally reports whether each axis was attached; prefers left and top when both opposite edges qualify.

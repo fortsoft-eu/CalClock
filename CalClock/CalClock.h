@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.2
+ * Last modified for version 1.7.0.4
  */
 
 #pragma once
@@ -446,8 +446,12 @@ struct WidgetConfig {
     LONGLONG offsetMilliseconds = 0;
     int x = 0;
     int y = 0;
+    int workAreaEdges = 0;
+    std::wstring workAreaMonitor;
     int previewX = CW_USEDEFAULT;
     int previewY = CW_USEDEFAULT;
+    int previewWorkAreaEdges = 0;
+    std::wstring previewWorkAreaMonitor;
     int size = 0;
     int opacity = 0;
     int fontSize = 0;
@@ -536,7 +540,10 @@ struct Widget {
     WNDPROC calendarProc = nullptr;
     HFONT calendarFont = nullptr;
     std::vector<HWND> fullscreenWindows;
+    UINT dpi = 0;
     bool fullscreenPreview = false;
+    bool preparingWindow = false;
+    bool displayRefreshPending = false;
     bool dragging = false;
     POINT dragOffset = {};
     bool calendarTitlePressed = false;
@@ -599,19 +606,19 @@ std::wstring BuildApplicationWindowTitle(TextId formatId);
 /// Prefixes the localized common caption with a mnemonic marker.
 std::wstring Mnemonic(TextId id);
 
-/// Captures current settings and saves them to the selected XML or registry backend. Removes registry settings
-/// after a successful switch to XML storage.
+/// Captures current settings and saves them to the selected XML or registry backend. Removes registry
+/// settings after a successful switch to XML storage.
 void SaveAllSettings();
 
 /// Reports whether the effective application font overrides the native system face or style.
 bool HasApplicationUiFont();
 
-/// Creates the effective application face and style at the native system font size and window DPI. The caller
-/// owns the returned font; null indicates failure.
+/// Creates the effective application face and style at the native system font size and window DPI.
+/// The caller owns the returned font; null indicates failure.
 HFONT CreateApplicationUiFont(HWND window);
 
-/// Creates the application font if needed, applies font and theme settings to a form and its children, and
-/// requests repainting.
+/// Creates the application font if needed, applies font and theme settings to a form and its children,
+/// and requests repainting.
 void ApplyUiStyle(HWND window);
 
 /// Updates each open information form through its own content and layout implementation.
@@ -626,8 +633,8 @@ bool IsUnicodeWhitespace(wchar_t character);
 /// Returns an owned copy of a control's current Unicode text.
 std::wstring GetControlText(HWND control);
 
-/// Creates a tooltip attached to a control, destroying it if registration fails. The supplied text must remain
-/// valid while the tooltip uses it.
+/// Creates a tooltip attached to a control, destroying it if registration fails. The supplied text must
+/// remain valid while the tooltip uses it.
 HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text);
 
 /// Aligns a settings label, edit, combo, push button, or checkbox to adjacent text plus an optional baseline
@@ -637,8 +644,8 @@ void AlignSettingsControl(HWND control, HWND reference, LONG baselineDistance = 
 /// Draws a wrapped label over its parent background using the selected font and native text colors.
 INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item);
 
-/// Measures a label's wrapped height at the requested width using its actual font, or returns zero if a DC is
-/// unavailable.
+/// Measures a label's wrapped height at the requested width using its actual font, or returns zero if a DC
+/// is unavailable.
 int InformationLabelHeight(HWND control, int width);
 
 /// Measures native dialog base units from the supplied interface font.
@@ -663,7 +670,8 @@ void PlaceInformationControl(HWND window, int id, int x, int y, int width, int h
 /// Converts current information-dialog font units to native pixel dimensions.
 SIZE InformationDialogUnits(HFONT font, int x, int y);
 
-/// Measures the common native Close button using its current font and existing dialog-unit minimum and padding.
+/// Measures the common native Close button using its current font and existing dialog-unit minimum and
+/// padding.
 SIZE InformationButtonSize(HWND window, HFONT font);
 
 /// Releases the cached Unicode boundary analysis and its retained text.

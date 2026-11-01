@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.0.4
  */
 
 #define NOMINMAX
@@ -81,7 +81,8 @@ static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, 
 
 /// Finds the nearest nonoverlapping grid position inside the work area with the requested gap.
 /// Breaks equal-distance ties by top, then left; writes placement only when a position is found.
-static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& work, const std::vector<RECT>& placed,
+static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& work,
+        const std::vector<RECT>& placed,
     LONG gridOriginX, LONG gridOriginY, LONG gap, RECT* placement) {
     LONG minimumCenterX = work.left + Width(item.rect) / 2;
     LONG maximumCenterX = work.right - Width(item.rect) + Width(item.rect) / 2;
@@ -163,8 +164,12 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
             continue;
         }
         RECT placement = {};
-        if (!FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, WIDGET_GAP, &placement)
-                || !FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0, &placement)) {
+        bool placementWithGapFound = FindNearestGridPlacement(original[index], work, placed, gridOriginX,
+            gridOriginY, WIDGET_GAP, &placement);
+        bool placementWithoutGapFound = placementWithGapFound
+            && FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY,
+                0, &placement);
+        if (!placementWithGapFound || !placementWithoutGapFound) {
             return false;
         }
         result[index].rect = placement;
@@ -174,8 +179,8 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
     return true;
 }
 
-/// Arranges widget rectangles on a common grid inside the work area.
-/// Leaves items unchanged on failure; anchorId identifies a fixed widget or uses the work-area origin when absent.
+/// Arranges widget rectangles on a common grid inside the work area. Leaves items unchanged on failure;
+/// anchorId identifies a fixed widget or uses the work-area origin when absent.
 bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& work, int anchorId) {
     if (items == nullptr) {
         return false;
@@ -201,47 +206,75 @@ bool ArrangeWidgetPlacements(std::vector<WidgetPlacement>* items, const RECT& wo
 }
 
 /// Snaps a proposed widget position to nearby work-area edges within snapDistance pixels.
-POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position, int snapDistance) {
+POINT SnapWidgetPositionToWorkArea(const RECT& widgetRect, const RECT& work, POINT position,
+        int snapDistance) {
     POINT result = position;
     LONG width = Width(widgetRect);
     LONG height = Height(widgetRect);
-    if (result.x >= work.left - snapDistance && result.x <= work.left + snapDistance) {
+    if (result.x >= work.left - snapDistance
+            && result.x <= work.left + snapDistance) {
         result.x = work.left;
-    } else if (result.x + width >= work.right - snapDistance && result.x + width <= work.right + snapDistance) {
+    } else if (result.x + width >= work.right - snapDistance
+            && result.x + width <= work.right + snapDistance) {
         result.x = work.right - width;
     }
-    if (result.y >= work.top - snapDistance && result.y <= work.top + snapDistance) {
+    if (result.y >= work.top - snapDistance
+            && result.y <= work.top + snapDistance) {
         result.y = work.top;
-    } else if (result.y + height >= work.bottom - snapDistance && result.y + height <= work.bottom + snapDistance) {
+    } else if (result.y + height >= work.bottom - snapDistance
+            && result.y + height <= work.bottom + snapDistance) {
         result.y = work.bottom - height;
     }
     return result;
+}
+
+/// Detects nearby work-area edges, preferring left and top when both opposite edges qualify.
+int GetWidgetWorkAreaEdges(const RECT& widgetRect, const RECT& work, int snapDistance) {
+    int edges = WIDGET_EDGE_NONE;
+    if (widgetRect.left >= work.left - snapDistance
+            && widgetRect.left <= work.left + snapDistance) {
+        edges |= WIDGET_EDGE_LEFT;
+    } else if (widgetRect.right >= work.right - snapDistance
+            && widgetRect.right <= work.right + snapDistance) {
+        edges |= WIDGET_EDGE_RIGHT;
+    }
+    if (widgetRect.top >= work.top - snapDistance
+            && widgetRect.top <= work.top + snapDistance) {
+        edges |= WIDGET_EDGE_TOP;
+    } else if (widgetRect.bottom >= work.bottom - snapDistance
+            && widgetRect.bottom <= work.bottom + snapDistance) {
+        edges |= WIDGET_EDGE_BOTTOM;
+    }
+    return edges;
+}
+
+/// Positions a resized widget at its remembered edges, retaining the origin on unattached axes.
+POINT PositionWidgetAtWorkAreaEdges(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight,
+        int edges) {
+    POINT position = { widgetRect.left, widgetRect.top };
+    if (edges & WIDGET_EDGE_LEFT) {
+        position.x = work.left;
+    } else if (edges & WIDGET_EDGE_RIGHT) {
+        position.x = work.right - newWidth;
+    }
+    if (edges & WIDGET_EDGE_TOP) {
+        position.y = work.top;
+    } else if (edges & WIDGET_EDGE_BOTTOM) {
+        position.y = work.bottom - newHeight;
+    }
+    return position;
 }
 
 /// Calculates a resized widget's position while preserving its attachment to nearby work-area edges.
 /// Optionally reports whether each axis was attached; prefers left and top when both opposite edges qualify.
 POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work, int newWidth, int newHeight,
         int snapDistance, bool* horizontalAttachment, bool* verticalAttachment) {
-    bool left = widgetRect.left >= work.left - snapDistance && widgetRect.left <= work.left + snapDistance;
-    bool right = widgetRect.right >= work.right - snapDistance && widgetRect.right <= work.right + snapDistance;
-    bool top = widgetRect.top >= work.top - snapDistance && widgetRect.top <= work.top + snapDistance;
-    bool bottom = widgetRect.bottom >= work.bottom - snapDistance && widgetRect.bottom <= work.bottom + snapDistance;
+    int edges = GetWidgetWorkAreaEdges(widgetRect, work, snapDistance);
     if (horizontalAttachment != nullptr) {
-        *horizontalAttachment = left || right;
+        *horizontalAttachment = (edges & (WIDGET_EDGE_LEFT | WIDGET_EDGE_RIGHT)) != 0;
     }
     if (verticalAttachment != nullptr) {
-        *verticalAttachment = top || bottom;
+        *verticalAttachment = (edges & (WIDGET_EDGE_TOP | WIDGET_EDGE_BOTTOM)) != 0;
     }
-    POINT position = { widgetRect.left, widgetRect.top };
-    if (left) {
-        position.x = work.left;
-    } else if (right) {
-        position.x = work.right - newWidth;
-    }
-    if (top) {
-        position.y = work.top;
-    } else if (bottom) {
-        position.y = work.bottom - newHeight;
-    }
-    return position;
+    return PositionWidgetAtWorkAreaEdges(widgetRect, work, newWidth, newHeight, edges);
 }
