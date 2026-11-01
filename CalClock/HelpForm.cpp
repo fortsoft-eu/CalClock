@@ -76,7 +76,7 @@ bool HelpForm::ApplyStyle(bool updateFont) {
     uiFont = font;
     ownsFont = updateFont;
     SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(font), FALSE);
-    const int ids[] = { ID_INFO_TEXT, ID_INFO_CLOSE };
+    const int ids[] = { ID_INFO_TEXT, ID_INFO_CLOSE, ID_INFO_SIZE_GRIP };
     const wchar_t* theme = themesDisabled ? L"" : nullptr;
     for (int id : ids) {
         HWND control = GetDlgItem(window, id);

@@ -61,6 +61,7 @@ private:
     Kind kind = Kind::Other;
     bool target = false;
     bool paintTarget = false;
+    bool scrollRecolorPending = false;
     std::array<COLORREF, 3> previousColors{};
 
     /// Records the target and controlling window and creates the owned background brushes.
@@ -75,6 +76,9 @@ private:
     /// Reuses or installs state on the current thread, pinning the callback module; returns null on failure.
     static ControlColors* Attach(HWND window, HWND owner);
 
+    /// Observes mouse moves consumed by native scrollbar tracking and queues the existing color correction.
+    static LRESULT CALLBACK ScrollMessageFilter(int code, WPARAM wParam, LPARAM lParam);
+
     /// Preserves native handling while recoloring enabled targets and releasing state on destruction.
     static LRESULT CALLBACK Procedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR data);
@@ -84,6 +88,9 @@ private:
 
     /// Maps exact system-color pixels within the clipped client or nonclient area to the classic palette.
     void Recolor(HDC dc, bool nonClient) const;
+
+    /// Recolors native scrollbars after scrolling, range updates or deferred tracking painting.
+    void RecolorScrollBars() const;
 
     /// Supplies owned brushes and text colors for targets of this owner; otherwise preserves the result.
     LRESULT ColorControl(UINT message, WPARAM wParam, LPARAM lParam, LRESULT result) const;

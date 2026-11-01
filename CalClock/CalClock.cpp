@@ -2737,7 +2737,7 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless, UINT dp
     if (dpi == 0) {
         dpi = GetSystemDialogDpi(nullptr);
     }
-    bool disabledThemes = themesDisabled || config.disableThemes;
+    bool disabledThemes = config.disableThemes;
     bool showToday = config.type != WIDGET_PANEL && (config.type != WIDGET_CALENDAR || config.showToday);
     for (size_t index = 0; index < calendarSizeCache.size(); index++) {
         const CalendarSizeEntry& entry = calendarSizeCache[index];
@@ -4890,14 +4890,12 @@ void ApplyUiStyle(HWND window) {
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
 
-/// Applies the combined application and widget theme-disable settings and invalidates the window and its
-/// children.
+/// Applies only the widget's own theme setting and invalidates its window and children.
 static void ApplyWidgetTheme(HWND window, const WidgetConfig& config) {
     if (window == nullptr) {
         return;
     }
-    bool disabled = themesDisabled || config.disableThemes;
-    const wchar_t* themeName = disabled ? L"" : nullptr;
+    const wchar_t* themeName = config.disableThemes ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
@@ -11953,13 +11951,13 @@ static void UpdateSettingControlVisibility() {
 /// Updates control enabled states for the selected widget and temporarily clears inapplicable checkbox
 /// values. When requested, prepares the final layout before replacing the visible controls.
 static void UpdateSettingControlAvailability(bool updateLayout) {
-    bool globalThemesDisabled = hDisableThemesCheck == nullptr
+    bool dialogThemesDisabled = hDisableThemesCheck == nullptr
         ? themesDisabled
         : GetCheck(hDisableThemesCheck);
-    if (!globalThemesDisabled) {
+    if (!dialogThemesDisabled) {
         SetCheck(hWindows2000StyleCheck, false);
     }
-    EnableWindow(hWindows2000StyleCheck, globalThemesDisabled);
+    EnableWindow(hWindows2000StyleCheck, dialogThemesDisabled);
     UpdateApplicationFontAntialiasingCombo();
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
@@ -11988,7 +11986,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     bool widgetThemesDisabled = hWidgetDisableThemesCheck == nullptr
         ? settingsDraft[selectedDraftIndex].disableThemes
         : GetCheck(hWidgetDisableThemesCheck);
-    bool calendarFontEnabled = globalThemesDisabled || widgetThemesDisabled || !AreVisualStylesActive();
+    bool calendarFontEnabled = widgetThemesDisabled || !AreVisualStylesActive();
     bool fontAntialiasingEnabled = type != WIDGET_CALENDAR || calendarFontEnabled;
     if (type == WIDGET_CALENDAR) {
         if (!calendarFontEnabled) {
@@ -12140,7 +12138,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
 }
 
 /// Fits dropdowns to the work area with at most thirteen whole rows and retains native scrolling.
-/// Recolors native dropdown painting locally and removes its subclass when the list window is destroyed.
+/// Removes the positioning subclass when the native list window is destroyed.
 static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     if (msg == WM_WINDOWPOSCHANGING) {
@@ -12224,25 +12222,7 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPAR
     } else if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, ComboBoxDropDownSubclassProc, subclassId);
     }
-    LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
-    bool suppliedContext = msg == WM_PRINT || msg == WM_PRINTCLIENT || msg == WM_ERASEBKGND;
-    if (windows2000Style && (suppliedContext || msg == WM_PAINT || msg == WM_NCPAINT)) {
-        HDC context = suppliedContext ? reinterpret_cast<HDC>(wParam) : GetWindowDC(window);
-        if (context != nullptr) {
-            RECT bounds = {};
-            if (!suppliedContext || msg == WM_PRINT && (lParam & PRF_NONCLIENT) != 0) {
-                GetWindowRect(window, &bounds);
-                OffsetRect(&bounds, -bounds.left, -bounds.top);
-            } else {
-                GetClientRect(window, &bounds);
-            }
-            DialogFrame::RecolorControl(window, context, bounds);
-            if (!suppliedContext) {
-                ReleaseDC(window, context);
-            }
-        }
-    }
-    return result;
+    return DefSubclassProc(window, msg, wParam, lParam);
 }
 
 /// Calculates current time-zone captions once for reuse across the three Settings selectors.
@@ -13471,20 +13451,16 @@ static bool SelectDraftWidgetById(int widgetId) {
 
 /// Applies a committed configuration with the least required window work, preserving unchanged widgets and
 /// updating runtime-only fields in place.
-static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configuration,
-        bool previousThemesDisabled) {
+static void ApplyWidgetConfiguration(Widget* widget, const WidgetConfig& configuration) {
     if (widget->window == nullptr) {
         widget->config = configuration;
         CreateWidgetWindow(widget);
         return;
     }
-    bool previousThemeDisabled = previousThemesDisabled || widget->config.disableThemes;
-    bool newThemeDisabled = themesDisabled || configuration.disableThemes;
-    bool themeChanged = previousThemeDisabled != newThemeDisabled;
-    if (!themeChanged && WidgetConfigurationsEqual(widget->config, configuration)) {
+    if (WidgetConfigurationsEqual(widget->config, configuration)) {
         return;
     }
-    if (themeChanged || !WidgetConfigurationsDifferOnlyInRuntimeSettings(widget->config, configuration)) {
+    if (!WidgetConfigurationsDifferOnlyInRuntimeSettings(widget->config, configuration)) {
         bool sendToBack = widget->config.topMost && !configuration.topMost;
         RecreateWidgetForConfiguration(widget, configuration);
         if (sendToBack) {
@@ -13710,11 +13686,6 @@ static bool ApplySettingsDraft() {
         lastNtpAttemptTick = 0;
         nextNtpAttemptTick = 0;
     }
-    if (previousThemesDisabled != themesDisabled) {
-        SetThemeAppProperties(themesDisabled
-            ? STAP_ALLOW_NONCLIENT
-            : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
-    }
     for (const WidgetConfig& configuration : settingsDraft) {
         Widget* current = FindWidgetById(configuration.id);
         if (current == nullptr) {
@@ -13723,7 +13694,7 @@ static bool ApplySettingsDraft() {
             CreateWidgetWindow(added.get());
             widgets.push_back(std::move(added));
         } else {
-            ApplyWidgetConfiguration(current, configuration, previousThemesDisabled);
+            ApplyWidgetConfiguration(current, configuration);
         }
     }
     for (const std::unique_ptr<Widget>& widget : widgets) {
@@ -15176,11 +15147,6 @@ static void ImportSettings() {
     ApplySettingsSnapshot(snapshot);
     storageUsesXml = useXmlStorage;
     ResetUiFont();
-    if (previousThemesDisabled != themesDisabled) {
-        SetThemeAppProperties(themesDisabled
-            ? STAP_ALLOW_NONCLIENT
-            : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
-    }
     for (size_t index = 0; index < widgets.size(); index++) {
         CreateWidgetWindow(widgets[index].get());
     }
@@ -17215,9 +17181,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     if (!anyWidgetVisible && !widgets.empty()) {
         widgets[0]->config.visible = true;
     }
-    SetThemeAppProperties(themesDisabled
-        ? STAP_ALLOW_NONCLIENT
-        : STAP_ALLOW_NONCLIENT | STAP_ALLOW_CONTROLS | STAP_ALLOW_WEBCONTENT);
     WNDCLASSEXW blackoutClass = {};
     blackoutClass.cbSize = sizeof(blackoutClass);
     blackoutClass.lpfnWndProc = BlackoutWindowProc;

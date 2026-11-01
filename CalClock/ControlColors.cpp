@@ -90,6 +90,8 @@ constexpr COLORREF CONTROL_COLORS[]{
     FaceColor
 };
 
+const UINT RecolorScrollMessage = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorScroll");
+
 thread_local bool recoloringControls = false;
 
 /// Converts a COLORREF value to the RGB byte order used by a 32-bit DIB pixel.
@@ -199,15 +201,16 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
     if (state->target) {
         return true;
     }
+    wchar_t className[64]{};
+    GetClassNameW(window, className, ARRAYSIZE(className));
+    bool comboList = lstrcmpiW(className, L"ComboLBox") == 0;
     HWND parent = GetParent(window);
-    if (GetWindowLongPtrW(window, GWL_STYLE) & WS_CHILD) {
+    if (!comboList && GetWindowLongPtrW(window, GWL_STYLE) & WS_CHILD) {
         if (!Attach(parent, owner)) {
             Restore(window);
             return false;
         }
     }
-    wchar_t className[64]{};
-    GetClassNameW(window, className, ARRAYSIZE(className));
     if (lstrcmpiW(className, WC_LISTVIEWW) == 0) {
         state->kind = Kind::ListView;
     } else if (lstrcmpiW(className, WC_TREEVIEWW) == 0) {
@@ -216,7 +219,7 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
         state->kind = Kind::Progress;
     }
     LONG_PTR style = GetWindowLongPtrW(window, GWL_STYLE);
-    state->paintTarget = (style & WS_CHILD) != 0 || lstrcmpiW(className, L"ComboLBox") == 0;
+    state->paintTarget = (style & WS_CHILD) != 0 || comboList;
     if (lstrcmpiW(className, WC_BUTTONW) == 0) {
         state->paintTarget = state->paintTarget
             && (style & BS_TYPEMASK) != BS_OWNERDRAW
@@ -246,7 +249,7 @@ void ControlColors::Restore(HWND window) {
         state->SetColors(false);
     }
     delete state;
-    RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+    RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
 
 /// Supplies classic text and background colors only for targets sharing this controlling window.
@@ -336,6 +339,55 @@ void ControlColors::Recolor(HDC dc, bool nonClient) const {
     }
 }
 
+/// Recolors complete native scrollbars, including released arrows, without repainting client content.
+void ControlColors::RecolorScrollBars() const {
+    RECT windowBounds{};
+    if (!GetWindowRect(window, &windowBounds)) {
+        return;
+    }
+    HDC dc = GetWindowDC(window);
+    if (dc == nullptr) {
+        return;
+    }
+    for (LONG object : { OBJID_VSCROLL, OBJID_HSCROLL }) {
+        SCROLLBARINFO information{ sizeof(information) };
+        if (!GetScrollBarInfo(window, object, &information)
+                || information.rgstate[0] & (STATE_SYSTEM_INVISIBLE | STATE_SYSTEM_OFFSCREEN)) {
+            continue;
+        }
+        RECT scrollbar = information.rcScrollBar;
+        OffsetRect(&scrollbar, -windowBounds.left, -windowBounds.top);
+        int saved = SaveDC(dc);
+        if (saved != 0) {
+            IntersectClipRect(dc, scrollbar.left, scrollbar.top, scrollbar.right, scrollbar.bottom);
+            Recolor(dc, true);
+            RestoreDC(dc, saved);
+        }
+    }
+    ReleaseDC(window, dc);
+}
+
+/// Queues recoloring after scrollbar tracking consumes mouse moves without sending a scroll notification.
+/// Runs only on the tracking thread and passes every message unchanged to the next hook.
+LRESULT CALLBACK ControlColors::ScrollMessageFilter(int code, WPARAM wParam, LPARAM lParam) {
+    DWORD previousError = GetLastError();
+    if (code == MSGF_SCROLLBAR) {
+        const MSG* message = reinterpret_cast<const MSG*>(lParam);
+        if (message->message == WM_MOUSEMOVE || message->message == WM_NCMOUSEMOVE) {
+            HWND capture = GetCapture();
+            ControlColors* state = Find(capture);
+            if (state != nullptr
+                    && state->paintTarget
+                    && !state->scrollRecolorPending
+                    && RecolorScrollMessage != 0) {
+                state->scrollRecolorPending = PostMessageW(capture, RecolorScrollMessage, 0, 0) != FALSE;
+            }
+        }
+    }
+    SetLastError(previousError);
+    return CallNextHookEx(nullptr, code, wParam, lParam);
+}
+
 /// Preserves native message handling and last-error state while applying enabled local color overrides.
 /// Recolors completed painting without recursion and releases subclass state on window destruction.
 LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
@@ -349,11 +401,27 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
         SetLastError(entryError);
         return DefSubclassProc(window, message, wParam, lParam);
     }
+    bool deferredScroll = RecolorScrollMessage != 0 && message == RecolorScrollMessage;
+    if (deferredScroll) {
+        state->scrollRecolorPending = false;
+    }
     RECT paintBounds{};
     bool paintRegion = message == WM_PAINT && GetUpdateRect(window, &paintBounds, FALSE);
+    HHOOK scrollHook = nullptr;
+    bool scrollTracking = (message == WM_NCLBUTTONDOWN || message == WM_NCLBUTTONDBLCLK)
+        && (wParam == HTHSCROLL || wParam == HTVSCROLL);
+    if (scrollTracking
+            && state->paintTarget
+            && GetPropW(state->owner, CLASSIC_STYLE_ENABLED_PROPERTY)
+            && GetPropW(state->owner, CLASSIC_CONTROL_COLORS_PROPERTY)) {
+        scrollHook = SetWindowsHookExW(WH_MSGFILTER, ScrollMessageFilter, nullptr, GetCurrentThreadId());
+    }
     SetLastError(entryError);
     LRESULT result = DefSubclassProc(window, message, wParam, lParam);
     DWORD previousError = GetLastError();
+    if (scrollHook != nullptr) {
+        UnhookWindowsHookEx(scrollHook);
+    }
     state = Find(window);
     if (state
             && IsWindow(state->owner)
@@ -372,31 +440,78 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
             || message == BM_SETSTATE
             || message == BM_SETCHECK
             || message == WM_UPDATEUISTATE;
-        if (state->paintTarget && painted && !recoloringControls) {
+        bool nativeScroll = (GetWindowLongPtrW(window, GWL_STYLE) & (WS_HSCROLL | WS_VSCROLL)) != 0;
+        bool nativeScrollChanged = false;
+        if (nativeScroll) {
+            nativeScrollChanged = painted
+                || deferredScroll
+                || message == WM_HSCROLL
+                || message == WM_VSCROLL
+                || message == WM_MOUSEWHEEL
+                || message == WM_MOUSEHWHEEL
+                || message == WM_KEYDOWN
+                || message == WM_WINDOWPOSCHANGED
+                || message == WM_SETFONT
+                || message == WM_THEMECHANGED
+                || message == WM_SETREDRAW && wParam != FALSE
+                || message == WM_SHOWWINDOW && wParam != FALSE
+                || message == WM_NCLBUTTONDOWN
+                || message == WM_NCLBUTTONDBLCLK
+                || message == WM_NCLBUTTONUP;
+        }
+        bool listViewScrollMessage = message == LVM_SCROLL
+            || message == LVM_ENSUREVISIBLE
+            || message == LVM_SETITEMCOUNT
+            || message == LVM_INSERTITEMA
+            || message == LVM_INSERTITEMW
+            || message == LVM_DELETEITEM
+            || message == LVM_DELETEALLITEMS
+            || message == LVM_INSERTCOLUMNA
+            || message == LVM_INSERTCOLUMNW
+            || message == LVM_DELETECOLUMN
+            || message == LVM_SETCOLUMNWIDTH
+            || message == LVM_SETCOLUMNA
+            || message == LVM_SETCOLUMNW
+            || message == LVM_SORTITEMS
+            || message == LVM_SORTITEMSEX;
+        bool scrollChanged = nativeScrollChanged || state->kind == Kind::ListView && listViewScrollMessage;
+        if (state->paintTarget
+                && nativeScroll
+                && (message == WM_HSCROLL || message == WM_VSCROLL)
+                && !state->scrollRecolorPending
+                && RecolorScrollMessage != 0) {
+            state->scrollRecolorPending = PostMessageW(window, RecolorScrollMessage, 0, 0) != FALSE;
+        }
+        if (state->paintTarget && (painted || scrollChanged) && !recoloringControls) {
             recoloringControls = true;
-            bool nonClient = message == WM_NCPAINT || message == WM_PRINT && lParam & PRF_NONCLIENT;
-            HDC dc = providedDc
-                ? reinterpret_cast<HDC>(wParam)
-                : nonClient ? GetWindowDC(window) : GetDC(window);
-            int saved = SaveDC(dc);
-            if (saved) {
-                if (paintRegion) {
-                    IntersectClipRect(dc, paintBounds.left, paintBounds.top, paintBounds.right,
-                        paintBounds.bottom);
+            if (painted) {
+                bool nonClient = message == WM_NCPAINT || message == WM_PRINT && lParam & PRF_NONCLIENT;
+                HDC dc = providedDc
+                    ? reinterpret_cast<HDC>(wParam)
+                    : nonClient ? GetWindowDC(window) : GetDC(window);
+                int saved = SaveDC(dc);
+                if (saved) {
+                    if (paintRegion) {
+                        IntersectClipRect(dc, paintBounds.left, paintBounds.top, paintBounds.right,
+                            paintBounds.bottom);
+                    }
+                    if (message == WM_NCPAINT) {
+                        WINDOWINFO information{ sizeof(information) };
+                        GetWindowInfo(window, &information);
+                        ExcludeClipRect(dc, information.rcClient.left - information.rcWindow.left,
+                            information.rcClient.top - information.rcWindow.top,
+                            information.rcClient.right - information.rcWindow.left,
+                            information.rcClient.bottom - information.rcWindow.top);
+                    }
+                    state->Recolor(dc, nonClient);
+                    RestoreDC(dc, saved);
                 }
-                if (message == WM_NCPAINT) {
-                    WINDOWINFO information{ sizeof(information) };
-                    GetWindowInfo(window, &information);
-                    ExcludeClipRect(dc, information.rcClient.left - information.rcWindow.left,
-                        information.rcClient.top - information.rcWindow.top,
-                        information.rcClient.right - information.rcWindow.left,
-                        information.rcClient.bottom - information.rcWindow.top);
+                if (!providedDc) {
+                    ReleaseDC(window, dc);
                 }
-                state->Recolor(dc, nonClient);
-                RestoreDC(dc, saved);
             }
-            if (!providedDc) {
-                ReleaseDC(window, dc);
+            if (scrollChanged && !providedDc && message != WM_NCPAINT) {
+                state->RecolorScrollBars();
             }
             recoloringControls = false;
         }

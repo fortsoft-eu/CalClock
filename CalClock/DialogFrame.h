@@ -34,7 +34,8 @@
 class DialogFrame {
 
 public:
-    /// Applies the theme mode and optional Windows 2000 caption without changing system metrics or client size.
+    /// Applies the theme mode and optional Windows 2000 caption without changing system metrics or client
+    /// size.
     static bool Apply(HWND window, bool disableThemes, bool windows2000Style);
 
     /// Applies dialog-local colors to a control and its children, including owned dropdowns and tooltips.
@@ -93,7 +94,7 @@ private:
     static DialogFrame* Find(HWND control);
 
     /// Applies or restores the shared color component for one control without changing its native content.
-    bool ApplyControlColors(HWND control);
+    bool ApplyControlColors(HWND control) const;
 
     /// Enumerates the current child controls while retaining application-owned color previews.
     static BOOL CALLBACK ApplyChildColors(HWND control, LPARAM parameter);
@@ -113,7 +114,8 @@ private:
     /// Reads DPI-scaled native metrics, using the configured classic caption-button width.
     int Metric(int index) const;
 
-    /// Draws the classic frame with system or Windows 2000 caption styling, retaining native scrollbars and content.
+    /// Draws the classic frame with system or Windows 2000 caption styling, retaining native scrollbars
+    /// and content.
     void Paint(HDC target = nullptr) const;
 
     /// Resolves screen coordinates against the same rectangles used for painting.

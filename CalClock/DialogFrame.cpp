@@ -207,16 +207,13 @@ void DialogFrame::RecolorControl(HWND control, HDC context, const RECT& rectangl
 }
 
 /// Applies or restores the shared color component for one control without changing its native content.
-bool DialogFrame::ApplyControlColors(HWND control) {
+bool DialogFrame::ApplyControlColors(HWND control) const {
     if (GetPropW(control, COLOR_PREVIEW_PROPERTY) != nullptr) {
         ControlColors::Restore(control);
         return true;
     }
     wchar_t className[64]{};
     GetClassNameW(control, className, ARRAYSIZE(className));
-    if (lstrcmpiW(className, L"ComboLBox") == 0) {
-        return true;
-    }
     bool changed = false;
     if (!ControlColors::Apply(control, window, windows2000Style, changed)) {
         return false;
