@@ -91,7 +91,8 @@
 
 /// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
-typedef BOOL(WINAPI* AdjustWindowRectExForDpiProc)(LPRECT, DWORD, BOOL, DWORD, UINT);
+typedef BOOL(WINAPI* AdjustWindowRectExForDpiProc)(LPRECT rectangle, DWORD style, BOOL menu,
+    DWORD extendedStyle, UINT dpi);
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
 typedef int(WINAPI* GetCalendarInfoWProc)(LCID locale, CALID calendar, CALTYPE type, LPWSTR data,
     int characters, LPDWORD value);
@@ -208,6 +209,7 @@ struct CalendarSizeEntry {
     SIZE size;
 };
 
+/// Stores the separator, information icon and text bounds for one panel notice.
 struct PanelNoticeLayout {
     RECT separator = {};
     RECT icon = {};
@@ -558,6 +560,7 @@ int appFontWeight = FW_NORMAL;
 int nextWidgetId = 1;
 int ntpPreset = NTP_PRESET_AUTO;
 int selectedDraftIndex = 0;
+int settingsAppFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
 int settingsAppFontDialogSize = 90;
 int settingsAppFontWeight = FW_NORMAL;
 int settingsContentHeight = 0;
@@ -725,6 +728,8 @@ static void SaveSettingsWithoutAppearancePreviews();
 /// Stops tests, restores uncommitted previews, remembers the form position, tab and widget, and destroys
 /// settings controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow();
+
+/// Recreates open dialogs when restoring native styles, preserving placement and the Settings selection.
 static void RecreateStyledDialogs(bool reopenSettings);
 
 /// Prompts before user-requested settings closure when warning is enabled and Apply is active.
@@ -747,6 +752,9 @@ static bool SetStartWithWindowsEnabled(bool enabled);
 /// Hides inactive pages before revealing the selected page, updates its state and mnemonics, and ends
 /// inapplicable previews.
 static void ShowSettingsTab(int tab);
+
+/// Returns whether the supplied checkbox is checked.
+static bool GetCheck(HWND control);
 
 /// Propagates a live menu change into draft, applied, and preview-original configurations.
 /// Updates selected controls as needed and reevaluates Apply without rebuilding the settings form.
@@ -798,6 +806,8 @@ static void CloseWidgetAudio(Widget* widget);
 /// state.
 static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& configuration);
 
+/// Prepares and swaps a complete native panel while preserving placement, calendar and alarm state.
+/// Returns false if the replacement cannot be prepared.
 static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& configuration,
     const std::vector<TimeDateNotice>* notices = nullptr, ULONGLONG applicationUtc = 0);
 
@@ -808,13 +818,25 @@ static HFONT CreateCalendarUiFont(const WidgetConfig& config, UINT dpi = 0);
 /// Moves or resizes a control only when necessary, retaining combo height and resource-authored text widths.
 static void SetControlPosition(HWND control, int x, int y, int width, int height);
 
-/// Maps native settings resource geometry and dialog-unit distances.
+/// Returns a control's resource-authored bounds in pixels using the current dialog units.
 static RECT GetSettingsResourceRect(HWND parent, int id);
+
+/// Maps a vertical dialog-unit distance using the current interface font and existing button height limit.
 static int SettingsDialogHeight(int value);
+
+/// Maps a horizontal dialog-unit distance using the current interface font.
 static int SettingsDialogWidth(int value);
+
+/// Returns the minimum or measured native button width, including text margins and border edges.
 static LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu = 12);
+
+/// Fits an NTP action button to its caption and margins while preserving its height and requested anchor.
 static void FitSettingsButtonWidth(HWND button, bool alignRight);
+
+/// Sizes action buttons uniformly and shortens the widget-type combo while retaining its left edge.
 static void UpdateSettingsActionButtonWidths();
+
+/// Fits Settings to its content and work area, updating scrollbars without activating the window.
 static void UpdateSettingsWindowLayout();
 
 /// Tests whether a handle matches one of the settings page handles.
@@ -997,14 +1019,60 @@ static void SelectFontAntialiasing(HWND combo, int mode) {
     }
 }
 
-/// Adds localized ClearType, GDI, and no-antialiasing choices with their independent stored mode values.
-static void PopulateFontAntialiasingCombo(HWND combo) {
+/// Checks the native smoothing API and display color depth using the verified availability rule.
+static bool IsClearTypeAvailable() {
+    UINT type = 0;
+    if (!SystemParametersInfoW(SPI_GETFONTSMOOTHINGTYPE, 0, &type, 0)) {
+        return false;
+    }
+    HDC dc = GetDC(nullptr);
+    if (dc == nullptr) {
+        return false;
+    }
+    int depth = GetDeviceCaps(dc, BITSPIXEL) * GetDeviceCaps(dc, PLANES);
+    ReleaseDC(nullptr, dc);
+    return depth > 8;
+}
+
+/// Substitutes grayscale rendering for unavailable ClearType without changing the stored preference.
+static int EffectiveFontAntialiasing(int mode, bool clearTypeAvailable) {
+    if (mode == FONT_ANTIALIAS_CLEARTYPE && !clearTypeAvailable) {
+        return FONT_ANTIALIAS_GDI;
+    }
+    return mode;
+}
+
+/// Adds available localized antialiasing choices with their independent stored mode values.
+static void PopulateFontAntialiasingCombo(HWND combo, bool clearTypeAvailable = true) {
     const FontAntialiasing modes[] = { FONT_ANTIALIAS_CLEARTYPE, FONT_ANTIALIAS_GDI, FONT_ANTIALIAS_NONE };
     for (FontAntialiasing mode : modes) {
-        LRESULT index =
-            SendMessageW(combo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(ANTIALIASING_TEXT_IDS[mode])));
+        if (mode == FONT_ANTIALIAS_CLEARTYPE && !clearTypeAvailable) {
+            continue;
+        }
+        LRESULT index = SendMessageW(combo, CB_ADDSTRING, 0,
+            reinterpret_cast<LPARAM>(T(ANTIALIASING_TEXT_IDS[mode])));
         SendMessageW(combo, CB_SETITEMDATA, index, mode);
     }
+}
+
+/// Filters the application selector for the draft style while retaining the user's requested mode.
+static void UpdateApplicationFontAntialiasingCombo() {
+    if (hAppAntialiasCombo == nullptr) {
+        return;
+    }
+    bool classic = windows2000Style;
+    if (hDisableThemesCheck != nullptr && hWindows2000StyleCheck != nullptr) {
+        classic = GetCheck(hDisableThemesCheck) && GetCheck(hWindows2000StyleCheck);
+    }
+    bool clearTypeAvailable = !classic && IsClearTypeAvailable();
+    int count = clearTypeAvailable ? FONT_ANTIALIAS_COUNT : FONT_ANTIALIAS_COUNT - 1;
+    if (SendMessageW(hAppAntialiasCombo, CB_GETCOUNT, 0, 0) != count) {
+        WindowRedrawScope redraw(hAppAntialiasCombo);
+        SendMessageW(hAppAntialiasCombo, CB_RESETCONTENT, 0, 0);
+        PopulateFontAntialiasingCombo(hAppAntialiasCombo, clearTypeAvailable);
+    }
+    int mode = EffectiveFontAntialiasing(settingsAppFontAntialiasing, clearTypeAvailable);
+    SelectFontAntialiasing(hAppAntialiasCombo, mode);
 }
 
 /// Adds supported language names in their defined display order.
@@ -1260,7 +1328,9 @@ static bool InstallCalendarLocaleHook() {
 }
 
 /// Appends a monitor's geometry, device name, and primary flag to the enumeration result.
-static BOOL CALLBACK CollectDisplayMonitor(HMONITOR monitor, HDC, LPRECT, LPARAM data) {
+static BOOL CALLBACK CollectDisplayMonitor(HMONITOR monitor, HDC context, LPRECT rectangle, LPARAM data) {
+    UNREFERENCED_PARAMETER(context);
+    UNREFERENCED_PARAMETER(rectangle);
     std::vector<DisplayMonitor>* monitors = reinterpret_cast<std::vector<DisplayMonitor> *>(data);
     MONITORINFOEXW information = {};
     information.cbSize = sizeof(information);
@@ -1400,7 +1470,9 @@ static void SetDefaultWidgetAppearance(WidgetConfig* config, WidgetType type) {
     config->opacity = 100;
     config->fontSize = 44;
     config->fontDialogSize = type == WIDGET_DIGITAL ? config->fontSize * 10 : 90;
-    int selectedAppFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
+    int selectedAppFontAntialiasing = hAppAntialiasCombo == nullptr
+        ? appFontAntialiasing
+        : settingsAppFontAntialiasing;
     config->fontAntialiasing = std::clamp(selectedAppFontAntialiasing, 0, FONT_ANTIALIAS_COUNT - 1);
     config->leadingZeroMode = LEADING_ZERO_VISIBLE;
     config->transparentBackground = false;
@@ -3460,10 +3532,10 @@ bool HasApplicationUiFont() {
     const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
     int weight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     bool italic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
-    return !face.empty() || weight != FW_NORMAL || italic;
+    return windows2000Style || !face.empty() || weight != FW_NORMAL || italic;
 }
 
-/// Creates the effective application face and style at the native system font size and window DPI.
+/// Creates the selected application font, using Tahoma 8 pt for the Windows 2000 system-font choice.
 HFONT CreateApplicationUiFont(HWND window) {
     HFONT systemFont = CreateSystemDialogFont(window);
     if (systemFont == nullptr) {
@@ -3478,16 +3550,26 @@ HFONT CreateApplicationUiFont(HWND window) {
     const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
     font.lfWeight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     font.lfItalic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
-    font.lfQuality = FontQuality(appFontAntialiasing);
+    int dialogSize = settingsApplicationFontPreviewActive ? settingsAppFontDialogSize : appFontDialogSize;
+    int antialiasing =
+        EffectiveFontAntialiasing(appFontAntialiasing, !windows2000Style && IsClearTypeAvailable());
+    font.lfQuality = FontQuality(antialiasing);
     if (!face.empty()) {
         wcsncpy_s(font.lfFaceName, face.c_str(), _TRUNCATE);
         font.lfCharSet = DEFAULT_CHARSET;
+    } else if (windows2000Style && font.lfWeight == FW_NORMAL && !font.lfItalic && dialogSize == 90) {
+        wcsncpy_s(font.lfFaceName, L"Tahoma", _TRUNCATE);
+        font.lfHeight = -MulDiv(8, GetSystemDialogDpi(window), 72);
+        font.lfWidth = 0;
+        font.lfCharSet = DEFAULT_CHARSET;
+        font.lfUnderline = FALSE;
+        font.lfStrikeOut = FALSE;
     }
     return CreateFontIndirectW(&font);
 }
 
-/// Replaces the application font in open dialogs before releasing their previous shared font.
-/// Defers final settings alignment and optional recreation until font changes and the button click complete.
+/// Replaces the application font in open dialogs before releasing their previous shared font. Defers
+/// final Settings alignment and optional control rebuilding until font changes and the click complete.
 static void RefreshApplicationFonts(bool rebuildSettings = true) {
     HFONT font = CreateApplicationUiFont(hSettings);
     if (font == nullptr) {
@@ -3535,7 +3617,8 @@ static HWND GetSettingsComboBox(HWND window) {
 }
 
 /// Applies the current application UI font and theme policy to a child.
-static BOOL CALLBACK ApplyFontAndTheme(HWND child, LPARAM) {
+static BOOL CALLBACK ApplyFontAndTheme(HWND child, LPARAM parameter) {
+    UNREFERENCED_PARAMETER(parameter);
     HWND parent = GetParent(child);
     if (GetSettingsComboBox(parent) == child) {
         return TRUE;
@@ -3658,10 +3741,17 @@ static bool DrawSettingsListItem(const DRAWITEMSTRUCT* item) {
     int saved = SaveDC(item->hDC);
     bool disabled = !IsWindowEnabled(item->hwndItem);
     bool selected = (item->itemState & ODS_SELECTED) != 0 && !disabled;
-    FillRect(item->hDC, &item->rcItem,
-        GetSysColorBrush(disabled ? COLOR_BTNFACE : selected ? COLOR_HIGHLIGHT : COLOR_WINDOW));
-    SetTextColor(item->hDC,
-        GetSysColor(disabled ? COLOR_GRAYTEXT : selected ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+    int backgroundColor = COLOR_WINDOW;
+    int textColor = COLOR_WINDOWTEXT;
+    if (disabled) {
+        backgroundColor = COLOR_BTNFACE;
+        textColor = COLOR_GRAYTEXT;
+    } else if (selected) {
+        backgroundColor = COLOR_HIGHLIGHT;
+        textColor = COLOR_HIGHLIGHTTEXT;
+    }
+    FillRect(item->hDC, &item->rcItem, DialogFrame::GetBrush(item->hwndItem, backgroundColor));
+    SetTextColor(item->hDC, DialogFrame::GetColor(item->hwndItem, textColor));
     SetBkMode(item->hDC, TRANSPARENT);
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
     if (font != nullptr) {
@@ -3910,7 +4000,10 @@ static bool AreVisualStylesActive() {
 static bool DrawSettingsColorPreviewTheme(HWND preview, HDC dc, bool nonClient) {
     HWND button = reinterpret_cast<HWND>(GetPropW(preview, SETTINGS_COLOR_BUTTON_PROPERTY));
     WINDOWINFO information = { sizeof(information) };
-    if (button == nullptr || dc == nullptr || themesDisabled || !AreVisualStylesActive()
+    if (button == nullptr
+            || dc == nullptr
+            || themesDisabled
+            || !AreVisualStylesActive()
             || !GetWindowInfo(preview, &information)) {
         return false;
     }
@@ -3986,8 +4079,8 @@ static LRESULT CALLBACK SettingsListBorderSubclassProc(HWND window, UINT message
         return result;
     }
     COLORREF borderColor = 0;
-    HRESULT colorResult =
-        GetThemeColor(theme, EP_EDITBORDER_NOSCROLL, EPSN_NORMAL, TMT_BORDERCOLOR, &borderColor);
+    HRESULT colorResult = GetThemeColor(theme, EP_EDITBORDER_NOSCROLL,
+        EPSN_NORMAL, TMT_BORDERCOLOR, &borderColor);
     CloseThemeData(theme);
     WINDOWINFO information = { sizeof(information) };
     if (FAILED(colorResult) || !GetWindowInfo(window, &information)) {
@@ -4015,7 +4108,8 @@ static LRESULT CALLBACK SettingsListBorderSubclassProc(HWND window, UINT message
 }
 
 /// Recalculates settings tabs, list rows, labels, combos, and edits without restricting descriptive notes.
-static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM) {
+static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM parameter) {
+    UNREFERENCED_PARAMETER(parameter);
     HWND edit = SettingsEdit::GetEdit(control);
     if (edit != nullptr) {
         control = edit;
@@ -4083,8 +4177,8 @@ static LONG GetSettingsButtonTextTop(HWND button, const WINDOWINFO& information,
         LONG_PTR type = GetWindowLongPtrW(button, GWL_STYLE) & BS_TYPEMASK;
         if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
             RECT themedContent = {};
-            if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, BP_PUSHBUTTON, PBS_NORMAL,
-                    &content, &themedContent))) {
+            if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, BP_PUSHBUTTON,
+                    PBS_NORMAL, &content, &themedContent))) {
                 content = themedContent;
             }
         } else if (type == BS_CHECKBOX
@@ -4339,8 +4433,8 @@ static void AlignSettingsSundayFirst(HWND reference, LONG baselineDistance = 0) 
         panel ? IDC_LAYOUT_SUNDAY_PANEL : IDC_LAYOUT_SUNDAY_CALENDAR);
     int x = placement.left;
     int width = placement.right - placement.left;
-    LONG top =
-        bounds.top + GetSettingsControlBaselineAdjustment(hSundayFirstCheck, reference, baselineDistance);
+    LONG top = bounds.top
+        + GetSettingsControlBaselineAdjustment(hSundayFirstCheck, reference, baselineDistance);
     SetControlPosition(hSundayFirstCheck, x, top, width, bounds.bottom - bounds.top);
 }
 
@@ -4515,7 +4609,8 @@ static void UpdateApplicationControlOrder() {
 }
 
 /// Aligns associated fields to their labels, retaining the separate text-widget antialiasing anchor.
-static BOOL CALLBACK AlignSettingsFieldLabel(HWND label, LPARAM) {
+static BOOL CALLBACK AlignSettingsFieldLabel(HWND label, LPARAM parameter) {
+    UNREFERENCED_PARAMETER(parameter);
     HWND field = reinterpret_cast<HWND>(GetPropW(label, SETTINGS_FIELD_LABEL_PROPERTY));
     if (field != nullptr && IsWindow(field)) {
         bool antialiasAnchor = field == hWidgetAntialiasCombo
@@ -9281,9 +9376,9 @@ static LRESULT UpdateSettingsTextControlState(HWND window, UINT msg, WPARAM wPar
 static LRESULT GetSettingsComboControlBrush(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (GetSettingsComboBox(window) != window && !IsWindowEnabled(window)) {
         HDC dc = reinterpret_cast<HDC>(wParam);
-        SetTextColor(dc, GetSysColor(COLOR_GRAYTEXT));
-        SetBkColor(dc, GetSysColor(COLOR_BTNFACE));
-        return reinterpret_cast<LRESULT>(GetSysColorBrush(COLOR_BTNFACE));
+        SetTextColor(dc, DialogFrame::GetColor(window, COLOR_GRAYTEXT));
+        SetBkColor(dc, DialogFrame::GetColor(window, COLOR_BTNFACE));
+        return reinterpret_cast<LRESULT>(DialogFrame::GetBrush(window, COLOR_BTNFACE));
     }
     return DefSubclassProc(window, msg, wParam, lParam);
 }
@@ -9318,8 +9413,8 @@ static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lPa
         RECT selection = item->rcItem;
         selection.left += GetSystemMetrics(SM_CXBORDER);
         selection.right -= GetSystemMetrics(SM_CXBORDER);
-        FillRect(item->hDC, &selection, GetSysColorBrush(COLOR_HIGHLIGHT));
-        SetBkColor(item->hDC, GetSysColor(COLOR_HIGHLIGHT));
+        FillRect(item->hDC, &selection, DialogFrame::GetBrush(window, COLOR_HIGHLIGHT));
+        SetBkColor(item->hDC, DialogFrame::GetColor(window, COLOR_HIGHLIGHT));
     }
     int textColor;
     if (disabled) {
@@ -9329,7 +9424,7 @@ static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lPa
     } else {
         textColor = COLOR_WINDOWTEXT;
     }
-    SetTextColor(item->hDC, GetSysColor(textColor));
+    SetTextColor(item->hDC, DialogFrame::GetColor(window, textColor));
     SetBkMode(item->hDC, selected ? OPAQUE : TRANSPARENT);
     RECT content = item->rcItem;
     DrawTextW(item->hDC, text.data(), static_cast<int>(length), &content,
@@ -9363,6 +9458,7 @@ static LRESULT DrawSettingsComboItem(HWND window, WPARAM wParam, LPARAM lParam) 
     IntersectClipRect(item->hDC, item->rcItem.left, item->rcItem.top, item->rcItem.right,
         item->rcItem.bottom);
     LRESULT result = DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+    DialogFrame::RecolorControl(window, item->hDC, item->rcItem);
     RestoreDC(item->hDC, saved);
     return result;
 }
@@ -9936,8 +10032,9 @@ static bool DrawNtpLogItem(const DRAWITEMSTRUCT* item) {
     } else {
         backgroundColor = COLOR_WINDOW;
     }
-    FillRect(item->hDC, &item->rcItem, GetSysColorBrush(backgroundColor));
-    SetTextColor(item->hDC, GetSysColor(selected && focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+    FillRect(item->hDC, &item->rcItem, DialogFrame::GetBrush(item->hwndItem, backgroundColor));
+    SetTextColor(item->hDC, DialogFrame::GetColor(item->hwndItem,
+        selected && focused ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
     SetBkMode(item->hDC, TRANSPARENT);
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(hNtpLogList, WM_GETFONT, 0, 0));
     if (font != nullptr) {
@@ -9964,8 +10061,8 @@ INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item) {
     int savedState = SaveDC(item->hDC);
     DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
     SetBkMode(item->hDC, TRANSPARENT);
-    SetTextColor(item->hDC,
-        GetSysColor(IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
+    SetTextColor(item->hDC, DialogFrame::GetColor(item->hwndItem,
+        IsWindowEnabled(item->hwndItem) ? COLOR_WINDOWTEXT : COLOR_GRAYTEXT));
     HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
     if (font != nullptr) {
         SelectObject(item->hDC, font);
@@ -9976,7 +10073,9 @@ INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item) {
     UiTextLine statusLine = {};
     const UiTextLine* fixedLine = nullptr;
     if (item->hwndItem == hNtpServersLabel) {
-        prefix = SendMessageW(item->hwndItem, WM_QUERYUISTATE, 0, 0) & UISF_HIDEACCEL ? DT_HIDEPREFIX : 0;
+        prefix = SendMessageW(item->hwndItem, WM_QUERYUISTATE, 0, 0) & UISF_HIDEACCEL
+            ? DT_HIDEPREFIX
+            : 0;
     } else if (item->hwndItem == hNtpStatus) {
         statusLine = GetNtpStatusLine(item->hDC);
         fixedLine = &statusLine;
@@ -10028,7 +10127,7 @@ static INT_PTR GetSettingsColorPreviewBrush(HWND preview, HDC dc) {
         if (DrawSettingsColorPreviewTheme(preview, dc, false)) {
             return reinterpret_cast<INT_PTR>(GetStockObject(NULL_BRUSH));
         }
-        color = GetSysColor(COLOR_BTNFACE);
+        color = DialogFrame::GetColor(preview, COLOR_BTNFACE);
     }
     SetBkColor(dc, color);
     SetDCBrushColor(dc, color);
@@ -10080,6 +10179,10 @@ static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wPa
         LimitDialogVerticalUnits(window, IDD_SETTINGS);
         return FALSE;
     }
+    if (message == WM_GETFONT && window == hSettings && hUiFont != nullptr) {
+        SetWindowLongPtrW(window, DWLP_MSGRESULT, reinterpret_cast<LONG_PTR>(hUiFont));
+        return TRUE;
+    }
     if (message == WM_SIZE && wParam == SIZE_RESTORED && hTabs != nullptr) {
         PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
     }
@@ -10102,6 +10205,9 @@ static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wPa
     }
     if (message == WM_SETTINGCHANGE || message == WM_THEMECHANGED || message == WM_SYSCOLORCHANGE) {
         WindowProc(window, message, wParam, lParam);
+    }
+    if (message == WM_DPICHANGED || message == WM_DISPLAYCHANGE) {
+        UpdateApplicationFontAntialiasingCombo();
     }
     return FALSE;
 }
@@ -11854,6 +11960,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         SetCheck(hWindows2000StyleCheck, false);
     }
     EnableWindow(hWindows2000StyleCheck, globalThemesDisabled);
+    UpdateApplicationFontAntialiasingCombo();
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
     }
@@ -12033,7 +12140,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
 }
 
 /// Fits dropdowns to the work area with at most thirteen whole rows and retains native scrolling.
-/// Removes its subclass when the native list window is destroyed.
+/// Recolors native dropdown painting locally and removes its subclass when the list window is destroyed.
 static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     if (msg == WM_WINDOWPOSCHANGING) {
@@ -12117,7 +12224,25 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPAR
     } else if (msg == WM_NCDESTROY) {
         RemoveWindowSubclass(window, ComboBoxDropDownSubclassProc, subclassId);
     }
-    return DefSubclassProc(window, msg, wParam, lParam);
+    LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
+    bool suppliedContext = msg == WM_PRINT || msg == WM_PRINTCLIENT || msg == WM_ERASEBKGND;
+    if (windows2000Style && (suppliedContext || msg == WM_PAINT || msg == WM_NCPAINT)) {
+        HDC context = suppliedContext ? reinterpret_cast<HDC>(wParam) : GetWindowDC(window);
+        if (context != nullptr) {
+            RECT bounds = {};
+            if (!suppliedContext || msg == WM_PRINT && (lParam & PRF_NONCLIENT) != 0) {
+                GetWindowRect(window, &bounds);
+                OffsetRect(&bounds, -bounds.left, -bounds.top);
+            } else {
+                GetClientRect(window, &bounds);
+            }
+            DialogFrame::RecolorControl(window, context, bounds);
+            if (!suppliedContext) {
+                ReleaseDC(window, context);
+            }
+        }
+    }
+    return result;
 }
 
 /// Calculates current time-zone captions once for reuse across the three Settings selectors.
@@ -12203,8 +12328,9 @@ static void UpdateComboBoxDropDownMetrics(HWND combo) {
     HWND list = combo;
     if (GetComboBoxInfo(GetSettingsComboBox(combo), &information) && information.hwndList != nullptr) {
         list = information.hwndList;
-        SetWindowSubclass(information.hwndList, ComboBoxDropDownSubclassProc, COMBO_BOX_DROPDOWN_SUBCLASS_ID,
-            reinterpret_cast<DWORD_PTR>(combo));
+        DialogFrame::ApplyControl(list, hSettings);
+        SetWindowSubclass(information.hwndList, ComboBoxDropDownSubclassProc,
+            COMBO_BOX_DROPDOWN_SUBCLASS_ID, reinterpret_cast<DWORD_PTR>(combo));
     }
     HDC dc = GetDC(list);
     if (dc == nullptr) {
@@ -12809,7 +12935,7 @@ static bool HasPendingSettingsChanges() {
             || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
             || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
             || GetCheck(hWarnUnsavedChangesCheck) != warnOnUnsavedChanges
-            || SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing) != appFontAntialiasing
+            || settingsAppFontAntialiasing != appFontAntialiasing
             || settingsAppFontFace != appFontFace
             || settingsTestAudioOutputDevice != testAudioOutputDevice
             || settingsAppFontDialogSize != appFontDialogSize
@@ -13520,8 +13646,8 @@ static bool ApplySettingsDraft() {
                         POINT draftClockPosition = {};
                         GetPanelLayout(current->config, nullptr, &currentClockPosition, nullptr,
                             &current->panelNotices, 0, current->dpi);
-                        GetPanelLayout(draft, nullptr, &draftClockPosition, nullptr, &notices,
-                            0, current->dpi);
+                        GetPanelLayout(draft, nullptr, &draftClockPosition, nullptr, &notices, 0,
+                            current->dpi);
                         position.x = rect.left + currentClockPosition.x - draftClockPosition.x;
                     }
                     CopyWidgetPlacement(&settingsDraft[draftIndex], current->config);
@@ -13541,7 +13667,7 @@ static bool ApplySettingsDraft() {
     bool previousWindows2000Style = windows2000Style;
     windows2000Style = themesDisabled && GetCheck(hWindows2000StyleCheck);
     int previousAppFontAntialiasing = appFontAntialiasing;
-    appFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
+    appFontAntialiasing = settingsAppFontAntialiasing;
     appFontFace = settingsAppFontFace;
     appFontDialogSize = std::clamp(settingsAppFontDialogSize, 10, 9990);
     appFontWeight = std::clamp(settingsAppFontWeight, 0, 1000);
@@ -13626,17 +13752,13 @@ static bool ApplySettingsDraft() {
     settingsAppearancePreviewActive = false;
     settingsAppearancePreviewIds.clear();
     settingsAppearanceOriginals.clear();
+    bool windows2000StyleChanged = previousWindows2000Style != windows2000Style;
     bool uiStyleChanged = previousThemesDisabled != themesDisabled
-        || previousAppFontAntialiasing != appFontAntialiasing;
-    if (uiStyleChanged) {
-        RefreshApplicationFonts(false);
-    } else if (previousWindows2000Style != windows2000Style) {
-        const HWND dialogs[] = { hSettings, helpForm.GetWindow(), aboutForm.GetWindow() };
-        for (HWND dialog : dialogs) {
-            if (dialog != nullptr) {
-                DialogFrame::Apply(dialog, themesDisabled, windows2000Style);
-            }
-        }
+        || previousAppFontAntialiasing != appFontAntialiasing
+        || windows2000StyleChanged;
+    bool recreateDialogs = previousThemesDisabled && !themesDisabled;
+    if (uiStyleChanged && !recreateDialogs) {
+        RefreshApplicationFonts(windows2000StyleChanged);
     }
     settingsAppliedWidgets.clear();
     for (const std::unique_ptr<Widget>& widget : widgets) {
@@ -13650,6 +13772,7 @@ static bool ApplySettingsDraft() {
     settingsDraft = settingsAppliedWidgets;
     settingsAppearanceOriginals = settingsAppliedWidgets;
     settingsAppFontFace = appFontFace;
+    settingsAppFontAntialiasing = appFontAntialiasing;
     settingsTestAudioOutputDevice = testAudioOutputDevice;
     settingsAppFontDialogSize = appFontDialogSize;
     settingsAppFontWeight = appFontWeight;
@@ -13683,7 +13806,7 @@ static bool ApplySettingsDraft() {
     }
     updatingSettingsControls = previousUpdating;
     UpdateSettingsApplyButton();
-    return previousThemesDisabled && !themesDisabled;
+    return recreateDialogs;
 }
 
 /// Copies placement and the field affected by a context-menu command into a settings snapshot without
@@ -13861,7 +13984,8 @@ static void SetFontDialogControlVisibility(HWND dialog, FontDialogMode mode) {
 }
 
 /// Customizes the native font dialog's control visibility, compact layout, and background painting.
-static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT msg, WPARAM, LPARAM parameter) {
+static UINT_PTR CALLBACK FontDialogHook(HWND dialog, UINT msg, WPARAM wParam, LPARAM parameter) {
+    UNREFERENCED_PARAMETER(wParam);
     if (msg == WM_PAINT) {
         PAINTSTRUCT paint = {};
         HDC dc = BeginPaint(dialog, &paint);
@@ -14556,8 +14680,7 @@ static bool CreateSettingsControls(int selectedTab) {
         T(TXT_ANTIALIASING_LABEL), &applicationControls);
     hAppAntialiasCombo = BindSettingsControl(hApplicationPage, ID_APP_ANTIALIAS, L"",
         &applicationControls, appAntialiasLabel);
-    PopulateFontAntialiasingCombo(hAppAntialiasCombo);
-    SelectFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
+    UpdateApplicationFontAntialiasingCombo();
     HWND appLanguageLabel = BindSettingsLabel(hApplicationPage, IDC_APP_LANGUAGE_LABEL,
         T(TXT_APPLICATION_LANGUAGE_LABEL), &applicationControls);
     hLanguageCombo = BindSettingsControl(hApplicationPage, ID_LANGUAGE, L"", &applicationControls,
@@ -14668,7 +14791,8 @@ static void CaptureSettingsControlValue(HWND control, int page,
         values->push_back(SettingsControlValue{ page, id, WM_SETTEXT, 0, 0, GetControlText(control) });
     } else if ((_wcsicmp(className, WC_COMBOBOXEXW) == 0 || _wcsicmp(className, WC_COMBOBOXW) == 0)
             && control != hAudioOutputCombo
-            && control != hTestAudioOutputCombo) {
+            && control != hTestAudioOutputCombo
+            && control != hAppAntialiasCombo) {
         WPARAM selectedItemIndex = static_cast<WPARAM>(SendMessageW(control, CB_GETCURSEL, 0, 0));
         SettingsControlValue savedComboSelection{ page, id, CB_SETCURSEL, selectedItemIndex, 0, {} };
         values->push_back(savedComboSelection);
@@ -14984,6 +15108,7 @@ static void RecreateStyledDialogs(bool reopenSettings) {
     bool reopenHelp = helpForm.GetWindow() != nullptr;
     bool reopenAbout = aboutForm.GetWindow() != nullptr;
     CloseSettingsWindow();
+    ResetUiFont();
     if (reopenHelp) {
         helpForm.Close();
         helpForm.Show(hInstance, helpWindowState);
@@ -15090,6 +15215,7 @@ static void CreateSettingsWindow(int widgetId) {
     settingsAppearancePreviewIds.clear();
     settingsAppearancePreviewActive = false;
     settingsAppFontFace = appFontFace;
+    settingsAppFontAntialiasing = appFontAntialiasing;
     settingsTestAudioOutputDevice = testAudioOutputDevice;
     settingsTimeSignalVolume = timeSignalVolume;
     settingsAppFontDialogSize = appFontDialogSize;
@@ -15672,7 +15798,9 @@ static void HandleSettingsCommand(int id, int notification) {
         lastAddedWidgetType = static_cast<WidgetType>(type);
         WidgetConfig config = DefaultConfig(static_cast<WidgetType>(type),
             static_cast<int>(settingsDraft.size()));
-        int selectedAppFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo, appFontAntialiasing);
+        int selectedAppFontAntialiasing = hAppAntialiasCombo == nullptr
+            ? appFontAntialiasing
+            : settingsAppFontAntialiasing;
         config.fontAntialiasing = std::clamp(selectedAppFontAntialiasing, 0, FONT_ANTIALIAS_COUNT - 1);
         settingsDraft.push_back(config);
         selectedDraftIndex = static_cast<int>(settingsDraft.size()) - 1;
@@ -15761,7 +15889,10 @@ static void HandleSettingsCommand(int id, int notification) {
         settingsAppFontItalic = false;
         UpdateApplicationFontButtons();
         ApplyApplicationFontPreview();
-    } else if (id == ID_VISUAL_STYLES && notification == BN_CLICKED) {
+    } else if (id == ID_APP_ANTIALIAS && notification == CBN_SELCHANGE) {
+        settingsAppFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo,
+            settingsAppFontAntialiasing);
+    } else if ((id == ID_VISUAL_STYLES || id == ID_WINDOWS_2000_STYLE) && notification == BN_CLICKED) {
         UpdateSettingControlAvailability();
     } else if (id == ID_DEFAULT_APPEARANCE) {
         ResetWidgetAppearance();
@@ -15798,6 +15929,7 @@ static void HandleSettingsCommand(int id, int notification) {
             }
         }
         AppLanguage previousLanguage = appLanguage;
+        bool previousWindows2000Style = windows2000Style;
         bool recreateDialogs = ApplySettingsDraft();
         if (recreateDialogs) {
             RecreateStyledDialogs(id == ID_APPLY);
@@ -15813,7 +15945,7 @@ static void HandleSettingsCommand(int id, int notification) {
             settingsAppearanceOriginals = settingsDraft;
             settingsAppearancePreviewIds.clear();
             settingsAppearancePreviewActive = false;
-            if (previousLanguage != appLanguage) {
+            if (previousLanguage != appLanguage && previousWindows2000Style == windows2000Style) {
                 RebuildSettingsControls();
             } else if (widgetListChanged) {
                 RefreshWidgetList(true, false);
@@ -16269,6 +16401,9 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
         if (control == hTestAudioOutputCombo) {
             FillAudioOutputCombo(control, settingsTestAudioOutputs, settingsTestAudioOutputDevice);
         }
+        if (control == hAppAntialiasCombo) {
+            UpdateApplicationFontAntialiasingCombo();
+        }
         hSettingsOpenCombo = control;
         settingsComboInitialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
         settingsComboAccepted = false;
@@ -16290,8 +16425,11 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
         return true;
     }
     if (*notification == CBN_CLOSEUP) {
+        bool requestedModeChanged = control == hAppAntialiasCombo
+            && SelectedFontAntialiasing(control, settingsAppFontAntialiasing) != settingsAppFontAntialiasing;
         bool changed = settingsComboAccepted
-            && SendMessageW(control, CB_GETCURSEL, 0, 0) != settingsComboInitialSelection;
+            && (requestedModeChanged
+                || SendMessageW(control, CB_GETCURSEL, 0, 0) != settingsComboInitialSelection);
         if (!settingsComboAccepted) {
             SetComboSelection(control, settingsComboInitialSelection);
         }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.2
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -35,8 +35,8 @@ static const int ANALOG_PROFILE_COUNT = 4;
 static const int ANALOG_PROFILE_LENGTH = 14;
 static const int ANALOG_PROFILE_SIZES[ANALOG_PROFILE_COUNT] = { 104, 130, 166, 198 };
 
-typedef UINT(__fastcall* RegisterClockClassProc)(HINSTANCE);
-typedef ATOM(WINAPI* VistaRegisterClockClassProc)(HINSTANCE);
+typedef UINT(__fastcall* RegisterClockClassProc)(HINSTANCE instance);
+typedef ATOM(WINAPI* VistaRegisterClockClassProc)(HINSTANCE instance);
 typedef void(__fastcall* RenderClockProc)(void* state, void* unused, HDC targetDC);
 typedef BOOL(__fastcall* VistaLoadClockResourcesProc)(void* state);
 typedef void(__fastcall* VistaReleaseClockResourcesProc)(void* state);
@@ -59,7 +59,8 @@ static DWORD* analogProfileTable = nullptr;
 static DWORD detectedAnalogProfiles[ANALOG_PROFILE_COUNT][ANALOG_PROFILE_LENGTH] = {};
 static AnalogClockImplementation analogClockImplementation = ANALOG_CLOCK_UNKNOWN;
 
-/// Returns the first exact byte-pattern match in a bounded memory range, or null for invalid input or no match.
+/// Returns the first exact byte-pattern match in a bounded memory range, or null for invalid input or no
+/// match.
 static BYTE* FindModulePattern(BYTE* begin, size_t length, const BYTE* pattern, size_t patternLength) {
     if (begin == nullptr || pattern == nullptr || patternLength == 0 || length < patternLength) {
         return nullptr;
@@ -78,7 +79,8 @@ static bool ContainsPattern(const BYTE* begin, size_t length, const BYTE* patter
 }
 
 /// Finds the largest executable PE section whose virtual range fits inside the loaded image.
-static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, BYTE** codeBegin, size_t* codeSize) {
+static bool GetExecutableCodeRange(BYTE* module, IMAGE_NT_HEADERS32* ntHeaders, BYTE** codeBegin,
+        size_t* codeSize) {
     if (module == nullptr || ntHeaders == nullptr || codeBegin == nullptr || codeSize == nullptr) {
         return false;
     }
@@ -118,7 +120,8 @@ static int AnalogProfileIndex(DWORD size) {
     return -1;
 }
 
-/// Checks a candidate private clock profile against the expected size, resource, and hand geometry constraints.
+/// Checks a candidate private clock profile against the expected size, resource, and hand geometry
+/// constraints.
 static bool IsValidAnalogProfile(const DWORD* profile) {
     return !(profile == nullptr
         || AnalogProfileIndex(profile[0]) < 0
@@ -215,7 +218,8 @@ static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* code
     BYTE* stringSearch = module;
     size_t stringRemaining = imageSize;
     while (stringRemaining >= sizeof(classNameBytes)) {
-        BYTE* className = FindModulePattern(stringSearch, stringRemaining, classNameBytes, sizeof(classNameBytes));
+        BYTE* className = FindModulePattern(stringSearch, stringRemaining, classNameBytes,
+            sizeof(classNameBytes));
         if (className == nullptr) {
             break;
         }
@@ -225,14 +229,16 @@ static BYTE* FindClockRegisterAddress(BYTE* module, size_t imageSize, BYTE* code
         BYTE* referenceSearch = codeBegin;
         size_t referenceRemaining = codeSize;
         while (referenceRemaining >= sizeof(addressBytes)) {
-            BYTE* reference = FindModulePattern(referenceSearch, referenceRemaining, addressBytes, sizeof(addressBytes));
+            BYTE* reference = FindModulePattern(referenceSearch, referenceRemaining, addressBytes,
+                sizeof(addressBytes));
             if (reference == nullptr) {
                 break;
             }
             BYTE* candidate = FindPreviousFunctionStart(codeBegin, reference);
             if (candidate != nullptr) {
                 size_t candidateLength = static_cast<size_t>(reference + sizeof(addressBytes) - candidate);
-                bool hasCursor = ContainsPattern(candidate, candidateLength, cursorPattern, sizeof(cursorPattern));
+                bool hasCursor = ContainsPattern(candidate, candidateLength, cursorPattern,
+                    sizeof(cursorPattern));
                 bool stackArgument = ContainsPattern(candidate, candidateLength, stackArgumentPattern,
                     sizeof(stackArgumentPattern));
                 bool fastcallArgument = ContainsPattern(candidate, candidateLength, fastcallPattern,
@@ -288,11 +294,16 @@ static BYTE* FindModernClockRenderAddress(BYTE* codeBegin, size_t codeSize) {
         size_t initialLength = functionLength < 96 ? functionLength : 96;
         bool stateArgument = ContainsPattern(candidate, argumentLength, stateArgumentPattern,
             sizeof(stateArgumentPattern));
-        bool readyState = ContainsPattern(candidate, initialLength, readyPattern, sizeof(readyPattern));
-        bool faceState = ContainsPattern(candidate, initialLength, facePattern, sizeof(facePattern));
-        bool remoteState = ContainsPattern(candidate, functionLength, remoteDirectPattern, sizeof(remoteDirectPattern))
-            || ContainsPattern(candidate, functionLength, remoteAddressPattern, sizeof(remoteAddressPattern));
-        bool secondsState = ContainsPattern(candidate, functionLength, secondsPattern, sizeof(secondsPattern));
+        bool readyState = ContainsPattern(candidate, initialLength, readyPattern,
+            sizeof(readyPattern));
+        bool faceState = ContainsPattern(candidate, initialLength, facePattern,
+            sizeof(facePattern));
+        bool remoteState = ContainsPattern(candidate, functionLength, remoteDirectPattern,
+                sizeof(remoteDirectPattern))
+            || ContainsPattern(candidate, functionLength, remoteAddressPattern,
+                sizeof(remoteAddressPattern));
+        bool secondsState = ContainsPattern(candidate, functionLength, secondsPattern,
+            sizeof(secondsPattern));
         if (stateArgument && readyState && faceState && remoteState && secondsState) {
             if (result != nullptr) {
                 return nullptr;
@@ -323,9 +334,11 @@ static BYTE* FindLegacyClockRegisterAddress(BYTE* module, size_t imageSize) {
         if (candidate + 22 <= module + imageSize && candidate[17] == 0xBF) {
             DWORD classAddressValue = 0;
             CopyMemory(&classAddressValue, candidate + 18, sizeof(classAddressValue));
-            const wchar_t* className = reinterpret_cast<const wchar_t*>(static_cast<ULONG_PTR>(classAddressValue));
+            const wchar_t* className =
+                reinterpret_cast<const wchar_t*>(static_cast<ULONG_PTR>(classAddressValue));
             if (reinterpret_cast<const BYTE*>(className) >= module
-                    && reinterpret_cast<const BYTE*>(className) + sizeof(L"ClockWndMain") <= module + imageSize
+                    && reinterpret_cast<const BYTE*>(className) + sizeof(L"ClockWndMain")
+                        <= module + imageSize
                     && wcscmp(className, L"ClockWndMain") == 0) {
                 if (registerAddress != nullptr) {
                     return nullptr;
@@ -383,7 +396,10 @@ static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
     BYTE* renderAddress = FindModulePattern(module, imageSize, renderPattern, sizeof(renderPattern));
     BYTE* loadAddress = FindModulePattern(module, imageSize, loadPattern, sizeof(loadPattern));
     BYTE* releaseAddress = FindModulePattern(module, imageSize, releasePattern, sizeof(releasePattern));
-    if (registerAddress == nullptr || renderAddress == nullptr || loadAddress == nullptr || releaseAddress == nullptr) {
+    if (registerAddress == nullptr
+            || renderAddress == nullptr
+            || loadAddress == nullptr
+            || releaseAddress == nullptr) {
         return false;
     }
     BYTE* secondRenderAddress = FindModulePattern(renderAddress + 1, imageSize
@@ -404,7 +420,8 @@ static bool ResolveVistaAnalogClockInternals(BYTE* module, size_t imageSize) {
 }
 
 /// Validates the loaded 32-bit timedate.cpl image and resolves its clock routines and profile table.
-/// Selects the supported legacy or modern implementation and reports failure if required patterns are unavailable.
+/// Selects the supported legacy or modern implementation and reports failure if required patterns are
+/// unavailable.
 static bool ResolveAnalogClockInternals() {
     if (timeDateModule == nullptr) {
         return false;
@@ -436,7 +453,8 @@ static bool ResolveAnalogClockInternals() {
         return true;
     }
     bool usesStackArgument = false;
-    BYTE* registerAddress = FindClockRegisterAddress(module, imageSize, codeBegin, codeSize, &usesStackArgument);
+    BYTE* registerAddress = FindClockRegisterAddress(module, imageSize, codeBegin, codeSize,
+        &usesStackArgument);
     if (registerAddress == nullptr || usesStackArgument) {
         return false;
     }
@@ -504,10 +522,13 @@ static bool LoadAnalogClockClass() {
     if (IsAnalogClockClassRegistered()) {
         return true;
     }
-    if (registerClockClass == nullptr && vistaRegisterClockClass == nullptr && !ResolveAnalogClockInternals()) {
+    if (registerClockClass == nullptr
+            && vistaRegisterClockClass == nullptr
+            && !ResolveAnalogClockInternals()) {
         return false;
     }
-    if (analogClockImplementation == ANALOG_CLOCK_VISTA || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
+    if (analogClockImplementation == ANALOG_CLOCK_VISTA
+            || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
         if (vistaRegisterClockClass == nullptr) {
             return false;
         }
@@ -539,7 +560,8 @@ POINT GetAnalogClockFaceCenter(int size) {
     return POINT{ static_cast<LONG>(profile[3]), static_cast<LONG>(profile[4]) };
 }
 
-/// Prepares the module's shared profile table for the requested size and second-hand state before control creation.
+/// Prepares the module's shared profile table for the requested size and second-hand state before control
+/// creation.
 static bool ApplyAnalogProfile(int size, bool showSeconds) {
     if (!LoadAnalogClockClass()) {
         return false;
@@ -673,7 +695,8 @@ COLORREF ReadAnalogClockBackground(HWND control) {
     if (stateValue == 0) {
         return GetSysColor(COLOR_WINDOW);
     }
-    if (analogClockImplementation == ANALOG_CLOCK_VISTA || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
+    if (analogClockImplementation == ANALOG_CLOCK_VISTA
+            || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
         return GetSysColor(COLOR_WINDOW);
     }
     BYTE* state = reinterpret_cast<BYTE*>(stateValue);
@@ -684,8 +707,8 @@ COLORREF ReadAnalogClockBackground(HWND control) {
     return GetSysColor(COLOR_WINDOW);
 }
 
-/// Renders the native clock into the supplied DC over a packed RGB background, restoring private background state
-/// afterward.
+/// Renders the native clock into the supplied DC over a packed RGB background, restoring private background
+/// state afterward.
 bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background) {
     if (control == nullptr || targetDC == nullptr || renderClock == nullptr) {
         return false;
@@ -704,7 +727,8 @@ bool RenderAnalogClock(HWND control, HDC targetDC, DWORD background) {
     FillRect(targetDC, &client, brush);
     DeleteObject(brush);
     BYTE* state = reinterpret_cast<BYTE*>(stateValue);
-    if (analogClockImplementation == ANALOG_CLOCK_VISTA || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
+    if (analogClockImplementation == ANALOG_CLOCK_VISTA
+            || analogClockImplementation == ANALOG_CLOCK_WINDOWS_7) {
         int backgroundOffset = analogClockImplementation == ANALOG_CLOCK_VISTA ? 0x24 : 0x20;
         DWORD** colorAddress = reinterpret_cast<DWORD**>(state + backgroundOffset);
         DWORD* oldColor = *colorAddress;
@@ -732,8 +756,12 @@ int GetSupportedAnalogClockSizes(int* sizes, int capacity) {
     }
     const int vistaSizes[] = { 103, 128, 129, 160 };
     const int otherSizes[] = { 104, 130, 166, 198 };
-    const int* supportedSizes = analogClockImplementation == ANALOG_CLOCK_VISTA ? vistaSizes : otherSizes;
-    int count = analogClockImplementation == ANALOG_CLOCK_VISTA ? ARRAYSIZE(vistaSizes) : ARRAYSIZE(otherSizes);
+    const int* supportedSizes = analogClockImplementation == ANALOG_CLOCK_VISTA
+        ? vistaSizes
+        : otherSizes;
+    int count = analogClockImplementation == ANALOG_CLOCK_VISTA
+        ? ARRAYSIZE(vistaSizes)
+        : ARRAYSIZE(otherSizes);
     if (sizes != nullptr && capacity > 0) {
         int copyCount = capacity < count ? capacity : count;
         CopyMemory(sizes, supportedSizes, copyCount * sizeof(int));
@@ -749,7 +777,8 @@ bool AnalogClockSupportsSeconds(int size) {
     return analogClockImplementation != ANALOG_CLOCK_VISTA || size == 128 || size == 160;
 }
 
-/// Clears cached native clock pointers and profiles and unloads timedate.cpl after its controls have been destroyed.
+/// Clears cached native clock pointers and profiles and unloads timedate.cpl after its controls have been
+/// destroyed.
 void ShutdownAnalogClockHost() {
     registerClockClass = nullptr;
     vistaRegisterClockClass = nullptr;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -34,10 +34,11 @@
 #pragma comment(lib, "Dxgi.lib")
 
 /// Optional display-configuration entry points, unavailable on Windows Vista.
-using GetDisplayConfigSizes = LONG(WINAPI*)(UINT32, UINT32*, UINT32*);
-using QueryCurrentDisplayConfig = LONG(WINAPI*)(UINT32, UINT32*, DISPLAYCONFIG_PATH_INFO*, UINT32*,
-    DISPLAYCONFIG_MODE_INFO*, DISPLAYCONFIG_TOPOLOGY_ID*);
-using GetDisplayConfigInfo = LONG(WINAPI*)(DISPLAYCONFIG_DEVICE_INFO_HEADER*);
+using GetDisplayConfigSizes = LONG(WINAPI*)(UINT32 flags, UINT32* pathCount, UINT32* modeCount);
+using QueryCurrentDisplayConfig = LONG(WINAPI*)(UINT32 flags, UINT32* pathCount,
+    DISPLAYCONFIG_PATH_INFO* paths, UINT32* modeCount, DISPLAYCONFIG_MODE_INFO* modes,
+    DISPLAYCONFIG_TOPOLOGY_ID* topology);
+using GetDisplayConfigInfo = LONG(WINAPI*)(DISPLAYCONFIG_DEVICE_INFO_HEADER* information);
 
 /// Removes the Win32 device-namespace prefix only from the displayed monitor name.
 std::wstring MonitorDisplayName(const std::wstring& device) {
@@ -127,8 +128,8 @@ static void ReadDisplayConfigMonitorDetails(const std::vector<DisplayMonitor>& m
         }
         std::vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
         std::vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
-        const LONG result = queryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(), &modeCount,
-            modes.data(), nullptr);
+        const LONG result = queryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &pathCount, paths.data(),
+            &modeCount, modes.data(), nullptr);
         if (result == ERROR_INSUFFICIENT_BUFFER) {
             continue;
         }

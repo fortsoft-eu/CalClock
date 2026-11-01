@@ -28,6 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include "DialogFrame.h"
 #include "SystemDialogTemplate.h"
+#include "ControlColors.h"
 #include <algorithm>
 #include <cerrno>
 #include <climits>
@@ -41,13 +42,62 @@
 
 #pragma comment(lib, "Msimg32.lib")
 
-using GetSystemMetricsForDpiProc = int(WINAPI*)(int, UINT);
-using AdjustWindowRectExForDpiProc = BOOL(WINAPI*)(RECT*, DWORD, BOOL, DWORD, UINT);
+using GetSystemMetricsForDpiProc = int(WINAPI*)(int index, UINT dpi);
+using AdjustWindowRectExForDpiProc = BOOL(WINAPI*)(RECT* rectangle, DWORD style, BOOL menu,
+    DWORD extendedStyle, UINT dpi);
 
 static constexpr UINT_PTR DIALOG_FRAME_SUBCLASS_ID = 1;
 static constexpr UINT WM_NCUAHDRAWCAPTION = 0x00AE;
 static constexpr UINT WM_NCUAHDRAWFRAME = 0x00AF;
 static constexpr int CAPTION_HITS[] = { HTCLOSE, HTMAXBUTTON, HTMINBUTTON };
+static constexpr wchar_t COLOR_OWNER_PROPERTY[] = L"CalClock.DialogColorOwner";
+static constexpr wchar_t COLOR_PREVIEW_PROPERTY[] = L"CalClock.SettingsColorButton";
+static constexpr int CONTROL_COLOR_INDICES[] = {
+    COLOR_SCROLLBAR,
+    COLOR_MENU,
+    COLOR_WINDOW,
+    COLOR_WINDOWFRAME,
+    COLOR_MENUTEXT,
+    COLOR_WINDOWTEXT,
+    COLOR_APPWORKSPACE,
+    COLOR_HIGHLIGHT,
+    COLOR_HIGHLIGHTTEXT,
+    COLOR_BTNFACE,
+    COLOR_BTNSHADOW,
+    COLOR_GRAYTEXT,
+    COLOR_BTNTEXT,
+    COLOR_BTNHIGHLIGHT,
+    COLOR_3DDKSHADOW,
+    COLOR_3DLIGHT,
+    COLOR_INFOTEXT,
+    COLOR_INFOBK,
+    COLOR_HOTLIGHT,
+    COLOR_MENUHILIGHT,
+    COLOR_MENUBAR
+};
+static constexpr COLORREF CONTROL_COLORS[] = {
+    RGB(212, 208, 200),
+    RGB(212, 208, 200),
+    RGB(255, 255, 255),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(128, 128, 128),
+    RGB(10, 36, 106),
+    RGB(255, 255, 255),
+    RGB(212, 208, 200),
+    RGB(128, 128, 128),
+    RGB(128, 128, 128),
+    RGB(0, 0, 0),
+    RGB(255, 255, 255),
+    RGB(64, 64, 64),
+    RGB(212, 208, 200),
+    RGB(0, 0, 0),
+    RGB(255, 255, 225),
+    RGB(0, 0, 128),
+    RGB(10, 36, 106),
+    RGB(212, 208, 200)
+};
 
 /// Reads native caption metrics, replacing the themed button width with the configured classic width.
 static HRESULT ReadSystemWindowMetrics(NONCLIENTMETRICSW& metrics) {
@@ -85,6 +135,143 @@ static HRESULT ReadSystemWindowMetrics(NONCLIENTMETRICSW& metrics) {
 /// Initializes per-window activation state; the window subclass owns this object.
 DialogFrame::DialogFrame(HWND target) : window(target) {
     active = GetActiveWindow() == window;
+}
+
+/// Releases brushes and removes dialog-local state from any remaining owned popup controls.
+DialogFrame::~DialogFrame() {
+    RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
+    RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
+    for (HWND control : popupControls) {
+        if (GetPropW(control, COLOR_OWNER_PROPERTY) == window) {
+            RemovePropW(control, COLOR_OWNER_PROPERTY);
+            ControlColors::Restore(control);
+        }
+    }
+    for (HBRUSH brush : colorBrushes) {
+        if (brush != nullptr) {
+            DeleteObject(brush);
+        }
+    }
+}
+
+/// Finds the attached dialog through a control's parent or owner chain.
+DialogFrame* DialogFrame::Find(HWND control) {
+    while (control != nullptr) {
+        DWORD_PTR reference = 0;
+        if (GetWindowSubclass(control, SubclassProc, DIALOG_FRAME_SUBCLASS_ID, &reference)) {
+            return reinterpret_cast<DialogFrame*>(reference);
+        }
+        HWND parent = GetParent(control);
+        HWND owner = reinterpret_cast<HWND>(GetPropW(control, COLOR_OWNER_PROPERTY));
+        if (owner != nullptr && owner != control) {
+            control = owner;
+        } else {
+            control = parent;
+        }
+    }
+    return nullptr;
+}
+
+/// Returns the dialog's Windows 2000 color, or the native system color outside that mode.
+COLORREF DialogFrame::GetColor(HWND control, int colorIndex) {
+    DialogFrame* frame = Find(control);
+    if (frame != nullptr && frame->windows2000Style) {
+        for (size_t index = 0; index < ARRAYSIZE(CONTROL_COLOR_INDICES); ++index) {
+            if (CONTROL_COLOR_INDICES[index] == colorIndex) {
+                return CONTROL_COLORS[index];
+            }
+        }
+    }
+    return GetSysColor(colorIndex);
+}
+
+/// Returns a brush owned by the dialog, or the native system brush outside Windows 2000 mode.
+HBRUSH DialogFrame::GetBrush(HWND control, int colorIndex) {
+    DialogFrame* frame = Find(control);
+    if (frame == nullptr || !frame->windows2000Style || colorIndex < 0 || colorIndex > COLOR_MENUBAR) {
+        return GetSysColorBrush(colorIndex);
+    }
+    HBRUSH& brush = frame->colorBrushes[colorIndex];
+    if (brush == nullptr) {
+        brush = CreateSolidBrush(GetColor(control, colorIndex));
+    }
+    return brush;
+}
+
+/// Maps completed native control drawing to dialog-local colors without changing its font or geometry.
+void DialogFrame::RecolorControl(HWND control, HDC context, const RECT& rectangle) {
+    DialogFrame* frame = Find(control);
+    if (context != nullptr && frame != nullptr && frame->windows2000Style) {
+        RecolorFrameRectangle(context, rectangle);
+    }
+}
+
+/// Applies or restores the shared color component for one control without changing its native content.
+bool DialogFrame::ApplyControlColors(HWND control) {
+    if (GetPropW(control, COLOR_PREVIEW_PROPERTY) != nullptr) {
+        ControlColors::Restore(control);
+        return true;
+    }
+    wchar_t className[64]{};
+    GetClassNameW(control, className, ARRAYSIZE(className));
+    if (lstrcmpiW(className, L"ComboLBox") == 0) {
+        return true;
+    }
+    bool changed = false;
+    if (!ControlColors::Apply(control, window, windows2000Style, changed)) {
+        return false;
+    }
+    if (lstrcmpiW(className, TOOLTIPS_CLASSW) == 0) {
+        SendMessageW(control, TTM_SETTIPBKCOLOR, GetColor(window, COLOR_INFOBK), 0);
+        SendMessageW(control, TTM_SETTIPTEXTCOLOR, GetColor(window, COLOR_INFOTEXT), 0);
+    }
+    if (lstrcmpiW(className, WC_COMBOBOXW) == 0) {
+        COMBOBOXINFO information{ sizeof(information) };
+        if (GetComboBoxInfo(control, &information) && information.hwndList != nullptr) {
+            return ApplyControl(information.hwndList, window);
+        }
+    }
+    return true;
+}
+
+/// Enumerates the current child controls while retaining application-owned color previews.
+BOOL CALLBACK DialogFrame::ApplyChildColors(HWND control, LPARAM parameter) {
+    ColorEnumeration* enumeration = reinterpret_cast<ColorEnumeration*>(parameter);
+    if (!enumeration->frame->ApplyControlColors(control)) {
+        enumeration->success = false;
+    }
+    return TRUE;
+}
+
+/// Applies dialog-local colors to a control and its children, including owned dropdowns and tooltips.
+bool DialogFrame::ApplyControl(HWND control, HWND dialog) {
+    DialogFrame* frame = Find(dialog);
+    if (control == nullptr || frame == nullptr) {
+        return false;
+    }
+    wchar_t className[64]{};
+    GetClassNameW(control, className, ARRAYSIZE(className));
+    bool popup = control != frame->window
+        && (!(GetWindowLongPtrW(control, GWL_STYLE) & WS_CHILD) || lstrcmpiW(className, L"ComboLBox") == 0);
+    if (popup) {
+        const wchar_t* theme = frame->disableThemes ? L"" : nullptr;
+        SetWindowTheme(control, theme, theme);
+    }
+    if (popup && frame->windows2000Style) {
+        if (!SetPropW(control, COLOR_OWNER_PROPERTY, frame->window)) {
+            return false;
+        }
+        if (std::find(frame->popupControls.begin(), frame->popupControls.end(), control)
+                == frame->popupControls.end()) {
+            frame->popupControls.push_back(control);
+        }
+    }
+    ColorEnumeration enumeration{ frame, frame->ApplyControlColors(control) };
+    EnumChildWindows(control, ApplyChildColors, reinterpret_cast<LPARAM>(&enumeration));
+    if (popup && !frame->windows2000Style) {
+        RemovePropW(control, COLOR_OWNER_PROPERTY);
+    }
+    return enumeration.success;
 }
 
 /// Reads DPI-scaled native metrics, using the configured classic caption-button width.
@@ -126,11 +313,30 @@ bool DialogFrame::Apply(HWND window, bool disableThemes, bool windows2000Style) 
     bool styleChanged = frame->windows2000Style != nextStyle;
     frame->windows2000Style = nextStyle;
     frame->disableThemes = disableThemes;
+    if (nextStyle) {
+        if (!SetPropW(window, CLASSIC_STYLE_ENABLED_PROPERTY, reinterpret_cast<HANDLE>(1))
+                || !SetPropW(window, CLASSIC_CONTROL_COLORS_PROPERTY, reinterpret_cast<HANDLE>(1))) {
+            RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
+            RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
+            return false;
+        }
+    } else {
+        RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
+        RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
+        for (HWND control : frame->popupControls) {
+            if (GetPropW(control, COLOR_OWNER_PROPERTY) == window) {
+                ApplyControl(control, window);
+            }
+        }
+        frame->popupControls.clear();
+    }
+    bool colorsApplied = ApplyControl(window, window);
     bool refreshed = frame->Refresh();
     if (refreshed && styleChanged) {
         frame->Paint();
+        RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
     }
-    return refreshed;
+    return refreshed && colorsApplied;
 }
 
 /// Converts client bounds to outer bounds using the attached frame and native scrollbars.
@@ -190,8 +396,11 @@ bool DialogFrame::Refresh(bool preserveClient) {
     Layout layout = GetLayout();
     SIZE nextSize{ 2 * layout.borderX, 2 * layout.borderY + Metric(SM_CYCAPTION) };
     UINT nextDpi = GetSystemDialogDpi(window);
-    if (enabled == next && frameSize.cx == nextSize.cx && frameSize.cy == nextSize.cy
-            && dpi == nextDpi && !captionChanged) {
+    if (enabled == next
+            && frameSize.cx == nextSize.cx
+            && frameSize.cy == nextSize.cy
+            && dpi == nextDpi
+            && !captionChanged) {
         return true;
     }
     updating = true;
@@ -281,8 +490,89 @@ bool DialogFrame::ButtonEnabled(int hit) const {
     return false;
 }
 
+/// Maps native edge and button colors inside one nonclient rectangle.
+void DialogFrame::RecolorFrameRectangle(HDC context, const RECT& rectangle) {
+    int width = rectangle.right - rectangle.left;
+    int height = rectangle.bottom - rectangle.top;
+    if (width <= 0 || height <= 0) {
+        return;
+    }
+    BITMAPINFO information{};
+    information.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    information.bmiHeader.biWidth = width;
+    information.bmiHeader.biHeight = -height;
+    information.bmiHeader.biPlanes = 1;
+    information.bmiHeader.biBitCount = 32;
+    void* pixels = nullptr;
+    HBITMAP bitmap = CreateDIBSection(context, &information, DIB_RGB_COLORS, &pixels, nullptr, 0);
+    HDC memory = CreateCompatibleDC(context);
+    if (bitmap != nullptr && memory != nullptr) {
+        HGDIOBJ previous = SelectObject(memory, bitmap);
+        if (previous != nullptr
+                && BitBlt(memory, 0, 0, width, height, context, rectangle.left, rectangle.top, SRCCOPY)) {
+            GdiFlush();
+            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> source{};
+            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> destination{};
+            for (size_t index = 0; index < source.size(); ++index) {
+                COLORREF color = GetSysColor(CONTROL_COLOR_INDICES[index]);
+                source[index] = static_cast<DWORD>(GetRValue(color)) << 16
+                    | static_cast<DWORD>(GetGValue(color)) << 8
+                    | GetBValue(color);
+                color = CONTROL_COLORS[index];
+                destination[index] = static_cast<DWORD>(GetRValue(color)) << 16
+                    | static_cast<DWORD>(GetGValue(color)) << 8
+                    | GetBValue(color);
+            }
+            DWORD* data = static_cast<DWORD*>(pixels);
+            size_t count = static_cast<size_t>(width) * height;
+            bool changed = false;
+            for (size_t pixel = 0; pixel < count; ++pixel) {
+                DWORD color = data[pixel] & 0x00FFFFFF;
+                for (size_t index = 0; index < source.size(); ++index) {
+                    if (color == source[index]) {
+                        if (color != destination[index]) {
+                            data[pixel] = data[pixel] & 0xFF000000 | destination[index];
+                            changed = true;
+                        }
+                        break;
+                    }
+                }
+            }
+            if (changed) {
+                BitBlt(context, rectangle.left, rectangle.top, width, height, memory, 0, 0, SRCCOPY);
+            }
+        }
+        if (previous != nullptr) {
+            SelectObject(memory, previous);
+        }
+    }
+    if (memory != nullptr) {
+        DeleteDC(memory);
+    }
+    if (bitmap != nullptr) {
+        DeleteObject(bitmap);
+    }
+}
+
+/// Recolors only the native frame edges and caption buttons, preserving the caption gradient and icon.
+void DialogFrame::RecolorFrame(HDC context, const Layout& layout) const {
+    if (!windows2000Style) {
+        return;
+    }
+    RecolorFrameRectangle(context, RECT{ 0, 0, layout.bounds.right, layout.borderY });
+    RecolorFrameRectangle(context, RECT{ 0, layout.borderY, layout.borderX,
+        layout.bounds.bottom - layout.borderY });
+    RecolorFrameRectangle(context, RECT{ layout.bounds.right - layout.borderX, layout.borderY,
+        layout.bounds.right, layout.bounds.bottom - layout.borderY });
+    RecolorFrameRectangle(context, RECT{ 0, layout.bounds.bottom - layout.borderY,
+        layout.bounds.right, layout.bounds.bottom });
+    for (const RECT& button : layout.buttons) {
+        RecolorFrameRectangle(context, button);
+    }
+}
+
 /// Draws the classic frame with system or Windows 2000 caption styling, retaining native scrollbars and
-/// content.
+/// content. The Windows 2000 caption inherits the current dialog font's antialiasing quality.
 void DialogFrame::Paint(HDC target) const {
     if (!enabled || IsIconic(window)) {
         return;
@@ -291,6 +581,13 @@ void DialogFrame::Paint(HDC target) const {
     metrics.cbSize = sizeof(metrics);
     if (!SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0)) {
         return;
+    }
+    LOGFONTW interfaceDescription{};
+    if (windows2000Style) {
+        HFONT interfaceFont = reinterpret_cast<HFONT>(SendMessageW(window, WM_GETFONT, 0, 0));
+        if (GetObjectW(interfaceFont, sizeof(interfaceDescription), &interfaceDescription) == 0) {
+            return;
+        }
     }
     HDC dc = target == nullptr ? GetWindowDC(window) : target;
     if (dc == nullptr) {
@@ -330,10 +627,13 @@ void DialogFrame::Paint(HDC target) const {
         } else {
             DefSubclassProc(window, WM_PRINT, reinterpret_cast<WPARAM>(dc), PRF_NONCLIENT);
         }
+        if (windows2000Style) {
+            RecolorFrameRectangle(dc, content);
+        }
         RestoreDC(dc, scrollClip);
     }
     ExcludeClipRect(dc, content.left, content.top, content.right, content.bottom);
-    FillRect(dc, &layout.bounds, GetSysColorBrush(COLOR_3DFACE));
+    FillRect(dc, &layout.bounds, GetBrush(window, COLOR_3DFACE));
     if (layout.borderX > 0) {
         RECT edge = layout.bounds;
         DrawEdge(dc, &edge, EDGE_RAISED, BF_RECT);
@@ -397,6 +697,7 @@ void DialogFrame::Paint(HDC target) const {
         font.lfHeight = -MulDiv(10, systemDpi, 72);
         font.lfWidth = 0;
         font.lfWeight = FW_BOLD;
+        font.lfQuality = interfaceDescription.lfQuality;
         wcscpy_s(font.lfFaceName, L"Tahoma");
     }
     font.lfHeight = MulDiv(font.lfHeight, dpi, systemDpi);
@@ -430,6 +731,7 @@ void DialogFrame::Paint(HDC target) const {
         }
         DrawFrameControl(dc, &button, DFC_CAPTION, state);
     }
+    RecolorFrame(dc, layout);
     RestoreDC(dc, saved);
     if (target == nullptr) {
         ReleaseDC(window, dc);
@@ -473,7 +775,8 @@ LRESULT DialogFrame::HitTest(POINT point) const {
     for (LONG object : { OBJID_VSCROLL, OBJID_HSCROLL }) {
         SCROLLBARINFO scroll{ sizeof(scroll) };
         if (GetScrollBarInfo(window, object, &scroll)
-                && !(scroll.rgstate[0] & STATE_SYSTEM_INVISIBLE) && PtInRect(&scroll.rcScrollBar, point)) {
+                && !(scroll.rgstate[0] & STATE_SYSTEM_INVISIBLE)
+                && PtInRect(&scroll.rcScrollBar, point)) {
             return object == OBJID_VSCROLL ? HTVSCROLL : HTHSCROLL;
         }
     }

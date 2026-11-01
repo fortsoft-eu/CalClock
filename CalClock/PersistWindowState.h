@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.3.0
+ * Last modified for version 1.7.0.5
  */
 
 #pragma once
@@ -64,7 +64,8 @@ struct PersistWindowStateEventArgs {
 
 /// Restores and persists native window bounds, show state and instance registration.
 class PersistWindowState;
-typedef void (*PersistWindowStateEventHandler)(PersistWindowState*, const PersistWindowStateEventArgs&, void*);
+typedef void (*PersistWindowStateEventHandler)(PersistWindowState* sender,
+    const PersistWindowStateEventArgs& arguments, void* context);
 
 /// Restores and persists native window bounds, show state and instance registration.
 class PersistWindowState {
@@ -168,10 +169,10 @@ public:
     ~PersistWindowState();
 
     /// Prevents copying ownership of a registered native form.
-    PersistWindowState(const PersistWindowState&) = delete;
+    PersistWindowState(const PersistWindowState& other) = delete;
 
     /// Prevents assigning ownership of a registered native form.
-    PersistWindowState& operator=(const PersistWindowState&) = delete;
+    PersistWindowState& operator=(const PersistWindowState& other) = delete;
 
     /// Allows persisting a minimized state and its normal or maximized restore state.
     void SetAllowSaveMinimized(bool enabled);

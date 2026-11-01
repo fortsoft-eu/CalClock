@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.4
+ * Last modified for version 1.7.0.5
  */
 
 #include "SystemDialogTemplate.h"
 #include <cwchar>
 
 /// Signature used to resolve the optional GetDpiForWindow export without a static import.
-typedef UINT(WINAPI* GetDpiForWindowProc)(HWND);
+typedef UINT(WINAPI* GetDpiForWindowProc)(HWND window);
 
 /// Byte lengths of the fixed extended-dialog header and extended font attributes.
 static const SIZE_T EXTENDED_DIALOG_HEADER_SIZE = 26;
@@ -103,13 +103,16 @@ static UINT DialogFontPoints(HWND owner, HFONT font) {
     BOOL measured = GetTextMetricsW(dc, &metrics);
     SelectObject(dc, previous);
     ReleaseDC(owner, dc);
-    return measured ? MulDiv(metrics.tmHeight - metrics.tmInternalLeading, 72, GetSystemDialogDpi(owner)) : 0;
+    if (measured) {
+        return MulDiv(metrics.tmHeight - metrics.tmInternalLeading, 72, GetSystemDialogDpi(owner));
+    }
+    return 0;
 }
 
-/// Copies an extended dialog resource without DS_SETFONT and inserts the supplied or current system message font.
-/// Preserves menu, class, title, control data and DWORD alignment; the supplied font remains caller-owned.
-/// Returns a template to free with HeapFree(GetProcessHeap(), 0, ...), or null on resource, format, font or
-/// allocation failure.
+/// Copies an extended dialog resource without DS_SETFONT and inserts the supplied or current system message
+/// font. Preserves menu, class, title, control data and DWORD alignment; the supplied font remains
+/// caller-owned. Returns a template to free with HeapFree(GetProcessHeap(), 0, ...), or null on resource,
+/// format, font or allocation failure.
 DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner, HFONT dialogFont) {
     HRSRC resource = FindResourceW(instance, MAKEINTRESOURCEW(resourceId), RT_DIALOG);
     HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(instance, resource);

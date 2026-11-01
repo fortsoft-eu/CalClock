@@ -21,13 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.3
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include "AboutForm.h"
 #include "CalClock.h"
+#include "DialogFrame.h"
 #include "resource.h"
 #include "SelectionEdit.h"
 #include "SystemDialogTemplate.h"
@@ -48,10 +49,15 @@ const int ID_MENU_ABOUT_COPY_INFORMATION = 1102;
 const int ID_MENU_ABOUT_COPY_URL = 1101;
 const int ID_MENU_ABOUT_OPEN_LINK = 1100;
 
-/// Creates the About license font using Consolas at the reference 8-point size.
+/// Creates the 8-point Consolas license font using the current interface font's antialiasing quality.
 /// The caller owns the returned GDI font, which may be null on failure.
-static HFONT CreateAboutFont(HWND window) {
+static HFONT CreateAboutFont(HWND window, HFONT interfaceFont) {
+    LOGFONTW interfaceDescription = {};
+    if (GetObjectW(interfaceFont, sizeof(interfaceDescription), &interfaceDescription) == 0) {
+        return nullptr;
+    }
     LOGFONTW font = {};
+    font.lfQuality = interfaceDescription.lfQuality;
     font.lfHeight = -MulDiv(8, GetSystemDialogDpi(window), 72);
     font.lfWeight = FW_NORMAL;
     font.lfCharSet = ANSI_CHARSET;
@@ -349,12 +355,12 @@ bool AboutForm::ApplyStyle(bool updateFont) {
     }
     HFONT font = uiFont;
     if (updateFont) {
-        font = HasApplicationUiFont() ? CreateApplicationUiFont(window) : CreateSystemDialogFont(window);
+        font = CreateApplicationUiFont(window);
     }
     if (font == nullptr) {
         return false;
     }
-    HFONT nextLicenseFont = CreateAboutFont(window);
+    HFONT nextLicenseFont = CreateAboutFont(window, font);
     if (nextLicenseFont == nullptr) {
         if (updateFont) {
             DeleteObject(font);
@@ -375,6 +381,9 @@ bool AboutForm::ApplyStyle(bool updateFont) {
         HFONT selected = id == ID_INFO_TEXT ? nextLicenseFont : font;
         SendMessageW(control, WM_SETFONT, reinterpret_cast<WPARAM>(selected), FALSE);
         SetWindowTheme(control, theme, theme);
+    }
+    if (tooltip != nullptr) {
+        SendMessageW(tooltip, WM_SETFONT, reinterpret_cast<WPARAM>(font), FALSE);
     }
     if (previousFont != nullptr) {
         DeleteObject(previousFont);
@@ -486,8 +495,12 @@ void AboutForm::Layout(bool resize) const {
     }
 }
 
-/// Handles this form's native commands, layout, theme, DPI changes and resource cleanup.
+/// Handles the current font query, native commands, layout, theme, DPI changes and resource cleanup.
 INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+    if (message == WM_GETFONT && uiFont != nullptr) {
+        SetWindowLongPtrW(window, DWLP_MSGRESULT, reinterpret_cast<LONG_PTR>(uiFont));
+        return TRUE;
+    }
     if (message == WM_CLOSE
             || message == WM_COMMAND && (LOWORD(wParam) == ID_INFO_CLOSE || LOWORD(wParam) == IDCANCEL)) {
         DestroyWindow(window);
@@ -534,6 +547,10 @@ INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
         return TRUE;
     }
     if (message == WM_NCDESTROY) {
+        if (tooltip != nullptr) {
+            DestroyWindow(tooltip);
+            tooltip = nullptr;
+        }
         if (ownsFont) {
             DeleteObject(uiFont);
         }
@@ -541,10 +558,6 @@ INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
         ownsFont = false;
         initialized = false;
         ResetInformationWordBreak();
-        if (tooltip != nullptr) {
-            DestroyWindow(tooltip);
-            tooltip = nullptr;
-        }
         if (licenseFont != nullptr) {
             DeleteObject(licenseFont);
             licenseFont = nullptr;
@@ -597,8 +610,10 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
     }
     uiFont = reinterpret_cast<HFONT>(SendMessageW(window, WM_GETFONT, 0, 0));
     referenceDpi = GetSystemDialogDpi(window);
-    referenceLicense = SIZE{ MulDiv(ABOUT_LICENSE_WIDTH_96DPI, referenceDpi, 96),
-        MulDiv(ABOUT_LICENSE_HEIGHT_96DPI, referenceDpi, 96) };
+    referenceLicense = SIZE{
+        MulDiv(ABOUT_LICENSE_WIDTH_96DPI, referenceDpi, 96),
+        MulDiv(ABOUT_LICENSE_HEIGHT_96DPI, referenceDpi, 96)
+    };
     initialized = true;
     if (!InstallSelectionEditHandler(GetDlgItem(window, ID_INFO_TEXT)) || !ApplyStyle(false)) {
         DestroyWindow(window);
@@ -634,6 +649,8 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
         DestroyWindow(window);
         return;
     }
+    SendMessageW(tooltip, WM_SETFONT, reinterpret_cast<WPARAM>(uiFont), FALSE);
+    DialogFrame::ApplyControl(tooltip, window);
     RefreshInformationWindows();
     SendMessageW(text, EM_SETSEL, 0, 0);
     placement->SetDisableSaveSize(true);

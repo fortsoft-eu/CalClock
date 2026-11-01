@@ -92,6 +92,7 @@
     <ClCompile Include="ClockTime.cpp" />
     <ClCompile Include="DateFormats.cpp" />
     <ClCompile Include="DialogFrame.cpp" />
+    <ClCompile Include="ControlColors.cpp" />
     <ClCompile Include="HelpForm.cpp" />
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="MonitorInfo.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="CalendarLocaleScope.h" />
     <ClInclude Include="DateFormats.h" />
     <ClInclude Include="DialogFrame.h" />
+    <ClInclude Include="ControlColors.h" />
     <ClInclude Include="IAudioSampleCallback.h" />
     <ClInclude Include="IAudioSampleGrabber.h" />
     <ClInclude Include="HelpForm.h" />

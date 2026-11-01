@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.2
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -67,7 +67,7 @@ bool HelpForm::ApplyStyle(bool updateFont) {
     }
     HFONT font = uiFont;
     if (updateFont) {
-        font = HasApplicationUiFont() ? CreateApplicationUiFont(window) : CreateSystemDialogFont(window);
+        font = CreateApplicationUiFont(window);
     }
     if (font == nullptr) {
         return false;
@@ -106,8 +106,8 @@ void HelpForm::Layout() const {
     SIZE button = InformationButtonSize(window, uiFont);
     int textTop = margin.cy;
     int buttonY = client.bottom - margin.cy - button.cy;
-    PlaceInformationControl(window, ID_INFO_CLOSE, client.right - margin.cx - button.cx, buttonY, button.cx,
-        button.cy);
+    PlaceInformationControl(window, ID_INFO_CLOSE, client.right - margin.cx - button.cx, buttonY,
+        button.cx, button.cy);
     PlaceInformationControl(window, ID_INFO_TEXT, margin.cx, textTop,
         client.right - 2 * margin.cx, buttonY - gap.cy - textTop);
     HWND grip = GetDlgItem(window, ID_INFO_SIZE_GRIP);
@@ -119,8 +119,12 @@ void HelpForm::Layout() const {
     }
 }
 
-/// Handles this form's native commands, layout, theme, DPI changes and resource cleanup.
+/// Handles the current font query, native commands, layout, theme, DPI changes and resource cleanup.
 INT_PTR HelpForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+    if (message == WM_GETFONT && uiFont != nullptr) {
+        SetWindowLongPtrW(window, DWLP_MSGRESULT, reinterpret_cast<LONG_PTR>(uiFont));
+        return TRUE;
+    }
     if (message == WM_CLOSE
             || message == WM_COMMAND && (LOWORD(wParam) == ID_INFO_CLOSE || LOWORD(wParam) == IDCANCEL)) {
         DestroyWindow(window);
@@ -231,4 +235,3 @@ void HelpForm::Show(HINSTANCE module, PersistWindowState& state) {
     SetFocus(GetDlgItem(window, ID_INFO_CLOSE));
     placement->Show();
 }
-

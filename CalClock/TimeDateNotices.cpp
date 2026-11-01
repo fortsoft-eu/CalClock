@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.3
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -34,8 +34,8 @@ static const LONGLONG NOTICE_TICKS_PER_MINUTE = 600000000;
 static const ULONGLONG NOTICE_WINDOW_TICKS = 7ULL * 24 * 60 * 60 * 10000000;
 static const WORD NOTICE_MONTH_DAYS[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-typedef BOOL(WINAPI* NoticeGetTimeZoneInformationForYearProc)(USHORT, PDYNAMIC_TIME_ZONE_INFORMATION,
-    LPTIME_ZONE_INFORMATION);
+typedef BOOL(WINAPI* NoticeGetTimeZoneInformationForYearProc)(USHORT year,
+    PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZone, LPTIME_ZONE_INFORMATION timeZoneInformation);
 
 struct TimeDateTransition {
     SYSTEMTIME localTime = {};
@@ -62,8 +62,9 @@ static DYNAMIC_TIME_ZONE_INFORMATION ReadNoticeBaseRules(const DYNAMIC_TIME_ZONE
     path += zone.TimeZoneKeyName;
     TimeDateRegistryRules rules = {};
     DWORD bytes = sizeof(rules);
-    if (RegGetValueW(HKEY_LOCAL_MACHINE, path.c_str(), L"TZI", RRF_RT_REG_BINARY, nullptr, &rules, &bytes) == ERROR_SUCCESS
-            && bytes == sizeof(rules)) {
+    LSTATUS status = RegGetValueW(HKEY_LOCAL_MACHINE, path.c_str(), L"TZI", RRF_RT_REG_BINARY,
+        nullptr, &rules, &bytes);
+    if (status == ERROR_SUCCESS && bytes == sizeof(rules)) {
         result.Bias = rules.bias;
         result.StandardBias = rules.standardBias;
         result.DaylightBias = rules.daylightBias;
@@ -74,9 +75,10 @@ static DYNAMIC_TIME_ZONE_INFORMATION ReadNoticeBaseRules(const DYNAMIC_TIME_ZONE
 }
 
 /// Loads the time-zone rules for a specific year, including rules hidden by disabled automatic adjustment.
-static void ReadNoticeYearRules(const DYNAMIC_TIME_ZONE_INFORMATION& zone, USHORT year, TIME_ZONE_INFORMATION* info) {
-    static NoticeGetTimeZoneInformationForYearProc getForYear =
-        reinterpret_cast<NoticeGetTimeZoneInformationForYearProc>(GetProcAddress(GetModuleHandleW(L"Kernel32.dll"),
+static void ReadNoticeYearRules(const DYNAMIC_TIME_ZONE_INFORMATION& zone, USHORT year,
+        TIME_ZONE_INFORMATION* info) {
+    static NoticeGetTimeZoneInformationForYearProc getForYear = reinterpret_cast<
+        NoticeGetTimeZoneInformationForYearProc>(GetProcAddress(GetModuleHandleW(L"Kernel32.dll"),
             "GetTimeZoneInformationForYear"));
     DYNAMIC_TIME_ZONE_INFORMATION dynamic = zone;
     dynamic.DynamicDaylightTimeDisabled = FALSE;
@@ -122,8 +124,8 @@ static bool ResolveNoticeTransitionDate(const SYSTEMTIME& rule, USHORT year, SYS
 }
 
 /// Converts one seasonal rule to its actual UTC instant while retaining the displayed pre-change local date.
-static bool MakeNoticeTransition(const TIME_ZONE_INFORMATION& info, USHORT year, bool daylight, bool autoAdjustment,
-        TimeDateTransition* transition) {
+static bool MakeNoticeTransition(const TIME_ZONE_INFORMATION& info, USHORT year, bool daylight,
+        bool autoAdjustment, TimeDateTransition* transition) {
     const SYSTEMTIME& rule = daylight ? info.DaylightDate : info.StandardDate;
     if (!ResolveNoticeTransitionDate(rule, year, &transition->localTime)) {
         return false;
@@ -150,8 +152,8 @@ static bool MakeNoticeTransition(const TIME_ZONE_INFORMATION& info, USHORT year,
 }
 
 /// Selects the next transition within seven days, otherwise the preceding transition within seven days.
-static bool FindNoticeTransition(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc, bool autoAdjustment,
-        TimeDateTransition* transition, bool* future) {
+static bool FindNoticeTransition(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc,
+        bool autoAdjustment, TimeDateTransition* transition, bool* future) {
     FILETIME fileTime = {};
     if (!SystemTimeToFileTime(&utc, &fileTime)) {
         return false;
@@ -175,7 +177,8 @@ static bool FindNoticeTransition(const DYNAMIC_TIME_ZONE_INFORMATION& zone, cons
         }
         for (int kind = 0; kind < 2; kind++) {
             TimeDateTransition candidate = {};
-            if (!MakeNoticeTransition(info, static_cast<USHORT>(year), kind != 0, autoAdjustment, &candidate)) {
+            if (!MakeNoticeTransition(info, static_cast<USHORT>(year), kind != 0, autoAdjustment,
+                    &candidate)) {
                 continue;
             }
             if (candidate.utcValue > now.QuadPart && candidate.utcValue - now.QuadPart <= NOTICE_WINDOW_TICKS
@@ -205,8 +208,8 @@ static std::wstring ReadNoticeString(HMODULE module, UINT identity) {
 /// Expands Windows resource inserts through its native message formatter.
 static std::wstring FormatNoticeString(const std::wstring& format, DWORD_PTR* arguments) {
     wchar_t text[1024] = {};
-    DWORD length = FormatMessageW(FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ARGUMENT_ARRAY, format.c_str(), 0, 0, text,
-        ARRAYSIZE(text), reinterpret_cast<va_list*>(arguments));
+    DWORD length = FormatMessageW(FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ARGUMENT_ARRAY, format.c_str(),
+        0, 0, text, ARRAYSIZE(text), reinterpret_cast<va_list*>(arguments));
     return length > 0 ? std::wstring(text, length) : std::wstring();
 }
 
@@ -218,7 +221,8 @@ static std::wstring FormatTransitionNotice(HMODULE module, const TimeDateTransit
     bool legacyResources = ReadNoticeString(module, 184).empty();
     DWORD dateFlags = DATE_LONGDATE | (legacyResources ? 0 : DATE_AUTOLAYOUT);
     std::wstring dateText;
-    if (GetDateFormatEx(localeName, dateFlags, &transition.localTime, nullptr, date, ARRAYSIZE(date), nullptr)) {
+    if (GetDateFormatEx(localeName, dateFlags, &transition.localTime, nullptr, date, ARRAYSIZE(date),
+            nullptr)) {
         dateText = date;
     } else {
         dateText = ReadNoticeString(module, 153);
@@ -228,7 +232,10 @@ static std::wstring FormatTransitionNotice(HMODULE module, const TimeDateTransit
     if (!future) {
         eventIdentity += 13;
     }
-    DWORD_PTR eventArguments[] = { reinterpret_cast<DWORD_PTR>(dateText.c_str()), reinterpret_cast<DWORD_PTR>(time) };
+    DWORD_PTR eventArguments[] = {
+        reinterpret_cast<DWORD_PTR>(dateText.c_str()),
+        reinterpret_cast<DWORD_PTR>(time)
+    };
     std::wstring event = FormatNoticeString(ReadNoticeString(module, eventIdentity), eventArguments);
     UINT actionIdentity = future ? 173 : 1186;
     if (autoAdjustment) {
@@ -254,12 +261,14 @@ static std::wstring FormatTransitionNotice(HMODULE module, const TimeDateTransit
 }
 
 /// Returns native date/time flyout notices for the selected zone and already-offset UTC instant.
-std::vector<TimeDateNotice> GetTimeDateNotices(const DYNAMIC_TIME_ZONE_INFORMATION* zone, const SYSTEMTIME& utc,
-        const wchar_t* localeName, bool autoAdjustment, bool calendarDateSupported, bool timeZoneRecognized) {
+std::vector<TimeDateNotice> GetTimeDateNotices(const DYNAMIC_TIME_ZONE_INFORMATION* zone,
+        const SYSTEMTIME& utc, const wchar_t* localeName, bool autoAdjustment, bool calendarDateSupported,
+        bool timeZoneRecognized) {
     std::vector<TimeDateNotice> notices;
     TimeDateTransition transition = {};
     bool future = false;
-    bool hasTransition = zone != nullptr && FindNoticeTransition(*zone, utc, autoAdjustment, &transition, &future);
+    bool hasTransition = zone != nullptr
+        && FindNoticeTransition(*zone, utc, autoAdjustment, &transition, &future);
     if (calendarDateSupported && zone != nullptr && timeZoneRecognized && !hasTransition) {
         return notices;
     }

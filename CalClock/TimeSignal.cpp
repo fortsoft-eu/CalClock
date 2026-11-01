@@ -41,7 +41,7 @@
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Avrt.lib")
 
-using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW*);
+using RtlGetVersionFunction = LONG(WINAPI*)(OSVERSIONINFOW* version);
 
 /// Stores one six-pip sequence anchored to a continuous FILETIME target, with sound settings and completion
 /// notification.

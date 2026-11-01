@@ -27,6 +27,8 @@
 #pragma once
 
 #include <windows.h>
+#include <array>
+#include <vector>
 
 /// Supplies a thin classic nonclient frame only for dialogs explicitly attached by the application.
 class DialogFrame {
@@ -34,6 +36,18 @@ class DialogFrame {
 public:
     /// Applies the theme mode and optional Windows 2000 caption without changing system metrics or client size.
     static bool Apply(HWND window, bool disableThemes, bool windows2000Style);
+
+    /// Applies dialog-local colors to a control and its children, including owned dropdowns and tooltips.
+    static bool ApplyControl(HWND control, HWND dialog);
+
+    /// Returns the dialog's Windows 2000 color, or the native system color outside that mode.
+    static COLORREF GetColor(HWND control, int colorIndex);
+
+    /// Returns a brush owned by the dialog, or the native system brush outside Windows 2000 mode.
+    static HBRUSH GetBrush(HWND control, int colorIndex);
+
+    /// Maps completed native control drawing to dialog-local colors without changing its font or geometry.
+    static void RecolorControl(HWND control, HDC context, const RECT& rectangle);
 
     /// Converts client bounds to outer bounds using the attached frame and native scrollbars.
     static BOOL AdjustRect(HWND window, RECT* rectangle, DWORD style, DWORD extendedStyle);
@@ -49,7 +63,14 @@ private:
         int borderY = 0;
     };
 
+    /// Carries the owning frame and accumulated result while applying colors to child controls.
+    struct ColorEnumeration {
+        DialogFrame* frame = nullptr;
+        bool success = true;
+    };
+
     HWND window = nullptr;
+    std::array<HBRUSH, COLOR_MENUBAR + 1> colorBrushes{};
     SIZE frameSize{};
     UINT dpi = 0;
     int captionWidth = 0;
@@ -60,9 +81,28 @@ private:
     bool active = false;
     int pressed = HTNOWHERE;
     bool pressedInside = false;
+    std::vector<HWND> popupControls;
 
     /// Initializes per-window activation state; the window subclass owns this object.
     explicit DialogFrame(HWND target);
+
+    /// Releases brushes and removes dialog-local state from any remaining owned popup controls.
+    ~DialogFrame();
+
+    /// Finds the attached dialog through a control's parent or owner chain.
+    static DialogFrame* Find(HWND control);
+
+    /// Applies or restores the shared color component for one control without changing its native content.
+    bool ApplyControlColors(HWND control);
+
+    /// Enumerates the current child controls while retaining application-owned color previews.
+    static BOOL CALLBACK ApplyChildColors(HWND control, LPARAM parameter);
+
+    /// Recolors only the native frame edges and caption buttons, preserving the caption gradient and icon.
+    void RecolorFrame(HDC context, const Layout& layout) const;
+
+    /// Maps native edge and button colors inside one nonclient rectangle.
+    static void RecolorFrameRectangle(HDC context, const RECT& rectangle);
 
     /// Reads current metrics and recalculates the frame after theme, metric or DPI changes.
     bool Refresh(bool preserveClient = true);

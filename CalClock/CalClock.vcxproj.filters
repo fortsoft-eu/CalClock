@@ -51,6 +51,9 @@
     <ClCompile Include="DialogFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ControlColors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="HelpForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -132,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DialogFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlColors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IAudioSampleCallback.h">

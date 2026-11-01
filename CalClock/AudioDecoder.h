@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.1.0
+ * Last modified for version 1.7.0.5
  */
 
 #pragma once
@@ -41,10 +41,10 @@ public:
     AudioDecoder() = default;
 
     /// Prevents copying ownership of the decoder and Media Foundation resources.
-    AudioDecoder(const AudioDecoder&) = delete;
+    AudioDecoder(const AudioDecoder& other) = delete;
 
     /// Prevents copying ownership of the decoder and Media Foundation resources.
-    AudioDecoder& operator=(const AudioDecoder&) = delete;
+    AudioDecoder& operator=(const AudioDecoder& other) = delete;
 
     /// Releases the reader and wave format, shuts down Media Foundation, and unloads its libraries.
     ~AudioDecoder();
@@ -70,11 +70,12 @@ public:
 private:
     HMODULE platform = nullptr;
     HMODULE readerLibrary = nullptr;
-    HRESULT(WINAPI* startup)(ULONG, DWORD) = nullptr;
+    HRESULT(WINAPI* startup)(ULONG version, DWORD flags) = nullptr;
     HRESULT(WINAPI* shutdown)() = nullptr;
-    HRESULT(WINAPI* createType)(IMFMediaType**) = nullptr;
-    HRESULT(WINAPI* createReader)(LPCWSTR, IMFAttributes*, IMFSourceReader**) = nullptr;
-    HRESULT(WINAPI* createWaveFormat)(IMFMediaType*, WAVEFORMATEX**, UINT32*, UINT32) = nullptr;
+    HRESULT(WINAPI* createType)(IMFMediaType** type) = nullptr;
+    HRESULT(WINAPI* createReader)(LPCWSTR url, IMFAttributes* attributes, IMFSourceReader** source) = nullptr;
+    HRESULT(WINAPI* createWaveFormat)(IMFMediaType* type, WAVEFORMATEX** waveFormat, UINT32* size,
+        UINT32 flags) = nullptr;
     Microsoft::WRL::ComPtr<IMFSourceReader> reader;
     AudioSampleFormat format;
     WAVEFORMATEX* wave = nullptr;

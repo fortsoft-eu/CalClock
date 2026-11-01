@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.3
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -73,7 +73,9 @@ struct VersionResourceTranslation {
 static const wchar_t placementProperty[] = L"FortSoft.PersistWindowState";
 
 /// Adds a physical monitor and its taskbar-adjusted work rectangle to the owned collection.
-static BOOL CALLBACK CollectMonitor(HMONITOR monitor, HDC, RECT*, LPARAM parameter) {
+static BOOL CALLBACK CollectMonitor(HMONITOR monitor, HDC context, RECT* rectangle, LPARAM parameter) {
+    UNREFERENCED_PARAMETER(context);
+    UNREFERENCED_PARAMETER(rectangle);
     MonitorCollection* collection = reinterpret_cast<MonitorCollection*>(parameter);
     MONITORINFO information = { sizeof(information) };
     if (!GetMonitorInfoW(monitor, &information)) {
@@ -1356,8 +1358,9 @@ bool PersistWindowState::FitToWorkArea() {
 }
 
 /// Handles native lifecycle, placement, fixed dimensions and automatic saving.
-LRESULT CALLBACK PersistWindowState::WindowSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
-        UINT_PTR, DWORD_PTR referenceData) {
+LRESULT CALLBACK PersistWindowState::WindowSubclassProc(HWND window, UINT message, WPARAM wParam,
+        LPARAM lParam, UINT_PTR subclassId, DWORD_PTR referenceData) {
+    UNREFERENCED_PARAMETER(subclassId);
     PersistWindowState* owner = reinterpret_cast<PersistWindowState*>(referenceData);
     if (message == WM_DESTROY || message == WM_QUERYENDSESSION) {
         owner->Save();

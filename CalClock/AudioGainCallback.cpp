@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.5.2.2
+ * Last modified for version 1.7.0.5
  */
 
 #define NOMINMAX
@@ -32,7 +32,8 @@
 AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters,
     const AudioSampleFormat& format) : parameters(parameters), format(format) {}
 
-/// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output pointers.
+/// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output
+/// pointers.
 HRESULT STDMETHODCALLTYPE AudioGainCallback::QueryInterface(REFIID id, void** object) {
     if (object == nullptr) {
         return E_POINTER;
@@ -61,7 +62,8 @@ ULONG STDMETHODCALLTYPE AudioGainCallback::Release() {
 }
 
 /// Validates sample format changes and applies the current playback gain directly to the sample data.
-HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* sample) {
+HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double time, IMediaSample* sample) {
+    UNREFERENCED_PARAMETER(time);
     if (sample == nullptr) {
         return E_POINTER;
     }
@@ -89,6 +91,9 @@ HRESULT STDMETHODCALLTYPE AudioGainCallback::SampleCB(double, IMediaSample* samp
 }
 
 /// Returns E_NOTIMPL because gain processing uses the sample callback interface.
-HRESULT STDMETHODCALLTYPE AudioGainCallback::BufferCB(double, BYTE*, long) {
+HRESULT STDMETHODCALLTYPE AudioGainCallback::BufferCB(double time, BYTE* buffer, long length) {
+    UNREFERENCED_PARAMETER(time);
+    UNREFERENCED_PARAMETER(buffer);
+    UNREFERENCED_PARAMETER(length);
     return E_NOTIMPL;
 }
