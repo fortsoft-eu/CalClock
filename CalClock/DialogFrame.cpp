@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -75,6 +75,7 @@ static constexpr int CONTROL_COLOR_INDICES[] = {
     COLOR_MENUHILIGHT,
     COLOR_MENUBAR
 };
+
 static constexpr COLORREF CONTROL_COLORS[] = {
     RGB(212, 208, 200),
     RGB(212, 208, 200),
@@ -612,7 +613,7 @@ void DialogFrame::Paint(HDC target) const {
                 client.right + bounds.left, client.bottom + bounds.top);
             if (scrollRegion != nullptr && clientRegion != nullptr) {
                 if (CombineRgn(scrollRegion, scrollRegion, clientRegion, RGN_DIFF) != ERROR) {
-                    DefSubclassProc(window, WM_NCPAINT, reinterpret_cast<WPARAM>(scrollRegion), 0);
+                    DefWindowProcW(window, WM_NCPAINT, reinterpret_cast<WPARAM>(scrollRegion), 0);
                 }
             }
             if (clientRegion != nullptr) {
@@ -622,7 +623,7 @@ void DialogFrame::Paint(HDC target) const {
                 DeleteObject(scrollRegion);
             }
         } else {
-            DefSubclassProc(window, WM_PRINT, reinterpret_cast<WPARAM>(dc), PRF_NONCLIENT);
+            DefWindowProcW(window, WM_PRINT, reinterpret_cast<WPARAM>(dc), PRF_NONCLIENT);
         }
         if (windows2000Style) {
             RecolorFrameRectangle(dc, content);
