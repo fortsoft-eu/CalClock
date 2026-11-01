@@ -284,6 +284,7 @@ const UINT_PTR SETTINGS_LIST_BORDER_SUBCLASS_ID = 0xCC08;
 /// Layout, appearance and alarm constants
 const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
 const int MAX_DIALOG_BUTTON_HEIGHT = 28;
+const int MAX_SETTINGS_FIELD_HEIGHT = MulDiv(11, MAX_DIALOG_BUTTON_HEIGHT, DIALOG_BUTTON_HEIGHT_DLU);
 const int ALARM_DAY_COUNT = 7;
 const int SETTINGS_COMBO_VISIBLE_ITEMS = 13;
 const int TIME_SIGNAL_VOLUME_SLIDER_MIN = 0;
@@ -3843,8 +3844,8 @@ static bool GetSettingsTextMetrics(HWND control, TEXTMETRICW* metrics) {
     return measured;
 }
 
-/// Sizes combo rows from their selected font up to the settings height limit, retaining native border
-/// dimensions.
+/// Sizes combo rows from their font and native borders, limiting only oversized fields to the fixed height
+/// cap.
 static void UpdateSettingsComboMetrics(HWND control) {
     HWND combo = GetSettingsComboBox(control);
     RECT bounds = {};
@@ -3861,7 +3862,7 @@ static void UpdateSettingsComboMetrics(HWND control) {
     }
     LONG chromeHeight = bounds.bottom - bounds.top - static_cast<LONG>(selectionHeight);
     LONG desired = std::max(1L, std::min(metrics.tmHeight + 2 * GetSystemMetrics(SM_CYBORDER),
-        SettingsDialogHeight(11) - chromeHeight));
+        MAX_SETTINGS_FIELD_HEIGHT - chromeHeight));
     if (selectionHeight != desired) {
         SendMessageW(combo, CB_SETITEMHEIGHT, static_cast<WPARAM>(-1), desired);
     }
@@ -3882,7 +3883,7 @@ static void UpdateSettingsComboMetrics(HWND control) {
     }
 }
 
-/// Sizes the edit viewport from its selected font up to the height limit and uses native combo margins.
+/// Sizes the edit viewport from its font and native combo margins, retaining the fixed cap for oversized fields.
 /// Uses current theme or system borders and preserves position, width, and the right margin.
 static void UpdateEditMetrics(HWND edit) {
     HWND frame = SettingsEdit::GetFrame(edit);
@@ -3924,7 +3925,7 @@ static void UpdateEditMetrics(HWND edit) {
     if (LOWORD(margins) != leftMargin) {
         SendMessageW(edit, EM_SETMARGINS, EC_LEFTMARGIN, MAKELPARAM(leftMargin, 0));
     }
-    LONG height = std::min(static_cast<LONG>(SettingsDialogHeight(11)),
+    LONG height = std::min(static_cast<LONG>(MAX_SETTINGS_FIELD_HEIGHT),
         metrics.tmHeight + contentTop + contentBottom + 2 * GetSystemMetrics(SM_CYBORDER));
     if (height != information.rcWindow.bottom - information.rcWindow.top) {
         SetWindowPos(frame, nullptr, 0, 0, information.rcWindow.right - information.rcWindow.left, height,
@@ -8900,10 +8901,9 @@ static void SetControlPosition(HWND control, int x, int y, int width, int height
     }
     bool settingsField = parent == hSettings || IsSettingsPageWindow(parent);
     if (settingsField
-        && (GetPropW(control, SETTINGS_FIELD_LABEL_PROPERTY) != nullptr
-            || _wcsicmp(className, L"EDIT") == 0
-            && (GetWindowLongPtrW(control, GWL_STYLE) & ES_MULTILINE) == 0)) {
-        height = std::min(height, SettingsDialogHeight(11));
+            && _wcsicmp(className, L"EDIT") == 0
+            && (GetWindowLongPtrW(control, GWL_STYLE) & ES_MULTILINE) == 0) {
+        height = std::min(height, MAX_SETTINGS_FIELD_HEIGHT);
     }
     if (GetPropW(control, SETTINGS_FIELD_LABEL_PROPERTY) != nullptr) {
         TEXTMETRICW metrics = {};
