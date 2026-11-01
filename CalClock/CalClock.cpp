@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -4319,25 +4319,19 @@ static void AlignSettingsCheckboxToBaseline(HWND checkbox, HWND label, LONG refe
     }
 }
 
-/// Anchors the monitor caption above its fixed listview and positions the NTP and command fields below
-/// their captions. Uses the baseline-to-field gaps authored in RC without moving the monitor listview.
+/// Anchors the monitor caption above its fixed listview and positions the NTP field below its caption.
+/// Uses the baseline-to-field gap authored in RC without moving the monitor listview.
 static void AlignSettingsFieldsBelowLabels() {
     RECT spacing = GetSettingsResourceRect(hSettings, IDC_SETTINGS_LABEL_FIELD_GAP);
     LONG gap = spacing.bottom - spacing.top;
-    RECT commandSpacing = GetSettingsResourceRect(hSettings, IDC_SETTINGS_COMMAND_FIELD_GAP);
     LONG baseline = 0;
     RECT bounds = {};
     if (GetWindowRect(hMonitorList, &bounds) && GetSettingsLabelBaseline(hMonitorLabel, &baseline)) {
         OffsetSettingsControl(hMonitorLabel, bounds.top - gap - baseline);
     }
-    const HWND labels[] = { hNtpServersLabel, GetDlgItem(hAlarmPage, ID_RUN_COMMAND) };
-    const HWND fields[] = { hNtpServersEdit, hCommandEdit };
-    for (int index = 0; index < ARRAYSIZE(fields); index++) {
-        if (GetWindowRect(SettingsEdit::GetFrame(fields[index]), &bounds)
-                && GetSettingsLabelBaseline(labels[index], &baseline)) {
-            LONG fieldGap = index == 0 ? gap : commandSpacing.bottom - commandSpacing.top;
-            OffsetSettingsControl(fields[index], baseline + fieldGap - bounds.top);
-        }
+    if (GetWindowRect(SettingsEdit::GetFrame(hNtpServersEdit), &bounds)
+            && GetSettingsLabelBaseline(hNtpServersLabel, &baseline)) {
+        OffsetSettingsControl(hNtpServersEdit, baseline + gap - bounds.top);
     }
 }
 
@@ -4420,6 +4414,15 @@ static LONG GetSettingsControlBaselineAdjustment(HWND control, HWND reference, L
 void AlignSettingsControl(HWND control, HWND reference, LONG baselineDistance) {
     OffsetSettingsControl(control,
         GetSettingsControlBaselineAdjustment(control, reference, baselineDistance));
+}
+
+/// Aligns the first row to its own page's RC anchor using the same font height as a settings label.
+static void AlignSettingsFirstRow(HWND control, HWND page, LONG top) {
+    TEXTMETRICW metrics = {};
+    if (GetSettingsTextMetrics(control, &metrics)) {
+        LONG labelHeight = std::min(metrics.tmHeight, static_cast<LONG>(SettingsDialogHeight(11)));
+        AlignSettingsControl(control, page, top + (labelHeight - metrics.tmHeight) / 2);
+    }
 }
 
 /// Places Sunday first at its final horizontal position and native text baseline in one move.
@@ -4706,6 +4709,18 @@ static void SpaceSettingsControls(HWND parent, int stepId, int divisor, bool hor
 static void LayoutSettingsControlGrids() {
     const HWND textRows[] = { hOpacityLabel, hFontSizeLabel, hFontLabel };
     const HWND sizeColumns[] = { hSizeCombo, hAdditionalSizeCombos[0], hAdditionalSizeCombos[1] };
+    const HWND alarmRows[] = {
+        hAlarmEnabledCheck,
+        hAlarmDayChecks[0],
+        GetDlgItem(hAlarmPage, IDC_ALARM_TIME_FIELD_LABEL),
+        hRunCommandCheck,
+        hCommandEdit,
+        hTestCommandButton,
+        hAlarmVolumeLabel,
+        hRemoteScriptCheck,
+        hRemoteScriptLabel,
+        hAlarmTimeSignalCheck
+    };
     const HWND applicationRows[] = {
         hAppFontLabel,
         GetDlgItem(hApplicationPage, IDC_APP_ANTIALIAS_LABEL),
@@ -4722,10 +4737,22 @@ static void LayoutSettingsControlGrids() {
         hStartWithWindowsCheck,
         hWarnUnsavedChangesCheck
     };
-    const HWND timeFields[] = { GetDlgItem(hTimePage, IDC_TIME_SOURCE_LABEL), hNtpPresetLabel };
+    const HWND timeFields[] = {
+        GetDlgItem(hTimePage, IDC_TIME_SOURCE_LABEL),
+        hNtpPresetLabel,
+        hNtpServersLabel
+    };
     const HWND timeActions[] = { hNtpServersEdit, hNtpSyncButton, hNtpStatus };
     HWND days[ALARM_DAY_COUNT] = {};
     int firstDay = GetCultureFirstAlarmDay(appLanguage);
+    RECT alarmSpacing = GetSettingsResourceRect(hAlarmPage, IDC_GRID_ROW_ALARM);
+    LONG alarmStep = alarmSpacing.bottom - alarmSpacing.top;
+    RECT signalSpacing = GetSettingsResourceRect(hTimeSignalPage, IDC_GRID_ROW_SIGNAL);
+    LONG signalStep = signalSpacing.bottom - signalSpacing.top;
+    RECT signalOuterSpacing = GetSettingsResourceRect(hTimeSignalPage, IDC_GRID_ROW_SIGNAL_OUTER);
+    LONG signalOuterStep = signalOuterSpacing.bottom - signalOuterSpacing.top;
+    RECT timeSpacing = GetSettingsResourceRect(hTimePage, IDC_GRID_ROW_TIME_FIELDS);
+    LONG timeStep = timeSpacing.bottom - timeSpacing.top;
     RECT applicationSpacing = GetSettingsResourceRect(hApplicationPage, IDC_GRID_ROW_APPLICATION);
     LONG applicationStep = applicationSpacing.bottom - applicationSpacing.top;
     LayoutSettingsWindowControls();
@@ -4740,26 +4767,29 @@ static void LayoutSettingsControlGrids() {
         SetControlPosition(day, bounds.left, bounds.top, bounds.right - bounds.left,
             bounds.bottom - bounds.top);
     }
-    SpaceSettingsControls(hTimeSignalPage, IDC_GRID_ROW_SIGNAL, 5, false, hTimeSignalIntervalRadios,
-        ARRAYSIZE(hTimeSignalIntervalRadios));
-    LONG enabledBaseline = 0;
-    LONG firstRadioBaseline = 0;
-    if (GetSettingsLabelBaseline(hTimeSignalEnabledCheck, &enabledBaseline)
-            && GetSettingsLabelBaseline(hTimeSignalIntervalRadios[0], &firstRadioBaseline)) {
-        AlignSettingsControl(hAudioOutputLabel,
-            hTimeSignalIntervalRadios[ARRAYSIZE(hTimeSignalIntervalRadios) - 1],
-            firstRadioBaseline - enabledBaseline);
+    AlignSettingsFirstRow(hAlarmEnabledCheck, hAlarmPage, alarmSpacing.top);
+    for (int index = 1; index < ARRAYSIZE(alarmRows); index++) {
+        AlignSettingsControl(alarmRows[index], alarmRows[0], index * alarmStep);
     }
+    for (int index = 1; index < ALARM_DAY_COUNT; index++) {
+        AlignSettingsControl(hAlarmDayChecks[index], hAlarmDayChecks[0]);
+    }
+    AlignSettingsFirstRow(hTimeSignalEnabledCheck, hTimeSignalPage, signalSpacing.top);
+    for (int index = 0; index < ARRAYSIZE(hTimeSignalIntervalRadios); index++) {
+        AlignSettingsControl(hTimeSignalIntervalRadios[index], hTimeSignalEnabledCheck,
+            signalOuterStep + index * signalStep);
+    }
+    AlignSettingsControl(hAudioOutputLabel,
+        hTimeSignalIntervalRadios[ARRAYSIZE(hTimeSignalIntervalRadios) - 1], signalOuterStep);
     for (int index = 1; index < ARRAYSIZE(applicationRows); index++) {
         AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
     }
     for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
         AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 1) * applicationStep);
     }
-    SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_FIELDS, 5, false, timeFields,
-        ARRAYSIZE(timeFields));
-    LONG timeFieldSpacing = GetSettingsControlBaselineAdjustment(timeFields[0], hNtpPresetLabel, 0);
-    AlignSettingsControl(hNtpServersLabel, hNtpPresetLabel, timeFieldSpacing);
+    for (int index = 1; index < ARRAYSIZE(timeFields); index++) {
+        AlignSettingsControl(timeFields[index], timeFields[0], index * timeStep);
+    }
     AlignSettingsFieldsBelowLabels();
     SpaceSettingsControls(hTimePage, IDC_GRID_ROW_TIME_ACTIONS, 5, false, timeActions,
         ARRAYSIZE(timeActions));
@@ -4845,7 +4875,7 @@ static void AlignSettingsControls() {
     AlignSettingsVolumeControls(hTimeSignalVolumeLabel, hTimeSignalVolumeValue, hTimeSignalVolumeTrackBar);
     AlignSettingsControl(hShowAmPmCheck, hTimeFormatLabel);
     AlignSettingsControl(hBlackoutMonitorsCheck, GetDlgItem(hGeneralPage, IDC_NAME_LABEL),
-        11 * SettingsDialogHeight(15));
+        11 * SettingsDialogHeight(15) + SettingsDialogHeight(10));
     AlignSettingsControl(hDefaultAppearanceButton, hWidgetDisableThemesCheck);
     AlignSettingsAppearanceTrackBar(hOpacityTrackBar, hOpacityLabel);
     AlignSettingsAppearanceTrackBar(hFontSizeTrackBar, hFontSizeLabel);
