@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -68,17 +68,20 @@ static std::wstring ReadAudioOutputName(IMMDeviceEnumerator* enumerator, const s
     Microsoft::WRL::ComPtr<IPropertyStore> properties;
     PROPVARIANT name = {};
     std::wstring result = fallback;
-    if (enumerator != nullptr && SUCCEEDED(enumerator->GetDevice(endpoint.c_str(), &device))
+    if (enumerator != nullptr
+            && SUCCEEDED(enumerator->GetDevice(endpoint.c_str(), &device))
             && SUCCEEDED(device->OpenPropertyStore(STGM_READ, &properties))
             && SUCCEEDED(properties->GetValue(PKEY_Device_FriendlyName, &name))
-            && name.vt == VT_LPWSTR && name.pwszVal != nullptr) {
+            && name.vt == VT_LPWSTR
+            && name.pwszVal != nullptr) {
         result = name.pwszVal;
     }
     PropVariantClear(&name);
     return result;
 }
 
-/// Enumerates waveform devices while COM is available, keeping transient device indices out of saved settings.
+/// Enumerates waveform devices while COM is available, keeping transient device indices out of saved
+/// settings.
 static std::vector<AudioOutputDevice> ReadAudioOutputDevices() {
     Microsoft::WRL::ComPtr<IMMDeviceEnumerator> enumerator;
     bool hasEnumerator = SUCCEEDED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr,
@@ -91,8 +94,11 @@ static std::vector<AudioOutputDevice> ReadAudioOutputDevices() {
         if (waveOutGetDevCapsW(index, &capabilities, sizeof(capabilities)) == MMSYSERR_NOERROR
                 && ReadAudioOutputEndpoint(index, &endpoint)) {
             devices.push_back(AudioOutputDevice{
-                endpoint, ReadAudioOutputName(hasEnumerator ? enumerator.Get() : nullptr,
-                    endpoint, capabilities.szPname) });
+                endpoint,
+                ReadAudioOutputName(hasEnumerator ? enumerator.Get() : nullptr,
+                endpoint,
+                capabilities.szPname)
+            });
         }
     }
     return devices;

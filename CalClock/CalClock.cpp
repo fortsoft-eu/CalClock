@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -1295,7 +1295,7 @@ static bool PatchCommonControlsImport(const char* functionName, ULONG_PTR replac
             }
             DWORD oldProtect = 0;
             if (!VirtualProtect(&addresses->u1.Function, sizeof(addresses->u1.Function), PAGE_READWRITE,
-                &oldProtect)) {
+                    &oldProtect)) {
                 return false;
             }
             *original = addresses->u1.Function;
@@ -5591,8 +5591,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     result = MeasureFullscreenDirectText(format, config, static_cast<float>(width),
         static_cast<float>(height), &metrics, &clockMetrics);
     if (SUCCEEDED(result)
-            && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width)
-                || metrics.height > static_cast<float>(height))) {
+        && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width)
+            || metrics.height > static_cast<float>(height))) {
         float widthScale = metrics.widthIncludingTrailingWhitespace > 0.0f
             ? static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace
             : 1.0f;

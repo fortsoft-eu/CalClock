@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -43,7 +43,8 @@ static GetPreciseTimeProc ResolvePreciseTimeProc() {
     HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
     GetPreciseTimeProc procedure = nullptr;
     if (kernel != nullptr) {
-        procedure = reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel, "GetSystemTimePreciseAsFileTime"));
+        procedure = reinterpret_cast<GetPreciseTimeProc>(GetProcAddress(kernel,
+            "GetSystemTimePreciseAsFileTime"));
     }
     return procedure;
 }
@@ -63,7 +64,8 @@ ULONGLONG CurrentFileTimeValue() {
     return value.QuadPart;
 }
 
-/// Captures the system UTC epoch and the performance-counter state once for the process's continuous timeline.
+/// Captures the system UTC epoch and the performance-counter state once for the process's continuous
+/// timeline.
 static ClockTimeReference CreateClockTimeReference() {
     ClockTimeReference reference;
     LARGE_INTEGER frequency = {};
@@ -76,8 +78,9 @@ static ClockTimeReference CreateClockTimeReference() {
     return reference;
 }
 
-/// Returns a continuous FILETIME timeline anchored once to system UTC and advanced by QueryPerformanceCounter.
-/// Subsequent system-clock adjustments do not change this timeline; elapsed time includes system sleep.
+/// Returns a continuous FILETIME timeline anchored once to system UTC and advanced by
+/// QueryPerformanceCounter. Subsequent system-clock adjustments do not change this timeline;
+/// elapsed time includes system sleep.
 ULONGLONG MonotonicFileTimeValue() {
     static const ClockTimeReference reference = CreateClockTimeReference();
     LARGE_INTEGER counter = {};

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -861,7 +861,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     if (ReadXmlNumberAttribute(reader, L"previewY", &number) && number >= INT_MIN && number <= INT_MAX) {
         config->previewY = static_cast<int>(number);
     }
-    if (ReadXmlNumberAttribute(reader, L"previewWorkAreaEdges", &number) && ValidWidgetWorkAreaEdges(number)) {
+    if (ReadXmlNumberAttribute(reader, L"previewWorkAreaEdges", &number)
+            && ValidWidgetWorkAreaEdges(number)) {
         config->previewWorkAreaEdges = static_cast<int>(number);
     }
     if (ReadXmlAttribute(reader, L"previewWorkAreaMonitor", &text)) {
@@ -1292,7 +1293,8 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
     return success;
 }
 
-/// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged on failure.
+/// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged
+/// on failure.
 bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage,
         WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets) {
     if (data.empty()

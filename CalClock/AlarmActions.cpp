@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -160,12 +160,13 @@ static HRESULT GetAudioFilterPin(IBaseFilter* filter, PIN_DIRECTION direction, I
     return VFW_E_NOT_FOUND;
 }
 
-/// Inserts a Sample Grabber between a connected audio input and its upstream pin and attaches live gain processing.
-/// Returns a failing HRESULT if the format is unsupported or graph reconnection fails.
+/// Inserts a Sample Grabber between a connected audio input and its upstream pin and attaches live gain
+/// processing. Returns a failing HRESULT if the format is unsupported or graph reconnection fails.
 static HRESULT InsertAudioGainFilter(IGraphBuilder* graph, IPin* input, const AM_MEDIA_TYPE& type,
         const AudioThreadParameters& parameters, AudioGainFilter& gainFilter) {
     AudioSampleFormat format;
-    if (type.formattype != FORMAT_WaveFormatEx || !GetAudioSampleFormat(type.pbFormat, type.cbFormat, format)) {
+    if (type.formattype != FORMAT_WaveFormatEx
+            || !GetAudioSampleFormat(type.pbFormat, type.cbFormat, format)) {
         return VFW_E_INVALIDMEDIATYPE;
     }
     Microsoft::WRL::ComPtr<IPin> upstream;
@@ -324,7 +325,8 @@ static bool StreamDecodedAudio(AudioDecoder& decoder, const AudioThreadParameter
         }
         size_t length = std::min(chunkSize, decoded.size() - decodedOffset);
         std::memcpy(buffer.data.data(), decoded.data() + decodedOffset, length);
-        result = ApplyAudioGain(buffer.data.data(), length, decoder.GetSampleFormat(), AudioPlaybackGain(parameters));
+        result = ApplyAudioGain(buffer.data.data(), length, decoder.GetSampleFormat(),
+            AudioPlaybackGain(parameters));
         if (FAILED(result)) {
             break;
         }
@@ -588,8 +590,8 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
             || WaitForSingleObject(parameters->stopEvent, 0) == WAIT_OBJECT_0) {
         CloseHandle(parameters->stopEvent);
         CloseHandle(parameters->muteEvent);
-        PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId),
-            static_cast<LPARAM>(parameters->generation));
+        PostMessageW(parameters->notifyWindow, parameters->notifyMessage,
+            static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
         return 0;
     }
     std::wstring alias = L"calClockAudio" + std::to_wstring(GetCurrentThreadId()) + L"_"
@@ -628,15 +630,16 @@ static DWORD WINAPI AudioThreadProc(void* parameter) {
     }
     CloseHandle(parameters->stopEvent);
     CloseHandle(parameters->muteEvent);
-    PostMessageW(parameters->notifyWindow, parameters->notifyMessage, static_cast<WPARAM>(parameters->widgetId),
-        static_cast<LPARAM>(parameters->generation));
+    PostMessageW(parameters->notifyWindow, parameters->notifyMessage,
+        static_cast<WPARAM>(parameters->widgetId), static_cast<LPARAM>(parameters->generation));
     return 0;
 }
 
 /// Starts an audio worker with independent stop and mute handles and a shared live volume value.
 /// On success, transfers the returned event handles to the caller; the worker owns duplicate handles.
-bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, const std::shared_ptr<std::atomic<int>>&
-    volume, HWND notifyWindow, UINT notifyMessage, int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted,
+        const std::shared_ptr<std::atomic<int>>& volume, HWND notifyWindow, UINT notifyMessage,
+        int widgetId, ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
     if (stopEvent == nullptr || muteEvent == nullptr) {
         return false;
     }
@@ -651,14 +654,14 @@ bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted, co
     }
     HANDLE workerEvent = nullptr;
     if (!DuplicateHandle(GetCurrentProcess(), ownerEvent, GetCurrentProcess(), &workerEvent, 0, FALSE,
-        DUPLICATE_SAME_ACCESS)) {
+            DUPLICATE_SAME_ACCESS)) {
         CloseHandle(ownerEvent);
         CloseHandle(ownerMuteEvent);
         return false;
     }
     HANDLE workerMuteEvent = nullptr;
     if (!DuplicateHandle(GetCurrentProcess(), ownerMuteEvent, GetCurrentProcess(), &workerMuteEvent, 0, FALSE,
-        DUPLICATE_SAME_ACCESS)) {
+            DUPLICATE_SAME_ACCESS)) {
         CloseHandle(workerEvent);
         CloseHandle(ownerEvent);
         CloseHandle(ownerMuteEvent);
@@ -703,7 +706,8 @@ void SetAudioPlaybackMuted(HANDLE muteEvent, bool muted) {
 
 /// Opens the supplied command through the shell and releases the worker parameters.
 static DWORD WINAPI LocalCommandThreadProc(void* parameter) {
-    std::unique_ptr<LocalCommandThreadParameters> parameters(static_cast<LocalCommandThreadParameters*>(parameter));
+    std::unique_ptr<LocalCommandThreadParameters> parameters(
+        static_cast<LocalCommandThreadParameters*>(parameter));
     ShellExecuteW(nullptr, L"open", parameters->command.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
     return 0;
 }
@@ -719,9 +723,11 @@ void StartLocalCommandAsync(const std::wstring& command) {
     }
 }
 
-/// Invokes the supplied URL with a WinHTTP GET request and releases all request handles and worker parameters.
+/// Invokes the supplied URL with a WinHTTP GET request and releases all request handles and worker
+/// parameters.
 static DWORD WINAPI RemoteScriptThreadProc(void* parameter) {
-    std::unique_ptr<RemoteScriptThreadParameters> parameters(static_cast<RemoteScriptThreadParameters*>(parameter));
+    std::unique_ptr<RemoteScriptThreadParameters> parameters(
+        static_cast<RemoteScriptThreadParameters*>(parameter));
     URL_COMPONENTSW components = {};
     components.dwStructSize = sizeof(components);
     components.dwHostNameLength = static_cast<DWORD>(-1);
@@ -757,11 +763,11 @@ static DWORD WINAPI RemoteScriptThreadProc(void* parameter) {
         request = WinHttpOpenRequest(connection, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER,
             WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
     }
-    if (request != nullptr
-            && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {
-        WinHttpReceiveResponse(request, nullptr);
-    }
     if (request != nullptr) {
+        BOOL requestSent = WinHttpSendRequest(request, nullptr, 0, nullptr, 0, 0, 0);
+        if (requestSent) {
+            WinHttpReceiveResponse(request, nullptr);
+        }
         WinHttpCloseHandle(request);
     }
     if (connection != nullptr) {

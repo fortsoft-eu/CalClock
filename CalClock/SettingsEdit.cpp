@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -36,9 +36,10 @@ static const wchar_t SETTINGS_EDIT_CLASS[] = L"CalClock.SettingsEdit";
 static const wchar_t SETTINGS_EDIT_FRAME_PROPERTY[] = L"CalClock.SettingsEditFrame";
 static const UINT_PTR SETTINGS_EDIT_SUBCLASS_ID = 1004;
 
-/// Creates a clipped native single-line edit and retains its native input, selection, caret, and text provider.
-HWND SettingsEdit::Create(HINSTANCE instance, HWND parent, DWORD extended, DWORD style, const wchar_t* text, int x, int y,
-        int width, int height, int id) {
+/// Creates a clipped native single-line edit and retains its native input, selection, caret, and text
+/// provider.
+HWND SettingsEdit::Create(HINSTANCE instance, HWND parent, DWORD extended, DWORD style, const wchar_t* text,
+        int x, int y, int width, int height, int id) {
     WNDCLASSW windowClass = {};
     windowClass.lpfnWndProc = FrameProc;
     windowClass.hInstance = instance;
@@ -62,8 +63,9 @@ HWND SettingsEdit::Create(HINSTANCE instance, HWND parent, DWORD extended, DWORD
         reinterpret_cast<HMENU>(static_cast<INT_PTR>(id)), instance, nullptr);
     state->edit = edit;
     if (edit == nullptr
-            || !SetPropW(edit, SETTINGS_EDIT_FRAME_PROPERTY, frame)
-            || !SetWindowSubclass(edit, EditProc, SETTINGS_EDIT_SUBCLASS_ID, reinterpret_cast<DWORD_PTR>(state))) {
+        || !SetPropW(edit, SETTINGS_EDIT_FRAME_PROPERTY, frame)
+        || !SetWindowSubclass(edit, EditProc, SETTINGS_EDIT_SUBCLASS_ID,
+            reinterpret_cast<DWORD_PTR>(state))) {
         if (edit != nullptr) {
             RemovePropW(edit, SETTINGS_EDIT_FRAME_PROPERTY);
         }
@@ -75,7 +77,8 @@ HWND SettingsEdit::Create(HINSTANCE instance, HWND parent, DWORD extended, DWORD
     return edit;
 }
 
-/// Returns the height-limited visible field rectangle while keeping the public handle on the real native edit.
+/// Returns the height-limited visible field rectangle while keeping the public handle on the real native
+/// edit.
 HWND SettingsEdit::GetFrame(HWND edit) {
     HWND frame = reinterpret_cast<HWND>(GetPropW(edit, SETTINGS_EDIT_FRAME_PROPERTY));
     return frame == nullptr ? edit : frame;
@@ -103,7 +106,8 @@ void SettingsEdit::UpdateLayout(HWND edit) {
     }
 }
 
-/// Centers the native edit's full font line inside a stable clipped viewport, as native buttons center their text.
+/// Centers the native edit's full font line inside a stable clipped viewport, as native buttons center their
+/// text.
 void SettingsEdit::Layout() const {
     RECT client = {};
     if (edit == nullptr || !GetClientRect(frame, &client)) {
@@ -176,8 +180,9 @@ void SettingsEdit::PaintBackground(HDC dc) const {
     GetClientRect(frame, &client);
     int saved = SaveDC(dc);
     bool staticColor = !IsWindowEnabled(edit) || (GetWindowLongPtrW(edit, GWL_STYLE) & ES_READONLY) != 0;
-    HBRUSH brush = reinterpret_cast<HBRUSH>(SendMessageW(GetParent(frame),
-        staticColor ? WM_CTLCOLORSTATIC : WM_CTLCOLOREDIT, reinterpret_cast<WPARAM>(dc), reinterpret_cast<LPARAM>(edit)));
+    HBRUSH brush = reinterpret_cast<HBRUSH>(SendMessageW(GetParent(frame), staticColor
+        ? WM_CTLCOLORSTATIC
+        : WM_CTLCOLOREDIT, reinterpret_cast<WPARAM>(dc), reinterpret_cast<LPARAM>(edit)));
     if (brush == nullptr) {
         brush = GetSysColorBrush(staticColor ? COLOR_BTNFACE : COLOR_WINDOW);
     }
@@ -230,7 +235,8 @@ void SettingsEdit::OnMouseMove() {
     }
 }
 
-/// Clears the frame's state pointer and leaves failed-creation cleanup with the caller that allocated the state.
+/// Clears the frame's state pointer and leaves failed-creation cleanup with the caller that allocated the
+/// state.
 void SettingsEdit::ReleaseFrameState(HWND window, SettingsEdit* state) {
     SetWindowLongPtrW(window, GWLP_USERDATA, 0);
     if (!state->creating) {
@@ -283,7 +289,8 @@ LRESULT CALLBACK SettingsEdit::FrameProc(HWND window, UINT message, WPARAM wPara
     return DefWindowProcW(window, message, wParam, lParam);
 }
 
-/// Preserves the original single-line EDIT procedure and updates only its clipping frame and native border state.
+/// Preserves the original single-line EDIT procedure and updates only its clipping frame and native border
+/// state.
 LRESULT CALLBACK SettingsEdit::EditProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     SettingsEdit* state = reinterpret_cast<SettingsEdit*>(referenceData);

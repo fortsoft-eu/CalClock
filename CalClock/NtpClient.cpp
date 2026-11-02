@@ -50,7 +50,8 @@ struct NtpThreadParameters {
     std::atomic<bool>* queryRunning = nullptr;
 };
 
-/// Stores a validated server sample's correction to the continuous clock and network delay in 100-nanosecond units.
+/// Stores a validated server sample's correction to the continuous clock and network delay in 100-nanosecond
+/// units.
 struct NtpSample {
     LONGLONG clockOffset100Nanoseconds = 0;
     LONGLONG delay100Nanoseconds = 0;
@@ -134,7 +135,8 @@ static ULONGLONG ReadNtpTimestamp(const BYTE* source, ULONGLONG referenceFileTim
     return ntpEpochInFileTime + candidate * 10000000ULL + (fraction * 10000000ULL >> 32);
 }
 
-/// Splits server names on whitespace, commas, or semicolons and keeps at most eight distinct names of valid length.
+/// Splits server names on whitespace, commas, or semicolons and keeps at most eight distinct names of valid
+/// length.
 static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverList) {
     std::vector<std::wstring> servers;
     size_t start = 0;
@@ -163,10 +165,10 @@ static std::vector<std::wstring> ParseNtpServerList(const std::wstring& serverLi
     return servers;
 }
 
-/// Queries a server's UDP endpoints, validates NTP replies, and retains the successful sample with the least delay.
-/// Checks cancellation between attempts and records the last failure if no valid sample is received.
-static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRequested, NtpSample* bestSample,
-        NtpQueryLogEntry* logEntry) {
+/// Queries a server's UDP endpoints, validates NTP replies, and retains the successful sample with the least
+/// delay. Checks cancellation between attempts and records the last failure if no valid sample is received.
+static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRequested,
+        NtpSample* bestSample, NtpQueryLogEntry* logEntry) {
     ADDRINFOW hints = {};
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
@@ -180,7 +182,9 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
     }
     bool success = false;
     for (int attempt = 0; attempt < 4 && !stopRequested->load(); attempt++) {
-        for (PADDRINFOW address = addresses; address != nullptr && !stopRequested->load(); address = address->ai_next) {
+        for (PADDRINFOW address = addresses;
+                address != nullptr && !stopRequested->load();
+                address = address->ai_next) {
             SOCKET socketHandle = socket(address->ai_family, address->ai_socktype, address->ai_protocol);
             if (socketHandle == INVALID_SOCKET) {
                 logEntry->error = NtpQueryError::Network;
@@ -188,9 +192,12 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
                 continue;
             }
             DWORD timeout = 1200;
-            setsockopt(socketHandle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
-            setsockopt(socketHandle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
-            int connectionResult = connect(socketHandle, address->ai_addr, static_cast<int>(address->ai_addrlen));
+            setsockopt(socketHandle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout),
+                sizeof(timeout));
+            setsockopt(socketHandle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout),
+                sizeof(timeout));
+            int connectionResult = connect(socketHandle, address->ai_addr,
+                static_cast<int>(address->ai_addrlen));
             if (connectionResult == SOCKET_ERROR) {
                 logEntry->error = NtpQueryError::Network;
                 logEntry->errorCode = WSAGetLastError();
@@ -216,7 +223,9 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             ULONGLONG systemReceivedTime = CurrentFileTimeValue();
             closesocket(socketHandle);
             if (received == SOCKET_ERROR) {
-                logEntry->error = receiveError == WSAETIMEDOUT ? NtpQueryError::Timeout : NtpQueryError::Network;
+                logEntry->error = receiveError == WSAETIMEDOUT
+                    ? NtpQueryError::Timeout
+                    : NtpQueryError::Network;
                 logEntry->errorCode = receiveError;
                 continue;
             }
@@ -246,7 +255,8 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
             if (t3 < t2) {
                 continue;
             }
-            LONGLONG networkDelay = static_cast<LONGLONG>(receivedTime - sentTime) - static_cast<LONGLONG>(t3 - t2);
+            LONGLONG networkDelay =
+                static_cast<LONGLONG>(receivedTime - sentTime) - static_cast<LONGLONG>(t3 - t2);
             if (networkDelay < 0 || networkDelay > 10LL * 10000000LL) {
                 continue;
             }
@@ -270,8 +280,9 @@ static bool QueryNtpServer(const std::wstring& server, std::atomic<bool>* stopRe
     return success;
 }
 
-/// Queries configured servers, rejects offset outliers, and combines accepted samples using inverse-delay weights.
-/// Transfers a heap-allocated result to the notification receiver on a successful post; otherwise releases it locally.
+/// Queries configured servers, rejects offset outliers, and combines accepted samples using inverse-delay
+/// weights. Transfers a heap-allocated result to the notification receiver on a successful post; otherwise
+/// releases it locally.
 static DWORD WINAPI NtpThreadProc(void* parameter) {
     std::unique_ptr<NtpThreadParameters> parameters(static_cast<NtpThreadParameters*>(parameter));
     std::unique_ptr<NtpThreadResult> result(new NtpThreadResult());
@@ -310,8 +321,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
         size_t bestIndex = 0;
         bool acceptedAny = false;
         for (size_t index = 0; index < samples.size(); index++) {
-            long double difference = std::fabs(static_cast<long double>(samples[index].clockOffset100Nanoseconds)
-                - static_cast<long double>(medianOffset));
+            long double difference = std::fabs(static_cast<long double>(
+                samples[index].clockOffset100Nanoseconds) - static_cast<long double>(medianOffset));
             if (difference > rejectionLimit) {
                 continue;
             }
@@ -328,7 +339,8 @@ static DWORD WINAPI NtpThreadProc(void* parameter) {
             bestIndex = fastestIndex;
             result->clockOffset100Nanoseconds = samples[bestIndex].clockOffset100Nanoseconds;
         } else {
-            result->clockOffset100Nanoseconds = static_cast<LONGLONG>(std::llround(weightedOffset / totalWeight));
+            result->clockOffset100Nanoseconds =
+                static_cast<LONGLONG>(std::llround(weightedOffset / totalWeight));
         }
         ULONGLONG now = MonotonicFileTimeValue();
         result->offset100Nanoseconds = static_cast<LONGLONG>(now) + result->clockOffset100Nanoseconds
@@ -360,10 +372,10 @@ bool HasNtpServers(const std::wstring& serverList) {
     return !ParseNtpServerList(serverList).empty();
 }
 
-/// Starts an NTP worker and returns its thread handle, or null on failure. The caller owns the handle and must
-/// keep both atomic flags alive until the worker exits; the receiver owns posted results.
-HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow, UINT notifyMessage,
-    std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning) {
+/// Starts an NTP worker and returns its thread handle, or null on failure. The caller owns the handle
+/// and must keep both atomic flags alive until the worker exits; the receiver owns posted results.
+HANDLE StartNtpQueryThread(const std::wstring& serverList, ULONG generation, HWND notifyWindow,
+        UINT notifyMessage, std::atomic<bool>* stopRequested, std::atomic<bool>* queryRunning) {
     if (stopRequested == nullptr || queryRunning == nullptr) {
         return nullptr;
     }

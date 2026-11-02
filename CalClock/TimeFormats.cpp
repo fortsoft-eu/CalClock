@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.5
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -32,8 +32,8 @@
 /// Reads a time-format property for the selected language without user locale overrides.
 /// Returns an empty string if Windows cannot provide the value.
 static std::wstring GetTimeLocaleValue(AppLanguage language, LCTYPE type) {
-    const wchar_t* locale =
-        GetLanguageLocale(static_cast<AppLanguage>(std::clamp(static_cast<int>(language), 0, LANG_COUNT - 1)));
+    const wchar_t* locale = GetLanguageLocale(static_cast<AppLanguage>(std::clamp(static_cast<int>(language),
+        0, LANG_COUNT - 1)));
     int length = GetLocaleInfoEx(locale, type | LOCALE_NOUSEROVERRIDE, nullptr, 0);
     if (length <= 1) {
         return L"";
@@ -73,7 +73,8 @@ bool WidgetUsesTwelveHourTime(const WidgetConfig& config) {
     return false;
 }
 
-/// Adapts the language's time pattern to the selected hour cycle and leading-zero mode while preserving literals.
+/// Adapts the language's time pattern to the selected hour cycle and leading-zero mode while preserving
+/// literals.
 static std::wstring GetWidgetTimePattern(const WidgetConfig& config) {
     std::wstring pattern = GetTimeLocaleValue(config.language, LOCALE_STIMEFORMAT);
     bool twelveHour = WidgetUsesTwelveHourTime(config);
@@ -101,7 +102,8 @@ static std::wstring GetWidgetTimePattern(const WidgetConfig& config) {
 }
 
 /// Formats a displayed time using the widget's language, seconds, leading-zero, and hour-cycle settings.
-/// Places the optional localized AM/PM marker on a separate line for fullscreen clocks; returns empty on failure.
+/// Places the optional localized AM/PM marker on a separate line for fullscreen clocks; returns empty on
+/// failure.
 std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time) {
     std::wstring pattern = GetWidgetTimePattern(config);
     if (pattern.empty()) {
@@ -111,8 +113,8 @@ std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time
     if (!config.showSeconds) {
         flags |= TIME_NOSECONDS;
     }
-    const wchar_t* locale =
-        GetLanguageLocale(static_cast<AppLanguage>(std::clamp(static_cast<int>(config.language), 0, LANG_COUNT - 1)));
+    const wchar_t* locale = GetLanguageLocale(static_cast<AppLanguage>(std::clamp(
+        static_cast<int>(config.language), 0, LANG_COUNT - 1)));
     int length = GetTimeFormatEx(locale, flags, &time, pattern.c_str(), nullptr, 0);
     if (length <= 1) {
         return L"";
@@ -123,7 +125,9 @@ std::wstring FormatWidgetTime(const WidgetConfig& config, const SYSTEMTIME& time
     }
     text.resize(length - 1);
     if (config.showAmPm && WidgetUsesTwelveHourTime(config)) {
-        std::wstring marker = GetTimeLocaleValue(config.language, time.wHour < 12 ? LOCALE_S1159 : LOCALE_S2359);
+        std::wstring marker = GetTimeLocaleValue(config.language, time.wHour < 12
+            ? LOCALE_S1159
+            : LOCALE_S2359);
         if (marker.empty()) {
             marker = time.wHour < 12 ? L"AM" : L"PM";
         }

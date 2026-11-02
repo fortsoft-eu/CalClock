@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -33,7 +33,7 @@
 #pragma comment(lib, "Mfuuid.lib")
 #pragma comment(lib, "Ole32.lib")
 
-/// Releases the reader and wave format, shuts down Media Foundation, and unloads its libraries.
+ /// Releases the reader and wave format, shuts down Media Foundation, and unloads its libraries.
 AudioDecoder::~AudioDecoder() {
     reader.Reset();
     CoTaskMemFree(wave);
@@ -69,9 +69,10 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
     startup = reinterpret_cast<decltype(startup)>(GetProcAddress(platform, "MFStartup"));
     shutdown = reinterpret_cast<decltype(shutdown)>(GetProcAddress(platform, "MFShutdown"));
     createType = reinterpret_cast<decltype(createType)>(GetProcAddress(platform, "MFCreateMediaType"));
-    createWaveFormat =
-        reinterpret_cast<decltype(createWaveFormat)>(GetProcAddress(platform, "MFCreateWaveFormatExFromMFMediaType"));
-    createReader = reinterpret_cast<decltype(createReader)>(GetProcAddress(readerLibrary, "MFCreateSourceReaderFromURL"));
+    createWaveFormat = reinterpret_cast<decltype(createWaveFormat)>(GetProcAddress(platform,
+        "MFCreateWaveFormatExFromMFMediaType"));
+    createReader = reinterpret_cast<decltype(createReader)>(GetProcAddress(readerLibrary,
+        "MFCreateSourceReaderFromURL"));
     if (startup == nullptr
             || shutdown == nullptr
             || createType == nullptr
@@ -101,7 +102,8 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
         result = type->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
     }
     if (SUCCEEDED(result)) {
-        result = reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
+        result = reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM),
+            nullptr, type.Get());
     }
     if (SUCCEEDED(result)) {
         result = reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM),
@@ -122,8 +124,8 @@ HRESULT AudioDecoder::Open(const std::wstring& path) {
 HRESULT AudioDecoder::Read(std::vector<BYTE>& data, bool& end) {
     Microsoft::WRL::ComPtr<IMFSample> sample;
     DWORD flags = 0;
-    HRESULT result = reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &flags,
-        nullptr, &sample);
+    HRESULT result = reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM),
+        0, nullptr, &flags, nullptr, &sample);
     if (FAILED(result)) {
         return result;
     }
@@ -173,20 +175,23 @@ HRESULT AudioDecoder::Read(std::vector<BYTE>& data, bool& end) {
 /// Replaces the current reader only on success, avoiding reliance on decoder seek support.
 HRESULT AudioDecoder::Restart(const std::wstring& path) {
     Microsoft::WRL::ComPtr<IMFMediaType> type;
-    HRESULT result = reader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &type);
+    HRESULT result = reader->GetCurrentMediaType(
+        static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &type);
     Microsoft::WRL::ComPtr<IMFSourceReader> replacement;
     if (SUCCEEDED(result)) {
         result = createReader(path.c_str(), nullptr, &replacement);
     }
     if (SUCCEEDED(result)) {
-        result = replacement->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS), FALSE);
+        result = replacement->SetStreamSelection(
+            static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS), FALSE);
     }
     if (SUCCEEDED(result)) {
-        result = replacement->SetStreamSelection(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), TRUE);
+        result = replacement->SetStreamSelection(
+            static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), TRUE);
     }
     if (SUCCEEDED(result)) {
-        result =
-            replacement->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
+        result = replacement->SetCurrentMediaType(
+            static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, type.Get());
     }
     if (SUCCEEDED(result)) {
         reader = replacement;

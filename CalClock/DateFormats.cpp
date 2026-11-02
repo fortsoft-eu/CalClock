@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.5
+ * Last modified for version 1.7.1.0
  */
 
 #include "DateFormats.h"
@@ -89,15 +89,16 @@ std::wstring FormatWidgetDate(const WidgetConfig& config, const SYSTEMTIME& date
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
     const DateFormatDefinition& definition = DATE_FORMAT_DEFINITIONS[selected];
     wchar_t text[160] = {};
-    int length = GetDateFormatEx(GetLanguageLocale(config.language), definition.flags, &date, definition.pattern,
-        text, ARRAYSIZE(text), nullptr);
+    int length = GetDateFormatEx(GetLanguageLocale(config.language), definition.flags, &date,
+        definition.pattern, text, ARRAYSIZE(text), nullptr);
     if (length == 0) {
         swprintf_s(text, L"%04d-%02d-%02d", date.wYear, date.wMonth, date.wDay);
     }
     return text;
 }
 
-/// Returns the language's short or long date pattern, or its localized label if Windows cannot supply the pattern.
+/// Returns the language's short or long date pattern, or its localized label if Windows cannot supply the
+/// pattern.
 static std::wstring GetLocaleDatePattern(const WidgetConfig& config, int formatIndex) {
     LCTYPE type = formatIndex == DATE_LOCAL_LONG ? LOCALE_SLONGDATE : LOCALE_SSHORTDATE;
     wchar_t pattern[160] = {};
@@ -113,7 +114,9 @@ static std::wstring GetLocaleDatePattern(const WidgetConfig& config, int formatI
 std::wstring DateFormatCaption(const WidgetConfig& config, const SYSTEMTIME& date, int formatIndex) {
     int selected = std::clamp(formatIndex, 0, DATE_FORMAT_COUNT - 1);
     const DateFormatDefinition& definition = DATE_FORMAT_DEFINITIONS[selected];
-    std::wstring name = definition.caption == nullptr ? GetLocaleDatePattern(config, selected) : definition.caption;
+    std::wstring name = definition.caption == nullptr
+        ? GetLocaleDatePattern(config, selected)
+        : definition.caption;
     if (selected == DATE_LOCAL_SHORT || selected == DATE_LOCAL_LONG) {
         name += L" (";
         name += selected == DATE_LOCAL_SHORT

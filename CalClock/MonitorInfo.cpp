@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -207,12 +207,12 @@ std::vector<MonitorDetails> ReadMonitorDetails(const std::vector<DisplayMonitor>
     }
     const HMODULE userLibrary = GetModuleHandleW(L"user32.dll");
     if (userLibrary) {
-        const GetDisplayConfigSizes getBufferSizes =
-            reinterpret_cast<GetDisplayConfigSizes>(GetProcAddress(userLibrary, "GetDisplayConfigBufferSizes"));
-        const QueryCurrentDisplayConfig queryDisplayConfig =
-            reinterpret_cast<QueryCurrentDisplayConfig>(GetProcAddress(userLibrary, "QueryDisplayConfig"));
-        const GetDisplayConfigInfo getDeviceInfo =
-            reinterpret_cast<GetDisplayConfigInfo>(GetProcAddress(userLibrary, "DisplayConfigGetDeviceInfo"));
+        const GetDisplayConfigSizes getBufferSizes = reinterpret_cast<GetDisplayConfigSizes>(
+            GetProcAddress(userLibrary, "GetDisplayConfigBufferSizes"));
+        const QueryCurrentDisplayConfig queryDisplayConfig = reinterpret_cast<QueryCurrentDisplayConfig>(
+            GetProcAddress(userLibrary, "QueryDisplayConfig"));
+        const GetDisplayConfigInfo getDeviceInfo = reinterpret_cast<GetDisplayConfigInfo>(
+            GetProcAddress(userLibrary, "DisplayConfigGetDeviceInfo"));
         ReadDisplayConfigMonitorDetails(monitors, details, getBufferSizes, queryDisplayConfig, getDeviceInfo);
     }
     ReadDxgiMonitorDetails(monitors, details);
