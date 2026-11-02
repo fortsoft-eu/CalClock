@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -39,6 +39,13 @@ struct ForwardScenario {
     ULONGLONG start;
     int hour;
     int minute;
+};
+
+struct CandidateScenario {
+    ULONGLONG local;
+    ULONGLONG first;
+    ULONGLONG second;
+    unsigned int count;
 };
 
 static constexpr ULONGLONG TEST_MINUTE_TICKS = 600000000;
@@ -552,6 +559,200 @@ static void TestSkippedAndRepeatedSignals() {
     Check(skippedSunday.LastDate() == 20260405, "catchup retains actual enabled date");
 }
 
+/// Checks exact DST boundaries, chronological candidate order, and subminute precision independently.
+static void TestInverseCandidates() {
+    const CandidateScenario scenarios[] = {
+        {
+            UtcTime(2026, 3, 29, 1, 59, 59, 999),
+            UtcTime(2026, 3, 29, 0, 59, 59, 999),
+            0,
+            1
+        }, {
+            UtcTime(2026, 3, 29, 2, 0),
+            0,
+            0,
+            0
+        }, {
+            UtcTime(2026, 3, 29, 2, 59, 59, 999),
+            0,
+            0,
+            0
+        }, {
+            UtcTime(2026, 3, 29, 3, 0),
+            UtcTime(2026, 3, 29, 1, 0),
+            0,
+            1
+        }, {
+            UtcTime(2026, 10, 25, 1, 59, 59, 999),
+            UtcTime(2026, 10, 24, 23, 59, 59, 999),
+            0,
+            1
+        }, {
+            UtcTime(2026, 10, 25, 2, 0),
+            UtcTime(2026, 10, 25, 0, 0),
+            UtcTime(2026, 10, 25, 1, 0),
+            2
+        }, {
+            UtcTime(2026, 10, 25, 2, 59, 59, 999),
+            UtcTime(2026, 10, 25, 0, 59, 59, 999),
+            UtcTime(2026, 10, 25, 1, 59, 59, 999),
+            2
+        }, {
+            UtcTime(2026, 10, 25, 3, 0),
+            UtcTime(2026, 10, 25, 2, 0),
+            0,
+            1
+        }
+    };
+    const DYNAMIC_TIME_ZONE_INFORMATION& zone = TestZone(L"Central Europe Standard Time");
+    for (const CandidateScenario& scenario : scenarios) {
+        ULARGE_INTEGER ticks{};
+        ticks.QuadPart = scenario.local;
+        FILETIME file{ ticks.LowPart, ticks.HighPart };
+        SYSTEMTIME local{};
+        Check(FileTimeToSystemTime(&file, &local) != FALSE, "candidate scenario is a valid calendar time");
+        ULONGLONG candidates[2]{ ULLONG_MAX, ULLONG_MAX };
+        unsigned int count = UINT_MAX;
+        Check(GetTimeZoneUtcCandidates(zone, local, candidates, count), "valid inverse request succeeds");
+        Check(count == scenario.count, "inverse distinguishes gap, unique time and repeated time");
+        if (count != 0) {
+            Check(candidates[0] == scenario.first, "first inverse candidate has exact UTC and milliseconds");
+        }
+        if (count == 2) {
+            Check(candidates[1] == scenario.second, "second inverse candidate is later and equally precise");
+        }
+    }
+    SYSTEMTIME invalid{};
+    invalid.wYear = 2026;
+    invalid.wMonth = 13;
+    invalid.wDay = 1;
+    ULONGLONG candidates[2]{};
+    unsigned int count = 2;
+    Check(!GetTimeZoneUtcCandidates(zone, invalid, candidates, count) && count == 0,
+        "invalid local date fails and clears the candidate count");
+}
+
+/// Honors fixed seasonal rules separately from fully disabled daylight saving without system changes.
+static void TestStaticZoneRules() {
+    DYNAMIC_TIME_ZONE_INFORMATION zone = TestZone(L"Central Europe Standard Time");
+    zone.DynamicDaylightTimeDisabled = TRUE;
+    std::vector<DYNAMIC_TIME_ZONE_INFORMATION> fixedZones{ zone };
+    WidgetConfig config = AlarmConfig(8, 0);
+    config.showUtc = false;
+    config.timeZoneKey = zone.TimeZoneKeyName;
+    AlarmSchedule fixedRules;
+    fixedRules.Reset(config, fixedZones, UtcTime(2026, 7, 1, 0, 0));
+    Check(fixedRules.Next() == UtcTime(2026, 7, 1, 6, 0),
+        "disabling dynamic rules still observes the supplied seasonal transition dates");
+    zone.StandardDate = SYSTEMTIME{};
+    zone.DaylightDate = SYSTEMTIME{};
+    fixedZones[0] = zone;
+    AlarmSchedule noDaylight;
+    noDaylight.Reset(config, fixedZones, UtcTime(2026, 7, 1, 0, 0));
+    Check(noDaylight.Next() == UtcTime(2026, 7, 1, 7, 0),
+        "cleared transition dates disable daylight saving during summer");
+    Check(noDaylight.Check(config, fixedZones, UtcTime(2026, 7, 1, 7, 0)),
+        "alarm fires at standard-time offset with daylight saving disabled");
+    AlarmSchedule noGap;
+    config.alarmHour = 2;
+    config.alarmMinute = 30;
+    noGap.Reset(config, fixedZones, UtcTime(2026, 3, 29, 0, 0));
+    Check(noGap.Next() == UtcTime(2026, 3, 29, 1, 30),
+        "disabled daylight saving keeps the normally skipped spring wall time");
+}
+
+/// Rejects invalid alarm fields and ignores bits outside the seven supported weekdays.
+static void TestInvalidScheduleFields() {
+    const int invalidHours[] = { INT_MIN, -1, 24, INT_MAX };
+    const int invalidMinutes[] = { INT_MIN, -1, 60, INT_MAX };
+    ULONGLONG now = UtcTime(2026, 11, 2, 7, 0);
+    for (int hour : invalidHours) {
+        WidgetConfig config = AlarmConfig(hour, 0);
+        AlarmSchedule schedule;
+        schedule.Reset(config, zones, now);
+        Check(schedule.Next() == 0, "invalid hour produces no pending alarm");
+        Check(!schedule.Check(config, zones, now + TEST_DAY_TICKS), "invalid hour cannot fire later");
+    }
+    for (int minute : invalidMinutes) {
+        WidgetConfig config = AlarmConfig(8, minute);
+        AlarmSchedule schedule;
+        schedule.Reset(config, zones, now);
+        Check(schedule.Next() == 0, "invalid minute produces no pending alarm");
+        Check(!schedule.Check(config, zones, now + TEST_DAY_TICKS), "invalid minute cannot fire later");
+    }
+    WidgetConfig config = AlarmConfig();
+    config.alarmDays = ~ALARM_DAYS_ALL;
+    AlarmSchedule schedule;
+    schedule.Reset(config, zones, now);
+    Check(schedule.Next() == 0, "unsupported weekday bits do not enable an alarm");
+    config.alarmDays = UINT_MAX;
+    Check(!schedule.Check(config, zones, now), "adding supported days begins a fresh observation");
+    Check(schedule.Next() == UtcTime(2026, 11, 2, 8, 0), "supported days survive extraneous mask bits");
+    config.alarmDays = ALARM_DAYS_ALL;
+    Check(schedule.Check(config, zones, UtcTime(2026, 11, 2, 8, 1)),
+        "changing ignored weekday bits does not discard a due alarm");
+}
+
+/// Catches an already elapsed first occurrence even when resumed inside the repeated hour before its twin.
+static void TestResumeBetweenFoldOccurrences() {
+    WidgetConfig config = AlarmConfig(2, 30);
+    config.showUtc = false;
+    config.timeZoneKey = L"Central Europe Standard Time";
+    config.offsetMilliseconds = -2500;
+    AlarmSchedule schedule;
+    schedule.Reset(config, zones, UtcTime(2026, 10, 25, 0, 0));
+    Check(schedule.Check(config, zones, UtcTime(2026, 10, 25, 1, 10)),
+        "resume before second fold occurrence catches the elapsed first occurrence immediately");
+    Check(schedule.LastDate() == 20261025 && schedule.LastMinute() == 150,
+        "fold catchup consumes the intended local date and minute");
+    Check(schedule.Next() == UtcTime(2026, 10, 26, 1, 30, 2, 500),
+        "catching the first fold suppresses its later twin even with an offset");
+    config.alarmMinute = 45;
+    Check(!schedule.Check(config, zones, UtcTime(2026, 10, 25, 1, 11)),
+        "editing inside the repeated hour does not replay the earlier new-time occurrence");
+    Check(schedule.Next() == UtcTime(2026, 10, 25, 1, 45, 2, 500),
+        "editing inside the fold retains the real future occurrence of the new minute");
+    Check(schedule.Check(config, zones, UtcTime(2026, 10, 25, 1, 45, 2, 500)),
+        "edited future occurrence in repeated hour fires");
+}
+
+/// Cross-checks changing yearly biases using the actual Windows forward converter and long pauses.
+static void TestHistoricalRuleChanges() {
+    const ForwardScenario scenarios[] = {
+        { L"Samoa Standard Time", UtcTime(2011, 12, 30, 0, 0), 8, 0 },
+        { L"Samoa Standard Time", UtcTime(2011, 12, 31, 12, 0), 8, 0 },
+        { L"Bahia Standard Time", UtcTime(2010, 12, 31, 20, 0), 0, 15 },
+        { L"Venezuela Standard Time", UtcTime(2015, 12, 31, 20, 0), 0, 15 },
+        { L"Turks And Caicos Standard Time", UtcTime(2017, 12, 31, 20, 0), 0, 15 }
+    };
+    for (const ForwardScenario& scenario : scenarios) {
+        WidgetConfig config = AlarmConfig(scenario.hour, scenario.minute);
+        config.showUtc = false;
+        config.timeZoneKey = scenario.zone;
+        config.offsetMilliseconds = -2500;
+        AlarmSchedule schedule;
+        schedule.Reset(config, zones, scenario.start);
+        ULONGLONG expected = NextByForwardScan(config, scenario.start);
+        Check(expected != 0 && schedule.Next() == expected,
+            "yearly bias change retains the earliest real future wall-clock occurrence");
+        ULONGLONG resume = scenario.start + 6 * TEST_DAY_TICKS;
+        ULONGLONG latest = 0;
+        int latestDate = -1;
+        while (expected != 0 && expected <= resume) {
+            latest = expected;
+            SYSTEMTIME displayed = DisplayedAt(config, expected);
+            latestDate = displayed.wYear * 10000 + displayed.wMonth * 100 + displayed.wDay;
+            expected = NextByForwardScan(config, expected, latestDate);
+        }
+        Check(latest != 0 && schedule.Check(config, zones, resume),
+            "sleep across yearly rule changes catches an actual elapsed occurrence");
+        Check(schedule.LastDate() == latestDate,
+            "historical catchup selects the latest eligible displayed date");
+        Check(schedule.Next() == expected, "next alarm after historical catchup matches forward search");
+        Check(!schedule.Check(config, zones, resume), "historical catchup cannot run twice");
+    }
+}
+
 /// Requires every inverse conversion to recover the original UTC even when a local year boundary is crossed.
 static void CheckYearBoundary(const wchar_t* key, int year) {
     for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : zones) {
@@ -598,6 +799,10 @@ int main() {
     RequireZone(L"Lord Howe Standard Time");
     RequireZone(L"UTC+05:45");
     RequireZone(L"UTC-03:30");
+    RequireZone(L"Samoa Standard Time");
+    RequireZone(L"Bahia Standard Time");
+    RequireZone(L"Venezuela Standard Time");
+    RequireZone(L"Turks And Caicos Standard Time");
     TestUtc();
     TestEurope();
     TestOtherZones();
@@ -609,6 +814,11 @@ int main() {
     TestForwardAgreement();
     TestPrePipAgreement();
     TestSkippedAndRepeatedSignals();
+    TestInverseCandidates();
+    TestStaticZoneRules();
+    TestInvalidScheduleFields();
+    TestResumeBetweenFoldOccurrences();
+    TestHistoricalRuleChanges();
     CheckYearBoundary(L"Bahia Standard Time", 2011);
     CheckYearBoundary(L"Venezuela Standard Time", 2016);
     CheckYearBoundary(L"Turks And Caicos Standard Time", 2018);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -102,10 +102,10 @@ static void Check(bool condition, const char* name) {
 }
 
 /// Creates a deterministic UTC instant without changing the computer clock.
-static ULONGLONG UtcTime(int day, int hour, int minute, int second = 0) {
+static ULONGLONG UtcDateTime(int year, int month, int day, int hour, int minute, int second = 0) {
     SYSTEMTIME time{};
-    time.wYear = 2026;
-    time.wMonth = 11;
+    time.wYear = static_cast<WORD>(year);
+    time.wMonth = static_cast<WORD>(month);
     time.wDay = static_cast<WORD>(day);
     time.wHour = static_cast<WORD>(hour);
     time.wMinute = static_cast<WORD>(minute);
@@ -118,6 +118,11 @@ static ULONGLONG UtcTime(int day, int hour, int minute, int second = 0) {
     value.LowPart = file.dwLowDateTime;
     value.HighPart = file.dwHighDateTime;
     return value.QuadPart;
+}
+
+/// Supplies the fixed November date used by ordinary scheduling scenarios.
+static ULONGLONG UtcTime(int day, int hour, int minute, int second = 0) {
+    return UtcDateTime(2026, 11, day, hour, minute, second);
 }
 
 /// Substitutes only the selected system zone while retaining the real production timezone conversion.
@@ -629,10 +634,16 @@ static void TestNtp() {
     NtpResult(0, false);
     Check(ntpTimeValid && ntpLastQueryFailed && wakeTimes.size() == armed,
         "failed NTP query preserves accepted time and pending wake");
+    hNtpThread = reinterpret_cast<HANDLE>(4);
+    ntpQueryRunning = true;
     NtpResult(999, true, 1);
     Check(ntpRestarts == 1
         && ntpClockOffset100Nanoseconds == -1200 * static_cast<LONGLONG>(REFRESH_SECOND_TICKS),
         "stale NTP generation cannot change accepted correction");
+    Check(hNtpThread == nullptr && !ntpQueryRunning && timerCloses == 1,
+        "stale NTP result releases the completed worker before requesting its replacement");
+    Check(wakeTimes.size() == armed && alarmStarts.size() == 1,
+        "stale NTP retry preserves the pending wake and cannot dispatch an alarm");
     Begin(UtcTime(2, 7, 50));
     useNtpTime = true;
     AddAlarm(1, 8);
@@ -694,7 +705,223 @@ static void TestApiFailures() {
     Check(alarmStarts.size() == starts, "noncontroller notifications never dispatch duplicate alarms");
 }
 
-/// Runs production alarm integration against simulated clocks and harmless API adapters only.
+/// Keeps fractional widget offsets separate from NTP calibration and the system wake-clock mapping.
+static void TestWakeOffsets() {
+    for (LONGLONG offsetMilliseconds : { -1250LL, 1250LL }) {
+        for (LONGLONG ntpSeconds : { -1800LL, 1800LL }) {
+            Begin(UtcTime(2, 7, 0));
+            useNtpTime = true;
+            ntpTimeValid = true;
+            ntpClockOffset100Nanoseconds = ntpSeconds * REFRESH_SECOND_TICKS;
+            simulatedSystemTime = UtcTime(2, 10, 0);
+            Widget* widget = AddAlarm(1, 8, 0, true, true);
+            widget->config.offsetMilliseconds = offsetMilliseconds;
+            CheckWidgetAlarms();
+            ULONGLONG due = static_cast<ULONGLONG>(static_cast<LONGLONG>(UtcTime(2, 8, 0))
+                - offsetMilliseconds * 10000);
+            ULONGLONG wake = static_cast<ULONGLONG>(static_cast<LONGLONG>(UtcTime(2, 11, 0))
+                - offsetMilliseconds * 10000 - (ntpSeconds + 5) * REFRESH_SECOND_TICKS);
+            Check(widget->alarmSchedule.Next() == due, "widget offset adjusts alarm application UTC");
+            Check(wakeTimes.size() == 1 && wakeTimes.back() == wake,
+                "fractional offset and NTP correction map pips into system UTC independently");
+            ULONGLONG elapsed = due - 5 * REFRESH_SECOND_TICKS - GetApplicationFileTimeValue();
+            simulatedTimeline += elapsed;
+            simulatedSystemTime += elapsed;
+            DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+            Check(alarmStarts.empty() && wakeTimes.back() == wake + 5 * REFRESH_SECOND_TICKS,
+                "resume at offset pre-pip instant keeps alarm pending and rearms its exact instant");
+            Elapse(5);
+            CheckWidgetAlarms();
+            Check(alarmStarts.size() == 1 && alarmStarts[0] == 1,
+                "fractional-offset alarm dispatches exactly once at its displayed minute");
+        }
+    }
+    Begin(UtcTime(2, 7, 0));
+    AddAlarm(1, 8);
+    Widget* laterWithPips = AddAlarm(2, 8, 0, true, true);
+    laterWithPips->config.offsetMilliseconds = -3000;
+    CheckWidgetAlarms();
+    Check(wakeTimes.size() == 1 && wakeTimes.back() == UtcTime(2, 7, 59, 58),
+        "later offset alarm can require an earlier wake for its pre-pips");
+    Elapse(3598);
+    DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+    Check(wakeTimes.back() == UtcTime(2, 8, 0),
+        "after pre-pip wake the earlier actual alarm becomes the next wake target");
+}
+
+/// Checks independently specified UTC transition instants through the complete wake-timer integration.
+static void TestTransitionWakeRequests() {
+    Begin(UtcDateTime(2026, 3, 29, 0, 45));
+    useNtpTime = true;
+    ntpTimeValid = true;
+    ntpClockOffset100Nanoseconds = 30 * REFRESH_SECOND_TICKS;
+    Widget* spring = AddAlarm(1, 3, 0, true, true);
+    spring->config.showUtc = false;
+    spring->config.timeZoneKey = L"Central Europe Standard Time";
+    spring->config.offsetMilliseconds = 90000;
+    CheckWidgetAlarms();
+    Check(spring->alarmSchedule.Next() == UtcDateTime(2026, 3, 29, 0, 58, 30),
+        "spring transition occurs ninety seconds earlier for the positive-offset widget");
+    Check(wakeTimes.size() == 1 && wakeTimes.back() == UtcDateTime(2026, 3, 29, 0, 57, 55),
+        "spring-transition wake includes independent NTP and pre-pip leads");
+    Elapse(14 * 60);
+    DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+    Check(alarmStarts.size() == 1, "late resume catches the offset spring-transition alarm");
+    Begin(UtcDateTime(2026, 10, 25, 0, 0));
+    Widget* autumn = AddAlarm(1, 2, 30, true, true);
+    autumn->config.showUtc = false;
+    autumn->config.timeZoneKey = L"Central Europe Standard Time";
+    autumn->config.offsetMilliseconds = 90000;
+    CheckWidgetAlarms();
+    Check(wakeTimes.size() == 1 && wakeTimes.back() == UtcDateTime(2026, 10, 25, 0, 28, 25),
+        "repeated-hour wake targets the first occurrence with the widget offset");
+    Elapse(28 * 60 + 30);
+    CheckWidgetAlarms();
+    Check(alarmStarts.size() == 1, "first repeated-hour occurrence dispatches");
+    Elapse(3600);
+    DispatchMessage(WM_TIMECHANGE);
+    DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+    Check(alarmStarts.size() == 1
+        && wakeTimes.back() == UtcDateTime(2026, 10, 26, 1, 28, 25),
+        "second repeated-hour occurrence cannot repeat alarm or its wake request");
+    Begin(UtcDateTime(2026, 10, 3, 15, 0));
+    Widget* halfHour = AddAlarm(1, 2, 30, true, true);
+    halfHour->config.showUtc = false;
+    halfHour->config.timeZoneKey = L"Lord Howe Standard Time";
+    halfHour->config.offsetMilliseconds = -90000;
+    CheckWidgetAlarms();
+    Check(halfHour->alarmSchedule.Next() == UtcDateTime(2026, 10, 3, 15, 31, 30)
+        && wakeTimes.back() == UtcDateTime(2026, 10, 3, 15, 31, 25),
+        "half-hour transition and negative widget offset retain five elapsed seconds of lead");
+}
+
+/// Exercises the production reset used when the user explicitly changes the application's time source.
+static void TestSourceChanges() {
+    Begin(UtcTime(2, 7, 50));
+    Widget* widget = AddAlarm(1, 8);
+    CheckWidgetAlarms();
+    useNtpTime = true;
+    ntpTimeValid = true;
+    ntpClockOffset100Nanoseconds = 1200 * REFRESH_SECOND_TICKS;
+    ResetAlarmSchedules();
+    CheckWidgetAlarms();
+    Check(alarmStarts.empty() && widget->alarmSchedule.Next() == UtcTime(3, 8, 0),
+        "explicit source change beyond an alarm does not replay it");
+    Check(wakeTimes.back() == UtcTime(3, 7, 40), "source change immediately remaps the next wake");
+    useNtpTime = false;
+    ResetAlarmSchedules();
+    Check(wakeTimes.back() == UtcTime(2, 8, 0), "returning to system time restores its upcoming alarm");
+    Elapse(600);
+    DispatchMessage(WM_POWERBROADCAST, PBT_APMSUSPEND);
+    Check(alarmStarts.size() == 1, "suspending exactly at alarm time consumes the due alarm");
+    useNtpTime = true;
+    ntpClockOffset100Nanoseconds = -1200 * REFRESH_SECOND_TICKS;
+    ResetAlarmSchedules();
+    Elapse(1200);
+    DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+    Check(alarmStarts.size() == 1 && widget->alarmSchedule.LastDate() == 20261102,
+        "switching source backward retains an already consumed occurrence");
+}
+
+/// Covers the two event orders that can straddle alarm dispatch and acceptance of a fresh NTP sample.
+static void TestResumeNtpOrder() {
+    for (bool validBeforeSleep : { false, true }) {
+        for (bool ntpFirst : { false, true }) {
+            Begin(UtcTime(2, 7, 50));
+            useNtpTime = true;
+            ntpTimeValid = validBeforeSleep;
+            AddAlarm(1, 8);
+            AddAlarm(2, 8, 30);
+            CheckWidgetAlarms();
+            DispatchMessage(WM_POWERBROADCAST, PBT_APMSUSPEND);
+            Elapse(2400);
+            simulatedSystemTime = UtcTime(2, 12, 0);
+            if (ntpFirst) {
+                NtpResult(600 * REFRESH_SECOND_TICKS);
+                DispatchMessage(WM_TIMECHANGE);
+                DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+            } else {
+                DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
+                DispatchMessage(WM_TIMECHANGE);
+                NtpResult(600 * REFRESH_SECOND_TICKS);
+            }
+            bool bothStarted = alarmStarts.size() == 2 && alarmStarts[0] == 1 && alarmStarts[1] == 2;
+            if (!bothStarted) {
+                std::fprintf(stderr, "Resume context: valid NTP before sleep=%d, NTP first=%d, alarms=",
+                    validBeforeSleep, ntpFirst);
+                for (int id : alarmStarts) {
+                    std::fprintf(stderr, " %d", id);
+                }
+                std::fputc('\n', stderr);
+            }
+            Check(bothStarted,
+                "resume, clock correction, and NTP sample each preserve the two elapsed alarm occurrences");
+            Check(wakeTimes.back() == UtcTime(3, 11, 20),
+                "post-resume NTP wake maps the next alarm through the corrected system clock");
+            DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMESUSPEND);
+            NtpResult(600 * REFRESH_SECOND_TICKS);
+            Check(alarmStarts.size() == 2, "duplicate resume and accepted NTP sample do not replay alarms");
+        }
+    }
+}
+
+/// Ensures a failed replacement cancels the former wake and can recover on a forced clock notification.
+static void TestWakeReplacementFailure() {
+    Begin(UtcTime(2, 7, 0));
+    Widget* widget = AddAlarm(1, 8);
+    CheckWidgetAlarms();
+    widget->config.alarmHour = 9;
+    timerSetFails = true;
+    CheckWidgetAlarms();
+    Check(!wakeArmed && timerCancels == 1, "failed wake replacement cancels the stale earlier wake");
+    timerSetFails = false;
+    DispatchMessage(WM_TIMECHANGE);
+    Check(wakeArmed && wakeTimes.back() == UtcTime(2, 9, 0),
+        "clock notification retries the failed replacement with the current alarm time");
+}
+
+/// Checks real timer signal, cancellation, and rearming without suspending Windows or changing its clock.
+static void TestNativeWakeTimerContract() {
+    HANDLE timer = CreateWaitableTimerW(nullptr, TRUE, nullptr);
+    Check(timer != nullptr, "native manual-reset timer creation succeeds");
+    if (timer == nullptr) {
+        return;
+    }
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        FILETIME time{};
+        GetSystemTimeAsFileTime(&time);
+        ULARGE_INTEGER now{};
+        now.LowPart = time.dwLowDateTime;
+        now.HighPart = time.dwHighDateTime;
+        LARGE_INTEGER due{};
+        due.QuadPart = static_cast<LONGLONG>(now.QuadPart + 1000000);
+        SetLastError(ERROR_SUCCESS);
+        BOOL armed = SetWaitableTimer(timer, &due, 0, nullptr, nullptr, TRUE);
+        DWORD error = GetLastError();
+        Check(armed != FALSE, "native absolute resume timer can be armed");
+        if (!armed) {
+            break;
+        }
+        if (error == ERROR_NOT_SUPPORTED) {
+            std::puts("NOTE: Windows reports timer signaling without supported wake from sleep.");
+        }
+        Check(WaitForSingleObject(timer, 2000) == WAIT_OBJECT_0,
+            "native absolute timer signals while the computer remains awake");
+        Check(WaitForSingleObject(timer, 0) == WAIT_OBJECT_0, "native timer retains its manual-reset signal");
+        GetSystemTimeAsFileTime(&time);
+        now.LowPart = time.dwLowDateTime;
+        now.HighPart = time.dwHighDateTime;
+        due.QuadPart = static_cast<LONGLONG>(now.QuadPart + 10 * REFRESH_SECOND_TICKS);
+        armed = SetWaitableTimer(timer, &due, 0, nullptr, nullptr, TRUE);
+        Check(armed != FALSE, "native rearm clears the prior signal");
+        Check(CancelWaitableTimer(timer) != FALSE, "native timer cancellation succeeds");
+        Check(WaitForSingleObject(timer, 0) == WAIT_TIMEOUT, "cancelled rearmed timer remains nonsignaled");
+    }
+    CancelWaitableTimer(timer);
+    CloseHandle(timer);
+}
+
+/// Runs isolated production scheduling and a brief native timer contract without suspending the computer.
 int main() {
     LoadTimeZoneList(&timeZones);
     TestWakeRequests();
@@ -704,9 +931,15 @@ int main() {
     TestZoneChanges();
     TestNtp();
     TestApiFailures();
+    TestWakeOffsets();
+    TestTransitionWakeRequests();
+    TestSourceChanges();
+    TestResumeNtpOrder();
+    TestWakeReplacementFailure();
     CancelAlarmWakeTimer();
+    TestNativeWakeTimerContract();
     if (failures == 0) {
-        std::puts("PASS: wake requests, suspend/resume, clock/zone changes, NTP, and API failures");
+        std::puts("PASS: alarm integration, wake mapping, event ordering, API failures, and native timer");
     }
     return failures == 0 ? 0 : 1;
 }

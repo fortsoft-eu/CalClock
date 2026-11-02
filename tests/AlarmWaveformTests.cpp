@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -279,6 +279,84 @@ static void TestBufferContinuity() {
     Check(reference.front() == 0 && reference.back() == 0, "complete waveform starts and ends at zero");
 }
 
+/// Renders complete pre-alarm sequences, including fractional overlaps, silence and output block boundaries.
+static void TestCompleteSequences() {
+    const LONGLONG cycle = GENERATOR_SAMPLE_RATE / GENERATOR_PIP_FREQUENCY;
+    for (ULONGLONG shift : { 0ULL, 234567ULL }) {
+        TimeSignalOutputRoute route;
+        InitializeRoute(route);
+        route.sequences.push_back(Sequence(TEST_TARGET, true, 50));
+        if (shift != 0) {
+            route.sequences.push_back(Sequence(TEST_TARGET + shift, true, 75));
+        }
+        std::vector<TimeSignalTone> tones =
+            CollectTimeSignalTones(route, TEST_BASE, TEST_TARGET + 10000000);
+        std::vector<TimeSignalTone> merged = MergeTimeSignalTones(tones);
+        Check(merged.size() == 6, "overlapping pre-alarm sequences retain six audible bursts");
+        TimeSignalPhase phase;
+        std::vector<short> reference(GENERATOR_SAMPLE_RATE * 6);
+        RenderTimeSignalSamples(merged, TEST_BASE, 0, &reference, &phase);
+        bool silence = true;
+        bool crossings = true;
+        bool continuous = true;
+        bool audible[6] = {};
+        int previous = 0;
+        for (size_t index = 0; index < reference.size(); ++index) {
+            size_t pip = index / GENERATOR_SAMPLE_RATE;
+            LONGLONG offset = index % GENERATOR_SAMPLE_RATE;
+            ULONGLONG duration = pip == 5 ? 5000000 : 1000000;
+            LONGLONG last =
+                static_cast<LONGLONG>(((duration + shift) * GENERATOR_SAMPLE_RATE + 9999999) / 10000000);
+            last = (last + cycle - 1) / cycle * cycle;
+            if (offset > last) {
+                silence = silence && reference[index] == 0;
+            } else {
+                audible[pip] = audible[pip] || reference[index] != 0;
+            }
+            if (offset % (cycle / 2) == 0) {
+                crossings = crossings && reference[index] == 0;
+            }
+            continuous = continuous && std::abs(reference[index] - previous) <= 6000;
+            previous = reference[index];
+        }
+        Check(silence, "whole pre-alarm sequence is silent between pips and after the final pip");
+        Check(crossings, "fractional overlaps preserve exact zero crossings in every pip");
+        Check(continuous, "full pre-alarm sequence has no discontinuous amplitude step");
+        for (bool pipAudible : audible) {
+            Check(pipAudible, "every scheduled pip produces nonzero PCM samples");
+        }
+        Check(!phase.active, "full pre-alarm sequence releases the oscillator after its final pip");
+        for (size_t size : { 959U, 960U, 961U }) {
+            route.sequences.clear();
+            route.sequences.push_back(Sequence(TEST_TARGET, true, 50));
+            if (shift != 0) {
+                route.sequences.push_back(Sequence(TEST_TARGET + shift, true, 75));
+            }
+            TimeSignalPhase blockPhase;
+            size_t first = 0;
+            bool equal = true;
+            bool endsAtZero = true;
+            while (first < reference.size()) {
+                ULONGLONG from = TEST_BASE + first * FILE_TIME_TICKS_PER_SECOND / GENERATOR_SAMPLE_RATE;
+                ULONGLONG retainedFrom = std::max(TEST_BASE, from - FILE_TIME_TICKS_PER_MILLISECOND);
+                tones = CollectTimeSignalTones(route, retainedFrom, from + FILE_TIME_TICKS_PER_SECOND);
+                std::vector<TimeSignalTone> current = MergeTimeSignalTones(tones);
+                std::vector<short> block(size);
+                RenderTimeSignalSamples(current, TEST_BASE, static_cast<LONGLONG>(first),
+                    &block, &blockPhase, true);
+                endsAtZero = endsAtZero && block.back() == 0;
+                for (size_t index = 0; index < block.size() && first + index < reference.size(); ++index) {
+                    equal = equal && block[index] == reference[first + index];
+                }
+                first += block.size();
+            }
+            Check(equal, "whole pre-alarm sequence is identical across output buffer boundaries");
+            Check(endsAtZero, "all pre-alarm output blocks end at zero");
+        }
+        DestroyRoute(route);
+    }
+}
+
 /// Changes gain and overlap ownership during one uninterrupted tone, then tests cancellation at arbitrary
 /// phases.
 static void TestLiveChanges() {
@@ -378,6 +456,7 @@ int main() {
     TestCollection();
     TestMergeAndPreview();
     TestBufferContinuity();
+    TestCompleteSequences();
     TestLiveChanges();
     TestCancellationIsolation();
     Check(forbiddenPlaybackCalls == 0, "offline scenarios never enter a hardware playback path");

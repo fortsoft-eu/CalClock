@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -58,6 +58,7 @@ static int settingsVisualPreviewWidgetId = -1;
 static bool timeSignalVolumeDragging = false;
 static bool generatedTimeSignal = true;
 static bool failPlayback = false;
+static bool failAudioPlayback = false;
 static double timeSignalVolume = TIME_SIGNAL_VOLUME_DEFAULT;
 static int signalStarts = 0;
 static int signalCancels = 0;
@@ -69,6 +70,10 @@ static int renders = 0;
 static bool audioMuted = false;
 static bool audioLoop = false;
 static int audioVolume = 0;
+static int audioWidgetId = 0;
+static ULONG audioGeneration = 0;
+static UINT audioFinishedMessage = 0;
+static std::wstring lastAudioPath;
 static std::wstring lastCommand;
 static std::wstring lastRemote;
 
@@ -179,15 +184,22 @@ bool LooksLikeAudio(const std::wstring& path) {
 }
 
 /// Captures audio options and returns only private kernel events, never an audio worker.
-bool StartAudioPlaybackAsync(const std::wstring&, bool loop, bool muted,
-        const std::shared_ptr<std::atomic<int>>& volume, HWND, UINT, int, ULONG,
-        HANDLE* stopEvent, HANDLE* muteEvent) {
+bool StartAudioPlaybackAsync(const std::wstring& path, bool loop, bool muted,
+        const std::shared_ptr<std::atomic<int>>& volume, HWND notifyWindow, UINT message, int id,
+        ULONG generation, HANDLE* stopEvent, HANDLE* muteEvent) {
     audioStarts++;
+    lastAudioPath = path;
     audioMuted = muted;
     audioLoop = loop;
     audioVolume = volume->load();
+    audioWidgetId = id;
+    audioGeneration = generation;
+    audioFinishedMessage = message;
+    if (failAudioPlayback) {
+        return false;
+    }
     *stopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-    *muteEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    *muteEvent = CreateEventW(nullptr, TRUE, muted, nullptr);
     Require(*stopEvent != nullptr && *muteEvent != nullptr, "private audio events");
     return true;
 }
@@ -246,9 +258,11 @@ static void Reset(ULONGLONG now) {
     applicationOffset = currentTimeSignalOffset = 0;
     generatedTimeSignal = true;
     failPlayback = false;
+    failAudioPlayback = false;
     signalStarts = signalCancels = audioStarts = commandStarts = remoteStarts = raises = renders = 0;
     lastCommand.clear();
     lastRemote.clear();
+    lastAudioPath.clear();
 }
 
 /// Adds a clock fixture with a default UTC alarm and independent occurrence history.
@@ -380,12 +394,90 @@ static void TestActions() {
     AudioFinished(999, 1);
 }
 
+/// Keeps a worker-side event reference so cancellation can be observed after its owner closes the handle.
+static HANDLE ObserveEvent(HANDLE event) {
+    HANDLE observer = nullptr;
+    Require(DuplicateHandle(GetCurrentProcess(), event, GetCurrentProcess(), &observer,
+        SYNCHRONIZE, FALSE, 0) != FALSE, "duplicate private event for worker-side observation");
+    return observer;
+}
+
+/// Checks action opt-outs and independent remote dispatch after an audio-start failure.
+static void TestActionFailure() {
+    Reset(Utc(2026, 11, 2, 7, 59, 54));
+    Widget* widget = AddClock(1);
+    widget->config.command = L"fixture.wav";
+    widget->config.remoteScriptUrl = L"https://example.invalid/independent";
+    widget->config.soundsMuted = true;
+    StartWidgetAlarm(widget);
+    Require(widget->alarmActive && audioStarts == 0 && commandStarts == 0 && remoteStarts == 0,
+        "disabled actions remain disabled even when their saved fields are populated");
+    widget->config.runCommand = true;
+    widget->config.command.clear();
+    StartWidgetAlarm(widget);
+    Require(audioStarts == 0 && commandStarts == 0, "an empty command is never dispatched");
+    widget->config.command = L"fixture.wav";
+    widget->config.callRemoteScript = true;
+    failAudioPlayback = true;
+    StartWidgetAlarm(widget);
+    Require(audioStarts == 1 && widget->audioStopEvent == nullptr && widget->audioMuteEvent == nullptr,
+        "failed audio startup leaves no owned playback handles");
+    Require(widget->alarmActive && widget->flashPhase && remoteStarts == 1,
+        "failed or muted audio does not suppress the visual alarm or independent remote action");
+    widget->config.command = L"fixture-command";
+    StartWidgetAlarm(widget);
+    Require(commandStarts == 1 && remoteStarts == 2,
+        "a muted widget still dispatches its local command and remote action");
+}
+
+/// Checks worker cancellation and completion isolation across two simultaneous alarm audio streams.
+static void TestAudioStopIsolation() {
+    Reset(Utc(2026, 11, 2, 7, 59, 54));
+    Widget* first = AddClock(1);
+    Widget* second = AddClock(2);
+    first->config.runCommand = second->config.runCommand = true;
+    first->config.command = second->config.command = L"fixture.wav";
+    first->config.alarmVolume = -1837;
+    StartWidgetAlarm(first);
+    Require(lastAudioPath == first->config.command
+        && audioVolume == -1837
+        && audioWidgetId == first->config.id
+        && audioGeneration == first->audioGeneration
+        && audioFinishedMessage == WM_AUDIO_FINISHED,
+        "audio dispatch preserves path, precise volume, widget identity and completion generation");
+    HANDLE firstObserver = ObserveEvent(first->audioStopEvent);
+    ULONG firstGeneration = first->audioGeneration;
+    StartWidgetAlarm(second);
+    HANDLE secondObserver = ObserveEvent(second->audioStopEvent);
+    HANDLE secondOwner = second->audioStopEvent;
+    StopWidgetAlarm(first);
+    Require(WaitForSingleObject(firstObserver, 0) == WAIT_OBJECT_0,
+        "stopping one alarm signals its worker before closing the owner handle");
+    Require(WaitForSingleObject(secondObserver, 0) == WAIT_TIMEOUT
+        && second->audioStopEvent == secondOwner
+        && second->alarmActive, "stopping one alarm leaves another audio stream running");
+    Require(first->audioStopEvent == nullptr && first->audioMuteEvent == nullptr && !first->alarmActive,
+        "stopped alarm releases its handles and visual state");
+    widgets.erase(widgets.begin());
+    AudioFinished(1, firstGeneration);
+    Require(second->audioStopEvent == secondOwner && second->alarmActive,
+        "completion for a removed widget cannot affect a surviving alarm");
+    StopAllAlarms();
+    Require(WaitForSingleObject(secondObserver, 0) == WAIT_OBJECT_0
+        && second->audioStopEvent == nullptr
+        && !second->alarmActive, "stop all signals and releases the remaining audio stream");
+    CloseHandle(firstObserver);
+    CloseHandle(secondObserver);
+}
+
 /// Runs production alarm dispatch and signal-contributor code with inert external actions.
 int main() {
     LoadTimeZoneList(&timeZones);
     TestContributors();
     TestTiming();
     TestActions();
+    TestActionFailure();
+    TestAudioStopIsolation();
     Reset(0);
     std::puts("PASS: alarm actions, shared pips, cancellation, output routing and stale audio completion");
     return 0;

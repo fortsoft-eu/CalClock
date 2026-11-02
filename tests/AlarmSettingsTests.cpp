@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.0
  */
 
 #define NOMINMAX
@@ -96,6 +96,8 @@ static int testLocalCalls = 0;
 static int testRemoteCalls = 0;
 static int testAudioCalls = 0;
 static int testSaveCalls = 0;
+static int testMessageCalls = 0;
+static bool testAudioFails = false;
 static std::wstring testXmlPath;
 static SettingsSnapshot testSavedSnapshot;
 
@@ -206,6 +208,7 @@ static void TestRemoveSettings() {}
 
 /// Keeps message boxes out of the user desktop and permits validation tests to return normally.
 static int WINAPI TestMessageBoxW(HWND owner, LPCWSTR text, LPCWSTR title, UINT type) {
+    ++testMessageCalls;
     return IDOK;
 }
 
@@ -224,8 +227,11 @@ static bool TestStartAudioPlaybackAsync(const std::wstring& path, bool loop, boo
         const std::shared_ptr<std::atomic<int>>& volume, HWND window, UINT message, int id, ULONG generation,
         HANDLE* stop, HANDLE* mute) {
     ++testAudioCalls;
+    if (testAudioFails) {
+        return false;
+    }
     *stop = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-    *mute = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    *mute = CreateEventW(nullptr, TRUE, muted, nullptr);
     return *stop != nullptr && *mute != nullptr;
 }
 
@@ -471,6 +477,7 @@ static void TestPersistence() {
     snapshot.widgets.push_back(AlarmConfiguration(1));
     WidgetConfig disabled = AlarmConfiguration(2);
     disabled.alarmEnabled = false;
+    disabled.alarmWakeComputer = false;
     snapshot.widgets.push_back(disabled);
     Require(WriteSettingsXml(testXmlPath, snapshot), "write isolated alarm settings XML");
     SettingsSnapshot restored{};
@@ -491,6 +498,248 @@ static void TestPersistence() {
         Require(SameAlarm(copied[0], snapshot.widgets[0]) && SameAlarm(copied[1], snapshot.widgets[1]),
             "clipboard preserves all enabled and disabled alarm fields");
     }
+}
+
+/// Checks legacy and malformed wake attributes cannot opt a user into waking the computer.
+static void TestWakePersistenceDefaults() {
+    for (int type = 0; type < WIDGET_TYPE_COUNT; ++type) {
+        WidgetConfig defaults = DefaultConfig(static_cast<WidgetType>(type), 0);
+        Require(!defaults.alarmWakeComputer, "every widget type defaults to no computer wake");
+    }
+    std::vector<WidgetConfig> source{ AlarmConfiguration(1) };
+    std::vector<BYTE> bytes;
+    Require(SerializeWidgetClipboardData(source, &bytes), "serialize wake persistence fixture");
+    std::string xml(bytes.begin(), bytes.end());
+    const std::string attribute = " alarmWakeComputer=\"1\"";
+    size_t position = xml.find(attribute);
+    Require(position != std::string::npos, "serialized fixture explicitly enables computer wake");
+    if (position == std::string::npos) {
+        return;
+    }
+    const char* replacements[] = { "", " alarmWakeComputer=\"not-a-number\"", " alarmWakeComputer=\"0\"" };
+    for (const char* replacement : replacements) {
+        std::string changed = xml;
+        changed.replace(position, attribute.size(), replacement);
+        bytes.assign(changed.begin(), changed.end());
+        std::vector<WidgetConfig> restored = source;
+        Require(DeserializeWidgetClipboardData(bytes, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
+            "older or malformed optional wake value does not reject otherwise valid settings");
+        Require(restored.size() == 1, "wake fixture restores one widget");
+        if (restored.size() == 1) {
+            WidgetConfig expected = source.front();
+            expected.alarmWakeComputer = false;
+            Require(SameAlarm(restored.front(), expected),
+                "absent, malformed or false wake preserves other preferences and stays disabled");
+        }
+    }
+}
+
+/// Writes one fixture DWORD into the isolated registry tree without calling the production writer.
+static void WriteRegistryFixtureNumber(HKEY key, const wchar_t* name, DWORD value) {
+    LSTATUS status = RegSetValueExW(key, name, 0, REG_DWORD,
+        reinterpret_cast<const BYTE*>(&value), sizeof(value));
+    Require(status == ERROR_SUCCESS, "write isolated registry number");
+}
+
+/// Writes an exact fixture string into the isolated registry tree.
+static void WriteRegistryFixtureText(HKEY key, const wchar_t* name, const std::wstring& value) {
+    DWORD bytes = static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t));
+    LSTATUS status = RegSetValueExW(key, name, 0, REG_SZ,
+        reinterpret_cast<const BYTE*>(value.c_str()), bytes);
+    Require(status == ERROR_SUCCESS, "write isolated registry text");
+}
+
+/// Reads real registry preferences under a process-local override; never invokes the destructive writer.
+static void TestRegistryReader() {
+    std::wstring path = L"Software\\CalClockAlarmSettingsTests-"
+        + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(GetTickCount64());
+    HKEY isolated = nullptr;
+    DWORD disposition = 0;
+    LSTATUS status = RegCreateKeyExW(HKEY_CURRENT_USER, path.c_str(), 0, nullptr, REG_OPTION_VOLATILE,
+        KEY_ALL_ACCESS, nullptr, &isolated, &disposition);
+    Require(status == ERROR_SUCCESS && disposition == REG_CREATED_NEW_KEY,
+        "create a new isolated registry tree");
+    if (status != ERROR_SUCCESS || disposition != REG_CREATED_NEW_KEY) {
+        if (isolated != nullptr) {
+            RegCloseKey(isolated);
+        }
+        return;
+    }
+    HKEY collection = nullptr;
+    HKEY item = nullptr;
+    status = RegCreateKeyExW(isolated, L"Software\\FortSoft\\CalClock\\Widgets", 0, nullptr,
+        REG_OPTION_VOLATILE, KEY_ALL_ACCESS, nullptr, &collection, nullptr);
+    Require(status == ERROR_SUCCESS, "create isolated widget collection");
+    if (status == ERROR_SUCCESS) {
+        WriteRegistryFixtureNumber(collection, L"Count", 1);
+        status = RegCreateKeyExW(collection, L"0", 0, nullptr, REG_OPTION_VOLATILE,
+            KEY_ALL_ACCESS, nullptr, &item, nullptr);
+        Require(status == ERROR_SUCCESS, "create isolated widget key");
+    }
+    if (item != nullptr) {
+        WidgetConfig expected = AlarmConfiguration(1);
+        WriteRegistryFixtureNumber(item, L"Id", 1);
+        WriteRegistryFixtureNumber(item, L"Type", WIDGET_DIGITAL);
+        WriteRegistryFixtureNumber(item, L"AlarmDays", expected.alarmDays);
+        WriteRegistryFixtureNumber(item, L"AlarmTimeSignal", 1);
+        WriteRegistryFixtureNumber(item, L"AlarmHour", expected.alarmHour);
+        WriteRegistryFixtureNumber(item, L"AlarmMinute", expected.alarmMinute);
+        WriteRegistryFixtureNumber(item, L"RunCommand", 1);
+        WriteRegistryFixtureNumber(item, L"LoopAudio", 1);
+        WriteRegistryFixtureNumber(item, L"AlarmVolume", static_cast<DWORD>(expected.alarmVolume));
+        WriteRegistryFixtureNumber(item, L"CallRemoteScript", 1);
+        WriteRegistryFixtureText(item, L"Command", expected.command);
+        WriteRegistryFixtureText(item, L"RemoteScriptUrl", expected.remoteScriptUrl);
+        status = RegOverridePredefKey(HKEY_CURRENT_USER, isolated);
+        Require(status == ERROR_SUCCESS, "install process-local registry override");
+        if (status == ERROR_SUCCESS) {
+            for (int scenario = 0; scenario < 4; ++scenario) {
+                expected.alarmEnabled = scenario % 2 == 0;
+                expected.alarmWakeComputer = scenario == 0;
+                WriteRegistryFixtureNumber(item, L"AlarmEnabled", expected.alarmEnabled);
+                if (scenario < 2) {
+                    WriteRegistryFixtureNumber(item, L"AlarmWakeComputer", expected.alarmWakeComputer);
+                } else if (scenario == 2) {
+                    Require(RegDeleteValueW(item, L"AlarmWakeComputer") == ERROR_SUCCESS,
+                        "remove optional wake value from older registry fixture");
+                } else {
+                    WriteRegistryFixtureText(item, L"AlarmWakeComputer", L"1");
+                }
+                SettingsSnapshot defaults{};
+                SettingsSnapshot restored{};
+                Require(ReadRegistrySettings(defaults, CreateStoredWidgetDefaults, &restored),
+                    "read isolated native registry settings");
+                Require(restored.widgets.size() == 1, "registry reader restores one fixture");
+                if (restored.widgets.size() == 1) {
+                    Require(SameAlarm(restored.widgets.front(), expected),
+                        "registry reader retains alarm values and requires an explicit valid wake value");
+                }
+            }
+            Require(RegOverridePredefKey(HKEY_CURRENT_USER, nullptr) == ERROR_SUCCESS,
+                "restore the process current-user registry mapping");
+        }
+        RegCloseKey(item);
+    }
+    if (collection != nullptr) {
+        RegCloseKey(collection);
+    }
+    RegCloseKey(isolated);
+    Require(RegDeleteTreeW(HKEY_CURRENT_USER, path.c_str()) == ERROR_SUCCESS,
+        "remove only the newly created isolated registry tree");
+}
+
+/// Verifies command availability and rejected previews without launching any external action.
+static void TestPreviewValidation() {
+    WidgetConfig expected = AlarmConfiguration(1);
+    LoadAlarm(expected);
+    const wchar_t* blankCommands[] = { L"", L" \t\r\n" };
+    int audioBefore = testAudioCalls;
+    int localBefore = testLocalCalls;
+    int remoteBefore = testRemoteCalls;
+    for (const wchar_t* command : blankCommands) {
+        SetControlText(hCommandEdit, command);
+        UpdateSettingControlAvailability();
+        Require(!IsWindowEnabled(hTestCommandButton), "blank command cannot start an alarm test");
+        Require(!IsWindowEnabled(hLoopAudioCheck), "blank command disables repeat playback");
+        TestSettingsCommand();
+        Require(!settingsCommandTestActive, "blank command does not start a preview");
+    }
+    SetControlText(hCommandEdit, expected.command.c_str());
+    SetControlText(hRemoteScriptEdit, L"file:///invalid-remote-command");
+    int messagesBefore = testMessageCalls;
+    TestSettingsCommand();
+    Require(testMessageCalls == messagesBefore + 1, "invalid enabled remote URL reports validation");
+    Require(!settingsCommandTestActive && !settingsVisualPreviewActive,
+        "rejected remote URL does not leave a partial preview");
+    Require(testAudioCalls == audioBefore && testLocalCalls == localBefore
+        && testRemoteCalls == remoteBefore, "invalid preview does not dispatch any action");
+    LoadAlarm(expected);
+}
+
+/// Exercises stale preview completions and audio-start failure through production message handling.
+static void TestPreviewLifetime() {
+    WidgetConfig expected = AlarmConfiguration(1);
+    LoadAlarm(expected);
+    Widget* widget = widgets[0].get();
+    widget->config = expected;
+    widget->config.visible = true;
+    TestSettingsCommand();
+    ULONG stoppedGeneration = settingsPreviewGeneration;
+    StopSettingsPreview();
+    Require(!settingsCommandTestActive && !widget->alarmActive, "stopping a test ends its visual alarm");
+    TestSettingsCommand();
+    HANDLE currentStop = settingsPreviewStopEvent;
+    HANDLE currentMute = settingsPreviewMuteEvent;
+    WindowProc(hController, WM_SETTINGS_AUDIO_FINISHED, 0, stoppedGeneration);
+    Require(settingsPreviewStopEvent == currentStop && settingsPreviewMuteEvent == currentMute,
+        "stale preview completion cannot close the current preview handles");
+    Require(settingsCommandTestActive && widget->alarmActive,
+        "stale preview completion cannot stop the current visual test");
+    WindowProc(hController, WM_SETTINGS_AUDIO_FINISHED, 0, settingsPreviewGeneration);
+    Require(settingsPreviewStopEvent == nullptr && settingsPreviewMuteEvent == nullptr,
+        "current preview completion releases audio handles");
+    Require(settingsCommandTestActive && widget->alarmActive,
+        "visual preview remains stoppable after its audio finishes");
+    stoppedGeneration = settingsPreviewGeneration;
+    StopSettingsPreview();
+    WindowProc(hController, WM_SETTINGS_AUDIO_FINISHED, 0, stoppedGeneration);
+    Require(!settingsCommandTestActive && !widget->alarmActive,
+        "completion after stopping cannot restart a preview");
+    testAudioFails = true;
+    int remoteBefore = testRemoteCalls;
+    TestSettingsCommand();
+    Require(settingsPreviewStopEvent == nullptr && settingsPreviewMuteEvent == nullptr,
+        "failed audio startup leaves no preview handles");
+    Require(settingsVisualPreviewActive && widget->alarmActive && testRemoteCalls == remoteBefore + 1,
+        "audio startup failure preserves independent visual and remote previews");
+    StopSettingsPreview();
+    testAudioFails = false;
+    widget->config.visible = false;
+}
+
+/// Checks live mute events and restoration of only the widgets muted by the global command.
+static void TestLiveMute() {
+    WidgetConfig expected = AlarmConfiguration(1);
+    LoadAlarm(expected);
+    Widget* first = widgets[0].get();
+    Widget* second = widgets[1].get();
+    first->config = expected;
+    second->config = AlarmConfiguration(2);
+    first->config.visible = second->config.visible = true;
+    second->config.soundsMuted = true;
+    StartWidgetAlarm(first);
+    StartWidgetAlarm(second);
+    TestSettingsCommand();
+    Require(WaitForSingleObject(second->audioMuteEvent, 0) == WAIT_OBJECT_0,
+        "already-muted widget starts its audio muted");
+    ApplyWidgetSoundsMuted(first, true);
+    Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_OBJECT_0
+        && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_OBJECT_0,
+        "muting a widget also mutes its current audio and preview");
+    Require(WaitForSingleObject(first->audioStopEvent, 0) == WAIT_TIMEOUT
+        && WaitForSingleObject(settingsPreviewStopEvent, 0) == WAIT_TIMEOUT,
+        "muting does not stop audio or preview playback");
+    ApplyWidgetSoundsMuted(first, false);
+    Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_TIMEOUT
+        && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_TIMEOUT,
+        "unmuting restores audio and preview without restarting them");
+    lastMutedWidgetIds.clear();
+    ToggleAllWidgetSounds();
+    Require(first->config.soundsMuted && second->config.soundsMuted,
+        "global mute mutes the remaining audible widget");
+    ToggleAllWidgetSounds();
+    Require(!first->config.soundsMuted && second->config.soundsMuted,
+        "global unmute preserves the previously muted widget");
+    Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_TIMEOUT
+        && WaitForSingleObject(second->audioMuteEvent, 0) == WAIT_OBJECT_0,
+        "global mute restoration updates the correct live audio events");
+    StopSettingsPreview();
+    Require(first->alarmActive && second->alarmActive, "stopping preview preserves both real alarms");
+    StopAllAlarms();
+    lastMutedWidgetIds.clear();
+    first->config = AlarmConfiguration(1);
+    second->config = AlarmConfiguration(2);
+    LoadAlarm(AlarmConfiguration(1));
 }
 
 /// Commits the real draft and toggles the context-menu alarm while redirecting saved snapshots to memory.
@@ -595,7 +844,12 @@ int wmain(int argc, wchar_t** argv) {
         TestDisabledValidation();
         TestRebuild();
         TestPersistence();
+        TestWakePersistenceDefaults();
+        TestRegistryReader();
         TestApplyAndMenu();
+        TestPreviewValidation();
+        TestPreviewLifetime();
+        TestLiveMute();
         TestPreviewOverlap();
         DestroySettingsChildControls();
         DestroyWindow(hSettings);
