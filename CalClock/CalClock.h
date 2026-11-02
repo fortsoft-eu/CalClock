@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.1
  */
 
 #pragma once
@@ -625,6 +625,12 @@ HFONT CreateApplicationUiFont(HWND window);
 /// Creates the application font if needed, applies font and theme settings to a form and its children,
 /// and requests repainting.
 void ApplyUiStyle(HWND window);
+
+/// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
+void UpdateApplicationWindowIcons(HWND window);
+
+/// Detaches and releases the owned caption and task-switcher icons before the window is destroyed.
+void ReleaseApplicationWindowIcons(HWND window);
 
 /// Updates each open information form through its own content and layout implementation.
 void RefreshInformationWindows();

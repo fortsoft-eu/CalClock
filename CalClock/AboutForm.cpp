@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.1
  */
 
 #define NOMINMAX
@@ -536,10 +536,12 @@ INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
         return TRUE;
     }
     if (message == WM_THEMECHANGED || message == WM_SETTINGCHANGE) {
+        UpdateApplicationWindowIcons(window);
         ApplyStyle(true);
         return TRUE;
     }
     if (message == WM_DPICHANGED) {
+        UpdateApplicationWindowIcons(window);
         const RECT* bounds = reinterpret_cast<const RECT*>(lParam);
         SetWindowPos(window, nullptr, bounds->left, bounds->top, bounds->right - bounds->left,
             bounds->bottom - bounds->top, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -547,6 +549,7 @@ INT_PTR AboutForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
         return TRUE;
     }
     if (message == WM_NCDESTROY) {
+        ReleaseApplicationWindowIcons(window);
         if (tooltip != nullptr) {
             DestroyWindow(tooltip);
             tooltip = nullptr;
@@ -623,12 +626,7 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
     SendDlgItemMessageW(window, ID_INFO_TEXT, EM_SETLIMITTEXT, 0x7FFFFFFE, 0);
     HWND text = GetDlgItem(window, ID_INFO_TEXT);
     SendMessageW(text, EM_SETWORDBREAKPROC, 0, reinterpret_cast<LPARAM>(InformationWordBreakProc));
-    HICON largeIcon = static_cast<HICON>(LoadImageW(instance, MAKEINTRESOURCEW(IDI_CLOCK),
-        IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_SHARED));
-    HICON smallIcon = static_cast<HICON>(LoadImageW(instance, MAKEINTRESOURCEW(IDI_CLOCK),
-        IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED));
-    SendMessageW(window, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(largeIcon));
-    SendMessageW(window, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(smallIcon));
+    UpdateApplicationWindowIcons(window);
     if (!SetWindowSubclass(text, InformationTextSubclassProc, INFORMATION_TEXT_SUBCLASS_ID, 0)
             || !SetWindowSubclass(text, AboutLicenseSubclassProc, ABOUT_LICENSE_SUBCLASS_ID, 0)) {
         DestroyWindow(window);

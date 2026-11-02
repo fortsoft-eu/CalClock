@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.1.1
  */
 
 #pragma once
@@ -73,9 +73,9 @@ private:
     /// size.
     void FitToWorkArea() const;
 
-    /// Decodes the embedded UTF-8 license, removes an optional BOM and a case-insensitive MIT License heading,
-    /// and trims outer whitespace. Accepts whitespace between heading words, preserves the license body, and
-    /// normalizes line endings for the edit control.
+    /// Decodes the embedded UTF-8 license, removes an optional BOM and a case-insensitive MIT License
+    /// heading, and trims outer whitespace. Accepts whitespace between heading words, preserves the license
+    /// body, and normalizes line endings for the edit control.
     std::wstring LoadLicenseText() const;
 
     /// Opens the About website and reports failures in the selected application language.

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.1.1
  */
 
 #define NOMINMAX
@@ -91,6 +91,7 @@
 
 /// Function pointer types
 typedef LCID(WINAPI* GetUserDefaultLcidProc)();
+typedef int(WINAPI* GetSystemMetricsForDpiProc)(int index, UINT dpi);
 typedef BOOL(WINAPI* AdjustWindowRectExForDpiProc)(LPRECT rectangle, DWORD style, BOOL menu,
     DWORD extendedStyle, UINT dpi);
 typedef int(WINAPI* GetLocaleInfoWProc)(LCID locale, LCTYPE type, LPWSTR data, int characters);
@@ -8084,16 +8085,65 @@ static void ToggleAllFromTray() {
     RestoreLastHiddenWidgets();
 }
 
+/// Loads an owned application icon at the target window's native small or large icon size.
+static HICON LoadApplicationIcon(HWND window, bool smallIcon) {
+    HMODULE module = GetModuleHandleW(L"user32.dll");
+    GetSystemMetricsForDpiProc getMetrics = nullptr;
+    if (module != nullptr) {
+        getMetrics = reinterpret_cast<GetSystemMetricsForDpiProc>(
+            GetProcAddress(module, "GetSystemMetricsForDpi"));
+    }
+    HICON icon = nullptr;
+    HRESULT result;
+    if (getMetrics != nullptr) {
+        UINT dpi = GetSystemDialogDpi(window);
+        int width = getMetrics(smallIcon ? SM_CXSMICON : SM_CXICON, dpi);
+        int height = getMetrics(smallIcon ? SM_CYSMICON : SM_CYICON, dpi);
+        result = LoadIconWithScaleDown(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), width, height, &icon);
+    } else {
+        result = LoadIconMetric(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), smallIcon ? LIM_SMALL : LIM_LARGE,
+            &icon);
+    }
+    return SUCCEEDED(result) ? icon : nullptr;
+}
+
+/// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
+void UpdateApplicationWindowIcons(HWND window) {
+    for (WPARAM type = ICON_SMALL; type <= ICON_BIG; ++type) {
+        HICON icon = LoadApplicationIcon(window, type == ICON_SMALL);
+        if (icon != nullptr) {
+            HICON previous = reinterpret_cast<HICON>(
+                SendMessageW(window, WM_SETICON, type, reinterpret_cast<LPARAM>(icon)));
+            if (previous != nullptr) {
+                DestroyIcon(previous);
+            }
+        }
+    }
+}
+
+/// Detaches and releases the owned caption and task-switcher icons before the window is destroyed.
+void ReleaseApplicationWindowIcons(HWND window) {
+    for (WPARAM type = ICON_SMALL; type <= ICON_BIG; ++type) {
+        HICON icon = reinterpret_cast<HICON>(SendMessageW(window, WM_SETICON, type, 0));
+        if (icon != nullptr) {
+            DestroyIcon(icon);
+        }
+    }
+}
+
 /// Creates the notification-area icon with localized tooltip text and negotiates version 4 notification
 /// behavior.
 static void AddTrayIcon() {
+    if (trayIcon.hIcon != nullptr) {
+        DestroyIcon(trayIcon.hIcon);
+    }
     trayIcon = {};
     trayIcon.cbSize = sizeof(trayIcon);
     trayIcon.hWnd = hController;
     trayIcon.uID = 1;
     trayIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_SHOWTIP;
     trayIcon.uCallbackMessage = WM_TRAYICON;
-    trayIcon.hIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK));
+    trayIcon.hIcon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true);
     wcscpy_s(trayIcon.szTip, T(TXT_APP));
     Shell_NotifyIconW(NIM_ADD, &trayIcon);
     trayIcon.uVersion = NOTIFYICON_VERSION_4;
@@ -8105,18 +8155,30 @@ static void RemoveTrayIcon() {
     if (trayIcon.cbSize != 0) {
         Shell_NotifyIconW(NIM_DELETE, &trayIcon);
     }
+    if (trayIcon.hIcon != nullptr) {
+        DestroyIcon(trayIcon.hIcon);
+    }
     trayIcon = {};
     trayUsesVersion4 = false;
 }
 
-/// Updates an existing notification-area icon's localized tooltip.
+/// Refreshes the notification-area icon for the taskbar DPI and updates its localized tooltip.
 static void UpdateTrayIcon() {
     if (trayIcon.cbSize == 0) {
         return;
     }
+    HICON previous = trayIcon.hIcon;
+    HICON icon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true);
     trayIcon.uFlags = NIF_TIP | NIF_SHOWTIP;
+    if (icon != nullptr) {
+        trayIcon.hIcon = icon;
+        trayIcon.uFlags |= NIF_ICON;
+    }
     wcscpy_s(trayIcon.szTip, T(TXT_APP));
     Shell_NotifyIconW(NIM_MODIFY, &trayIcon);
+    if (icon != nullptr && previous != nullptr) {
+        DestroyIcon(previous);
+    }
 }
 
 /// Applies a widget context-menu command, synchronizing settings and recreating or redrawing the widget
@@ -10352,6 +10414,12 @@ static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wPa
     if (message == WM_DPICHANGED || message == WM_DISPLAYCHANGE) {
         UpdateApplicationFontAntialiasingCombo();
     }
+    if (message == WM_DPICHANGED || message == WM_SETTINGCHANGE) {
+        UpdateApplicationWindowIcons(window);
+    }
+    if (message == WM_NCDESTROY) {
+        ReleaseApplicationWindowIcons(window);
+    }
     return FALSE;
 }
 
@@ -12009,7 +12077,7 @@ static void ReadAppearanceControls(WidgetConfig& config) {
         config.size = sizes[sizeIndex];
     }
     for (int index = 0; index < ADDITIONAL_CLOCK_COUNT; index++) {
-        config.additionalClocks[index].size = 
+        config.additionalClocks[index].size =
             GetSelectedAnalogClockSize(config.additionalClocks[index].size, hAdditionalSizeCombos[index]);
     }
     config.opacity = std::clamp(static_cast<int>(SendMessageW(hOpacityTrackBar, TBM_GETPOS, 0, 0)),
@@ -15431,9 +15499,7 @@ static void CreateSettingsWindow(int widgetId) {
     if (hSettings == nullptr) {
         return;
     }
-    HICON windowIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_CLOCK));
-    SendMessageW(hSettings, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(windowIcon));
-    SendMessageW(hSettings, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(windowIcon));
+    UpdateApplicationWindowIcons(hSettings);
     std::wstring title = BuildApplicationWindowTitle(TXT_SETTINGS_WINDOW_TITLE);
     SetWindowTextW(hSettings, title.c_str());
     RECT content = {};
@@ -16703,6 +16769,13 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
     if ((widget != nullptr && widget->config.type == WIDGET_FULLSCREEN || window == hFullscreenCursorWindow)
             && HandleFullscreenCursorMessage(window, msg, wParam, lParam)) {
         return TRUE;
+    }
+    if (window == hController
+        && (msg == WM_SETTINGCHANGE
+            || msg == WM_DPICHANGED
+            || msg == WM_DISPLAYCHANGE
+            || msg == WM_THEMECHANGED)) {
+        UpdateTrayIcon();
     }
     if (msg == taskbarCreatedMessage && window == hController) {
         AddTrayIcon();
