@@ -35,6 +35,7 @@
 #define ID_ALARM_TIME                           3031
 #define ID_ALARM_TIME_SIGNAL                    3079
 #define ID_ALARM_VOLUME                         3097
+#define ID_ALARM_WAKE_COMPUTER                  3106
 #define ID_APP_ANTIALIAS                        3048
 #define ID_APP_FONT                             3049
 #define ID_APP_FONT_DEFAULT                     3076

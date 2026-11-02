@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -622,6 +622,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
             result = WriteXmlNumberAttribute(writer, L"alarmEnabled", config.alarmEnabled);
         }
         if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"alarmWakeComputer", config.alarmWakeComputer);
+        }
+        if (SUCCEEDED(result)) {
             result = WriteXmlNumberAttribute(writer, L"alarmDays", config.alarmDays);
         }
         if (SUCCEEDED(result)) {
@@ -1051,6 +1054,9 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
     }
     if (ReadXmlNumberAttribute(reader, L"alarmEnabled", &number)) {
         config->alarmEnabled = number != 0;
+    }
+    if (ReadXmlNumberAttribute(reader, L"alarmWakeComputer", &number)) {
+        config->alarmWakeComputer = number != 0;
     }
     if (ReadXmlNumberAttribute(reader, L"alarmDays", &number)) {
         config->alarmDays = static_cast<unsigned int>(number) & ALARM_DAYS_ALL;
@@ -1562,6 +1568,9 @@ static void ReadWidgetConfig(HKEY key, WidgetConfig* config) {
     if (ReadDword(key, L"AlarmEnabled", &value)) {
         config->alarmEnabled = value != 0;
     }
+    if (ReadDword(key, L"AlarmWakeComputer", &value)) {
+        config->alarmWakeComputer = value != 0;
+    }
     if (ReadDword(key, L"AlarmDays", &value)) {
         config->alarmDays = value & ALARM_DAYS_ALL;
     }
@@ -1678,6 +1687,7 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteDword(key, L"TimeSignal", config.timeSignal);
     WriteDword(key, L"SoundsMuted", config.soundsMuted);
     WriteDword(key, L"AlarmEnabled", config.alarmEnabled);
+    WriteDword(key, L"AlarmWakeComputer", config.alarmWakeComputer);
     WriteDword(key, L"AlarmDays", config.alarmDays);
     WriteDword(key, L"AlarmTimeSignal", config.alarmTimeSignal);
     WriteDword(key, L"AlarmHour", config.alarmHour);

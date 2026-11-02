@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="AboutForm.cpp" />
     <ClCompile Include="AlarmActions.cpp" />
+    <ClCompile Include="AlarmSchedule.cpp" />
     <ClCompile Include="AnalogClockHost.cpp" />
     <ClCompile Include="AudioDecoder.cpp" />
     <ClCompile Include="AudioGainCallback.cpp" />
@@ -112,6 +113,7 @@
   <ItemGroup>
     <ClInclude Include="AboutForm.h" />
     <ClInclude Include="AlarmActions.h" />
+    <ClInclude Include="AlarmSchedule.h" />
     <ClInclude Include="AnalogClockHost.h" />
     <ClInclude Include="AudioDecoder.h" />
     <ClInclude Include="AudioGainCallback.h" />

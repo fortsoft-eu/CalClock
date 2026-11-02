@@ -9,6 +9,11 @@
     <File Path="PackageRelease.ps1" />
   </Folder>
   <Folder Name="/tests/">
+    <File Path="tests\AlarmIntegrationTests.cpp" />
+    <File Path="tests\AlarmPlaybackTests.cpp" />
+    <File Path="tests\AlarmScheduleTests.cpp" />
+    <File Path="tests\AlarmSettingsTests.cpp" />
+    <File Path="tests\AlarmWaveformTests.cpp" />
     <File Path="tests\ClockTimeTests.cpp" />
     <File Path="tests\RunClockTests.ps1" />
   </Folder>

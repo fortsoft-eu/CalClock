@@ -18,15 +18,19 @@ Iestatījumos var pievienot, noņemt un dublēt analogos un digitālos pulksteņ
 
 ## Modinātājs un īsinājumtaustiņi
 
-Pulksteņi un paneļi atbalsta modinātāju. Programma pati atskaņo skaņas failu vienreiz vai nepārtraukti atbilstoši atkārtošanas izvēlei; citus failus un komandas nodod Windows. Klikšķis uz aktīvā modinātāja ciparnīcas vai displeja, Apturēt modinātāju vai Esc aptur indikāciju un programmas skaņu. Dubultklikšķis uz ciparnīcas vai digitālā displeja pārslēdz sekundes. F1 atver palīdzību, B iestatījumus, Esc paslēpj logrīku, ja netiek apturēts modinātājs. Logrīka novietojumu saglabā pēc vilkšanas, dialoga novietojumu aizverot, iestatījumus izvēlētajā krātuvē. Atkārtota palaišana aktivizē esošo programmas eksemplāru un notur logrīkus tuvākajā pieejamajā darba apgabala vietā.
+Pulksteņi un paneļi atbalsta modinātāju. Programma pati atskaņo skaņas failu vienreiz vai nepārtraukti atbilstoši atkārtošanas izvēlei; citus failus un komandas nodod Windows. Klikšķis uz aktīvā modinātāja ciparnīcas vai displeja, Apturēt modinātāju vai Esc aptur indikāciju un programmas skaņu. Dubultklikšķis uz ciparnīcas vai digitālā displeja pārslēdz sekundes. F1 atver palīdzību, B iestatījumus, Esc paslēpj logrīku, ja netiek apturēts modinātājs. Logrīka novietojumu saglabā pēc vilkšanas, dialoga novietojumu aizverot, iestatījumus izvēlētajā krātuvē. Atkārtota palaišana aktivizē esošo programmas eksemplāru. Darba apgabala malām piesaistītie logrīki saglabā piesaisti pēc atkārtotas palaišanas un lieluma, DPI vai darba apgabala maiņas.
 
 ## Laika ievade un modinātāja darbības
 
 Modinātāja laiks pieņem HH:mm ar kolu, punktu, atstarpi, citu atdalītāju vai bez tā. Viens vai divi cipari ir stundas, trīs vai četri – stundas un minūtes: 7, 12, 730, 0730 vai 7:30. Atstājot lauku, vērtība kļūst par HH:mm. Nobīdi lasa no labās puses, sākot ar sekundēm: 2 ir 00:00:02.00, 230 un 0230 ir 00:02:30.00, 12345 ir 01:23:45.00. Ar atdalītājiem divas grupas nozīmē minūtes un sekundes, trīs – stundas, minūtes un sekundes, ceturtā – sekundes simtdaļas; atļauta zīme. Dienas zem Modinātājs ieslēgts nosaka darbības dienas; sākumā atlasītas visas. Secība atbilst programmas valodai, bet valodas maiņa nemaina saglabātās dienas.
 
-Modinātājs parāda paslēpto logrīku un izvirza to priekšplānā bez pastāvīgas Vienmēr virspusē maiņas. Atskaņot laika signālu sāk pirmo īso toni piecas sekundes pirms modinātāja. Šī izvēle ir neatkarīga no cilnes Signāls; vienlaicīgās virknes tiek apvienotas. Pārbaudīt ieslēdz ciparnīcas vai rāmja mirgošanu un pārbauda failu, komandu, skaņu, attālā skripta HTTP/HTTPS adresi un izvēlēto pilno laika signālu. Pārbaudes apturēšana pārtrauc tās iekšējo skaņu un izmēģinājuma signālu; modinātāja apturēšana pārtrauc tā iekšējo skaņu. Izslēdzot skaņu, atskaņošana turpinās nedzirdami un kļūst dzirdama pēc ieslēgšanas. Komandas un attālie skripti netiek apturēti.
+Modinātājs parāda paslēpto logrīku un izvirza to priekšplānā bez pastāvīgas Vienmēr virspusē maiņas. Atskaņot laika signālu sāk pirmo īso toni piecas sekundes pirms modinātāja. Šī izvēle ir neatkarīga no cilnes Signāls; vienlaicīgās virknes tiek apvienotas. Pārbaudīt ieslēdz ciparnīcas vai rāmja mirgošanu un pārbauda failu, komandu, skaņu un attālā skripta HTTP/HTTPS adresi. Pārbaudīt ir pieejams, ja ir atzīmēts Modinātājs ieslēgts un Palaist failu vai komandu un faila vai komandas lauks nav tukšs. Pārbaude neatskaņo modinātāja laika signālu. Apturēt pārbaudi aptur iekšējo skaņu un vizuālo priekšskatījumu. Modinātāja apturēšana pārtrauc tā iekšējo skaņu. Izslēdzot skaņu, atskaņošana turpinās nedzirdami un kļūst dzirdama pēc ieslēgšanas. Komandas un attālie skripti netiek apturēti.
 
 Modinātāja skaņas signāli tiek plānoti pēc nākamā modinātāja faktiskā brīža pēc laika joslas pārrēķina un logrīka nobīdes piemērošanas. Tie sākas piecas reālas sekundes pirms šā brīža arī tad, ja rādītais pulkstenis pārlec tieši uz modinātāja laiku. Pavasarī izlaists modinātāja laiks neiedarbina ne modinātāju, ne tā signālus. Rudenī atkārtotajā stundā modinātājs un tā signāli nostrādā tikai vienu reizi vienam un tam pašam datumam un iestatītajam laikam.
+
+Ja CalClock paliek palaists, pēc miega, hibernācijas vai apstrādes aizkaves katrs logrīks vienreiz iedarbina savu pēdējo nokavēto modinātāju ar konfigurētajām darbībām. Atkārtoti palaižot CalClock, vecie modinātāji netiek atkārtoti; nokavētie laika signāli un modinātāja iepriekšējie pīkstieni vēlāk netiek atskaņoti. „Pamodināt datoru modinātājam“ pēc noklusējuma ir izslēgts, un tam vajadzīgs palaists CalClock, kā arī Windows un aparatūras atbalsts; lēna pamošanās var kavēt savlaicīgus iepriekšējos pīkstienus.
+
+Ja Modinātājs ieslēgts nav atzīmēts, pārējie cilnes Modinātājs vadības elementi ir pelēki un neaktīvi, bet to vērtības tiek saglabātas. Modinātāja izslēgšana aptur pašreizējo pārbaudi.
 
 Slīdnis Skaļums cilnē Modinātājs regulē šī logrīka iekšējo atskaņošanu. Noklusējuma −18 dB saglabā faila sākotnējo līmeni (100%). Pa labi skaņa tiek pastiprināta; lielākie 0 dB atbilst apmēram 794%. −∞ dB ir klusums. Izmaiņas dzirdamas arī pārbaudē. MIDI un faili, kurus nevar dekodēt un atskaņo rezerves atskaņotājs, ir ierobežoti līdz 100%.
 
@@ -54,6 +58,8 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
+Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība un Par programmu. Sistēmas noklusējuma fonta vietā izmanto Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek nemainītas.
+
 ## Iestatījumi un izvēlnes
 
 Programmas valoda, fonts, nogludināšana, krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Iestatījumi, Palīdzība un Par programmu. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows saskarnes valodu vai ASV angļu valodu, ja tā netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to.
@@ -64,14 +70,16 @@ Logrīka izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu
 
 Signāls atbilst Griničas laika signālam (GTS): pieci īsi toņi pēdējās piecās sekundēs un garš tonis precīzi noteiktajā brīdī. Cilnē Signāls ir Laika signāls ieslēgts un 1, 5, 10, 15, 20, 30 vai 60 minūšu intervāli pēc logrīka laika. Sākumā izslēgts, atlasīts stundas intervāls. Pārslēgšana izvēlnē saglabā intervālu. Ņem vērā UTC, joslu, nobīdi un NTP; 20 minūšu intervālā skan :00, :20 un :40. Izslēdzot skaņu, pašreizējais tonis var beigties; nākamie tiek izlaisti līdz nākamajam plānotajam tonim pēc skaņas ieslēgšanas. Atsevišķam Kalendāram nav modinātāja, laika signāla vai skaņas izslēgšanas.
 
-Cilnē Programma Laika signāla skaņa piedāvā Iebūvēts ģenerators (noklusējums) un Sistēmas pīkstiens visiem logrīkiem un modinātājiem. Laika signāla skaļums rāda ģeneratora līmeni dB: labajā galā 0 dB ir maksimālā neizkropļotā sinusoīdas amplitūda, −∞ dB klusums, noklusējums −18 dB. Pārbaudīt sāk nepārtrauktu priekšskatījumu, Apturēt pārbaudi to beidz. Pārbaudāmas abas skaņas; pārbaude netiek saglabāta. Turot slīdni, skaņa skan līdz peles atlaišanai, ja nenotiek pogas pārbaude. Atskaņošana sākas nākamajā veselajā sekundē: īss tonis katru sekundi un garš :00, :05, :10 utt. Apturot pašreizējais tonis drīkst beigties; garais var turpināties vēl pussekundi. Ņem vērā nobīdes simtdaļas; pārklājušies toņi skan nepārtraukti līdz pēdējā pārklājuma beigām tajā pašā audio izvadē.
+Cilnē Programma Laika signāla skaņa piedāvā Iebūvēts ģenerators (noklusējums) un Sistēmas pīkstiens visiem logrīkiem un modinātājiem. Laika signāla skaļums rāda ģeneratora līmeni dB: labajā galā 0 dB ir maksimālā neizkropļotā sinusoīdas amplitūda, −∞ dB klusums, noklusējums −18 dB. Pārbaudīt sāk nepārtrauktu priekšskatījumu, Apturēt pārbaudi to beidz. Pārbaudāmas abas skaņas; pārbaude netiek saglabāta. Turot slīdni, skaņa skan līdz peles atlaišanai, ja nenotiek pogas pārbaude. Atskaņošana sākas nākamajā veselajā sekundē: īss tonis katru sekundi un garš :00, :05, :10 utt. Apturot pārbaudi, jau sākts tonis var izskanēt līdz beigām. Citi vienlaicīgie laika signāli var turpināties. Ņem vērā nobīdes simtdaļas; pārklājušies toņi skan nepārtraukti līdz pēdējā pārklājuma beigām tajā pašā audio izvadē.
 
 **Audio izvade**
 
-**Audio izvade** cilnē **Signāls** izvēlas ierīci katra skaņu atbalstoša logrīka regulārajiem laika signāliem. Logrīka
-laika josla, nobīde un intervāls nemainās. Ģeneratora izvēle un signāla skaļums joprojām ir kopīgi visai lietotnei
-cilnē **Programma**. Izvēloties **Sistēmas pīkstiens**, lauks paliek redzams, bet ir pelēkots un saglabā izvēlēto
-ierīci; **Iebūvēts ģenerators** to atkal iespējo. Windows Vista ģeneratoru izmanto automātiski.
+Audio izvade cilnē Signāls izvēlas ierīci katra skaņu atbalstoša logrīka regulārajiem laika signāliem. Logrīka
+laika josla, nobīde un intervāls nemainās. Ģeneratora izvēle un signāla skaļums joprojām ir kopīgi visai
+lietotnei cilnē Programma. Izvēloties Sistēmas pīkstiens, izvades saraksts ir pelēks un rāda Windows
+noklusējuma ierīce. Saglabātā ierīces izvēle paliek nemainīga un atkal parādās, izvēloties Iebūvēts
+ģenerators. Ja laika signāls ir izslēgts, arī uzraksts Audio izvade ir pelēks. Windows Vista ģeneratoru
+izmanto automātiski.
 
 **Windows noklusējuma ierīce** seko pašreizējai Windows noklusējuma audio izvadei. Atsevišķi izvēlēta ierīce paliek
 izvēlēta arī pēc atvienošanas un sarakstā tiek parādīta kā **Ierīce nav pieejama**; tās signāli ir klusi, līdz ierīce
@@ -80,9 +88,10 @@ saglabāta atsevišķi reģistrā vai XML iestatījumos.
 
 Signāli tiek automātiski apvienoti katrā izvadē. Atsevišķi izvēlēta ierīce un uz to pašu ierīci norādoša
 izvēle Windows noklusējuma ierīce izmanto vienu izvadi. Dažādas ierīces darbojas neatkarīgi; tiek saglabāta
-sinusoīda, fāzes nepārtrauktība un toņu sākums un beigas nullē. Testa skaņas izvade cilnē Lietotne saglabā
-ierīci ģeneratora testiem un skaļuma priekšskatījumam. Sistēmas pīkstiens atspējo tikai šo izvēli. Modinātāji
-joprojām izmanto Windows noklusējuma izvadi. Tie tiek apvienoti ar regulārajiem signāliem tikai kopīgā izvadē.
+sinusoīda, fāzes nepārtrauktība un toņu sākums un beigas nullē. Testa skaņas izvade cilnē Programma saglabā
+ierīci ģeneratora testiem un skaļuma priekšskatījumam. Sistēmas pīkstiens pelēkajā sarakstā rāda Windows noklusējuma ierīce; saglabātā testa ierīces izvēle paliek nemainīga. Modinātāja
+skaņa un tā iepriekšējie pīkstieni izmanto Windows noklusējuma izvadi. Ar regulārajiem laika signāliem tajā
+pašā izvadē apvieno tikai iepriekšējos pīkstienus; modinātāja skaņas faili tiek atskaņoti atsevišķi.
 
 ## Papildu pulksteņi
 

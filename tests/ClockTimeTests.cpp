@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -51,20 +51,23 @@ static void WINAPI TestSystemTime(FILETIME* value);
 #undef GetModuleHandleW
 #undef GetSystemTimeAsFileTime
 
-/// Returns the simulated counter frequency and counts queries to verify that initialization reads it only once.
+/// Returns the simulated counter frequency and counts queries to verify that initialization reads it only
+/// once.
 static BOOL WINAPI TestPerformanceFrequency(LARGE_INTEGER* value) {
     frequencyReads++;
     value->QuadPart = frequency;
     return TRUE;
 }
 
-/// Returns the counter value controlled by the test without reading or advancing the real performance counter.
+/// Returns the counter value controlled by the test without reading or advancing the real performance
+/// counter.
 static BOOL WINAPI TestPerformanceCounter(LARGE_INTEGER* value) {
     value->QuadPart = counter;
     return TRUE;
 }
 
-/// Disables precise-time API lookup so initialization uses the controlled GetSystemTimeAsFileTime replacement.
+/// Disables precise-time API lookup so initialization uses the controlled GetSystemTimeAsFileTime
+/// replacement.
 static HMODULE WINAPI TestGetModuleHandle(LPCWSTR name) {
     return nullptr;
 }
@@ -97,10 +100,12 @@ int main(int argc, char** argv) {
     Require(MonotonicFileTimeValue() == TEST_UTC, "Initial epoch mismatch");
     systemTime += 90 * CLOCK_TICKS_PER_SECOND;
     counter += frequency;
-    Require(MonotonicFileTimeValue() == TEST_UTC + CLOCK_TICKS_PER_SECOND, "Forward system jump changed ticks");
+    Require(MonotonicFileTimeValue() == TEST_UTC + CLOCK_TICKS_PER_SECOND,
+        "Forward system jump changed ticks");
     systemTime -= 180 * CLOCK_TICKS_PER_SECOND;
     counter += frequency;
-    Require(MonotonicFileTimeValue() == TEST_UTC + 2 * CLOCK_TICKS_PER_SECOND, "Backward system jump changed ticks");
+    Require(MonotonicFileTimeValue() == TEST_UTC + 2 * CLOCK_TICKS_PER_SECOND,
+        "Backward system jump changed ticks");
     counter = 86400LL * frequency + frequency / 8;
     Require(std::llabs(static_cast<LONGLONG>(MonotonicFileTimeValue() - TEST_UTC
         - 86400ULL * CLOCK_TICKS_PER_SECOND) - 1250000) <= static_cast<LONGLONG>(tolerance),
@@ -114,6 +119,7 @@ int main(int argc, char** argv) {
     Require(MonotonicFileTimeValue() == TEST_UTC + 400ULL * 86400 * CLOCK_TICKS_PER_SECOND,
         "Long uptime overflowed counter conversion");
     Require(frequencyReads == 1 && systemReads == 1, "Continuous clock reread the system clock or frequency");
-    std::printf("PASS: clock jumps, sleep, fractional precision, polling drift, long uptime at %lld Hz\n", frequency);
+    std::printf("PASS: clock jumps, sleep, fractional precision, polling drift, long uptime at %lld Hz\n",
+        frequency);
     return 0;
 }

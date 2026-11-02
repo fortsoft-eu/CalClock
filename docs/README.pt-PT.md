@@ -72,9 +72,16 @@ Nos calendários independentes, **Linha Hoje**, no menu ou em Aspeto, controla a
 
 As alterações de aspeto são imediatamente pré-visualizadas no widget selecionado. `Aspeto predefinido` repõe os valores predefinidos desse tipo de widget. Ao fechar as definições com alterações não aplicadas, é perguntado se pretende guardá-las. Este aviso está ativado por predefinição e pode ser desativado no separador Aplicação.
 
-Relógios digitais, calendários e painéis partilham quatro estilos de contorno. O estilo simples também permite escolher a cor; a largura é configurável quando o widget a suporta. Os relógios digitais transparentes oferecem os mesmos estilos que os opacos. Para aplicação e calendário não incluem tamanho; para relógios digitais e texto do painel incluem. Os tipos de letra personalizados do calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para o widget.
+Relógios digitais, calendários e painéis partilham quatro estilos de contorno. O estilo simples também permite escolher a cor; a largura é configurável quando o widget a suporta. Os relógios digitais transparentes oferecem os mesmos estilos que os opacos. O tamanho do tipo de letra não é selecionável para a aplicação e o calendário; é selecionável para os relógios digitais e os textos do painel. Os tipos de letra personalizados do calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para o widget.
 
 Idioma da aplicação, tipo de letra da interface, suavização, armazenamento, arranque com Windows e encaixe às margens são globais e configurados em Aplicação. Desativar os temas em Aplicação afeta apenas Definições, Ajuda e Acerca de. Cada widget utiliza a sua própria definição de temas. A origem da hora também é global. Idioma do widget, suavização, estilos, fuso, desvio, alarme e sinal horário são independentes. A suavização oferece **ClearType**, **GDI** e **Nenhuma**.
+
+Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda e Acerca de. Com o tipo
+de letra predefinido do sistema, estas janelas usam Tahoma de 8 pt; um tipo de letra personalizado da
+aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo, a suavização só oferece
+GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e é reposta ao desativar o modo. Se os
+estilos visuais estiverem desativados no Windows, ambas as opções de estilo aparecem desmarcadas e desativadas
+sem alterar as escolhas guardadas.
 
 O controlo **Volume do áudio** em Alarme regula os ficheiros reproduzidos internamente por widget e apresenta o nível em dB. A predefinição **−18 dB** mantém o nível original do ficheiro (**100%**). Para a direita amplifica o áudio; o máximo **0 dB** corresponde a cerca de **794%** da amplitude original. O extremo esquerdo é **−∞ dB** (silêncio). As alterações aplicam-se durante o teste. A amplificação aplica-se a áudio descodificado, incluindo WAV, MP3, WMA, AAC, M4A e FLAC quando suportados pelo Windows. A reprodução antiga de ficheiros que não podem ser descodificados, como MIDI, está limitada a 100%.
 
@@ -112,19 +119,36 @@ Os widgets de relógio permitem alarmes por dias escolhidos individualmente; os 
 
 Os sinais sonoros do alarme são agendados a partir do instante real do próximo alarme, após a conversão do fuso e a aplicação do desvio do widget. Começam cinco segundos reais antes desse instante, mesmo quando o relógio apresentado salta diretamente para a hora do alarme. Uma hora de alarme omitida na primavera não ativa o alarme nem os sinais. Durante a hora repetida no outono, o alarme e os seus sinais ocorrem apenas uma vez para a mesma data e hora configurada.
 
-Teste mostra a indicação visual e testa de forma assíncrona ficheiro, comando, áudio e URL do script remoto. Se o sinal horário do alarme estiver selecionado, reproduz também os seis tons completos; Parar teste termina o áudio interno e a pré-visualização do sinal.
+Se o CalClock continuar em execução, após suspensão, hibernação ou um atraso de processamento, cada widget ativa uma vez o último alarme perdido, incluindo as ações configuradas. Voltar a iniciar o CalClock não recupera alarmes antigos; os sinais horários e os sinais prévios do alarme perdidos não são reproduzidos depois. «Reativar o computador para o alarme» está desativado por predefinição e requer o CalClock em execução e suporte do Windows e do hardware; uma reativação lenta pode impedir os sinais prévios a tempo.
+
+Testar faz piscar o mostrador ou o contorno do painel e testa o ficheiro, o comando, o áudio e o URL
+HTTP/HTTPS do script remoto configurados. Não reproduz os sinais sonoros anteriores ao alarme. Parar teste
+termina a indicação visual e o respetivo áudio interno; parar o alarme termina o seu áudio interno. Desativar
+Alarme ativo desativa os restantes controlos do separador Alarme sem apagar os seus valores. O teste requer um
+alarme ativo, a opção Executar um ficheiro ou comando selecionada e o campo do ficheiro ou comando preenchido.
 
 O separador Sinal contém a caixa Sinal horário ativo e botões de opção para intervalos de 1, 5, 10, 15, 20, 30 ou 60 minutos segundo a hora apresentada pelo widget. Inicialmente, o sinal está desativado e está selecionado o intervalo de uma hora. Desativar e ativar Sinal no menu do widget mantém o intervalo. O menu mostra a hora do alarme e o intervalo do sinal entre parênteses. O intervalo de 20 minutos toca a :00, :20 e :40 dessa hora. O padrão é o **Greenwich Time Signal (GTS)**: cinco tons curtos marcam os últimos cinco segundos e um mais longo o limite exato. São respeitados fusos, UTC, desvios e correção NTP atual. O sinal do alarme e o separador Sinal permanecem independentes. São respeitados desvios fracionários, e os tons sobrepostos de widgets, alarmes e testes continuam sem interrupção até terminar a última sobreposição na mesma saída de áudio.
 
-**Som do sinal horário** em Aplicação permite escolher **Gerador integrado** (predefinido) ou **Sinal sonoro do sistema**. A escolha aplica-se a todos os sinais, incluindo os dos alarmes, e é guardada globalmente. No **Gerador integrado**, **Volume do sinal horário** mostra o nível em dB para toda a aplicação. À direita fica **0 dB**, a amplitude sinusoidal máxima sem distorção; silêncio é **−∞ dB**. O valor predefinido é **−18 dB**. A escala em decibéis tem −18 dB a meio. O gerador inicia e termina tons na passagem por zero, também ao parar um teste. O tom atual termina normalmente; um tom longo pode demorar até meio segundo. **Testar**, junto de **Som do sinal horário**, inicia a pré-visualização contínua; **Parar teste** termina-a. Ambos os modos podem ser testados e o estado do teste não é guardado. Manter premido o controlo de volume também inicia uma pré-visualização até soltar o rato, exceto se o teste pelo botão estiver ativo. A reprodução começa no próximo segundo inteiro, com tons curtos a cada segundo e um longo a :00, :05, :10, etc. A escolha só está disponível quando o sistema suporta ambos os modos.
+**Som do sinal horário** em Aplicação permite escolher **Gerador integrado** (predefinido) ou **Sinal sonoro
+do sistema**. A escolha aplica-se a todos os sinais, incluindo os dos alarmes, e é guardada globalmente. No
+**Gerador integrado**, **Volume do sinal horário** mostra o nível em dB para toda a aplicação. À direita fica
+**0 dB**, a amplitude sinusoidal máxima sem distorção; silêncio é **−∞ dB**. O valor predefinido é **−18 dB**.
+A escala em decibéis tem −18 dB a meio. O gerador inicia e termina tons na passagem por zero, também ao parar
+um teste. Um sinal sonoro já iniciado pode terminar depois de parar o teste. **Testar**, junto de **Som do
+sinal horário**, inicia a pré-visualização contínua; **Parar teste** termina-a. Ambos os modos podem ser
+testados e o estado do teste não é guardado. Manter premido o controlo de volume também inicia uma
+pré-visualização até soltar o rato, exceto se o teste pelo botão estiver ativo. A reprodução começa no próximo
+segundo inteiro, com tons curtos a cada segundo e um longo a :00, :05, :10, etc. A escolha só está disponível
+quando o sistema suporta ambos os modos.
 
 **Saída de áudio**
 
-**Saída de áudio** no separador **Sinal** seleciona o dispositivo para os sinais horários regulares de cada widget com
-som. O fuso horário, o desvio e o intervalo do widget não são alterados. A escolha do gerador e o volume continuam a
-ser globais no separador **Aplicação**. Com **Sinal sonoro do sistema**, o seletor permanece visível mas desativado e
-conserva o dispositivo escolhido; **Gerador integrado** volta a ativá-lo. O Windows Vista utiliza automaticamente o
-gerador.
+**Saída de áudio** no separador **Sinal** seleciona o dispositivo para os sinais horários regulares de cada
+widget com som. O fuso horário, o desvio e o intervalo do widget não são alterados. A escolha do gerador e o
+volume continuam a ser globais no separador **Aplicação**. Com Sinal sonoro do sistema, o seletor está
+desativado e mostra o dispositivo predefinido do Windows. O dispositivo escolhido fica guardado e é reposto ao
+voltar a Gerador integrado. Desativar Sinal horário ativo desativa o rótulo da saída de áudio e o seletor sem
+apagar a escolha. O Windows Vista utiliza automaticamente o gerador.
 
 **Dispositivo predefinido do Windows** acompanha a saída predefinida atual do Windows. Um dispositivo escolhido
 explicitamente mantém-se selecionado após ser desligado e aparece como **Dispositivo indisponível**; os seus sinais
@@ -135,8 +159,10 @@ Os sinais são combinados automaticamente por saída. Um dispositivo escolhido e
 predefinido do Windows que indique esse mesmo dispositivo partilham uma saída. Dispositivos diferentes
 funcionam de forma independente; mantêm-se a onda sinusoidal, a continuidade de fase e o início e fim dos tons
 em zero. Saída de áudio do teste no separador Aplicação guarda o dispositivo para os testes do gerador e a
-pré-visualização do volume. O sinal sonoro do sistema desativa apenas este seletor. Os alarmes continuam a
-usar a saída predefinida do Windows. Só se combinam com sinais regulares numa saída comum.
+pré-visualização do volume. Com Sinal sonoro do sistema, este seletor está desativado e mostra o dispositivo
+predefinido do Windows, conservando a escolha guardada. O áudio do alarme e os sinais sonoros que o antecedem
+usam a saída predefinida do Windows. Apenas esses sinais se combinam com os sinais horários regulares nessa
+saída.
 
 Alarmes e sinais também podem ser ativados no menu contextual de cada widget com som. A entrada do alarme mostra a hora e, salvo se todos estiverem selecionados, os dias ativos. Sem som afeta o widget e corresponde à opção em Geral. Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento. Na área de notificação existe Silenciar tudo; `M` em qualquer widget executa a mesma alternância global. A reativação global restaura apenas widgets silenciados pela ação global anterior. O áudio interno continua silenciosamente e volta a ouvir-se ao reativar. Um tom já iniciado pode terminar; os seguintes são ignorados até reativar o som. Comandos não sonoros e scripts remotos não são afetados.
 

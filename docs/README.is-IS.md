@@ -64,7 +64,7 @@ Efri dagsetning spjaldsins er tengill sem færir dagatalið á daginn í dag; ne
 
 Spjöld með dagatali og klukku geta birt tilkynningar Windows um dagsetningu og tíma fyrir ofan neðri tengilinn. Valkosturinn **Tilkynningar um dagsetningu og tíma** á flipanum **Almennt** er sjálfgefið virkur og vistaður sérstaklega fyrir hvert spjald. Ef fleiri en ein tilkynning á við birtast þær hver undir annarri eins og í Windows. Ef valkosturinn er óvirkur eða engin tilkynning á við haldast upprunaleg stærð og uppsetning spjaldsins óbreytt án þess að autt svæði sé tekið frá.
 
-`Raða í hnitanet` raðar sýnilegum skjáborðsgræjum stöðugt án skörunar og varðveitir handvirka uppröðun nokkurn veginn. Græjan sem ræsti skipunina úr eigin valmynd helst á sínum stað; skipunin á tilkynningasvæðinu raðar hverjum skjá sjálfstætt. Skjáklukkur eru undanskildar.
+`Raða á hnitanet` raðar sýnilegum skjáborðsgræjum stöðugt án skörunar og varðveitir handvirka uppröðun nokkurn veginn. Græjan sem ræsti skipunina úr eigin valmynd helst á sínum stað; skipunin á tilkynningasvæðinu raðar hverjum skjá sjálfstætt. Skjáklukkur eru undanskildar.
 
 ## Útlit
 
@@ -76,17 +76,19 @@ Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ram
 
 Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það aðeins fyrir Stillingar, Hjálp og Um. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
 
+Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp og Um. Tahoma 8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar haldast óbreyttar.
+
 Sleðinn **Hljóðstyrkur** á Vekjari stjórnar innri spilun hljóðskráa fyrir hverja græju og sýnir styrk í dB. Sjálfgefið **−18 dB** varðveitir upprunalegan styrk skrárinnar (**100%**). Til hægri magnast hljóðið; hámarkið **0 dB** er um **794%** af upprunalegri sveifluvídd. Lengst til vinstri er **−∞ dB** (þögn). Breytingar virka meðan á prófun stendur. Mögnun gildir um afkóðað hljóð, þar á meðal WAV, MP3, WMA, AAC, M4A og FLAC þegar Windows styður það. Eldri spilun skráa sem ekki er hægt að afkóða, svo sem MIDI, er takmörkuð við 100%.
 
 Vikudagar vekjarans fylgja fyrsta vikudegi valinnar menningarstillingar forritsins. Vistaðir dagar halda merkingu sinni þegar tungumál breytist. Ef vekjari er virkjaður úr valmynd án valinna vikudaga opnast Vekjari-flipinn í stað þess að virkja vekjara sem getur ekki hringt.
 
-**Upphafsnúll** býður **Já** (sjálfgefið), **Nei, halda plássi** og **Nei, án pláss**. **Nei, halda plássi** felur núllið en tekur frá raunverulega breidd þess í völdu letri, svo að aðrir tölustafir haldi stöðu sinni líka í misbreiðu letri. Skjáklukkur nota sjálfgefið hvítan texta á svörtum bakgrunni.
+**Núll fremst** býður **Já** (sjálfgefið), **Nei, halda plássi** og **Nei, án pláss**. **Nei, halda plássi** felur núllið en tekur frá raunverulega breidd þess í völdu letri, svo að aðrir tölustafir haldi stöðu sinni líka í misbreiðu letri. Skjáklukkur nota sjálfgefið hvítan texta á svörtum bakgrunni.
 
 ## Tími og vekjarar
 
 Stafrænar klukkur, dagatalsspjöld og skjáklukkur bjóða **Samkvæmt tungumáli**, **12 klukkustundir** og **24 klukkustundir** undir **Tímasnið** á Almennt. **Samkvæmt tungumáli** er sjálfgefið: bandarísk og áströlsk enska nota til dæmis 12 klukkustundir, bresk enska 24. Handvirkt val helst þegar tungumál græjunnar breytist. Aðskiljarar og AM/PM-merki fylgja menningarstillingunni; án eigin merkja er **AM/PM** notað í 12 klukkustunda ham.
 
-**AM/PM** er sjálfgefið valið. Afval felur merkið án þess að breyta 12 klukkustunda kerfinu. Skjáklukkur sýna merkið á sér línu undir tímanum eins og UTC. UTC notar alltaf 24 klukkustunda snið. Upphafsnúllsstillingin ræður áfram hvort núllið sé sýnt, falið með fráteknu plássi eða sleppt.
+**AM/PM** er sjálfgefið valið. Afval felur merkið án þess að breyta 12 klukkustunda kerfinu. Skjáklukkur sýna merkið á sér línu undir tímanum eins og UTC. UTC notar alltaf 24 klukkustunda snið. Stillingin Núll fremst ræður áfram hvort núllið sé sýnt, falið með fráteknu plássi eða sleppt.
 
 Nafngreind tímabelti sýna borgaralegan tíma valins staðar og fylgja sjálfkrafa sumartímareglum hans. Hliðrun við nafnið gildir fyrir núverandi dagsetningu og uppfærist þegar listinn opnast. Sérstakar **UTC**-færslur bjóða fasta hliðrun frá **UTC−12:00** til **UTC+14:00** í 15 mínútna skrefum, án sumartíma. Veldu staðbundið belti, annað nafngreint belti eða fasta UTC-hliðrun sjálfstætt fyrir hverja græju.
 
@@ -112,18 +114,23 @@ Klukkugræjur styðja vekjara á völdum vikudögum; allir sjö eru virkir sjál
 
 Hljóðmerki vekjarans miðast við raunverulegt augnablik næstu vekjarahringingar eftir umreikning í tímabeltið og beitingu tímafráviks græjunnar. Þau hefjast fimm raunverulegum sekúndum fyrr, jafnvel þótt klukkan hoppi beint á stilltan vekjaratíma. Vekjaratími sem er sleppt að vori kveikir hvorki á vekjara né hljóðmerkjum. Þegar klukkustund er endurtekin að hausti hringja vekjarinn og hljóðmerki hans aðeins einu sinni fyrir sömu dagsetningu og stilltan tíma.
 
-Prófa sýnir sjónræna merkingu og prófar skrá, skipun, hljóð og slóð fjarskriftu ósamstillt. Ef tímamerki vekjarans er valið er öll sex-pípa runan líka spiluð; Stöðva prófun lýkur innri hljóðspilun og forskoðun merkisins.
+Ef CalClock er áfram í gangi virkjar hver græja síðasta missta vekjarann sinn einu sinni eftir svefn, dvala eða vinnslutöf, ásamt stilltum aðgerðum. Endurræsing CalClock endurtekur ekki gamla vekjara; misst tímamerki og forhljóð vekjarans eru ekki spiluð eftir á. „Vekja tölvuna fyrir vekjarann“ er sjálfgefið óvirkt og krefst þess að CalClock sé í gangi og að Windows og vélbúnaður styðji vakningu; hæg vakning getur komið í veg fyrir að forhljóð heyrist tímanlega.
+
+Þegar Vekjari virkur er ekki valið eru aðrir stýrihlutir á Vekjari-flipanum óvirkir, en gildin varðveitast. Slökkt er á prófun sem er í gangi þegar vekjarinn er gerður óvirkur.
+
+Prófa sýnir sjónræna merkingu og prófar skrá, skipun, hljóð og slóð fjarskriftu ósamstillt. Prófa er tiltækt þegar Vekjari virkur og Keyra skrá eða skipun eru valin og reiturinn fyrir skrá eða skipun er ekki auður. Prófunin spilar ekki tímamerki vekjarans. Stöðva prófun lýkur innri hljóðspilun og sjónrænni forskoðun.
 
 Tímamerkisflipinn hefur gátreitinn Tímamerki virkt og valhnappa fyrir 1, 5, 10, 15, 20, 30 eða 60 mínútna bil samkvæmt sýndum tíma græjunnar. Í upphafi er slökkt á merkinu og klukkustundarbil valið. Þegar slökkt og kveikt er á Tímamerki í valmynd græjunnar helst bilið óbreytt. Valmyndin sýnir vekjaratímann og tímamerkjabilið innan sviga. 20 mínútna bilið gefur merki við :00, :20 og :40. Mynstrið er **Greenwich Time Signal (GTS)**: fimm stutt píp merkja síðustu fimm sekúndurnar og eitt lengra nákvæm tímamörk. Tímabelti, UTC, hliðrun og gildandi NTP-leiðrétting eru virt. Merki vekjarans og Tímamerki-flipinn eru óháð. Brot úr sekúndu í hliðrun eru virt og skarandi tónar græja, vekjara og prófana hljóma samfellt þar til síðustu skörun lýkur.
 
-**Hljóð tímamerkis** á Forrit býður **Innbyggðan hljóðgjafa** (sjálfgefið) og **Kerfispíp**. Valið gildir fyrir öll tímamerki, líka vekjara, og vistast almennt. Fyrir **Innbyggðan hljóðgjafa** sýnir **Hljóðstyrkur tímamerkis** styrkinn í dB fyrir allt forritið. Hægri endinn er **0 dB**, mesta óbjagaða sveifluvídd sínusbylgju; þögn er **−∞ dB**. Sjálfgefið gildi er **−18 dB**. Yfirstandandi píp fær að enda; langt píp getur tekið allt að hálfa sekúndu. **Prófa** við **Hljóð tímamerkis** ræsir samfellda forskoðun og **Stöðva prófun** lýkur henni. Báðar aðferðir má prófa og prófunarstaðan vistast ekki. Að halda hljóðstyrkssleðanum niðri ræsir einnig forskoðun þar til músinni er sleppt, nema hnappaprófun sé í gangi. Spilun byrjar á næstu heilu sekúndu, með stuttum tón hverja sekúndu og löngum við :00, :05, :10 o.s.frv. Hljóðvalið er aðeins tiltækt ef kerfið styður báðar aðferðir.
+**Hljóð tímamerkis** á Forrit býður **Innbyggðan hljóðgjafa** (sjálfgefið) og **Kerfishljóð**. Valið gildir fyrir öll tímamerki, líka vekjara, og vistast almennt. Fyrir **Innbyggðan hljóðgjafa** sýnir **Hljóðstyrkur tímamerkis** styrkinn í dB fyrir allt forritið. Hægri endinn er **0 dB**, mesta óbjagaða sveifluvídd sínusbylgju; þögn er **−∞ dB**. Sjálfgefið gildi er **−18 dB**. Þegar prófun er stöðvuð getur tónn sem þegar er hafinn klárast. Önnur tímamerki sem hljóma samtímis geta haldið áfram. **Prófa** við **Hljóð tímamerkis** ræsir samfellda forskoðun og **Stöðva prófun** lýkur henni. Báðar aðferðir má prófa og prófunarstaðan vistast ekki. Að halda hljóðstyrkssleðanum niðri ræsir einnig forskoðun þar til músinni er sleppt, nema hnappaprófun sé í gangi. Spilun byrjar á næstu heilu sekúndu, með stuttum tón hverja sekúndu og löngum við :00, :05, :10 o.s.frv. Hljóðvalið er aðeins tiltækt ef kerfið styður báðar aðferðir.
 
 **Hljóðúttak**
 
-**Hljóðúttak** á flipanum **Tímamerki** velur tæki fyrir regluleg tímamerki hverrar græju sem styður hljóð. Tímabelti,
-hliðrun og bil græjunnar breytast ekki. Val á hljóðgjafa og hljóðstyrkur tímamerkja eru áfram sameiginleg á flipanum
-**Forrit**. Með **Kerfishljóð** er reiturinn áfram sýnilegur en grár og heldur völdu tæki; **Innbyggður hljóðgjafi**
-virkjar hann aftur. Windows Vista notar hljóðgjafann sjálfkrafa.
+Hljóðúttak á flipanum Tímamerki velur tæki fyrir regluleg tímamerki hverrar græju sem styður hljóð. Tímabelti,
+hliðrun og bil græjunnar breytast ekki. Val á hljóðgjafa og hljóðstyrkur tímamerkja eru áfram sameiginleg á
+flipanum Forrit. Með Kerfishljóð er úttakslistinn grár og sýnir Sjálfgefið tæki Windows. Vistað tækjaval helst
+óbreytt og birtist aftur þegar Innbyggður hljóðgjafi er valinn. Þegar tímamerkið er óvirkt er fyrirsögnin
+Hljóðúttak einnig grá. Windows Vista notar hljóðgjafann sjálfkrafa.
 
 **Sjálfgefið tæki Windows** fylgir núverandi sjálfgefnu hljóðúttaki Windows. Tæki sem er sérstaklega valið helst valið
 þegar það er aftengt og birtist sem **Tæki ekki tiltækt**; tímamerki þess eru hljóðlaus þar til það er tiltækt eða
@@ -133,14 +140,15 @@ skrásetningunni eða XML-stillingum.
 Tímamerki eru sameinuð sjálfkrafa á hverju úttaki. Sérstaklega valið tæki og Sjálfgefið tæki Windows sem vísar
 á sama tæki deila einu úttaki. Mismunandi tæki vinna sjálfstætt; sínusbylgjan, samfelldur fasi og upphaf og
 endir tóna við núll haldast óbreytt. Hljóðúttak prófunar á flipanum Forrit vistar tækið fyrir prófanir
-hljóðgjafans og forskoðun hljóðstyrks. Kerfishljóð gerir aðeins þennan valreit óvirkan. Vekjarar nota áfram
-sjálfgefið úttak Windows. Þau sameinast aðeins reglulegum tímamerkjum á sameiginlegu úttaki.
+hljóðgjafans og forskoðun hljóðstyrks. Kerfishljóð sýnir Sjálfgefið tæki Windows í óvirkum valreit; vistað prófunartæki helst óbreytt. Hljóð vekjarans og
+tímamerkin á undan honum nota sjálfgefið úttak Windows. Aðeins tímamerki vekjarans sameinast reglulegum
+tímamerkjum á sama úttaki; hljóðskrár vekjarans eru spilaðar sérstaklega.
 
 Vekjara og tímamerki má líka kveikja og slökkva á í samhengisvalmynd hljóðgræju. Vekjarafærslan sýnir tímann og virka daga ef ekki allir eru valdir. Þöggun gildir fyrir græjuna og samsvarar valinu á Almennt. Sjálfstætt Dagatal styður hvorki vekjara, tímamerki né þöggun. Skipunin á tilkynningasvæðinu er Þagga allt; `M` á hvaða græju sem er framkvæmir sömu almennu breytingu. Almenn afþöggun endurheimtir aðeins þær græjur sem síðasta almenna aðgerð þaggaði. Innri spilun heldur áfram hljóðlaust og verður aftur heyranleg þegar þöggun lýkur. Yfirstandandi píp getur klárast; seinni pípum er sleppt þar til hljóð er virkjað. Aðrar skipanir og fjarskriftur eru óbreyttar.
 
 ## Stillingar og valmyndir
 
-Hver græjuvalmynd inniheldur viðeigandi skipanir — sýnileika, alltaf efst, sekúndur, stærð vísaklukku eða dagsetningarafritunarsnið — og síðan `Raða í hnitanet`, Stillingar, Hjálp, Um og Hætta. Tilkynningavalmyndin telur upp græjurnar með raðnúmerum og síðan Sýna allt, Fela allt og Þagga allt. Sérstaklega aðgreind skipun `Raða í hnitanet` kemur á undan forritsskipunum.
+Hver græjuvalmynd inniheldur viðeigandi skipanir — sýnileika, alltaf efst, sekúndur, stærð vísaklukku eða dagsetningarafritunarsnið — og síðan `Raða á hnitanet`, Stillingar, Hjálp, Um og Hætta. Tilkynningavalmyndin telur upp græjurnar með raðnúmerum og síðan Sýna allt, Fela allt og Þagga allt. Sérstaklega aðgreind skipun `Raða á hnitanet` kemur á undan forritsskipunum.
 
 Að sýna eða endurheimta græjur færir þær fram fyrir aðra glugga án breytingar á alltaf efst. CalClock tryggir að minnst ein græja sé sýnileg eftir ræsingu. Önnur ræsing virkjar fyrirliggjandi keyrslu og endurheimtir síðast földu græjurnar ef engin er sýnileg. Tilkynningatáknið skráist sjálfkrafa aftur þegar Windows Explorer endurræsist. Ef `ClockWndMain` styður ekki sekúnduvísi í valdri stærð er Sekúndur óvirkt, en valið varðveitist fyrir aðra studda stærð.
 

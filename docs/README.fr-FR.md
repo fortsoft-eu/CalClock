@@ -14,7 +14,7 @@ CalClock est une application native Win32/x86 pour Windows Vista et versions ult
 - Panneaux calendrier et horloge avec jusqu’à deux horloges supplémentaires nommées dans des fuseaux indépendants, tailles de cadran distinctes, quatre styles de bordure, couleur configurable, texte UTC, zéro initial et police distincte pour chaque ligne de texte
 - Alarmes avec choix des jours, indication visuelle, lecture audio interne, répétition, commandes locales et appels de scripts HTTP/HTTPS
 - Signaux horaires propres à chaque horloge, toutes les 1, 5, 10, 15, 20, 30 ou 60 minutes, les signaux simultanés étant réunis en une seule séquence
-- Commande Muet par horloge et commande à cocher Tout mettre en sourdine dans la zone de notification
+- Commande Muet par horloge et commande à cocher Couper tous les sons dans la zone de notification
 - Démarrage automatique avec Windows facultatif
 - Accrochage facultatif aux bords de la zone de travail dans un rayon de cinq pixels pendant le déplacement, activé par défaut ; l’attachement reste conservé lors du redimensionnement
 - Synchronisation NTP sans modification de l’horloge système Windows
@@ -76,6 +76,13 @@ Horloges numériques, calendriers et panneaux combinés partagent quatre styles 
 
 La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans Application concerne uniquement Paramètres, Aide et À propos. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
+Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide et À propos. Avec
+la police système par défaut, ces fenêtres utilisent Tahoma 8 pt ; une police d’application personnalisée
+reste prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun sont proposés pour le
+lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et revient à la désactivation
+du mode. Si les styles visuels sont désactivés dans Windows, les deux options de style apparaissent décochées
+et désactivées sans modifier les choix enregistrés.
+
 Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en interne séparément pour chaque widget et indique le niveau en dB. La valeur par défaut **−18 dB** conserve le niveau d’origine du fichier (**100%**). Vers la droite, le son est amplifié ; le maximum **0 dB** correspond à environ **794%** de l’amplitude initiale. Tout à gauche, **−∞ dB** signifie silence. Les modifications s’appliquent pendant le test audio. L’amplification concerne l’audio décodé, dont WAV, MP3, WMA, AAC, M4A et FLAC si Windows les prend en charge. L’ancienne lecture de fichiers non décodables, comme MIDI, est limitée à 100%.
 
 Les jours d’alarme suivent le premier jour de semaine de la culture sélectionnée pour l’application. Les jours enregistrés gardent leur signification après un changement de langue. Activer une alarme par le menu sans aucun jour sélectionné ouvre l’onglet Alarme correspondant au lieu d’activer une alarme incapable de se déclencher.
@@ -112,19 +119,35 @@ Les widgets d’horloge prennent en charge les alarmes par jour de semaine ; les
 
 Les tops sonores de l’alarme sont planifiés d’après l’instant réel de la prochaine alarme, après conversion de fuseau et application du décalage du widget. Ils commencent cinq secondes réelles avant cet instant, même si l’horloge affichée saute directement à l’heure de l’alarme. Une heure d’alarme sautée au printemps ne déclenche ni alarme ni tops. Pendant l’heure répétée en automne, l’alarme et ses tops ne se produisent qu’une fois pour une même date et une même heure configurée.
 
-Test prévisualise l’indication visuelle et teste de façon asynchrone le fichier, la commande, l’audio et l’URL du script distant. Si le signal horaire d’alarme est sélectionné, Test joue aussi sa séquence complète de six bips ; Arrêter le test termine l’audio interne et l’aperçu du signal.
+Si CalClock reste ouvert, après une veille, une veille prolongée ou un retard de traitement, chaque widget déclenche une fois sa dernière alarme manquée, avec les actions configurées. Un nouveau démarrage de CalClock ne rattrape pas les anciennes alarmes ; les signaux horaires et les bips d’alarme manqués ne sont pas rejoués. « Réveiller l’ordinateur pour l’alarme » est désactivé par défaut et nécessite que CalClock fonctionne ainsi que la prise en charge par Windows et le matériel ; une sortie de veille lente peut empêcher les bips de retentir à temps.
 
-L’onglet Signal propose la case Signal horaire actif et des boutons radio pour les intervalles de 1, 5, 10, 15, 20, 30 ou 60 minutes selon l’heure affichée par le widget. Le signal est initialement désactivé, avec un intervalle d’une heure sélectionné. Désactiver puis réactiver Signal dans le menu du widget conserve l’intervalle. Le menu affiche l’heure de l’alarme et l’intervalle du signal entre parenthèses. L’intervalle de 20 minutes sonne à :00, :20 et :40 de cette heure. Le motif est celui du **Greenwich Time Signal (GTS)** : cinq bips courts marquent les cinq dernières secondes et un bip plus long la limite exacte. Fuseaux, UTC, décalages et correction NTP sont respectés. Le signal d’alarme et l’onglet Signal restent indépendants . Les fractions de seconde des décalages sont prises en compte. Les tons de widgets, alarmes et tests qui se chevauchent sont continus jusqu’à la fin du dernier chevauchement sur la même sortie audio.
+Tester fait clignoter le cadran ou le cadre du panneau et teste le fichier, la commande, l’audio et l’URL
+HTTP/HTTPS du script distant configurés. Les bips précédant l’alarme ne sont pas joués. Arrêter le test
+termine l’aperçu visuel et son audio interne ; arrêter l’alarme termine son audio interne. Désactiver Alarme
+active désactive les autres commandes de l’onglet Alarme sans effacer leurs valeurs. Le test nécessite une
+alarme active, l’option Lancer un fichier ou une commande cochée et un champ de fichier ou de commande rempli.
 
-**Son du signal horaire** dans Application propose **Générateur intégré** (par défaut) et **Bip système**. Le choix concerne tous les signaux de widgets, y compris les alarmes, et s’enregistre globalement. Pour le **Générateur intégré**, **Volume du signal horaire** indique le niveau en dB pour toute l’application. L’extrémité droite est **0 dB**, amplitude sinusoïdale maximale sans distorsion ; le silence est **−∞ dB**. La valeur par défaut est **−18 dB**. L’échelle en décibels place −18 dB au milieu. Le bip en cours se termine normalement ; un bip long peut prendre jusqu’à une demi-seconde. **Tester**, à côté de **Son du signal horaire**, lance l’aperçu continu ; **Arrêter le test** l’arrête. Les deux modes sont testables et l’état du test n’est pas enregistré. Maintenir le curseur de volume lance aussi un aperçu jusqu’au relâchement de la souris, sauf si le test par bouton est actif. La lecture commence à la prochaine seconde entière, avec un ton court chaque seconde et un long à :00, :05, :10, etc. Le choix du son n’est disponible que si le système prend en charge les deux modes.
+L’onglet Signal propose la case Signal horaire actif et des boutons radio pour les intervalles de 1, 5, 10, 15, 20, 30 ou 60 minutes selon l’heure affichée par le widget. Le signal est initialement désactivé, avec un intervalle d’une heure sélectionné. Désactiver puis réactiver Signal dans le menu du widget conserve l’intervalle. Le menu affiche l’heure de l’alarme et l’intervalle du signal entre parenthèses. L’intervalle de 20 minutes sonne à :00, :20 et :40 de cette heure. Le motif est celui du **Greenwich Time Signal (GTS)** : cinq bips courts marquent les cinq dernières secondes et un bip plus long la limite exacte. Fuseaux, UTC, décalages et correction NTP sont respectés. Le signal d’alarme et l’onglet Signal restent indépendants. Les fractions de seconde des décalages sont prises en compte. Les tons de widgets, alarmes et tests qui se chevauchent sont continus jusqu’à la fin du dernier chevauchement sur la même sortie audio.
+
+**Son du signal horaire** dans Application propose **Générateur intégré** (par défaut) et **Bip système**. Le
+choix concerne tous les signaux de widgets, y compris les alarmes, et s’enregistre globalement. Pour le
+**Générateur intégré**, **Volume du signal horaire** indique le niveau en dB pour toute l’application.
+L’extrémité droite est **0 dB**, amplitude sinusoïdale maximale sans distorsion ; le silence est **−∞ dB**. La
+valeur par défaut est **−18 dB**. L’échelle en décibels place −18 dB au milieu. Un bip déjà commencé peut se
+terminer après l’arrêt du test. **Tester**, à côté de **Son du signal horaire**, lance l’aperçu continu ;
+**Arrêter le test** l’arrête. Les deux modes sont testables et l’état du test n’est pas enregistré. Maintenir
+le curseur de volume lance aussi un aperçu jusqu’au relâchement de la souris, sauf si le test par bouton est
+actif. La lecture commence à la prochaine seconde entière, avec un ton court chaque seconde et un long à :00,
+:05, :10, etc. Le choix du son n’est disponible que si le système prend en charge les deux modes.
 
 **Sortie audio**
 
-**Sortie audio** dans l’onglet **Signal** choisit le périphérique des signaux horaires réguliers de chaque widget
-sonore. Le fuseau horaire, le décalage et l’intervalle du widget restent inchangés. Le choix du générateur et le
-volume du signal restent globaux dans l’onglet **Application**. Avec **Bip système**, la liste reste visible mais
-grisée et conserve le périphérique choisi ; **Générateur intégré** la réactive. Windows Vista utilise automatiquement
-le générateur.
+**Sortie audio** dans l’onglet **Signal** choisit le périphérique des signaux horaires réguliers de chaque
+widget sonore. Le fuseau horaire, le décalage et l’intervalle du widget restent inchangés. Le choix du
+générateur et le volume du signal restent globaux dans l’onglet **Application**. Avec Bip système, la liste
+est désactivée et affiche le périphérique Windows par défaut. Le périphérique choisi reste enregistré et est
+rétabli avec Générateur intégré. Désactiver Signal horaire actif désactive le libellé de sortie audio et sa
+liste sans effacer le choix. Windows Vista utilise automatiquement le générateur.
 
 **Périphérique Windows par défaut** suit la sortie Windows par défaut actuelle. Un périphérique choisi explicitement
 reste sélectionné après sa déconnexion et apparaît comme **Périphérique indisponible** ; ses signaux restent
@@ -135,15 +158,16 @@ Les signaux sont fusionnés automatiquement pour chaque sortie. Un périphériqu
 Périphérique Windows par défaut désignant ce même périphérique partagent une seule sortie. Les périphériques
 différents fonctionnent indépendamment ; la sinusoïde, la continuité de phase et les débuts et fins des sons à
 zéro sont préservés. Sortie audio du test dans l’onglet Application mémorise le périphérique des tests du
-générateur et de l’aperçu du volume. Le bip système désactive uniquement ce sélecteur. Les alarmes utilisent
-toujours la sortie Windows par défaut. Ils ne fusionnent avec les signaux réguliers que sur une sortie
-commune.
+générateur et de l’aperçu du volume. Avec Bip système, ce sélecteur est désactivé et affiche le périphérique
+Windows par défaut tout en conservant le choix enregistré. L’audio de l’alarme et les bips qui la précèdent
+utilisent la sortie Windows par défaut. Seuls ces bips sont fusionnés avec les signaux horaires réguliers sur
+cette sortie.
 
-L’alarme et le signal horaire peuvent aussi être activés dans le menu contextuel de tout widget sonore. L’entrée d’alarme montre son heure et, sauf si tous sont sélectionnés, ses jours actifs. Muet agit sur son widget et correspond à la case de Général. Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son. La commande de notification Tout mettre en sourdine est également accessible avec `M` sur un widget. La réactivation globale ne restaure que les widgets mis en sourdine par l’action globale précédente. L’audio interne continue silencieusement et redevient audible ensuite. Un bip déjà commencé peut se terminer ; les suivants sont ignorés jusqu’à réactivation du son. Les commandes non audio et scripts distants ne sont pas affectés.
+L’alarme et le signal horaire peuvent aussi être activés dans le menu contextuel de tout widget sonore. L’entrée d’alarme montre son heure et, sauf si tous sont sélectionnés, ses jours actifs. Muet agit sur son widget et correspond à la case de Général. Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son. La commande de notification Couper tous les sons est également accessible avec `M` sur un widget. La réactivation globale ne restaure que les widgets mis en sourdine par l’action globale précédente. L’audio interne continue silencieusement et redevient audible ensuite. Un bip déjà commencé peut se terminer ; les suivants sont ignorés jusqu’à réactivation du son. Les commandes non audio et scripts distants ne sont pas affectés.
 
 ## Paramètres et menus
 
-Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille analogique ou format de copie de date — puis `Aligner sur la grille`, Paramètres, Aide, À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout masquer et Tout mettre en sourdine. La commande `Aligner sur la grille`, séparée des autres groupes, précède les commandes de l’application.
+Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille analogique ou format de copie de date — puis `Aligner sur la grille`, Paramètres, Aide, À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout masquer et Couper tous les sons. La commande `Aligner sur la grille`, séparée des autres groupes, précède les commandes de l’application.
 
 Afficher ou restaurer des widgets les place devant les autres fenêtres sans modifier leur maintien au premier plan. CalClock garantit au moins un widget visible au démarrage. Un second lancement active l’instance existante et restaure les widgets masqués en dernier si aucun n’est visible. L’icône de notification est réenregistrée automatiquement après un redémarrage de l’Explorateur Windows. Si `ClockWndMain` ne prend pas en charge la trotteuse à la taille choisie, Secondes est désactivé, mais le choix reste mémorisé pour une autre taille compatible.
 

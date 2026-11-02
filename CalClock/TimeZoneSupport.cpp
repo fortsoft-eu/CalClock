@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -30,13 +30,16 @@
 #include <windows.h>
 #include <algorithm>
 #include <cwchar>
+#include <climits>
 
-typedef DWORD(WINAPI* EnumDynamicTimeZoneInformationProc)(DWORD index, PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
-typedef DWORD(WINAPI* GetDynamicTimeZoneInformationProc)(PDYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
-typedef BOOL(WINAPI* GetTimeZoneInformationForYearProc)(USHORT year,
-    PDYNAMIC_TIME_ZONE_INFORMATION dynamicTimeZoneInformation, LPTIME_ZONE_INFORMATION timeZoneInformation);
-typedef BOOL(WINAPI* SystemTimeToTzSpecificLocalTimeExProc)(const DYNAMIC_TIME_ZONE_INFORMATION* timeZoneInformation,
-    const SYSTEMTIME* universalTime, SYSTEMTIME* localTime);
+typedef DWORD(WINAPI* EnumDynamicTimeZoneInformationProc)(DWORD index, PDYNAMIC_TIME_ZONE_INFORMATION
+    timeZoneInformation);
+typedef DWORD(WINAPI* GetDynamicTimeZoneInformationProc)(PDYNAMIC_TIME_ZONE_INFORMATION
+    timeZoneInformation);
+typedef BOOL(WINAPI* GetTimeZoneInformationForYearProc)(USHORT year, PDYNAMIC_TIME_ZONE_INFORMATION
+    dynamicTimeZoneInformation, LPTIME_ZONE_INFORMATION timeZoneInformation);
+typedef BOOL(WINAPI* SystemTimeToTzSpecificLocalTimeExProc)(const DYNAMIC_TIME_ZONE_INFORMATION*
+    timeZoneInformation, const SYSTEMTIME* universalTime, SYSTEMTIME* localTime);
 
 /// Matches the registry TZI binary layout containing time-zone biases and seasonal transition rules.
 struct RegistryTimeZoneInformation {
@@ -104,7 +107,8 @@ static std::wstring FormatTimeZoneOffset(LONGLONG minutes) {
 }
 
 /// Orders named zones alphabetically before fixed offsets, which are ordered by their numeric offset.
-static bool TimeZoneLess(const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMIC_TIME_ZONE_INFORMATION& right) {
+static bool TimeZoneLess(const DYNAMIC_TIME_ZONE_INFORMATION& left,
+        const DYNAMIC_TIME_ZONE_INFORMATION& right) {
     LONG leftOffset = 0;
     LONG rightOffset = 0;
     bool leftFixed = ParseTimeZoneOffset(left.StandardName, &leftOffset);
@@ -118,7 +122,8 @@ static bool TimeZoneLess(const DYNAMIC_TIME_ZONE_INFORMATION& left, const DYNAMI
     return _wcsicmp(left.StandardName, right.StandardName) < 0;
 }
 
-/// Adds missing fixed offsets from UTC-12:00 through UTC+14:00 in 15-minute steps without daylight saving time.
+/// Adds missing fixed offsets from UTC-12:00 through UTC+14:00 in 15-minute steps without daylight saving
+/// time.
 static void AddFixedTimeZones(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     for (LONG offset = -12 * 60; offset <= 14 * 60; offset += 15) {
         bool exists = false;
@@ -152,7 +157,8 @@ static FARPROC FindProcedure(const wchar_t* moduleName, const char* procedureNam
     return module == nullptr ? nullptr : GetProcAddress(module, procedureName);
 }
 
-/// Caches the optional dynamic time-zone enumeration entry point for compatibility with older Windows versions.
+/// Caches the optional dynamic time-zone enumeration entry point for compatibility with older Windows
+/// versions.
 static EnumDynamicTimeZoneInformationProc GetEnumDynamicTimeZoneInformationProc() {
     static EnumDynamicTimeZoneInformationProc procedure =
         reinterpret_cast<EnumDynamicTimeZoneInformationProc>(FindProcedure(L"Advapi32.dll",
@@ -201,7 +207,8 @@ static bool ReadRegistryString(HKEY key, const wchar_t* name, wchar_t* value, DW
 }
 
 /// Copies dynamic zone data into the legacy structure, preserving the configured seasonal transition dates.
-static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source, TIME_ZONE_INFORMATION* destination) {
+static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source,
+        TIME_ZONE_INFORMATION* destination) {
     ZeroMemory(destination, sizeof(*destination));
     destination->Bias = source.Bias;
     wcscpy_s(destination->StandardName, source.StandardName);
@@ -212,11 +219,12 @@ static void CopyTimeZoneInformation(const DYNAMIC_TIME_ZONE_INFORMATION& source,
     destination->DaylightBias = source.DaylightBias;
 }
 
-/// Appends zones with valid TZI records from the Windows time-zone registry, supplying missing names from their keys.
+/// Appends zones with valid TZI records from the Windows time-zone registry, supplying missing names from
+/// their keys.
 static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     HKEY root = nullptr;
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones", 0, KEY_READ,
-        &root) != ERROR_SUCCESS) {
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
+            0, KEY_READ, &root) != ERROR_SUCCESS) {
         return;
     }
     for (DWORD index = 0;; index++) {
@@ -237,9 +245,11 @@ static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATI
         RegistryTimeZoneInformation registryInformation = {};
         DWORD type = 0;
         DWORD bytes = sizeof(registryInformation);
-        LSTATUS informationStatus =
-            RegQueryValueExW(key, L"TZI", nullptr, &type, reinterpret_cast<BYTE*>(&registryInformation), &bytes);
-        if (informationStatus == ERROR_SUCCESS && type == REG_BINARY && bytes == sizeof(registryInformation)) {
+        LSTATUS informationStatus = RegQueryValueExW(key, L"TZI", nullptr, &type,
+            reinterpret_cast<BYTE*>(&registryInformation), &bytes);
+        if (informationStatus == ERROR_SUCCESS
+                && type == REG_BINARY
+                && bytes == sizeof(registryInformation)) {
             DYNAMIC_TIME_ZONE_INFORMATION zone = {};
             zone.Bias = registryInformation.bias;
             zone.StandardBias = registryInformation.standardBias;
@@ -262,7 +272,8 @@ static void LoadTimeZoneListFromRegistry(std::vector<DYNAMIC_TIME_ZONE_INFORMATI
     RegCloseKey(root);
 }
 
-/// Rebuilds the zone list with current Windows settings first, followed by sorted named zones and fixed UTC offsets.
+/// Rebuilds the zone list with current Windows settings first, followed by sorted named zones and fixed UTC
+/// offsets.
 void LoadTimeZoneList(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     if (zones == nullptr) {
         return;
@@ -292,8 +303,8 @@ void LoadTimeZoneList(std::vector<DYNAMIC_TIME_ZONE_INFORMATION>* zones) {
     zones->insert(zones->begin(), system);
 }
 
-/// Prefixes a named zone with its UTC offset at the supplied instant, including applicable daylight saving time.
-/// Returns only the normalized offset for fixed-offset, unnamed, or current-Windows-settings zones.
+/// Prefixes a named zone with its UTC offset at the supplied instant, including applicable daylight saving
+/// time. Returns only the normalized offset for fixed-offset, unnamed, or current-Windows-settings zones.
 std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc) {
     std::wstring name = zone.StandardName;
     LONG fixedOffset = 0;
@@ -316,8 +327,8 @@ std::wstring TimeZoneDisplayName(const DYNAMIC_TIME_ZONE_INFORMATION& zone, cons
         ULARGE_INTEGER localTicks = {};
         localTicks.LowPart = localFileTime.dwLowDateTime;
         localTicks.HighPart = localFileTime.dwHighDateTime;
-        offsetMinutes =
-            (static_cast<LONGLONG>(localTicks.QuadPart) - static_cast<LONGLONG>(utcTicks.QuadPart)) / 600000000;
+        offsetMinutes = (static_cast<LONGLONG>(localTicks.QuadPart)
+            - static_cast<LONGLONG>(utcTicks.QuadPart)) / 600000000;
     }
     std::wstring offset = FormatTimeZoneOffset(offsetMinutes);
     if (name.empty()) {
@@ -338,8 +349,8 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
     }
     HKEY key = nullptr;
     wchar_t keyName[128] = {};
-    LSTATUS result =
-        RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key);
+    LSTATUS result = RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+        L"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", 0, KEY_READ, &key);
     if (result == ERROR_SUCCESS) {
         ReadRegistryString(key, L"TimeZoneKeyName", keyName, ARRAYSIZE(keyName));
         RegCloseKey(key);
@@ -366,7 +377,8 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
 
 /// Converts UTC using current Windows settings, fixed offsets, or dynamic or yearly rules for named zones.
 /// Returns false if the destination is null or Windows cannot perform the conversion.
-bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc, SYSTEMTIME* local) {
+bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc,
+        SYSTEMTIME* local) {
     if (local == nullptr) {
         return false;
     }
@@ -391,9 +403,106 @@ bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTE
     }
     TIME_ZONE_INFORMATION information = {};
     GetTimeZoneInformationForYearProc getForYear = GetGetTimeZoneInformationForYearProc();
-    if (selectedZone->DynamicDaylightTimeDisabled || getForYear == nullptr
-            || !getForYear(utc.wYear, const_cast<PDYNAMIC_TIME_ZONE_INFORMATION>(selectedZone), &information)) {
+    if (selectedZone->DynamicDaylightTimeDisabled
+        || getForYear == nullptr
+        || !getForYear(utc.wYear, const_cast<PDYNAMIC_TIME_ZONE_INFORMATION>(selectedZone),
+            &information)) {
         CopyTimeZoneInformation(*selectedZone, &information);
     }
     return SystemTimeToTzSpecificLocalTime(&information, &utc, local) != FALSE;
+}
+
+/// Returns validated UTC candidates using all yearly biases that can cross the local year's boundary.
+/// Round trips reject spring gaps and retain both real occurrences of an autumn repeated time.
+bool GetTimeZoneUtcCandidates(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& local,
+        ULONGLONG(&utc)[2], unsigned int& count) {
+    count = 0;
+    FILETIME localFileTime{};
+    if (!SystemTimeToFileTime(&local, &localFileTime)) {
+        return false;
+    }
+    DYNAMIC_TIME_ZONE_INFORMATION current = zone;
+    TIME_ZONE_INFORMATION information{};
+    GetTimeZoneInformationForYearProc getForYear = GetGetTimeZoneInformationForYearProc();
+    LONG fixedOffset = 0;
+    bool yearlyRules = false;
+    bool system = _wcsicmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0;
+    if (ParseTimeZoneOffset(zone.TimeZoneKeyName, &fixedOffset)) {
+        information.Bias = -fixedOffset;
+    } else {
+        GetDynamicTimeZoneInformationProc getDynamic = GetGetDynamicTimeZoneInformationProc();
+        if (system && (getDynamic == nullptr || getDynamic(&current) == TIME_ZONE_ID_INVALID)) {
+            if (GetTimeZoneInformation(&information) == TIME_ZONE_ID_INVALID) {
+                return false;
+            }
+        } else {
+            CopyTimeZoneInformation(current, &information);
+            yearlyRules = !current.DynamicDaylightTimeDisabled && getForYear != nullptr;
+        }
+    }
+    ULARGE_INTEGER localValue{};
+    localValue.LowPart = localFileTime.dwLowDateTime;
+    localValue.HighPart = localFileTime.dwHighDateTime;
+    int firstYear = local.wYear;
+    int lastYear = local.wYear;
+    if (yearlyRules) {
+        firstYear = std::max(1601, firstYear - 1);
+        lastYear = std::min(30827, lastYear + 1);
+    }
+    for (int year = firstYear; year <= lastYear; ++year) {
+        TIME_ZONE_INFORMATION rules = information;
+        if (yearlyRules) {
+            TIME_ZONE_INFORMATION yearly{};
+            if (getForYear(static_cast<USHORT>(year), &current, &yearly)) {
+                rules = yearly;
+            }
+        }
+        const LONGLONG biases[] = {
+            static_cast<LONGLONG>(rules.Bias) + rules.StandardBias,
+            static_cast<LONGLONG>(rules.Bias) + rules.DaylightBias
+        };
+        unsigned int biasCount = 1;
+        if (rules.StandardDate.wMonth != 0 && rules.DaylightDate.wMonth != 0 && biases[0] != biases[1]) {
+            biasCount = 2;
+        }
+        for (unsigned int index = 0; index < biasCount; ++index) {
+            LONGLONG adjustment = biases[index] * 600000000;
+            if (adjustment > 0 && localValue.QuadPart > static_cast<ULONGLONG>(LLONG_MAX - adjustment)
+                    || adjustment < 0 && localValue.QuadPart < static_cast<ULONGLONG>(-adjustment)) {
+                continue;
+            }
+            ULARGE_INTEGER value{};
+            value.QuadPart = static_cast<ULONGLONG>(static_cast<LONGLONG>(localValue.QuadPart) + adjustment);
+            FILETIME fileTime{ value.LowPart, value.HighPart };
+            SYSTEMTIME candidate{};
+            SYSTEMTIME checked{};
+            if (!FileTimeToSystemTime(&fileTime, &candidate)
+                    || !ConvertUtcToTimeZone(zone, candidate, &checked)) {
+                return false;
+            }
+            if (checked.wYear == local.wYear
+                    && checked.wMonth == local.wMonth
+                    && checked.wDay == local.wDay
+                    && checked.wHour == local.wHour
+                    && checked.wMinute == local.wMinute
+                    && checked.wSecond == local.wSecond
+                    && checked.wMilliseconds == local.wMilliseconds) {
+                bool duplicate = false;
+                for (unsigned int position = 0; position < count; ++position) {
+                    duplicate = duplicate || utc[position] == value.QuadPart;
+                }
+                if (!duplicate) {
+                    if (count == ARRAYSIZE(utc)) {
+                        count = 0;
+                        return false;
+                    }
+                    utc[count++] = value.QuadPart;
+                }
+            }
+        }
+    }
+    if (count == 2 && utc[0] > utc[1]) {
+        std::swap(utc[0], utc[1]);
+    }
+    return true;
 }

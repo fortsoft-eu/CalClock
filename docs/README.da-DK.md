@@ -76,6 +76,13 @@ Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har ju
 
 Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på Program gælder kun Indstillinger, Hjælp og Om. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
+Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp og Om. Med systemets
+standardskrifttype bruger disse vinduer Tahoma 8 pt; en brugerdefineret programskrifttype har forrang.
+Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI og Ingen tilgængelige for
+skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når tilstanden slås fra. Hvis
+visuelle typografier er deaktiveret i Windows, vises begge stilvalg som umarkerede og deaktiverede, uden at de
+gemte valg ændres.
+
 Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for hver widget og viser niveauet i dB. Standardværdien **−18 dB** bevarer filens oprindelige niveau (**100%**). Mod højre forstærkes lyden; maksimum **0 dB** svarer til cirka **794%** af oprindelig amplitude. Yderst til venstre er **−∞ dB** (stilhed). Ændringer virker under lydtesten. Forstærkning gælder afkodet lyd, herunder WAV, MP3, WMA, AAC, M4A og FLAC, når Windows understøtter dem. Ældre afspilning af filer, der ikke kan afkodes, eksempelvis MIDI, er begrænset til 100%.
 
 Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage bevarer deres betydning ved sprogskift. Aktivering fra menuen uden valgte ugedage åbner widgetens Alarm-fane i stedet for at aktivere en alarm, der ikke kan ringe.
@@ -112,18 +119,33 @@ Urwidgets understøtter alarmer på individuelt valgte ugedage; alle syv er akti
 
 Alarmtonerne planlægges efter det faktiske tidspunkt for den kommende alarm, efter tidszoneomregning og widgetforskydning. De begynder fem reelle sekunder før dette tidspunkt, også når det viste ur springer direkte til alarmtiden. En alarmtid, der springes over om foråret, udløser hverken alarm eller toner. I den gentagne time om efteråret udløses alarmen og dens toner kun én gang for samme dato og indstillede klokkeslæt.
 
-Test viser den visuelle markering og afprøver fil, kommando, lyd og fjernscriptets adresse asynkront. Hvis alarmens tidssignal er valgt, afspilles også hele sekvensen på seks bip; Stop test afslutter intern lyd og signalforhåndsvisning.
+Hvis CalClock fortsat kører, udløser hver widget sin senest overskredne alarm én gang efter slumretilstand, dvale eller forsinket behandling, inklusive de indstillede handlinger. En ny start af CalClock afspiller ikke gamle alarmer; overskredne tidssignaler og alarmens forudgående bip afspilles ikke bagefter. „Væk computeren til alarmen“ er som standard slået fra og kræver, at CalClock kører, og at Windows og hardwaren understøtter vækning; langsom vækning kan forhindre rettidige alarmbip.
 
-Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. eller 60. minut efter widgetens viste tid. 20-minuttersintervallet lyder ved :00, :20 og :40. Mønstret er **Greenwich Time Signal (GTS)**: fem korte bip markerer de sidste fem sekunder og et længere den nøjagtige grænse. Tidszoner, UTC, forskydninger og aktuel NTP-korrektion respekteres. Alarmens signal og Signal-fanen indstilles uafhængigt. Brøkdele af sekunder i forskydningen respekteres, og overlappende widget-, alarm- og testtoner fortsætter uafbrudt til den sidste overlapning slutter på samme lydudgang.
+Test får urskiven eller panelrammen til at blinke og afprøver den indstillede fil, kommando, lyd og
+HTTP/HTTPS-adresse til fjernscriptet. Bippene før alarmen afspilles ikke. Stop test afslutter den visuelle
+markering og testens interne lyd; stop af alarmen afslutter dens interne lyd. Hvis Alarm aktiv slås fra,
+deaktiveres de øvrige kontroller på fanen Alarm, uden at deres værdier slettes. Testen kræver en aktiv alarm,
+at Kør en fil eller kommando er markeret, og at fil- eller kommandofeltet er udfyldt.
 
-**Lyd for tidssignal** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Lydstyrke for tidssignal** niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude; stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et igangværende bip får lov at afslutte; et langt bip kan tage op til et halvt sekund. **Test** ved **Lyd for tidssignal** starter en kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
+Signal-fanen har afkrydsningsfeltet Tidssignal aktivt og alternativknapper til intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter efter widgetens viste tid. Signalet er som udgangspunkt slået fra med et interval på én time valgt. Når Signal slås fra og til i widgetmenuen, bevares intervallet. Menuen viser alarmtid og signalinterval i parentes. 20-minuttersintervallet lyder ved :00, :20 og :40. Mønstret er **Greenwich Time Signal (GTS)**: fem korte bip markerer de sidste fem sekunder og et længere den nøjagtige grænse. Tidszoner, UTC, forskydninger og aktuel NTP-korrektion respekteres. Alarmens signal og Signal-fanen indstilles uafhængigt. Brøkdele af sekunder i forskydningen respekteres, og overlappende widget-, alarm- og testtoner fortsætter uafbrudt til den sidste overlapning slutter på samme lydudgang.
+
+**Lyd for tidssignal** på Program tilbyder **Indbygget generator** (standard) og **Systembip**. Valget gælder
+alle signaler, også alarmer, og gemmes globalt. For **Indbygget generator** viser **Lydstyrke for tidssignal**
+niveauet i dB for hele programmet. Højre endepunkt er **0 dB**, den største uforvrængede sinusamplitude;
+stilhed er **−∞ dB**. Standardniveauet er **−18 dB**. Decibelskalaen har −18 dB i midten. Et bip, der allerede
+er begyndt, kan afsluttes, efter at testen er stoppet. **Test** ved **Lyd for tidssignal** starter en
+kontinuerlig forhåndsvisning; **Stop test** afslutter den. Begge lydmetoder kan testes, og testtilstanden
+gemmes ikke. Holdes lydstyrkeskyderen nede, starter også en forhåndsvisning indtil musen slippes, medmindre
+knaptesten kører. Afspilningen starter på næste hele sekund, med korte toner hvert sekund og en lang ved :00,
+:05, :10 osv. Lydvalget er kun tilgængeligt, hvis systemet understøtter begge metoder.
 
 **Lydudgang**
 
-**Lydudgang** på fanen **Signal** vælger en enhed til de regelmæssige tidssignaler fra hver widget med lyd. Widgetens
-tidszone, forskydning og interval ændres ikke. Valget af generator og signalets lydstyrke er fortsat globale på fanen
-**Program**. Med **Systembip** er feltet stadig synligt, men nedtonet, og den valgte enhed bevares; **Indbygget
-generator** aktiverer det igen. Windows Vista bruger automatisk generatoren.
+**Lydudgang** på fanen **Signal** vælger en enhed til de regelmæssige tidssignaler fra hver widget med lyd.
+Widgetens tidszone, forskydning og interval ændres ikke. Valget af generator og signalets lydstyrke er fortsat
+globale på fanen **Program**. Med Systembip er feltet deaktiveret og viser Windows-standardenheden. Den valgte
+enhed gemmes og gendannes, når Indbygget generator vælges igen. Hvis Tidssignal aktivt slås fra, deaktiveres
+både lydudgangens etiket og feltet, uden at valget slettes. Windows Vista bruger automatisk generatoren.
 
 **Windows-standardenhed** følger den aktuelle standardudgang i Windows. En bestemt enhed forbliver valgt, hvis den
 frakobles, og vises som **Enhed ikke tilgængelig**; dens signaler er tavse, indtil den er tilgængelig, eller en anden
@@ -133,8 +155,9 @@ eller XML-indstillingerne.
 Signaler flettes automatisk for hver udgang. En bestemt enhed og Windows-standardenhed, som peger på samme
 enhed, deler én udgang. Forskellige enheder arbejder uafhængigt; sinuskurven, den sammenhængende fase samt
 tonernes begyndelse og afslutning ved nul bevares. Lydudgang til test på fanen Program gemmer enheden til
-generatortest og lydstyrkeprøver. Systembip deaktiverer kun denne vælger. Alarmer bruger fortsat
-Windows-standardudgangen. De flettes kun med regelmæssige signaler på en fælles udgang.
+generatortest og lydstyrkeprøver. Med Systembip er dette felt deaktiveret og viser Windows-standardenheden,
+mens det gemte valg bevares. Alarmlyd og bippene før alarmen bruger Windows-standardudgangen. Kun bippene
+flettes med regelmæssige tidssignaler på denne udgang.
 
 Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
 
@@ -158,7 +181,7 @@ XML-lagring kan aktiveres i Indstillinger og bruger:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Brugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske udseende, eller når temaer er slået fra for programmet eller widgeten.
+Brugerdefinerede kalenderskrifttyper understøttes med Windows' klassiske udseende, eller når temaer er slået fra for widgeten.
 
 XML-import indlæser og gemmer straks indstillingerne i den valgte lagring uden at skifte type. Lydløs-tilstanden gemmes pr. widget med lyd.
 

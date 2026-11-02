@@ -18,13 +18,17 @@ V Nastavitvah lahko dodajate, odstranjujete in podvajate analogne in digitalne u
 
 ## Budilka in bližnjice
 
-Ure in plošče podpirajo budilko. Program sam predvaja zvočno datoteko enkrat ali neprekinjeno glede na ponavljanje; druge datoteke in ukaze preda sistemu Windows. Klik na številčnico ali prikaz aktivne budilke, Ustavi budilko ali Esc ustavi opozarjanje in zvok programa. Dvoklik na številčnico ali digitalni prikaz preklopi sekunde. F1 odpre pomoč, B Nastavitve, Esc pa skrije gradnik, kadar ne ustavlja budilke. Položaji gradnikov se shranijo po premikanju, položaji pogovornih oken ob zaprtju, nastavitve pa v izbrano shrambo. Ponovni zagon aktivira obstoječi primerek in ohrani gradnike na najbližjem dosegljivem mestu delovnega območja.
+Ure in plošče podpirajo budilko. Program sam predvaja zvočno datoteko enkrat ali neprekinjeno glede na ponavljanje; druge datoteke in ukaze preda sistemu Windows. Klik na številčnico ali prikaz aktivne budilke, Ustavi budilko ali Esc ustavi opozarjanje in zvok programa. Dvoklik na številčnico ali digitalni prikaz preklopi sekunde. F1 odpre pomoč, B Nastavitve, Esc pa skrije gradnik, kadar ne ustavlja budilke. Položaji gradnikov se shranijo po premikanju, položaji pogovornih oken ob zaprtju, nastavitve pa v izbrano shrambo. Ponovni zagon aktivira obstoječi primerek. Shranjena pripetost gradnikov na robove delovnega območja se ohrani tudi po ponovnem zagonu programa.
 
 ## Vnos časa in dejanja budilke
 
-Čas budilke sprejema HH:mm z dvopičjem, piko, presledkom ali drugim ločilom, lahko tudi brez ločila. Ena ali dve števki pomenita ure, tri ali štiri pa ure in minute: 7, 12, 730, 0730 ali 7:30. Po odhodu iz polja se vrednost poenoti v HH:mm. Odmik se bere z desne, od sekund: 2 pomeni 00:00:02.00, 230 in 0230 pomenita 00:02:30.00, 12345 pa 01:23:45.00. Z ločili dve skupini pomenita minute in sekunde, tri ure, minute in sekunde, četrta pa stotinke; dovoljen je predznak. Dnevi pod Budilka vključena določajo dneve sprožitve; privzeto so izbrani vsi. Vrstni red sledi jeziku programa, sprememba jezika pa ne spremeni shranjenih dni. Budilka pokaže skriti gradnik in ga postavi v ospredje brez trajne spremembe Vedno na vrhu. Predvajaj časovni signal začne prvi kratek pisk pet sekund pred budilko. Nastavitev je neodvisna od zavihka Signal; sočasna zaporedja se združijo. Preizkusi sproži utripanje številčnice ali okvira ter preveri datoteko, ukaz, zvok, naslov HTTP/HTTPS oddaljenega skripta in po potrebi celoten časovni signal. Ustavitev preizkusa ustavi njegov notranji zvok in poskusni signal; ustavitev budilke ustavi njen notranji zvok. Izklop zvoka ne ustavi predvajanja: nadaljuje se neslišno in po vklopu spet postane slišno. Ukazi in oddaljeni skripti niso prizadeti.
+Čas budilke sprejema HH:mm z dvopičjem, piko, presledkom ali drugim ločilom, lahko tudi brez ločila. Ena ali dve števki pomenita ure, tri ali štiri pa ure in minute: 7, 12, 730, 0730 ali 7:30. Po odhodu iz polja se vrednost poenoti v HH:mm. Odmik se bere z desne, od sekund: 2 pomeni 00:00:02.00, 230 in 0230 pomenita 00:02:30.00, 12345 pa 01:23:45.00. Z ločili dve skupini pomenita minute in sekunde, tri ure, minute in sekunde, četrta pa stotinke; dovoljen je predznak. Dnevi pod Budilka vključena določajo dneve sprožitve; privzeto so izbrani vsi. Vrstni red sledi jeziku programa, sprememba jezika pa ne spremeni shranjenih dni. Budilka pokaže skriti gradnik in ga postavi v ospredje brez trajne spremembe Vedno na vrhu. Predvajaj časovni signal začne prvi kratek pisk pet sekund pred budilko. Nastavitev je neodvisna od zavihka Signal; sočasna zaporedja se združijo. Preizkusi sproži utripanje številčnice ali okvira ter preveri datoteko, ukaz, zvok, naslov HTTP/HTTPS oddaljenega skripta. Preizkus ne predvaja piskov pred budilko. Ustavitev preizkusa ustavi njegov notranji zvok in vizualno opozarjanje; ustavitev budilke ustavi njen notranji zvok. Izklop zvoka ne ustavi predvajanja: nadaljuje se neslišno in po vklopu spet postane slišno. Ukazi in oddaljeni skripti niso prizadeti.
 
 Zvočni signali budilke se načrtujejo glede na dejanski trenutek naslednje budilke po pretvorbi časovnega pasu in upoštevanju odmika gradnika. Začnejo se pet dejanskih sekund prej, tudi če prikazana ura preskoči neposredno na čas budilke. Spomladi preskočeni čas budilke ne sproži ne budilke ne njenih signalov. V jeseni ponovljeni uri se budilka in njeni signali sprožijo samo enkrat za isti datum in nastavljeni čas.
+
+Če CalClock ostane zagnan, po spanju, mirovanju ali zamudi pri obdelavi vsak gradnik enkrat sproži svojo zadnjo zamujeno budilko skupaj z nastavljenimi dejanji. Ponovni zagon CalClocka ne nadoknadi starih budilk; zamujeni časovni signali in piski pred budilko se ne predvajajo naknadno. »Prebudi računalnik za budilko« je privzeto izklopljeno in zahteva zagnan CalClock ter podporo sistema Windows in strojne opreme; počasno prebujanje lahko prepreči pravočasne piske pred budilko.
+
+Ko je budilka izklopljena, so druge kontrole na zavihku Budilka onemogočene, nastavljene vrednosti pa se ohranijo. Preizkus je na voljo, ko je budilka vključena, možnost Zaženi datoteko ali ukaz izbrana in datoteka ali ukaz vnesen.
 
 Drsnik Glasnost zvoka na zavihku Budilka uravnava notranje predvajanje za posamezni gradnik. Privzetih −18 dB ohrani izvirno raven datoteke (100%). Pomik v desno ojača zvok; največjih 0 dB pomeni približno 794%. −∞ dB pomeni tišino. Spremembe se slišijo tudi med preizkusom. MIDI in datoteke, ki jih ni mogoče dekodirati in se predvajajo z nadomestnim načinom, so omejene na 100%.
 
@@ -48,6 +52,8 @@ Spremembe videza so takoj vidne v predogledu izbranega gradnika. `Privzeti videz
 
 Glajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja »Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.
 
+Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč in O programu. Pri privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.
+
 ## Nastavitve in meniji
 
 Jezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Nastavitve, Pomoč in O programu. Vsak gradnik uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj.
@@ -60,14 +66,13 @@ Signal sledi vzorcu Greenwich Time Signal (GTS). Zavihek Signal ponuja Časovni 
 
 Pri intervalu 20 minut se signal oglasi ob :00, :20 in :40 po času gradnika. Na zavihku Program Zvok časovnega signala ponuja Vgrajeni generator (privzeto) in Sistemski pisk. Izbira velja za vse gradnike, tudi za signale budilk.
 
-Glasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, največja nepopačena amplituda sinusoide; tišina je −∞ dB. Privzeto je −18 dB. Preizkusi ob izbiri zvoka začne neprekinjeni predogled, Ustavi preizkus pa ga konča. Preizkusiti je mogoče obe možnosti; preizkus se ne shrani. Držanje drsnika prav tako predvaja predogled do izpusta miške, razen če teče preizkus z gumbom. Predvajanje se začne ob naslednji polni sekundi: kratko vsako sekundo in dolgo ob :00, :05, :10 in tako naprej. Ob ustavitvi se trenutni pisk konča; dolg lahko traja še pol sekunde. Upoštevane so tudi stotinke odmikov. Prekrivajoči se toni trajajo neprekinjeno do konca zadnjega prekrivanja na istem zvočnem izhodu.
+Glasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, največja nepopačena amplituda sinusoide; tišina je −∞ dB. Privzeto je −18 dB. Preizkusi ob izbiri zvoka začne neprekinjeni predogled, Ustavi preizkus pa ga konča. Preizkusiti je mogoče obe možnosti; preizkus se ne shrani. Držanje drsnika prav tako predvaja predogled do izpusta miške, razen če teče preizkus z gumbom. Predvajanje se začne ob naslednji polni sekundi: kratko vsako sekundo in dolgo ob :00, :05, :10 in tako naprej. Ob ustavitvi se trenutni pisk konča. Upoštevane so tudi stotinke odmikov. Prekrivajoči se toni trajajo neprekinjeno do konca zadnjega prekrivanja na istem zvočnem izhodu.
 
 **Zvočni izhod**
 
 **Zvočni izhod** na zavihku **Signal** izbere napravo za redne časovne signale vsakega gradnika, ki podpira zvok.
 Časovni pas, odmik in interval gradnika ostanejo nespremenjeni. Izbira generatorja in glasnost signala sta še vedno
-skupni za ves program na zavihku **Program**. Pri možnosti **Sistemski pisk** polje ostane vidno, vendar je sivo in
-onemogočeno ter ohrani izbrano napravo; **Vgrajeni generator** ga znova omogoči. Windows Vista generator uporablja
+skupni za ves program na zavihku **Program**. Pri možnosti **Sistemski pisk** polje je sivo in kaže privzeto napravo Windows, prejšnja izbira pa ostane shranjena; **Vgrajeni generator** ga znova omogoči. Windows Vista generator uporablja
 samodejno.
 
 **Privzeta naprava Windows** sledi trenutnemu privzetemu izhodu sistema Windows. Izrecno izbrana naprava ostane
@@ -78,8 +83,8 @@ register ali nastavitve XML.
 Signali se samodejno združujejo za vsak izhod posebej. Izrecno izbrana naprava in možnost Privzeta naprava
 Windows, ki kaže na isto napravo, uporabljata en izhod. Različne naprave delujejo neodvisno; ohranijo se
 sinusni val, zveznost faze ter začetek in konec tonov pri ničli. Zvočni izhod preizkusa na zavihku Program
-shrani napravo za preizkuse generatorja in predposlušanje glasnosti. Sistemski pisk onemogoči samo ta izbor.
-Budilke še naprej uporabljajo privzeti izhod Windows. Z rednimi signali se združijo samo na skupnem izhodu.
+shrani napravo za preizkuse generatorja in predposlušanje glasnosti. Pri sistemskem pisku je ta seznam onemogočen in kaže privzeto napravo Windows; shranjena izbira se ohrani.
+Zvok budilke in piski pred budilko uporabljajo privzeti izhod Windows. Z rednimi signali na istem izhodu se združijo samo piski pred budilko.
 
 ## Dodatne ure
 

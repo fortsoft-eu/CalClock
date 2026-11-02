@@ -19,15 +19,25 @@ Via Instellingen kunt u analoge en digitale klokken, kalenders, kalenderpanelen 
 
 ## Alarm en sneltoetsen
 
-Klokken en panelen kunnen een alarm hebben. De toepassing speelt een geluidsbestand zelf eenmaal of voortdurend af volgens de herhaaloptie; andere bestanden en opdrachten worden aan Windows doorgegeven. Klik op de alarmerende wijzerplaat of weergave, kies Alarm stoppen of druk op Esc om de aanduiding en het geluid van de toepassing te stoppen. Dubbelklikken op een wijzerplaat of digitale weergave schakelt seconden om. F1 opent Help, B Instellingen en Esc verbergt een widget wanneer er geen alarm wordt gestopt. Widgetposities worden na slepen opgeslagen, dialoogposities bij sluiten en instellingen in de gekozen opslag. Opnieuw starten activeert de bestaande toepassing en houdt widgets op de dichtstbijzijnde beschikbare plaats in het werkgebied.
+Klokken en panelen kunnen een alarm hebben. De toepassing speelt een geluidsbestand zelf eenmaal of voortdurend af volgens de herhaaloptie; andere bestanden en opdrachten worden aan Windows doorgegeven. Klik op de alarmerende wijzerplaat of weergave, kies Alarm stoppen of druk op Esc om de aanduiding en het geluid van de toepassing te stoppen. Dubbelklikken op een wijzerplaat of digitale weergave schakelt seconden om. F1 opent Help, B Instellingen en Esc verbergt een widget wanneer er geen alarm wordt gestopt. Widgetposities worden na slepen opgeslagen, dialoogposities bij sluiten en instellingen in de gekozen opslag. Opnieuw starten activeert de bestaande toepassing. Bij een nieuwe start worden de opgeslagen widgetposities en hun bevestiging aan specifieke randen van het werkgebied hersteld.
 
 ## Tijd invoeren en alarmacties
 
 De alarmtijd accepteert HH:mm met een dubbele punt, punt, spatie of ander scheidingsteken, of zonder scheidingsteken. Een of twee cijfers zijn uren, drie of vier uren en minuten: 7, 12, 730, 0730 of 7:30. Na het verlaten van het veld wordt de waarde HH:mm. Verschuivingen worden vanaf rechts als seconden gelezen: 2 is 00:00:02.00, 230 en 0230 zijn 00:02:30.00, 12345 is 01:23:45.00. Met scheidingstekens zijn twee groepen minuten en seconden, drie uren, minuten en seconden en een vierde honderdsten; een teken is toegestaan. De dagen onder Alarm ingeschakeld bepalen de actieve weekdagen; standaard zijn alle dagen gekozen. Hun volgorde volgt de toepassingstaal; taalwijziging verandert de opgeslagen dagen niet.
 
-Een alarm toont een verborgen widget en brengt deze naar voren zonder Altijd op voorgrond blijvend te wijzigen. Tijdsignaal afspelen begint de eerste korte toon vijf seconden vóór het alarm. Dit staat los van het tabblad Signaal; gelijktijdige reeksen worden samengevoegd. Testen laat de wijzerplaat of rand knipperen en test het bestand, de opdracht, het geluid, de HTTP/HTTPS-URL van het externe script en, indien gekozen, het volledige tijdsignaal. Test stoppen beëindigt de interne audio en het proefsignaal van de test; het alarm stoppen beëindigt de interne alarmaudio. Bij dempen loopt interne audio stil door en wordt na opheffen weer hoorbaar. Opdrachten en externe scripts blijven actief.
+Een alarm toont een verborgen widget en brengt deze naar voren zonder Altijd op voorgrond blijvend te
+wijzigen. Tijdsignaal afspelen begint de eerste korte toon vijf seconden vóór het alarm. Dit staat los van het
+tabblad Signaal; gelijktijdige reeksen worden samengevoegd. Testen laat de wijzerplaat of rand knipperen en test het ingestelde bestand, de opdracht, het geluid en de
+HTTP/HTTPS-URL van het externe script. De pieptonen vóór het alarm worden niet afgespeeld. Test stoppen
+beëindigt de visuele aanduiding en de interne audio van de test; het alarm stoppen beëindigt de interne
+alarmaudio. Alarm ingeschakeld uitzetten schakelt de overige bedieningselementen op het tabblad Alarm uit
+zonder hun waarden te wissen. De test vereist een ingeschakeld alarm, de optie Bestand of opdracht uitvoeren
+en een ingevuld bestand- of opdrachtveld. Bij dempen loopt interne audio stil
+door en wordt na opheffen weer hoorbaar. Opdrachten en externe scripts blijven actief.
 
 De pieptonen van het alarm worden gepland volgens het werkelijke tijdstip van het eerstvolgende alarm, na tijdzoneconversie en toepassing van de widgetverschuiving. Ze beginnen vijf werkelijke seconden eerder, ook als de weergegeven klok rechtstreeks naar de alarmtijd springt. Een alarmtijd die in het voorjaar wordt overgeslagen, activeert geen alarm of pieptonen. Tijdens het herhaalde uur in het najaar worden het alarm en de pieptonen voor dezelfde datum en ingestelde tijd slechts eenmaal afgespeeld.
+
+Als CalClock blijft draaien, activeert elke widget na slaapstand, sluimerstand of een verwerkingsvertraging eenmaal het laatst gemiste alarm, inclusief de ingestelde acties. Bij een nieuwe start van CalClock worden oude alarmen niet ingehaald; gemiste tijdsignalen en voorafgaande alarmpiepjes worden niet achteraf afgespeeld. „Computer wekken voor het alarm” staat standaard uit en vereist dat CalClock draait en dat Windows en de hardware dit ondersteunen; langzaam ontwaken kan tijdige voorafgaande piepjes verhinderen.
 
 Geluidsvolume op het tabblad Alarm regelt de interne weergave voor die widget. De standaard −18 dB behoudt het oorspronkelijke bestandsniveau (100%). Naar rechts versterkt het geluid; het maximum van 0 dB is ongeveer 794%. −∞ dB betekent stilte. Wijzigingen zijn ook tijdens een test hoorbaar. MIDI en bestanden die niet gedecodeerd kunnen worden en via een alternatieve speler worden afgespeeld, zijn beperkt tot 100%.
 
@@ -55,6 +65,13 @@ Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart d
 
 Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
+Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help en Info. Met het
+standaardlettertype van het systeem gebruiken deze vensters Tahoma 8 pt; een eigen toepassingslettertype heeft
+voorrang. De licentie behoudt het lettertype met vaste tekenbreedte. In deze modus zijn alleen GDI en Geen
+beschikbaar voor lettertypevereffening: een opgeslagen ClearType-keuze gebruikt tijdelijk GDI en keert terug
+bij het uitschakelen van de modus. Als Windows zelf geen visuele stijlen gebruikt, worden beide stijlopties
+ongemarkeerd en uitgeschakeld weergegeven zonder de opgeslagen keuzes te veranderen.
+
 ## Instellingen en menu’s
 
 Taal, lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor Instellingen, Help en Info. Elke widget gebruikt zijn eigen thema-instelling. Bij de eerste start wordt de Windows-weergavetaal gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en thema’s gelden alleen voor die widget.
@@ -65,15 +82,23 @@ Een widgetmenu bevat toepasselijke keuzes voor zichtbaarheid, Altijd op voorgron
 
 Het signaal volgt Greenwich Time Signal (GTS): vijf korte tonen tijdens de laatste vijf seconden en een lange toon precies op de tijdgrens. Signaal biedt Tijdsignaal ingeschakeld en intervallen van 1, 5, 10, 15, 20, 30 of 60 minuten volgens de widgettijd. Aanvankelijk staat het uit met een uurinterval geselecteerd. Schakelen via het menu behoudt het interval. UTC, tijdzone, verschuiving en NTP tellen mee; bij 20 minuten klinkt het op :00, :20 en :40. Na dempen mag de huidige toon eindigen; volgende tonen worden overgeslagen tot de eerstvolgende geplande toon na opheffen. Een losse Kalender heeft geen alarm, tijdsignaal of demping.
 
-Geluid tijdsignaal op Toepassing biedt Ingebouwde generator (standaard) en Systeempiep voor alle widgets en alarmen. Volume tijdsignaal toont het generatorniveau in dB: rechts is 0 dB de maximale onvervormde sinusamplitude, −∞ dB is stilte en −18 dB de standaard. Testen start een voortdurend voorbeeld, Test stoppen beëindigt dit. Beide geluiden zijn te testen; de test wordt niet opgeslagen. De schuifregelaar vasthouden geeft ook een voorbeeld tot de muis wordt losgelaten, tenzij de knoptest loopt. Het afspelen begint op de volgende hele seconde: een korte toon elke seconde en een lange op :00, :05, :10 enzovoort. Stoppen laat de huidige toon eindigen; een lange kan nog een halve seconde duren. Honderdsten in de verschuiving tellen mee; overlappende tonen klinken onafgebroken tot de laatste overlap eindigt op dezelfde audio-uitgang.
+Geluid tijdsignaal op Toepassing biedt Ingebouwde generator (standaard) en Systeempiep voor alle widgets en
+alarmen. Volume tijdsignaal toont het generatorniveau in dB: rechts is 0 dB de maximale onvervormde
+sinusamplitude, −∞ dB is stilte en −18 dB de standaard. Testen start een voortdurend voorbeeld, Test stoppen
+beëindigt dit. Beide geluiden zijn te testen; de test wordt niet opgeslagen. De schuifregelaar vasthouden
+geeft ook een voorbeeld tot de muis wordt losgelaten, tenzij de knoptest loopt. Het afspelen begint op de
+volgende hele seconde: een korte toon elke seconde en een lange op :00, :05, :10 enzovoort. Een al klinkende
+toon mag eindigen nadat de test is gestopt. Honderdsten in de verschuiving tellen mee; overlappende tonen
+klinken onafgebroken tot de laatste overlap eindigt op dezelfde audio-uitgang.
 
 **Audio-uitgang**
 
-**Audio-uitgang** op het tabblad **Signaal** kiest een apparaat voor de regelmatige tijdsignalen van elke widget met
-geluid. Tijdzone, verschuiving en interval van de widget veranderen niet. De generatorkeuze en het signaalvolume
-blijven algemeen ingesteld op het tabblad **Toepassing**. Bij **Systeempiep** blijft het veld zichtbaar maar grijs en
-uitgeschakeld, met behoud van het gekozen apparaat; **Ingebouwde generator** schakelt het weer in. Windows Vista
-gebruikt de generator automatisch.
+**Audio-uitgang** op het tabblad **Signaal** kiest een apparaat voor de regelmatige tijdsignalen van elke
+widget met geluid. Tijdzone, verschuiving en interval van de widget veranderen niet. De generatorkeuze en het
+signaalvolume blijven algemeen ingesteld op het tabblad **Toepassing**. Bij Systeempiep is de keuzelijst
+uitgeschakeld en toont deze het Windows-standaardapparaat. Het gekozen apparaat blijft opgeslagen en wordt
+hersteld bij Ingebouwde generator. Tijdsignaal ingeschakeld uitzetten schakelt zowel het uitvoerlabel als de
+keuzelijst uit zonder de keuze te wissen. Windows Vista gebruikt de generator automatisch.
 
 **Windows-standaardapparaat** volgt de huidige standaarduitgang van Windows. Een uitdrukkelijk gekozen apparaat blijft
 na loskoppelen geselecteerd en verschijnt als **Apparaat niet beschikbaar**; de signalen blijven stil totdat het
@@ -84,8 +109,10 @@ Signalen worden automatisch per uitgang samengevoegd. Een uitdrukkelijk gekozen 
 Windows-standaardapparaat dat naar hetzelfde apparaat verwijst, delen één uitgang. Verschillende apparaten
 werken onafhankelijk; de sinusgolf, doorlopende fase en het begin en einde van tonen bij nul blijven behouden.
 Audio-uitvoer voor test op het tabblad Toepassing bewaart het apparaat voor generatortests en
-volumevoorbeelden. De systeempiep schakelt alleen deze keuzelijst uit. Alarmen blijven de standaarduitvoer van
-Windows gebruiken. Ze worden alleen op een gemeenschappelijke uitgang met regelmatige signalen samengevoegd.
+volumevoorbeelden. Bij Systeempiep is deze keuzelijst uitgeschakeld en toont deze het
+Windows-standaardapparaat; de opgeslagen keuze blijft behouden. Alarmaudio en de pieptonen vóór het alarm
+gebruiken de standaarduitvoer van Windows. Alleen de pieptonen worden daar met regelmatige tijdsignalen
+samengevoegd.
 
 ## Extra klokken
 

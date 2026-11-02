@@ -22,13 +22,17 @@ Satovi i ploče mogu imati alarm. Program sam reproducira zvučnu datoteku jedno
 
 ## Prečaci i čuvanje
 
-Dvostruki klik na brojčanik ili digitalni ekran uključuje ili isključuje sekunde. F1 otvara pomoć, B otvara Postavke, a Esc skriva vidžet ako ne zaustavlja alarm. Položaji vidžeta čuvaju se nakon povlačenja, položaji dijaloških prozora pri zatvaranju, a postavke u odabrano spremište. Ponovno pokretanje aktivira već pokrenutu instancu i zadržava vidžete na najbližem dostupnom mjestu radnog područja.
+Dvostruki klik na brojčanik ili digitalni ekran uključuje ili isključuje sekunde. F1 otvara pomoć, B otvara Postavke, a Esc skriva vidžet ako ne zaustavlja alarm. Položaji vidžeta čuvaju se nakon povlačenja, položaji dijaloških prozora pri zatvaranju, a postavke u odabrano spremište. Ponovno pokretanje aktivira već pokrenutu instancu. Sačuvano priljubljivanje vidžeta uz ivice radnog područja zadržava se i nakon ponovnog pokretanja programa.
 
 ## Unos vremena i radnje alarma
 
-Vrijeme alarma prihvata HH:mm s dvotačkom, tačkom, razmakom ili drugim razdjelnikom; razdjelnik se može izostaviti. Jedna ili dvije znamenke označavaju sate, a tri ili četiri sate i minute, primjerice 7, 12, 730, 0730 ili 7:30. Nakon napuštanja polja vrijednost se pretvara u HH:mm. Pomak se čita zdesna, počevši od sekundi: 2 znači 00:00:02.00, 230 i 0230 znače 00:02:30.00, a 12345 znači 01:23:45.00. Uz razdjelnike dvije skupine znače minute i sekunde, tri sate, minute i sekunde, a četvrta sadrži stotinke; dopušten je predznak. Dani ispod opcije Alarm uključen određuju dane u sedmici kada se alarm pokreće; podrazumijevano su odabrani svi dani. Redoslijed prati jezik programa, a promjena jezika ne mijenja sačuvane dane. Aktivirani alarm prikazuje skriveni vidžet i dovodi ga ispred drugih prozora bez trajne promjene postavke Uvijek na vrhu. Reproduciraj vremenski signal pokreće prvi kratki ton pet sekundi prije vremena alarma. Ta je opcija nezavisna o kartici Signal, ali istovremeni se nizovi spajaju. Testiraj uključuje treperenje odabranog brojčanika ili okvira ploče i provjerava datoteku, naredbu, zvuk, HTTP/HTTPS adresu udaljene skripte te, ako je odabrano, cijeli niz vremenskog signala. Zaustavljanje testa prekida njegov unutrašnji zvuk i probni signal; zaustavljanje alarma prekida njegov unutrašnji zvuk. Isključivanje zvuka ne zaustavlja reprodukciju: ona se nastavlja nečujno i ponovno se čuje nakon uključivanja zvuka. Naredbe i udaljene skripte ostaju aktivne.
+Vrijeme alarma prihvata HH:mm s dvotačkom, tačkom, razmakom ili drugim razdjelnikom; razdjelnik se može izostaviti. Jedna ili dvije znamenke označavaju sate, a tri ili četiri sate i minute, primjerice 7, 12, 730, 0730 ili 7:30. Nakon napuštanja polja vrijednost se pretvara u HH:mm. Pomak se čita zdesna, počevši od sekundi: 2 znači 00:00:02.00, 230 i 0230 znače 00:02:30.00, a 12345 znači 01:23:45.00. Uz razdjelnike dvije skupine znače minute i sekunde, tri sate, minute i sekunde, a četvrta sadrži stotinke; dopušten je predznak. Dani ispod opcije Alarm uključen određuju dane u sedmici kada se alarm pokreće; podrazumijevano su odabrani svi dani. Redoslijed prati jezik programa, a promjena jezika ne mijenja sačuvane dane. Aktivirani alarm prikazuje skriveni vidžet i dovodi ga ispred drugih prozora bez trajne promjene postavke Uvijek na vrhu. Reproduciraj vremenski signal pokreće prvi kratki ton pet sekundi prije vremena alarma. Ta je opcija nezavisna o kartici Signal, ali istovremeni se nizovi spajaju. Testiraj uključuje treperenje odabranog brojčanika ili okvira ploče i provjerava datoteku, naredbu, zvuk, HTTP/HTTPS adresu udaljene skripte. Test ne pušta zvučne signale prije alarma. Zaustavljanje testa prekida njegov unutrašnji zvuk i vizuelnu signalizaciju; zaustavljanje alarma prekida njegov unutrašnji zvuk. Isključivanje zvuka ne zaustavlja reprodukciju: ona se nastavlja nečujno i ponovno se čuje nakon uključivanja zvuka. Naredbe i udaljene skripte ostaju aktivne.
 
 Zvučni signali alarma planiraju se prema stvarnom trenutku sljedećeg alarma nakon pretvaranja vremenske zone i primjene pomaka vidžeta. Počinju pet stvarnih sekundi prije tog trenutka, čak i kada prikazani sat skoči direktno na vrijeme alarma. Vrijeme alarma preskočeno u proljeće ne pokreće ni alarm ni njegove signale. Tokom sata ponovljenog u jesen alarm i njegovi signali oglašavaju se samo jednom za isti datum i podešeno vrijeme.
+
+Ako CalClock ostane pokrenut, nakon mirovanja, hibernacije ili kašnjenja obrade svaki vidžet jednom pokreće svoj posljednji propušteni alarm, uključujući podešene radnje. Ponovno pokretanje CalClocka ne nadoknađuje stare alarme; propušteni vremenski signali i zvučni signali prije alarma ne puštaju se naknadno. „Probudi računar radi alarma“ je početno isključeno i zahtijeva pokrenut CalClock i podršku Windowsa i hardvera; sporo buđenje može onemogućiti pravovremene signale prije alarma.
+
+Kada je alarm isključen, ostale kontrole na kartici Alarm nisu dostupne, ali podešene vrijednosti ostaju sačuvane. Test je dostupan kada je alarm uključen, opcija Pokreni datoteku ili naredbu označena i datoteka ili naredba unesena.
 
 Klizač Glasnoća zvuka na kartici Alarm podešava glasnoću zvučnih datoteka koje program reproducira za taj vidžet. Podrazumijevanih −18 dB čuva izvornu razinu datoteke (100%). Pomicanje udesno pojačava zvuk; najvećih 0 dB odgovara približno 794%. Položaj −∞ dB znači tišinu. Promjene se čuju i tokom testa. MIDI i datoteke koje se ne mogu dekodirati pa se reproduciraju zamjenskim načinom ograničene su na 100%.
 
@@ -52,6 +56,8 @@ Promjene izgleda odmah se prikazuju u pregledu odabranog vidžeta. `Podrazumijev
 
 Izglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da“ (podrazumijevano), „Ne, zadrži razmak“ i „Ne, bez razmaka“. „Ne, zadrži razmak“ skriva nulu, ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani razmak. Red UTC ima vlastito centriranje.
 
+Stil Windows 2000 dostupan je uz isključene teme i važi samo za Postavke, Pomoć i O programu. Uz podrazumijevani sistemski font koristi Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.
+
 ## Postavke i meniji
 
 Jezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz ivice vrijede globalno i postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na prozore Postavke, Pomoć i O programu. Svaki vidžet koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema jeziku interfejsa Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme vidžeta utječu samo na taj vidžet.
@@ -66,14 +72,13 @@ Pri intervalu od 20 minuta signal se čuje na :00, :20 i :40 prema vremenu vidž
 
 Na kartici Program opcija Zvuk vremenskog signala nudi Ugrađeni generator i Zvuk sistema. Izbor vrijedi za sve vidžete, uključujući signale alarma. Podrazumijevani je Ugrađeni generator.
 
-Klizač Glasnoća vremenskog signala na kartici Program prikazuje razinu generatora u dB. Krajnji desni položaj je 0 dB, najveća neizobličena amplituda sinusoide; tišina je −∞ dB. Podrazumijevana je glasnoća −18 dB. Testiraj uz izbor zvuka pokreće neprekidni pregled, a Zaustavi test ga završava. Oba se zvuka mogu testirati; test se ne čuva. Držanje klizača glasnoće također pokreće pregled do otpuštanja miša, osim ako traje test pokrenut dugmetom. Reprodukcija počinje na sljedećoj punoj sekundi: kratki ton svake sekunde i dugi na :00, :05, :10 i tako dalje. Zaustavljanje testa dopušta završetak trenutnog tona; dugi ton može trajati još do pola sekunde. Pomaci vidžeta poštuju se i u stotinkama sekunde. Tonovi vidžeta, alarma i testova koji se preklapaju zvuče kao jedan neprekidan ton do kraja posljednjeg preklapanja na istom audio izlazu.
+Klizač Glasnoća vremenskog signala na kartici Program prikazuje razinu generatora u dB. Krajnji desni položaj je 0 dB, najveća neizobličena amplituda sinusoide; tišina je −∞ dB. Podrazumijevana je glasnoća −18 dB. Testiraj uz izbor zvuka pokreće neprekidni pregled, a Zaustavi test ga završava. Oba se zvuka mogu testirati; test se ne čuva. Držanje klizača glasnoće također pokreće pregled do otpuštanja miša, osim ako traje test pokrenut dugmetom. Reprodukcija počinje na sljedećoj punoj sekundi: kratki ton svake sekunde i dugi na :00, :05, :10 i tako dalje. Zaustavljanje testa dopušta završetak trenutnog tona. Pomaci vidžeta poštuju se i u stotinkama sekunde. Tonovi vidžeta, alarma i testova koji se preklapaju zvuče kao jedan neprekidan ton do kraja posljednjeg preklapanja na istom audio izlazu.
 
 **Audio izlaz**
 
 **Audio izlaz** na kartici **Signal** bira uređaj za redovne vremenske signale svakog vidžeta koji podržava zvuk.
 Vremenska zona, pomak i interval vidžeta ostaju nepromijenjeni. Izbor generatora i glasnoća signala i dalje su
-zajednički za cijeli program na kartici **Program**. Uz **Zvuk sistema**, polje ostaje vidljivo, ali je zasivljeno i
-onemogućeno, a odabrani uređaj se čuva; **Ugrađeni generator** ga ponovo omogućava. Windows Vista automatski koristi
+zajednički za cijeli program na kartici **Program**. Uz **Zvuk sistema**, polje je zasivljeno i prikazuje podrazumijevani uređaj Windowsa, dok prethodno odabrani uređaj ostaje sačuvan; **Ugrađeni generator** ga ponovo omogućava. Windows Vista automatski koristi
 generator.
 
 **Zadani Windows uređaj** prati trenutni zadani izlaz Windowsa. Izričito odabrani uređaj ostaje odabran nakon
@@ -83,9 +88,8 @@ XML postavkama.
 
 Signali se automatski spajaju za svaki izlaz. Izričito odabrani uređaj i Zadani Windows uređaj koji upućuje na
 isti uređaj dijele jedan izlaz. Različiti uređaji rade nezavisno; sinusni val, kontinuitet faze te početak i
-završetak tonova u nuli ostaju očuvani. Zvučni izlaz testa na kartici Aplikacija pamti uređaj za testove
-generatora i pregled glasnoće. Sistemski zvučni signal onemogućava samo ovaj izbor. Alarmi i dalje koriste
-zadani izlaz Windowsa. S redovnim signalima spajaju se samo na zajedničkom izlazu.
+završetak tonova u nuli ostaju očuvani. Zvučni izlaz testa na kartici Program pamti uređaj za testove
+generatora i pregled glasnoće. Uz sistemski zvučni signal, ovaj spisak je onemogućen i prikazuje podrazumijevani uređaj Windowsa; sačuvani izbor ostaje nepromijenjen. Zvuk alarma i zvučni signali prije alarma koriste podrazumijevani izlaz Windowsa. S redovnim signalima na istom izlazu spajaju se samo signali prije alarma.
 
 ## Dodatni satovi
 

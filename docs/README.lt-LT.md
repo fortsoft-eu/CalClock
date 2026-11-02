@@ -18,15 +18,19 @@ Parametruose galima įtraukti, pašalinti ir dubliuoti analoginius bei skaitmeni
 
 ## Žadintuvas ir spartieji klavišai
 
-Laikrodžiai ir skydeliai palaiko žadintuvą. Programa pati leidžia garso failą vieną kartą arba nuolat pagal kartojimo nuostatą; kiti failai ir komandos perduodami „Windows“. Spustelėjus skambantį ciferblatą ar ekraną, pasirinkus Stabdyti žadintuvą arba paspaudus Esc, sustabdomas vaizdinis signalas ir programos garsas. Dukart spustelėjus ciferblatą arba skaitmeninį ekraną perjungiamos sekundės. F1 atidaro žinyną, B – parametrus, Esc paslepia valdiklį, jei nestabdomas žadintuvas. Valdiklių padėtys įrašomos nuvilkus, dialogų – juos uždarius, o parametrai – pasirinktoje saugykloje. Pakartotinis paleidimas suaktyvina veikiantį egzempliorių; valdikliai paliekami artimiausioje pasiekiamoje darbo srities vietoje.
+Laikrodžiai ir skydeliai palaiko žadintuvą. Programa pati leidžia garso failą vieną kartą arba nuolat pagal kartojimo nuostatą; kiti failai ir komandos perduodami „Windows“. Spustelėjus skambantį ciferblatą ar ekraną, pasirinkus Stabdyti žadintuvą arba paspaudus Esc, sustabdomas vaizdinis signalas ir programos garsas. Dukart spustelėjus ciferblatą arba skaitmeninį ekraną perjungiamos sekundės. F1 atidaro žinyną, B – parametrus, Esc paslepia valdiklį, jei nestabdomas žadintuvas. Valdiklių padėtys įrašomos nuvilkus, dialogų – juos uždarius, o parametrai – pasirinktoje saugykloje. Pakartotinis paleidimas suaktyvina veikiantį egzempliorių. Prie darbo srities kraštų prikabinti valdikliai išlaiko prikabinimą paleidus iš naujo ir pasikeitus dydžiui, DPI ar darbo sričiai.
 
 ## Laiko įvedimas ir žadintuvo veiksmai
 
 Žadintuvo laikas priima HH:mm su dvitaškiu, tašku, tarpu ar kitu skirtuku arba be skirtuko. Vienas ar du skaitmenys reiškia valandas, trys ar keturi – valandas ir minutes: 7, 12, 730, 0730 arba 7:30. Išėjus iš lauko nustatomas HH:mm formatas. Poslinkis skaitomas iš dešinės nuo sekundžių: 2 reiškia 00:00:02.00, 230 ir 0230 – 00:02:30.00, 12345 – 01:23:45.00. Su skirtukais dvi grupės reiškia minutes ir sekundes, trys – valandas, minutes ir sekundes, ketvirta – šimtąsias sekundės dalis; leidžiamas ženklas. Dienos po Žadintuvas įjungtas nustato suveikimo dienas; iš pradžių pasirinktos visos. Jų tvarka priklauso nuo programos kalbos, tačiau pakeitus kalbą įrašytos dienos nesikeičia.
 
-Žadintuvas parodo paslėptą valdiklį ir iškelia jį į priekį nekeisdamas Visada viršuje visam laikui. Leisti laiko signalą pradeda pirmą trumpą toną likus penkioms sekundėms iki žadintuvo. Ši nuostata nepriklauso nuo skirtuko Signalas; vienalaikės sekos sujungiamos. Tikrinti įjungia ciferblato arba rėmelio mirksėjimą ir tikrina failą, komandą, garsą, nuotolinio scenarijaus HTTP/HTTPS adresą ir, jei pasirinkta, visą laiko signalą. Sustabdžius tikrinimą nutraukiamas jo vidinis garsas ir bandomasis signalas; sustabdžius žadintuvą – jo vidinis garsas. Nutildžius atkūrimas tęsiasi tyliai ir vėl girdimas įjungus garsą. Komandos ir nuotoliniai scenarijai nestabdomi.
+Žadintuvas parodo paslėptą valdiklį ir iškelia jį į priekį nekeisdamas Visada viršuje visam laikui. Leisti laiko signalą pradeda pirmą trumpą toną likus penkioms sekundėms iki žadintuvo. Ši nuostata nepriklauso nuo skirtuko Signalas; vienalaikės sekos sujungiamos. Tikrinti įjungia ciferblato arba rėmelio mirksėjimą ir tikrina failą, komandą, garsą ir nuotolinio scenarijaus HTTP/HTTPS adresą. Tikrinti galima, kai pasirinkta Žadintuvas įjungtas ir Vykdyti failą arba komandą, o failo arba komandos laukas nėra tuščias. Tikrinimas neatkuria žadintuvo laiko signalo. Stabdyti tikrinimą sustabdo vidinį garsą ir vaizdinę peržiūrą. Sustabdžius žadintuvą sustabdomas jo vidinis garsas. Nutildžius atkūrimas tęsiasi tyliai ir vėl girdimas įjungus garsą. Komandos ir nuotoliniai scenarijai nestabdomi.
 
 Žadintuvo garsiniai signalai planuojami pagal tikrąjį artimiausio žadintuvo momentą po laiko juostos konvertavimo ir valdiklio poslinkio pritaikymo. Jie prasideda penkiomis tikromis sekundėmis anksčiau, net kai rodomas laikrodis peršoka tiesiai į žadintuvo laiką. Pavasarį praleistas žadintuvo laikas nesukelia nei žadintuvo, nei jo signalų. Rudenį pasikartojančią valandą žadintuvas ir jo signalai suveikia tik kartą tai pačiai datai ir nustatytam laikui.
+
+Jei CalClock lieka paleistas, po miego, užmigdymo ar apdorojimo delsos kiekvienas valdiklis vieną kartą paleidžia paskutinį praleistą žadintuvą su nustatytais veiksmais. Iš naujo paleidus CalClock seni žadintuvai nekartojami; praleisti laiko signalai ir išankstiniai žadintuvo pyptelėjimai vėliau neatkuriami. „Pažadinti kompiuterį žadintuvui“ pagal numatytuosius parametrus išjungta; reikia veikiančio CalClock ir Windows bei aparatinės įrangos palaikymo. Lėtas pažadinimas gali sutrukdyti laiku atkurti išankstinius pyptelėjimus.
+
+Kai Žadintuvas įjungtas nepažymėta, kiti skirtuko Žadintuvas valdikliai papilkėja ir tampa neaktyvūs, tačiau jų reikšmės išlieka. Išjungus žadintuvą sustabdomas vykstantis tikrinimas.
 
 Slankiklis Garsumas skirtuke Žadintuvas valdo šio valdiklio vidinį atkūrimą. Numatytieji −18 dB išlaiko pradinį failo lygį (100%). Slenkant dešinėn garsas stiprinamas; didžiausi 0 dB atitinka maždaug 794%. −∞ dB reiškia tylą. Pakeitimai girdimi ir tikrinant. MIDI ir failams, kurių negalima dekoduoti ir kurie atkuriami atsarginiu būdu, taikoma 100% riba.
 
@@ -54,6 +58,8 @@ Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parame
 
 Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
+Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas ir Apie. Vietoj numatytojo sistemos šrifto naudojamas Tahoma 8 pt; pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti pasirinkimai išlieka.
+
 ## Parametrai ir meniu
 
 Programos kalba, šriftas, glodinimas, saugykla, paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų išjungimas skirtuke Programa taikomas tik langams Parametrai, Žinynas ir Apie. Kiekvienas valdiklis naudoja savo temų nuostatą. Pirmą kartą parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, glodinimas ir temos taikomi tik jam.
@@ -64,15 +70,16 @@ Valdiklio meniu turi jam tinkamus matomumo, Visada viršuje, sekundžių, dydži
 
 Signalas atitinka Grinvičo laiko signalą (GTS): penki trumpi tonai paskutines penkias sekundes ir ilgas tonas tiksliai nustatytu metu. Skirtuke Signalas yra Laiko signalas įjungtas ir 1, 5, 10, 15, 20, 30 arba 60 minučių intervalai pagal valdiklio laiką. Iš pradžių išjungta, pasirinktas valandos intervalas. Perjungimas meniu išlaiko intervalą. Atsižvelgiama į UTC, juostą, poslinkį ir NTP. 20 minučių intervalas skamba :00, :20 ir :40. Nutildžius dabartinis tonas gali baigtis, kiti praleidžiami, o įjungus garsą girdimas tik kitas suplanuotas tonas. Atskiras Kalendorius neturi žadintuvo, laiko signalo ar nutildymo.
 
-Skirtuko Programa Laiko signalo garsas siūlo Įtaisytasis generatorius (numatyta) ir Sistemos pyptelėjimas visiems valdikliams ir žadintuvams. Laiko signalo garsumas rodo generatoriaus lygį dB: dešinėje 0 dB – didžiausia neiškraipyta sinusoidės amplitudė, −∞ dB – tyla, numatyta −18 dB. Tikrinti pradeda nepertraukiamą peržiūrą, Stabdyti tikrinimą ją baigia. Tikrinami abu garsai; tikrinimas neįrašomas. Laikant slankiklį garsas taip pat leidžiamas iki pelės atleidimo, jei nevyksta mygtuko tikrinimas. Pradedama kitą pilną sekundę: trumpas tonas kas sekundę ir ilgas :00, :05, :10 ir toliau. Sustabdymas leidžia dabartiniam tonui baigtis; ilgas gali tęstis dar pusę sekundės. Įskaitomos poslinkių šimtosios dalys; persidengiantys tonai skamba nenutrūkstamai iki paskutinio persidengimo pabaigos toje pačioje garso išvestyje.
+Skirtuko Programa Laiko signalo garsas siūlo Įtaisytasis generatorius (numatyta) ir Sistemos pyptelėjimas visiems valdikliams ir žadintuvams. Laiko signalo garsumas rodo generatoriaus lygį dB: dešinėje 0 dB – didžiausia neiškraipyta sinusoidės amplitudė, −∞ dB – tyla, numatyta −18 dB. Tikrinti pradeda nepertraukiamą peržiūrą, Stabdyti tikrinimą ją baigia. Tikrinami abu garsai; tikrinimas neįrašomas. Laikant slankiklį garsas taip pat leidžiamas iki pelės atleidimo, jei nevyksta mygtuko tikrinimas. Pradedama kitą pilną sekundę: trumpas tonas kas sekundę ir ilgas :00, :05, :10 ir toliau. Sustabdžius tikrinimą jau prasidėjęs tonas gali baigtis. Kiti tuo pat metu skambantys laiko signalai gali tęstis. Įskaitomos poslinkių šimtosios dalys; persidengiantys tonai skamba nenutrūkstamai iki paskutinio persidengimo pabaigos toje pačioje garso išvestyje.
 
 **Garso išvestis**
 
-**Garso išvestis** skirtuke **Signalas** parenka įrenginį kiekvieno garsą palaikančio valdiklio reguliariems laiko
-signalams. Valdiklio laiko juosta, poslinkis ir intervalas nesikeičia. Generatoriaus pasirinkimas ir signalo garsumas
-tebėra bendri visai programai skirtuke **Programa**. Pasirinkus **Sistemos pyptelėjimas**, laukas lieka matomas, bet
-papilkėja ir išsaugo pasirinktą įrenginį; **Įtaisytasis generatorius** jį vėl įjungia. Windows Vista generatorių
-naudoja automatiškai.
+Garso išvestis skirtuke Signalas parenka įrenginį kiekvieno garsą palaikančio valdiklio reguliariems laiko
+signalams. Valdiklio laiko juosta, poslinkis ir intervalas nesikeičia. Generatoriaus pasirinkimas ir signalo
+garsumas tebėra bendri visai programai skirtuke Programa. Pasirinkus Sistemos pyptelėjimas, išvesties sąrašas
+papilkėja ir rodo Numatytasis Windows įrenginys. Įrašytas įrenginio pasirinkimas išlieka ir vėl rodomas
+pasirinkus Įtaisytasis generatorius. Kai laiko signalas išjungtas, užrašas Garso išvestis taip pat papilkėja.
+Windows Vista generatorių naudoja automatiškai.
 
 **Numatytasis Windows įrenginys** seka dabartinę numatytąją Windows garso išvestį. Atskirai pasirinktas įrenginys
 lieka pasirinktas ir atjungtas, o sąraše rodomas kaip **Įrenginys nepasiekiamas**; jo signalai nutyla, kol jis vėl
@@ -82,9 +89,10 @@ valdikliui atskirai įrašomas į registrą arba XML parametrus.
 Signalai automatiškai sujungiami kiekvienoje išvestyje. Atskirai pasirinktas įrenginys ir į tą patį įrenginį
 nukreiptas Numatytasis Windows įrenginys naudoja vieną išvestį. Skirtingi įrenginiai veikia nepriklausomai;
 išlaikoma sinusoidė, fazės tolydumas ir tonų pradžia bei pabaiga ties nuliu. Bandymo garso išvestis kortelėje
-Programa išsaugo įrenginį generatoriaus bandymams ir garsumo perklausai. Sistemos pyptelėjimas išjungia tik šį
-parinkiklį. Žadintuvai ir toliau naudoja numatytąją „Windows“ išvestį. Su reguliariais signalais jie
-sujungiami tik bendroje išvestyje.
+Programa išsaugo įrenginį generatoriaus bandymams ir garsumo perklausai. Sistemos pyptelėjimas papilkintame
+sąraše rodo Numatytasis Windows įrenginys; įrašytas bandymo įrenginys išlieka. Žadintuvo garsas ir
+išankstiniai pyptelėjimai naudoja numatytąją Windows išvestį. Su reguliariais laiko signalais toje pačioje
+išvestyje sujungiami tik išankstiniai pyptelėjimai; žadintuvo garso failai atkuriami atskirai.
 
 ## Papildomi laikrodžiai
 

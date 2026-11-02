@@ -14,7 +14,7 @@ CalClock je nativní aplikace Win32/x86 pro Windows Vista a novější, která n
 - Kalendáře s hodinami a až dvěma dalšími pojmenovanými hodinami v samostatných časových pásmech, samostatnými velikostmi ciferníků, čtyřmi styly rámečku, nastavitelnou barvou rámečku, textem UTC, volbou úvodní nuly a samostatným písmem pro každý textový řádek
 - Budíky s výběrem dnů v týdnu, vizuální signalizací, interním přehráváním zvuku, opakováním, místními příkazy a voláním skriptů přes HTTP/HTTPS
 - Časové znamení pro jednotlivé hodiny v intervalu 1, 5, 10, 15, 20, 30 nebo 60 minut; souběžná znamení se sloučí do jedné sekvence
-- Příkaz Ztlumeno pro jednotlivé hodiny a zaškrtávací příkaz Ztlumit vše v nabídce oznamovací oblasti
+- Příkaz Ztlumit pro jednotlivé hodiny a zaškrtávací příkaz Ztlumit vše v nabídce oznamovací oblasti
 - Volitelné automatické spouštění s Windows
 - Volitelné přichytávání widgetů k okrajům pracovní plochy při tažení v dosahu pěti pixelů, ve výchozím stavu zapnuté; přichycení zůstává zachováno při změně velikosti widgetu
 - Synchronizace NTP bez změny systémového času Windows
@@ -76,7 +76,13 @@ Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly r�
 
 Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Nastavení, Nápovědu a O programu. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
-Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvukové soubory samostatně pro každý widget a zobrazuje úroveň v dB. Výchozí hodnota **−18 dB** zachovává původní úroveň souboru (**100%**). Posun doprava zvuk zesiluje; maximum **0 dB** odpovídá přibližně **794%** původní amplitudy. Levá krajní poloha je **−∞ dB** (ticho). Změny se projevují i během testu zvuku. Zesílení se vztahuje na dekódovaný zvuk včetně WAV, MP3, WMA, AAC, M4A a FLAC, pokud je Windows podporují. Starší způsob přehrávání souborů, které nelze dekódovat, například MIDI, je omezen na 100%.
+Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu a O programu. Při
+výchozím systémovém písmu používají tato okna Tahomu 8 pt; vlastní aplikační písmo má přednost. Text licence
+zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování GDI nebo Žádné: uložená volba
+ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li vizuální styly vypnuté přímo ve Windows,
+obě volby vzhledu se zobrazí nezaškrtnuté a neaktivní, aniž se změní uložené nastavení.
+
+Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvukové soubory samostatně pro každý widget a zobrazuje úroveň v dB. Výchozí hodnota **−18 dB** zachovává původní úroveň souboru (**100 %**). Posun doprava zvuk zesiluje; maximum **0 dB** odpovídá přibližně **794 %** původní amplitudy. Levá krajní poloha je **−∞ dB** (ticho). Změny se projevují i během testu zvuku. Zesílení se vztahuje na dekódovaný zvuk včetně WAV, MP3, WMA, AAC, M4A a FLAC, pokud je Windows podporují. Starší způsob přehrávání souborů, které nelze dekódovat, například MIDI, je omezen na 100 %.
 
 Ovládací prvky dnů budíku respektují první den týdne používaný zvolenou kulturou aplikace. Uložené dny budíku si při změně jazyka aplikace zachovávají význam. Zapnutí budíku z nabídky widgetu bez vybraného dne v týdnu otevře kartu Budík příslušného widgetu, místo aby zapnulo budík, který nemůže zaznít.
 
@@ -112,19 +118,34 @@ Hodinové widgety podporují budíky pro samostatně vybrané dny v týdnu; ve v
 
 Pípání budíku se plánuje podle skutečného nadcházejícího času budíku po převodu do pásma a započtení offsetu widgetu. Začíná pět skutečných sekund před tímto okamžikem, i když hodiny skočí přímo na nastavený čas budíku. Pro přeskočený jarní čas se nespustí budík ani jeho pípání. Při podzimním opakování hodiny se budík i jeho pípání spustí pouze jednou pro stejné datum a nastavený čas.
 
-Tlačítko Test u budíku zobrazí náhled vizuální signalizace a asynchronně otestuje nastavený soubor, příkaz, zvuk i adresu vzdáleného skriptu. Je-li zvoleno časové znamení budíku, Test přehraje také celou šestipípovou sekvenci; Zastavit test ukončí interní zvuk a náhled znamení.
+Pokud CalClock zůstane spuštěný, po spánku, hibernaci nebo prodlevě obsluhy každý widget jednou spustí poslední zmeškaný budík včetně nastavených akcí. Nové spuštění CalClocku staré budíky nedohání; zmeškaná časová znamení ani předpípávání se zpětně nepřehrávají. Volba „Probudit počítač kvůli budíku“ je ve výchozím stavu vypnutá a vyžaduje běžící CalClock a podporu Windows i hardwaru; pomalé probouzení může znemožnit včasné předpípávání.
+
+Tlačítko Vyzkoušet rozbliká ciferník či rám panelu a vyzkouší nastavený soubor, příkaz, zvuk a HTTP/HTTPS
+adresu vzdáleného skriptu. Předpípávání budíku nepřehrává. Zastavit test ukončí vizuální náhled a jeho interní
+zvuk; zastavení budíku ukončí jeho interní zvuk. Vypnutí volby Budík aktivní znepřístupní ostatní prvky na
+kartě Budík, ale zachová jejich hodnoty. Test vyžaduje zapnutý budík, zaškrtnutou volbu Spustit soubor nebo
+příkaz a vyplněné pole souboru nebo příkazu.
 
 Na kartě Znamení je zatržítko Časové znamení aktivní a přepínače intervalů 1, 5, 10, 15, 20, 30 nebo 60 minut podle času zobrazovaného widgetem. Znamení je zpočátku vypnuté a je zvolen hodinový interval. Vypnutí a zapnutí příkazem Signál v menu widgetu interval zachovává. Menu zobrazuje čas budíku a interval znamení v závorkách. Interval 20 minut znamená :00, :20 a :40 podle tohoto času. Znamení odpovídá **Greenwich Time Signal (GTS)**: pět krátkých pípnutí označuje posledních pět sekund a delší pípnutí přesnou hranici intervalu. Zohledňují se časová pásma, režim UTC, offsety i aktuální korekce NTP. Znamení budíku a karta Znamení zůstávají nezávisle nastavitelné. Zohledňují se i zlomkové offsety widgetů. Na každém zvukovém výstupu znějí překrývající se tóny widgetů, budíků a testů souvisle do konce posledního překryvu.
 
-**Zvuk časového znamení** na kartě Aplikace nabízí **Vlastní generátor** (výchozí) a **Systémové pípání**. Volba platí pro časová znamení všech widgetů včetně znamení budíků a ukládá se do globálního nastavení. U **Vlastního generátoru** zobrazuje jezdec **Hlasitost časového znamení** úroveň v dB pro celou aplikaci. Pravá krajní poloha je **0 dB**, maximální nezkreslená amplituda sinusovky; ticho je **−∞ dB**. Výchozí hlasitost je **−18 dB**. Zastavení testu nechá aktuální pípnutí doznít; dlouhé pípnutí může končit až půl sekundy. Tlačítko **Test** vedle **Zvuku časového znamení** zapne souvislý náhled, **Zastavit test** jej ukončí. Testovat lze **Systémové pípání** i **Vlastní generátor**; stav testu se neukládá. Držení jezdce hlasitosti také spouští náhled do uvolnění myši, pokud neběží test zapnutý tlačítkem. Přehrávání začíná v následující celé sekundě, s krátkými tóny každou sekundu a dlouhým v :00, :05, :10 atd. Volba zvuku je dostupná jen tehdy, podporuje-li systém obě možnosti.
+**Zvuk časového znamení** na kartě Aplikace nabízí **Vlastní generátor** (výchozí) a **Systémové pípání**.
+Volba platí pro časová znamení všech widgetů včetně znamení budíků a ukládá se do globálního nastavení. U
+**Vlastního generátoru** zobrazuje jezdec **Hlasitost časového znamení** úroveň v dB pro celou aplikaci. Pravá
+krajní poloha je **0 dB**, maximální nezkreslená amplituda sinusovky; ticho je **−∞ dB**. Výchozí hlasitost je
+**−18 dB**. Po zastavení testu může již znějící tón doznít. Tlačítko **Vyzkoušet** vedle **Zvuku časového
+znamení** zapne souvislý náhled, **Zastavit test** jej ukončí. Testovat lze **Systémové pípání** i **Vlastní
+generátor**; stav testu se neukládá. Držení jezdce hlasitosti také spouští náhled do uvolnění myši, pokud
+neběží test zapnutý tlačítkem. Přehrávání začíná v následující celé sekundě, s krátkými tóny každou sekundu a
+dlouhým v :00, :05, :10 atd. Volba zvuku je dostupná jen tehdy, podporuje-li systém obě možnosti.
 
 **Zvukový výstup**
 
 Volba **Zvukový výstup** na kartě **Znamení** určuje zařízení pro pravidelná časová znamení každého widgetu
-podporujícího zvuk. Časové pásmo, offset a interval widgetu se tím nemění. Volba generátoru a hlasitost znamení
-zůstávají společné pro celou aplikaci na kartě **Aplikace**. Při volbě **Systémové pípání** pole zašedne, zůstane
-viditelné a zachová vybrané zařízení; volba **Vlastní generátor** je znovu zpřístupní. Ve Windows Vista se generátor
-používá automaticky.
+podporujícího zvuk. Časové pásmo, offset a interval widgetu se tím nemění. Volba generátoru a hlasitost
+znamení zůstávají společné pro celou aplikaci na kartě **Aplikace**. Při volbě Systémové pípání rozbalovací
+seznam zašedne a zobrazí výchozí zařízení Windows. Zvolené zařízení zůstane uložené a obnoví se po přepnutí na
+Vlastní generátor. Vypnutí volby Časové znamení aktivní znepřístupní popisek zvukového výstupu i rozbalovací
+seznam, ale zachová vybrané zařízení. Ve Windows Vista se generátor používá automaticky.
 
 Volba **Výchozí zařízení Windows** sleduje aktuální výchozí výstup Windows. Konkrétní zařízení zůstane vybrané i po
 odpojení a v seznamu se zobrazí jako **Nedostupné zařízení**; jeho znamení zůstanou bez zvuku, dokud nebude dostupné
@@ -134,11 +155,12 @@ registru nebo XML.
 Slučování probíhá automaticky pro každý výstup zvlášť. Výslovně zvolené zařízení a volba Výchozí zařízení
 Windows, která právě odkazuje na stejné zařízení, sdílejí jeden výstup. Různá zařízení pracují nezávisle;
 výpočet sinusovky, návaznost fáze a začátky i konce tónů v nule zůstávají zachované. Zvukový výstup testu na
-kartě Aplikace ukládá zařízení pro test generátoru a poslech při změně hlasitosti. Systémové pípání zašedne
-pouze tento výběr. Budíky nadále používají výchozí výstup Windows. S pravidelnými znameními se sloučí jen na
-společném výstupu.
+kartě Aplikace ukládá zařízení pro test generátoru a poslech při změně hlasitosti. Při systémovém pípání tento
+rozbalovací seznam zašedne a zobrazí výchozí zařízení Windows, přičemž uloženou volbu zachová. Zvuk budíku a
+jeho předpípávání používají výchozí výstup Windows. S pravidelnými časovými znameními se na tomto výstupu
+slučuje pouze předpípávání.
 
-Budík i časové znamení lze zapínat také v kontextové nabídce každého widgetu podporujícího zvuk. Položka budíku zobrazuje jeho čas a, nejsou-li zvoleny všechny dny, také aktivní dny v týdnu. Zaškrtnutý příkaz Ztlumeno ovlivňuje svůj widget a odpovídá volbě Ztlumeno na kartě Obecné. Samostatný Kalendář nepodporuje budík, časové znamení ani ztlumení. Příkaz v oznamovací oblasti se jmenuje Ztlumit vše; `M` na libovolném widgetu provede stejné globální přepnutí. Globální zrušení ztlumení obnoví pouze widgety ztlumené předchozí globální akcí. Interní zvuk pokračuje tiše a po zrušení ztlumení je opět slyšitelný. Již probíhající pípnutí může doznít, další se vynechávají do opětovného povolení zvuku. Příkazy nesouvisející se zvukem a vzdálené skripty nejsou ovlivněny.
+Budík i časové znamení lze zapínat také v kontextové nabídce každého widgetu podporujícího zvuk. Položka budíku zobrazuje jeho čas a, nejsou-li zvoleny všechny dny, také aktivní dny v týdnu. Zaškrtnutý příkaz Ztlumit ovlivňuje svůj widget a odpovídá volbě Ztlumeno na kartě Obecné. Samostatný Kalendář nepodporuje budík, časové znamení ani ztlumení. Příkaz v oznamovací oblasti se jmenuje Ztlumit vše; `M` na libovolném widgetu provede stejné globální přepnutí. Globální zrušení ztlumení obnoví pouze widgety ztlumené předchozí globální akcí. Interní zvuk pokračuje tiše a po zrušení ztlumení je opět slyšitelný. Již probíhající pípnutí může doznít, další se vynechávají do opětovného povolení zvuku. Příkazy nesouvisející se zvukem a vzdálené skripty nejsou ovlivněny.
 
 ## Nastavení a nabídky
 

@@ -76,6 +76,8 @@ Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jedn
 
 Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre Nastavenia, Pomoc a O programe. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
 
+Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc a O programe. Pri predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a neuplatňujú sa; uložené voľby sa zachovajú.
+
 Jazdec **Hlasitosť zvuku** na karte Budík ovláda interne prehrávané súbory samostatne pre každý widget a zobrazuje úroveň v dB. Predvolených **−18 dB** zachováva pôvodnú úroveň súboru (**100%**). Posun doprava zosilňuje; maximum **0 dB** predstavuje približne **794%** pôvodnej amplitúdy. Ľavá krajná poloha je **−∞ dB** (ticho). Zmeny sa prejavujú aj počas testu. Zosilnenie sa týka dekódovaného zvuku vrátane WAV, MP3, WMA, AAC, M4A a FLAC, ak ich Windows podporuje. Starší spôsob prehrávania nedekódovateľných súborov, napríklad MIDI, je obmedzený na 100%.
 
 Dni budíka rešpektujú prvý deň týždňa zvolenej kultúry aplikácie. Uložené dni si pri zmene jazyka zachovávajú význam. Zapnutie budíka z ponuky bez vybraného dňa otvorí príslušnú kartu Budík namiesto zapnutia budíka, ktorý nemôže zaznieť.
@@ -112,18 +114,21 @@ Hodinové widgety podporujú budíky pre jednotlivo vybrané dni; predvolene je 
 
 Pípanie budíka sa plánuje podľa skutočného nadchádzajúceho času budíka po prevode do pásma a započítaní posunu widgetu. Začína päť skutočných sekúnd pred týmto okamihom, aj keď hodiny skočia priamo na nastavený čas budíka. Pre preskočený jarný čas sa nespustí budík ani jeho pípanie. Pri jesennom opakovaní hodiny sa budík aj jeho pípanie spustia iba raz pre rovnaký dátum a nastavený čas.
 
-Test zobrazí vizuálnu signalizáciu a asynchrónne otestuje súbor, príkaz, zvuk a adresu vzdialeného skriptu. Pri zvolenom znamení budíka prehrá aj celú šesťpípovú sekvenciu; Zastaviť test ukončí interný zvuk aj náhľad znamenia.
+Ak CalClock zostane spustený, po spánku, hibernácii alebo oneskorení obsluhy každý widget raz spustí posledný zmeškaný budík vrátane nastavených akcií. Nové spustenie CalClocku staré budíky nedoháňa; zmeškané časové znamenia ani predpípanie sa spätne neprehrávajú. Voľba „Prebudiť počítač kvôli budíku“ je predvolene vypnutá a vyžaduje spustený CalClock a podporu Windows aj hardvéru; pomalé prebúdzanie môže znemožniť včasné predpípanie.
+
+Keď je budík vypnutý, ostatné ovládacie prvky na karte Budík sú neaktívne, ale nastavené hodnoty sa zachovajú. Test je dostupný pri zapnutom budíku a voľbe Spustiť súbor alebo príkaz s vyplneným súborom alebo príkazom.
+
+Test zobrazí vizuálnu signalizáciu a asynchrónne otestuje súbor, príkaz, zvuk a adresu vzdialeného skriptu. Test neprehráva predpípanie budíka. Zastaviť test ukončí interný zvuk aj vizuálnu signalizáciu.
 
 Na karte Znamenie je začiarkavacie políčko Časové znamenie aktívne a prepínače intervalov 1, 5, 10, 15, 20, 30 alebo 60 minút podľa času zobrazovaného widgetom. Znamenie je spočiatku vypnuté a je zvolený hodinový interval. Vypnutie a zapnutie príkazom Signál v menu widgetu zachováva interval. Menu zobrazuje čas budíka a interval znamenia v zátvorkách. Interval 20 minút znamená :00, :20 a :40 daného času. Vzorom je **Greenwich Time Signal (GTS)**: päť krátkych pípnutí označuje posledných päť sekúnd a dlhšie presnú hranicu. Zohľadňujú sa pásma, UTC, posuny a aktuálna korekcia NTP. Znamenie budíka a karta Znamenie zostávajú nezávislé. Zohľadňujú sa zlomkové posuny a prekrývajúce sa tóny widgetov, budíkov a testov znejú súvisle do konca posledného prekryvu na rovnakom zvukovom výstupe.
 
-**Zvuk časového znamenia** na karte Aplikácia ponúka **Vlastný generátor** (predvolený) a **Systémové pípanie**. Platí pre všetky znamenia vrátane budíkov a ukladá sa globálne. Pri **Vlastnom generátore** jazdec **Hlasitosť časového znamenia** ukazuje úroveň v dB pre celú aplikáciu. Pravá krajná poloha je **0 dB**, maximálna neskreslená amplitúda sínusovky; ticho je **−∞ dB**. Predvolená hlasitosť je **−18 dB**. Generátor začína aj končí tóny v priechode nulou vrátane zastavenia testu. Aktuálne pípnutie nechá doznieť; dlhé môže končiť až pol sekundy. **Test** vedľa **Zvuku časového znamenia** zapne súvislý náhľad, **Zastaviť test** ho ukončí. Testovať možno oba spôsoby a stav testu sa neukladá. Držanie jazdca hlasitosti tiež spúšťa náhľad do uvoľnenia myši, pokiaľ nebeží test zapnutý tlačidlom. Prehrávanie začína v nasledujúcej celej sekunde, s krátkymi tónmi každú sekundu a dlhým v :00, :05, :10 atď. Voľba zvuku je dostupná len v systéme podporujúcom oba spôsoby.
+**Zvuk časového znamenia** na karte Aplikácia ponúka **Vlastný generátor** (predvolený) a **Systémové pípanie**. Platí pre všetky znamenia vrátane budíkov a ukladá sa globálne. Pri **Vlastnom generátore** jazdec **Hlasitosť časového znamenia** ukazuje úroveň v dB pre celú aplikáciu. Pravá krajná poloha je **0 dB**, maximálna neskreslená amplitúda sínusovky; ticho je **−∞ dB**. Predvolená hlasitosť je **−18 dB**. Generátor začína aj končí tóny v priechode nulou vrátane zastavenia testu. Aktuálne pípnutie nechá doznieť. **Test** vedľa **Zvuku časového znamenia** zapne súvislý náhľad, **Zastaviť test** ho ukončí. Testovať možno oba spôsoby a stav testu sa neukladá. Držanie jazdca hlasitosti tiež spúšťa náhľad do uvoľnenia myši, pokiaľ nebeží test zapnutý tlačidlom. Prehrávanie začína v nasledujúcej celej sekunde, s krátkymi tónmi každú sekundu a dlhým v :00, :05, :10 atď. Voľba zvuku je dostupná len v systéme podporujúcom oba spôsoby.
 
 **Zvukový výstup**
 
 Voľba **Zvukový výstup** na karte **Znamenie** určuje zariadenie pre pravidelné časové znamenia každého widgetu so
 zvukom. Časové pásmo, offset a interval widgetu zostávajú nezmenené. Voľba generátora a hlasitosť znamení zostávajú
-spoločné pre celú aplikáciu na karte **Aplikácia**. Pri voľbe **Systémové pípanie** pole zosivie, zostane viditeľné a
-zachová vybrané zariadenie; voľba **Vlastný generátor** ho znovu sprístupní. Windows Vista používa generátor
+spoločné pre celú aplikáciu na karte **Aplikácia**. Pri voľbe **Systémové pípanie** pole zosivie a zobrazí predvolené zariadenie Windows; predchádzajúca voľba zostane uložená; voľba **Vlastný generátor** ho znovu sprístupní. Windows Vista používa generátor
 automaticky.
 
 Voľba **Predvolené zariadenie Windows** sleduje aktuálny predvolený výstup Windows. Konkrétne zariadenie zostane
@@ -135,8 +140,7 @@ Zlučovanie prebieha automaticky pre každý výstup zvlášť. Výslovne zvolen
 zariadenie Windows, ktorá práve odkazuje na to isté zariadenie, zdieľajú jeden výstup. Rôzne zariadenia
 pracujú nezávisle; výpočet sínusovky, nadväznosť fázy a začiatky aj konce tónov v nule zostávajú zachované.
 Zvukový výstup testu na karte Aplikácia ukladá zariadenie pre test generátora a počúvanie pri zmene
-hlasitosti. Systémové pípanie zneaktívni iba tento výber. Budíky naďalej používajú predvolený výstup Windows.
-S pravidelnými znameniami sa zlúčia len na spoločnom výstupe.
+hlasitosti. Pri systémovom pípaní je tento zoznam neaktívny a zobrazuje predvolené zariadenie Windows; uložená voľba sa zachová. Zvuk budíka aj jeho predpípanie používajú predvolený výstup Windows. S pravidelnými znameniami na rovnakom výstupe sa zlučuje iba predpípanie.
 
 Budík a znamenie možno zapínať aj v ponuke každého widgetu so zvukom. Položka budíka zobrazuje čas a, ak nie sú zvolené všetky dni, aktívne dni. Zaškrtnuté Stlmené ovplyvňuje widget a zodpovedá voľbe na karte Všeobecné. Samostatný Kalendár nepodporuje budík, časové znamenie ani stlmenie. V oblasti oznámení sa príkaz nazýva Stlmiť všetko; `M` na ľubovoľnom widgete vykoná rovnaké globálne prepnutie. Globálne zrušenie stlmenia obnoví iba widgety stlmené predchádzajúcou globálnou akciou. Interný zvuk pokračuje potichu a po obnovení je znovu počuteľný. Rozbehnuté pípnutie môže doznieť; ďalšie sa vynechávajú do povolenia zvuku. Nezvukové príkazy a vzdialené skripty nie sú ovplyvnené.
 

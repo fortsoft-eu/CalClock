@@ -76,6 +76,12 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects only Settings, Help, and About. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
+Windows 2000 style requires Disable themes and applies only to Settings, Help and About. With the default
+system font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The license
+keeps its monospaced font. Only GDI and None are available for font antialiasing in this mode: a saved
+ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows itself has visual
+styles turned off, both style options appear unchecked and disabled without changing the saved choices.
+
 The **Audio volume** slider on the Alarm tab controls internally played audio files separately for each widget and shows the level in dB. The default is **−18 dB**, which preserves the file’s original level (**100%**). Moving the slider to the right amplifies the audio; the **0 dB** maximum is approximately **794%** of the original amplitude. The leftmost position is **−∞ dB** (silence). Changes take effect during the audio test. Amplification applies to decoded audio, including WAV, MP3, WMA, AAC, M4A, and FLAC when supported by Windows. Legacy playback for files that cannot be decoded, such as MIDI, is limited to 100%.
 
 The alarm weekday controls follow the first day of the week used by the selected application culture. Stored alarm days retain their meaning when the application language changes. Enabling an alarm from a widget menu when no weekday is selected opens that widget's Alarm tab instead of enabling an alarm that cannot run.
@@ -112,18 +118,35 @@ Clock widgets support alarms on individually selected weekdays; all seven days a
 
 Alarm pips are scheduled from the actual upcoming alarm time after time-zone conversion and the widget offset. They start five elapsed seconds before that instant, including when the displayed clock jumps directly to the alarm time. A skipped spring alarm time produces neither an alarm nor its pips. During a repeated autumn hour, an alarm and its pips occur only once for the same date and configured time.
 
-The alarm Test button previews the visual indication and asynchronously tests the configured file, command, audio and remote-script URL. When the alarm time signal is selected, Test also plays its complete six-pip sequence; Stop test ends internal audio and the signal preview.
+If CalClock remains running, after sleep, hibernation or a processing delay each widget triggers its latest missed alarm once, including its configured actions. Starting CalClock again does not replay old alarms; missed time signals and alarm pips are not replayed. Wake computer for alarm is off by default and requires CalClock to be running and support from Windows and the hardware; a slow wake-up may prevent timely alarm pips.
+
+Test flashes the clock face or panel frame and tests the configured file, command, audio and HTTP/HTTPS
+remote-script URL. It does not play the pre-alarm pips. Stop test ends the visual preview and its internal
+audio; stopping the alarm ends its internal audio. Turning off Alarm enabled disables the other controls on
+the Alarm tab without erasing their values. The test requires an enabled alarm, Run a file or command
+selected, and a nonempty file or command field.
 
 The Signal tab has a Time signal active checkbox and radio buttons for intervals of 1, 5, 10, 15, 20, 30, or 60 minutes according to the widget's displayed time. Signals are initially off, with an hourly interval selected. Turning Signal off and on in the widget menu retains the interval. The menu shows the alarm time and signal interval in parentheses. The 20-minute interval signals at :00, :20, and :40 according to that displayed time. The signal follows the **Greenwich Time Signal (GTS)** pattern: five short pips mark the final five seconds and a longer pip marks the exact boundary. Time zones, UTC mode, offsets, and the current NTP correction are respected. Alarm signals and the Signal tab remain independently configured. Fractional widget offsets are respected. On each audio output, overlapping widget, alarm, and test tones play continuously until the last overlap ends.
 
-**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and **System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. Stopping the test lets the current pip finish; a long pip can take up to half a second to end. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved. Holding the volume slider also plays a preview until the mouse is released, unless the button test is running. Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and so on. The sound choice is available only when the system supports both options.
+**Time signal sound** on the Application tab lets you choose between **Built-in generator** (the default) and
+**System beep**. The choice applies to time signals from all widgets, including alarm time signals, and is
+saved with the global settings. For **Built-in generator**, the **Time signal volume** slider shows the level
+in dB for the entire application. The rightmost position is **0 dB**, the maximum undistorted sine-wave
+amplitude; silence is **−∞ dB**. The default volume is **−18 dB**. An already sounding pip may finish after
+the test is stopped. Click **Test** next to **Time signal sound** to start a continuous preview, or **Stop
+test** to end it. Both **System beep** and **Built-in generator** can be tested; the test is not saved.
+Holding the volume slider also plays a preview until the mouse is released, unless the button test is running.
+Playback starts on the next whole second, with short tones every second and a long tone at :00, :05, :10, and
+so on. The sound choice is available only when the system supports both options.
 
 **Audio output**
 
-**Audio output** on the **Signal** tab selects a device for each sound-capable widget's regular time signals. This
-does not change the widget's time zone, offset, or interval. The generator choice and signal volume remain global on
-the **Application** tab. With **System beep**, the selector stays visible but grayed out and retains its device;
-**Built-in generator** enables it again. Windows Vista uses the generator automatically.
+**Audio output** on the **Signal** tab selects a device for each sound-capable widget's regular time signals.
+This does not change the widget's time zone, offset, or interval. The generator choice and signal volume
+remain global on the **Application** tab. With System beep, the selector is disabled and shows the Windows
+default device. The selected device is retained and restored when Built-in generator is selected again.
+Turning off Time signal active disables both the output label and selector without erasing the choice. Windows
+Vista uses the generator automatically.
 
 **Windows default device** follows the current Windows default output. A specifically selected device remains selected
 if disconnected and appears as **Unavailable device**; its signals stay silent until it becomes available or another
@@ -133,8 +156,9 @@ registry or XML settings.
 Signals merge automatically for each output. An explicit device choice and Windows default device pointing to
 that same device share one output. Different devices operate independently; the sine waveform, continuous
 phase, and starts and ends at zero amplitude are preserved. Test audio output on the Application tab saves the
-device for generator tests and volume previews. System beep disables only this selector. Alarms continue to
-use the Windows default output. They merge with regular signals only on a shared output.
+device for generator tests and volume previews. With System beep, this selector is disabled and shows the
+Windows default device while retaining the saved choice. Alarm audio and pre-alarm pips use the Windows
+default output. Only the pips merge with regular time signals on that output.
 
 Alarm and time-signal enablement can also be toggled in each sound-capable widget's context menu. The alarm item shows its time and, unless all days are selected, its active weekdays. The checked Mute command affects its widget and is reflected by Muted on the General tab. A standalone Calendar supports neither alarms, time signals nor muting. The notification-area command is named Mute all; pressing `M` on any widget performs the same global toggle. Global unmute restores only the widgets muted by the preceding global action. Internal audio continues silently and resumes when unmuted. A pip already in progress may finish, while subsequent pips are skipped until sound is enabled again. Non-audio commands and remote scripts are unaffected.
 

@@ -18,15 +18,19 @@ Sätetes saab lisada, eemaldada ja dubleerida analoogkelli, digitaalkelli, kalen
 
 ## Äratus ja kiirklahvid
 
-Kelladel ja paneelidel võib olla äratus. Rakendus esitab helifaili ise ühe korra või pidevalt vastavalt kordamise sättele; muud failid ja käsud edastatakse Windowsile. Klõps ärataval sihverplaadil või kuval, Peata äratus või Esc peatab nii äratuse tähistuse kui ka rakenduse heli. Topeltklõps sihverplaadil või digitaalkuval lülitab sekundeid. F1 avab spikri, B sätted ja Esc peidab vidina, kui ei peatata äratust. Vidina asukoht salvestatakse lohistamise järel, dialoogi asukoht sulgemisel ja sätted valitud salvestuskohta. Korduskäivitus aktiveerib töötava eksemplari ning vidinad jäävad tööala lähimasse saadaolevasse punkti.
+Kelladel ja paneelidel võib olla äratus. Rakendus esitab helifaili ise ühe korra või pidevalt vastavalt kordamise sättele; muud failid ja käsud edastatakse Windowsile. Klõps ärataval sihverplaadil või kuval, Peata äratus või Esc peatab nii äratuse tähistuse kui ka rakenduse heli. Topeltklõps sihverplaadil või digitaalkuval lülitab sekundeid. F1 avab spikri, B sätted ja Esc peidab vidina, kui ei peatata äratust. Vidina asukoht salvestatakse lohistamise järel, dialoogi asukoht sulgemisel ja sätted valitud salvestuskohta. Korduskäivitus aktiveerib olemasoleva programmi. Tööala serva külge kinnitatud vidinad säilitavad kinnituse ka järgmisel käivitamisel ning suuruse, DPI või tööala muutumisel.
 
 ## Aja sisestamine ja äratuse toimingud
 
 Äratuse aeg lubab vormingut HH:mm kooloni, punkti, tühiku või muu eraldajaga või eraldajata. Üks või kaks numbrit tähendavad tunde, kolm või neli tunde ja minuteid: 7, 12, 730, 0730 või 7:30. Väljalt lahkumisel teisendatakse väärtus vormingusse HH:mm. Nihet loetakse paremalt alates sekunditest: 2 tähendab 00:00:02.00, 230 ja 0230 tähendavad 00:02:30.00 ning 12345 tähendab 01:23:45.00. Eraldajatega tähendavad kaks rühma minuteid ja sekundeid, kolm tunde, minuteid ja sekundeid ning neljas sajandiksekundeid; märk on lubatud. Päevad suvandi Äratus lubatud all määravad äratuspäevad; vaikimisi on valitud kõik. Järjestus järgib rakenduse keelt, kuid keele muutmine ei muuda salvestatud päevi.
 
-Äratus kuvab peidetud vidina ja toob selle ette, muutmata püsivalt suvandit Alati pealmine. Esita ajasignaal alustab esimest lühikest tooni viis sekundit enne äratust. See on vahekaardist Signaal sõltumatu; samaaegsed jadad ühendatakse. Testi paneb sihverplaadi või raami vilkuma ja kontrollib faili, käsku, heli, kaugskripti HTTP/HTTPS-aadressi ning valitud ajasignaali kogu jada. Testi peatamine lõpetab selle sisemise heli ja proovisignaali; äratuse peatamine lõpetab selle sisemise heli. Vaigistamisel esitus jätkub hääletult ja muutub vaigistuse eemaldamisel taas kuuldavaks. Käske ja kaugskripte see ei peata.
+Äratus kuvab peidetud vidina ja toob selle ette, muutmata püsivalt suvandit Alati pealmine. Esita ajasignaal alustab esimest lühikest tooni viis sekundit enne äratust. See on vahekaardist Signaal sõltumatu; samaaegsed jadad ühendatakse. Testi paneb sihverplaadi või raami vilkuma ja kontrollib faili, käsku, heli ja kaugskripti HTTP/HTTPS-aadressi. Testi on saadaval, kui Äratus lubatud ja Käivita fail või käsk on valitud ning faili või käsu väli ei ole tühi. Test ei esita äratuse ajasignaali. Peata test lõpetab sisemise heli ja visuaalse eelvaate. Äratuse peatamine lõpetab selle sisemise heli. Vaigistamisel esitus jätkub hääletult ja muutub vaigistuse eemaldamisel taas kuuldavaks. Käske ja kaugskripte see ei peata.
 
 Äratuse helisignaalid kavandatakse järgmise äratuse tegeliku hetke järgi pärast ajavööndi teisendust ja vidina nihke rakendamist. Need algavad viis tegelikku sekundit enne seda hetke ka siis, kui kuvatav kell hüppab otse äratusajale. Kevadel vahele jäetud äratusaeg ei käivita äratust ega selle helisignaale. Sügisel korduva tunni ajal käivituvad äratus ja selle signaalid sama kuupäeva ning määratud kellaaja kohta ainult üks kord.
+
+Kui CalClock jääb tööle, käivitab iga vidin pärast une- või talveunerežiimi või töötlemisviivitust oma viimase vahelejäänud äratuse ühe korra koos määratud toimingutega. CalClocki uuesti käivitamine vanu äratusi ei korda; vahelejäänud ajasignaale ega äratuse eelhelisid tagantjärele ei esitata. „Ärata arvuti äratuseks“ on vaikimisi välja lülitatud ning vajab töötavat CalClocki ja Windowsi ning riistvara tuge; aeglane ärkamine võib takistada eelhelide õigeaegset esitamist.
+
+Kui Äratus lubatud pole märgitud, on vahekaardi Äratus muud juhtelemendid hallid ja keelatud, kuid nende väärtused säilivad. Äratuse keelamine peatab käimasoleva testi.
 
 Vahekaardi Äratus liugur Helitugevus määrab selle vidina sisemise heliesituse tugevuse. Vaikimisi −18 dB säilitab faili algtaseme (100%). Paremale liikumine võimendab heli; maksimaalne 0 dB vastab ligikaudu 794%-le. −∞ dB tähendab vaikust. Muutus kostab ka testi ajal. MIDI ja failid, mida ei saa dekodeerida ning esitatakse varumängijaga, on piiratud 100%-ga.
 
@@ -54,6 +58,8 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
+Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker ja Teave. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused säilivad.
+
 ## Sätted ja menüüd
 
 Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine vahekaardil Rakendus mõjutab ainult aknaid Sätted, Spikker ja Teave. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat.
@@ -64,15 +70,15 @@ Vidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, seku
 
 Signaal järgib Greenwichi ajasignaali (GTS): viis lühikest tooni viimase viie sekundi jooksul ja pikk toon täpsel ajahetkel. Vahekaardil Signaal on Ajasignaal lubatud ja intervallid 1, 5, 10, 15, 20, 30 või 60 minutit vidina kuvatava aja järgi. Vaikimisi on signaal väljas ja valitud tunnine intervall. Menüü lülitus säilitab intervalli. Ajapiir arvestab UTC-d, ajavööndit, nihet ja NTP-d. 20-minutilise intervalliga kõlab signaal :00, :20 ja :40. Vaigistamisel võib praegune toon lõppeda; järgmised jäetakse vahele ja heli taastamisel kõlab alles järgmine kavandatud toon. Eraldi Kalender ei toeta äratust, ajasignaali ega vaigistamist.
 
-Vahekaardi Rakendus Ajasignaali heli pakub Sisseehitatud generaatorit (vaikimisi) ja Süsteemi helisignaali. Valik kehtib kõigile vidinatele ja äratustele. Ajasignaali helitugevus näitab generaatori taset dB-des: parempoolne 0 dB on suurim moonutuseta siinusamplituud, −∞ dB vaikus ja vaikesäte −18 dB. Testi käivitab pideva prooviesituse ning Peata test lõpetab selle. Testida saab mõlemat heli; testi ei salvestata. Liuguri hoidmine esitab samuti heli kuni hiire vabastamiseni, kui nuputest pole käimas. Esitus algab järgmisel täissekundil: lühike toon igal sekundil ja pikk toon :00, :05, :10 jne. Peatamine lubab praegusel toonil lõppeda; pikk toon võib kesta veel pool sekundit. Arvestatakse ka nihke sajandikke ning kattuvad toonid kõlavad katkestuseta viimase kattumise lõpuni samal heliväljundil.
+Vahekaardi Rakendus Ajasignaali heli pakub Sisseehitatud generaatorit (vaikimisi) ja Süsteemi helisignaali. Valik kehtib kõigile vidinatele ja äratustele. Ajasignaali helitugevus näitab generaatori taset dB-des: parempoolne 0 dB on suurim moonutuseta siinusamplituud, −∞ dB vaikus ja vaikesäte −18 dB. Testi käivitab pideva prooviesituse ning Peata test lõpetab selle. Testida saab mõlemat heli; testi ei salvestata. Liuguri hoidmine esitab samuti heli kuni hiire vabastamiseni, kui nuputest pole käimas. Esitus algab järgmisel täissekundil: lühike toon igal sekundil ja pikk toon :00, :05, :10 jne. Testi peatamisel võib juba alanud toon lõpuni kõlada. Muud samaaegsed ajasignaalid võivad jätkuda. Arvestatakse ka nihke sajandikke ning kattuvad toonid kõlavad katkestuseta viimase kattumise lõpuni samal heliväljundil.
 
 **Heliväljund**
 
-**Heliväljund** vahekaardil **Signaal** valib seadme iga helitoega vidina korrapäraste ajasignaalide jaoks. Vidina
-ajavöönd, nihe ja intervall ei muutu. Generaatori valik ja signaali helitugevus jäävad vahekaardil **Rakendus** kogu
-rakenduse jaoks ühisteks. Valikuga **Süsteemi helisignaal** jääb väli nähtavaks, kuid on hall ja keelatud ning
-säilitab valitud seadme; **Sisseehitatud generaator** lubab selle uuesti. Windows Vista kasutab generaatorit
-automaatselt.
+Heliväljund vahekaardil Signaal valib seadme iga helitoega vidina korrapäraste ajasignaalide jaoks. Vidina
+ajavöönd, nihe ja intervall ei muutu. Generaatori valik ja signaali helitugevus jäävad vahekaardil Rakendus
+kogu rakenduse jaoks ühisteks. Valikuga Süsteemi helisignaal on väljundiloend hall ja näitab valikut Windowsi
+vaikeseade. Salvestatud seadmevalik säilib ja taastub, kui valitakse Sisseehitatud generaator. Kui ajasignaal
+on keelatud, on ka silt Heliväljund hall. Windows Vista kasutab generaatorit automaatselt.
 
 **Windowsi vaikeseade** järgib Windowsi praegust vaikeheliväljundit. Eraldi valitud seade jääb valituks ka
 lahtiühendamisel ja kuvatakse nimega **Seade pole saadaval**; selle signaalid on vaiksed, kuni seade on saadaval või
@@ -82,8 +88,9 @@ registrisse või XML-sätetesse.
 Signaalid ühendatakse automaatselt iga väljundi jaoks. Eraldi valitud seade ja samale seadmele viitav Windowsi
 vaikeseade kasutavad ühist väljundit. Erinevad seadmed töötavad sõltumatult; siinuslaine, faasi pidevus ning
 toonide algus ja lõpp nullis säilivad. Testi heliväljund vahekaardil Rakendus salvestab seadme generaatori
-testide ja helitugevuse eelkuulamise jaoks. Süsteemi piiks keelab ainult selle valiku. Äratused kasutavad
-endiselt Windowsi vaikeväljundit. Need ühendatakse korrapäraste signaalidega ainult ühisel väljundil.
+testide ja helitugevuse eelkuulamise jaoks. Süsteemi helisignaal näitab hallis loendis valikut Windowsi vaikeseade; salvestatud testiseade säilib. Äratuse heli ja selle
+eelsignaalid kasutavad Windowsi vaikeväljundit. Korrapäraste ajasignaalidega ühendatakse samal väljundil
+ainult äratuse eelsignaalid; äratuse helifaile esitatakse eraldi.
 
 ## Lisakellad
 

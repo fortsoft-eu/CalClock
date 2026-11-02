@@ -27,6 +27,7 @@
 #pragma once
 
 #include <windows.h>
+#include "AlarmSchedule.h"
 #include "PersistWindowState.h"
 #include "TimeDateNotices.h"
 #include <string>
@@ -376,6 +377,7 @@ enum TextId {
     TXT_TEST_COMMAND_LABEL,
     TXT_STOP_TEST_LABEL,
     TXT_ALARM_TIME_SIGNAL_LABEL,
+    TXT_ALARM_WAKE_COMPUTER,
     TXT_REMOTE_SCRIPT_LABEL,
     TXT_REMOTE_SCRIPT_URL_LABEL,
     TXT_INVALID_REMOTE_SCRIPT_URL,
@@ -492,6 +494,7 @@ struct WidgetConfig {
     bool alarmEnabled = false;
     unsigned int alarmDays = ALARM_DAYS_ALL;
     bool alarmTimeSignal = false;
+    bool alarmWakeComputer = false;
     int alarmHour = 0;
     int alarmMinute = 0;
     bool runCommand = false;
@@ -555,10 +558,7 @@ struct Widget {
     bool rendered = false;
     bool alarmActive = false;
     bool flashPhase = false;
-    int lastAlarmDate = -1;
-    int lastAlarmMinute = -1;
-    int lastObservedAlarmDate = -1;
-    int lastObservedAlarmMinute = -1;
+    AlarmSchedule alarmSchedule;
     int lastRenderKey = -1;
     int lastPanelDateKey = -1;
     std::vector<TimeDateNotice> panelNotices;

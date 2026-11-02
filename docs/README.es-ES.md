@@ -76,6 +76,13 @@ Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El b
 
 El idioma de la aplicación, fuente de interfaz, suavizado, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. Desactivar los temas en Aplicación solo afecta a Configuración, Ayuda y Acerca de. Cada widget utiliza su propio ajuste de temas. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**.
 
+Estilo de Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda y Acerca de. Si se elige
+la fuente predeterminada del sistema, estas ventanas usan Tahoma de 8 pt; una fuente de aplicación
+personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En este modo solo se ofrecen GDI
+y Ninguno para el suavizado: una elección guardada de ClearType usa GDI temporalmente y se restaura al
+desactivar el modo. Si los estilos visuales están desactivados en Windows, ambas opciones de estilo aparecen
+desmarcadas y deshabilitadas sin cambiar las opciones guardadas.
+
 El control **Volumen de audio** de Alarma regula los archivos reproducidos internamente por widget y muestra el nivel en dB. El valor predeterminado **−18 dB** conserva el nivel original (**100%**). Moverlo a la derecha amplifica el audio; el máximo **0 dB** equivale aproximadamente al **794%** de la amplitud original. El extremo izquierdo es **−∞ dB** (silencio). Los cambios actúan durante la prueba de audio. La amplificación se aplica al audio decodificado, incluidos WAV, MP3, WMA, AAC, M4A y FLAC cuando Windows los admite. La reproducción heredada de archivos no decodificables, como MIDI, está limitada al 100%.
 
 Los controles de días de alarma respetan el primer día de semana de la cultura elegida para la aplicación. Los días guardados conservan su significado al cambiar el idioma. Activar desde el menú una alarma sin días seleccionados abre la pestaña Alarma del widget en lugar de activar una alarma que no puede sonar.
@@ -112,19 +119,36 @@ Los widgets de reloj admiten alarmas en días seleccionados individualmente; los
 
 Los pitidos de la alarma se programan según el instante real de la próxima alarma, tras convertir la zona horaria y aplicar el desfase del widget. Comienzan cinco segundos reales antes, incluso si el reloj mostrado salta directamente a la hora de la alarma. Una hora de alarma omitida en primavera no produce ni alarma ni pitidos. Durante la hora repetida en otoño, la alarma y sus pitidos suenan una sola vez para la misma fecha y hora configurada.
 
-Prueba muestra la indicación visual y prueba asíncronamente el archivo, comando, audio y URL del script remoto. Si está seleccionada la señal horaria de alarma, reproduce también la secuencia completa de seis pitidos; Detener prueba termina el audio interno y la vista previa de señal.
+Si CalClock sigue ejecutándose, tras una suspensión, hibernación o demora de procesamiento, cada widget activa una vez su última alarma omitida, incluidas las acciones configuradas. Al iniciar CalClock de nuevo no se recuperan alarmas anteriores; las señales horarias y los pitidos previos omitidos no se reproducen después. «Activar el equipo para la alarma» está desactivado inicialmente y requiere que CalClock esté en ejecución y que Windows y el hardware lo admitan; una reactivación lenta puede impedir los pitidos a tiempo.
+
+Probar hace parpadear la esfera o el marco del panel y prueba el archivo, el comando, el audio y la URL
+HTTP/HTTPS del script remoto configurados. No reproduce los pitidos previos a la alarma. Detener prueba
+finaliza la indicación visual y su audio interno; detener la alarma finaliza su audio interno. Desactivar
+Alarma activa deshabilita los demás controles de la pestaña Alarma sin borrar sus valores. La prueba requiere
+una alarma activa, la opción Ejecutar archivo o comando marcada y el campo de archivo o comando rellenado.
 
 La pestaña Señal incluye la casilla Señal horaria activa y botones de opción para intervalos de 1, 5, 10, 15, 20, 30 o 60 minutos según la hora mostrada por el widget. La señal está inicialmente desactivada y el intervalo seleccionado es de una hora. Desactivar y activar Señal en el menú del widget conserva el intervalo. El menú muestra la hora de la alarma y el intervalo de la señal entre paréntesis. El intervalo de 20 minutos señala :00, :20 y :40 de esa hora. El patrón es el **Greenwich Time Signal (GTS)**: cinco pitidos cortos marcan los últimos cinco segundos y uno más largo el límite exacto. Se respetan zona, UTC, desfases y corrección NTP actual. La señal de alarma y la pestaña Señal se configuran por separado. Se respetan desfases fraccionarios, y los tonos superpuestos de widgets, alarmas y pruebas suenan continuamente hasta el fin del último solapamiento en la misma salida de audio.
 
-**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o **Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor predeterminado es **−18 dB**. El pitido actual termina normalmente; uno largo puede tardar hasta medio segundo. **Prueba**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05, :10, etc. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
+**Sonido de la señal horaria** en Aplicación permite elegir **Generador integrado** (predeterminado) o
+**Pitido del sistema**. Se aplica a todas las señales, incluidas las de alarma, y se guarda globalmente. Para
+el **Generador integrado**, **Volumen de la señal horaria** indica el nivel en dB para toda la aplicación. El
+extremo derecho es **0 dB**, la máxima amplitud sinusoidal sin distorsión; el silencio es **−∞ dB**. El valor
+predeterminado es **−18 dB**. Un pitido que ya haya comenzado puede terminar después de detener la prueba.
+**Probar**, junto a **Sonido de la señal horaria**, inicia una prueba continua; **Detener prueba** la
+finaliza. Ambos modos se pueden probar y el estado de la prueba no se guarda. Mantener pulsado el control de
+volumen también inicia una prueba hasta soltar el ratón, salvo si ya está activa la prueba por botón. La
+reproducción empieza en el siguiente segundo entero, con tonos cortos cada segundo y uno largo en :00, :05,
+:10, etc. La elección de sonido está disponible únicamente si el sistema admite ambos modos.
 
 **Salida de audio**
 
-**Salida de audio** en la pestaña **Señal** selecciona el dispositivo para las señales horarias periódicas de cada
-widget con sonido. No cambia la zona horaria, el desfase ni el intervalo del widget. La elección del generador y el
-volumen siguen siendo globales en la pestaña **Aplicación**. Con **Pitido del sistema**, el selector permanece visible
-pero deshabilitado y conserva el dispositivo elegido; **Generador integrado** lo habilita de nuevo. Windows Vista
-utiliza el generador automáticamente.
+**Salida de audio** en la pestaña **Señal** selecciona el dispositivo para las señales horarias periódicas de
+cada widget con sonido. No cambia la zona horaria, el desfase ni el intervalo del widget. La elección del
+generador y el volumen siguen siendo globales en la pestaña **Aplicación**. Con Pitido del sistema, el
+selector está deshabilitado y muestra el dispositivo predeterminado de Windows. El dispositivo elegido se
+conserva y se restaura al volver a Generador integrado. Desactivar Señal horaria activa deshabilita tanto la
+etiqueta de salida de audio como el selector sin borrar la elección. Windows Vista utiliza el generador
+automáticamente.
 
 **Dispositivo predeterminado de Windows** sigue la salida predeterminada actual de Windows. Un dispositivo elegido
 expresamente permanece seleccionado al desconectarse y aparece como **Dispositivo no disponible**; sus señales quedan
@@ -135,9 +159,10 @@ Las señales se combinan automáticamente por salida. Un dispositivo elegido exp
 predeterminado de Windows que apunte a ese mismo dispositivo comparten una salida. Los dispositivos distintos
 funcionan de forma independiente; se conservan la onda sinusoidal, la continuidad de fase y el inicio y final
 de los tonos en cero. Salida de audio de prueba en la pestaña Aplicación guarda el dispositivo para las
-pruebas del generador y la vista previa del volumen. El pitido del sistema desactiva solo este selector. Las
-alarmas siguen usando la salida predeterminada de Windows. Solo se combinan con señales periódicas en una
-salida común.
+pruebas del generador y la vista previa del volumen. Con Pitido del sistema, este selector está deshabilitado
+y muestra el dispositivo predeterminado de Windows, pero conserva la elección guardada. El audio de la alarma
+y sus pitidos previos usan la salida predeterminada de Windows. Solo los pitidos se combinan con las señales
+horarias periódicas de esa salida.
 
 La alarma y señal también se activan desde el menú contextual de cada widget con sonido. La entrada de alarma muestra su hora y, si no están seleccionados todos, sus días activos. Un Calendario independiente no admite alarma, señal horaria ni silencio. El comando del área de notificación es Silenciar todo; `M` sobre cualquier widget hace lo mismo. Desactivar la sordina global solo restaura los widgets silenciados por la acción global anterior. El audio interno continúa en silencio y vuelve a oírse al reactivarlo. Un pitido iniciado puede terminar; los siguientes se omiten hasta habilitar el sonido. Los comandos no sonoros y los scripts remotos no se ven afectados.
 

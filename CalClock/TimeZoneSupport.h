@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.1.1
+ * Last modified for version 1.7.0.6
  */
 
 #pragma once
@@ -46,3 +46,8 @@ std::wstring GetSystemTimeZoneKey(const std::vector<DYNAMIC_TIME_ZONE_INFORMATIO
 /// Converts UTC using current Windows settings, fixed offsets, or dynamic or yearly rules for named zones.
 /// Returns false if the destination is null or Windows cannot perform the conversion.
 bool ConvertUtcToTimeZone(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& utc, SYSTEMTIME* local);
+
+/// Returns zero, one, or two real UTC instants for a local time; gaps have no candidates and folds have two.
+/// Sorts FILETIME candidates chronologically and reports conversion failures separately from nonexistent times.
+bool GetTimeZoneUtcCandidates(const DYNAMIC_TIME_ZONE_INFORMATION& zone, const SYSTEMTIME& local,
+    ULONGLONG (&utc)[2], unsigned int& count);

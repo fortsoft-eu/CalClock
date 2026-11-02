@@ -76,6 +76,8 @@ Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ra
 
 Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy tylko okien Ustawienia, Pomoc i O programie. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
+Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc i O programie. Przy domyślnej czcionce systemowej używa Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, obie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają zachowane.
+
 Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzane pliki osobno dla każdego widżetu i pokazuje poziom w dB. Domyślne **−18 dB** zachowuje poziom oryginalnego pliku (**100%**). Przesunięcie w prawo wzmacnia dźwięk; maksimum **0 dB** odpowiada około **794%** pierwotnej amplitudy. Skrajnie lewa pozycja to **−∞ dB** (cisza). Zmiany działają podczas testu. Wzmocnienie dotyczy dekodowanego audio, w tym WAV, MP3, WMA, AAC, M4A i FLAC, jeśli Windows je obsługuje. Starszy sposób odtwarzania plików, których nie można dekodować, np. MIDI, jest ograniczony do 100%.
 
 Dni alarmu uwzględniają pierwszy dzień tygodnia wybranej kultury aplikacji. Zapisane dni zachowują znaczenie przy zmianie języka. Włączenie alarmu z menu bez wybranych dni otwiera kartę Alarm widżetu, zamiast włączać alarm, który nie może zabrzmieć.
@@ -112,18 +114,21 @@ Widżety zegarów obsługują alarmy w wybrane dni; domyślnie aktywne są wszys
 
 Sygnały dźwiękowe budzika są planowane według rzeczywistego momentu najbliższego budzika po przeliczeniu strefy i uwzględnieniu przesunięcia widżetu. Zaczynają się pięć rzeczywistych sekund przed tym momentem, także gdy wyświetlany zegar przeskakuje bezpośrednio do godziny budzika. Dla godziny pominiętej wiosną nie uruchamia się budzik ani jego sygnały. Podczas godziny powtarzanej jesienią budzik i jego sygnały uruchamiają się tylko raz dla tej samej daty i ustawionej godziny.
 
-Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Jeśli wybrano sygnał czasu alarmu, odtwarza także pełną sekwencję sześciu tonów; Zatrzymaj test kończy wewnętrzne audio i podgląd sygnału.
+Jeśli CalClock pozostaje uruchomiony, po uśpieniu, hibernacji lub opóźnieniu przetwarzania każdy widżet jednokrotnie uruchamia ostatni pominięty alarm wraz ze skonfigurowanymi działaniami. Ponowne uruchomienie CalClock nie odtwarza dawnych alarmów; pominięte sygnały czasu i sygnały poprzedzające alarm nie są odtwarzane z opóźnieniem. Opcja „Wybudź komputer na alarm” jest domyślnie wyłączona i wymaga uruchomionego CalClock oraz obsługi przez Windows i sprzęt; powolne wybudzanie może uniemożliwić sygnały poprzedzające alarm na czas.
+
+Gdy alarm jest wyłączony, pozostałe pola na karcie Alarm są nieaktywne, ale zachowują ustawione wartości. Test jest dostępny po włączeniu alarmu i opcji Uruchom plik lub polecenie oraz wpisaniu pliku lub polecenia.
+
+Test pokazuje sygnalizację wizualną i asynchronicznie sprawdza plik, polecenie, audio oraz adres skryptu zdalnego. Test nie odtwarza sygnałów poprzedzających alarm. Zatrzymaj test kończy wewnętrzne audio i sygnalizację wizualną.
 
 Karta Sygnał zawiera pole Sygnał czasu aktywny oraz przyciski opcji dla odstępów 1, 5, 10, 15, 20, 30 lub 60 minut według czasu wyświetlanego przez widżet. Początkowo sygnał jest wyłączony i wybrany jest odstęp jednej godziny. Wyłączenie i włączenie opcji Sygnał w menu widżetu zachowuje odstęp. Menu pokazuje godzinę alarmu i odstęp sygnału w nawiasach. Interwał 20 minut oznacza :00, :20 i :40 tego czasu. Wzorem jest **Greenwich Time Signal (GTS)**: pięć krótkich tonów wyznacza ostatnie pięć sekund, a dłuższy dokładną granicę. Uwzględniane są strefy, UTC, przesunięcia i bieżąca korekta NTP. Sygnał alarmu i karta Sygnał pozostają niezależne. Uwzględniane są ułamkowe przesunięcia, a nakładające się tony widżetów, alarmów i testów brzmią nieprzerwanie do końca ostatniego nałożenia na tym samym wyjściu dźwięku.
 
-**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Bieżący ton może się zakończyć; długi może trwać jeszcze do pół sekundy. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
+**Dźwięk sygnału czasu** na karcie Aplikacja oferuje **Wbudowany generator** (domyślny) i **Sygnał systemowy**. Wybór obejmuje wszystkie widżety i sygnały alarmów oraz jest zapisywany globalnie. Dla **Wbudowanego generatora** suwak **Głośność sygnału czasu** pokazuje poziom w dB dla całej aplikacji. Prawy skraj to **0 dB**, maksymalna niezniekształcona amplituda sinusoidy; cisza to **−∞ dB**. Domyślna głośność wynosi **−18 dB**. Bieżący ton może się zakończyć. **Test** obok **Dźwięku sygnału czasu** uruchamia ciągły podgląd, **Zatrzymaj test** go kończy. Można testować obydwa sposoby; stan testu nie jest zapisywany. Trzymanie suwaka głośności również uruchamia podgląd do puszczenia myszy, chyba że trwa test włączony przyciskiem. Odtwarzanie rozpoczyna się w następnej pełnej sekundzie: krótkie tony co sekundę, długi o :00, :05, :10 itd. Wybór dźwięku jest dostępny wyłącznie wtedy, gdy system obsługuje obie możliwości.
 
 **Wyjście dźwięku**
 
 **Wyjście dźwięku** na karcie **Sygnał** wybiera urządzenie dla regularnych sygnałów czasu każdego widżetu
 obsługującego dźwięk. Strefa czasowa, przesunięcie i interwał widżetu pozostają bez zmian. Wybór generatora i głośność
-nadal są globalne na karcie **Aplikacja**. Przy opcji **Sygnał systemowy** pole pozostaje widoczne, ale wyszarzone i
-zachowuje wybrane urządzenie; **Wbudowany generator** ponownie je uaktywnia. Windows Vista automatycznie używa
+nadal są globalne na karcie **Aplikacja**. Przy opcji **Sygnał systemowy** pole jest wyszarzone i pokazuje domyślne urządzenie Windows, zachowując poprzedni wybór w ustawieniach; **Wbudowany generator** ponownie je uaktywnia. Windows Vista automatycznie używa
 generatora.
 
 **Domyślne urządzenie Windows** śledzi bieżące domyślne wyjście Windows. Urządzenie wybrane bezpośrednio pozostaje
@@ -134,8 +139,8 @@ zapisywany osobno dla każdego widżetu w rejestrze lub ustawieniach XML.
 Sygnały są automatycznie łączone na każdym wyjściu. Urządzenie wybrane bezpośrednio i wskazująca je opcja
 Domyślne urządzenie Windows współdzielą jedno wyjście. Różne urządzenia działają niezależnie; zachowane są
 sinusoida, ciągłość fazy oraz początek i koniec tonów w zerze. Wyjście dźwięku testu na karcie Aplikacja
-zapamiętuje urządzenie do testów generatora i podglądu głośności. Sygnał systemowy wyłącza tylko ten wybór.
-Budziki nadal używają domyślnego wyjścia Windows. Łączą się z regularnymi sygnałami tylko na wspólnym wyjściu.
+zapamiętuje urządzenie do testów generatora i podglądu głośności. Przy sygnale systemowym ta lista jest nieaktywna i pokazuje domyślne urządzenie Windows; zapisany wybór zostaje zachowany.
+Dźwięk alarmu i sygnały poprzedzające alarm używają domyślnego wyjścia Windows. Tylko sygnały poprzedzające alarm łączą się z regularnymi sygnałami na tym samym wyjściu.
 
 Alarm i sygnał można także przełączać w menu widżetu obsługującego dźwięk. Pozycja alarmu pokazuje godzinę oraz aktywne dni, jeśli nie wybrano wszystkich. Zaznaczone Wycisz dotyczy widżetu i odpowiada polu na karcie Ogólne. Samodzielny Kalendarz nie obsługuje alarmu, sygnału czasu ani wyciszenia. W obszarze powiadomień polecenie nazywa się Wycisz wszystko; `M` na dowolnym widżecie wykonuje tę samą globalną zmianę. Globalne przywrócenie dźwięku dotyczy tylko widżetów wyciszonych poprzednią akcją globalną. Wewnętrzne audio trwa bezgłośnie i staje się słyszalne po wyłączeniu wyciszenia. Rozpoczęty ton może się skończyć; następne są pomijane do włączenia dźwięku. Polecenia niedźwiękowe i zdalne skrypty pozostają bez zmian.
 

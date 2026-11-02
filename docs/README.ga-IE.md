@@ -18,15 +18,19 @@ Is féidir cloig analógacha, cloig dhigiteacha, féilirí, painéil féilire ag
 
 ## Aláram agus aicearraí
 
-Is féidir aláram a shocrú do chloig agus do phainéil. Seinneann an feidhmchlár comhad fuaime é féin uair amháin nó go leanúnach de réir na rogha athsheinnte; cuirtear comhaid agus orduithe eile ar aghaidh chuig Windows. Stopann cliceáil ar aghaidh nó taispeáint an aláraim, Stop an t-aláram nó Esc an comhartha amhairc agus fuaim an fheidhmchláir. Athraíonn déchliceáil ar aghaidh nó taispeáint dhigiteach na soicindí. Osclaíonn F1 Cabhair agus B Socruithe; folaíonn Esc giuirléid mura bhfuil aláram á stopadh. Sábháiltear suíomhanna giuirléidí tar éis tarraingthe, suíomhanna dialóg nuair a dhúntar iad agus na socruithe sa stóras roghnaithe. Má sheoltar CalClock arís, gníomhachtaítear an feidhmchlár atá ar siúl cheana agus coinnítear na giuirléidí ag an bpointe is gaire atá ar fáil sa limistéar oibre.
+Is féidir aláram a shocrú do chloig agus do phainéil. Seinneann an feidhmchlár comhad fuaime é féin uair amháin nó go leanúnach de réir na rogha athsheinnte; cuirtear comhaid agus orduithe eile ar aghaidh chuig Windows. Stopann cliceáil ar aghaidh nó taispeáint an aláraim, Stop an t-aláram nó Esc an comhartha amhairc agus fuaim an fheidhmchláir. Athraíonn déchliceáil ar aghaidh nó taispeáint dhigiteach na soicindí. Osclaíonn F1 Cabhair agus B Socruithe; folaíonn Esc giuirléid mura bhfuil aláram á stopadh. Sábháiltear suíomhanna giuirléidí tar éis tarraingthe, suíomhanna dialóg nuair a dhúntar iad agus na socruithe sa stóras roghnaithe. Má sheoltar CalClock arís, gníomhachtaítear an feidhmchlár atá ar siúl cheana. Coinníonn giuirléidí atá ceangailte le himill an limistéir oibre an ceangal nuair a thosaítear arís iad nó nuair a athraíonn a méid, an DPI nó an limistéar oibre.
 
 ## Am a iontráil agus gníomhartha aláraim
 
 Glacann am an aláraim le HH:mm, le hidirstad, lánstad, spás nó deighilteoir eile, nó gan deighilteoir. Ciallaíonn digit nó dhó uaireanta, agus trí nó ceithre huaireanta agus nóiméid: 7, 12, 730, 0730 nó 7:30. Déantar HH:mm den luach nuair a fhágtar an réimse. Léitear an fritháireamh ón taobh deas, ag tosú le soicindí: is ionann 2 agus 00:00:02.00, 230 agus 0230 agus 00:02:30.00, agus 12345 agus 01:23:45.00. Le deighilteoirí, ciallaíonn dhá ghrúpa nóiméid agus soicindí, trí ghrúpa uaireanta, nóiméid agus soicindí, agus ceathrú grúpa céaduithe soicind; ceadaítear comhartha. Roghnaíonn na laethanta faoi Aláram cumasaithe na laethanta gníomhacha; tá siad uile roghnaithe ar dtús. Leanann an t-ord teanga an fheidhmchláir; ní athraíonn teanga nua na laethanta sábháilte.
 
-Taispeánann aláram giuirléid fholaithe agus tugann sé chun tosaigh í gan Ar barr i gcónaí a athrú go buan. Tosaíonn Seinn an comhartha ama an chéad bhíp ghearr cúig shoicind roimh an aláram. Tá sé neamhspleách ar an gcluaisín Comhartha, ach cumaisctear seichimh chomhuaineacha. Cuireann Tástáil aghaidh an chloig nó fráma an phainéil ag caochadh agus seiceálann sé an comhad, an t-ordú, an fhuaim, URL HTTP/HTTPS an chianscript agus, má roghnaítear é, an comhartha ama iomlán. Stopann Stop an tástáil an fhuaim inmheánach agus an comhartha trialach; stopann Stop an t-aláram fuaim inmheánach an aláraim. Leanann athsheinm ar aghaidh go ciúin nuair a bhalbhaítear é agus éiríonn sé inchloiste arís nuair a bhaintear an balbhú. Ní stoptar orduithe ná cianscripteanna.
+Taispeánann aláram giuirléid fholaithe agus tugann sé chun tosaigh í gan Ar barr i gcónaí a athrú go buan. Tosaíonn Seinn an comhartha ama an chéad bhíp ghearr cúig shoicind roimh an aláram. Tá sé neamhspleách ar an gcluaisín Comhartha, ach cumaisctear seichimh chomhuaineacha. Cuireann Tástáil aghaidh an chloig nó fráma an phainéil ag caochadh agus seiceálann sé an comhad, an t-ordú, an fhuaim agus URL HTTP/HTTPS an chianscript. Bíonn Tástáil ar fáil nuair atá Aláram cumasaithe agus Rith comhad nó ordú roghnaithe agus réimse an chomhaid nó an ordaithe líonta. Ní sheinneann an tástáil comhartha ama an aláraim. Stopann Stop an tástáil an fhuaim inmheánach agus an réamhamharc amhairc. Stopann Stop an t-aláram fuaim inmheánach an aláraim. Leanann athsheinm ar aghaidh go ciúin nuair a bhalbhaítear é agus éiríonn sé inchloiste arís nuair a bhaintear an balbhú. Ní stoptar orduithe ná cianscripteanna.
 
 Déantar bípeanna an aláraim a sceidealú de réir am iarbhír an chéad aláraim eile tar éis tiontú crios ama agus fritháireamh na giuirléide a chur i bhfeidhm. Tosaíonn siad cúig shoicind iarbhír roimh an am sin, fiú má léimeann an clog taispeánta díreach chuig am an aláraim. Má sciptear am aláraim san earrach, ní ghníomhachtaítear an t-aláram ná na bípeanna. Le linn na huaire a athdhéantar san fhómhar, ní tharlaíonn an t-aláram agus a chuid bípeanna ach uair amháin don dáta agus don am socraithe céanna.
+
+Má fhanann CalClock ag rith, tar éis codlata, geimhridh nó moille próiseála, cuireann gach giuirléid a haláram deireanach a cailleadh i ngníomh uair amháin, leis na gníomhartha cumraithe. Ní athsheinntear sean-aláraim nuair a thosaítear CalClock arís; ní athsheinntear comharthaí ama ná bípeanna réamhaláraim a cailleadh. Tá “Dúisigh an ríomhaire don aláram” múchta de réir réamhshocraithe agus éilíonn sé CalClock ag rith agus tacaíocht ó Windows agus na crua-earraí; d’fhéadfadh dúiseacht mhall cosc a chur ar na bípeanna roimh ré in am.
+
+Nuair nach bhfuil Aláram cumasaithe roghnaithe, bíonn na rialtáin eile ar an gcluaisín Aláram liath agus díchumasaithe, ach coinnítear a luachanna. Stopann díchumasú an aláraim tástáil atá ar siúl.
 
 Socraíonn Airde na fuaime ar an gcluaisín Aláram leibhéal na gcomhad a sheinntear go hinmheánach don ghiuirléid sin. Coinníonn an réamhshocrú −18 dB leibhéal bunaidh an chomhaid (100%). Méadaíonn bogadh ar dheis an fhuaim; is ionann an t-uasmhéid 0 dB agus thart ar 794%. Is tost é −∞ dB. Cloistear athruithe le linn tástála freisin. Tá MIDI agus comhaid a sheinntear le seinnteoir cúltaca toisc nach féidir iad a dhíchódú teoranta do 100%.
 
@@ -54,6 +58,8 @@ Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompór
 
 Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
+Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe, Cabhair agus Maidir leis. Úsáidtear Tahoma 8 pt in áit chló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+
 ## Socruithe agus roghchláir
 
 Is socruithe comhroinnte ar an gcluaisín Feidhmchlár iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Ní bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Socruithe, Cabhair agus Maidir leis. Úsáideann gach giuirléid a socrú téama féin. Ar an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin.
@@ -64,15 +70,16 @@ Taispeánann roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcón
 
 Leanann an comhartha patrún Greenwich Time Signal (GTS): cúig bhíp ghearra sna cúig shoicind dheireanacha agus bíp fhada ag an teorainn ama go beacht. Tugann Comhartha an rogha Comhartha ama gníomhach agus eatraimh 1, 5, 10, 15, 20, 30 nó 60 nóiméad de réir am na giuirléide. Tá sé múchta ar dtús agus eatramh uair an chloig roghnaithe. Coinníonn an roghchlár an t-eatramh. Cuirtear UTC, crios ama, fritháireamh agus NTP san áireamh; le 20 nóiméad, seinntear ag :00, :20 agus :40. Tar éis balbhaithe, féadfaidh an ton reatha críochnú; scipeáiltear na chéad toin eile go dtí an chéad ton sceidealaithe tar éis díbhalbhaithe. Ní thacaíonn Féilire neamhspleách le haláram, comhartha ama ná balbhú.
 
-Ar Feidhmchlár, tugann Fuaim an chomhartha ama Gineadóir ionsuite (réamhshocrú) agus Bíp an chórais do gach giuirléid agus aláram. Taispeánann Airde an chomhartha ama leibhéal an ghineadóra in dB: is é 0 dB ar dheis an aimplitiúid síneasóideach is mó gan saobhadh, −∞ dB tost agus −18 dB an réamhshocrú. Tosaíonn Tástáil réamhamharc leanúnach agus stopann Stop an tástáil é. Is féidir an dá chineál fuaime a thástáil; ní shábháiltear an tástáil. Seinneann coinneáil an tsleamhnáin fuaim go dtí go scaoiltear an luch, mura bhfuil tástáil an chnaipe ar siúl. Tosaíonn sí ar an gcéad soicind iomlán eile: ton gearr gach soicind agus ton fada ag :00, :05, :10 agus mar sin de. Roinneann comharthaí trialach, giuirléidí agus aláraim ton amháin. Ní dhíchumasaítear ach an sleamhnán airde do Bhíp an chórais. Ligtear don ton reatha críochnú nuair a stoptar an tástáil; d’fhéadfadh ton fada maireachtáil leathshoicind eile. Cuirtear céaduithe fritháirimh san áireamh agus seinntear toin fhorluiteacha go leanúnach go deireadh an fhorluí dheireanaigh.
+Ar Feidhmchlár, tugann Fuaim an chomhartha ama Gineadóir ionsuite (réamhshocrú) agus Bíp an chórais do gach giuirléid agus aláram. Taispeánann Airde an chomhartha ama leibhéal an ghineadóra in dB: is é 0 dB ar dheis an aimplitiúid síneasóideach is mó gan saobhadh, −∞ dB tost agus −18 dB an réamhshocrú. Tosaíonn Tástáil réamhamharc leanúnach agus stopann Stop an tástáil é. Is féidir an dá chineál fuaime a thástáil; ní shábháiltear an tástáil. Seinneann coinneáil an tsleamhnáin fuaim go dtí go scaoiltear an luch, mura bhfuil tástáil an chnaipe ar siúl. Tosaíonn sí ar an gcéad soicind iomlán eile: ton gearr gach soicind agus ton fada ag :00, :05, :10 agus mar sin de. Roinneann comharthaí trialach, giuirléidí agus aláraim ton amháin. Díchumasaítear an sleamhnán airde do Bhíp an chórais. Nuair a stoptar an tástáil, féadfaidh ton atá tosaithe cheana críochnú. Féadfaidh comharthaí ama comhuaineacha eile leanúint ar aghaidh. Cuirtear céaduithe fritháirimh san áireamh agus seinntear toin fhorluiteacha go leanúnach go deireadh an fhorluí dheireanaigh.
 
 **Aschur fuaime**
 
-Roghnaíonn **Aschur fuaime** ar an gcluaisín **Comhartha** gléas do chomharthaí ama rialta gach giuirléide a thacaíonn
-le fuaim. Ní athraíonn sé crios ama, fritháireamh ná eatramh na giuirléide. Fanann rogha an ghineadóra agus airde
-fuaime an chomhartha mar shocruithe don fheidhmchlár ar fad ar an gcluaisín **Feidhmchlár**. Le **Bíp an chórais**,
-fanann an réimse le feiceáil ach tá sé liath agus díchumasaithe, agus coinnítear an gléas roghnaithe; cumasaíonn
-**Gineadóir ionsuite** arís é. Úsáideann Windows Vista an gineadóir go huathoibríoch.
+Roghnaíonn Aschur fuaime ar an gcluaisín Comhartha gléas do chomharthaí ama rialta gach giuirléide a thacaíonn
+le fuaim. Ní athraíonn sé crios ama, fritháireamh ná eatramh na giuirléide. Fanann rogha an ghineadóra agus
+airde fuaime an chomhartha mar shocruithe don fheidhmchlár ar fad ar an gcluaisín Feidhmchlár. Le Bíp an
+chórais, bíonn an liosta aschuir liath agus taispeánann sé Gléas réamhshocraithe Windows. Coinnítear an gléas
+sábháilte agus taispeántar arís é nuair a roghnaítear Gineadóir ionsuite. Nuair atá an comhartha ama múchta,
+bíonn an lipéad Aschur fuaime liath freisin. Úsáideann Windows Vista an gineadóir go huathoibríoch.
 
 Leanann **Gléas réamhshocraithe Windows** aschur réamhshocraithe reatha Windows. Fanann gléas a roghnaítear go sonrach
 roghnaithe má dhícheanglaítear é agus taispeántar mar **Gléas nach bhfuil ar fáil** é; fanann a chomharthaí ina dtost
@@ -83,8 +90,9 @@ Cumaisctear comharthaí go huathoibríoch do gach aschur. Roinneann gléas a rog
 réamhshocraithe Windows a thagraíonn don ghléas céanna aon aschur amháin. Oibríonn gléasanna éagsúla go
 neamhspleách; caomhnaítear an tonn sínis, leanúnachas an phas agus tús agus deireadh na dton ag nialas.
 Sábhálann Aschur fuaime tástála ar an gcluaisín Feidhmchlár an gléas le haghaidh tástálacha gineadóra agus
-réamhéisteachta toirte. Ní dhíchumasaíonn Bíp córais ach an roghnóir seo. Úsáideann aláraim aschur
-réamhshocraithe Windows fós. Ní chumaisctear iad le comharthaí rialta ach ar aschur comhroinnte.
+réamhéisteachta toirte. Taispeánann Bíp an chórais Gléas réamhshocraithe Windows sa liosta liath; coinnítear an gléas tástála sábháilte. Úsáideann fuaim an aláraim agus a
+chuid bípeanna roimh ré aschur réamhshocraithe Windows. Ní chumaisctear ach na bípeanna roimh ré le comharthaí
+ama rialta ar an aschur céanna; seinntear comhaid fuaime an aláraim ar leithligh.
 
 ## Cloig bhreise
 

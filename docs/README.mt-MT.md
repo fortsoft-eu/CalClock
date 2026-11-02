@@ -18,15 +18,19 @@ Fis-Settings tista’ żżid, tneħħi u tidduplika arloġġi analogi u diġital
 
 ## Allarm u shortcuts
 
-L-arloġġi u l-panewijiet jistgħu jkollhom allarm. Il-programm idoqq fajl tal-awdjo huwa stess darba jew kontinwament skont ir-ripetizzjoni; fajls u kmandi oħra jintbagħtu lill-Windows. Klikk fuq il-wiċċ jew il-wiri tal-allarm attiv, Waqqaf l-allarm jew Esc iwaqqaf l-indikazzjoni u l-awdjo tal-programm. Klikk doppju fuq wiċċ jew wiri diġitali jaqleb is-sekondi. F1 jiftaħ l-Għajnuna, B is-Settings, u Esc jaħbi widget jekk mhux qed iwaqqaf allarm. Il-pożizzjonijiet tal-widgets jiġu ssejvjati wara t-tkaxkir, dawk tad-djalogi meta jingħalqu, u s-settings fil-ħażna magħżula. Tnedija oħra tattiva l-istanza li diġà qed taħdem u żżomm il-widgets fl-eqreb punt disponibbli taż-żona tax-xogħol.
+L-arloġġi u l-panewijiet jistgħu jkollhom allarm. Il-programm idoqq fajl tal-awdjo huwa stess darba jew kontinwament skont ir-ripetizzjoni; fajls u kmandi oħra jintbagħtu lill-Windows. Klikk fuq il-wiċċ jew il-wiri tal-allarm attiv, Waqqaf l-allarm jew Esc iwaqqaf l-indikazzjoni u l-awdjo tal-programm. Klikk doppju fuq wiċċ jew wiri diġitali jaqleb is-sekondi. F1 jiftaħ l-Għajnuna, B is-Settings, u Esc jaħbi widget jekk mhux qed iwaqqaf allarm. Il-pożizzjonijiet tal-widgets jiġu ssejvjati wara t-tkaxkir, dawk tad-djalogi meta jingħalqu, u s-settings fil-ħażna magħżula. Tnedija oħra tattiva l-istanza li diġà qed taħdem. Widgets imwaħħla mat-truf taż-żona tax-xogħol iżommu t-twaħħil wara tnedija ġdida jew bidla fid-daqs, fid-DPI jew fiż-żona tax-xogħol.
 
 ## Dħul tal-ħin u azzjonijiet tal-allarm
 
 Il-ħin tal-allarm jaċċetta HH:mm b’żewġ punti, punt, spazju jew separatur ieħor, jew mingħajr separatur. Ċifra waħda jew tnejn ifissru sigħat; tlieta jew erbgħa sigħat u minuti: 7, 12, 730, 0730 jew 7:30. Meta titlaq mill-qasam, il-valur isir HH:mm. Il-kumpens jinqara mil-lemin mis-sekondi: 2 ifisser 00:00:02.00, 230 u 0230 ifissru 00:02:30.00, u 12345 ifisser 01:23:45.00. B’separaturi, żewġ gruppi jfissru minuti u sekondi, tlieta sigħat, minuti u sekondi, u r-raba’ ċentesimi ta’ sekonda; sinjal huwa permess. Il-jiem taħt Allarm attivat jagħżlu l-jiem tal-allarm; kollha magħżula inizjalment. L-ordni jsegwi l-lingwa tal-programm, iżda bidla fil-lingwa ma tbiddilx il-jiem issejvjati.
 
-L-allarm juri widget moħbi u jġibu fuq quddiem mingħajr ma jibdel Dejjem fuq nett permanentement. Daqq is-sinjal tal-ħin jibda l-ewwel ton qasir ħames sekondi qabel l-allarm. Dan huwa indipendenti mit-tab Sinjal; sekwenzi simultanji jingħaqdu. Ittestja jteptep il-wiċċ jew il-qafas u jittestja l-fajl, il-kmand, l-awdjo, l-indirizz HTTP/HTTPS tal-iskript remot u, jekk magħżul, is-sinjal tal-ħin sħiħ. Il-waqfien tat-test iwaqqaf l-awdjo intern tiegħu u s-sinjal ta’ prova; il-waqfien tal-allarm iwaqqaf l-awdjo intern tiegħu. Meta ssikket, id-daqq ikompli fis-skiet u jerġa’ jinstema’ meta tneħħi s-sikket. Il-kmandi u l-iskripts remoti jibqgħu attivi.
+L-allarm juri widget moħbi u jġibu fuq quddiem mingħajr ma jibdel Dejjem fuq nett permanentement. Daqq is-sinjal tal-ħin jibda l-ewwel ton qasir ħames sekondi qabel l-allarm. Dan huwa indipendenti mit-tab Sinjal; sekwenzi simultanji jingħaqdu. Ittestja jteptep il-wiċċ jew il-qafas u jittestja l-fajl, il-kmand, l-awdjo u l-indirizz HTTP/HTTPS tal-iskript remot. Ittestja jkun disponibbli meta jintgħażlu Allarm attivat u Ħaddem fajl jew kmand u l-qasam tal-fajl jew tal-kmand ma jkunx vojt. It-test ma jdoqqx is-sinjal tal-ħin tal-allarm. Waqqaf it-test iwaqqaf l-awdjo intern u l-previżjoni viżiva. Il-waqfien tal-allarm iwaqqaf l-awdjo intern tiegħu. Meta ssikket, id-daqq ikompli fis-skiet u jerġa’ jinstema’ meta tneħħi s-sikket. Il-kmandi u l-iskripts remoti jibqgħu attivi.
 
 Is-sinjali tal-allarm jiġu skedati skont il-mument reali tal-allarm li jmiss, wara l-konverżjoni taż-żona tal-ħin u l-applikazzjoni tal-kumpens tal-widget. Jibdew ħames sekondi reali qabel dak il-mument, anki meta l-arloġġ muri jaqbeż direttament għall-ħin tal-allarm. Ħin tal-allarm maqbuż fir-rebbiegħa ma jattivax la l-allarm u lanqas is-sinjali tiegħu. Matul is-siegħa ripetuta fil-ħarifa, l-allarm u s-sinjali tiegħu jseħħu darba biss għall-istess data u ħin issettjat.
+
+Jekk CalClock jibqa’ jaħdem, wara sleep, ibernazzjoni jew dewmien fl-ipproċessar kull widget jattiva l-aħħar allarm mitluf tiegħu darba, bl-azzjonijiet konfigurati. Meta CalClock jerġa’ jinbeda, l-allarmi l-qodma ma jiġux ripetuti; is-sinjali tal-ħin u l-ħsejjes ta’ qabel l-allarm li ntilfu ma jindaqqux wara. “Qajjem il-kompjuter għall-allarm” huwa mitfi awtomatikament u jeħtieġ li CalClock ikun qed jaħdem u li Windows u l-ħardwer jappoġġjawh; tqajjim bil-mod jista’ jipprevjeni l-ħsejjes minn qabel fil-ħin.
+
+Meta Allarm attivat ma jkunx magħżul, il-kontrolli l-oħra fit-tab Allarm ikunu griżi u diżattivati, iżda l-valuri tagħhom jinżammu. Id-diżattivazzjoni tal-allarm twaqqaf test li jkun għaddej.
 
 Is-slajder Volum tal-awdjo fit-tab Allarm jikkontrolla d-daqq intern ta’ dak il-widget. Id-default −18 dB iżomm il-livell oriġinali tal-fajl (100%). Lejn il-lemin il-ħoss jiġi amplifikat; il-massimu 0 dB huwa madwar 794%. −∞ dB huwa skiet. Il-bidliet jinstemgħu waqt it-test ukoll. MIDI u fajls li ma jistgħux jiġu dekodifikati u jindaqqu b’metodu ta’ riżerva huma limitati għal 100%.
 
@@ -54,6 +58,8 @@ Is-settings jistgħu jiġu esportati f’XML. L-importazzjoni tgħabbi u tissejv
 
 Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
 
+Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna u Dwar. Tahoma 8 pt tintuża minflok il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u ma jiġux applikati; l-għażliet issejvjati jinżammu.
+
 ## Settings u menus
 
 Il-lingwa, il-font, l-anti-aliasing, il-ħażna, il-bidu mal-Windows u t-twaħħil mat-truf huma settings komuni fit-tab Applikazzjoni. Id-diżattivazzjoni tat-temi fit-tab Applikazzjoni taffettwa biss it-twieqi Settings, Għajnuna u Dwar. Kull widget juża s-setting tat-temi tiegħu stess. Mal-ewwel tnedija tintgħażel il-lingwa tal-interfaċċa tal-Windows jew l-Ingliż Amerikan jekk mhijiex appoġġjata. Il-lingwa, l-anti-aliasing u t-temi tal-widget jaffettwaw biss lilu.
@@ -64,15 +70,16 @@ Il-menu tal-widget fih l-għażliet xierqa għall-viżibbiltà, Dejjem fuq nett,
 
 Is-sinjal isegwi s-Sinjal tal-Ħin ta’ Greenwich (GTS): ħames toni qosra fl-aħħar ħames sekondi u ton twil eżatt fil-ħin stabbilit. It-tab Sinjal għandu Sinjal tal-ħin attivat u intervalli ta’ 1, 5, 10, 15, 20, 30 jew 60 minuta skont il-ħin tal-widget. Għall-ewwel huwa mitfi b’intervall ta’ siegħa magħżul. Il-bidla fil-menu żżomm l-intervall. Jitqiesu UTC, iż-żona, il-kumpens u NTP; b’20 minuta jindaqq f’:00, :20 u :40. Wara s-sikket, it-ton kurrenti jista’ jispiċċa, dawk li jmiss jinqabżu u wara li jerġa’ jinxtegħel il-ħoss jinstema’ biss it-ton skedat li jmiss. Kalendarju separat m’għandux allarm, sinjal tal-ħin jew sikket.
 
-Ħoss tas-sinjal tal-ħin fit-tab Applikazzjoni joffri Ġeneratur integrat (default) u Ħoss tas-sistema għall-widgets u l-allarmi kollha. Volum tas-sinjal tal-ħin juri l-livell tal-ġeneratur f’dB: 0 dB fuq il-lemin huwa l-massimu ta’ amplitudni sinusojdali mingħajr distorsjoni, −∞ dB huwa skiet, u d-default −18 dB. Ittestja jibda previżjoni kontinwa, Waqqaf it-test itemmha. Iż-żewġ ħsejjes jistgħu jiġu ttestjati; it-test ma jiġix issejvjat. Iż-żamma tas-slajder iddoqq ukoll sal-ħelsien tal-maws, sakemm mhux għaddej test mill-buttuna. Id-daqq jibda fis-sekonda sħiħa li jmiss: ton qasir kull sekonda u twil f’:00, :05, :10 u hekk ikompli. Il-waqfien iħalli t-ton kurrenti jispiċċa; wieħed twil jista’ jdum nofs sekonda oħra. Jitqiesu ċ-ċentesimi tal-kumpens; toni li jikkoinċidu jindaqqu kontinwament sa tmiem l-aħħar sovrapożizzjoni fuq l-istess ħruġ tal-awdjo.
+Ħoss tas-sinjal tal-ħin fit-tab Applikazzjoni joffri Ġeneratur integrat (default) u Ħoss tas-sistema għall-widgets u l-allarmi kollha. Volum tas-sinjal tal-ħin juri l-livell tal-ġeneratur f’dB: 0 dB fuq il-lemin huwa l-massimu ta’ amplitudni sinusojdali mingħajr distorsjoni, −∞ dB huwa skiet, u d-default −18 dB. Ittestja jibda previżjoni kontinwa, Waqqaf it-test itemmha. Iż-żewġ ħsejjes jistgħu jiġu ttestjati; it-test ma jiġix issejvjat. Iż-żamma tas-slajder iddoqq ukoll sal-ħelsien tal-maws, sakemm mhux għaddej test mill-buttuna. Id-daqq jibda fis-sekonda sħiħa li jmiss: ton qasir kull sekonda u twil f’:00, :05, :10 u hekk ikompli. Meta jitwaqqaf it-test, ton li jkun diġà beda jista’ jispiċċa. Sinjali oħra tal-ħin li jindaqqu fl-istess ħin jistgħu jkomplu. Jitqiesu ċ-ċentesimi tal-kumpens; toni li jikkoinċidu jindaqqu kontinwament sa tmiem l-aħħar sovrapożizzjoni fuq l-istess ħruġ tal-awdjo.
 
 **Ħruġ tal-awdjo**
 
-**Ħruġ tal-awdjo** fit-tab **Sinjal** jagħżel apparat għas-sinjali regolari tal-ħin ta’ kull widget li jappoġġja
-l-ħoss. Iż-żona tal-ħin, il-kumpens u l-intervall tal-widget ma jinbidlux. L-għażla tal-ġeneratur u l-volum tas-sinjal
-jibqgħu globali fit-tab **Applikazzjoni**. B’**Ħoss tas-sistema**, il-kaxxa tibqa’ tidher iżda tkun griża u
-diżattivata, u żżomm l-apparat magħżul; **Ġeneratur integrat** jerġa’ jattivaha. Windows Vista juża l-ġeneratur
-awtomatikament.
+Ħruġ tal-awdjo fit-tab Sinjal jagħżel apparat għas-sinjali regolari tal-ħin ta’ kull widget li jappoġġja
+l-ħoss. Iż-żona tal-ħin, il-kumpens u l-intervall tal-widget ma jinbidlux. L-għażla tal-ġeneratur u l-volum
+tas-sinjal jibqgħu globali fit-tab Applikazzjoni. B’Ħoss tas-sistema, il-lista tal-ħruġ tkun griża u turi
+Apparat predefinit ta’ Windows. L-għażla tal-apparat issejvjata tinżamm u terġa’ tidher meta jintgħażel
+Ġeneratur integrat. Meta s-sinjal tal-ħin ikun mitfi, it-tikketta Ħruġ tal-awdjo tkun griża wkoll. Windows
+Vista juża l-ġeneratur awtomatikament.
 
 **Apparat predefinit ta’ Windows** isegwi l-ħruġ predefinit attwali ta’ Windows. Apparat magħżul speċifikament jibqa’
 magħżul meta jiġi skonnettjat u jidher bħala **Apparat mhux disponibbli**; is-sinjali tiegħu jibqgħu siekta sakemm
@@ -82,9 +89,10 @@ separatament għal kull widget fir-reġistru jew fis-settings XML.
 Is-sinjali jingħaqdu awtomatikament għal kull ħruġ. Apparat magħżul speċifikament u Apparat predefinit ta’
 Windows li jirreferi għall-istess apparat jaqsmu ħruġ wieħed. Apparati differenti jaħdmu indipendentement;
 jinżammu l-mewġa sinusojdali, il-kontinwità tal-fażi u l-bidu u t-tmiem tat-toni f’żero. Ħruġ tal-awdjo
-tat-test fit-tab Applikazzjoni jiffranka l-apparat għat-testijiet tal-ġeneratur u l-previżjoni tal-volum.
-Il-ħoss tas-sistema jiddiżattiva biss dan is-selettur. L-allarmi jibqgħu jużaw il-ħruġ predefinit ta’ Windows.
-Jingħaqdu mas-sinjali regolari biss fuq ħruġ komuni.
+tat-test fit-tab Applikazzjoni jissejvja l-apparat għat-testijiet tal-ġeneratur u l-previżjoni tal-volum.
+Ħoss tas-sistema juri Apparat predefinit ta’ Windows fil-lista griża; l-għażla tal-apparat tat-test issejvjata tinżamm. Il-ħoss tal-allarm u t-toni ta’ qablu jużaw il-ħruġ
+predefinit ta’ Windows. It-toni ta’ qabel l-allarm biss jingħaqdu mas-sinjali regolari tal-ħin fuq l-istess
+ħruġ; il-fajls tal-awdjo tal-allarm jindaqqu separatament.
 
 ## Arloġġi addizzjonali
 

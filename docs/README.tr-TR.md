@@ -64,7 +64,7 @@ Panelin üst tarihi, takvimi bugüne döndüren bir bağlantıdır; alttaki saat
 
 Takvim ve saat panelleri, alt bağlantının üzerinde Windows tarih ve saat bildirimlerini gösterebilir. **Genel** sekmesindeki **Tarih ve saat bildirimleri** seçeneği varsayılan olarak açıktır ve her panel için ayrı kaydedilir. Birden fazla bildirim geçerliyse Windows’taki gibi alt alta gösterilir. Seçenek kapalıysa veya geçerli bir bildirim yoksa panelin özgün boyutu ve düzeni korunur; boş alan ayrılmaz.
 
-`Izgaraya hizala`, görünür masaüstü araçlarını yaklaşık elle yerleştirme düzenini koruyarak sabit ve çakışmayan bir ızgaraya yerleştirir. Komutun kendi menüsünden çağrıldığı araç yerinde kalır; bildirim alanındaki komut her monitörü ayrı düzenler. Monitör saatleri kapsam dışındadır.
+`Izgarada düzenle`, görünür masaüstü araçlarını yaklaşık elle yerleştirme düzenini koruyarak sabit ve çakışmayan bir ızgaraya yerleştirir. Komutun kendi menüsünden çağrıldığı araç yerinde kalır; bildirim alanındaki komut her monitörü ayrı düzenler. Monitör saatleri kapsam dışındadır.
 
 ## Görünüm
 
@@ -75,6 +75,8 @@ Görünüm değişiklikleri seçili araçta hemen önizlenir. `Varsayılan gör�
 Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaşır. Tek çizgili kenarlığın rengi de ayarlanabilir; genişlik denetimi aracın desteklediği yerlerde kullanılabilir. Saydam dijital saatlerde opak saatlerle aynı stiller bulunur. Uygulama ve takvim yazı tiplerinde boyut yoktur; dijital saatlerde ve panel metinlerinde vardır. Özel takvim yazı tipleri, Windows klasik görünümünde veya araç için temalar kapatıldığında desteklenir.
 
 Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak yalnızca Ayarlar, Yardım ve Hakkında pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
+
+Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım ve Hakkında pencerelerine uygulanır. Sistem varsayılan yazı tipi yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler korunur.
 
 Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her araç için ayrı ayarlar ve düzeyi dB cinsinden gösterir. Varsayılan **−18 dB**, dosyanın özgün düzeyini (**100%**) korur. Sağa taşımak sesi yükseltir; en yüksek **0 dB**, özgün genliğin yaklaşık **794%** değeridir. En sol **−∞ dB** (sessizlik) konumudur. Değişiklikler ses testi sırasında etkilidir. Yükseltme, Windows desteklediğinde WAV, MP3, WMA, AAC, M4A ve FLAC dahil çözülmüş sese uygulanır. MIDI gibi çözülemeyen dosyaların eski çalma yöntemi 100% ile sınırlıdır.
 
@@ -112,19 +114,24 @@ Saat araçları ayrı seçilen hafta günlerinde alarm sunar; varsayılan olarak
 
 Alarmın ses sinyalleri, saat dilimi dönüşümü ve araç kaydırması uygulandıktan sonraki gerçek alarm anına göre planlanır. Gösterilen saat doğrudan alarm saatine atlasa bile sinyaller bu andan beş gerçek saniye önce başlar. İlkbaharda atlanan bir alarm saati ne alarmı ne de sinyallerini başlatır. Sonbaharda tekrarlanan saatte, aynı tarih ve ayarlı saat için alarm ve sinyalleri yalnızca bir kez çalar.
 
-Test görsel uyarıyı gösterir ve dosya, komut, ses ve uzak betik adresini eşzamansız dener. Alarm zaman sinyali seçilmişse altı biplik dizinin tamamını da çalar; Testi durdur dahili sesi ve sinyal önizlemesini bitirir.
+CalClock çalışmaya devam ediyorsa uyku, hazırda bekletme veya işleme gecikmesinden sonra her araç, yapılandırılmış eylemleriyle birlikte kaçırılan son alarmını bir kez çalıştırır. CalClock yeniden başlatıldığında eski alarmlar tekrarlanmaz; kaçırılan zaman sinyalleri ve alarm öncesi bipler sonradan çalınmaz. “Alarm için bilgisayarı uyandır” varsayılan olarak kapalıdır; CalClock’un çalışmasını ve Windows ile donanımın bu özelliği desteklemesini gerektirir. Yavaş uyanma, alarm öncesi biplerin zamanında çalınmasını engelleyebilir.
 
-Sinyal sekmesinde Zaman sinyali etkin onay kutusu ve aracın gösterdiği saate göre 1, 5, 10, 15, 20, 30 veya 60 dakikalık aralıklar için seçenek düğmeleri bulunur. Sinyal başlangıçta kapalıdır ve bir saatlik aralık seçilidir. Araç menüsünde Sinyal seçeneğini kapatıp açmak aralığı korur. Menü, alarm saatini ve sinyal aralığını parantez içinde gösterir. 20 dakikalık aralık bu saatin :00, :20 ve :40 dakikalarında çalar. Düzen **Greenwich Time Signal (GTS)** biçimindedir: beş kısa bip son beş saniyeyi, uzun bip tam sınırı işaretler. Saat dilimleri, UTC, kaydırmalar ve geçerli NTP düzeltmesi dikkate alınır. Alarm sinyali ve Sinyal sekmesi ayrı ayarlanır; zamanları aynı ana denk gelirse CalClock tek bir ortak dizi çalar. Kesirli kaydırmalar korunur; üst üste gelen araç, alarm ve test tonları son örtüşme bitene kadar kesintisiz sürer aynı ses çıkışında.
+Alarm etkin seçili değilse Alarm sekmesindeki diğer denetimler gri ve devre dışıdır; değerleri korunur. Alarmı devre dışı bırakmak çalışan testi de durdurur.
 
-Uygulama’daki **Zaman sinyali sesi**, **Yerleşik üreteç** (varsayılan) ve **Sistem bip sesi** seçeneklerini sunar. Seçim alarmlar dahil tüm araç sinyallerine uygulanır ve genel ayarlara kaydedilir. **Yerleşik üreteç** için **Zaman sinyali ses düzeyi** tüm uygulamanın düzeyini dB olarak gösterir. Sağ uç **0 dB**, bozulmamış sinüs dalgasının en yüksek genliğidir; sessizlik **−∞ dB** değeridir. Varsayılan **−18 dB**’dir. Üreteç, test durdurulurken de tonları sıfır geçişinde başlatır ve bitirir. Geçerli bipin bitmesine izin verilir; uzun bipin sona ermesi yarım saniyeye kadar sürebilir. **Zaman sinyali sesi** yanındaki **Test** sürekli önizlemeyi başlatır; **Testi durdur** bitirir. İki yöntem de test edilebilir ve test durumu kaydedilmez. Ses düzeyi kaydırıcısını fareyle tutmak da düğmeden başlatılmış test çalışmıyorsa fare bırakılana kadar önizleme yapar. Çalma sonraki tam saniyede başlar: her saniye kısa, :00, :05, :10 vb. anlarda uzun ton duyulur. Ses seçimi yalnızca sistem her iki yöntemi destekliyorsa kullanılabilir.
+Test görsel uyarıyı gösterir ve dosya, komut, ses ve uzak betik adresini eşzamansız dener. Test için Alarm etkin ve Dosya veya komut çalıştır seçili olmalı, dosya veya komut alanı boş olmamalıdır. Test, alarmın zaman sinyalini çalmaz. Testi durdur, dahili sesi ve görsel önizlemeyi bitirir.
+
+Sinyal sekmesinde Zaman sinyali etkin onay kutusu ve aracın gösterdiği saate göre 1, 5, 10, 15, 20, 30 veya 60 dakikalık aralıklar için seçenek düğmeleri bulunur. Sinyal başlangıçta kapalıdır ve bir saatlik aralık seçilidir. Araç menüsünde Sinyal seçeneğini kapatıp açmak aralığı korur. Menü, alarm saatini ve sinyal aralığını parantez içinde gösterir. 20 dakikalık aralık bu saatin :00, :20 ve :40 dakikalarında çalar. Düzen **Greenwich Time Signal (GTS)** biçimindedir: beş kısa bip son beş saniyeyi, uzun bip tam sınırı işaretler. Saat dilimleri, UTC, kaydırmalar ve geçerli NTP düzeltmesi dikkate alınır. Alarm sinyali ve Sinyal sekmesi ayrı ayarlanır; zamanları aynı ana denk gelirse CalClock tek bir ortak dizi çalar. Kesirli kaydırmalar korunur; aynı ses çıkışındaki araç, alarm ve test tonları son örtüşme bitene kadar kesintisiz sürer.
+
+Uygulama’daki **Zaman sinyali sesi**, **Yerleşik üreteç** (varsayılan) ve **Sistem bip sesi** seçeneklerini sunar. Seçim alarmlar dahil tüm araç sinyallerine uygulanır ve genel ayarlara kaydedilir. **Yerleşik üreteç** için **Zaman sinyali ses düzeyi** tüm uygulamanın düzeyini dB olarak gösterir. Sağ uç **0 dB**, bozulmamış sinüs dalgasının en yüksek genliğidir; sessizlik **−∞ dB** değeridir. Varsayılan **−18 dB**’dir. Üreteç, test durdurulurken de tonları sıfır geçişinde başlatır ve bitirir. Test durdurulduğunda başlamış olan ton tamamlanabilir. Eşzamanlı diğer zaman sinyalleri devam edebilir. **Zaman sinyali sesi** yanındaki **Test** sürekli önizlemeyi başlatır; **Testi durdur** bitirir. İki yöntem de test edilebilir ve test durumu kaydedilmez. Ses düzeyi kaydırıcısını fareyle tutmak da düğmeden başlatılmış test çalışmıyorsa fare bırakılana kadar önizleme yapar. Çalma sonraki tam saniyede başlar: her saniye kısa, :00, :05, :10 vb. anlarda uzun ton duyulur. Ses seçimi yalnızca sistem her iki yöntemi destekliyorsa kullanılabilir.
 
 **Ses çıkışı**
 
-**Sinyal** sekmesindeki **Ses çıkışı**, ses destekleyen her aracın düzenli zaman sinyalleri için bir aygıt seçer.
-Aracın saat dilimi, zaman kaydırması ve aralığı değişmez. Üreteç seçimi ve sinyal ses düzeyi, **Uygulama** sekmesinde
-uygulamanın tamamı için geçerli olmaya devam eder. **Sistem bip sesi** seçildiğinde alan görünür kalır ancak gri ve
-devre dışıdır; seçilen aygıt korunur. **Yerleşik üreteç** alanı yeniden etkinleştirir. Windows Vista üreteci otomatik
-olarak kullanır.
+Sinyal sekmesindeki Ses çıkışı, ses destekleyen her aracın düzenli zaman sinyalleri için bir aygıt seçer.
+Aracın saat dilimi, zaman kaydırması ve aralığı değişmez. Üreteç seçimi ve sinyal ses düzeyi, Uygulama
+sekmesinde uygulamanın tamamı için geçerli olmaya devam eder. Sistem bip sesi seçildiğinde çıkış listesi gri
+olur ve Windows varsayılan aygıtı seçeneğini gösterir. Kayıtlı aygıt tercihi korunur; Yerleşik üreteç
+seçilince yeniden gösterilir. Zaman sinyali kapalıysa Ses çıkışı etiketi de gri olur. Windows Vista üreteci
+otomatik olarak kullanır.
 
 **Windows varsayılan aygıtı**, Windows'un geçerli varsayılan ses çıkışını izler. Açıkça seçilen bir aygıtın bağlantısı
 kesilirse seçim korunur ve **Aygıt kullanılamıyor** olarak görünür; aygıt kullanılabilir olana veya başka bir çıkış
@@ -134,15 +141,15 @@ XML ayarlarında ayrı ayrı saklanır.
 Sinyaller her çıkış için otomatik birleştirilir. Açıkça seçilen aygıt ile aynı aygıta işaret eden Windows
 varsayılan aygıtı tek çıkışı paylaşır. Farklı aygıtlar bağımsız çalışır; sinüs dalgası, faz sürekliliği ve
 tonların sıfırda başlayıp bitmesi korunur. Uygulama sekmesindeki Test ses çıkışı, üreteç testleri ve ses
-düzeyi önizlemeleri için aygıtı kaydeder. Sistem bip sesi yalnızca bu seçiciyi devre dışı bırakır. Alarmlar
-Windows varsayılan çıkışını kullanmaya devam eder. Düzenli sinyallerle yalnızca ortak bir çıkışta
-birleştirilirler.
+düzeyi önizlemeleri için aygıtı kaydeder. Sistem bip sesi bu listede Windows varsayılan aygıtı seçeneğini gri gösterir; kayıtlı test aygıtı tercihi korunur. Alarm sesi
+ve alarm öncesi bipler Windows varsayılan çıkışını kullanır. Yalnızca alarm öncesi bipler aynı çıkıştaki
+düzenli zaman sinyalleriyle birleştirilir; alarm ses dosyaları ayrı çalınır.
 
 Alarm ve zaman sinyali ses destekleyen araçların bağlam menüsünden de açılabilir. Alarm öğesi saatini ve tüm günler seçili değilse etkin günleri gösterir. Sessiz komutu kendi aracını etkiler ve Genel’deki seçimle eşleşir. Bağımsız Takvim alarmı, zaman sinyalini veya sessize almayı desteklemez. Bildirim alanındaki komut Tümünü sessize al’dır; herhangi bir araç üzerinde `M` aynı genel geçişi yapar. Genel sessizliği kaldırmak yalnızca önceki genel eylemin susturduğu araçları geri getirir. Dahili ses sessizce ilerler ve sessizlik kaldırılınca yeniden duyulur. Başlamış bip bitebilir; sonraki bipler ses açılana kadar atlanır. Ses dışı komutlar ve uzak betikler etkilenmez.
 
 ## Ayarlar ve menüler
 
-Her araç menüsü türüne uygun komutları — görünürlük, her zaman üstte, saniyeler, analog boyut veya tarih kopyalama biçimi — ve ardından `Izgaraya hizala`, Ayarlar, Yardım, Hakkında ve Çıkış’ı içerir. Bildirim menüsü tüm araçları sıra numaralarıyla listeler, ardından Tümünü göster, Tümünü gizle ve Tümünü sessize al gelir. Ayrı gruptaki `Izgaraya hizala` uygulama komutlarından önce yer alır.
+Her araç menüsü türüne uygun komutları — görünürlük, her zaman üstte, saniyeler, analog boyut veya tarih kopyalama biçimi — ve ardından `Izgarada düzenle`, Ayarlar, Yardım, Hakkında ve Çıkış’ı içerir. Bildirim menüsü tüm araçları sıra numaralarıyla listeler, ardından Tümünü göster, Tümünü gizle ve Tümünü sessize al gelir. Ayrı gruptaki `Izgarada düzenle` uygulama komutlarından önce yer alır.
 
 Araçları göstermek veya geri getirmek her zaman üstte durumunu değiştirmeden onları diğer pencerelerin önüne taşır. CalClock başlangıçta en az bir görünür araç sağlar. İkinci çalıştırma var olan örneği etkinleştirir ve görünür araç yoksa en son gizlenenleri geri getirir. Windows Gezgini yeniden başladığında bildirim simgesi otomatik yeniden kaydedilir. `ClockWndMain` seçili boyutta saniye ibresini desteklemiyorsa Saniyeler komutu devre dışı kalır, ancak tercih başka bir desteklenen boyut için saklanır.
 

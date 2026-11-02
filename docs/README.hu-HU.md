@@ -19,15 +19,19 @@ A Beállítások között analóg és digitális órákat, naptárakat, naptára
 
 ## Ébresztés és billentyűparancsok
 
-Az órákhoz és panelekhez ébresztés állítható be. A program a hangfájlt maga játssza le egyszer vagy folyamatosan az ismétlés szerint; a többi fájlt és parancsot átadja a Windowsnak. Az ébresztő számlapra vagy kijelzőre kattintva, az Ébresztés leállítása paranccsal vagy az Esc billentyűvel a jelzés és a program hangja leállítható. A számlapra vagy digitális kijelzőre duplán kattintva a másodperceket kapcsolhatja. Az F1 a Súgót, a B a Beállításokat nyitja meg; az Esc elrejti a minialkalmazást, ha nem ébresztést állít le. A helyzetet húzás után, a párbeszédablak helyét bezáráskor, a beállításokat a kiválasztott tárolóban menti a program. Az újabb indítás a futó példányt aktiválja, és a minialkalmazásokat a munkaterület legközelebbi elérhető pontján tartja.
+Az órákhoz és panelekhez ébresztés állítható be. A program a hangfájlt maga játssza le egyszer vagy folyamatosan az ismétlés szerint; a többi fájlt és parancsot átadja a Windowsnak. Az ébresztő számlapra vagy kijelzőre kattintva, az Ébresztés leállítása paranccsal vagy az Esc billentyűvel a jelzés és a program hangja leállítható. A számlapra vagy digitális kijelzőre duplán kattintva a másodperceket kapcsolhatja. Az F1 a Súgót, a B a Beállításokat nyitja meg; az Esc elrejti a minialkalmazást, ha nem ébresztést állít le. A helyzetet húzás után, a párbeszédablak helyét bezáráskor, a beállításokat a kiválasztott tárolóban menti a program. Az újabb indítás a futó példányt aktiválja. A munkaterület széléhez rögzített minialkalmazások újraindításkor, illetve méret-, DPI- vagy munkaterület-változáskor is rögzítve maradnak.
 
 ## Időbevitel és ébresztési műveletek
 
 Az ébresztési idő HH:mm formátumú lehet kettősponttal, ponttal, szóközzel, más elválasztóval vagy anélkül. Egy vagy két számjegy órát, három vagy négy órát és percet jelent: 7, 12, 730, 0730 vagy 7:30. A mező elhagyásakor HH:mm alakra vált. Az eltolást jobbról, a másodpercektől olvassa: 2 jelentése 00:00:02.00, 230 és 0230 jelentése 00:02:30.00, 12345 jelentése 01:23:45.00. Elválasztóval két csoport percet és másodpercet, három órát, percet és másodpercet, a negyedik századmásodpercet jelent; előjel megadható. Az Ébresztés engedélyezve alatti napok adják a működés napjait; alapból mind kijelölt. Sorrendjük a program nyelvét követi, de a nyelvváltás nem módosítja a mentett napokat.
 
-Az ébresztés megjeleníti a rejtett minialkalmazást, és előtérbe hozza a Mindig felül tartós módosítása nélkül. Az Időjelzés lejátszása az első rövid hangot öt másodperccel az ébresztés előtt indítja. Ez független az Időjelzés fültől; az egyidejű sorozatok egyesülnek. A Tesztelés villogtatja a számlapot vagy keretet, és ellenőrzi a fájlt, parancsot, hangot, távoli parancsfájl HTTP/HTTPS-címét és a kiválasztott teljes időjelzést. A teszt leállítása annak belső hangját és próbajelzését, az ébresztés leállítása annak belső hangját állítja le. Némításkor a lejátszás hangtalanul folytatódik, feloldáskor ismét hallható. A parancsok és távoli parancsfájlok nem állnak le.
+Az ébresztés megjeleníti a rejtett minialkalmazást, és előtérbe hozza a Mindig felül tartós módosítása nélkül. Az Időjelzés lejátszása az első rövid hangot öt másodperccel az ébresztés előtt indítja. Ez független az Időjelzés fültől; az egyidejű sorozatok egyesülnek. A Tesztelés villogtatja a számlapot vagy keretet, és ellenőrzi a fájlt, parancsot, hangot és a távoli parancsfájl HTTP/HTTPS-címét. A Tesztelés akkor érhető el, ha az Ébresztés engedélyezve és a Fájl vagy parancs futtatása be van jelölve, és a fájl vagy parancs mező nem üres. A teszt nem játssza le az ébresztés időjelzését. A Teszt leállítása a belső hangot és a vizuális előnézetet állítja le. Az ébresztés leállítása annak belső hangját állítja le. Némításkor a lejátszás hangtalanul folytatódik, feloldáskor ismét hallható. A parancsok és távoli parancsfájlok nem állnak le.
 
 Az ébresztés hangjelzéseinek ütemezése a következő ébresztés tényleges időpontjához igazodik, az időzóna átszámítása és a minialkalmazás eltolása után. A jelzések öt tényleges másodperccel előtte kezdődnek akkor is, ha a kijelzett óra közvetlenül az ébresztési időre ugrik. A tavasszal kihagyott ébresztési idő sem ébresztést, sem hangjelzést nem indít. Az ősszel megismételt órában ugyanarra a dátumra és beállított időre az ébresztés és a hangjelzései csak egyszer indulnak el.
+
+Ha a CalClock futva marad, alvó vagy hibernált állapot, illetve feldolgozási késés után minden minialkalmazás egyszer elindítja a legutóbbi elmaradt ébresztését a beállított műveletekkel együtt. A CalClock újraindítása nem pótolja a régi ébresztéseket; az elmaradt időjelzések és az ébresztés előtti sípolások utólag nem szólalnak meg. „A számítógép felébresztése az ébresztéshez” alapértelmezés szerint ki van kapcsolva; futó CalClock, valamint a Windows és a hardver támogatása szükséges hozzá. Lassú ébredés esetén az előzetes sípolások elkéshetnek.
+
+Ha az Ébresztés engedélyezve nincs bejelölve, az Ébresztés fül többi vezérlője szürke és letiltott, de a beállított értékek megmaradnak. Az ébresztés kikapcsolása leállítja a futó tesztet.
 
 Az Ébresztés fül Hangerő csúszkája az adott minialkalmazás belső lejátszását szabályozza. Az alapértelmezett −18 dB megőrzi a fájl eredeti szintjét (100%). Jobbra erősíti a hangot; a legnagyobb 0 dB körülbelül 794%. A −∞ dB csendet jelent. A változtatás teszt közben is hallható. A MIDI és a nem dekódolható, tartalék lejátszóval kezelt fájlok legfeljebb 100%-osak.
 
@@ -55,6 +59,8 @@ A beállítások XML-be exportálhatók. Az importálás azonnal betölti és a 
 
 A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
 
+A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó és Névjegy ablakokra vonatkozik. A rendszer alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+
 ## Beállítások és menük
 
 A nyelv, betűtípus, élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás fülön. A témák kikapcsolása az Alkalmazás fülön csak a Beállítások, Súgó és Névjegy ablakokra vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows felületének nyelve, nem támogatott nyelvnél az amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek.
@@ -65,15 +71,16 @@ A minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, máso
 
 A jelzés a Greenwich Time Signal (GTS) mintáját követi: öt rövid hang az utolsó öt másodpercben, majd hosszú hang a pontos időhatáron. Az Időjelzés fülön az Időjelzés engedélyezve és 1, 5, 10, 15, 20, 30 vagy 60 perces intervallum választható a minialkalmazás ideje szerint. Kezdetben kikapcsolt, órás intervallummal. A menübeli kapcsolás megőrzi az intervallumot. Figyelembe veszi az UTC-t, időzónát, eltolást és NTP-t; 20 percnél :00, :20 és :40 időpontban szól. Némítás után az aktuális hang befejeződhet; a következők kimaradnak, és feloldáskor csak a következő ütemezett hang szól. Az önálló Naptárnak nincs ébresztése, időjelzése vagy némítása.
 
-Az Alkalmazás fül Időjelzés hangja beállítása Beépített generátor (alapértelmezett) vagy Rendszerhang lehet minden órához és ébresztéshez. Az Időjelzés hangereje dB-ben mutatja a generátor szintjét: a jobb szélső 0 dB a legnagyobb torzítatlan szinuszamplitúdó, −∞ dB a csend, −18 dB az alapérték. A Tesztelés folyamatos próbát indít, a Teszt leállítása befejezi. Mindkét hang tesztelhető; a teszt nem mentődik. A csúszka nyomva tartása is szól az egér felengedéséig, ha nincs gombbal indított teszt. A lejátszás a következő egész másodpercnél indul: rövid hang másodpercenként és hosszú :00, :05, :10 stb. időpontban. A rendszerhangnál csak a hangerőcsúszka tiltott. Leállításkor az aktuális hang befejeződik; a hosszú még fél másodpercig tarthat. A századmásodperces eltolás is számít; az átfedő hangok az utolsó átfedés végéig megszakítás nélkül szólnak ugyanazon a hangkimeneten.
+Az Alkalmazás fül Időjelzés hangja beállítása Beépített generátor (alapértelmezett) vagy Rendszerhang lehet minden órához és ébresztéshez. Az Időjelzés hangereje dB-ben mutatja a generátor szintjét: a jobb szélső 0 dB a legnagyobb torzítatlan szinuszamplitúdó, −∞ dB a csend, −18 dB az alapérték. A Tesztelés folyamatos próbát indít, a Teszt leállítása befejezi. Mindkét hang tesztelhető; a teszt nem mentődik. A csúszka nyomva tartása is szól az egér felengedéséig, ha nincs gombbal indított teszt. A lejátszás a következő egész másodpercnél indul: rövid hang másodpercenként és hosszú :00, :05, :10 stb. időpontban. A rendszerhangnál a hangerőcsúszka tiltott. A teszt leállításakor a már elkezdett hang befejeződhet. Más egyidejű időjelzések folytatódhatnak. A századmásodperces eltolás is számít; az átfedő hangok az utolsó átfedés végéig megszakítás nélkül szólnak ugyanazon a hangkimeneten.
 
 **Hangkimenet**
 
-Az **Időjelzés** lapon lévő **Hangkimenet** minden hangot támogató minialkalmazás rendszeres időjelzéseihez külön
-eszközt választ. A minialkalmazás időzónája, időeltolása és időköze nem változik. A generátor kiválasztása és a jelzés
-hangereje továbbra is az egész alkalmazásra érvényes az **Alkalmazás** lapon. A **Rendszerhang** kiválasztásakor a
-mező látható marad, de szürkén, letiltva jelenik meg, és megőrzi a kiválasztott eszközt; a **Beépített generátor**
-újra engedélyezi. A Windows Vista automatikusan a generátort használja.
+Az Időjelzés lapon lévő Hangkimenet minden hangot támogató minialkalmazás rendszeres időjelzéseihez külön
+eszközt választ. A minialkalmazás időzónája, időeltolása és időköze nem változik. A generátor kiválasztása és
+a jelzés hangereje továbbra is az egész alkalmazásra érvényes az Alkalmazás lapon. A Rendszerhang
+kiválasztásakor a kimeneti lista szürke, és a Windows alapértelmezett eszköze lehetőséget mutatja. A mentett
+eszközválasztás megmarad, és a Beépített generátor kiválasztásakor újra megjelenik. Kikapcsolt időjelzésnél a
+Hangkimenet felirat is szürke. A Windows Vista automatikusan a generátort használja.
 
 A **Windows alapértelmezett eszköze** a Windows aktuális alapértelmezett hangkimenetét követi. A külön kiválasztott
 eszköz leválasztás után is kiválasztva marad, és **Az eszköz nem érhető el** néven jelenik meg; jelzései némák
@@ -83,9 +90,10 @@ frissül. A választás minden minialkalmazáshoz külön mentődik a beállít�
 A jelzések kimenetenként automatikusan egyesülnek. A külön kiválasztott eszköz és az ugyanarra mutató Windows
 alapértelmezett eszköze egyetlen kimenetet használ. A különböző eszközök egymástól függetlenül működnek; a
 szinuszhullám, a fázis folytonossága és a hangok nullán való kezdete és vége megmarad. Az Alkalmazás lap Teszt
-hangkimenete beállítása elmenti a generátorteszt és a hangerőpróba eszközét. A rendszerhang csak ezt a
-választót tiltja le. Az ébresztők továbbra is a Windows alapértelmezett kimenetét használják. Csak közös
-kimeneten egyesülnek a rendszeres jelzésekkel.
+hangkimenete beállítása elmenti a generátorteszt és a hangerőpróba eszközét. A Rendszerhang a szürke listában
+a Windows alapértelmezett eszköze lehetőséget mutatja; a mentett teszteszköz megmarad. Az ébresztés hangja és
+az előzetes sípolások a Windows alapértelmezett kimenetét használják. Csak az előzetes sípolások egyesülnek az
+ugyanazon a kimeneten szóló rendszeres időjelzésekkel; az ébresztés hangfájljai külön szólnak.
 
 ## További órák
 

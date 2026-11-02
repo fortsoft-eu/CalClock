@@ -328,6 +328,7 @@ HINSTANCE hInstance = nullptr;
 
 /// Thread, mutex and event handles
 HANDLE hNtpThread = nullptr;
+static HANDLE hAlarmWakeTimer = nullptr;
 static HANDLE hSettingsOpenThread = nullptr;
 HANDLE hSingleInstanceMutex = nullptr;
 HANDLE settingsPreviewMuteEvent = nullptr;
@@ -432,6 +433,7 @@ HWND hAlarmDayChecks[ALARM_DAY_COUNT] = {};
 HWND hAlarmEnabledCheck = nullptr;
 HWND hAlarmTimeEdit = nullptr;
 HWND hAlarmTimeSignalCheck = nullptr;
+HWND hAlarmWakeCheck = nullptr;
 HWND hBrowseButton = nullptr;
 HWND hCommandEdit = nullptr;
 HWND hLoopAudioCheck = nullptr;
@@ -581,6 +583,12 @@ UINT taskbarCreatedMessage = 0;
 
 /// Timing state
 LONGLONG currentTimeSignalOffset = 0;
+static LONGLONG alarmClockOffset = 0;
+static LONGLONG alarmWakeOffset = 0;
+static ULONGLONG alarmWakeTarget = 0;
+static bool alarmWakeUsesNtp = false;
+static bool alarmTimeZoneInitialized = false;
+static DYNAMIC_TIME_ZONE_INFORMATION alarmTimeZone{};
 ULONGLONG lastNtpAttemptTick = 0;
 ULONGLONG nextNtpAttemptTick = 0;
 static ULONGLONG fullscreenCursorActivityTick = 0;
@@ -1568,6 +1576,7 @@ static WidgetConfig DefaultConfig(WidgetType type, int index) {
     config.alarmEnabled = false;
     config.alarmDays = ALARM_DAYS_ALL;
     config.alarmTimeSignal = false;
+    config.alarmWakeComputer = false;
     config.soundsMuted = false;
     config.alarmHour = 6;
     config.alarmMinute = 0;
@@ -2397,12 +2406,6 @@ static void UpdateCurrentTimeSignalMute() {
     }
 }
 
-/// Tests a Windows day-of-week value against the alarm's Monday-based weekday mask.
-static bool AlarmEnabledOnDay(const WidgetConfig& config, WORD dayOfWeek) {
-    int mondayBasedDay = dayOfWeek == 0 ? 6 : dayOfWeek - 1;
-    return (config.alarmDays & 1U << mondayBasedDay) != 0;
-}
-
 /// Returns a localized abbreviated weekday for a Monday-based index, using English abbreviations if
 /// formatting fails.
 static std::wstring GetWeekdayAbbreviation(AppLanguage language, int mondayBasedDay) {
@@ -2588,13 +2591,8 @@ static void CheckTimeSignals() {
             candidates.push_back(TimeSignalCandidate{ target, outputDevice, true, widget->config.id });
         }
         if (alarmSignal && (!generatedTone || !defaultOutput.empty())) {
-            int targetDate = targetDisplayedTime.wYear * 10000 + targetDisplayedTime.wMonth * 100
-                + targetDisplayedTime.wDay;
-            int targetMinute = targetDisplayedTime.wHour * 60 + targetDisplayedTime.wMinute;
-            if (AlarmEnabledOnDay(widget->config, targetDisplayedTime.wDayOfWeek)
-                    && targetDisplayedTime.wHour == widget->config.alarmHour
-                    && targetDisplayedTime.wMinute == widget->config.alarmMinute
-                    && (widget->lastAlarmDate != targetDate || widget->lastAlarmMinute != targetMinute)) {
+            ULONGLONG targetApplicationUtc = applicationNow + target - timelineNow;
+            if (widget->alarmSchedule.Next() == targetApplicationUtc) {
                 candidates.push_back(TimeSignalCandidate{
                     target,
                     defaultOutput,
@@ -4722,7 +4720,8 @@ static void LayoutSettingsControlGrids() {
         hAlarmVolumeLabel,
         hRemoteScriptCheck,
         hRemoteScriptLabel,
-        hAlarmTimeSignalCheck
+        hAlarmTimeSignalCheck,
+        hAlarmWakeCheck
     };
     const HWND applicationRows[] = {
         hAppFontLabel,
@@ -6962,6 +6961,10 @@ static void StartWidgetAlarm(Widget* widget) {
     if (widget == nullptr) {
         return;
     }
+    if (settingsVisualPreviewActive && settingsVisualPreviewWidgetId == widget->config.id) {
+        settingsVisualPreviewActive = false;
+        settingsVisualPreviewWidgetId = -1;
+    }
     CloseWidgetAudio(widget);
     widget->alarmActive = true;
     widget->flashPhase = true;
@@ -6985,33 +6988,145 @@ static void StartWidgetAlarm(Widget* widget) {
     RenderWidget(widget);
 }
 
-/// Checks displayed-minute transitions against the enabled weekdays and alarm time, preventing duplicate
-/// activation for that minute.
-static void CheckWidgetAlarm(Widget* widget) {
-    if (widget == nullptr || !WidgetSupportsSound(widget->config.type)) {
+/// Releases the process wake request when no enabled alarm needs it or the application is closing.
+static void CancelAlarmWakeTimer() {
+    if (hAlarmWakeTimer != nullptr) {
+        CancelWaitableTimer(hAlarmWakeTimer);
+        CloseHandle(hAlarmWakeTimer);
+        hAlarmWakeTimer = nullptr;
+    }
+    alarmWakeTarget = 0;
+}
+
+/// Arms one absolute system-UTC wake request for the earliest opted-in alarm, including its pre-alarm pips.
+/// Converts from the application clock and only rearms when the target or accepted time correction changes.
+static void UpdateAlarmWakeTimer(bool force = false) {
+    ULONGLONG applicationNow = GetApplicationFileTimeValue();
+    ULONGLONG target = 0;
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        if (!WidgetSupportsSound(widget->config.type)
+                || !widget->config.alarmEnabled
+                || !widget->config.alarmWakeComputer) {
+            continue;
+        }
+        ULONGLONG candidate = widget->alarmSchedule.Next();
+        if (candidate <= applicationNow) {
+            continue;
+        }
+        if (widget->config.alarmTimeSignal && candidate - applicationNow > 5 * REFRESH_SECOND_TICKS) {
+            candidate -= 5 * REFRESH_SECOND_TICKS;
+        }
+        if (target == 0 || candidate < target) {
+            target = candidate;
+        }
+    }
+    if (target == 0) {
+        CancelAlarmWakeTimer();
         return;
     }
-    SYSTEMTIME time = {};
-    GetDisplayedTime(widget->config, &time);
-    int date = time.wYear * 10000 + time.wMonth * 100 + time.wDay;
-    int minute = time.wHour * 60 + time.wMinute;
-    bool minuteChanged = widget->lastObservedAlarmDate >= 0
-        && widget->lastObservedAlarmMinute >= 0
-        && (widget->lastObservedAlarmDate != date || widget->lastObservedAlarmMinute != minute);
-    widget->lastObservedAlarmDate = date;
-    widget->lastObservedAlarmMinute = minute;
-    if (!widget->config.alarmEnabled || !minuteChanged) {
+    bool ntp = useNtpTime && ntpTimeValid;
+    LONGLONG offset = ntp ? ntpClockOffset100Nanoseconds.load() : 0;
+    if (!force && target == alarmWakeTarget && ntp == alarmWakeUsesNtp && offset == alarmWakeOffset) {
         return;
     }
-    bool shouldStartAlarm = AlarmEnabledOnDay(widget->config, time.wDayOfWeek)
-        && time.wHour == widget->config.alarmHour
-        && time.wMinute == widget->config.alarmMinute
-        && (widget->lastAlarmDate != date || widget->lastAlarmMinute != minute);
-    if (shouldStartAlarm) {
-        widget->lastAlarmDate = date;
-        widget->lastAlarmMinute = minute;
+    alarmWakeTarget = target;
+    alarmWakeUsesNtp = ntp;
+    alarmWakeOffset = offset;
+    if (hAlarmWakeTimer == nullptr) {
+        hAlarmWakeTimer = CreateWaitableTimerW(nullptr, TRUE, nullptr);
+    }
+    if (hAlarmWakeTimer == nullptr) {
+        OutputDebugStringW(L"CalClock: cannot create the alarm wake timer.\n");
+        return;
+    }
+    LARGE_INTEGER due{};
+    due.QuadPart = static_cast<LONGLONG>(target);
+    if (ntp) {
+        ULONGLONG systemNow = CurrentFileTimeValue();
+        ULONGLONG remaining = target - applicationNow;
+        if (remaining > static_cast<ULONGLONG>(LLONG_MAX) - systemNow) {
+            CancelWaitableTimer(hAlarmWakeTimer);
+            return;
+        }
+        due.QuadPart = static_cast<LONGLONG>(systemNow + remaining);
+    }
+    SetLastError(ERROR_SUCCESS);
+    BOOL armed = SetWaitableTimer(hAlarmWakeTimer, &due, 0, nullptr, nullptr, TRUE);
+    if (!armed || GetLastError() == ERROR_NOT_SUPPORTED) {
+        CancelWaitableTimer(hAlarmWakeTimer);
+        OutputDebugStringW(L"CalClock: Windows could not arm the alarm wake request.\n");
+    }
+}
+
+/// Detects actual system-zone/rule changes without resetting alarms for unrelated Windows settings messages.
+static bool AlarmSystemTimeZoneChanged() {
+    DYNAMIC_TIME_ZONE_INFORMATION current{};
+    if (GetDynamicTimeZoneInformation(&current) == TIME_ZONE_ID_INVALID) {
+        return false;
+    }
+    bool changed = alarmTimeZoneInitialized && memcmp(&alarmTimeZone, &current, sizeof(current)) != 0;
+    alarmTimeZone = current;
+    alarmTimeZoneInitialized = true;
+    return changed;
+}
+
+/// Identifies alarms whose displayed time follows the current Windows zone, including an unknown stored
+/// zone.
+static bool AlarmUsesSystemTimeZone(const WidgetConfig& config) {
+    if (config.showUtc) {
+        return false;
+    }
+    for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : timeZones) {
+        if (_wcsicmp(zone.TimeZoneKeyName, config.timeZoneKey.c_str()) == 0
+                && _wcsicmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/// Replans explicit source changes without replay, retaining consumed occurrences across window rebuilds.
+static void ResetAlarmSchedules() {
+    ULONGLONG timelineNow = MonotonicFileTimeValue();
+    alarmClockOffset = GetApplicationTimeOffset(timelineNow);
+    ULONGLONG now = static_cast<ULONGLONG>(static_cast<LONGLONG>(timelineNow) + alarmClockOffset);
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        widget->alarmSchedule.Reset(widget->config, timeZones, now);
+    }
+    UpdateAlarmWakeTimer(true);
+}
+
+/// Consumes the latest elapsed occurrence once and starts the widget's existing alarm actions.
+static void CheckWidgetAlarm(Widget* widget, ULONGLONG applicationNow) {
+    if (widget != nullptr && widget->alarmSchedule.Check(widget->config, timeZones, applicationNow)) {
         StartWidgetAlarm(widget);
     }
+}
+
+/// Checks elapsed alarms, distinguishing system-clock corrections from time spent asleep or stalled.
+/// A one-second correction threshold tolerates clock-sampling jitter before WM_TIMECHANGE is delivered.
+/// Explicit clock notifications also replan smaller corrections; NTP keeps its independent timeline.
+static void CheckWidgetAlarms(bool clockNotification = false) {
+    ULONGLONG timelineNow = MonotonicFileTimeValue();
+    LONGLONG offset = GetApplicationTimeOffset(timelineNow);
+    LONGLONG correction = offset - alarmClockOffset;
+    bool clockChanged = !(useNtpTime && ntpTimeValid)
+        && (clockNotification || correction > REFRESH_SECOND_TICKS || correction < -REFRESH_SECOND_TICKS);
+    bool zoneChanged = AlarmSystemTimeZoneChanged();
+    ULONGLONG currentNow = static_cast<ULONGLONG>(static_cast<LONGLONG>(timelineNow) + offset);
+    LONGLONG observedOffset = clockChanged ? alarmClockOffset : offset;
+    ULONGLONG observedNow = static_cast<ULONGLONG>(static_cast<LONGLONG>(timelineNow) + observedOffset);
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        bool widgetZoneChanged = zoneChanged && AlarmUsesSystemTimeZone(widget->config);
+        if (!widgetZoneChanged) {
+            CheckWidgetAlarm(widget.get(), observedNow);
+        }
+        if (clockChanged || widgetZoneChanged) {
+            widget->alarmSchedule.Reset(widget->config, timeZones, currentNow);
+        }
+    }
+    alarmClockOffset = offset;
+    UpdateAlarmWakeTimer(clockNotification || clockChanged || zoneChanged);
 }
 
 /// Copies a nonfullscreen widget's current screen position into live and draft settings, then saves without
@@ -7438,13 +7553,7 @@ static void CreateWidgetWindow(Widget* widget, bool activate = false,
     widget->rendered = false;
     widget->alarmActive = false;
     widget->flashPhase = false;
-    widget->lastAlarmDate = -1;
-    widget->lastAlarmMinute = -1;
-    SYSTEMTIME alarmObservation = {};
-    GetDisplayedTime(widget->config, &alarmObservation);
-    widget->lastObservedAlarmDate = alarmObservation.wYear * 10000 + alarmObservation.wMonth * 100
-        + alarmObservation.wDay;
-    widget->lastObservedAlarmMinute = alarmObservation.wHour * 60 + alarmObservation.wMinute;
+    widget->alarmSchedule.Reset(widget->config, timeZones, GetApplicationFileTimeValue());
     widget->lastRenderKey = -1;
     widget->lastPanelDateKey = -1;
     widget->panelDateTooltip = nullptr;
@@ -8080,6 +8189,7 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         if (!widget->config.alarmEnabled) {
             StopWidgetAlarm(widget);
         }
+        CheckWidgetAlarms();
         SynchronizeOpenSettings(widget, command);
         SaveSettingsWithoutAppearancePreviews();
     } else if (command == ID_MENU_TIME_SIGNAL_ENABLED) {
@@ -12090,6 +12200,10 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         }
     }
     bool supportsAlarm = WidgetSupportsSound(type);
+    bool alarmEnabled = supportsAlarm && GetCheck(hAlarmEnabledCheck);
+    if (!alarmEnabled && settingsCommandTestActive) {
+        StopSettingsPreview();
+    }
     bool timeSignalEnabled = supportsAlarm && GetCheck(hTimeSignalEnabledCheck);
     bool generatedTone = IsTimeSignalGeneratorRequired()
         || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
@@ -12151,6 +12265,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
         { hOpacityTrackBar, !fullscreen },
         { hSoundsMutedCheck, supportsAlarm },
         { hAlarmEnabledCheck, supportsAlarm },
+        { hAlarmWakeCheck, supportsAlarm && GetCheck(hAlarmEnabledCheck) },
         { hAudioOutputLabel, timeSignalEnabled },
         { hAudioOutputCombo, timeSignalEnabled && generatedTone },
         { hAlarmTimeEdit, supportsAlarm },
@@ -12201,6 +12316,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
                 continue;
             }
             bool enabled = groupEnabled;
+            if (group == &alarmControls && control != hAlarmEnabledCheck) {
+                enabled = enabled && alarmEnabled;
+            }
             for (const ControlState& state : controlStates) {
                 if (state.control == control) {
                     enabled = enabled && state.enabled;
@@ -12593,6 +12711,7 @@ static void LoadDraftIntoControls() {
     SetCheck(hRemoteScriptCheck, config.callRemoteScript);
     SetControlText(hRemoteScriptEdit, config.remoteScriptUrl.c_str());
     SetCheck(hAlarmTimeSignalCheck, config.alarmTimeSignal);
+    SetCheck(hAlarmWakeCheck, config.alarmWakeComputer);
     FillAudioOutputCombo(hAudioOutputCombo, settingsAudioOutputs, config.timeSignalOutputDevice);
     SetCheck(hTimeSignalEnabledCheck, config.timeSignalEnabled);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
@@ -12618,22 +12737,22 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
         }
         return false;
     }
+    int selectedType = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
+    bool alarmEnabled = selectedType != WIDGET_CALENDAR && GetCheck(hAlarmEnabledCheck);
     int hour = config.alarmHour;
     int minute = config.alarmMinute;
     std::wstring alarmText = GetControlText(hAlarmTimeEdit);
-    if (!ParseAlarmTime(alarmText.c_str(), &hour, &minute)) {
+    if (!ParseAlarmTime(alarmText.c_str(), &hour, &minute) && alarmEnabled) {
         if (showErrors) {
             MessageBoxW(hSettings, T(TXT_INVALID_TIME), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
             SetFocus(hAlarmTimeEdit);
         }
         return false;
     }
-    int selectedType = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
     bool remoteScriptEnabled = GetCheck(hRemoteScriptCheck);
     std::wstring remoteScriptUrl = GetControlText(hRemoteScriptEdit);
-    if (selectedType != WIDGET_CALENDAR
-            && remoteScriptEnabled
-            && !IsRemoteScriptUrlValid(remoteScriptUrl)) {
+    bool remoteScriptUrlValid = IsRemoteScriptUrlValid(remoteScriptUrl);
+    if (alarmEnabled && remoteScriptEnabled && !remoteScriptUrlValid) {
         if (showErrors) {
             MessageBoxW(hSettings, T(TXT_INVALID_REMOTE_SCRIPT_URL), T(TXT_SETTINGS),
                 MB_OK | MB_ICONWARNING);
@@ -12705,6 +12824,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
         }
     }
     config.alarmTimeSignal = supportsSound && GetCheck(hAlarmTimeSignalCheck);
+    config.alarmWakeComputer = supportsSound && GetCheck(hAlarmWakeCheck);
     config.alarmHour = hour;
     config.alarmMinute = minute;
     config.runCommand = GetCheck(hRunCommandCheck);
@@ -12712,7 +12832,9 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     config.loopAudio = GetCheck(hLoopAudioCheck);
     config.alarmVolume = SelectedAlarmVolume();
     config.callRemoteScript = remoteScriptEnabled;
-    config.remoteScriptUrl = remoteScriptUrl;
+    if (!remoteScriptEnabled || remoteScriptUrlValid) {
+        config.remoteScriptUrl = remoteScriptUrl;
+    }
     if (IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0) {
         config.timeSignalOutputDevice = SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
     }
@@ -12988,6 +13110,7 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
         && left.alarmEnabled == right.alarmEnabled
         && left.alarmDays == right.alarmDays
         && left.alarmTimeSignal == right.alarmTimeSignal
+        && left.alarmWakeComputer == right.alarmWakeComputer
         && left.alarmHour == right.alarmHour
         && left.alarmMinute == right.alarmMinute
         && left.runCommand == right.runCommand
@@ -13086,6 +13209,7 @@ static bool WidgetConfigurationsDifferOnlyInRuntimeSettings(const WidgetConfig& 
     normalized.timeSignalEnabled = right.timeSignalEnabled;
     normalized.timeSignal = right.timeSignal;
     normalized.alarmTimeSignal = right.alarmTimeSignal;
+    normalized.alarmWakeComputer = right.alarmWakeComputer;
     normalized.soundsMuted = right.soundsMuted;
     return WidgetConfigurationsEqual(normalized, right);
 }
@@ -13122,10 +13246,7 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
     replacement.config.visible = true;
     replacement.alarmActive = widget->alarmActive;
     replacement.flashPhase = widget->flashPhase;
-    replacement.lastAlarmDate = widget->lastAlarmDate;
-    replacement.lastAlarmMinute = widget->lastAlarmMinute;
-    replacement.lastObservedAlarmDate = widget->lastObservedAlarmDate;
-    replacement.lastObservedAlarmMinute = widget->lastObservedAlarmMinute;
+    replacement.alarmSchedule = widget->alarmSchedule;
     replacement.audioStopEvent = widget->audioStopEvent;
     replacement.audioMuteEvent = widget->audioMuteEvent;
     replacement.audioGeneration = widget->audioGeneration;
@@ -13249,10 +13370,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     bool activate = GetActiveWindow() == widget->window;
     bool alarmActive = widget->alarmActive;
     bool flashPhase = widget->flashPhase;
-    int lastAlarmDate = widget->lastAlarmDate;
-    int lastAlarmMinute = widget->lastAlarmMinute;
-    int lastObservedAlarmDate = widget->lastObservedAlarmDate;
-    int lastObservedAlarmMinute = widget->lastObservedAlarmMinute;
+    AlarmSchedule alarmSchedule = widget->alarmSchedule;
     ULONGLONG alarmStoppedTick = widget->alarmStoppedTick;
     bool identifyActive = widget->identifyActive;
     bool identifyPhase = widget->identifyPhase;
@@ -13301,10 +13419,7 @@ static void RecreateWidgetForConfiguration(Widget* widget, const WidgetConfig& c
     }
     widget->alarmActive = alarmActive;
     widget->flashPhase = flashPhase;
-    widget->lastAlarmDate = lastAlarmDate;
-    widget->lastAlarmMinute = lastAlarmMinute;
-    widget->lastObservedAlarmDate = lastObservedAlarmDate;
-    widget->lastObservedAlarmMinute = lastObservedAlarmMinute;
+    widget->alarmSchedule = alarmSchedule;
     widget->alarmStoppedTick = alarmStoppedTick;
     widget->identifyActive = identifyActive;
     widget->identifyPhase = identifyPhase;
@@ -13517,6 +13632,7 @@ static void RestoreSettingsAppearancePreview() {
     }
     settingsAppearancePreviewActive = false;
     settingsAppearancePreviewIds.clear();
+    CheckWidgetAlarms();
 }
 
 /// Selects a draft by persistent ID after validating the previous selection; negative IDs leave selection
@@ -13816,6 +13932,11 @@ static bool ApplySettingsDraft() {
         }
     }
     widgets = std::move(appliedWidgets);
+    if (previousUseNtpTime != useNtpTime) {
+        ResetAlarmSchedules();
+    } else {
+        CheckWidgetAlarms();
+    }
     settingsAppearancePreviewActive = false;
     settingsAppearancePreviewIds.clear();
     settingsAppearanceOriginals.clear();
@@ -14694,6 +14815,8 @@ static bool CreateSettingsControls(int selectedTab) {
         &alarmControls, hRemoteScriptLabel);
     hAlarmTimeSignalCheck = BindSettingsControl(hAlarmPage, ID_ALARM_TIME_SIGNAL,
         T(TXT_ALARM_TIME_SIGNAL_LABEL), &alarmControls);
+    hAlarmWakeCheck = BindSettingsControl(hAlarmPage, ID_ALARM_WAKE_COMPUTER,
+        T(TXT_ALARM_WAKE_COMPUTER), &alarmControls);
     hTimeSignalEnabledCheck = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_ENABLED,
         T(TXT_TIME_SIGNAL_ENABLED_LABEL), &timeSignalControls);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
@@ -14962,6 +15085,7 @@ static void DestroySettingsChildControls() {
     hRemoteScriptLabel = nullptr;
     hRemoteScriptEdit = nullptr;
     hAlarmTimeSignalCheck = nullptr;
+    hAlarmWakeCheck = nullptr;
     hAlarmVolumeLabel = nullptr;
     hAlarmVolumeTrackBar = nullptr;
     hAlarmVolumeValue = nullptr;
@@ -15140,6 +15264,7 @@ static void CloseSettingsWindow() {
     hRemoteScriptLabel = nullptr;
     hRemoteScriptEdit = nullptr;
     hAlarmTimeSignalCheck = nullptr;
+    hAlarmWakeCheck = nullptr;
     hAlarmVolumeLabel = nullptr;
     hAlarmVolumeTrackBar = nullptr;
     hAlarmVolumeValue = nullptr;
@@ -15710,6 +15835,7 @@ static void HandleSettingsCommand(int id, int notification) {
                     }
                     settingsAppearancePreviewActive = true;
                     RecreateWidgetForConfiguration(widget, preview);
+                    CheckWidgetAlarms();
                 }
                 RefreshWidgetList(true, false);
                 LoadDraftIntoControls();
@@ -16599,12 +16725,24 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return MAKELRESULT(defaultId, DC_HASDEFID);
             }
             break;
+        case WM_POWERBROADCAST:
+            if (window == hController
+                && (wParam == PBT_APMRESUMEAUTOMATIC
+                    || wParam == PBT_APMRESUMESUSPEND
+                    || wParam == PBT_APMSUSPEND)) {
+                CheckWidgetAlarms();
+                UpdateAlarmWakeTimer(true);
+                ScheduleWidgetRefresh();
+                return TRUE;
+            }
+            break;
         case WM_TIMECHANGE:
         case WM_SETTINGCHANGE:
             if (msg == WM_SETTINGCHANGE && window == hSettings) {
                 PostMessageW(window, WM_UPDATE_SETTINGS_CONTROL_METRICS, 0, 0);
             }
             if (window == hController) {
+                CheckWidgetAlarms(msg == WM_TIMECHANGE);
                 if (msg == WM_SETTINGCHANGE) {
                     ScheduleWidgetDisplayRefresh();
                     return 0;
@@ -16644,7 +16782,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 MONITORINFOEXW information = {};
                 if (GetWidgetWorkArea(suggested, L"", &information)) {
                     std::wstring& monitor = widget->fullscreenPreview
-                        ? widget->config.previewWorkAreaMonitor : widget->config.workAreaMonitor;
+                        ? widget->config.previewWorkAreaMonitor
+                        : widget->config.workAreaMonitor;
                     monitor = information.szDevice;
                 }
                 int width = 0;
@@ -16766,6 +16905,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                     ntpHasSynchronized = true;
                     ntpLastQueryFailed = false;
                     nextNtpAttemptTick = GetTickCount64() + 3610000 - GetNtpHourPosition();
+                    CheckWidgetAlarms();
                     CheckTimeSignals();
                     for (size_t index = 0; index < widgets.size(); index++) {
                         widgets[index]->lastRenderKey = -1;
@@ -17008,6 +17148,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 ULONGLONG tick = GetTickCount64();
                 UpdateFullscreenCursor();
                 StartNtpSynchronization(false);
+                CheckWidgetAlarms();
                 CheckTimeSignals();
                 UpdateSettingsApplyButton();
                 ULONGLONG second = tick / 1000;
@@ -17056,7 +17197,6 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 }
                 for (size_t index = 0; index < widgets.size(); index++) {
                     Widget* current = widgets[index].get();
-                    CheckWidgetAlarm(current);
                     if (!current->config.visible) {
                         continue;
                     }
@@ -17236,6 +17376,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 StopSettingsPreview();
                 StopTimeSignalPlayback();
                 KillTimer(hController, TIMER_REFRESH);
+                CancelAlarmWakeTimer();
                 RemoveTrayIcon();
                 DestroyWidgetWindows();
                 SaveAllSettings();
@@ -17325,6 +17466,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     for (size_t index = 0; index < widgets.size(); index++) {
         CreateWidgetWindow(widgets[index].get());
     }
+    AlarmSystemTimeZoneChanged();
+    ResetAlarmSchedules();
     RefreshFullscreenPresentation();
     AddTrayIcon();
     ScheduleWidgetRefresh();

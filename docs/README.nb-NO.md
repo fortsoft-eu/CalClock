@@ -76,6 +76,8 @@ Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den en
 
 Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder bare Innstillinger, Hjelp og Om. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
 
+Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp og Om. Tahoma 8 pt brukes i stedet for systemets standardskrift; en egendefinert programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk Windows-utseende vises begge temavalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene beholdes.
+
 **Lydvolum** på Alarm styrer internt avspilte lydfiler separat for hver widget og viser nivået i dB. Standardverdien **−18 dB** bevarer filens opprinnelige nivå (**100%**). Mot høyre forsterkes lyden; maksimum **0 dB** er omtrent **794%** av opprinnelig amplitude. Helt til venstre er **−∞ dB** (stillhet). Endringer virker under lydtesten. Forsterkning gjelder dekodet lyd, inkludert WAV, MP3, WMA, AAC, M4A og FLAC når Windows støtter dem. Eldre avspilling av filer som ikke kan dekodes, for eksempel MIDI, er begrenset til 100%.
 
 Alarmens ukedager følger første ukedag i valgt programkultur. Lagrede dager beholder betydningen ved språkbytte. Aktivering fra widgetmenyen uten valgte ukedager åpner widgetens Alarm-fane i stedet for å aktivere en alarm som ikke kan ringe.
@@ -112,18 +114,23 @@ Klokkewidgeter støtter alarmer på individuelt valgte ukedager; alle sju er akt
 
 Alarmtonene planlegges ut fra det faktiske tidspunktet for neste alarm etter tidssoneomregning og widgetforskyvning. De begynner fem faktiske sekunder før dette tidspunktet, også når klokken hopper direkte til alarmtiden. En alarmtid som hoppes over om våren, utløser verken alarm eller toner. I den gjentatte timen om høsten utløses alarmen og tonene bare én gang for samme dato og innstilte klokkeslett.
 
-Test viser den visuelle indikasjonen og tester fil, kommando, lyd og ekstern skriptadresse asynkront. Hvis alarmens tidssignal er valgt, spilles også hele sekvensen med seks toner; Stopp test avslutter intern lyd og signalforhåndsvisning.
+Hvis CalClock fortsatt kjører, utløser hver widget sin siste tapte alarm én gang etter hvilemodus, dvalemodus eller forsinket behandling, med de konfigurerte handlingene. En ny start av CalClock gjentar ikke gamle alarmer; tapte tidssignaler og alarmens forhåndstoner spilles ikke av i ettertid. «Vekk datamaskinen for alarmen» er slått av som standard og krever at CalClock kjører og at Windows og maskinvaren støtter vekking; langsom vekking kan hindre forhåndstoner til riktig tid.
 
-Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter etter widgetens viste tid. Signalet er først slått av, med et intervall på én time valgt. Å slå Signal av og på i widgetmenyen beholder intervallet. Menyen viser alarmtid og signalintervall i parentes. eller 60. minutt etter widgetens viste tid. 20-minuttersintervallet gir signal ved :00, :20 og :40. Mønsteret er **Greenwich Time Signal (GTS)**: fem korte toner markerer de siste fem sekundene og én lengre den nøyaktige grensen. Tidssoner, UTC, forskyvninger og gjeldende NTP-korreksjon tas med. Alarmens signal og Signal-fanen er uavhengige. Forskyvninger på deler av sekunder tas med, og overlappende widget-, alarm- og testtoner fortsetter uten avbrudd til siste overlapping er ferdig på samme lydutgang.
+Når Alarm aktiv ikke er valgt, er de andre kontrollene på Alarm-fanen nedtonet, og verdiene beholdes. Deaktivering av alarmen stopper en pågående test.
 
-**Lyd for tidssignal** på Program tilbyr **Innebygd generator** (standard) og **Systempip**. Valget gjelder alle tidssignaler, også alarmene, og lagres globalt. For **Innebygd generator** viser **Volum for tidssignal** nivået i dB for hele programmet. Høyre endepunkt er **0 dB**, maksimal uforvrengt sinusamplitude; stillhet er **−∞ dB**. Standardvolumet er **−18 dB**. Desibelskalaen har −18 dB i midten. Pågående tone får avsluttes; en lang tone kan bruke opptil et halvt sekund. **Test** ved **Lyd for tidssignal** starter kontinuerlig forhåndsvisning; **Stopp test** avslutter den. Begge lydmåter kan testes, og testtilstanden lagres ikke. Å holde volumglidebryteren nede starter også forhåndsvisning til musen slippes, med mindre knappetesten kjører. Avspilling begynner på neste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Lydvalget er bare tilgjengelig hvis systemet støtter begge metodene.
+Test viser den visuelle indikasjonen og tester fil, kommando, lyd og ekstern skriptadresse asynkront. Test er tilgjengelig når Alarm aktiv og Kjør en fil eller kommando er valgt, og feltet for fil eller kommando ikke er tomt. Testen spiller ikke alarmens tidssignal. Stopp test avslutter intern lyd og visuell forhåndsvisning.
+
+Signal-fanen har avkrysningsboksen Tidssignal aktivt og alternativknapper for intervaller på 1, 5, 10, 15, 20, 30 eller 60 minutter etter widgetens viste tid. Signalet er først slått av, med et intervall på én time valgt. Å slå Signal av og på i widgetmenyen beholder intervallet. Menyen viser alarmtid og signalintervall i parentes. 20-minuttersintervallet gir signal ved :00, :20 og :40. Mønsteret er **Greenwich Time Signal (GTS)**: fem korte toner markerer de siste fem sekundene og én lengre den nøyaktige grensen. Tidssoner, UTC, forskyvninger og gjeldende NTP-korreksjon tas med. Alarmens signal og Signal-fanen er uavhengige. Forskyvninger på deler av sekunder tas med, og overlappende widget-, alarm- og testtoner fortsetter uten avbrudd til siste overlapping er ferdig på samme lydutgang.
+
+**Lyd for tidssignal** på Program tilbyr **Innebygd generator** (standard) og **Systempip**. Valget gjelder alle tidssignaler, også alarmene, og lagres globalt. For **Innebygd generator** viser **Volum for tidssignal** nivået i dB for hele programmet. Høyre endepunkt er **0 dB**, maksimal uforvrengt sinusamplitude; stillhet er **−∞ dB**. Standardvolumet er **−18 dB**. Desibelskalaen har −18 dB i midten. Når testen stoppes, kan en tone som allerede har startet, spilles ferdig. Andre samtidige tidssignaler kan fortsette. **Test** ved **Lyd for tidssignal** starter kontinuerlig forhåndsvisning; **Stopp test** avslutter den. Begge lydmåter kan testes, og testtilstanden lagres ikke. Å holde volumglidebryteren nede starter også forhåndsvisning til musen slippes, med mindre knappetesten kjører. Avspilling begynner på neste hele sekund, med korte toner hvert sekund og en lang ved :00, :05, :10 osv. Lydvalget er bare tilgjengelig hvis systemet støtter begge metodene.
 
 **Lydutgang**
 
-**Lydutgang** på fanen **Signal** velger enhet for de regelmessige tidssignalene fra hver widget med lydstøtte.
-Widgetens tidssone, forskyvning og intervall endres ikke. Valg av generator og signalvolum er fortsatt globale på
-fanen **Program**. Med **Systempip** forblir feltet synlig, men nedtonet, og beholder valgt enhet; **Innebygd
-generator** aktiverer det igjen. Windows Vista bruker generatoren automatisk.
+Lydutgang på fanen Signal velger enhet for de regelmessige tidssignalene fra hver widget med lydstøtte.
+Widgetens tidssone, forskyvning og intervall endres ikke. Valg av generator og signalvolum er fortsatt globale
+på fanen Program. Med Systempip er utgangslisten nedtonet og viser Windows-standardenhet. Det lagrede
+enhetsvalget beholdes og vises igjen når Innebygd generator velges. Når tidssignalet er slått av, er også
+etiketten Lydutgang nedtonet. Windows Vista bruker generatoren automatisk.
 
 **Windows-standardenhet** følger den gjeldende standardutgangen i Windows. En bestemt enhet forblir valgt hvis den
 kobles fra, og vises som **Enheten er ikke tilgjengelig**; signalene er stille til den er tilgjengelig eller en annen
@@ -133,8 +140,9 @@ XML-innstillingene.
 Signaler slås automatisk sammen for hver utgang. En bestemt enhet og Windows-standardenhet som peker på samme
 enhet, deler én utgang. Ulike enheter arbeider uavhengig; sinuskurven, sammenhengende fase og tonenes start og
 slutt ved null bevares. Lydutgang for test på fanen Program lagrer enheten for generatortester og
-forhåndslytting av volum. Systempip deaktiverer bare denne velgeren. Alarmer bruker fortsatt
-Windows-standardutgangen. De slås bare sammen med regelmessige signaler på en felles utgang.
+forhåndslytting av volum. Systempip viser Windows-standardenhet i den nedtonede listen; den lagrede testenheten beholdes. Alarmlyden og alarmens forhåndstoner
+bruker Windows-standardutgangen. Bare forhåndstonene slås sammen med regelmessige tidssignaler på samme
+utgang; alarmens lydfiler spilles separat.
 
 Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med lyd. Alarmoppføringen viser tiden og aktive ukedager hvis ikke alle er valgt. Demp gjelder widgeten og gjenspeiles på Generelt. En frittstående Kalender støtter ikke alarm, tidssignal eller demping. I systemstatusfeltet heter kommandoen Demp alle. Global oppheving gjenoppretter bare widgeter dempet av forrige globale handling. Intern lyd fortsetter lydløst og blir hørbar igjen når dempingen oppheves. En pågående tone kan fullføres; senere toner hoppes over til lyden aktiveres. Andre kommandoer og eksterne skript påvirkes ikke.
 

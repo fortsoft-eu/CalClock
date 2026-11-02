@@ -76,6 +76,13 @@ Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelr
 
 Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller bara Inställningar, Hjälp och Om. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
+Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp och Om. Med systemets
+standardteckensnitt använder dessa fönster Tahoma 8 pt; ett anpassat programteckensnitt har företräde.
+Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast GDI och Ingen tillgängliga för
+teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och återställs när läget stängs
+av. Om visuella format är avstängda i Windows visas båda stilalternativen som avmarkerade och inaktiverade
+utan att de sparade valen ändras.
+
 Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per widget och visar nivån i dB. Standardvärdet **−18 dB** bevarar filens ursprungliga nivå (**100%**). Åt höger förstärks ljudet; maximum **0 dB** motsvarar cirka **794%** av ursprunglig amplitud. Längst till vänster är **−∞ dB** (tystnad). Ändringar gäller under ljudtestet. Reglaget är avstängt för filer som öppnas i externa program. Förstärkning gäller avkodat ljud, inklusive WAV, MP3, WMA, AAC, M4A och FLAC när Windows stöder dem. Äldre uppspelning av filer som inte kan avkodas, exempelvis MIDI, är begränsad till 100%.
 
 Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dagar behåller sin innebörd när språket ändras. Om ett alarm utan valda veckodagar aktiveras från menyn öppnas dess Alarm-flik i stället för att aktivera ett alarm som inte kan ljuda.
@@ -112,18 +119,34 @@ Klockwidgetar har alarm för individuellt valda veckodagar; alla sju är aktiva 
 
 Alarmtonerna planeras efter den faktiska tidpunkten för nästa alarm, efter tidszonsomräkning och widgetförskjutning. De börjar fem verkliga sekunder före den tidpunkten, även när klockan hoppar direkt till alarmtiden. En alarmtid som hoppas över på våren utlöser varken alarm eller toner. Under den upprepade timmen på hösten utlöses alarmet och dess toner bara en gång för samma datum och inställda klockslag.
 
-Test visar den visuella indikeringen och provar fil, kommando, ljud och fjärrskriptadress asynkront. Om alarmets tidssignal valts spelas också hela sekvensen med sex toner; Stoppa test avslutar internt ljud och signalens förhandsvisning.
+Om CalClock fortsätter att köras utlöser varje widget sitt senaste missade alarm en gång efter strömsparläge, viloläge eller fördröjd behandling, inklusive de inställda åtgärderna. När CalClock startas på nytt upprepas inga gamla alarm; missade tidssignaler och alarmets föregående pip spelas inte upp i efterhand. ”Väck datorn för alarmet” är avstängt som standard och kräver att CalClock körs och att Windows och maskinvaran stöder väckning; långsam väckning kan förhindra pip i rätt tid.
+
+Testa får urtavlan eller panelramen att blinka och provar den inställda filen, kommandot, ljudet och
+fjärrskriptets HTTP/HTTPS-adress. Pipen före alarmet spelas inte upp. Stoppa test avslutar den visuella
+indikeringen och testets interna ljud; stopp av alarmet avslutar dess interna ljud. Om Alarm aktivt stängs av
+inaktiveras de övriga kontrollerna på fliken Alarm utan att deras värden raderas. Testet kräver ett aktivt
+alarm, att Kör en fil eller ett kommando är markerat och att fil- eller kommandofältet är ifyllt.
 
 Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. 20-minutersintervallet ljuder vid :00, :20 och :40. Mönstret är **Greenwich Time Signal (GTS)**: fem korta toner markerar de sista fem sekunderna och en längre den exakta gränsen. Tidszoner, UTC, förskjutningar och aktuell NTP-korrigering beaktas. Alarmets signal och Signal-fliken är oberoende. Även förskjutningar med delar av sekunder beaktas, och överlappande widget-, alarm- och testtoner fortsätter oavbrutet tills sista överlappningen slutar på samma ljudutgång.
 
-**Ljud för tidssignal** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Volym för tidssignal** nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är **−∞ dB**. Standardnivån är **−18 dB**. Pågående pip får avslutas; ett långt pip kan ta upp till en halv sekund. **Test** vid **Ljud för tidssignal** startar fortlöpande förhandsvisning; **Stoppa test** avslutar den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med korta toner varje sekund och en lång vid :00, :05, :10 osv. För **Systempip** är bara volymreglaget avstängt. Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
+**Ljud för tidssignal** på Program erbjuder **Inbyggd generator** (standard) och **Systempip**. Valet gäller
+alla signaler, inklusive alarm, och sparas globalt. För **Inbyggd generator** visar **Volym för tidssignal**
+nivån i dB för hela programmet. Höger ändläge är **0 dB**, den högsta oförvrängda sinusamplituden; tystnad är
+**−∞ dB**. Standardnivån är **−18 dB**. Ett pip som redan har börjat kan avslutas efter att testet har
+stoppats. **Testa** vid **Ljud för tidssignal** startar fortlöpande förhandsvisning; **Stoppa test** avslutar
+den. Båda ljudsätten kan testas, och testläget sparas inte. Att hålla volymreglaget nedtryckt startar också
+förhandsvisning tills musen släpps, om inte knapptestet körs. Uppspelning börjar vid nästa hela sekund, med
+korta toner varje sekund och en lång vid :00, :05, :10 osv. För **Systempip** är volymreglaget avstängt.
+Ljudvalet är tillgängligt endast när systemet stöder båda metoderna.
 
 **Ljudutgång**
 
-**Ljudutgång** på fliken **Signal** väljer enhet för de regelbundna tidssignalerna från varje widget med ljudstöd.
-Widgetens tidszon, förskjutning och intervall ändras inte. Valet av generator och signalvolym är fortfarande globala
-på fliken **Program**. Med **Systempip** är fältet fortfarande synligt men nedtonat och behåller vald enhet; **Inbyggd
-generator** aktiverar det igen. Windows Vista använder generatorn automatiskt.
+**Ljudutgång** på fliken **Signal** väljer enhet för de regelbundna tidssignalerna från varje widget med
+ljudstöd. Widgetens tidszon, förskjutning och intervall ändras inte. Valet av generator och signalvolym är
+fortfarande globala på fliken **Program**. Med Systempip är fältet inaktiverat och visar Windows
+standardenhet. Den valda enheten sparas och återställs när Inbyggd generator väljs igen. Om Tidssignal aktiv
+stängs av inaktiveras både ljudutgångens etikett och fältet utan att valet raderas. Windows Vista använder
+generatorn automatiskt.
 
 **Windows standardenhet** följer den aktuella standardutgången i Windows. En särskilt vald enhet förblir vald om den
 kopplas bort och visas som **Enheten är inte tillgänglig**; dess signaler är tysta tills den är tillgänglig eller en
@@ -133,8 +156,9 @@ XML-inställningarna.
 Signaler slås automatiskt samman för varje utgång. En särskilt vald enhet och Windows standardenhet som pekar
 på samma enhet delar en utgång. Olika enheter arbetar oberoende; sinusvågen, sammanhängande fas samt tonernas
 början och slut vid noll bevaras. Ljudutgång för test på fliken Program sparar enheten för generatortest och
-förhandslyssning av volymen. Systempip inaktiverar bara denna väljare. Alarm använder fortfarande Windows
-standardutgång. De slås bara samman med regelbundna signaler på en gemensam utgång.
+förhandslyssning av volymen. Med Systempip är detta fält inaktiverat och visar Windows standardenhet,
+samtidigt som det sparade valet behålls. Alarmljud och pipen före alarmet använder Windows standardutgång.
+Endast pipen slås samman med regelbundna tidssignaler på denna utgång.
 
 Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 

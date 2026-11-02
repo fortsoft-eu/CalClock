@@ -18,15 +18,19 @@ Glisați ceasul sau panoul cu butonul stâng al mouse-ului. Un calendar separat 
 
 ## Alarmă și comenzi rapide
 
-Ceasurile și panourile pot avea alarmă. Aplicația redă singură fișierul audio o dată sau continuu, conform repetării; alte fișiere și comenzi sunt transmise către Windows. Un clic pe cadranul sau afișajul alarmei active, Oprire alarmă ori Esc oprește indicația și sunetul aplicației. Un dublu clic pe cadran sau afișaj digital comută secundele. F1 deschide Ajutor, B Setări, iar Esc ascunde widgetul dacă nu oprește o alarmă. Pozițiile widgeturilor se salvează după glisare, cele ale dialogurilor la închidere, iar setările în spațiul de stocare ales. O nouă pornire activează instanța existentă și păstrează widgeturile în cel mai apropiat punct disponibil al zonei de lucru.
+Ceasurile și panourile pot avea alarmă. Aplicația redă singură fișierul audio o dată sau continuu, conform repetării; alte fișiere și comenzi sunt transmise către Windows. Un clic pe cadranul sau afișajul alarmei active, Oprire alarmă ori Esc oprește indicația și sunetul aplicației. Un dublu clic pe cadran sau afișaj digital comută secundele. F1 deschide Ajutor, B Setări, iar Esc ascunde widgetul dacă nu oprește o alarmă. Pozițiile widgeturilor se salvează după glisare, cele ale dialogurilor la închidere, iar setările în spațiul de stocare ales. O nouă pornire activează instanța existentă. Widgeturile atașate la marginile zonei de lucru își păstrează atașarea după repornire și la schimbarea dimensiunii, a DPI sau a zonei de lucru.
 
 ## Introducerea orei și acțiunile alarmei
 
 Ora alarmei acceptă HH:mm cu două puncte, punct, spațiu, alt separator sau fără separator. Una ori două cifre înseamnă ore, trei sau patru ore și minute: 7, 12, 730, 0730 sau 7:30. La ieșirea din câmp, valoarea devine HH:mm. Decalajul se citește de la dreapta, începând cu secundele: 2 înseamnă 00:00:02.00, 230 și 0230 înseamnă 00:02:30.00, iar 12345 înseamnă 01:23:45.00. Cu separatori, două grupuri înseamnă minute și secunde, trei ore, minute și secunde, al patrulea sutimi; se acceptă semn. Zilele de sub Alarmă activată stabilesc zilele de declanșare; implicit sunt selectate toate. Ordinea urmează limba aplicației, dar schimbarea limbii nu modifică zilele salvate.
 
-Alarma afișează widgetul ascuns și îl aduce în față fără a modifica permanent Întotdeauna deasupra. Redare semnal orar pornește primul ton scurt cu cinci secunde înaintea alarmei. Este independent de fila Semnal; secvențele simultane sunt îmbinate. Testare face să clipească cadranul sau rama și verifică fișierul, comanda, sunetul, adresa HTTP/HTTPS a scriptului la distanță și, dacă este selectat, întregul semnal orar. Oprirea testului oprește sunetul intern și semnalul de probă ale acestuia; oprirea alarmei oprește sunetul ei intern. Dezactivarea sunetului nu oprește redarea: aceasta continuă în liniște și se aude din nou după reactivare. Comenzile și scripturile la distanță nu sunt oprite.
+Alarma afișează widgetul ascuns și îl aduce în față fără a modifica permanent Întotdeauna deasupra. Redare semnal orar pornește primul ton scurt cu cinci secunde înaintea alarmei. Este independent de fila Semnal; secvențele simultane sunt îmbinate. Testare face să clipească cadranul sau rama și verifică fișierul, comanda, sunetul și adresa HTTP/HTTPS a scriptului la distanță. Testare este disponibil dacă sunt bifate Alarmă activată și Executare fișier sau comandă și câmpul pentru fișier sau comandă nu este gol. Testul nu redă semnalul orar al alarmei. Oprire test oprește sunetul intern și previzualizarea vizuală. Oprirea alarmei oprește sunetul ei intern. Dezactivarea sunetului nu oprește redarea: aceasta continuă în liniște și se aude din nou după reactivare. Comenzile și scripturile la distanță nu sunt oprite.
 
 Semnalele sonore ale alarmei sunt programate după momentul real al următoarei alarme, după conversia fusului orar și aplicarea decalajului widgetului. Ele încep cu cinci secunde reale înainte, chiar dacă ceasul afișat sare direct la ora alarmei. O oră de alarmă omisă primăvara nu declanșează nici alarma, nici semnalele sale. În ora repetată toamna, alarma și semnalele sale se declanșează o singură dată pentru aceeași dată și oră configurată.
+
+Dacă CalClock rămâne pornit, după repaus, hibernare sau o întârziere de procesare, fiecare widget declanșează o singură dată ultima alarmă ratată, inclusiv acțiunile configurate. Repornirea CalClock nu recuperează alarme vechi; semnalele orare și bipurile preliminare ratate nu sunt redate ulterior. „Trezește calculatorul pentru alarmă” este dezactivat implicit și necesită CalClock pornit și suport din partea Windows și a componentelor hardware; o reactivare lentă poate împiedica redarea bipurilor preliminare la timp.
+
+Când Alarmă activată nu este bifată, celelalte controale din fila Alarmă sunt dezactivate și afișate cu gri, dar valorile lor se păstrează. Dezactivarea alarmei oprește testul aflat în desfășurare.
 
 Glisorul Volum audio din fila Alarmă controlează redarea internă a widgetului. Valoarea implicită −18 dB păstrează nivelul inițial al fișierului (100%). Spre dreapta se amplifică sunetul; maximul de 0 dB corespunde la aproximativ 794%. −∞ dB înseamnă liniște. Modificările se aud și în timpul testului. MIDI și fișierele care nu pot fi decodificate și sunt redate prin metoda de rezervă sunt limitate la 100%.
 
@@ -54,6 +58,8 @@ Setările pot fi exportate în XML. Importul încarcă și salvează imediat set
 
 Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
+Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor și Despre. Tahoma 8 pt înlocuiește fontul implicit al sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu se aplică; preferințele salvate se păstrează.
+
 ## Setări și meniuri
 
 Limba aplicației, fontul, netezirea, stocarea, pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea temelor în fila Aplicație afectează numai ferestrele Setări, Ajutor și Despre. Fiecare widget folosește propria setare a temelor. La prima pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, netezirea și temele widgetului afectează numai acel widget.
@@ -64,14 +70,16 @@ Meniul widgetului conține alegerile aplicabile de vizibilitate, Întotdeauna de
 
 Semnalul urmează Greenwich Time Signal (GTS): cinci tonuri scurte în ultimele cinci secunde și un ton lung exact la momentul stabilit. Semnal oferă Semnal orar activat și intervale de 1, 5, 10, 15, 20, 30 sau 60 de minute după ora widgetului. Inițial este dezactivat, cu interval orar selectat. Comutarea din meniu păstrează intervalul. Sunt respectate UTC, fusul, decalajul și NTP; la 20 de minute sună la :00, :20 și :40. După dezactivarea sunetului, tonul curent se poate încheia; următoarele sunt omise până la următorul ton programat după reactivare. Un Calendar separat nu are alarmă, semnal orar sau dezactivare de sunet.
 
-Sunet semnal orar din Aplicație oferă Generator încorporat (implicit) și Bip de sistem pentru toate widgeturile și alarmele. Volum semnal orar arată nivelul generatorului în dB: 0 dB la dreapta este amplitudinea sinusoidală maximă nedistorsionată, −∞ dB liniște, iar −18 dB valoarea implicită. Testare începe o previzualizare continuă, Oprire test o încheie. Se pot testa ambele sunete; testul nu se salvează. Menținerea glisorului redă și ea sunet până la eliberarea mouse-ului, dacă nu rulează testul din buton. Redarea începe la următoarea secundă întreagă: ton scurt în fiecare secundă și lung la :00, :05, :10 etc. Oprirea lasă tonul curent să se încheie; unul lung poate dura încă o jumătate de secundă. Sunt luate în calcul sutimile decalajului; tonurile suprapuse sună continuu până la sfârșitul ultimei suprapuneri pe aceeași ieșire audio.
+Sunet semnal orar din Aplicație oferă Generator încorporat (implicit) și Bip de sistem pentru toate widgeturile și alarmele. Volum semnal orar arată nivelul generatorului în dB: 0 dB la dreapta este amplitudinea sinusoidală maximă nedistorsionată, −∞ dB liniște, iar −18 dB valoarea implicită. Testare începe o previzualizare continuă, Oprire test o încheie. Se pot testa ambele sunete; testul nu se salvează. Menținerea glisorului redă și ea sunet până la eliberarea mouse-ului, dacă nu rulează testul din buton. Redarea începe la următoarea secundă întreagă: ton scurt în fiecare secundă și lung la :00, :05, :10 etc. La oprirea testului, un ton deja început poate ajunge la final. Alte semnale orare simultane pot continua. Sunt luate în calcul sutimile decalajului; tonurile suprapuse sună continuu până la sfârșitul ultimei suprapuneri pe aceeași ieșire audio.
 
 **Ieșire audio**
 
-**Ieșire audio** din fila **Semnal** alege dispozitivul pentru semnalele orare regulate ale fiecărui widget cu sunet.
-Fusul orar, decalajul și intervalul widgetului nu se schimbă. Alegerea generatorului și volumul semnalului rămân
-globale în fila **Aplicație**. Cu **Bip de sistem**, câmpul rămâne vizibil, dar este dezactivat și afișat cu gri,
-păstrând dispozitivul ales; **Generator încorporat** îl reactivează. Windows Vista folosește automat generatorul.
+Ieșire audio din fila Semnal alege dispozitivul pentru semnalele orare regulate ale fiecărui widget cu sunet.
+Fusul orar, decalajul și intervalul widgetului nu se schimbă. Alegerea generatorului și volumul semnalului
+rămân globale în fila Aplicație. Cu Bip de sistem, lista de ieșiri este dezactivată și arată Dispozitivul
+implicit Windows. Alegerea salvată a dispozitivului se păstrează și reapare la selectarea Generator
+încorporat. Când semnalul orar este dezactivat, eticheta Ieșire audio este și ea afișată cu gri. Windows Vista
+folosește automat generatorul.
 
 **Dispozitivul implicit Windows** urmărește ieșirea implicită curentă din Windows. Un dispozitiv ales explicit rămâne
 selectat după deconectare și apare ca **Dispozitiv indisponibil**; semnalele sale rămân mute până când devine
@@ -82,8 +90,9 @@ Semnalele se combină automat pentru fiecare ieșire. Un dispozitiv ales explici
 Windows care indică același dispozitiv folosesc o singură ieșire. Dispozitivele diferite funcționează
 independent; se păstrează sinusoida, continuitatea fazei și începutul și sfârșitul tonurilor la zero. Ieșire
 audio pentru test din fila Aplicație salvează dispozitivul pentru testele generatorului și previzualizarea
-volumului. Bipul de sistem dezactivează doar acest selector. Alarmele continuă să folosească ieșirea implicită
-Windows. Se combină cu semnalele regulate numai pe o ieșire comună.
+volumului. Bip de sistem arată Dispozitivul implicit Windows în lista dezactivată; dispozitivul de test salvat se păstrează. Sunetul alarmei și bipurile sale preliminare
+folosesc ieșirea implicită Windows. Doar bipurile preliminare se combină cu semnalele orare regulate de pe
+aceeași ieșire; fișierele audio ale alarmei sunt redate separat.
 
 ## Ceasuri suplimentare
 
