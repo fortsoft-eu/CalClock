@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #pragma once
@@ -611,6 +611,9 @@ std::wstring Mnemonic(TextId id);
 /// Captures current settings and saves them to the selected XML or registry backend. Removes registry
 /// settings after a successful switch to XML storage.
 void SaveAllSettings();
+
+/// Reports whether visual styles are active for Windows and the current application.
+bool AreVisualStylesActive();
 
 /// Reports whether the effective application font overrides the native system face or style.
 bool HasApplicationUiFont();

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #include "ControlColors.h"
@@ -211,7 +211,9 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
             return false;
         }
     }
-    if (lstrcmpiW(className, WC_LISTVIEWW) == 0) {
+    if (lstrcmpiW(className, WC_EDITW) == 0) {
+        state->kind = Kind::Edit;
+    } else if (lstrcmpiW(className, WC_LISTVIEWW) == 0) {
         state->kind = Kind::ListView;
     } else if (lstrcmpiW(className, WC_TREEVIEWW) == 0) {
         state->kind = Kind::TreeView;
@@ -430,8 +432,35 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
         if (message >= WM_CTLCOLORMSGBOX && message <= WM_CTLCOLORSTATIC) {
             result = state->ColorControl(message, wParam, lParam, result);
         }
+        bool editPainted = false;
+        if (state->kind == Kind::Edit) {
+            editPainted = message == EM_SETSEL
+                || message == EM_REPLACESEL
+                || message == EM_UNDO
+                || message == EM_SCROLL
+                || message == EM_LINESCROLL
+                || message == EM_SCROLLCARET
+                || message == WM_SETTEXT
+                || message == WM_SETFONT && lParam != FALSE
+                || message == WM_KEYDOWN
+                || message == WM_CHAR
+                || message == WM_CUT
+                || message == WM_PASTE
+                || message == WM_CLEAR
+                || message == WM_UNDO
+                || message == WM_LBUTTONDOWN
+                || message == WM_LBUTTONDBLCLK
+                || message == WM_LBUTTONUP
+                || message == WM_MOUSEMOVE && wParam & MK_LBUTTON
+                || message == WM_TIMER && GetCapture() == window
+                || message == WM_HSCROLL
+                || message == WM_VSCROLL
+                || message == WM_MOUSEWHEEL
+                || message == WM_MOUSEHWHEEL;
+        }
         bool providedDc = message == WM_PRINT || message == WM_PRINTCLIENT || message == WM_ERASEBKGND;
         bool painted = providedDc
+            || editPainted
             || message == WM_PAINT
             || message == WM_NCPAINT
             || message == WM_ENABLE

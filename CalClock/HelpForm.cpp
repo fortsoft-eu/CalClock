@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #define NOMINMAX
@@ -77,7 +77,7 @@ bool HelpForm::ApplyStyle(bool updateFont) {
     ownsFont = updateFont;
     SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(font), FALSE);
     const int ids[] = { ID_INFO_TEXT, ID_INFO_CLOSE, ID_INFO_SIZE_GRIP };
-    const wchar_t* theme = themesDisabled ? L"" : nullptr;
+    const wchar_t* theme = themesDisabled && AreVisualStylesActive() ? L"" : nullptr;
     for (int id : ids) {
         HWND control = GetDlgItem(window, id);
         if (control == nullptr) {

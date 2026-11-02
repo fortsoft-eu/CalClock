@@ -528,6 +528,8 @@ static bool settingsComboAccepted = false;
 static bool settingsGeneralCheckboxReferenceValid = false;
 static bool settingsLayoutSuspended = false;
 static bool windows2000Style = false;
+static bool settingsThemesDisabled = false;
+static bool settingsWindows2000Style = false;
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 bool ntpHasSynchronized = false;
@@ -1061,7 +1063,7 @@ static void UpdateApplicationFontAntialiasingCombo() {
     if (hAppAntialiasCombo == nullptr) {
         return;
     }
-    bool classic = windows2000Style;
+    bool classic = windows2000Style && AreVisualStylesActive();
     if (hDisableThemesCheck != nullptr && hWindows2000StyleCheck != nullptr) {
         classic = GetCheck(hDisableThemesCheck) && GetCheck(hWindows2000StyleCheck);
     }
@@ -2737,7 +2739,7 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless, UINT dp
     if (dpi == 0) {
         dpi = GetSystemDialogDpi(nullptr);
     }
-    bool disabledThemes = config.disableThemes;
+    bool disabledThemes = config.disableThemes && AreVisualStylesActive();
     bool showToday = config.type != WIDGET_PANEL && (config.type != WIDGET_CALENDAR || config.showToday);
     for (size_t index = 0; index < calendarSizeCache.size(); index++) {
         const CalendarSizeEntry& entry = calendarSizeCache[index];
@@ -3533,7 +3535,7 @@ bool HasApplicationUiFont() {
     const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
     int weight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     bool italic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
-    return windows2000Style || !face.empty() || weight != FW_NORMAL || italic;
+    return windows2000Style && AreVisualStylesActive() || !face.empty() || weight != FW_NORMAL || italic;
 }
 
 /// Creates the selected application font, using Tahoma 8 pt for the Windows 2000 system-font choice.
@@ -3552,13 +3554,13 @@ HFONT CreateApplicationUiFont(HWND window) {
     font.lfWeight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     font.lfItalic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
     int dialogSize = settingsApplicationFontPreviewActive ? settingsAppFontDialogSize : appFontDialogSize;
-    int antialiasing =
-        EffectiveFontAntialiasing(appFontAntialiasing, !windows2000Style && IsClearTypeAvailable());
+    bool classic = windows2000Style && AreVisualStylesActive();
+    int antialiasing = EffectiveFontAntialiasing(appFontAntialiasing, !classic && IsClearTypeAvailable());
     font.lfQuality = FontQuality(antialiasing);
     if (!face.empty()) {
         wcsncpy_s(font.lfFaceName, face.c_str(), _TRUNCATE);
         font.lfCharSet = DEFAULT_CHARSET;
-    } else if (windows2000Style && font.lfWeight == FW_NORMAL && !font.lfItalic && dialogSize == 90) {
+    } else if (classic && font.lfWeight == FW_NORMAL && !font.lfItalic && dialogSize == 90) {
         wcsncpy_s(font.lfFaceName, L"Tahoma", _TRUNCATE);
         font.lfHeight = -MulDiv(8, GetSystemDialogDpi(window), 72);
         font.lfWidth = 0;
@@ -3628,14 +3630,15 @@ static BOOL CALLBACK ApplyFontAndTheme(HWND child, LPARAM parameter) {
     if (font != nullptr) {
         SendMessageW(child, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
     }
-    const wchar_t* themeName = themesDisabled ? L"" : nullptr;
+    bool disableThemes = themesDisabled && AreVisualStylesActive();
+    const wchar_t* themeName = disableThemes ? L"" : nullptr;
     SetWindowTheme(child, themeName, themeName);
     HWND combo = GetSettingsComboBox(child);
     if (combo != child) {
         SetWindowTheme(combo, themeName, themeName);
     }
     if (IsSettingsPageWindow(child)) {
-        EnableThemeDialogTexture(child, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
+        EnableThemeDialogTexture(child, disableThemes ? ETDT_DISABLE : ETDT_ENABLETAB);
     }
     return TRUE;
 }
@@ -3883,8 +3886,8 @@ static void UpdateSettingsComboMetrics(HWND control) {
     }
 }
 
-/// Sizes the edit viewport from its font and native combo margins, retaining the fixed cap for oversized fields.
-/// Uses current theme or system borders and preserves position, width, and the right margin.
+/// Sizes the edit viewport from its font and native combo margins, retaining the fixed cap for oversized
+/// fields. Uses current theme or system borders and preserves position, width, and the right margin.
 static void UpdateEditMetrics(HWND edit) {
     HWND frame = SettingsEdit::GetFrame(edit);
     WINDOWINFO information = {};
@@ -3992,7 +3995,7 @@ static void UpdateSettingsTabLayout() {
 }
 
 /// Reports whether visual styles are active for Windows and the current application.
-static bool AreVisualStylesActive() {
+bool AreVisualStylesActive() {
     return IsThemeActive() && IsAppThemed();
 }
 
@@ -4900,20 +4903,21 @@ static void UpdateSettingsControlMetrics() {
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and
 /// requests repainting.
 void ApplyUiStyle(HWND window) {
+    bool disableThemes = themesDisabled && AreVisualStylesActive();
     if (window == helpForm.GetWindow() || window == aboutForm.GetWindow()) {
-        const wchar_t* theme = themesDisabled ? L"" : nullptr;
+        const wchar_t* theme = disableThemes ? L"" : nullptr;
         SetWindowTheme(window, theme, theme);
-        DialogFrame::Apply(window, themesDisabled, windows2000Style);
+        DialogFrame::Apply(window, disableThemes, windows2000Style);
         return;
     }
     if (hUiFont == nullptr) {
         hUiFont = CreateApplicationUiFont(window);
     }
-    const wchar_t* themeName = themesDisabled ? L"" : nullptr;
+    const wchar_t* themeName = disableThemes ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
     EnumChildWindows(window, ApplyFontAndTheme, 0);
     if (window == hSettings) {
-        DialogFrame::Apply(window, themesDisabled, windows2000Style);
+        DialogFrame::Apply(window, disableThemes, windows2000Style);
         SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(hUiFont), FALSE);
         UpdateSettingsControlMetrics();
     }
@@ -4925,7 +4929,7 @@ static void ApplyWidgetTheme(HWND window, const WidgetConfig& config) {
     if (window == nullptr) {
         return;
     }
-    const wchar_t* themeName = config.disableThemes ? L"" : nullptr;
+    const wchar_t* themeName = config.disableThemes && AreVisualStylesActive() ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
@@ -9236,7 +9240,7 @@ static void UpdateApplicationControlWidths() {
         return;
     }
     SendMessageW(measurement, WM_SETFONT, reinterpret_cast<WPARAM>(buttonFont), FALSE);
-    const wchar_t* theme = themesDisabled ? L"" : nullptr;
+    const wchar_t* theme = themesDisabled && AreVisualStylesActive() ? L"" : nullptr;
     SetWindowTheme(measurement, theme, theme);
     RECT margins = {};
     SendMessageW(hTimeSignalTestButton, BCM_GETTEXTMARGIN, 0, reinterpret_cast<LPARAM>(&margins));
@@ -10170,7 +10174,8 @@ static INT_PTR CALLBACK SettingsPageProc(HWND window, UINT msg, WPARAM wParam, L
         case WM_INITDIALOG:
             LimitDialogVerticalUnits(window, static_cast<int>(lParam));
             BufferedPaintInit();
-            EnableThemeDialogTexture(window, themesDisabled ? ETDT_DISABLE : ETDT_ENABLETAB);
+            EnableThemeDialogTexture(window,
+                themesDisabled && AreVisualStylesActive() ? ETDT_DISABLE : ETDT_ENABLETAB);
             return TRUE;
         case WM_COMMAND:
         case WM_HSCROLL:
@@ -11562,6 +11567,63 @@ static std::vector<size_t> CheckedMonitorIndices() {
     return checked;
 }
 
+/// Replaces only the native monitor checkbox images with flat classic glyphs when the list is unthemed.
+static void UpdateMonitorCheckboxImages(HWND list) {
+    if (GetWindowTheme(list) != nullptr) {
+        return;
+    }
+    HIMAGELIST images = ListView_GetImageList(list, LVSIL_STATE);
+    int width = 0;
+    int height = 0;
+    if (images == nullptr || !ImageList_GetIconSize(images, &width, &height)) {
+        return;
+    }
+    HDC reference = GetDC(list);
+    if (reference == nullptr) {
+        return;
+    }
+    HDC dc = CreateCompatibleDC(reference);
+    HBITMAP bitmap = CreateCompatibleBitmap(reference, width, height);
+    ReleaseDC(list, reference);
+    HIMAGELIST classicImages = ImageList_Create(width, height, ILC_COLOR32 | ILC_MASK, 2, 0);
+    if (dc != nullptr && bitmap != nullptr && classicImages != nullptr) {
+        HGDIOBJ previous = SelectObject(dc, bitmap);
+        if (previous != nullptr && previous != HGDI_ERROR) {
+            const UINT states[] = {
+                DFCS_BUTTONCHECK | DFCS_FLAT,
+                DFCS_BUTTONCHECK | DFCS_FLAT | DFCS_CHECKED
+            };
+            for (int index = 0; index < ARRAYSIZE(states); index++) {
+                RECT bounds = { 0, 0, width, height };
+                FillRect(dc, &bounds, GetSysColorBrush(COLOR_WINDOW));
+                BOOL drawn = DrawFrameControl(dc, &bounds, DFC_BUTTON, states[index]);
+                SelectObject(dc, previous);
+                if (!drawn || ImageList_Add(classicImages, bitmap, nullptr) != index) {
+                    break;
+                }
+                SelectObject(dc, bitmap);
+            }
+            SelectObject(dc, previous);
+            if (ImageList_GetImageCount(classicImages) == ARRAYSIZE(states)) {
+                images = ListView_SetImageList(list, classicImages, LVSIL_STATE);
+                if (images != nullptr) {
+                    ImageList_Destroy(images);
+                }
+                classicImages = nullptr;
+            }
+        }
+    }
+    if (classicImages != nullptr) {
+        ImageList_Destroy(classicImages);
+    }
+    if (bitmap != nullptr) {
+        DeleteObject(bitmap);
+    }
+    if (dc != nullptr) {
+        DeleteDC(dc);
+    }
+}
+
 /// Selects all monitor rows with Ctrl+A while retaining native checkbox, mouse and keyboard handling.
 static LRESULT CALLBACK MonitorListSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
@@ -11579,7 +11641,8 @@ static LRESULT CALLBACK MonitorListSubclassProc(HWND window, UINT message, WPARA
         RemoveWindowSubclass(window, MonitorListSubclassProc, subclassId);
     }
     LRESULT result = DefSubclassProc(window, message, wParam, lParam);
-    if (message == WM_SETFONT || message == WM_THEMECHANGED) {
+    if (message == WM_SETFONT || message == WM_THEMECHANGED || message == WM_DPICHANGED_AFTERPARENT) {
+        UpdateMonitorCheckboxImages(window);
         UpdateSettingsReportMetrics(window);
     }
     return result;
@@ -11594,6 +11657,7 @@ static void InitializeMonitorList() {
     }
     ListView_SetExtendedListViewStyle(hMonitorList,
         LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_DOUBLEBUFFER | LVS_EX_CHECKBOXES);
+    UpdateMonitorCheckboxImages(hMonitorList);
     LVCOLUMNW column = {};
     column.mask = LVCF_TEXT | LVCF_SUBITEM;
     for (int index = 0; index < MONITOR_COLUMN_COUNT; index++) {
@@ -11865,7 +11929,9 @@ static void ReadAppearanceControls(WidgetConfig& config) {
     config.leadingZeroMode = std::clamp(static_cast<int>(SendMessageW(hLeadingZeroCombo, CB_GETCURSEL,
         0, 0)), 0, LEADING_ZERO_MODE_COUNT - 1);
     config.transparentBackground = GetCheck(hTransparentBackgroundCheck);
-    config.disableThemes = GetCheck(hWidgetDisableThemesCheck);
+    if (IsWindowEnabled(hWidgetDisableThemesCheck)) {
+        config.disableThemes = GetCheck(hWidgetDisableThemesCheck);
+    }
     config.textColor = static_cast<COLORREF>(GetWindowLongPtrW(hTextColorButton, GWLP_USERDATA));
     config.backgroundColor =
         static_cast<COLORREF>(GetWindowLongPtrW(hBackgroundColorButton, GWLP_USERDATA));
@@ -11981,13 +12047,11 @@ static void UpdateSettingControlVisibility() {
 /// Updates control enabled states for the selected widget and temporarily clears inapplicable checkbox
 /// values. When requested, prepares the final layout before replacing the visible controls.
 static void UpdateSettingControlAvailability(bool updateLayout) {
-    bool dialogThemesDisabled = hDisableThemesCheck == nullptr
-        ? themesDisabled
-        : GetCheck(hDisableThemesCheck);
-    if (!dialogThemesDisabled) {
-        SetCheck(hWindows2000StyleCheck, false);
-    }
-    EnableWindow(hWindows2000StyleCheck, dialogThemesDisabled);
+    bool visualStylesActive = AreVisualStylesActive();
+    SetCheck(hDisableThemesCheck, visualStylesActive && settingsThemesDisabled);
+    EnableWindow(hDisableThemesCheck, visualStylesActive);
+    SetCheck(hWindows2000StyleCheck, visualStylesActive && settingsWindows2000Style);
+    EnableWindow(hWindows2000StyleCheck, visualStylesActive && settingsThemesDisabled);
     UpdateApplicationFontAntialiasingCombo();
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
@@ -12013,10 +12077,9 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     bool utc = GetCheck(hUtcCheck);
     bool hasSize = type == WIDGET_ANALOG || type == WIDGET_PANEL;
     bool hasTextFont = digital || calendar;
-    bool widgetThemesDisabled = hWidgetDisableThemesCheck == nullptr
-        ? settingsDraft[selectedDraftIndex].disableThemes
-        : GetCheck(hWidgetDisableThemesCheck);
-    bool calendarFontEnabled = widgetThemesDisabled || !AreVisualStylesActive();
+    bool widgetThemesDisabled = settingsDraft[selectedDraftIndex].disableThemes;
+    SetCheck(hWidgetDisableThemesCheck, visualStylesActive && widgetThemesDisabled);
+    bool calendarFontEnabled = widgetThemesDisabled || !visualStylesActive;
     bool fontAntialiasingEnabled = type != WIDGET_CALENDAR || calendarFontEnabled;
     if (type == WIDGET_CALENDAR) {
         if (!calendarFontEnabled) {
@@ -12067,6 +12130,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     }
     const LRESULT borderStylePosition = SendMessageW(hBorderTrackBar, TBM_GETPOS, 0, 0);
     std::vector<ControlState> controlStates = {
+        { hWidgetDisableThemesCheck, visualStylesActive },
         { hTransparentBackgroundCheck, !fullscreen },
         { hPaddingTrackBar, digital },
         { hBorderTrackBar, supportsBorderStyle },
@@ -12939,8 +13003,8 @@ static bool WidgetConfigurationsEqual(const WidgetConfig& left, const WidgetConf
 /// for validation.
 static bool HasPendingSettingsChanges() {
     if (LanguageFromCombo(hLanguageCombo) != appLanguage
-            || GetCheck(hDisableThemesCheck) != themesDisabled
-            || GetCheck(hWindows2000StyleCheck) != windows2000Style
+            || settingsThemesDisabled != themesDisabled
+            || settingsWindows2000Style != windows2000Style
             || GetCheck(hStartWithWindowsCheck) != startWithWindows
             || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
             || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
@@ -12981,7 +13045,9 @@ static bool HasPendingSettingsChanges() {
 /// Reenables Apply when pending changes exist; disabling is reserved for a successful explicit Apply
 /// action.
 static void UpdateSettingsApplyButton() {
-    if (hSettings == nullptr || updatingSettingsControls || hSettingsOpenCombo != nullptr
+    if (hSettings == nullptr
+            || updatingSettingsControls
+            || hSettingsOpenCombo != nullptr
             || !IsWindowEnabled(hSettings)) {
         return;
     }
@@ -13669,9 +13735,9 @@ static bool ApplySettingsDraft() {
         RefreshInformationWindows();
     }
     bool previousThemesDisabled = themesDisabled;
-    themesDisabled = GetCheck(hDisableThemesCheck);
+    themesDisabled = settingsThemesDisabled;
     bool previousWindows2000Style = windows2000Style;
-    windows2000Style = themesDisabled && GetCheck(hWindows2000StyleCheck);
+    windows2000Style = themesDisabled && settingsWindows2000Style;
     int previousAppFontAntialiasing = appFontAntialiasing;
     appFontAntialiasing = settingsAppFontAntialiasing;
     appFontFace = settingsAppFontFace;
@@ -13805,6 +13871,7 @@ static bool ApplySettingsDraft() {
             LoadMonitorSelection(configuration);
         }
     }
+    UpdateSettingControlAvailability();
     updatingSettingsControls = previousUpdating;
     UpdateSettingsApplyButton();
     return recreateDialogs;
@@ -14726,11 +14793,11 @@ static bool CreateSettingsControls(int selectedTab) {
     UpdateTimeSignalVolumeControls();
     hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES,
         Mnemonic(TXT_VISUAL_STYLES).c_str(), &applicationControls);
-    SetCheck(hDisableThemesCheck, themesDisabled);
+    SetCheck(hDisableThemesCheck, AreVisualStylesActive() && settingsThemesDisabled);
     hWindows2000StyleCheck = BindSettingsControl(hApplicationPage, ID_WINDOWS_2000_STYLE,
         T(TXT_WINDOWS_2000_STYLE), &applicationControls);
-    SetCheck(hWindows2000StyleCheck, windows2000Style);
-    EnableWindow(hWindows2000StyleCheck, themesDisabled);
+    SetCheck(hWindows2000StyleCheck, AreVisualStylesActive() && settingsWindows2000Style);
+    EnableWindow(hWindows2000StyleCheck, AreVisualStylesActive() && settingsThemesDisabled);
     hUseXmlSettingsCheck = BindSettingsControl(hApplicationPage, ID_USE_XML_SETTINGS,
         T(TXT_XML_STORAGE_LABEL), &applicationControls);
     SetCheck(hUseXmlSettingsCheck, storageUsesXml);
@@ -15202,6 +15269,8 @@ static void ImportSettings() {
 
 /// Creates the settings controls on the UI thread after slow system queries have completed.
 static void CreateSettingsWindow(int widgetId) {
+    settingsThemesDisabled = themesDisabled;
+    settingsWindows2000Style = windows2000Style;
     settingsDraft.clear();
     for (size_t index = 0; index < widgets.size(); index++) {
         settingsDraft.push_back(widgets[index]->config);
@@ -15889,16 +15958,20 @@ static void HandleSettingsCommand(int id, int notification) {
         settingsAppFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo,
             settingsAppFontAntialiasing);
     } else if ((id == ID_VISUAL_STYLES || id == ID_WINDOWS_2000_STYLE) && notification == BN_CLICKED) {
+        if (AreVisualStylesActive()) {
+            settingsThemesDisabled = GetCheck(hDisableThemesCheck);
+            settingsWindows2000Style = settingsThemesDisabled && GetCheck(hWindows2000StyleCheck);
+        }
         UpdateSettingControlAvailability();
     } else if (id == ID_DEFAULT_APPEARANCE) {
         ResetWidgetAppearance();
     } else if (id == ID_LEADING_ZERO && notification == CBN_SELCHANGE) {
         PreviewSelectedWidgetAppearance(false);
     } else if ((id == ID_TRANSPARENT_BG || id == ID_WIDGET_DISABLE_THEMES) && notification == BN_CLICKED) {
+        PreviewSelectedWidgetAppearance(false);
         if (id == ID_WIDGET_DISABLE_THEMES) {
             UpdateSettingControlAvailability();
         }
-        PreviewSelectedWidgetAppearance(false);
     } else if ((id == ID_SHOW_TODAY || id == ID_WEEK_NUMBERS || id == ID_SUNDAY_FIRST)
             && notification == BN_CLICKED) {
         PreviewSelectedWidgetAppearance(true);
@@ -16715,6 +16788,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
         case WM_THEMECHANGED:
         case WM_SYSCOLORCHANGE:
             if (window == hController && msg == WM_THEMECHANGED) {
+                RefreshApplicationFonts();
                 ScheduleWidgetDisplayRefresh();
             }
             if (window == hSettings) {

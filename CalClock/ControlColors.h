@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.0.6
  */
 
 #pragma once
@@ -46,9 +46,10 @@ public:
     static void Restore(HWND window);
 
 private:
-    /// Identifies controls whose native color properties must be saved and restored explicitly.
+    /// Identifies native controls requiring color properties or direct-paint handling.
     enum class Kind {
         Other,
+        Edit,
         ListView,
         TreeView,
         Progress
