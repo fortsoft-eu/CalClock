@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.1.2
  */
 
 #include "SystemDialogTemplate.h"
@@ -132,7 +132,9 @@ DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND 
         }
     }
     SIZE_T fontOffset = reinterpret_cast<const BYTE*>(cursor) - source;
-    SIZE_T controlsOffset = fontOffset + 3 & ~static_cast<SIZE_T>(3);
+    SIZE_T controlsOffset = *reinterpret_cast<const WORD*>(source + 16) == 0
+        ? fontOffset
+        : fontOffset + 3 & ~static_cast<SIZE_T>(3);
     if (controlsOffset > size) {
         return nullptr;
     }

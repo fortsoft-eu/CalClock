@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.1
+ * Last modified for version 1.7.1.2
  */
 
 #define NOMINMAX
@@ -12687,7 +12687,7 @@ static void FillDateFormatCombo(const WidgetConfig& config) {
 /// Loads the selected widget while suppressing edit notifications and retaining the previous controls until
 /// replacement. Keeps the previous Appearance image visible until all values, positions and visibility
 /// states are ready.
-static void LoadDraftIntoControls() {
+static void LoadDraftIntoControls(bool updateLayout = true) {
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
     }
@@ -12785,7 +12785,7 @@ static void LoadDraftIntoControls() {
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
         SetCheck(hTimeSignalIntervalRadios[mode - 1], config.timeSignal == mode);
     }
-    UpdateSettingsSelectionState(true);
+    UpdateSettingsSelectionState(updateLayout);
     if (GetActiveWidgetSettingsPage() != nullptr) {
         AssignSettingsMnemonics();
     }
@@ -13719,13 +13719,14 @@ static bool SelectDraftWidgetById(int widgetId) {
     if (targetIndex < 0) {
         return false;
     }
-    if (targetIndex != selectedDraftIndex && !SaveControlsToDraft(true)) {
+    bool selectionChanged = targetIndex != selectedDraftIndex;
+    if (selectionChanged && !SaveControlsToDraft(true)) {
         SelectOnlyWidgetIndex(selectedDraftIndex);
         return false;
     }
     selectedDraftIndex = targetIndex;
     SelectOnlyWidgetIndex(selectedDraftIndex, false);
-    LoadDraftIntoControls();
+    LoadDraftIntoControls(selectionChanged);
     return true;
 }
 
@@ -14449,7 +14450,7 @@ static void ResetWidgetAppearance() {
     WidgetConfig defaults = {};
     SetDefaultWidgetAppearance(&defaults, config.type);
     CopyWidgetAppearance(&config, defaults);
-    LoadDraftIntoControls();
+    LoadDraftIntoControls(false);
     PreviewSelectedWidgetAppearance(false);
 }
 
