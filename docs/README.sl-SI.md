@@ -72,7 +72,7 @@ Glasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, n
 
 **Zvočni izhod** na zavihku **Signal** izbere napravo za redne časovne signale vsakega gradnika, ki podpira zvok.
 Časovni pas, odmik in interval gradnika ostanejo nespremenjeni. Izbira generatorja in glasnost signala sta še vedno
-skupni za ves program na zavihku **Program**. Pri možnosti **Sistemski pisk** polje je sivo in kaže privzeto napravo Windows, prejšnja izbira pa ostane shranjena; **Vgrajeni generator** ga znova omogoči. Windows Vista generator uporablja
+skupni za ves program na zavihku **Program**. Pri možnosti **Sistemski pisk** je polje sivo in kaže privzeto napravo Windows, prejšnja izbira pa ostane shranjena; **Vgrajeni generator** ga znova omogoči. Windows Vista generator uporablja
 samodejno.
 
 **Privzeta naprava Windows** sledi trenutnemu privzetemu izhodu sistema Windows. Izrecno izbrana naprava ostane

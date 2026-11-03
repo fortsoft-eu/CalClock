@@ -14,7 +14,7 @@ CalClock är ett nativt Win32/x86-program för Windows Vista och senare som visa
 - Kalender- och klockpaneler med upp till två extra namngivna klockor i egna tidszoner, separata urtavlestorlekar, fyra ramstilar, justerbar färg, UTC-text, inledande nolla och eget teckensnitt för varje textrad
 - Alarm med veckodagsval, visuell indikering, intern ljuduppspelning, upprepning, lokala kommandon och HTTP/HTTPS-skriptanrop
 - Tidssignaler per klocka med intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter; samtidiga signaler slås ihop till en sekvens
-- Tyst-kommando per klocka och ett markerbart Tysta alla-kommando i meddelandefältet
+- Tysta-kommando per klocka och ett markerbart Tysta alla-kommando i meddelandefältet
 - Valfri automatisk start med Windows
 - Valfri fästning vid arbetsytans kanter inom fem bildpunkter under dragning, aktiverad som standard; kantfästningen bevaras när storleken ändras
 - NTP-synkronisering utan att ändra Windows-systemklockan
@@ -64,11 +64,11 @@ I panelen är datumet överst en länk som återför kalendern till idag. Tidszo
 
 Paneler med kalender och klocka kan visa Windows-meddelanden om datum och tid ovanför den nedre länken. **Meddelanden om datum och tid** på fliken **Allmänt** är aktiverat som standard och sparas separat för varje panel. När flera meddelanden är aktuella visas de under varandra som i Windows. Om inställningen är avstängd eller inget meddelande är aktuellt behåller panelen sin ursprungliga storlek och layout utan att reservera tomt utrymme.
 
-`Ordna i rutnät` placerar synliga skrivbordswidgetar i ett stabilt rutnät utan överlappning och bevarar ungefär den manuella placeringen. Widgeten vars meny startade kommandot stannar på plats; kommandot i meddelandefältet ordnar varje skärm oberoende. Skärmklockor undantas.
+`Ordna i ett rutnät` placerar synliga skrivbordswidgetar i ett stabilt rutnät utan överlappning och bevarar ungefär den manuella placeringen. Widgeten vars meny startade kommandot stannar på plats; kommandot i meddelandefältet ordnar varje skärm oberoende. Skärmklockor undantas.
 
 ## Utseende
 
-För fristående kalendrar styr **Idag-rad** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
+För fristående kalendrar styr **Raden I dag** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
 
 Utseendeändringar förhandsvisas direkt på den valda widgeten. `Standardutseende` återställer standardvärdena för den widgettypen. När Inställningar stängs med ändringar som inte har verkställts får du frågan om de ska sparas. Varningen är aktiverad som standard och kan stängas av på fliken Program.
 
@@ -160,11 +160,11 @@ förhandslyssning av volymen. Med Systempip är detta fält inaktiverat och visa
 samtidigt som det sparade valet behålls. Alarmljud och pipen före alarmet använder Windows standardutgång.
 Endast pipen slås samman med regelbundna tidssignaler på denna utgång.
 
-Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tyst gäller widgeten och motsvarar valet på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
+Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Alarmets post visar tiden och aktiva veckodagar om inte alla valts. Markerat Tysta gäller widgeten och motsvarar Tyst på Allmänt. En fristående Kalender stöder inte alarm, tidssignal eller tystning. Meddelandefältets kommando heter Tysta alla; `M` på valfri widget gör samma globala växling. Global återaktivering återställer bara de widgetar som tystades av föregående globala åtgärd. Internt ljud fortsätter tyst och blir hörbart igen när tystningen upphävs. Ett pågående pip kan avslutas; kommande pip hoppas över tills ljudet åter aktiveras. Andra kommandon och fjärrskript påverkas inte.
 
 ## Inställningar och menyer
 
-Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller datumkopieringsformat — följt av `Ordna i rutnät`, Inställningar, Hjälp, Om och Avsluta. Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat grupperade `Ordna i rutnät` följer före programkommandona.
+Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller datumkopieringsformat — följt av `Ordna i ett rutnät`, Inställningar, Hjälp, Om och Avsluta. Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat grupperade `Ordna i ett rutnät` följer före programkommandona.
 
 Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om. Om `ClockWndMain` inte stöder sekundvisare vid vald storlek inaktiveras Sekunder, men det sparade valet behålls för en annan kompatibel storlek.
 

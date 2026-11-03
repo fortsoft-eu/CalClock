@@ -64,7 +64,7 @@ Im Kalender-Uhr-Panel führt der Datumslink oben den Kalender zum heutigen Tag z
 
 Kalender-Uhr-Panels können oberhalb des unteren Links die Datums- und Uhrzeithinweise von Windows anzeigen. Die Option **Hinweise zu Datum und Uhrzeit** auf der Registerkarte **Allgemein** ist standardmäßig aktiviert und wird für jedes Panel getrennt gespeichert. Treffen mehrere Hinweise zu, erscheinen sie wie in Windows untereinander. Ist die Option deaktiviert oder liegt kein zutreffender Hinweis vor, bleiben Größe und Anordnung des Panels unverändert, ohne dass Leerraum reserviert wird.
 
-`Am Raster ausrichten` ordnet sichtbare Desktop-Widgets in einem stabilen, überlappungsfreien Raster an und erhält ihre ungefähre manuelle Positionierung. Das Widget, aus dessen Menü der Befehl stammt, bleibt an seinem Platz; der Befehl im Infobereich ordnet jeden Monitor unabhängig an. Monitoruhren sind ausgenommen.
+`Im Raster anordnen` ordnet sichtbare Desktop-Widgets in einem stabilen, überlappungsfreien Raster an und erhält ihre ungefähre manuelle Positionierung. Das Widget, aus dessen Menü der Befehl stammt, bleibt an seinem Platz; der Befehl im Infobereich ordnet jeden Monitor unabhängig an. Monitoruhren sind ausgenommen.
 
 ## Darstellung
 
@@ -128,16 +128,16 @@ Audio. Wird Wecker aktiv ausgeschaltet, werden die übrigen Bedienelemente auf d
 deaktiviert; ihre Werte bleiben erhalten. Der Test erfordert einen aktiven Wecker, die Auswahl Datei oder
 Befehl starten und ein ausgefülltes Datei- oder Befehlsfeld.
 
-Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und Optionsfelder für Intervalle von 1, 5, 10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten Widget-Zeit. Anfangs ist das Signal ausgeschaltet und das Stundenintervall ausgewählt. Aus- und Einschalten über Zeitzeichen im Widget-Menü behält das Intervall bei. Das Menü zeigt die Weckzeit und das Signalintervall in Klammern. Das 20-Minuten-Intervall ertönt zu :00, :20 und :40 dieser Zeit. Das Signal folgt dem **Greenwich Time Signal (GTS)**: Fünf kurze Töne markieren die letzten fünf Sekunden, ein längerer Ton den genauen Intervallbeginn. Zeitzonen, UTC-Modus, Versätze und aktuelle NTP-Korrektur werden berücksichtigt. Weckerzeitzeichen und Registerkarte Signal bleiben getrennt konfigurierbar. Auch Sekundenbruchteile im Widget-Versatz werden berücksichtigt. Überlappende Widget-, Wecker- und Testtöne erklingen durchgehend bis zum Ende der letzten Überlappung auf demselben Audioausgang.
+Auf der Registerkarte Zeitzeichen gibt es das Kontrollkästchen Zeitzeichen aktiv und Optionsfelder für Intervalle von 1, 5, 10, 15, 20, 30 oder 60 Minuten gemäß der angezeigten Widget-Zeit. Anfangs ist das Signal ausgeschaltet und das Stundenintervall ausgewählt. Aus- und Einschalten über Zeitzeichen im Widget-Menü behält das Intervall bei. Das Menü zeigt die Weckzeit und das Signalintervall in Klammern. Das 20-Minuten-Intervall ertönt zu :00, :20 und :40 dieser Zeit. Das Signal folgt dem **Greenwich Time Signal (GTS)**: Fünf kurze Töne markieren die letzten fünf Sekunden, ein längerer Ton den genauen Intervallbeginn. Zeitzonen, UTC-Modus, Versätze und aktuelle NTP-Korrektur werden berücksichtigt. Weckerzeitzeichen und Registerkarte Zeitzeichen bleiben getrennt konfigurierbar. Auch Sekundenbruchteile im Widget-Versatz werden berücksichtigt. Überlappende Widget-, Wecker- und Testtöne erklingen durchgehend bis zum Ende der letzten Überlappung auf demselben Audioausgang.
 
-**Zeitzeichenklang** auf Anwendung bietet **Interner Generator** (Standard) und **Systemsignalton**. Die
+**Klang des Zeitzeichens** auf Anwendung bietet **Interner Generator** (Standard) und **Systemsignalton**. Die
 Auswahl gilt für alle Widget-Zeitzeichen einschließlich der Wecker und wird global gespeichert. Beim
-**Internen Generator** zeigt **Zeitzeichenlautstärke** den Pegel für die ganze Anwendung in dB. Ganz rechts
+**Internen Generator** zeigt **Lautstärke des Zeitzeichens** den Pegel für die ganze Anwendung in dB. Ganz rechts
 liegen **0 dB**, die maximale unverzerrte Sinusamplitude; Stille entspricht **−∞ dB**. Die Vorgabe ist **−18
-dB**. Ein bereits erklingender Ton darf nach dem Stoppen des Tests ausklingen. **Test** neben
-**Zeitzeichenklang** startet die fortlaufende Vorschau, **Test stoppen** beendet sie. Sowohl
+dB**. Ein bereits erklingender Ton darf nach dem Stoppen des Tests ausklingen. **Testen** neben
+**Klang des Zeitzeichens** startet die fortlaufende Vorschau, **Test stoppen** beendet sie. Sowohl
 **Systemsignalton** als auch **Interner Generator** sind testbar; der Testzustand wird nicht gespeichert. Das
-Festhalten des Lautstärkereglers startet ebenfalls eine Vorschau bis zum Loslassen, sofern kein per Taste
+Festhalten des Lautstärkereglers startet ebenfalls eine Vorschau bis zum Loslassen, sofern kein über die Schaltfläche
 gestarteter Test läuft. Die Wiedergabe beginnt mit der nächsten vollen Sekunde: kurze Töne jede Sekunde und
 ein langer zu :00, :05, :10 usw. Die Klangwahl ist nur verfügbar, wenn das System beide Verfahren unterstützt.
 
@@ -164,11 +164,11 @@ Bei Systemsignalton ist diese Auswahl deaktiviert und zeigt das Windows-Standard
 Auswahl bleibt erhalten. Weckeraudio und Vorab-Pieptöne verwenden die Windows-Standardausgabe. Nur die
 Pieptöne werden dort mit den regelmäßigen Zeitzeichen zusammengeführt.
 
-Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widgets umschalten. Der Weckereintrag zeigt die Zeit und, sofern nicht alle Tage aktiv sind, die ausgewählten Wochentage. Der markierte Befehl Stumm betrifft sein Widget und entspricht Stumm auf Allgemein. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Im Infobereich heißt der Befehl Alles stummschalten; `M` auf einem Widget führt dieselbe globale Aktion aus. Das globale Aufheben der Stummschaltung stellt nur die durch die vorherige globale Aktion stummgeschalteten Widgets wieder her. Interne Audiowiedergabe läuft lautlos weiter und wird danach wieder hörbar. Ein bereits laufender Ton darf enden; weitere Töne werden bis zur erneuten Freigabe übersprungen. Andere Befehle und entfernte Skripte bleiben unbeeinflusst.
+Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widgets umschalten. Der Weckereintrag zeigt die Zeit und, sofern nicht alle Tage aktiv sind, die ausgewählten Wochentage. Der markierte Befehl Stummschalten betrifft sein Widget und entspricht Stummgeschaltet auf Allgemein. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Im Infobereich heißt der Befehl Alles stummschalten; `M` auf einem Widget führt dieselbe globale Aktion aus. Das globale Aufheben der Stummschaltung stellt nur die durch die vorherige globale Aktion stummgeschalteten Widgets wieder her. Interne Audiowiedergabe läuft lautlos weiter und wird danach wieder hörbar. Ein bereits laufender Ton darf enden; weitere Töne werden bis zur erneuten Freigabe übersprungen. Andere Befehle und entfernte Skripte bleiben unbeeinflusst.
 
 ## Einstellungen und Menüs
 
-Jedes Widget-Menü enthält die für den Typ passenden Befehle — Sichtbarkeit, Vordergrund, Sekunden, Analoggröße oder Datumskopierformat — gefolgt von `Am Raster ausrichten`, Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü führt alle Widgets mit ihrer laufenden Nummer auf, danach Alle anzeigen, Alle ausblenden und Alles stummschalten. Der getrennt gruppierte Befehl `Am Raster ausrichten` folgt vor den Anwendungsbefehlen.
+Jedes Widget-Menü enthält die für den Typ passenden Befehle — Sichtbarkeit, Vordergrund, Sekunden, Analoggröße oder Datumskopierformat — gefolgt von `Im Raster anordnen`, Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü führt alle Widgets mit ihrer laufenden Nummer auf, danach Alle anzeigen, Alle ausblenden und Alles stummschalten. Der getrennt gruppierte Befehl `Im Raster anordnen` folgt vor den Anwendungsbefehlen.
 
 Anzeigen oder Wiederherstellen holt Widgets vor andere Fenster, ohne ihren Vordergrundstatus zu ändern. CalClock sorgt nach dem Start für mindestens ein sichtbares Widget. Ein zweiter Start aktiviert die vorhandene Instanz und stellt die zuletzt ausgeblendeten Widgets wieder her, falls keines sichtbar ist. Nach einem Neustart des Windows-Explorers wird das Infobereichssymbol automatisch neu registriert. Unterstützt `ClockWndMain` bei der gewählten Größe keinen Sekundenzeiger, ist Sekunden deaktiviert; die gespeicherte Wahl bleibt für eine andere unterstützte Größe erhalten.
 

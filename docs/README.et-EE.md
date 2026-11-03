@@ -112,7 +112,7 @@ Vahekaart Aeg valib Windowsi süsteemiaja või NTP-serverid kogu rakendusele. NT
 
 Pärast sünkroonimist käib CalClocki kell sõltumata Windowsi süsteemiaja hilisematest muutustest. Ühenduse kadumisel või serverite vahetamisel jätkab kell viimasest sobivast sünkroonimisest uue vastuseni; olek säilib rakenduse sulgemiseni.
 
-Vahekaart Aeg logib NTP-päringud käivitamisest alates. Kirje sisaldab kuupäeva, arvuti kohalikku aega, serverit ja olekut. OK näitab sobivat vastust ja θ selle nihet Windowsi süsteemiajast. ERR annab põhjuse ja võimaliku veakoodi. Päringurühma viimane kirje näitab ka ühendatud nihet Θ, kui on kasutatavaid mõõtmisi. Nihked on millisekundites nelja kümnendkohaga: positiivne tähendab serveri edestamist ja negatiivne mahajäämist. Θ põhineb vastu võetud mõõtmistel ja ilmub ka sünkroonimisolekus. Salvesta logi ekspordib CSV koos nihete ja veateabega. Logi ei säili käivituste vahel; vajaduse korral salvestage see enne väljumist.
+Vahekaart Aeg logib NTP-päringud käivitamisest alates. Kirje sisaldab kuupäeva, arvuti kohalikku aega, serverit ja olekut. OK näitab sobivat vastust ja θ selle nihet Windowsi süsteemiajast. ERR annab põhjuse ja võimaliku veakoodi. Päringurühma viimane kirje näitab ka ühendatud nihet Θ, kui on kasutatavaid mõõtmisi. Nihked on millisekundites nelja kümnendkohaga: positiivse väärtuse korral on serveri kell Windowsi omast ees, negatiivse korral taga. Θ põhineb vastu võetud mõõtmistel ja ilmub ka sünkroonimisolekus. Salvesta logi ekspordib CSV koos nihete ja veateabega. Logi ei säili käivituste vahel; vajaduse korral salvestage see enne väljumist.
 
 ## Ekraanikell
 

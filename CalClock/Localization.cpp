@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.2
  */
 
 #include "Localization.h"
@@ -284,7 +284,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"uslyšíte i během testu. Soubory MIDI a soubory, které nelze dekódovat a přehrávají se "
             L"náhradním přehrávačem, lze nastavit nejvýše na 100 %.\r\n\r\nVÝBĚR, KLÁVESY A KOPÍROVÁNÍ "
             L"DATA\r\nPři otevření Nastavení z ikony v oznamovací oblasti se vybere naposledy zvolený "
-            L"widget. Nastavení si pamatuje poslední otevřenou kartu a Přidat poslední skutečně přidaný typ. "
+            L"widget. Nastavení si pamatuje poslední otevřenou kartu i typ naposledy přidaného widgetu. "
             L"Odebrat nebo Del odstraní všechny označené položky až po použití změn. Dvojklik položky "
             L"zobrazí případně skrytý widget, nastaví Zobrazeno a krátce jej zvýrazní. Volba Nastavení v "
             L"nabídce konkrétního widgetu jej v seznamu rovnou vybere. Kliknutí na den v kalendáři datum "
@@ -416,8 +416,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"aplikaci, tedy společně pro všechny widgety, vybrat systémový čas Windows nebo čas ze zadaných "
             L"serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; systémové hodiny Windows se nikdy "
             L"nemění. Dokud nebyl získán platný údaj, používá se systémový čas. NTP je výchozí. Automatická "
-            L"sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětový "
-            L"fond. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat "
+            L"sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětovou "
+            L"skupinu serverů. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat "
             L"nyní spustí nové měření okamžitě.\r\n\r\nPo synchronizaci hodiny CalClock pokračují nezávisle "
             L"na pozdějších změnách systémového času Windows. Při výpadku spojení nebo změně serverů "
             L"pokračují od poslední platné synchronizace až do získání nové odpovědi; stav se uchovává do "
@@ -1199,7 +1199,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
             L"requires Disable themes and applies only to Settings, Help and About. With the default system "
             L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
-            L"license keeps its monospaced font. Only GDI and None are available for font antialiasing in "
+            L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
             L"off. If Windows itself has visual styles turned off, both style options appear unchecked and "
             L"disabled without changing the saved choices.\r\n\r\nLeading zero offers "
@@ -1301,7 +1301,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of later changes "
             L"to Windows system time. If the connection fails or servers change, it continues from the last "
             L"valid synchronisation until a new reply arrives; this state is retained until the application "
-            L"closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab records NTP server queries since the "
+            L"closes.\r\n\r\nNTP SYNCHRONISATION LOG\r\nThe Time tab records NTP server queries since the "
             L"application started. Each entry contains the date and local computer time, server, and status. "
             L"OK identifies a valid reply, with θ showing its offset from Windows system time. ERR gives the "
             L"failure reason and any error code. The final entry in a query group also shows the combined "
@@ -1334,7 +1334,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_COPY_INFORMATION_FAILED,
             L"The information could not be copied to the clipboard."
         },
-        LocalizedText{ TXT_ABOUT_LICENSE_UNAVAILABLE, L"License resource unavailable." },
+        LocalizedText{ TXT_ABOUT_LICENSE_UNAVAILABLE, L"Licence resource unavailable." },
         LocalizedText{ TXT_OPEN_IN_BROWSER_LABEL, L"&Open in default browser" },
         LocalizedText{ TXT_COPY_URL_LABEL, L"Copy &URL" },
         LocalizedText{ TXT_COPY_INFORMATION_LABEL, L"Copy &information" },
@@ -1640,7 +1640,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
             L"requires Disable themes and applies only to Settings, Help and About. With the default system "
             L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
-            L"license keeps its monospaced font. Only GDI and None are available for font antialiasing in "
+            L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
             L"off. If Windows itself has visual styles turned off, both style options appear unchecked and "
             L"disabled without changing the saved choices.\r\n\r\nLeading zero offers "
@@ -1742,7 +1742,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"immediately.\r\n\r\nAfter synchronisation, CalClock keeps time independently of later changes "
             L"to Windows system time. If the connection fails or servers change, it continues from the last "
             L"valid synchronisation until a new reply arrives; this state is retained until the application "
-            L"closes.\r\n\r\nNTP SYNCHRONIZATION LOG\r\nThe Time tab records NTP server queries since the "
+            L"closes.\r\n\r\nNTP SYNCHRONISATION LOG\r\nThe Time tab records NTP server queries since the "
             L"application started. Each entry contains the date and local computer time, server, and status. "
             L"OK identifies a valid reply, with θ showing its offset from Windows system time. ERR gives the "
             L"failure reason and any error code. The final entry in a query group also shows the combined "
@@ -1775,7 +1775,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_COPY_INFORMATION_FAILED,
             L"The information could not be copied to the clipboard."
         },
-        LocalizedText{ TXT_ABOUT_LICENSE_UNAVAILABLE, L"License resource unavailable." },
+        LocalizedText{ TXT_ABOUT_LICENSE_UNAVAILABLE, L"Licence resource unavailable." },
         LocalizedText{ TXT_OPEN_IN_BROWSER_LABEL, L"&Open in default browser" },
         LocalizedText{ TXT_COPY_URL_LABEL, L"Copy &URL" },
         LocalizedText{ TXT_COPY_INFORMATION_LABEL, L"Copy &information" },
@@ -2143,9 +2143,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Standardlautstärke beträgt −18 dB. Mit Testen neben Klang des Zeitzeichens starten Sie eine "
             L"fortlaufende Vorschau, mit Test stoppen beenden Sie sie. Beide Klangarten lassen sich testen; "
             L"der Test wird nicht gespeichert. Auch das Festhalten des Lautstärkereglers startet eine "
-            L"Vorschau bis zum Loslassen, sofern der Tastentest nicht läuft. Die Wiedergabe beginnt zur "
-            L"nächsten vollen Sekunde: kurze Töne jede Sekunde und ein langer bei :00, :05, :10 usw. Ein "
-            L"bereits erklingender Ton darf nach dem Stoppen des Tests ausklingen. Widget-Versätze gelten "
+            L"Vorschau bis zum Loslassen, sofern der über die Schaltfläche gestartete Test nicht läuft. Die "
+            L"Wiedergabe beginnt zur nächsten vollen Sekunde: kurze Töne jede Sekunde und ein langer bei "
+            L":00, :05, :10 usw. Ein bereits erklingender Ton darf nach dem Stoppen des Tests ausklingen. "
+            L"Widget-Versätze gelten "
             L"auch in Hundertstelsekunden. Überlappende Töne von "
             L"Widgets, Weckern und Tests erklingen als ein durchgehender Ton bis zum Ende der letzten "
             L"Überlappung auf demselben Audioausgang.\r\n\r\nZusätzliche Uhren: Auf der Registerkarte "
@@ -3529,7 +3530,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"disponibili dipendono dalla versione di Windows installata. Sveglia e Segnale si attivano dal "
             L"menu del widget; Sveglia mostra l’ora e, per una settimana parziale, i giorni attivi. "
             L"Disattiva audio nel menu del widget corrisponde ad Audio disattivato in Generali. Disattiva "
-            L"tutto ripristina poi solo i widget che aveva disattivato. M su un widget esegue lo stesso "
+            L"tutto l'audio ripristina poi solo i widget che aveva disattivato. M su un widget esegue lo stesso "
             L"comando globale. Attivare la sveglia senza giorni selezionati apre la scheda Sveglia del "
             L"widget.\r\n\r\nSEGNALE ORARIO ACUSTICO\r\nIl segnale segue lo schema del Greenwich Time Signal "
             L"(GTS). La scheda Segnale contiene la casella Segnale orario attivo e pulsanti di opzione per "
@@ -4911,8 +4912,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"widgety, vybrať systémový čas Windows alebo čas zo zadaných serverov NTP. NTP koriguje iba čas "
             L"zobrazený v CalClock; systémové hodiny Windows sa nikdy nemenia. Do prvej platnej odpovede sa "
             L"používa systémový čas. NTP je predvolené. Automatická sada vyberie podľa systémovej oblasti "
-            L"české a slovenské servery, PTB pre Európu alebo celosvetový fond. Viaceré merania sa filtrujú "
-            L"podľa sieťového oneskorenia a odľahlých odpovedí. Synchronizovať teraz spustí nové meranie "
+            L"české a slovenské servery, PTB pre Európu alebo celosvetovú skupinu serverov. Viaceré merania "
+            L"sa filtrujú podľa sieťového oneskorenia a odľahlých odpovedí. Synchronizovať teraz spustí nové "
+            L"meranie "
             L"ihneď.\r\n\r\nPo synchronizácii hodiny CalClock pokračujú nezávisle od neskorších zmien "
             L"systémového času Windows. Pri výpadku spojenia alebo zmene serverov pokračujú od poslednej "
             L"platnej synchronizácie až do získania novej odpovede; stav sa uchováva do ukončenia "
@@ -5212,7 +5214,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"eller Alt+3 på Analogt ur eller Kalender med ur for at vælge hovedurskivens størrelse, fra "
             L"mindst til størst.\r\n\r\nPLACERING\r\nNår kantfastgørelse er slået til, fastgøres widgets til "
             L"arbejdsområdets kanter inden for fem pixel og forbliver fastgjort ved størrelsesændring. "
-            L"Arranger i gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og lader "
+            L"Arranger i et gitter flytter de øvrige widgets til nærliggende pladser uden overlapning og lader "
             L"referencewidgeten blive stående. Skærmure ignoreres. I kalender- og urpanelet går det øverste "
             L"link til i dag, og det nederste åbner Windows' klassiske indstillinger for dato og klokkeslæt; "
             L"begge virker med mus og tastatur.\r\n\r\nI en selvstændig kalender kan rækken I dag vises "
@@ -5470,7 +5472,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_DEFAULT_FONT_LABEL, L"&Oletus" },
         LocalizedText{ TXT_ALARM_TEXT_COLOR_LABEL, L"Herätyksen &tekstiväri…" },
         LocalizedText{ TXT_ALARM_BACKGROUND_COLOR_LABEL, L"Herätyksen &tausta…" },
-        LocalizedText{ TXT_PADDING_LABEL, L"&Täyttö:" },
+        LocalizedText{ TXT_PADDING_LABEL, L"&Sisämarginaali:" },
         LocalizedText{ TXT_BORDER_LABEL, L"&Reunatyyli:" },
         LocalizedText{ TXT_BORDER_COLOR_LABEL, L"Reunuksen väri…" },
         LocalizedText{ TXT_BORDER_WIDTH_LABEL, L"Reunan &leveys:" },
@@ -5756,7 +5758,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"CSV-tiedostoon, mukaan lukien aikaerot ja virhetiedot. Merkintöjä ei säilytetä "
             L"käynnistyskertojen välillä; tallenna ne ennen sulkemista, jos haluat säilyttää "
             L"ne.\r\n\r\nNÄYTTÖKELLO\r\nDigitaalinen kello voi täyttää yhden tai useita näyttöjä ja pimentää "
-            L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja täyttö "
+            L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja sisämarginaali "
             L"voidaan määrittää. Kun Asetukset on avoinna, näytetään aina pieni siirrettävä esikatselu. Esc "
             L"piilottaa kellon ja poistaa pimennyksen.\r\n\r\nOsoitin piilotetaan lyhyen käyttämättömyyden "
             L"jälkeen näyttökellojen ja pimennettyjen näyttöjen päällä. Se palaa näkyviin hiirtä "
@@ -6847,7 +6849,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Alt+0, Alt+1, Alt+2 eller Alt+3 på Analog klocka eller Kalender med klocka för att välja "
             L"huvudurtavlans storlek, från minst till störst.\r\n\r\nPLACERING\r\nNär kantfästning är "
             L"aktiverad fäster widgetar vid arbetsytans kanter inom fem bildpunkter och förblir fästa när "
-            L"storleken ändras. Ordna i rutnät flyttar de andra widgetarna till närliggande platser utan "
+            L"storleken ändras. Ordna i ett rutnät flyttar de andra widgetarna till närliggande platser utan "
             L"överlappning medan referenswidgeten står kvar. Skärmklockor ignoreras. I kalender- och "
             L"klockpanelen går den övre länken till i dag och den nedre öppnar Windows klassiska "
             L"inställningar för datum och tid; båda fungerar med mus och tangentbord.\r\n\r\nI en fristående "
@@ -7792,9 +7794,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Kirje sisaldab kuupäeva, arvuti kohalikku aega, serverit ja olekut. OK näitab sobivat vastust "
             L"ja θ selle nihet Windowsi süsteemiajast. ERR annab põhjuse ja võimaliku veakoodi. Päringurühma "
             L"viimane kirje näitab ka ühendatud nihet Θ, kui on kasutatavaid mõõtmisi. Nihked on "
-            L"millisekundites nelja kümnendkohaga: positiivne tähendab serveri edestamist ja negatiivne "
-            L"mahajäämist. Θ põhineb vastu võetud mõõtmistel ja ilmub ka sünkroonimisolekus. Salvesta logi "
-            L"ekspordib CSV koos nihete ja veateabega. Logi ei säili käivituste vahel; vajaduse korral "
+            L"millisekundites nelja kümnendkohaga: positiivse väärtuse korral on serveri kell Windowsi omast "
+            L"ees, negatiivse korral taga. Θ põhineb vastu võetud mõõtmistel ja ilmub ka sünkroonimisolekus. "
+            L"Salvesta logi ekspordib CSV koos nihete ja veateabega. Logi ei säili käivituste vahel; "
+            L"vajaduse korral "
             L"salvestage see enne väljumist.\r\n\r\nEkraanikell\r\nDigitaalkell võib täita ühe või mitu "
             L"kuvarit ja tumendada ülejäänud. Fondisuurus on protsent kuvari kõrgusest; valida saab ka "
             L"fondi, silumise, värvid ja siseveerise. UTC võib olla eraldi real. Vaikimisi on tekst valge ja "
@@ -8064,7 +8067,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"san earrach, ní ghníomhachtaítear an t-aláram ná na bípeanna. Le linn na huaire a athdhéantar "
             L"san fhómhar, ní tharlaíonn an t-aláram agus a chuid bípeanna ach uair amháin don dáta agus don "
             L"am socraithe céanna."
-            L"\r\n\r\nMá fhanann CalClock ag rith, tar éis codlata, geimhridh nó moille próiseála, cuireann "
+            L"\r\n\r\nMá fhanann CalClock ag rith, tar éis codlata, suanaíochta nó moille próiseála, cuireann "
             L"gach giuirléid a haláram deireanach a cailleadh i ngníomh uair amháin, leis na gníomhartha "
             L"cumraithe. Ní athsheinntear sean-aláraim nuair a thosaítear CalClock arís; ní athsheinntear "
             L"comharthaí ama ná bípeanna réamhaláraim a cailleadh. Tá “Dúisigh an ríomhaire don aláram” "
@@ -12620,7 +12623,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"IZHOD\r\nZvočni izhod na zavihku Signal izbere napravo za redne časovne signale vsakega "
             L"gradnika, ki podpira zvok. Časovni pas, odmik in interval gradnika ostanejo nespremenjeni. "
             L"Izbira generatorja in glasnost signala sta še vedno skupni za ves program na zavihku Program. "
-            L"Pri možnosti Sistemski pisk polje je sivo in kaže privzeto napravo Windows, prejšnja izbira pa "
+            L"Pri možnosti Sistemski pisk je polje sivo in kaže privzeto napravo Windows, prejšnja izbira pa "
             L"ostane shranjena; Vgrajeni generator ga znova omogoči. Windows Vista generator uporablja "
             L"samodejno.\r\n\r\nPrivzeta naprava Windows sledi trenutnemu privzetemu izhodu sistema Windows. "
             L"Izrecno izbrana naprava ostane izbrana tudi po odklopu in je prikazana kot Naprava ni na "

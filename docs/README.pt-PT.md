@@ -14,7 +14,7 @@ O CalClock é uma aplicação nativa Win32/x86 para Windows Vista e versões pos
 - Painéis de calendário e relógio com até dois relógios adicionais com nome e fusos independentes, tamanhos separados de mostrador, quatro estilos de contorno, cor configurável, texto UTC, zero inicial e tipo de letra próprio para cada linha de texto
 - Alarmes com seleção de dias, indicação visual, reprodução interna de áudio, repetição, comandos locais e chamadas a scripts HTTP/HTTPS
 - Sinais horários por relógio a cada 1, 5, 10, 15, 20, 30 ou 60 minutos; sinais coincidentes são unidos numa sequência
-- Comando Sem som por relógio e comando selecionável Silenciar tudo na área de notificação
+- Comando Silenciar por relógio e comando selecionável Silenciar tudo na área de notificação
 - Arranque automático com o Windows opcional
 - Encaixe opcional nas margens da área de trabalho ao arrastar, dentro de cinco píxeis e ativo por predefinição; a ligação à margem mantém-se ao redimensionar
 - Sincronização NTP sem alterar o relógio do sistema Windows
@@ -64,7 +64,7 @@ Neste painel, a data superior é uma ligação que leva o calendário a hoje; o 
 
 Os painéis de calendário e relógio podem apresentar os avisos de data e hora do Windows acima da ligação inferior. A opção **Avisos de data e hora** no separador **Geral** está ativada por predefinição e é guardada separadamente para cada painel. Quando se aplicam vários avisos, estes aparecem uns por baixo dos outros, como no Windows. Se a opção estiver desativada ou não houver avisos aplicáveis, o painel mantém o tamanho e a disposição originais, sem reservar espaço vazio.
 
-`Alinhar na grelha` coloca os widgets visíveis numa grelha estável sem sobreposições, preservando aproximadamente a disposição manual. O widget cujo menu invocou o comando permanece no lugar; o comando da área de notificação organiza cada monitor separadamente. Os relógios no monitor são excluídos.
+`Dispor numa grelha` coloca os widgets visíveis numa grelha estável sem sobreposições, preservando aproximadamente a disposição manual. O widget cujo menu invocou o comando permanece no lugar; o comando da área de notificação organiza cada monitor separadamente. Os relógios no monitor são excluídos.
 
 ## Aspeto
 
@@ -164,11 +164,11 @@ predefinido do Windows, conservando a escolha guardada. O áudio do alarme e os 
 usam a saída predefinida do Windows. Apenas esses sinais se combinam com os sinais horários regulares nessa
 saída.
 
-Alarmes e sinais também podem ser ativados no menu contextual de cada widget com som. A entrada do alarme mostra a hora e, salvo se todos estiverem selecionados, os dias ativos. Sem som afeta o widget e corresponde à opção em Geral. Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento. Na área de notificação existe Silenciar tudo; `M` em qualquer widget executa a mesma alternância global. A reativação global restaura apenas widgets silenciados pela ação global anterior. O áudio interno continua silenciosamente e volta a ouvir-se ao reativar. Um tom já iniciado pode terminar; os seguintes são ignorados até reativar o som. Comandos não sonoros e scripts remotos não são afetados.
+Alarmes e sinais também podem ser ativados no menu contextual de cada widget com som. A entrada do alarme mostra a hora e, salvo se todos estiverem selecionados, os dias ativos. Silenciar afeta o widget e corresponde à opção Silenciado em Geral. Um Calendário autónomo não suporta alarme, sinal horário nem silenciamento. Na área de notificação existe Silenciar tudo; `M` em qualquer widget executa a mesma alternância global. A reativação global restaura apenas widgets silenciados pela ação global anterior. O áudio interno continua silenciosamente e volta a ouvir-se ao reativar. Um tom já iniciado pode terminar; os seguintes são ignorados até reativar o som. Comandos não sonoros e scripts remotos não são afetados.
 
 ## Definições e menus
 
-Cada menu contém os comandos pertinentes ao tipo — visibilidade, sempre no topo, segundos, tamanho analógico ou formato da data copiada — seguidos de `Alinhar na grelha`, Definições, Ajuda, Acerca de e Sair. O menu de notificação enumera todos os widgets com o seu número e oferece Mostrar tudo, Ocultar tudo e Silenciar tudo. `Alinhar na grelha` surge num grupo separado antes dos comandos da aplicação.
+Cada menu contém os comandos pertinentes ao tipo — visibilidade, sempre no topo, segundos, tamanho analógico ou formato da data copiada — seguidos de `Dispor numa grelha`, Definições, Ajuda, Acerca de e Sair. O menu de notificação enumera todos os widgets com o seu número e oferece Mostrar tudo, Ocultar tudo e Silenciar tudo. `Dispor numa grelha` surge num grupo separado antes dos comandos da aplicação.
 
 Mostrar ou restaurar widgets coloca-os à frente das outras janelas sem alterar o estado sempre no topo. O CalClock garante pelo menos um widget visível ao iniciar. Um segundo arranque ativa a instância existente e restaura os widgets ocultados mais recentemente se nenhum estiver visível. O ícone de notificação é registado novamente de forma automática após o reinício do Explorador do Windows. Se `ClockWndMain` não suportar ponteiro dos segundos no tamanho selecionado, Segundos fica desativado, mas a escolha é conservada para outro tamanho compatível.
 

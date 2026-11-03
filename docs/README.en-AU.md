@@ -77,7 +77,7 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects only Settings, Help, and About. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
 Windows 2000 style requires Disable themes and applies only to Settings, Help and About. With the default
-system font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The license
+system font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The licence
 keeps its monospaced font. Only GDI and None are available for font antialiasing in this mode: a saved
 ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows itself has visual
 styles turned off, both style options appear unchecked and disabled without changing the saved choices.

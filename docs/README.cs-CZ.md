@@ -13,7 +13,7 @@ CalClock je nativní aplikace Win32/x86 pro Windows Vista a novější, která n
 - Nativní kalendáře Windows s výběrem data, čtyřmi styly rámečku, nastavitelnou barvou rámečku, čísly týdnů, volbou prvního dne týdne a 33 formáty kopírování data
 - Kalendáře s hodinami a až dvěma dalšími pojmenovanými hodinami v samostatných časových pásmech, samostatnými velikostmi ciferníků, čtyřmi styly rámečku, nastavitelnou barvou rámečku, textem UTC, volbou úvodní nuly a samostatným písmem pro každý textový řádek
 - Budíky s výběrem dnů v týdnu, vizuální signalizací, interním přehráváním zvuku, opakováním, místními příkazy a voláním skriptů přes HTTP/HTTPS
-- Časové znamení pro jednotlivé hodiny v intervalu 1, 5, 10, 15, 20, 30 nebo 60 minut; souběžná znamení se sloučí do jedné sekvence
+- Časové znamení pro jednotlivé hodiny v intervalu 1, 5, 10, 15, 20, 30 nebo 60 minut; souběžná znamení se na stejném zvukovém výstupu sloučí do jedné sekvence
 - Příkaz Ztlumit pro jednotlivé hodiny a zaškrtávací příkaz Ztlumit vše v nabídce oznamovací oblasti
 - Volitelné automatické spouštění s Windows
 - Volitelné přichytávání widgetů k okrajům pracovní plochy při tažení v dosahu pěti pixelů, ve výchozím stavu zapnuté; přichycení zůstává zachováno při změně velikosti widgetu
@@ -104,7 +104,7 @@ Offset je vhodný například v rozhlasovém či televizním studiu ke kompenzac
 
 Offset widgetu se přičítá k UTC před převodem do časového pásma, takže posouvá i okamžik přechodu na letní nebo pásmový čas. Hodiny předsunuté o deset sekund přejdou o deset sekund dříve; hodiny zpožděné o deset sekund přejdou o deset sekund později. Výsledný čas používají ručičky, digitální údaj, datum kalendáře, budík i časové znamení.
 
-Na kartě Čas lze pro celou aplikaci, tedy společně pro všechny widgety, vybrat systémový čas Windows nebo čas ze zadaných serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; systémové hodiny Windows se nikdy nemění. Dokud nebyl získán platný údaj, používá se systémový čas. NTP je výchozí. Automatická sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětový fond. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat nyní spustí nové měření okamžitě.
+Na kartě Čas lze pro celou aplikaci, tedy společně pro všechny widgety, vybrat systémový čas Windows nebo čas ze zadaných serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; systémové hodiny Windows se nikdy nemění. Dokud nebyl získán platný údaj, používá se systémový čas. NTP je výchozí. Automatická sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětovou skupinu serverů. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat nyní spustí nové měření okamžitě.
 
 Po synchronizaci hodiny CalClock pokračují nezávisle na pozdějších změnách systémového času Windows. Při výpadku spojení nebo změně serverů pokračují od poslední platné synchronizace až do získání nové odpovědi; stav se uchovává do ukončení aplikace.
 

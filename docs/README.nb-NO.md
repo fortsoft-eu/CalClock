@@ -64,7 +64,7 @@ I panelet er datoen øverst en lenke som flytter kalenderen til i dag, mens tids
 
 Paneler med kalender og klokke kan vise Windows-varsler om dato og klokkeslett over den nederste lenken. **Varsler om dato og klokkeslett** på fanen **Generelt** er aktivert som standard og lagres separat for hvert panel. Når flere varsler er aktuelle, vises de under hverandre som i Windows. Hvis innstillingen er deaktivert eller ingen varsler er aktuelle, beholder panelet sin opprinnelige størrelse og utforming uten å sette av tom plass.
 
-`Plasser i rutenett` ordner synlige skrivebordswidgeter i et stabilt rutenett uten overlapping og beholder omtrent den manuelle plasseringen. Widgeten som startet kommandoen fra sin meny, blir stående; kommandoen fra systemstatusfeltet ordner hver skjerm separat. Skjermklokker holdes utenfor.
+`Ordne i et rutenett` ordner synlige skrivebordswidgeter i et stabilt rutenett uten overlapping og beholder omtrent den manuelle plasseringen. Widgeten som startet kommandoen fra sin meny, blir stående; kommandoen fra systemstatusfeltet ordner hver skjerm separat. Skjermklokker holdes utenfor.
 
 ## Utseende
 
@@ -148,7 +148,7 @@ Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med
 
 ## Innstillinger og menyer
 
-Hver widgetmeny inneholder relevante kommandoer — synlighet, alltid øverst, sekunder, analog størrelse eller datokopieringsformat — etterfulgt av `Plasser i rutenett`, Innstillinger, Hjelp, Om og Avslutt. Systemstatusmenyen viser alle widgeter med nummer, deretter Vis alle, Skjul alle og Demp alle. Den separat grupperte `Plasser i rutenett` følger før programkommandoene.
+Hver widgetmeny inneholder relevante kommandoer — synlighet, alltid øverst, sekunder, analog størrelse eller datokopieringsformat — etterfulgt av `Ordne i et rutenett`, Innstillinger, Hjelp, Om og Avslutt. Systemstatusmenyen viser alle widgeter med nummer, deretter Vis alle, Skjul alle og Demp alle. Den separat grupperte `Ordne i et rutenett` følger før programkommandoene.
 
 Visning eller gjenoppretting bringer widgeter foran andre vinduer uten å endre alltid øverst. CalClock sørger for minst én synlig widget etter oppstart. En ny oppstart aktiverer eksisterende instans og gjenoppretter sist skjulte widgeter hvis ingen er synlige. Ikonet registreres automatisk på nytt når Windows Utforsker starter på nytt. Hvis `ClockWndMain` ikke støtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget beholdes for en annen støttet størrelse.
 
@@ -166,7 +166,7 @@ XML-lagring kan aktiveres i Innstillinger og bruker:
 %AppData%\FortSoft\CalClock\settings.xml
 ```
 
-Egendefinerte kalenderskrifter støttes med klassisk Windows-utseende eller når temaer er deaktivert for programmet eller widgeten.
+Egendefinerte kalenderskrifter støttes med klassisk Windows-utseende eller når temaer er deaktivert for widgeten.
 
 Import av XML laster og lagrer innstillingene straks i valgt lagringsmåte uten å bytte type. Demping lagres per widget med lyd.
 

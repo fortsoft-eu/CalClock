@@ -14,7 +14,7 @@ CalClock è un’applicazione nativa Win32/x86 per Windows Vista e versioni succ
 - Pannelli calendario e orologio con fino a due orologi aggiuntivi dotati di nome e fusi indipendenti, dimensioni separate dei quadranti, quattro stili di bordo, colore configurabile, testo UTC, zero iniziale e carattere distinto per ogni riga di testo
 - Sveglie con scelta dei giorni, indicazione visiva, riproduzione audio interna, ripetizione, comandi locali e chiamate a script HTTP/HTTPS
 - Segnali orari per ogni orologio a intervalli di 1, 5, 10, 15, 20, 30 o 60 minuti, con segnali simultanei uniti in una sola sequenza
-- Comando Silenzioso per ogni orologio e comando selezionabile Disattiva tutto l'audio nell’area di notifica
+- Comando Disattiva audio per ogni orologio e comando selezionabile Disattiva tutto l'audio nell’area di notifica
 - Avvio automatico con Windows facoltativo
 - Aggancio facoltativo ai bordi dell’area di lavoro entro cinque pixel durante il trascinamento, attivo per impostazione predefinita; l’aggancio resta valido quando cambiano le dimensioni
 - Sincronizzazione NTP senza modificare l’orologio di sistema Windows
@@ -64,7 +64,7 @@ Nel pannello, la data superiore è un collegamento che riporta il calendario a o
 
 I pannelli con calendario e orologio possono mostrare gli avvisi di data e ora di Windows sopra il collegamento inferiore. L’opzione **Avvisi su data e ora** nella scheda **Generali** è attiva per impostazione predefinita e viene salvata separatamente per ogni pannello. Quando sono pertinenti più avvisi, vengono mostrati uno sotto l’altro, come in Windows. Se l’opzione è disattivata o non ci sono avvisi pertinenti, il pannello mantiene le dimensioni e la disposizione originali, senza riservare spazi vuoti.
 
-`Allinea alla griglia` dispone i widget desktop visibili su una griglia stabile senza sovrapposizioni, mantenendo approssimativamente il posizionamento manuale. Il widget dal cui menu è stato richiamato resta fermo; il comando dell’area di notifica organizza ogni monitor separatamente. Gli orologi su monitor sono esclusi.
+`Disponi in griglia` dispone i widget desktop visibili su una griglia stabile senza sovrapposizioni, mantenendo approssimativamente il posizionamento manuale. Il widget dal cui menu è stato richiamato resta fermo; il comando dell’area di notifica organizza ogni monitor separatamente. Gli orologi su monitor sono esclusi.
 
 ## Aspetto
 
@@ -74,7 +74,7 @@ Le modifiche all’aspetto sono mostrate subito nell’anteprima del widget sele
 
 Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bordo semplice ha anche un colore configurabile; la larghezza è disponibile quando supportata dal widget. Gli orologi digitali trasparenti mantengono le stesse scelte di quelli opachi. La dimensione del carattere non è selezionabile per l’applicazione e il calendario; lo è invece per gli orologi digitali e i testi del pannello. I caratteri personalizzati del calendario sono supportati con l’aspetto classico di Windows o con i temi disattivati per il widget.
 
-Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida e Informazioni. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. La smussatura offre **ClearType**, **GDI** e **Nessuna**.
+Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida e Informazioni. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
 Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida e Informazioni. Con il
 carattere di sistema predefinito, queste finestre usano Tahoma 8 pt; un carattere personalizzato
@@ -165,11 +165,11 @@ dispositivo predefinito di Windows, conservando la scelta salvata. L’audio del
 precedono usano l’uscita predefinita di Windows. Solo i bip vengono uniti ai segnali orari periodici su questa
 uscita.
 
-Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto audio. La voce della sveglia mostra l’ora e, se non sono selezionati tutti i giorni, quelli attivi. Silenzioso riguarda il widget e corrisponde alla casella su Generali. Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio. Nell’area di notifica il comando è Disattiva tutto l'audio; `M` su qualsiasi widget esegue la stessa commutazione globale. La riattivazione globale ripristina soltanto i widget silenziati dall’azione globale precedente. L’audio interno continua senza suono e torna udibile alla riattivazione. Un bip già iniziato può terminare; i successivi vengono saltati fino al ritorno dell’audio. Comandi non audio e script remoti non sono interessati.
+Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto audio. La voce della sveglia mostra l’ora e, se non sono selezionati tutti i giorni, quelli attivi. Disattiva audio riguarda il widget e corrisponde alla casella Audio disattivato su Generali. Un Calendario autonomo non supporta sveglia, segnale orario o disattivazione audio. Nell’area di notifica il comando è Disattiva tutto l'audio; `M` su qualsiasi widget esegue la stessa commutazione globale. La riattivazione globale ripristina soltanto i widget silenziati dall’azione globale precedente. L’audio interno continua senza suono e torna udibile alla riattivazione. Un bip già iniziato può terminare; i successivi vengono saltati fino al ritorno dell’audio. Comandi non audio e script remoti non sono interessati.
 
 ## Impostazioni e menu
 
-Ogni menu widget include i comandi pertinenti al tipo — visibilità, primo piano, secondi, dimensioni analogiche o formato della data copiata — seguiti da `Allinea alla griglia`, Impostazioni, Guida, Informazioni ed Esci. Il menu di notifica elenca i widget con il loro numero, poi Mostra tutto, Nascondi tutto e Disattiva tutto l'audio. `Allinea alla griglia`, in un gruppo separato, precede i comandi dell’applicazione.
+Ogni menu widget include i comandi pertinenti al tipo — visibilità, primo piano, secondi, dimensioni analogiche o formato della data copiata — seguiti da `Disponi in griglia`, Impostazioni, Guida, Informazioni ed Esci. Il menu di notifica elenca i widget con il loro numero, poi Mostra tutto, Nascondi tutto e Disattiva tutto l'audio. `Disponi in griglia`, in un gruppo separato, precede i comandi dell’applicazione.
 
 Mostrare o ripristinare widget li porta davanti alle altre finestre senza cambiare il loro stato sempre in primo piano. CalClock assicura almeno un widget visibile all’avvio. Un secondo avvio attiva l’istanza esistente e ripristina i widget nascosti più di recente se nessuno è visibile. Dopo il riavvio di Esplora risorse l’icona di notifica viene registrata di nuovo automaticamente. Se `ClockWndMain` non supporta i secondi nelle dimensioni scelte, Secondi è disattivato, ma la preferenza resta salvata per un’altra dimensione compatibile.
 

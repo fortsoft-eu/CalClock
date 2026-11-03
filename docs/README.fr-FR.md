@@ -14,7 +14,7 @@ CalClock est une application native Win32/x86 pour Windows Vista et versions ult
 - Panneaux calendrier et horloge avec jusqu’à deux horloges supplémentaires nommées dans des fuseaux indépendants, tailles de cadran distinctes, quatre styles de bordure, couleur configurable, texte UTC, zéro initial et police distincte pour chaque ligne de texte
 - Alarmes avec choix des jours, indication visuelle, lecture audio interne, répétition, commandes locales et appels de scripts HTTP/HTTPS
 - Signaux horaires propres à chaque horloge, toutes les 1, 5, 10, 15, 20, 30 ou 60 minutes, les signaux simultanés étant réunis en une seule séquence
-- Commande Muet par horloge et commande à cocher Couper tous les sons dans la zone de notification
+- Commande Couper le son par horloge et commande à cocher Couper tous les sons dans la zone de notification
 - Démarrage automatique avec Windows facultatif
 - Accrochage facultatif aux bords de la zone de travail dans un rayon de cinq pixels pendant le déplacement, activé par défaut ; l’attachement reste conservé lors du redimensionnement
 - Synchronisation NTP sans modification de l’horloge système Windows
@@ -64,7 +64,7 @@ Dans ce panneau, la date supérieure est un lien ramenant le calendrier à aujou
 
 Les panneaux calendrier et horloge peuvent afficher les notifications de date et d’heure de Windows au-dessus du lien inférieur. L’option **Notifications de date et d’heure** de l’onglet **Général** est activée par défaut et enregistrée séparément pour chaque panneau. Lorsque plusieurs notifications s’appliquent, elles s’affichent les unes sous les autres, comme dans Windows. Si l’option est désactivée ou qu’aucune notification ne s’applique, le panneau conserve sa taille et sa disposition d’origine, sans réserver d’espace vide.
 
-`Aligner sur la grille` place les widgets de bureau visibles sur une grille stable sans chevauchement en préservant approximativement leur disposition manuelle. Le widget ayant lancé la commande depuis son menu reste en place ; la commande de la zone de notification traite chaque moniteur indépendamment. Les horloges sur moniteur sont exclues.
+`Aligner sur une grille` place les widgets de bureau visibles sur une grille stable sans chevauchement en préservant approximativement leur disposition manuelle. Le widget ayant lancé la commande depuis son menu reste en place ; la commande de la zone de notification traite chaque moniteur indépendamment. Les horloges sur moniteur sont exclues.
 
 ## Apparence
 
@@ -163,11 +163,11 @@ Windows par défaut tout en conservant le choix enregistré. L’audio de l’al
 utilisent la sortie Windows par défaut. Seuls ces bips sont fusionnés avec les signaux horaires réguliers sur
 cette sortie.
 
-L’alarme et le signal horaire peuvent aussi être activés dans le menu contextuel de tout widget sonore. L’entrée d’alarme montre son heure et, sauf si tous sont sélectionnés, ses jours actifs. Muet agit sur son widget et correspond à la case de Général. Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son. La commande de notification Couper tous les sons est également accessible avec `M` sur un widget. La réactivation globale ne restaure que les widgets mis en sourdine par l’action globale précédente. L’audio interne continue silencieusement et redevient audible ensuite. Un bip déjà commencé peut se terminer ; les suivants sont ignorés jusqu’à réactivation du son. Les commandes non audio et scripts distants ne sont pas affectés.
+L’alarme et le signal horaire peuvent aussi être activés dans le menu contextuel de tout widget sonore. L’entrée d’alarme montre son heure et, sauf si tous sont sélectionnés, ses jours actifs. Couper le son agit sur son widget et correspond à la case Son coupé de Général. Un Calendrier autonome ne propose ni alarme, ni signal horaire, ni coupure du son. La commande de notification Couper tous les sons est également accessible avec `M` sur un widget. La réactivation globale ne restaure que les widgets mis en sourdine par l’action globale précédente. L’audio interne continue silencieusement et redevient audible ensuite. Un bip déjà commencé peut se terminer ; les suivants sont ignorés jusqu’à réactivation du son. Les commandes non audio et scripts distants ne sont pas affectés.
 
 ## Paramètres et menus
 
-Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille analogique ou format de copie de date — puis `Aligner sur la grille`, Paramètres, Aide, À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout masquer et Couper tous les sons. La commande `Aligner sur la grille`, séparée des autres groupes, précède les commandes de l’application.
+Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille analogique ou format de copie de date — puis `Aligner sur une grille`, Paramètres, Aide, À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout masquer et Couper tous les sons. La commande `Aligner sur une grille`, séparée des autres groupes, précède les commandes de l’application.
 
 Afficher ou restaurer des widgets les place devant les autres fenêtres sans modifier leur maintien au premier plan. CalClock garantit au moins un widget visible au démarrage. Un second lancement active l’instance existante et restaure les widgets masqués en dernier si aucun n’est visible. L’icône de notification est réenregistrée automatiquement après un redémarrage de l’Explorateur Windows. Si `ClockWndMain` ne prend pas en charge la trotteuse à la taille choisie, Secondes est désactivé, mais le choix reste mémorisé pour une autre taille compatible.
 

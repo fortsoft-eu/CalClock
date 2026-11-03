@@ -14,7 +14,7 @@ CalClock er et Win32/x86-program til Windows Vista og nyere, som viser frit plac
 - Kalender- og urpaneler med op til to ekstra navngivne ure i egne tidszoner, separate urskivestørrelser, fire rammestile, justerbar farve, UTC-tekst, foranstillet nul og egen skrifttype til hver tekstlinje
 - Alarmer med valg af ugedage, visuel markering, intern lydafspilning, gentagelse, lokale kommandoer og HTTP/HTTPS-scriptkald
 - Tidssignaler pr. ur hvert 1., 5., 10., 15., 20., 30. eller 60. minut; samtidige signaler samles i én sekvens
-- Lydløs-kommando for hvert ur og en markerbar Slå al lyd fra-kommando i meddelelsesområdet
+- Slå lyd fra-kommando for hvert ur og en markerbar Slå al lyd fra-kommando i meddelelsesområdet
 - Valgfri automatisk start med Windows
 - Valgfri fastgørelse inden for fem pixels af arbejdsområdets kanter ved træk, aktiveret som standard; fastgørelsen bevares ved ændring af størrelsen
 - NTP-synkronisering uden ændring af Windows-systemuret
@@ -64,7 +64,7 @@ I panelet er datoen øverst et link, som fører kalenderen til i dag. Tidszonete
 
 Paneler med kalender og ur kan vise Windows-meddelelser om dato og klokkeslæt over det nederste link. **Meddelelser om dato og klokkeslæt** på fanen **Generelt** er slået til som standard og gemmes separat for hvert panel. Når flere meddelelser er relevante, vises de under hinanden som i Windows. Hvis indstillingen er slået fra, eller der ikke er nogen relevant meddelelse, bevarer panelet sin oprindelige størrelse og sit layout uden at reservere tom plads.
 
-`Arranger i gitter` placerer synlige skrivebordswidgets i et stabilt gitter uden overlapning og bevarer omtrent den manuelle placering. Widgeten, hvis menu startede kommandoen, bliver stående; kommandoen fra meddelelsesområdet arrangerer hver skærm særskilt. Skærmure er undtaget.
+`Arranger i et gitter` placerer synlige skrivebordswidgets i et stabilt gitter uden overlapning og bevarer omtrent den manuelle placering. Widgeten, hvis menu startede kommandoen, bliver stående; kommandoen fra meddelelsesområdet arrangerer hver skærm særskilt. Skærmure er undtaget.
 
 ## Udseende
 
@@ -159,11 +159,11 @@ generatortest og lydstyrkeprøver. Med Systembip er dette felt deaktiveret og vi
 mens det gemte valg bevares. Alarmlyd og bippene før alarmen bruger Windows-standardudgangen. Kun bippene
 flettes med regelmæssige tidssignaler på denne udgang.
 
-Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Lydløs gælder widgeten og svarer til valget på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
+Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets med lyd. Alarmens punkt viser tiden og aktive ugedage, medmindre alle er valgt. Slå lyd fra gælder widgeten og svarer til Lyd fra på Generelt. En selvstændig Kalender understøtter ikke alarm, tidssignal eller dæmpning. Global genaktivering gendanner kun de widgets, som blev gjort lydløse af forrige globale handling. Intern lyd fortsætter lydløst og bliver hørbar igen ved genaktivering. Et igangværende bip kan afsluttes; efterfølgende bip springes over, til lyden aktiveres. Andre kommandoer og fjernscripts påvirkes ikke.
 
 ## Indstillinger og menuer
 
-Hver widgetmenu indeholder relevante kommandoer — synlighed, altid øverst, sekunder, analog størrelse eller datokopiformat — efterfulgt af `Arranger i gitter`, Indstillinger, Hjælp, Om og Afslut. Meddelelsesområdets menu viser alle widgets med nummer, derefter Vis alle, Skjul alle og Slå al lyd fra. Det særskilt grupperede `Arranger i gitter` følger før programkommandoerne.
+Hver widgetmenu indeholder relevante kommandoer — synlighed, altid øverst, sekunder, analog størrelse eller datokopiformat — efterfulgt af `Arranger i et gitter`, Indstillinger, Hjælp, Om og Afslut. Meddelelsesområdets menu viser alle widgets med nummer, derefter Vis alle, Skjul alle og Slå al lyd fra. Det særskilt grupperede `Arranger i et gitter` følger før programkommandoerne.
 
 Visning eller gendannelse bringer widgets foran andre vinduer uden at ændre altid øverst. CalClock sørger for mindst én synlig widget efter start. En ny start aktiverer den eksisterende instans og gendanner sidst skjulte widgets, hvis ingen er synlige. Ikonet registreres automatisk igen, når Windows Stifinder genstarter. Hvis `ClockWndMain` ikke understøtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget bevares til en anden understøttet størrelse.
 

@@ -14,7 +14,7 @@ CalClock es una aplicación nativa Win32/x86 para Windows Vista y versiones post
 - Paneles de calendario y reloj con hasta dos relojes adicionales con nombre y zonas independientes, tamaños de esfera separados, cuatro estilos de borde, color configurable, texto UTC, cero inicial y una fuente distinta por línea de texto
 - Alarmas con selección de días, indicación visual, reproducción interna de audio, repetición, comandos locales y llamadas a scripts HTTP/HTTPS
 - Señales horarias por reloj cada 1, 5, 10, 15, 20, 30 o 60 minutos; las señales coincidentes se combinan en una secuencia
-- Comando Silenciado por reloj y comando marcable Silenciar todo en el área de notificación
+- Comando Silenciar por reloj y comando marcable Silenciar todo en el área de notificación
 - Inicio automático con Windows opcional
 - Ajuste opcional a los bordes del área de trabajo al arrastrar, dentro de cinco píxeles y activado de forma predeterminada; la fijación se conserva al cambiar el tamaño
 - Sincronización NTP sin modificar el reloj del sistema Windows
