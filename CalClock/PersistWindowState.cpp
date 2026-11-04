@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.1.4
  */
 
 #define NOMINMAX
@@ -106,7 +106,8 @@ static DWORD ReadMonitorWorkAreas(MonitorWorkArea** areas, UINT* count) {
     *areas = nullptr;
     *count = 0;
     MonitorCollection collection = MonitorCollection{ nullptr, 0, ERROR_SUCCESS };
-    if (EnumDisplayMonitors(nullptr, nullptr, CollectMonitor, reinterpret_cast<LPARAM>(&collection)) && collection.count) {
+    if (EnumDisplayMonitors(nullptr, nullptr, CollectMonitor, reinterpret_cast<LPARAM>(&collection))
+            && collection.count) {
         *areas = collection.areas;
         *count = collection.count;
         return ERROR_SUCCESS;
@@ -197,7 +198,8 @@ static void InsertEdge(LONG* edges, UINT* count, LONG value) {
     ++*count;
 }
 
-/// Fits a window to the union of actual work areas, retaining spans across adjacent monitors and fixed dimensions.
+/// Fits a window to the union of actual work areas, retaining spans across adjacent monitors and fixed
+/// dimensions.
 static bool FitWindowToWorkAreas(RECT* bounds, const MonitorWorkArea* areas, UINT count, bool resizeWidth,
         bool resizeHeight, SIZE minimum = SIZE{ 0, 0 }) {
     if (!count || IsRectEmpty(bounds)) {
@@ -206,7 +208,8 @@ static bool FitWindowToWorkAreas(RECT* bounds, const MonitorWorkArea* areas, UIN
     HRGN available = CreateRectRgn(0, 0, 0, 0);
     HRGN rectangle = CreateRectRgn(0, 0, 0, 0);
     HRGN outside = CreateRectRgn(0, 0, 0, 0);
-    LONG* edges = static_cast<LONG*>(HeapAlloc(GetProcessHeap(), 0, 4 * static_cast<SIZE_T>(count) * sizeof(LONG)));
+    LONG* edges =
+        static_cast<LONG*>(HeapAlloc(GetProcessHeap(), 0, 4 * static_cast<SIZE_T>(count) * sizeof(LONG)));
     if (!available || !rectangle || !outside || !edges) {
         SetLastError(ERROR_NOT_ENOUGH_MEMORY);
         DeleteObject(available);
@@ -254,7 +257,8 @@ static bool FitWindowToWorkAreas(RECT* bounds, const MonitorWorkArea* areas, UIN
                         }
                         LONG x = ClampPosition(bounds->left, space.left, space.right - candidateWidth);
                         LONG y = ClampPosition(bounds->top, space.top, space.bottom - candidateHeight);
-                        ConsiderCandidate(RECT{ x, y, x + candidateWidth, y + candidateHeight }, *bounds, &best);
+                        ConsiderCandidate(RECT{ x, y, x + candidateWidth, y + candidateHeight }, *bounds,
+                            &best);
                     }
                 }
             }
@@ -283,7 +287,8 @@ static bool FitWindowToWorkAreas(RECT* bounds, const MonitorWorkArea* areas, UIN
     return best.found;
 }
 
-/// Compares a requested span of Unicode title text without changing case or relying on the process main window.
+/// Compares a requested span of Unicode title text without changing case or relying on the process main
+/// window.
 static bool TitleSpanEqual(const wchar_t* first, const wchar_t* second, int length) {
     for (int index = 0; index < length; ++index) {
         if (first[index] != second[index]) {
@@ -323,8 +328,8 @@ static bool TitleMatches(const wchar_t* title, const wchar_t* pattern, WindowDet
 /// Copies the complete native caption, preserving long form titles used by the original detection modes.
 static wchar_t* CopyWindowCaption(HWND window) {
     int length = GetWindowTextLengthW(window);
-    wchar_t* text =
-        static_cast<wchar_t*>(HeapAlloc(GetProcessHeap(), 0, (static_cast<SIZE_T>(length) + 1) * sizeof(wchar_t)));
+    wchar_t* text = static_cast<wchar_t*>(HeapAlloc(GetProcessHeap(), 0,
+        (static_cast<SIZE_T>(length) + 1) * sizeof(wchar_t)));
     if (!text) {
         SetLastError(ERROR_NOT_ENOUGH_MEMORY);
         return nullptr;
@@ -370,7 +375,8 @@ static RECT ConvertWorkspaceBounds(HWND window, RECT bounds, bool toScreen) {
     if (!(GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_TOOLWINDOW)) {
         MonitorWorkArea current = MonitorWorkArea{};
         if (toScreen && ReadWindowMonitorWorkArea(window, &current)) {
-            OffsetRect(&bounds, current.work.left - current.monitor.left, current.work.top - current.monitor.top);
+            OffsetRect(&bounds, current.work.left - current.monitor.left,
+                current.work.top - current.monitor.top);
             return bounds;
         }
         MonitorWorkArea* areas = nullptr;
@@ -420,14 +426,15 @@ static LONG ConstrainDimension(LONG value, LONG minimum, LONG maximum) {
 
 /// Creates a native state tracker with registry saving and Windows-selected initial bounds.
 PersistWindowState::PersistWindowState()
-    : window(nullptr), instanceMutex(nullptr), attached(false), registrationLocked(false), allowSaveMinimized(false),
-    allowSaveTopMost(false), disableSaveHeight(false), disableSavePosition(false), disableSaveSize(false),
-    disableSaveWidth(false), disableSaveWindowState(false), fixHeight(false), fixWidth(false),
-    placeOnScreenAfterLoad(true), singleInstance(false), useWindowsDefaultLocation(true), useWindowsDefaultSize(true),
-    hasState(false), applying(false), restoredShowState(false), detectionOptions(WindowDetectionOptions::Default),
-    savingOptions(PersistWindowStateSavingOptions::Registry), registryPath(nullptr), initialTitle(nullptr),
-    errorCode(ERROR_SUCCESS), errorHandler(nullptr), loadedHandler(nullptr), savedHandler(nullptr), errorContext(nullptr),
-    loadedContext(nullptr), savedContext(nullptr) {
+        : window(nullptr), instanceMutex(nullptr), attached(false), registrationLocked(false),
+        allowSaveMinimized(false), allowSaveTopMost(false), disableSaveHeight(false),
+        disableSavePosition(false), disableSaveSize(false), disableSaveWidth(false),
+        disableSaveWindowState(false), fixHeight(false), fixWidth(false), placeOnScreenAfterLoad(true),
+        singleInstance(false), useWindowsDefaultLocation(true), useWindowsDefaultSize(true), hasState(false),
+        applying(false), restoredShowState(false), detectionOptions(WindowDetectionOptions::Default),
+        savingOptions(PersistWindowStateSavingOptions::Registry), registryPath(nullptr),
+        initialTitle(nullptr), errorCode(ERROR_SUCCESS), errorHandler(nullptr), loadedHandler(nullptr),
+        savedHandler(nullptr), errorContext(nullptr), loadedContext(nullptr), savedContext(nullptr) {
     identity[0] = 0;
     instanceProperty[0] = 0;
     InitializeRegistryPath();
@@ -451,8 +458,9 @@ void PersistWindowState::InitializeRegistryPath() {
     }
     VersionResourceTranslation* translations = nullptr;
     UINT translationBytes = 0;
-    if (GetFileVersionInfoW(module, 0, bytes, information) && VerQueryValueW(information, L"\\VarFileInfo\\Translation",
-        reinterpret_cast<void**>(&translations), &translationBytes)) {
+    if (GetFileVersionInfoW(module, 0, bytes, information)
+        && VerQueryValueW(information, L"\\VarFileInfo\\Translation", reinterpret_cast<void**>(&translations),
+            &translationBytes)) {
         for (UINT index = 0; index < translationBytes / sizeof(*translations); index++) {
             wchar_t query[64];
             wchar_t* company = nullptr;
@@ -473,8 +481,10 @@ void PersistWindowState::InitializeRegistryPath() {
                     || !product[0]) {
                 continue;
             }
-            SIZE_T characters = static_cast<SIZE_T>(companyLength) + productLength + ARRAYSIZE(L"Software\\") - 1;
-            registryPath = static_cast<wchar_t*>(HeapAlloc(GetProcessHeap(), 0, characters * sizeof(wchar_t)));
+            SIZE_T characters =
+                static_cast<SIZE_T>(companyLength) + productLength + ARRAYSIZE(L"Software\\") - 1;
+            registryPath =
+                static_cast<wchar_t*>(HeapAlloc(GetProcessHeap(), 0, characters * sizeof(wchar_t)));
             if (!registryPath) {
                 ReportError(ERROR_NOT_ENOUGH_MEMORY);
                 break;
@@ -719,7 +729,8 @@ DWORD PersistWindowState::ReadValue(HKEY key, const wchar_t* suffix, DWORD type,
     if (result == ERROR_FILE_NOT_FOUND) {
         return result;
     }
-    if (result == ERROR_MORE_DATA || result == ERROR_SUCCESS && (actualType != type || actualBytes != bytes)) {
+    if (result == ERROR_MORE_DATA
+            || result == ERROR_SUCCESS && (actualType != type || actualBytes != bytes)) {
         result = ERROR_INVALID_DATA;
     }
     if (result != ERROR_SUCCESS) {
@@ -729,7 +740,8 @@ DWORD PersistWindowState::ReadValue(HKEY key, const wchar_t* suffix, DWORD type,
 }
 
 /// Writes one value identified by the form name and reports native registry failures.
-bool PersistWindowState::WriteValue(HKEY key, const wchar_t* suffix, DWORD type, const void* data, DWORD bytes) {
+bool PersistWindowState::WriteValue(HKEY key, const wchar_t* suffix, DWORD type, const void* data,
+        DWORD bytes) {
     wchar_t name[MAX_PATH + 32];
     ValueName(suffix, name);
     DWORD result = RegSetValueExW(key, name, 0, type, static_cast<const BYTE*>(data), bytes);
@@ -765,7 +777,8 @@ void PersistWindowState::ReadRegistry() {
         return;
     }
     POINT location = POINT{};
-    if (!disableSavePosition && ReadValue(key, L"Location", REG_BINARY, &location, sizeof(location)) == ERROR_SUCCESS) {
+    if (!disableSavePosition
+            && ReadValue(key, L"Location", REG_BINARY, &location, sizeof(location)) == ERROR_SUCCESS) {
         if (location.x >= -100000 && location.x <= 100000 && location.y >= -100000 && location.y <= 100000) {
             state.x = location.x;
             state.y = location.y;
@@ -808,8 +821,8 @@ void PersistWindowState::ReadRegistry() {
 void PersistWindowState::WriteRegistry() {
     HKEY key = nullptr;
     DWORD disposition = 0;
-    DWORD result = RegCreateKeyExW(HKEY_CURRENT_USER, registryPath, 0, nullptr, 0, KEY_QUERY_VALUE | KEY_SET_VALUE,
-        nullptr, &key, &disposition);
+    DWORD result = RegCreateKeyExW(HKEY_CURRENT_USER, registryPath, 0, nullptr, 0,
+        KEY_QUERY_VALUE | KEY_SET_VALUE, nullptr, &key, &disposition);
     if (result != ERROR_SUCCESS) {
         ReportError(result);
         return;
@@ -961,8 +974,8 @@ void PersistWindowState::UnregisterForm() {
 
 /// Reads Windows-selected bounds without displaying or activating the temporary native window.
 bool PersistWindowState::ReadWindowsDefaultBounds(int width, int height, RECT* bounds) {
-    HWND positionWindow = CreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_OVERLAPPED, CW_USEDEFAULT, CW_USEDEFAULT,
-        width, height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
+    HWND positionWindow = CreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_OVERLAPPED, CW_USEDEFAULT,
+        CW_USEDEFAULT, width, height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
     if (!positionWindow) {
         return false;
     }
@@ -1088,8 +1101,8 @@ bool PersistWindowState::Attach(HWND target, const char* formIdentity) {
         UINT count = 0;
         DWORD result = ReadMonitorWorkAreas(&areas, &count);
         if (result == ERROR_SUCCESS) {
-            FitWindowToWorkAreas(&placed, areas, count, style & WS_THICKFRAME && !fixWidth,
-                style & WS_THICKFRAME && !fixHeight, SIZE{ limits.ptMinTrackSize.x, limits.ptMinTrackSize.y });
+            FitWindowToWorkAreas(&placed, areas, count, style & WS_THICKFRAME && !fixWidth, style
+                & WS_THICKFRAME && !fixHeight, SIZE{ limits.ptMinTrackSize.x, limits.ptMinTrackSize.y });
             HeapFree(GetProcessHeap(), 0, areas);
         } else {
             ReportError(result);
@@ -1115,7 +1128,8 @@ bool PersistWindowState::Attach(HWND target, const char* formIdentity) {
             native.showCmd = !visible ? SW_HIDE : initialMinimized ? SW_SHOWMINNOACTIVE : SW_SHOWMAXIMIZED;
             positioned = SetWindowPlacement(window, &native) != FALSE;
             if (positioned && allowSaveTopMost) {
-                positioned = SetWindowPos(window, after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE) != FALSE;
+                positioned = SetWindowPos(window, after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE)
+                    != FALSE;
             }
         }
     } else {
