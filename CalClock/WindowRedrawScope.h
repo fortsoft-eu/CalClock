@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.1.5
  */
 
 #pragma once
@@ -36,14 +36,14 @@ public:
     /// Disables redraw only when target is a valid, currently visible window.
     explicit WindowRedrawScope(HWND target);
 
-    /// Reenables redraw and refreshes the target, presenting a composited subtree only after painting is complete.
+    /// Reenables redraw if the target still exists and invalidates its frame and child controls.
     ~WindowRedrawScope();
 
     /// Prevents copying responsibility for restoring window redraw.
-    WindowRedrawScope(const WindowRedrawScope& other) = delete;
+    WindowRedrawScope(const WindowRedrawScope&) = delete;
 
     /// Prevents copying responsibility for restoring window redraw.
-    WindowRedrawScope& operator=(const WindowRedrawScope& other) = delete;
+    WindowRedrawScope& operator=(const WindowRedrawScope&) = delete;
 
 private:
     HWND window = nullptr;
