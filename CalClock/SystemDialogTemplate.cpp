@@ -21,29 +21,68 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.2
+ * Last modified for version 1.7.1.3
  */
 
 #include "SystemDialogTemplate.h"
-#include <cwchar>
 
-/// Signature used to resolve the optional GetDpiForWindow export without a static import.
+/// Native monitor handle hidden by SDK headers while targeting Windows NT 4.0.
+#if WINVER < 0x0500 && !defined(HMONITOR_DECLARED)
+#define HMONITOR_DECLARED
+DECLARE_HANDLE(HMONITOR);
+#endif
+
+/// Signatures used to resolve optional window and monitor DPI exports without static imports.
 typedef UINT(WINAPI* GetDpiForWindowProc)(HWND window);
+typedef HMONITOR(WINAPI* MonitorFromWindowProc)(HWND window, DWORD flags);
+typedef HRESULT(WINAPI* GetDpiForMonitorProc)(HMONITOR monitor, int type, UINT* dpiX, UINT* dpiY);
 
 /// Byte lengths of the fixed extended-dialog header and extended font attributes.
 static const SIZE_T EXTENDED_DIALOG_HEADER_SIZE = 26;
 static const SIZE_T EXTENDED_FONT_HEADER_SIZE = 6;
 
-/// Returns window DPI when supported, otherwise device-context DPI; a null window uses the screen DC.
+/// System library names and native monitor-DPI query options.
+static const wchar_t USER_LIBRARY_NAME[] = L"user32.dll";
+static const wchar_t SHCORE_LIBRARY_SUFFIX[] = L"\\shcore.dll";
+static const DWORD NEAREST_WINDOW_MONITOR = 0x00000002;
+static const int EFFECTIVE_MONITOR_DPI = 0;
+
+/// Returns window or monitor DPI when supported, otherwise DC DPI; a null window uses the screen DC.
 /// Returns 96 if the device context or its DPI is unavailable.
 UINT GetSystemDialogDpi(HWND window) {
-    HMODULE module = GetModuleHandleW(L"user32.dll");
+    HMODULE module = GetModuleHandleW(USER_LIBRARY_NAME);
     GetDpiForWindowProc getDpi = nullptr;
     if (module != nullptr) {
         getDpi = reinterpret_cast<GetDpiForWindowProc>(GetProcAddress(module, "GetDpiForWindow"));
     }
     if (getDpi != nullptr && window != nullptr) {
-        return getDpi(window);
+        UINT dpi = getDpi(window);
+        if (dpi != 0) {
+            return dpi;
+        }
+    }
+    MonitorFromWindowProc monitorFromWindow = module == nullptr
+        ? nullptr
+        : reinterpret_cast<MonitorFromWindowProc>(GetProcAddress(module, "MonitorFromWindow"));
+    if (window != nullptr && monitorFromWindow != nullptr) {
+        wchar_t path[MAX_PATH];
+        UINT length = GetSystemDirectoryW(path, MAX_PATH);
+        if (length != 0 && length + lstrlenW(SHCORE_LIBRARY_SUFFIX) < MAX_PATH) {
+            lstrcatW(path, SHCORE_LIBRARY_SUFFIX);
+            HMODULE scaling = LoadLibraryW(path);
+            if (scaling != nullptr) {
+                GetDpiForMonitorProc getMonitorDpi =
+                    reinterpret_cast<GetDpiForMonitorProc>(GetProcAddress(scaling, "GetDpiForMonitor"));
+                UINT dpiX = 0;
+                UINT dpiY = 0;
+                bool success = getMonitorDpi != nullptr && SUCCEEDED(getMonitorDpi(
+                    monitorFromWindow(window, NEAREST_WINDOW_MONITOR), EFFECTIVE_MONITOR_DPI, &dpiX, &dpiY));
+                FreeLibrary(scaling);
+                if (success && dpiY != 0) {
+                    return dpiY;
+                }
+            }
+        }
     }
     HDC dc = GetDC(window);
     if (dc == nullptr) {
@@ -58,8 +97,9 @@ UINT GetSystemDialogDpi(HWND window) {
 /// Returns a caller-owned font, or null if system metrics or font creation fails.
 HFONT CreateSystemDialogFont(HWND window) {
     NONCLIENTMETRICSW metrics = {};
-    metrics.cbSize = sizeof(metrics);
-    if (!SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0)) {
+    metrics.cbSize = static_cast<UINT>(FIELD_OFFSET(NONCLIENTMETRICSW, lfMessageFont)
+        + sizeof(metrics.lfMessageFont));
+    if (!SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0)) {
         return nullptr;
     }
     UINT dpi = GetSystemDialogDpi(window);
@@ -148,7 +188,7 @@ DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND 
     if (!described || points == 0 || points >= 0x7FFF) {
         return nullptr;
     }
-    SIZE_T faceBytes = (wcslen(description.lfFaceName) + 1) * sizeof(wchar_t);
+    SIZE_T faceBytes = (lstrlenW(description.lfFaceName) + 1) * sizeof(wchar_t);
     SIZE_T fontSize = EXTENDED_FONT_HEADER_SIZE + faceBytes;
     SIZE_T newControlsOffset = fontOffset + fontSize + 3 & ~static_cast<SIZE_T>(3);
     SIZE_T newSize = newControlsOffset + size - controlsOffset;

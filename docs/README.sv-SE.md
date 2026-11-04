@@ -74,9 +74,9 @@ Utseendeändringar förhandsvisas direkt på den valda widgeten. `Standardutseen
 
 Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. Egna kalenderteckensnitt stöds med Windows klassiska utseende eller när teman är avstängda för widgeten.
 
-Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller bara Inställningar, Hjälp och Om. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
+Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller bara Inställningar, Hjälp, Om och Tidskalkylator. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
-Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp och Om. Med systemets
+Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. Med systemets
 standardteckensnitt använder dessa fönster Tahoma 8 pt; ett anpassat programteckensnitt har företräde.
 Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast GDI och Ingen tillgängliga för
 teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och återställs när läget stängs
@@ -88,6 +88,34 @@ Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per w
 Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dagar behåller sin innebörd när språket ändras. Om ett alarm utan valda veckodagar aktiveras från menyn öppnas dess Alarm-flik i stället för att aktivera ett alarm som inte kan ljuda.
 
 **Inledande nolla** erbjuder **Ja** (standard), **Nej, behåll utrymme** och **Nej, utan utrymme**. **Nej, behåll utrymme** döljer nollan men reserverar dess verkliga bredd i valt teckensnitt, så att övriga siffror står still även med proportionella teckensnitt. Skärmklockor använder vit text på svart bakgrund som standard.
+
+## Tidskalkylator
+
+Öppna Tidskalkylator från en widgets meny eller menyn för ikonen i meddelandefältet. Tidsintervall beräknar
+skillnaden mellan två datum och tider. Runda värden markerar runda värden, upprepade siffror samt månatliga
+och årliga bemärkelsedagar i kalendern från vald start. Sparade datum och tider låter dig lägga till,
+redigera, sortera och ta bort datum och tider med beskrivningar. Datum och tider sparas separat i
+`%APPDATA%\FortSoft\CalClock\times.xml`. Manuell export inkluderar dem; import bevarar befintliga poster och
+hoppar bara över poster med identiskt datum, tid och fullständig beskrivning.
+
+Varje inmatning har en egen tidszon från samma lista som i Inställningar. Aktuell Windows-tidszon är standard.
+En entydig UTC-tidpunkt och visningszonen sparas. Byte av zon bevarar tidpunkten. Välj UTC-förskjutning vid en
+upprepad timme; lokala tider som inte finns kan inte sparas. Timmar mäter förfluten tid; kalenderberäkningar
+använder startzonen. Nu använder Windows systemtid utan widgetförskjutning, visad i vald zon.
+
+Import accepterar även en separat XML-fil med sparade datum och tider; posterna slås samman utan att ändra
+programmets inställningar.
+
+På fliken Markering väljer du reglerna för markering av datum i kalendern. Som standard markeras startdagen
+(nollvärden), runda värden som slutar med nollor, de första nio hela veckorna samt månads- och årsdagar.
+Upprepade siffror 1–9 (till exempel 11, 111 eller 66, 666) kan aktiveras var för sig och är avstängda som
+standard.
+
+Klicka på en kolumnrubrik för att sortera sparade poster efter den faktiska tidpunkten eller
+beskrivningstexten. Klicka igen för att vända ordningen; en pil visar riktningen.
+
+Fönstrets position, den aktiva fliken, inmatade värden och markeringsval sparas tillsammans med
+programinställningarna i registret eller XML enligt vald lagringsmetod.
 
 ## Tid och alarm
 
@@ -164,7 +192,10 @@ Alarm och tidssignal kan också växlas i snabbmenyn för widgetar med ljud. Ala
 
 ## Inställningar och menyer
 
-Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller datumkopieringsformat — följt av `Ordna i ett rutnät`, Inställningar, Hjälp, Om och Avsluta. Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat grupperade `Ordna i ett rutnät` följer före programkommandona.
+Varje widgetmeny innehåller relevanta kommandon — synlighet, alltid överst, sekunder, analog storlek eller
+datumkopieringsformat — följt av `Ordna i ett rutnät`, Tidskalkylator, Inställningar, Hjälp, Om och Avsluta.
+Meddelandefältets meny listar alla widgetar med löpnummer, sedan Visa alla, Dölj alla och Tysta alla. Separat
+grupperade `Ordna i ett rutnät` följer före programkommandona.
 
 Visning eller återställning placerar widgetar framför andra fönster utan att ändra alltid överst. CalClock säkerställer minst en synlig widget efter start. En andra start aktiverar den befintliga instansen och återställer senast dolda widgetar om ingen syns. Ikonen registreras automatiskt igen när Utforskaren startas om. Om `ClockWndMain` inte stöder sekundvisare vid vald storlek inaktiveras Sekunder, men det sparade valet behålls för en annan kompatibel storlek.
 

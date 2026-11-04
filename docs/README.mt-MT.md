@@ -58,13 +58,51 @@ Is-settings jistgħu jiġu esportati f’XML. L-importazzjoni tgħabbi u tissejv
 
 Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
 
-Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna u Dwar. Tahoma 8 pt tintuża minflok il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u ma jiġux applikati; l-għażliet issejvjati jinżammu.
+Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. Tahoma 8 pt tintuża minflok il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u ma jiġux applikati; l-għażliet issejvjati jinżammu.
+
+## Kalkulatur tal-ħin
+
+Iftaħ Kalkulatur tal-ħin mill-menu ta’ kwalunkwe widget jew mill-menu tal-ikona fiż-żona tan-notifiki.
+Intervall ta’ ħin jikkalkula d-differenza bejn żewġ dati u ħinijiet. Valuri tondi jenfasizza valuri tondi,
+ċifri ripetuti u anniversarji ta’ kull xahar u ta’ kull sena fil-kalendarju mill-bidu magħżul. Dati u ħinijiet
+issettjati minn qabel jippermetti li żżid, teditja, tordna u tħassar dati u ħinijiet b’deskrizzjoni. Id-dati u
+l-ħinijiet jiġu ssejvjati separatament f’`%APPDATA%\FortSoft\CalClock\times.xml`. L-esportazzjoni manwali
+tinkludihom; l-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess data, ħin u deskrizzjoni
+sħiħa.
+
+Kull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal fis-Settings. Il-valur prestabbilit huwa ż-żona
+attwali tal-Windows. Jiġu ssejvjati mument UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess
+mument. Għal siegħa ripetuta agħżel l-offset UTC; ħinijiet lokali li ma jeżistux ma jistgħux jiġu ssejvjati.
+Is-sigħat ikejlu l-ħin li għadda; il-kalkoli tal-kalendarju jużaw iż-żona tal-bidu. Issa juża l-ħin
+tas-sistema Windows mingħajr offset tal-widget, muri fiż-żona magħżula.
+
+L-importazzjoni taċċetta wkoll fajl XML separat bid-dati u l-ħinijiet issejvjati; tgħaqqad dawk ir-rekords
+mingħajr ma tibdel is-settings tal-applikazzjoni.
+
+Fit-tab Enfasizzar, agħżel ir-regoli biex tenfasizza d-dati fil-kalendarju. B’mod awtomatiku jiġu enfasizzati
+l-jum tal-bidu (valuri żero), il-valuri tondi li jispiċċaw b’żerijiet, l-ewwel disa’ ġimgħat sħaħ u
+l-anniversarji ta’ kull xahar u sena. Iċ-ċifri ripetuti 1–9 (pereżempju 11, 111 jew 66, 666) jistgħu jiġu
+attivati waħda waħda u huma diżattivati b’mod awtomatiku.
+
+Ikklikkja fuq l-intestatura ta’ kolonna biex tordna l-entrati ssejvjati skont il-mument reali jew it-test
+tad-deskrizzjoni. Ikklikkja mill-ġdid biex taqleb l-ordni; vleġġa turi d-direzzjoni.
+
+Il-pożizzjoni tat-tieqa, it-tab attiva, il-valuri mdaħħla u l-għażliet tal-enfasizzar jiġu ssejvjati
+mas-settings tal-applikazzjoni fir-reġistru jew f’XML, skont il-ħażna magħżula.
 
 ## Settings u menus
 
-Il-lingwa, il-font, l-anti-aliasing, il-ħażna, il-bidu mal-Windows u t-twaħħil mat-truf huma settings komuni fit-tab Applikazzjoni. Id-diżattivazzjoni tat-temi fit-tab Applikazzjoni taffettwa biss it-twieqi Settings, Għajnuna u Dwar. Kull widget juża s-setting tat-temi tiegħu stess. Mal-ewwel tnedija tintgħażel il-lingwa tal-interfaċċa tal-Windows jew l-Ingliż Amerikan jekk mhijiex appoġġjata. Il-lingwa, l-anti-aliasing u t-temi tal-widget jaffettwaw biss lilu.
+Il-lingwa, il-font, l-anti-aliasing, il-ħażna, il-bidu mal-Windows u t-twaħħil mat-truf huma settings komuni fit-tab Applikazzjoni. Id-diżattivazzjoni tat-temi fit-tab Applikazzjoni taffettwa biss it-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. Kull widget juża s-setting tat-temi tiegħu stess. Mal-ewwel tnedija tintgħażel il-lingwa tal-interfaċċa tal-Windows jew l-Ingliż Amerikan jekk mhijiex appoġġjata. Il-lingwa, l-anti-aliasing u t-temi tal-widget jaffettwaw biss lilu.
 
-Il-menu tal-widget fih l-għażliet xierqa għall-viżibbiltà, Dejjem fuq nett, sekondi, daqs u kkupjar tad-data, imbagħad Irranġa fi gradilja, Settings, Għajnuna, Dwar u Oħroġ. Il-menu tal-ikona jelenka widgets innumerati, Uri kollox, Aħbi kollox u Iddiżattiva l-ħoss kollu, imbagħad il-kmand tal-gradilja separat. Il-wiri jew ir-restawr iġib il-widget quddiem mingħajr ma jibdel Dejjem fuq nett. Tnedija oħra tirrestawra l-aħħar widgets moħbija jekk meħtieġ. Id-daqsijiet u l-appoġġ għall-id tas-sekondi jiddependu fuq Windows. Allarm u Sinjal jistgħu jinqalbu fil-menu, li juri l-ħin, l-intervall u l-jiem magħżula jekk mhijiex magħżula l-ġimgħa kollha. Iddiżattiva l-ħoss jikkorrispondi għal Ħoss diżattivat fit-tab Ġenerali. Iddiżattiva l-ħoss kollu u M isikktu l-widgets kollha; ir-ripetizzjoni tirrestawra biss dawk imsikkta minn dak il-kmand. L-attivazzjoni ta’ allarm mingħajr jum magħżul tiftaħ it-tab Allarm.
+Il-menu tal-widget fih l-għażliet xierqa għall-viżibbiltà, Dejjem fuq nett, sekondi, daqs u kkupjar tad-data,
+imbagħad Irranġa fi gradilja, Kalkulatur tal-ħin, Settings, Għajnuna, Dwar u Oħroġ. Il-menu tal-ikona jelenka
+widgets innumerati, Uri kollox, Aħbi kollox u Iddiżattiva l-ħoss kollu, imbagħad il-kmand tal-gradilja
+separat. Il-wiri jew ir-restawr iġib il-widget quddiem mingħajr ma jibdel Dejjem fuq nett. Tnedija oħra
+tirrestawra l-aħħar widgets moħbija jekk meħtieġ. Id-daqsijiet u l-appoġġ għall-id tas-sekondi jiddependu fuq
+Windows. Allarm u Sinjal jistgħu jinqalbu fil-menu, li juri l-ħin, l-intervall u l-jiem magħżula jekk mhijiex
+magħżula l-ġimgħa kollha. Iddiżattiva l-ħoss jikkorrispondi għal Ħoss diżattivat fit-tab Ġenerali. Iddiżattiva
+l-ħoss kollu u M isikktu l-widgets kollha; ir-ripetizzjoni tirrestawra biss dawk imsikkta minn dak il-kmand.
+L-attivazzjoni ta’ allarm mingħajr jum magħżul tiftaħ it-tab Allarm.
 
 ## Sinjal tal-ħin li jinstema’
 

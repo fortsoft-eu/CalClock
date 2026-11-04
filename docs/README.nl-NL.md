@@ -65,18 +65,55 @@ Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart d
 
 Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
-Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help en Info. Met het
+Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en Tijdcalculator. Met het
 standaardlettertype van het systeem gebruiken deze vensters Tahoma 8 pt; een eigen toepassingslettertype heeft
 voorrang. De licentie behoudt het lettertype met vaste tekenbreedte. In deze modus zijn alleen GDI en Geen
 beschikbaar voor lettertypevereffening: een opgeslagen ClearType-keuze gebruikt tijdelijk GDI en keert terug
 bij het uitschakelen van de modus. Als Windows zelf geen visuele stijlen gebruikt, worden beide stijlopties
 ongemarkeerd en uitgeschakeld weergegeven zonder de opgeslagen keuzes te veranderen.
 
+## Tijdcalculator
+
+Open Tijdcalculator via het menu van een widget of het pictogram in het systeemvak. Tijdsinterval berekent het
+verschil tussen twee datums en tijden. Ronde waarden markeert ronde waarden, herhaalde cijfers en maandelijkse
+en jaarlijkse gedenkdagen in de kalender vanaf het gekozen begin. Opgeslagen datums en tijden laat u datums en
+tijden met beschrijvingen toevoegen, bewerken, sorteren en verwijderen. Datums en tijden worden afzonderlijk
+opgeslagen in `%APPDATA%\FortSoft\CalClock\times.xml`. Handmatige export neemt ze op; import behoudt bestaande
+vermeldingen en slaat alleen vermeldingen met een identieke datum, tijd en volledige beschrijving over.
+
+Elke invoer heeft een eigen tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de
+standaard. Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt het
+tijdstip. Kies bij een herhaald uur de UTC-afwijking; niet-bestaande lokale tijden kunnen niet worden
+opgeslagen. Uren meten verstreken tijd; kalenderberekeningen gebruiken de beginzone. Nu gebruikt de
+Windows-systeemtijd zonder widgetafwijking, weergegeven in de gekozen zone.
+
+Import accepteert ook een afzonderlijk XML-bestand met opgeslagen datums en tijden; deze gegevens worden
+samengevoegd zonder de toepassingsinstellingen te wijzigen.
+
+Op het tabblad Markering kiest u de regels voor het markeren van datums in de kalender. Standaard worden de
+begindag (nulwaarden), ronde waarden die eindigen op nullen, de eerste negen volle weken en maandelijkse en
+jaarlijkse herdenkingsdagen gemarkeerd. Herhaalde cijfers 1–9 (bijvoorbeeld 11, 111 of 66, 666) kunnen
+afzonderlijk worden ingeschakeld en staan standaard uit.
+
+Klik op een kolomkop om opgeslagen gegevens op het werkelijke tijdstip of de beschrijvingstekst te sorteren.
+Klik nogmaals om de volgorde om te keren; een pijl geeft de richting aan.
+
+De vensterpositie, het actieve tabblad, ingevoerde waarden en markeringskeuzes worden samen met de
+toepassingsinstellingen in het register of XML opgeslagen, afhankelijk van de gekozen opslagmethode.
+
 ## Instellingen en menu’s
 
-Taal, lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor Instellingen, Help en Info. Elke widget gebruikt zijn eigen thema-instelling. Bij de eerste start wordt de Windows-weergavetaal gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en thema’s gelden alleen voor die widget.
+Taal, lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor Instellingen, Help, Info en Tijdcalculator. Elke widget gebruikt zijn eigen thema-instelling. Bij de eerste start wordt de Windows-weergavetaal gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en thema’s gelden alleen voor die widget.
 
-Een widgetmenu bevat toepasselijke keuzes voor zichtbaarheid, Altijd op voorgrond, seconden, grootte en datumkopie, gevolgd door Schikken in raster, Instellingen, Help, Info en Afsluiten. Het pictogrammenu bevat genummerde widgets, Alles weergeven, Alles verbergen en Alles dempen, gevolgd door een afzonderlijke rasteropdracht. Tonen of herstellen brengt een widget naar voren zonder Altijd op voorgrond te wijzigen. Opnieuw starten herstelt zo nodig de laatst verborgen widgets. Wijzerplaatgroottes en de secondewijzer hangen van Windows af. Alarm en Signaal zijn ook in het menu te schakelen; daar staan de tijd, het interval en bij een gedeeltelijke week de actieve dagen. Dempen komt overeen met Gedempt op Algemeen. Alles dempen en M dempen elke widget; opnieuw schakelen herstelt alleen wat deze opdracht zelf dempte. Een alarm inschakelen zonder gekozen dag opent het tabblad Alarm.
+Een widgetmenu bevat toepasselijke keuzes voor zichtbaarheid, Altijd op voorgrond, seconden, grootte en
+datumkopie, gevolgd door Schikken in raster, Tijdcalculator, Instellingen, Help, Info en Afsluiten. Het
+pictogrammenu bevat genummerde widgets, Alles weergeven, Alles verbergen en Alles dempen, gevolgd door een
+afzonderlijke rasteropdracht. Tonen of herstellen brengt een widget naar voren zonder Altijd op voorgrond te
+wijzigen. Opnieuw starten herstelt zo nodig de laatst verborgen widgets. Wijzerplaatgroottes en de
+secondewijzer hangen van Windows af. Alarm en Signaal zijn ook in het menu te schakelen; daar staan de tijd,
+het interval en bij een gedeeltelijke week de actieve dagen. Dempen komt overeen met Gedempt op Algemeen.
+Alles dempen en M dempen elke widget; opnieuw schakelen herstelt alleen wat deze opdracht zelf dempte. Een
+alarm inschakelen zonder gekozen dag opent het tabblad Alarm.
 
 ## Hoorbaar tijdsignaal
 

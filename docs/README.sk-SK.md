@@ -74,15 +74,44 @@ Zmeny vzhľadu sa ihneď zobrazujú v náhľade vybraného widgetu. `Predvolený
 
 Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jednoduchý rámček má nastaviteľnú farbu; šírka je dostupná tam, kde ju widget podporuje. Priehľadné digitálne hodiny ponúkajú rovnaké štýly ako nepriehľadné. Pri písme aplikácie a kalendára neponúkajú veľkosť, pri digitálnych hodinách a textoch panela áno. Vlastné písmo kalendára sa používa pri klasickom vzhľade Windows alebo pri vypnutých motívoch widgetu.
 
-Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre Nastavenia, Pomoc a O programe. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
+Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre Nastavenia, Pomoc, O programe a Časový kalkulátor. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
 
-Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc a O programe. Pri predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a neuplatňujú sa; uložené voľby sa zachovajú.
+Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový kalkulátor. Pri predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a neuplatňujú sa; uložené voľby sa zachovajú.
 
 Jazdec **Hlasitosť zvuku** na karte Budík ovláda interne prehrávané súbory samostatne pre každý widget a zobrazuje úroveň v dB. Predvolených **−18 dB** zachováva pôvodnú úroveň súboru (**100%**). Posun doprava zosilňuje; maximum **0 dB** predstavuje približne **794%** pôvodnej amplitúdy. Ľavá krajná poloha je **−∞ dB** (ticho). Zmeny sa prejavujú aj počas testu. Zosilnenie sa týka dekódovaného zvuku vrátane WAV, MP3, WMA, AAC, M4A a FLAC, ak ich Windows podporuje. Starší spôsob prehrávania nedekódovateľných súborov, napríklad MIDI, je obmedzený na 100%.
 
 Dni budíka rešpektujú prvý deň týždňa zvolenej kultúry aplikácie. Uložené dni si pri zmene jazyka zachovávajú význam. Zapnutie budíka z ponuky bez vybraného dňa otvorí príslušnú kartu Budík namiesto zapnutia budíka, ktorý nemôže zaznieť.
 
 **Úvodná nula** ponúka **Áno** (predvolené), **Nie, ponechať miesto** a **Nie, bez miesta**. **Nie, ponechať miesto** skryje nulu a rezervuje jej skutočnú šírku v zvolenom písme, takže ostatné číslice držia pozície aj pri proporcionálnom písme. Predvolene majú hodiny na monitore biely text na čiernom pozadí.
+
+## Časový kalkulátor
+
+Časový kalkulátor otvoríte z ponuky ľubovoľného widgetu alebo ikony v oblasti oznámení. Karta Časový interval
+počíta rozdiel medzi dvoma údajmi dátumu a času. Karta Okrúhle hodnoty vyznačuje v kalendári okrúhle hodnoty,
+opakujúce sa číslice a mesačné aj ročné výročia od zvoleného začiatku. Karta Predvolené časové údaje umožňuje
+pridávať, upravovať, triediť a odstraňovať údaje s popisom. Časové údaje sa ukladajú samostatne do
+`%APPDATA%\FortSoft\CalClock\times.xml`. Ručný export ich zahŕňa; import zachová existujúce údaje a vynechá
+iba položky so zhodným dátumom, časom aj celým popisom.
+
+Každý vstup má vlastné časové pásmo z rovnakého zoznamu ako v Nastaveniach. Predvolené je aktuálne pásmo
+Windows. Ukladá sa jednoznačný okamih v UTC a pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej
+hodine vyberte posun voči UTC; neexistujúci miestny čas nemožno uložiť. Hodiny vyjadrujú skutočne uplynutý
+čas, kalendárne počty používajú pásmo začiatku. Teraz používa systémový čas Windows bez posunu widgetu,
+zobrazený vo zvolenom pásme.
+
+Import prijíma aj samostatný súbor časových údajov v XML; v tom prípade iba zlúči údaje a nastavenia aplikácie
+nezmení.
+
+Na karte Zvýraznenie si môžete vybrať pravidlá zvýrazňovania dátumov v kalendári. V predvolenom stave sa
+zvýrazňuje počiatočný deň (nulové hodnoty), okrúhle hodnoty končiace nulami, prvých deväť celých týždňov a
+mesačné aj ročné výročia. Opakujúce sa číslice 1–9 (napríklad 11, 111 alebo 66, 666) sa zapínajú jednotlivo a
+v predvolenom stave sú vypnuté.
+
+Kliknutím na hlavičku stĺpca zoradíte predvolené údaje podľa skutočného okamihu alebo podľa textu popisu.
+Ďalším kliknutím obrátite smer zoradenia, ktorý ukazuje šípka.
+
+Poloha okna, aktívna karta, zadané hodnoty a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do
+registra alebo XML podľa zvoleného úložiska.
 
 ## Čas a budíky
 
@@ -146,7 +175,10 @@ Budík a znamenie možno zapínať aj v ponuke každého widgetu so zvukom. Polo
 
 ## Nastavenia a ponuky
 
-Ponuka widgetu obsahuje príkazy platné pre daný typ — viditeľnosť, vždy navrchu, sekundy, veľkosť ručičkových hodín či formát kopírovania dátumu — a potom `Zarovnať do mriežky`, Nastavenia, Pomoc, O programe a Koniec. Ponuka oblasti oznámení uvádza widgety s poradovými číslami, potom Zobraziť všetko, Skryť všetko a Stlmiť všetko. Oddelené `Zarovnať do mriežky` nasleduje pred príkazmi aplikácie.
+Ponuka widgetu obsahuje príkazy platné pre daný typ — viditeľnosť, vždy navrchu, sekundy, veľkosť ručičkových
+hodín či formát kopírovania dátumu — a potom `Zarovnať do mriežky`, Časový kalkulátor, Nastavenia, Pomoc, O
+programe a Koniec. Ponuka oblasti oznámení uvádza widgety s poradovými číslami, potom Zobraziť všetko, Skryť
+všetko a Stlmiť všetko. Oddelené `Zarovnať do mriežky` nasleduje pred príkazmi aplikácie.
 
 Zobrazenie alebo obnovenie widgetov ich prenesie pred ostatné okná bez zmeny stavu vždy navrchu. CalClock zabezpečuje aspoň jeden viditeľný widget po spustení. Druhé spustenie aktivuje existujúcu inštanciu a, ak nič nie je viditeľné, obnoví naposledy skryté widgety. Po reštarte Prieskumníka Windows sa ikona oznámení automaticky znovu zaregistruje. Ak `ClockWndMain` nepodporuje sekundovú ručičku pri vybranej veľkosti, Sekundy sú neaktívne, ale voľba zostáva uložená pre inú podporovanú veľkosť.
 

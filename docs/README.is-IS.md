@@ -74,15 +74,45 @@ Fyrir sjálfstæð dagatöl stjórnar **Línan Í dag** í valmynd eða á Útli
 
 Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ramminn hefur stillanlegan lit; breidd má stilla þar sem græjan styður það. Gagnsæjar stafrænar klukkur bjóða sömu stíla og ógagnsæjar. Forrits- og dagatalsletur hafa ekki stærðarval, en stafrænar klukkur og spjaldtextar hafa það. Nota má sérsniðið letur í dagatali með hefðbundnu útliti Windows eða þegar slökkt er á þemum fyrir græjuna.
 
-Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það aðeins fyrir Stillingar, Hjálp og Um. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
+Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það aðeins fyrir Stillingar, Hjálp, Um og Tímareiknivél. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
 
-Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp og Um. Tahoma 8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar haldast óbreyttar.
+Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um og Tímareiknivél. Tahoma 8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar haldast óbreyttar.
 
 Sleðinn **Hljóðstyrkur** á Vekjari stjórnar innri spilun hljóðskráa fyrir hverja græju og sýnir styrk í dB. Sjálfgefið **−18 dB** varðveitir upprunalegan styrk skrárinnar (**100%**). Til hægri magnast hljóðið; hámarkið **0 dB** er um **794%** af upprunalegri sveifluvídd. Lengst til vinstri er **−∞ dB** (þögn). Breytingar virka meðan á prófun stendur. Mögnun gildir um afkóðað hljóð, þar á meðal WAV, MP3, WMA, AAC, M4A og FLAC þegar Windows styður það. Eldri spilun skráa sem ekki er hægt að afkóða, svo sem MIDI, er takmörkuð við 100%.
 
 Vikudagar vekjarans fylgja fyrsta vikudegi valinnar menningarstillingar forritsins. Vistaðir dagar halda merkingu sinni þegar tungumál breytist. Ef vekjari er virkjaður úr valmynd án valinna vikudaga opnast Vekjari-flipinn í stað þess að virkja vekjara sem getur ekki hringt.
 
 **Núll fremst** býður **Já** (sjálfgefið), **Nei, halda plássi** og **Nei, án pláss**. **Nei, halda plássi** felur núllið en tekur frá raunverulega breidd þess í völdu letri, svo að aðrir tölustafir haldi stöðu sinni líka í misbreiðu letri. Skjáklukkur nota sjálfgefið hvítan texta á svörtum bakgrunni.
+
+## Tímareiknivél
+
+Opnaðu Tímareiknivél úr valmynd hvaða græju sem er eða valmynd táknsins á tilkynningasvæðinu. Flipinn Tímabil
+reiknar mismun tveggja dagsetninga og tíma. Flipinn Sléttar tölur auðkennir sléttar tölur, endurtekna
+tölustafi og mánaðarleg og árleg tímamót í dagatalinu frá völdu upphafi. Flipinn Vistaðar dagsetningar og
+tímar gerir kleift að bæta við, breyta, raða og eyða dagsetningum og tímum með lýsingu. Dagsetningar og tímar
+eru vistaðir sérstaklega í `%APPDATA%\FortSoft\CalClock\times.xml`. Handvirkur útflutningur inniheldur þau;
+innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sömu dagsetningu, tíma og
+heildarlýsingu.
+
+Hvert inntak hefur eigið tímabelti úr sama lista og í stillingum. Núverandi tímabelti Windows er sjálfgefið.
+Vistaður er ótvíræður tímapunktur í UTC ásamt tímabelti birtingar. Breyting á tímabelti varðveitir
+tímapunktinn. Veldu UTC-hliðrun fyrir endurtekna klukkustund; ekki er hægt að vista staðartíma sem er ekki
+til. Klukkustundir mæla liðinn tíma; dagatalsútreikningar nota upphafstímabeltið. Núna notar kerfistíma
+Windows án hliðrunar græju, birtan á völdu tímabelti.
+
+Innflutningur tekur einnig við sérstakri XML-skrá með vistuðum dagsetningum og tímum; færslurnar eru
+sameinaðar án þess að stillingum forritsins sé breytt.
+
+Á flipanum Auðkenning geturðu valið reglurnar sem auðkenna dagsetningar í dagatalinu. Sjálfgefið eru
+upphafsdagurinn (núllgildi), sléttar tölur sem enda á núllum, fyrstu níu heilu vikurnar og mánaðar- og
+ársafmæli auðkennd. Hægt er að virkja endurtekna tölustafi 1–9 (til dæmis 11, 111 eða 66, 666) hvern fyrir
+sig; sjálfgefið er slökkt á þeim.
+
+Smelltu á dálkhaus til að raða vistuðum færslum eftir raunverulegu augnabliki eða lýsingartexta. Smelltu aftur
+til að snúa röðinni við; ör sýnir röðunarstefnuna.
+
+Staðsetning gluggans, virkur flipi, innslegin gildi og val á auðkenningu eru vistuð með forritsstillingum í
+skrásetningunni eða XML eftir völdum geymslumáta.
 
 ## Tími og vekjarar
 
@@ -148,7 +178,10 @@ Vekjara og tímamerki má líka kveikja og slökkva á í samhengisvalmynd hljó
 
 ## Stillingar og valmyndir
 
-Hver græjuvalmynd inniheldur viðeigandi skipanir — sýnileika, alltaf efst, sekúndur, stærð vísaklukku eða dagsetningarafritunarsnið — og síðan `Raða á hnitanet`, Stillingar, Hjálp, Um og Hætta. Tilkynningavalmyndin telur upp græjurnar með raðnúmerum og síðan Sýna allt, Fela allt og Þagga allt. Sérstaklega aðgreind skipun `Raða á hnitanet` kemur á undan forritsskipunum.
+Hver græjuvalmynd inniheldur viðeigandi skipanir — sýnileika, alltaf efst, sekúndur, stærð vísaklukku eða
+dagsetningarafritunarsnið — og síðan `Raða á hnitanet`, Tímareiknivél, Stillingar, Hjálp, Um og Hætta.
+Tilkynningavalmyndin telur upp græjurnar með raðnúmerum og síðan Sýna allt, Fela allt og Þagga allt.
+Sérstaklega aðgreind skipun `Raða á hnitanet` kemur á undan forritsskipunum.
 
 Að sýna eða endurheimta græjur færir þær fram fyrir aðra glugga án breytingar á alltaf efst. CalClock tryggir að minnst ein græja sé sýnileg eftir ræsingu. Önnur ræsing virkjar fyrirliggjandi keyrslu og endurheimtir síðast földu græjurnar ef engin er sýnileg. Tilkynningatáknið skráist sjálfkrafa aftur þegar Windows Explorer endurræsist. Ef `ClockWndMain` styður ekki sekúnduvísi í valdri stærð er Sekúndur óvirkt, en valið varðveitist fyrir aðra studda stærð.
 

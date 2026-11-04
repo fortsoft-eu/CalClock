@@ -58,13 +58,50 @@ Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parame
 
 Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
-Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas ir Apie. Vietoj numatytojo sistemos šrifto naudojamas Tahoma 8 pt; pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti pasirinkimai išlieka.
+Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Vietoj numatytojo sistemos šrifto naudojamas Tahoma 8 pt; pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti pasirinkimai išlieka.
+
+## Laiko skaičiuotuvas
+
+Atverkite Laiko skaičiuotuvą iš bet kurio valdiklio meniu arba pranešimų srities piktogramos meniu. Laiko
+intervalas skaičiuoja skirtumą tarp dviejų datų ir laikų. Apvalios reikšmės kalendoriuje paryškina apvalias
+reikšmes, pasikartojančius skaitmenis ir mėnesines bei metines sukaktis nuo pasirinktos pradžios. Išsaugotos
+datos ir laikai leidžia pridėti, redaguoti, rikiuoti ir naikinti datas bei laikus su aprašais. Datos ir laikai
+saugomi atskirai faile `%APPDATA%\FortSoft\CalClock\times.xml`. Rankinis eksportas juos įtraukia; importas
+išsaugo esamus įrašus ir praleidžia tik įrašus, kurių data, laikas ir visas aprašas yra vienodi.
+
+Kiekvienas įvesties laikas turi savo laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra
+dabartinė Windows laiko juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas
+išlieka. Pasikartojančiai valandai pasirinkite UTC poslinkį; neegzistuojančio vietinio laiko įrašyti negalima.
+Valandos matuoja praėjusį laiką, o kalendoriniai skaičiavimai naudoja pradžios juostą. Dabar naudoja Windows
+sistemos laiką be valdiklio poslinkio, rodomą pasirinktoje juostoje.
+
+Importuoti galima ir atskirą XML failą su įrašytomis datomis bei laikais; įrašai sujungiami nekeičiant
+programos nuostatų.
+
+Kortelėje Paryškinimas galite pasirinkti kalendoriaus datų paryškinimo taisykles. Pagal numatytąsias nuostatas
+paryškinama pradinė diena (nulinės reikšmės), apvalios reikšmės, kurios baigiasi nuliais, pirmosios devynios
+pilnos savaitės ir mėnesių bei metų sukaktys. Pasikartojančius skaitmenis 1–9 (pavyzdžiui, 11, 111 arba 66,
+666) galima įjungti atskirai; pagal numatytąsias nuostatas jie išjungti.
+
+Spustelėkite stulpelio antraštę, kad surikiuotumėte išsaugotus įrašus pagal tikrąjį laiko momentą arba aprašo
+tekstą. Dar kartą spustelėjus tvarka apverčiama; rodyklė nurodo kryptį.
+
+Lango padėtis, aktyvus skirtukas, įvestos reikšmės ir paryškinimo parinktys išsaugomos su programos
+parametrais registre arba XML faile pagal pasirinktą saugojimo būdą.
 
 ## Parametrai ir meniu
 
-Programos kalba, šriftas, glodinimas, saugykla, paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų išjungimas skirtuke Programa taikomas tik langams Parametrai, Žinynas ir Apie. Kiekvienas valdiklis naudoja savo temų nuostatą. Pirmą kartą parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, glodinimas ir temos taikomi tik jam.
+Programos kalba, šriftas, glodinimas, saugykla, paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų išjungimas skirtuke Programa taikomas tik langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Kiekvienas valdiklis naudoja savo temų nuostatą. Pirmą kartą parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, glodinimas ir temos taikomi tik jam.
 
-Valdiklio meniu turi jam tinkamus matomumo, Visada viršuje, sekundžių, dydžio ir datos kopijavimo pasirinkimus, po jų – Išdėstyti tinkleliu, Parametrai, Žinynas, Apie ir Išeiti. Piktogramos meniu pateikia numeruotus valdiklius, Rodyti visus, Slėpti visus ir Nutildyti visus, tada atskirą tinklelio komandą. Rodant ar atkuriant valdiklis iškeliamas į priekį nekeičiant Visada viršuje. Pakartotinis paleidimas prireikus atkuria paskutinį kartą paslėptus valdiklius. Ciferblatų dydžiai ir sekundžių rodyklė priklauso nuo „Windows“. Žadintuvas ir Signalas perjungiami ir meniu, kuris rodo laiką, intervalą bei pasirinktas dienas, jei pažymėta ne visa savaitė. Nutildyti atitinka Nutildyta skirtuke Bendra. Nutildyti visus ir M nutildo visus valdiklius; pakartojus grąžinamas garsas tik tiems, kuriuos ši komanda nutildė. Įjungus žadintuvą be pasirinktos dienos atidaromas skirtukas Žadintuvas.
+Valdiklio meniu turi jam tinkamus matomumo, Visada viršuje, sekundžių, dydžio ir datos kopijavimo
+pasirinkimus, po jų – Išdėstyti tinkleliu, Laiko skaičiuotuvas, Parametrai, Žinynas, Apie ir Išeiti.
+Piktogramos meniu pateikia numeruotus valdiklius, Rodyti visus, Slėpti visus ir Nutildyti visus, tada atskirą
+tinklelio komandą. Rodant ar atkuriant valdiklis iškeliamas į priekį nekeičiant Visada viršuje. Pakartotinis
+paleidimas prireikus atkuria paskutinį kartą paslėptus valdiklius. Ciferblatų dydžiai ir sekundžių rodyklė
+priklauso nuo „Windows“. Žadintuvas ir Signalas perjungiami ir meniu, kuris rodo laiką, intervalą bei
+pasirinktas dienas, jei pažymėta ne visa savaitė. Nutildyti atitinka Nutildyta skirtuke Bendra. Nutildyti
+visus ir M nutildo visus valdiklius; pakartojus grąžinamas garsas tik tiems, kuriuos ši komanda nutildė.
+Įjungus žadintuvą be pasirinktos dienos atidaromas skirtukas Žadintuvas.
 
 ## Garsinis laiko signalas
 

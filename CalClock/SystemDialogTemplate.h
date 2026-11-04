@@ -21,15 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.3.0
+ * Last modified for version 1.7.1.3
  */
 
 #pragma once
 
 #include <windows.h>
 
+/// Returns window or monitor DPI when supported, otherwise DC DPI; a null window uses the screen DC.
+/// Returns 96 if the device context or its DPI is unavailable.
 UINT GetSystemDialogDpi(HWND window);
+
+/// Creates the current system message font scaled from system DPI to the target window DPI.
+/// Returns a caller-owned font, or null if system metrics or font creation fails.
 HFONT CreateSystemDialogFont(HWND window);
 
-/// Uses a supplied or system font for the copied dialog template; a supplied font remains owned by the caller.
-DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner, HFONT dialogFont = nullptr);
+/// Uses a supplied or system font for the copied dialog template; a supplied font remains owned by the
+/// caller.
+DLGTEMPLATE* LoadSystemDialogTemplate(HINSTANCE instance, UINT resourceId, HWND owner,
+    HFONT dialogFont = nullptr);

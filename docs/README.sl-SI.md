@@ -52,13 +52,49 @@ Spremembe videza so takoj vidne v predogledu izbranega gradnika. `Privzeti videz
 
 Glajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja »Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.
 
-Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč in O programu. Pri privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.
+Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni kalkulator. Pri privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.
+
+## Časovni kalkulator
+
+Odprite Časovni kalkulator iz menija poljubnega gradnika ali ikone v območju za obvestila. Časovni interval
+izračuna razliko med dvema datumoma in časoma. Okrogle vrednosti v koledarju poudari okrogle vrednosti,
+ponavljajoče se števke ter mesečne in letne obletnice od izbranega začetka. Shranjeni datumi in časi omogoča
+dodajanje, urejanje, razvrščanje in brisanje datumov in časov z opisom. Datumi in časi se shranijo ločeno v
+`%APPDATA%\FortSoft\CalClock\times.xml`. Ročni izvoz jih vključuje; uvoz ohrani obstoječe vnose in preskoči
+samo vnose z enakim datumom, časom in celotnim opisom.
+
+Vsak vnos ima svoj časovni pas z istega seznama kot v Nastavitvah. Privzet je trenutni časovni pas Windows.
+Shranita se enoličen trenutek UTC in pas prikaza. Sprememba pasu ohrani trenutek. Pri ponovljeni uri izberite
+odmik UTC; neobstoječega lokalnega časa ni mogoče shraniti. Ure merijo pretečeni čas, koledarski izračuni pa
+uporabljajo začetni pas. Zdaj uporablja sistemski čas Windows brez odmika gradnika, prikazan v izbranem pasu.
+
+Uvoz sprejme tudi ločeno datoteko XML s shranjenimi datumi in časi; združi te zapise brez spreminjanja
+nastavitev aplikacije.
+
+Na zavihku Označevanje lahko izberete pravila za označevanje datumov v koledarju. Privzeto so označeni začetni
+dan (ničelne vrednosti), okrogle vrednosti, ki se končajo z ničlami, prvih devet polnih tednov ter mesečne in
+letne obletnice. Ponavljajoče se števke 1–9 (na primer 11, 111 ali 66, 666) lahko vklopite posamično; privzeto
+so izklopljene.
+
+Kliknite glavo stolpca, da shranjene podatke razvrstite po dejanskem časovnem trenutku ali besedilu opisa.
+Ponovni klik obrne vrstni red; puščica kaže smer.
+
+Položaj okna, aktivni zavihek, vnesene vrednosti in izbire označevanja se shranijo z nastavitvami programa v
+register ali XML, odvisno od izbrane shrambe.
 
 ## Nastavitve in meniji
 
-Jezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Nastavitve, Pomoč in O programu. Vsak gradnik uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj.
+Jezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Nastavitve, Pomoč, O programu in Časovni kalkulator. Vsak gradnik uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj.
 
-Meni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti in kopiranja datuma, nato Razporedi v mrežo, Nastavitve, Pomoč, O programu in Izhod. Meni ikone vsebuje oštevilčene gradnike ter Pokaži vse, Skrij vse in Izklopi ves zvok; sledi ločeni ukaz Razporedi v mrežo. Prikaz ali obnova postavi gradnik v ospredje brez spremembe Vedno na vrhu. Ponovni zagon aktivira obstoječi primerek in po potrebi obnovi nazadnje skrite gradnike. Velikosti številčnic in podpora sekundnemu kazalcu so odvisne od Windows. Budilko in Signal lahko preklopite v meniju; budilka kaže čas in pri delnem tednu izbrane dneve. Označeni Izklopi zvok ustreza možnosti Zvok izklopljen na zavihku Splošno. Izklopi ves zvok utiša vse gradnike, ob ponovitvi pa obnovi zvok samo tistim, ki jih je sam utišal. Tipka M na katerem koli gradniku naredi isto. Vklop budilke brez izbranega dneva odpre njen zavihek Budilka.
+Meni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti in kopiranja datuma, nato
+Razporedi v mrežo, Časovni kalkulator, Nastavitve, Pomoč, O programu in Izhod. Meni ikone vsebuje oštevilčene
+gradnike ter Pokaži vse, Skrij vse in Izklopi ves zvok; sledi ločeni ukaz Razporedi v mrežo. Prikaz ali obnova
+postavi gradnik v ospredje brez spremembe Vedno na vrhu. Ponovni zagon aktivira obstoječi primerek in po
+potrebi obnovi nazadnje skrite gradnike. Velikosti številčnic in podpora sekundnemu kazalcu so odvisne od
+Windows. Budilko in Signal lahko preklopite v meniju; budilka kaže čas in pri delnem tednu izbrane dneve.
+Označeni Izklopi zvok ustreza možnosti Zvok izklopljen na zavihku Splošno. Izklopi ves zvok utiša vse
+gradnike, ob ponovitvi pa obnovi zvok samo tistim, ki jih je sam utišal. Tipka M na katerem koli gradniku
+naredi isto. Vklop budilke brez izbranega dneva odpre njen zavihek Budilka.
 
 ## Zvočni časovni signal
 

@@ -74,9 +74,9 @@ Les modifications d’apparence sont immédiatement prévisualisées sur le widg
 
 Horloges numériques, calendriers et panneaux combinés partagent quatre styles de bordure. Le style simple possède une couleur configurable ; la largeur est réglable lorsque le widget la prend en charge. Les horloges numériques transparentes proposent les mêmes styles que les opaques. Les polices de calendrier personnalisées sont prises en charge avec l’apparence classique de Windows ou lorsque les thèmes sont désactivés pour le widget.
 
-La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans Application concerne uniquement Paramètres, Aide et À propos. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
+La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans Application concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
-Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide et À propos. Avec
+Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Avec
 la police système par défaut, ces fenêtres utilisent Tahoma 8 pt ; une police d’application personnalisée
 reste prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun sont proposés pour le
 lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et revient à la désactivation
@@ -88,6 +88,38 @@ Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en inte
 Les jours d’alarme suivent le premier jour de semaine de la culture sélectionnée pour l’application. Les jours enregistrés gardent leur signification après un changement de langue. Activer une alarme par le menu sans aucun jour sélectionné ouvre l’onglet Alarme correspondant au lieu d’activer une alarme incapable de se déclencher.
 
 **Zéro initial** propose **Oui** (par défaut), **Non, garder l’espace** et **Non, sans espace**. **Non, garder l’espace** masque le zéro en conservant sa largeur réelle dans la police choisie ; les autres chiffres gardent ainsi leur position même en police proportionnelle. Les horloges sur moniteur affichent par défaut du texte blanc sur fond noir.
+
+## Calculateur de temps
+
+Ouvrez Calculateur de temps depuis le menu de n’importe quel widget ou de l’icône de la zone de notification.
+L’onglet Intervalle de temps calcule la différence entre deux dates et heures. L’onglet Valeurs rondes met en
+évidence dans le calendrier les valeurs rondes, les chiffres répétés et les anniversaires mensuels et annuels
+depuis le début choisi. L’onglet Dates et heures prédéfinies permet d’ajouter, de modifier, de trier et de
+supprimer des dates et heures avec une description. Les dates et heures sont enregistrées séparément dans
+`%APPDATA%\FortSoft\CalClock\times.xml`. L’exportation manuelle les inclut ; l’importation conserve les
+entrées existantes et ignore uniquement celles dont la date, l’heure et la description complète sont
+identiques.
+
+Chaque saisie possède son fuseau horaire, choisi dans la même liste que les paramètres. Le fuseau Windows
+actuel est utilisé par défaut. Un instant UTC non ambigu et son fuseau d’affichage sont enregistrés. Changer
+de fuseau conserve l’instant. Pour une heure répétée, choisissez le décalage UTC ; une heure locale
+inexistante ne peut pas être enregistrée. Les heures mesurent le temps écoulé ; les décomptes calendaires
+utilisent le fuseau de départ. Maintenant utilise l’heure système Windows sans décalage du widget, affichée
+dans le fuseau choisi.
+
+L’import accepte aussi un fichier XML autonome de dates et heures enregistrées ; il fusionne ces données sans
+modifier les paramètres de l’application.
+
+Dans l’onglet Mise en évidence, choisissez les règles de mise en évidence des dates du calendrier. Par défaut,
+le jour de départ (valeurs nulles), les valeurs rondes se terminant par des zéros, les neuf premières semaines
+entières et les anniversaires mensuels et annuels sont mis en évidence. Les chiffres répétés de 1 à 9 (par
+exemple 11, 111 ou 66, 666) peuvent être activés séparément et sont désactivés par défaut.
+
+Cliquez sur un en-tête de colonne pour trier les données enregistrées par instant réel ou par texte de
+description. Un second clic inverse l’ordre ; une flèche indique le sens du tri.
+
+La position de la fenêtre, l’onglet actif, les valeurs saisies et les choix de mise en évidence sont
+enregistrés avec les paramètres de l’application dans le Registre ou en XML, selon le stockage choisi.
 
 ## Heure et alarmes
 
@@ -167,7 +199,11 @@ L’alarme et le signal horaire peuvent aussi être activés dans le menu contex
 
 ## Paramètres et menus
 
-Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille analogique ou format de copie de date — puis `Aligner sur une grille`, Paramètres, Aide, À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout masquer et Couper tous les sons. La commande `Aligner sur une grille`, séparée des autres groupes, précède les commandes de l’application.
+Chaque menu de widget contient les commandes adaptées au type — visibilité, premier plan, secondes, taille
+analogique ou format de copie de date — puis `Aligner sur une grille`, Calculateur de temps, Paramètres, Aide,
+À propos et Quitter. Le menu de notification énumère les widgets avec leur numéro, puis Tout afficher, Tout
+masquer et Couper tous les sons. La commande `Aligner sur une grille`, séparée des autres groupes, précède les
+commandes de l’application.
 
 Afficher ou restaurer des widgets les place devant les autres fenêtres sans modifier leur maintien au premier plan. CalClock garantit au moins un widget visible au démarrage. Un second lancement active l’instance existante et restaure les widgets masqués en dernier si aucun n’est visible. L’icône de notification est réenregistrée automatiquement après un redémarrage de l’Explorateur Windows. Si `ClockWndMain` ne prend pas en charge la trotteuse à la taille choisie, Secondes est désactivé, mais le choix reste mémorisé pour une autre taille compatible.
 

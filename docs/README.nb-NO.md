@@ -74,15 +74,43 @@ Utseendeendringer forhåndsvises straks på den valgte widgeten. `Standardutseen
 
 Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den enkle rammen har justerbar farge; rammebredde kan endres der widgeten støtter det. Gjennomsiktige digitale klokker tilbyr de samme stilene som ugjennomsiktige. Program- og kalenderskrifter utelater størrelse, mens digitale klokker og paneltekster inkluderer den. En frittstående Kalender støtter ikke alarm, tidssignal eller demping.
 
-Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder bare Innstillinger, Hjelp og Om. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
+Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp og Om. Tahoma 8 pt brukes i stedet for systemets standardskrift; en egendefinert programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk Windows-utseende vises begge temavalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene beholdes.
+Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. Tahoma 8 pt brukes i stedet for systemets standardskrift; en egendefinert programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk Windows-utseende vises begge temavalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene beholdes.
 
 **Lydvolum** på Alarm styrer internt avspilte lydfiler separat for hver widget og viser nivået i dB. Standardverdien **−18 dB** bevarer filens opprinnelige nivå (**100%**). Mot høyre forsterkes lyden; maksimum **0 dB** er omtrent **794%** av opprinnelig amplitude. Helt til venstre er **−∞ dB** (stillhet). Endringer virker under lydtesten. Forsterkning gjelder dekodet lyd, inkludert WAV, MP3, WMA, AAC, M4A og FLAC når Windows støtter dem. Eldre avspilling av filer som ikke kan dekodes, for eksempel MIDI, er begrenset til 100%.
 
 Alarmens ukedager følger første ukedag i valgt programkultur. Lagrede dager beholder betydningen ved språkbytte. Aktivering fra widgetmenyen uten valgte ukedager åpner widgetens Alarm-fane i stedet for å aktivere en alarm som ikke kan ringe.
 
 **Innledende null** tilbyr **Ja** (standard), **Nei, behold plass** og **Nei, uten plass**. **Nei, behold plass** skjuler nullen og reserverer den faktiske bredden i valgt skrift, slik at øvrige sifre beholder plasseringen også med proporsjonale skrifter. Skjermklokker bruker hvit tekst på svart bakgrunn som standard.
+
+## Tidskalkulator
+
+Åpne Tidskalkulator fra menyen til en widget eller ikonet i systemstatusfeltet. Tidsintervall beregner
+forskjellen mellom to datoer og klokkeslett. Runde verdier fremhever runde verdier, gjentatte sifre samt
+månedlige og årlige merkedager i kalenderen fra valgt start. Lagrede datoer og klokkeslett lar deg legge til,
+redigere, sortere og slette datoer og klokkeslett med beskrivelser. Datoer og klokkeslett lagres separat i
+`%APPDATA%\FortSoft\CalClock\times.xml`. Manuell eksport inkluderer dem; import bevarer eksisterende
+oppføringer og hopper bare over oppføringer med identisk dato, klokkeslett og fullstendig beskrivelse.
+
+Hver inndata har egen tidssone fra samme liste som i Innstillinger. Gjeldende Windows-tidssone er standard. Et
+entydig UTC-tidspunkt og visningssonen lagres. Bytte av sone bevarer tidspunktet. Velg UTC-forskyvningen ved
+en gjentatt time; lokale klokkeslett som ikke finnes, kan ikke lagres. Timer måler medgått tid;
+kalenderberegninger bruker startsonen. Nå bruker Windows-systemtiden uten widgetforskyvning, vist i valgt
+sone.
+
+Import godtar også en separat XML-fil med lagrede datoer og klokkeslett; oppføringene slås sammen uten å endre
+programinnstillingene.
+
+På fanen Utheving velger du reglene for utheving av datoer i kalenderen. Som standard utheves startdagen
+(nullverdier), runde verdier som slutter på nuller, de første ni hele ukene samt måneds- og årsdager.
+Gjentatte sifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres enkeltvis og er slått av som standard.
+
+Klikk på en kolonneoverskrift for å sortere lagrede oppføringer etter faktisk tidspunkt eller
+beskrivelsestekst. Klikk igjen for å snu rekkefølgen; en pil viser retningen.
+
+Vindusposisjonen, den aktive fanen, innskrevne verdier og valg av utheving lagres sammen med
+programinnstillingene i registeret eller XML, avhengig av valgt lagringsmåte.
 
 ## Tid og alarmer
 
@@ -148,7 +176,10 @@ Alarm og tidssignal kan også slås av eller på i hurtigmenyen til widgeter med
 
 ## Innstillinger og menyer
 
-Hver widgetmeny inneholder relevante kommandoer — synlighet, alltid øverst, sekunder, analog størrelse eller datokopieringsformat — etterfulgt av `Ordne i et rutenett`, Innstillinger, Hjelp, Om og Avslutt. Systemstatusmenyen viser alle widgeter med nummer, deretter Vis alle, Skjul alle og Demp alle. Den separat grupperte `Ordne i et rutenett` følger før programkommandoene.
+Hver widgetmeny inneholder relevante kommandoer — synlighet, alltid øverst, sekunder, analog størrelse eller
+datokopieringsformat — etterfulgt av `Ordne i et rutenett`, Tidskalkulator, Innstillinger, Hjelp, Om og
+Avslutt. Systemstatusmenyen viser alle widgeter med nummer, deretter Vis alle, Skjul alle og Demp alle. Den
+separat grupperte `Ordne i et rutenett` følger før programkommandoene.
 
 Visning eller gjenoppretting bringer widgeter foran andre vinduer uten å endre alltid øverst. CalClock sørger for minst én synlig widget etter oppstart. En ny oppstart aktiverer eksisterende instans og gjenoppretter sist skjulte widgeter hvis ingen er synlige. Ikonet registreres automatisk på nytt når Windows Utforsker starter på nytt. Hvis `ClockWndMain` ikke støtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget beholdes for en annen støttet størrelse.
 

@@ -74,15 +74,44 @@ Zmiany wyglądu są od razu widoczne w podglądzie wybranego widżetu. `Wygląd 
 
 Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ramka ma konfigurowalny kolor; ustawienie szerokości jest dostępne tam, gdzie widżet je obsługuje. Przezroczyste zegary cyfrowe oferują te same style co nieprzezroczyste. Czcionki aplikacji i kalendarza nie mają wyboru rozmiaru; cyfrowe i teksty panelu mają. Własne czcionki kalendarza są obsługiwane przy klasycznym wyglądzie systemu Windows lub po wyłączeniu motywów dla widżetu.
 
-Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy tylko okien Ustawienia, Pomoc i O programie. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
+Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy tylko okien Ustawienia, Pomoc, O programie i Kalkulator czasu. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
-Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc i O programie. Przy domyślnej czcionce systemowej używa Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, obie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają zachowane.
+Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie i Kalkulator czasu. Przy domyślnej czcionce systemowej używa Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, obie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają zachowane.
 
 Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzane pliki osobno dla każdego widżetu i pokazuje poziom w dB. Domyślne **−18 dB** zachowuje poziom oryginalnego pliku (**100%**). Przesunięcie w prawo wzmacnia dźwięk; maksimum **0 dB** odpowiada około **794%** pierwotnej amplitudy. Skrajnie lewa pozycja to **−∞ dB** (cisza). Zmiany działają podczas testu. Wzmocnienie dotyczy dekodowanego audio, w tym WAV, MP3, WMA, AAC, M4A i FLAC, jeśli Windows je obsługuje. Starszy sposób odtwarzania plików, których nie można dekodować, np. MIDI, jest ograniczony do 100%.
 
 Dni alarmu uwzględniają pierwszy dzień tygodnia wybranej kultury aplikacji. Zapisane dni zachowują znaczenie przy zmianie języka. Włączenie alarmu z menu bez wybranych dni otwiera kartę Alarm widżetu, zamiast włączać alarm, który nie może zabrzmieć.
 
 **Zero wiodące** oferuje **Tak** (domyślnie), **Nie, zachowaj miejsce** i **Nie, bez miejsca**. **Nie, zachowaj miejsce** ukrywa zero, rezerwując jego rzeczywistą szerokość w danej czcionce. Pozostałe cyfry zachowują pozycje również przy czcionce proporcjonalnej. Domyślnie zegary na monitorze mają biały tekst na czarnym tle.
+
+## Kalkulator czasu
+
+Otwórz Kalkulator czasu z menu dowolnego widżetu lub ikony w obszarze powiadomień. Karta Przedział czasu
+oblicza różnicę między dwiema datami i godzinami. Karta Okrągłe wartości wyróżnia w kalendarzu okrągłe
+wartości, powtarzające się cyfry oraz miesięcznice i rocznice od wybranego początku. Karta Zapisane daty i
+godziny umożliwia dodawanie, edycję, sortowanie i usuwanie dat i godzin z opisem. Daty i godziny są zapisywane
+osobno w `%APPDATA%\FortSoft\CalClock\times.xml`. Eksport ręczny je uwzględnia; import zachowuje istniejące
+wpisy i pomija tylko te z identyczną datą, godziną i pełnym opisem.
+
+Każde pole ma własną strefę czasową z tej samej listy co w Ustawieniach. Domyślna jest bieżąca strefa Windows.
+Zapisywane są jednoznaczna chwila w UTC i strefa wyświetlania. Zmiana strefy zachowuje chwilę. Dla powtórzonej
+godziny wybierz przesunięcie UTC; nieistniejącego czasu lokalnego nie można zapisać. Godziny mierzą upływ
+czasu, a obliczenia kalendarzowe używają strefy początku. Teraz używa czasu systemowego Windows bez
+przesunięcia widżetu, wyświetlanego w wybranej strefie.
+
+Import przyjmuje również osobny plik XML z zapisanymi datami i godzinami; scala te wpisy bez zmiany ustawień
+aplikacji.
+
+Na karcie Wyróżnianie można wybrać reguły wyróżniania dat w kalendarzu. Domyślnie wyróżniane są dzień
+początkowy (wartości zerowe), okrągłe wartości zakończone zerami, pierwszych dziewięć pełnych tygodni oraz
+miesięcznice i rocznice. Powtarzające się cyfry 1–9 (na przykład 11, 111 lub 66, 666) można włączać osobno;
+domyślnie są wyłączone.
+
+Kliknij nagłówek kolumny, aby posortować zapisane dane według rzeczywistego momentu lub tekstu opisu. Kolejne
+kliknięcie odwraca kolejność; strzałka wskazuje kierunek sortowania.
+
+Położenie okna, aktywna karta, wprowadzone wartości i opcje wyróżniania są zapisywane z ustawieniami aplikacji
+w rejestrze lub pliku XML, zgodnie z wybranym magazynem ustawień.
 
 ## Czas i alarmy
 
@@ -146,7 +175,10 @@ Alarm i sygnał można także przełączać w menu widżetu obsługującego dźw
 
 ## Ustawienia i menu
 
-Każde menu widżetu zawiera polecenia właściwe dla typu — widoczność, zawsze na wierzchu, sekundy, rozmiar analogowy lub format kopiowanej daty — a potem `Ułóż w siatce`, Ustawienia, Pomoc, O programie i Zakończ. Menu powiadomień wymienia widżety z numerami, a następnie Pokaż wszystkie, Ukryj wszystkie i Wycisz wszystko. Oddzielona pozycja `Ułóż w siatce` poprzedza polecenia aplikacji.
+Każde menu widżetu zawiera polecenia właściwe dla typu — widoczność, zawsze na wierzchu, sekundy, rozmiar
+analogowy lub format kopiowanej daty — a potem `Ułóż w siatce`, Kalkulator czasu, Ustawienia, Pomoc, O
+programie i Zakończ. Menu powiadomień wymienia widżety z numerami, a następnie Pokaż wszystkie, Ukryj
+wszystkie i Wycisz wszystko. Oddzielona pozycja `Ułóż w siatce` poprzedza polecenia aplikacji.
 
 Pokazanie lub przywrócenie widżetów przenosi je przed inne okna bez zmiany stanu zawsze na wierzchu. CalClock zapewnia co najmniej jeden widoczny widżet po starcie. Drugie uruchomienie aktywuje istniejącą instancję i przywraca ostatnio ukryte widżety, jeśli żaden nie jest widoczny. Po restarcie Eksploratora Windows ikona powiadomień rejestruje się automatycznie ponownie. Jeśli `ClockWndMain` nie obsługuje sekundnika w danym rozmiarze, Sekundy są nieaktywne, ale wybór pozostaje zapisany dla innego obsługiwanego rozmiaru.
 

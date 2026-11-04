@@ -74,9 +74,9 @@ Udseendeændringer vises straks som et eksempel på den valgte widget. `Standard
 
 Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har justerbar farve; rammebredde kan ændres, hvor widgeten understøtter det. Gennemsigtige digitale ure tilbyder samme stile som uigennemsigtige. Program- og kalenderskrifter har intet størrelsesvalg, mens digitale ure og paneltekster har. En indbygget kalender kan bruge en egen skrifttype med Windows klassiske udseende eller med temaer slået fra for widgeten.
 
-Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på Program gælder kun Indstillinger, Hjælp og Om. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
+Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på Program gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp og Om. Med systemets
+Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Med systemets
 standardskrifttype bruger disse vinduer Tahoma 8 pt; en brugerdefineret programskrifttype har forrang.
 Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI og Ingen tilgængelige for
 skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når tilstanden slås fra. Hvis
@@ -88,6 +88,34 @@ Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for 
 Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage bevarer deres betydning ved sprogskift. Aktivering fra menuen uden valgte ugedage åbner widgetens Alarm-fane i stedet for at aktivere en alarm, der ikke kan ringe.
 
 **Foranstillet nul** tilbyder **Ja** (standard), **Nej, bevar plads** og **Nej, uden plads**. **Nej, bevar plads** skjuler nullet, men reserverer dets faktiske bredde i den valgte skrifttype, så øvrige cifre bevarer positionen, også med proportionale skrifttyper. Skærmure bruger som standard hvid tekst på sort baggrund.
+
+## Tidsberegner
+
+Åbn Tidsberegner fra en widgets menu eller menuen for ikonet i meddelelsesområdet. Tidsinterval beregner
+forskellen mellem to datoer og tider. Runde værdier fremhæver runde værdier, gentagne cifre samt månedlige og
+årlige mærkedage i kalenderen fra den valgte start. Gemte datoer og tider giver mulighed for at tilføje,
+redigere, sortere og slette datoer og tider med beskrivelser. Datoer og tider gemmes separat i
+`%APPDATA%\FortSoft\CalClock\times.xml`. Manuel eksport medtager dem; import bevarer eksisterende poster og
+springer kun poster over med identisk dato, tid og fuld beskrivelse.
+
+Hvert input har sin egen tidszone fra samme liste som i Indstillinger. Den aktuelle Windows-tidszone er
+standard. Et entydigt UTC-tidspunkt og visningszonen gemmes. Et zoneskift bevarer tidspunktet. Vælg
+UTC-forskydningen ved en gentaget time; lokale tidspunkter, der ikke findes, kan ikke gemmes. Timer måler
+forløbet tid; kalenderberegninger bruger startzonen. Nu bruger Windows-systemtiden uden widgetforskydning,
+vist i den valgte zone.
+
+Import accepterer også en separat XML-fil med gemte datoer og klokkeslæt; posterne flettes uden at ændre
+programmets indstillinger.
+
+På fanen Fremhævning kan du vælge reglerne for fremhævning af datoer i kalenderen. Som standard fremhæves
+startdagen (nulværdier), runde værdier, der ender på nuller, de første ni hele uger samt måneds- og årsdage.
+Gentagne cifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres enkeltvis og er slået fra som standard.
+
+Klik på en kolonneoverskrift for at sortere gemte poster efter det faktiske tidspunkt eller beskrivelsens
+tekst. Klik igen for at vende rækkefølgen; en pil viser retningen.
+
+Vinduets placering, den aktive fane, indtastede værdier og fremhævningsvalg gemmes med programindstillingerne
+i registreringsdatabasen eller XML afhængigt af det valgte lager.
 
 ## Tid og alarmer
 
@@ -163,7 +191,10 @@ Alarm og tidssignal kan også slås til eller fra i genvejsmenuen for widgets me
 
 ## Indstillinger og menuer
 
-Hver widgetmenu indeholder relevante kommandoer — synlighed, altid øverst, sekunder, analog størrelse eller datokopiformat — efterfulgt af `Arranger i et gitter`, Indstillinger, Hjælp, Om og Afslut. Meddelelsesområdets menu viser alle widgets med nummer, derefter Vis alle, Skjul alle og Slå al lyd fra. Det særskilt grupperede `Arranger i et gitter` følger før programkommandoerne.
+Hver widgetmenu indeholder relevante kommandoer — synlighed, altid øverst, sekunder, analog størrelse eller
+datokopiformat — efterfulgt af `Arranger i et gitter`, Tidsberegner, Indstillinger, Hjælp, Om og Afslut.
+Meddelelsesområdets menu viser alle widgets med nummer, derefter Vis alle, Skjul alle og Slå al lyd fra. Det
+særskilt grupperede `Arranger i et gitter` følger før programkommandoerne.
 
 Visning eller gendannelse bringer widgets foran andre vinduer uden at ændre altid øverst. CalClock sørger for mindst én synlig widget efter start. En ny start aktiverer den eksisterende instans og gendanner sidst skjulte widgets, hvis ingen er synlige. Ikonet registreres automatisk igen, når Windows Stifinder genstarter. Hvis `ClockWndMain` ikke understøtter sekundviser i valgt størrelse, deaktiveres Sekunder, men valget bevares til en anden understøttet størrelse.
 

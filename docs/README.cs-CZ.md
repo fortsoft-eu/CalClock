@@ -74,9 +74,9 @@ Změny vzhledu se ihned zobrazují v náhledu vybraného widgetu. `Výchozí vzh
 
 Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly rámečku. Jednoduchý rámeček má také nastavitelnou barvu; nastavení šířky rámečku je dostupné tam, kde je vybraný widget podporuje. Průhledné digitální hodiny nabízejí stejné styly jako neprůhledné. Vlastní písmo kalendáře se používá při klasickém vzhledu Windows nebo při vypnutých motivech widgetu.
 
-Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Nastavení, Nápovědu a O programu. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
+Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Nastavení, Nápovědu, O programu a Časový kalkulátor. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
-Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu a O programu. Při
+Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu a Časový kalkulátor. Při
 výchozím systémovém písmu používají tato okna Tahomu 8 pt; vlastní aplikační písmo má přednost. Text licence
 zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování GDI nebo Žádné: uložená volba
 ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li vizuální styly vypnuté přímo ve Windows,
@@ -87,6 +87,35 @@ Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvuk
 Ovládací prvky dnů budíku respektují první den týdne používaný zvolenou kulturou aplikace. Uložené dny budíku si při změně jazyka aplikace zachovávají význam. Zapnutí budíku z nabídky widgetu bez vybraného dne v týdnu otevře kartu Budík příslušného widgetu, místo aby zapnulo budík, který nemůže zaznít.
 
 **Úvodní nula** nabízí **Ano** (výchozí), **Ne, ponechat místo** a **Ne, bez místa**. Volba **Ne, ponechat místo** skryje nulu a rezervuje její skutečnou šířku ve zvoleném písmu, takže ostatní číslice drží pozice i při proporcionálním písmu. Výchozí vzhled hodin na monitoru je bílý text na černém pozadí.
+
+## Časový kalkulátor
+
+Časový kalkulátor otevřete z nabídky libovolného widgetu nebo ikony v oznamovací oblasti. Karta Časový
+interval počítá rozdíl mezi dvěma údaji data a času. Karta Kulaté hodnoty vyznačuje v kalendáři kulaté
+hodnoty, opakující se číslice a měsíční i roční výročí od zvoleného počátku. Karta Předvolené časové údaje
+umožňuje přidávat, upravovat, řadit a mazat uložené údaje s popisem. Časové údaje se ukládají samostatně do
+`%APPDATA%\FortSoft\CalClock\times.xml`. Ruční export je zahrnuje; import zachová stávající údaje a vynechá
+pouze položky se shodným datem, časem i celým popisem.
+
+Každý vstup má vlastní časové pásmo ze stejného seznamu jako v Nastavení. Výchozí je aktuální pásmo Windows.
+Ukládá se jednoznačný okamžik v UTC a pásmo pro zobrazení. Změna pásma zachová okamžik. Při opakované hodině
+vyberte UTC offset; neexistující místní čas nelze uložit. Hodiny vyjadřují skutečně uplynulý čas, kalendářní
+počty používají pásmo počátku. Nyní používá systémový čas Windows bez offsetu widgetu, zobrazený ve zvoleném
+pásmu.
+
+Import přijímá také samostatný soubor časových údajů v XML; v tom případě pouze sloučí údaje a nastavení
+aplikace nezmění.
+
+Na kartě Zvýraznění si můžete vybrat, která pravidla zvýrazňování kalendář použije. Ve výchozím stavu se
+zvýrazňuje výchozí den (nulové hodnoty), kulaté hodnoty končící nulami, prvních devět celých týdnů a měsíční i
+roční výročí. Opakující se číslice 1–9 (například 11, 111 nebo 66, 666) se zapínají jednotlivě a ve výchozím
+stavu jsou vypnuté.
+
+Kliknutím na záhlaví sloupce seřadíte předvolené údaje podle skutečného okamžiku nebo podle textu popisu.
+Dalším kliknutím obrátíte směr řazení, který ukazuje šipka.
+
+Poloha okna, aktivní karta, zadané hodnoty a volby zvýraznění se ukládají s nastavením aplikace do registru
+nebo XML podle zvoleného úložiště.
 
 ## Čas a budíky
 
@@ -164,7 +193,11 @@ Budík i časové znamení lze zapínat také v kontextové nabídce každého w
 
 ## Nastavení a nabídky
 
-Nabídka každého widgetu obsahuje příkazy pro daný typ — viditelnost, vždy navrchu, sekundy, velikost ručičkových hodin nebo formát kopírování data — a dále `Zarovnat do mřížky`, Nastavení, Nápovědu, O programu a Konec. Nabídka oznamovací oblasti uvádí všechny widgety s pořadovými čísly a dále Zobrazit vše, Skrýt vše a Ztlumit vše. Samostatně oddělené `Zarovnat do mřížky` následuje před příkazy aplikace.
+Nabídka každého widgetu obsahuje příkazy pro daný typ — viditelnost, vždy navrchu, sekundy, velikost
+ručičkových hodin nebo formát kopírování data — a dále `Zarovnat do mřížky`, Časový kalkulátor, Nastavení,
+Nápovědu, O programu a Konec. Nabídka oznamovací oblasti uvádí všechny widgety s pořadovými čísly a dále
+Zobrazit vše, Skrýt vše a Ztlumit vše. Samostatně oddělené `Zarovnat do mřížky` následuje před příkazy
+aplikace.
 
 Zobrazení nebo obnovení widgetů je přenese před ostatní okna, aniž by změnilo jejich nastavení vždy navrchu. CalClock zajišťuje, že je po spuštění viditelný alespoň jeden widget. Druhé spuštění aktivuje již běžící instanci CalClocku a, není-li nic viditelné, obnoví naposledy skryté widgety. Po restartu Průzkumníka Windows se ikona v oznamovací oblasti automaticky znovu zaregistruje. Pokud systémový `ClockWndMain` nepodporuje při vybrané velikosti sekundovou ručičku, příkaz Sekundy je neaktivní a uložená volba se zachová pro jinou podporovanou velikost.
 

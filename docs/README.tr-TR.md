@@ -74,15 +74,45 @@ Görünüm değişiklikleri seçili araçta hemen önizlenir. `Varsayılan gör�
 
 Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaşır. Tek çizgili kenarlığın rengi de ayarlanabilir; genişlik denetimi aracın desteklediği yerlerde kullanılabilir. Saydam dijital saatlerde opak saatlerle aynı stiller bulunur. Uygulama ve takvim yazı tiplerinde boyut yoktur; dijital saatlerde ve panel metinlerinde vardır. Özel takvim yazı tipleri, Windows klasik görünümünde veya araç için temalar kapatıldığında desteklenir.
 
-Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak yalnızca Ayarlar, Yardım ve Hakkında pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
+Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
 
-Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım ve Hakkında pencerelerine uygulanır. Sistem varsayılan yazı tipi yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler korunur.
+Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerine uygulanır. Sistem varsayılan yazı tipi yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler korunur.
 
 Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her araç için ayrı ayarlar ve düzeyi dB cinsinden gösterir. Varsayılan **−18 dB**, dosyanın özgün düzeyini (**100%**) korur. Sağa taşımak sesi yükseltir; en yüksek **0 dB**, özgün genliğin yaklaşık **794%** değeridir. En sol **−∞ dB** (sessizlik) konumudur. Değişiklikler ses testi sırasında etkilidir. Yükseltme, Windows desteklediğinde WAV, MP3, WMA, AAC, M4A ve FLAC dahil çözülmüş sese uygulanır. MIDI gibi çözülemeyen dosyaların eski çalma yöntemi 100% ile sınırlıdır.
 
 Alarmın gün denetimleri seçilen uygulama kültürünün ilk hafta gününü izler. Kaydedilmiş günler dil değişince anlamlarını korur. Hiç gün seçilmeden menüden alarm açmak, çalamayacak bir alarmı etkinleştirmek yerine aracın Alarm sekmesini açar.
 
 **Baştaki sıfır**, **Evet** (varsayılan), **Hayır, yer ayır** ve **Hayır, boşluksuz** seçeneklerini sunar. **Hayır, yer ayır**, sıfırı gizler ama seçili yazı tipindeki gerçek genişliğini korur; diğer rakamlar orantılı yazı tiplerinde bile yerinde kalır. Monitör saatleri varsayılan olarak siyah zemin üzerinde beyaz metin kullanır.
+
+## Zaman hesaplayıcı
+
+Herhangi bir aracın menüsünden veya bildirim alanı simgesinin menüsünden Zaman hesaplayıcı seçeneğini açın.
+Zaman aralığı iki tarih ve saat arasındaki farkı hesaplar. Yuvarlak değerler, seçilen başlangıçtan itibaren
+yuvarlak değerleri, yinelenen rakamları ve aylık ve yıllık dönümleri takvimde vurgular. Kayıtlı tarih ve
+saatler, açıklamalı tarih ve saatleri eklemenizi, düzenlemenizi, sıralamanızı ve silmenizi sağlar. Tarih ve
+saatler ayrı olarak `%APPDATA%\FortSoft\CalClock\times.xml` dosyasına kaydedilir. Elle dışa aktarma bunları
+içerir; içe aktarma mevcut kayıtları korur ve yalnızca tarihi, saati ve açıklamasının tamamı aynı olan
+kayıtları atlar.
+
+Her girişin Ayarlar ile aynı listedeki seçeneklerden kendi saat dilimi vardır. Varsayılan, Windows’un geçerli
+saat dilimidir. Kesin bir UTC anı ve görüntüleme saat dilimi kaydedilir. Saat dilimini değiştirmek anı korur.
+Tekrarlanan saatte UTC farkını seçin; var olmayan yerel saatler kaydedilemez. Saatler geçen süreyi ölçer;
+takvim hesapları başlangıç saat dilimini kullanır. Şimdi, widget farkı olmadan Windows sistem saatini seçili
+saat diliminde gösterir.
+
+İçe aktarma, kayıtlı tarih ve saatleri içeren ayrı bir XML dosyasını da kabul eder; uygulama ayarlarını
+değiştirmeden kayıtları birleştirir.
+
+Vurgulama sekmesinde takvimdeki tarihleri vurgulamak için kullanılacak kuralları seçebilirsiniz. Varsayılan
+olarak başlangıç günü (sıfır değerleri), sıfırlarla biten yuvarlak değerler, ilk dokuz tam hafta ve aylık ve
+yıllık dönümler vurgulanır. Tekrarlanan 1–9 rakamları (örneğin 11, 111 veya 66, 666) ayrı ayrı
+etkinleştirilebilir ve varsayılan olarak kapalıdır.
+
+Kaydedilmiş kayıtları gerçek zaman noktasına veya açıklama metnine göre sıralamak için sütun başlığına
+tıklayın. Yeniden tıklamak sıralamayı tersine çevirir; ok, yönü gösterir.
+
+Pencere konumu, etkin sekme, girilen değerler ve vurgulama seçimleri, seçilen depolama seçeneğine göre
+uygulama ayarlarıyla birlikte kayıt defterine veya XML dosyasına kaydedilir.
 
 ## Saat ve alarmlar
 
@@ -149,7 +179,10 @@ Alarm ve zaman sinyali ses destekleyen araçların bağlam menüsünden de açı
 
 ## Ayarlar ve menüler
 
-Her araç menüsü türüne uygun komutları — görünürlük, her zaman üstte, saniyeler, analog boyut veya tarih kopyalama biçimi — ve ardından `Izgarada düzenle`, Ayarlar, Yardım, Hakkında ve Çıkış’ı içerir. Bildirim menüsü tüm araçları sıra numaralarıyla listeler, ardından Tümünü göster, Tümünü gizle ve Tümünü sessize al gelir. Ayrı gruptaki `Izgarada düzenle` uygulama komutlarından önce yer alır.
+Her araç menüsü türüne uygun komutları — görünürlük, her zaman üstte, saniyeler, analog boyut veya tarih
+kopyalama biçimi — ve ardından `Izgarada düzenle`, Zaman hesaplayıcı, Ayarlar, Yardım, Hakkında ve Çıkış’ı
+içerir. Bildirim menüsü tüm araçları sıra numaralarıyla listeler, ardından Tümünü göster, Tümünü gizle ve
+Tümünü sessize al gelir. Ayrı gruptaki `Izgarada düzenle` uygulama komutlarından önce yer alır.
 
 Araçları göstermek veya geri getirmek her zaman üstte durumunu değiştirmeden onları diğer pencerelerin önüne taşır. CalClock başlangıçta en az bir görünür araç sağlar. İkinci çalıştırma var olan örneği etkinleştirir ve görünür araç yoksa en son gizlenenleri geri getirir. Windows Gezgini yeniden başladığında bildirim simgesi otomatik yeniden kaydedilir. `ClockWndMain` seçili boyutta saniye ibresini desteklemiyorsa Saniyeler komutu devre dışı kalır, ancak tercih başka bir desteklenen boyut için saklanır.
 

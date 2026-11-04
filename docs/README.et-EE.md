@@ -58,13 +58,51 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
-Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker ja Teave. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused säilivad.
+Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused säilivad.
+
+## Ajakalkulaator
+
+Ava Ajakalkulaator mis tahes vidina menüüst või olekuala ikooni menüüst. Vahekaart Ajavahemik arvutab kahe
+kuupäeva ja kellaaja vahe. Vahekaart Ümmargused väärtused tõstab kalendris esile ümmargused väärtused,
+korduvad numbrid ning igakuised ja iga-aastased tähtpäevad alates valitud algusest. Vahekaart Salvestatud
+kuupäevad ja kellaajad võimaldab kirjeldusega kuupäevi ja kellaaegu lisada, muuta, sortida ja kustutada.
+Kuupäevad ja kellaajad salvestatakse eraldi faili `%APPDATA%\FortSoft\CalClock\times.xml`. Käsitsi eksport
+sisaldab neid; import säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille kuupäev, kellaaeg ja
+kogu kirjeldus on identsed.
+
+Igal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi kasutatakse Windowsi praegust
+ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja kuvamisvöönd. Vööndi muutmine säilitab ajahetke.
+Korduva tunni korral valige UTC-nihe; olematut kohalikku aega ei saa salvestada. Tunnid mõõdavad möödunud
+aega; kalendriarvutused kasutavad algusvööndit. Praegu kasutab Windowsi süsteemiaega ilma vidina nihketa,
+kuvatuna valitud vööndis.
+
+Import toetab ka eraldi XML-faili salvestatud kuupäevade ja kellaaegadega; kirjed ühendatakse rakenduse
+seadeid muutmata.
+
+Vahekaardil Esiletõstmine saate valida kalendri kuupäevade esiletõstmise reeglid. Vaikimisi tõstetakse esile
+alguspäev (nullväärtused), nullidega lõppevad ümmargused väärtused, esimesed üheksa täisnädalat ning kuu- ja
+aastapäevad. Korduvad numbrid 1–9 (näiteks 11, 111 või 66, 666) saab eraldi sisse lülitada; vaikimisi on need
+välja lülitatud.
+
+Klõpsa veerupäist, et sortida salvestatud kirjeid tegeliku ajahetke või kirjelduse teksti järgi. Uus klõps
+pöörab järjestuse ümber; nool näitab suunda.
+
+Akna asukoht, aktiivne vahekaart, sisestatud väärtused ja esiletõstmise valikud salvestatakse koos rakenduse
+sätetega registrisse või XML-faili vastavalt valitud salvestuskohale.
 
 ## Sätted ja menüüd
 
-Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine vahekaardil Rakendus mõjutab ainult aknaid Sätted, Spikker ja Teave. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat.
+Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine vahekaardil Rakendus mõjutab ainult aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat.
 
-Vidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, sekundite, suuruse ja kuupäeva kopeerimise valikud, seejärel Paiguta ruudustikku, Sätted, Spikker, Teave ja Välju. Olekuala menüü loetleb nummerdatud vidinad, Kuva kõik, Peida kõik ja Vaigista kõik ning eraldi ruudustikukäsu. Kuvamine või taastamine toob vidina ette suvandit Alati pealmine muutmata. Korduskäivitus taastab vajaduse korral viimati peidetud vidinad. Sihverplaadisuurused ja sekundiosuti tugi sõltuvad Windowsist. Äratus ja Signaal on lülitatavad ka menüüs, kus kuvatakse aeg, intervall ning osalise nädala korral aktiivsed päevad. Vaigista vastab vahekaardi Üldine valikule Vaigistatud. Vaigista kõik ja klahv M vaigistavad kõik vidinad ning järgmisel korral taastavad heli ainult neil, mille nad ise vaigistasid. Päevadeta äratuse lubamine avab vahekaardi Äratus.
+Vidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, sekundite, suuruse ja kuupäeva
+kopeerimise valikud, seejärel Paiguta ruudustikku, Ajakalkulaator, Sätted, Spikker, Teave ja Välju. Olekuala
+menüü loetleb nummerdatud vidinad, Kuva kõik, Peida kõik ja Vaigista kõik ning eraldi ruudustikukäsu. Kuvamine
+või taastamine toob vidina ette suvandit Alati pealmine muutmata. Korduskäivitus taastab vajaduse korral
+viimati peidetud vidinad. Sihverplaadisuurused ja sekundiosuti tugi sõltuvad Windowsist. Äratus ja Signaal on
+lülitatavad ka menüüs, kus kuvatakse aeg, intervall ning osalise nädala korral aktiivsed päevad. Vaigista
+vastab vahekaardi Üldine valikule Vaigistatud. Vaigista kõik ja klahv M vaigistavad kõik vidinad ning
+järgmisel korral taastavad heli ainult neil, mille nad ise vaigistasid. Päevadeta äratuse lubamine avab
+vahekaardi Äratus.
 
 ## Kuuldav ajasignaal
 

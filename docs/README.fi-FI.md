@@ -76,13 +76,43 @@ Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyl
 
 Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa vain Asetukset-, Ohje- ja Tietoja-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
 
-Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje- ja Tietoja-ikkunoita. Järjestelmän oletusfonttina käytetään Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat teemavalinnat näkyvät valitsemattomina ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
+Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja- ja Aikalaskin-ikkunoita. Järjestelmän oletusfonttina käytetään Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat teemavalinnat näkyvät valitsemattomina ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
 
 Herätyksen **Äänenvoimakkuus**-liukusäädin säätää sisäisesti toistettavia tiedostoja pienoisohjelmakohtaisesti ja näyttää tason dB-yksiköissä. Oletus **−18 dB** säilyttää tiedoston alkuperäisen tason (**100%**). Oikealle siirtäminen vahvistaa ääntä; enimmäistaso **0 dB** vastaa noin **794%** alkuperäisestä amplitudista. Vasemmassa ääriasennossa **−∞ dB** tarkoittaa hiljaisuutta. Muutokset vaikuttavat äänitestin aikana. Vahvistus koskee purettua ääntä, kuten WAV-, MP3-, WMA-, AAC-, M4A- ja FLAC-tiedostoja Windowsin tukemissa muodoissa. Vanhempi toistotapa tiedostoille, joita ei voida purkaa, kuten MIDI, rajoittuu 100%:iin.
 
 Herätyksen viikonpäivät seuraavat sovelluksen valitun kulttuurin ensimmäistä viikonpäivää. Tallennetut päivät säilyttävät merkityksensä kieltä vaihdettaessa. Jos herätys otetaan käyttöön valikosta ilman valittuja päiviä, avataan kyseisen pienoisohjelman Herätys-välilehti sen sijaan, että käyttöön tulisi herätys, joka ei voi soida.
 
 **Etunolla** tarjoaa **Kyllä** (oletus), **Ei, varaa tila** ja **Ei, ilman tilaa**. **Ei, varaa tila** piilottaa nollan mutta varaa sen todellisen leveyden valitussa fontissa, joten muut numerot pysyvät paikoillaan myös suhteellisella fontilla. Näyttökellon oletuksena on valkoinen teksti mustalla taustalla.
+
+## Aikalaskin
+
+Avaa Aikalaskin minkä tahansa pienoisohjelman valikosta tai ilmoitusalueen kuvakkeen valikosta.
+Aikaväli-välilehti laskee kahden päivämäärän ja ajan eron. Tasaluvut-välilehti korostaa kalenterissa
+tasaluvut, toistuvat numerot sekä kuukausi- ja vuosipäivät valitusta alusta. Tallennetut päivämäärät ja ajat
+-välilehti mahdollistaa päivämäärien ja aikojen lisäämisen, muokkaamisen, lajittelun ja poistamisen
+kuvauksineen. Päivämäärät ja ajat tallennetaan erikseen tiedostoon `%APPDATA%\FortSoft\CalClock\times.xml`.
+Manuaalinen vienti sisältää ne; tuonti säilyttää nykyiset merkinnät ja ohittaa vain merkinnät, joiden
+päivämäärä, aika ja koko kuvaus ovat samat.
+
+Jokaisella syötteellä on oma aikavyöhyke samasta luettelosta kuin asetuksissa. Oletuksena on Windowsin
+nykyinen aikavyöhyke. Tallennetaan yksiselitteinen UTC-ajanhetki ja näyttövyöhyke. Vyöhykkeen vaihtaminen
+säilyttää ajanhetken. Valitse UTC-poikkeama toistuvalle tunnille; olematonta paikallista aikaa ei voi
+tallentaa. Tunnit mittaavat kulunutta aikaa, ja kalenterilaskelmat käyttävät aloitusvyöhykettä. Nyt käyttää
+Windowsin järjestelmäaikaa ilman pienoisohjelman siirtymää valitulla vyöhykkeellä.
+
+Tuonti hyväksyy myös erillisen XML-tiedoston tallennetuista päivämääristä ja ajoista; tietueet yhdistetään
+sovelluksen asetuksia muuttamatta.
+
+Korostus-välilehdellä voit valita kalenterin päivämäärien korostussäännöt. Oletuksena korostetaan aloituspäivä
+(nolla-arvot), nolliin päättyvät tasaluvut, ensimmäiset yhdeksän täyttä viikkoa sekä kuukausi- ja vuosipäivät.
+Toistuvat numerot 1–9 (esimerkiksi 11, 111 tai 66, 666) voi ottaa käyttöön erikseen, ja ne ovat oletuksena
+poissa käytöstä.
+
+Napsauta sarakeotsikkoa lajitellaksesi tallennetut tiedot todellisen ajanhetken tai kuvaustekstin mukaan. Uusi
+napsautus kääntää järjestyksen; nuoli näyttää suunnan.
+
+Ikkunan sijainti, aktiivinen välilehti, syötetyt arvot ja korostusvalinnat tallennetaan sovelluksen asetusten
+mukana rekisteriin tai XML-tiedostoon valitun tallennustavan mukaan.
 
 ## Aika ja herätykset
 
@@ -150,7 +180,11 @@ Herätyksen ja aikamerkin voi vaihtaa myös ääntä tukevan pienoisohjelman pik
 
 ## Asetukset ja valikot
 
-Jokaisessa pienoisohjelmavalikossa on tyypille sopivat komennot — näkyvyys, aina päällimmäisenä, sekunnit, analoginen koko tai päivämäärän kopiointimuoto — ja sitten `Järjestä ruudukkoon`, Asetukset, Ohje, Tietoja ja Lopeta. Ilmoitusalueen valikko luettelee pienoisohjelmat järjestysnumeroineen ja tarjoaa Näytä kaikki, Piilota kaikki ja Mykistä kaikki. Erikseen ryhmitelty `Järjestä ruudukkoon` seuraa ennen sovelluksen komentoja.
+Jokaisessa pienoisohjelmavalikossa on tyypille sopivat komennot — näkyvyys, aina päällimmäisenä, sekunnit,
+analoginen koko tai päivämäärän kopiointimuoto — ja sitten `Järjestä ruudukkoon`, Aikalaskin, Asetukset, Ohje,
+Tietoja ja Lopeta. Ilmoitusalueen valikko luettelee pienoisohjelmat järjestysnumeroineen ja tarjoaa Näytä
+kaikki, Piilota kaikki ja Mykistä kaikki. Erikseen ryhmitelty `Järjestä ruudukkoon` seuraa ennen sovelluksen
+komentoja.
 
 Näyttäminen tai palauttaminen nostaa pienoisohjelmat muiden ikkunoiden eteen muuttamatta aina päällimmäisenä -asetusta. CalClock varmistaa ainakin yhden näkyvän pienoisohjelman käynnistyksen jälkeen. Toinen käynnistys aktivoi olemassa olevan sovellusinstanssin ja palauttaa viimeksi piilotetut pienoisohjelmat, jos yhtään ei näy. Ilmoituskuvake rekisteröidään automaattisesti uudelleen Resurssienhallinnan käynnistyessä uudelleen. Jos `ClockWndMain` ei tue sekuntiviisaria valitussa koossa, Sekunnit-komento poistuu käytöstä, mutta valinta säilytetään muuta tuettua kokoa varten.
 

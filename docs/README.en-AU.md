@@ -74,9 +74,9 @@ Appearance changes are previewed immediately on the selected widget. `Default ap
 
 Digital clocks, calendars, and combined panels share four border styles. The single-line style also has a configurable border colour; the border-width control is available where the selected widget supports it. Transparent digital clocks retain the same style choices as opaque ones. Custom calendar fonts are supported with the Windows classic appearance or with visual styles turned off for the widget.
 
-Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects only Settings, Help, and About. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
+Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects only Settings, Help, About, and Time Calculator. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
-Windows 2000 style requires Disable themes and applies only to Settings, Help and About. With the default
+Windows 2000 style requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the default
 system font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The licence
 keeps its monospaced font. Only GDI and None are available for font antialiasing in this mode: a saved
 ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows itself has visual
@@ -87,6 +87,35 @@ The **Audio volume** slider on the Alarm tab controls internally played audio fi
 The alarm weekday controls follow the first day of the week used by the selected application culture. Stored alarm days retain their meaning when the application language changes. Enabling an alarm from a widget menu when no weekday is selected opens that widget's Alarm tab instead of enabling an alarm that cannot run.
 
 **Leading zero** offers **Yes** (the default), **No, keep space**, and **No, without space**. **No, keep space** hides the zero while reserving its actual width in the selected font, so the other digits keep their positions even with proportional fonts. Monitor clocks default to white text on a black background.
+
+## Time Calculator
+
+Open Time Calculator from any widget menu or the notification-area icon menu. The Time interval tab calculates
+the difference between two dates and times. The Round values tab highlights round values, repeated digits, and
+monthly and yearly anniversaries in the calendar from the selected start. The Preset dates and times tab lets
+you add, edit, sort, and delete saved dates and times with descriptions. Saved dates and times are stored
+separately in `%APPDATA%\FortSoft\CalClock\times.xml`. Manual exports include them; imports preserve existing
+entries and skip only entries with an identical date, time, and complete description.
+
+Each input has its own time zone from the same list as Settings, defaulting to the current Windows time zone.
+An unambiguous UTC instant and its display zone are saved. Changing the zone preserves the instant. Choose the
+UTC offset for a repeated hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar
+counts use the starting zone. Now uses the Windows system time without a widget offset, displayed in the
+selected zone.
+
+Import also accepts a standalone XML file of saved dates and times; it merges those records without changing
+application settings.
+
+On the Highlights tab, choose which rules the calendar uses to highlight dates. By default, the starting day
+(zero values), round values ending in zeros, the first nine whole weeks, and monthly and yearly anniversaries
+are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be enabled individually and are off
+by default.
+
+Click a column header to sort presets by the actual instant or by description text. Click again to reverse the
+order; an arrow shows the direction.
+
+The window position, active tab, entered values, and highlight choices are saved with application settings in
+the registry or XML, according to the selected storage option.
 
 ## Time and alarms
 
@@ -164,7 +193,10 @@ Alarm and time-signal enablement can also be toggled in each sound-capable widge
 
 ## Settings and menus
 
-Each widget menu contains the commands applicable to that type—visibility, always-on-top state, seconds, analog size, or date-copy format—followed by `Arrange in a grid`, Settings, Help, About, and Exit. The notification-area menu lists every widget with its ordinal number, then provides Show all, Hide all, and Mute all. The separately grouped `Arrange in a grid` command follows before the application commands.
+Each widget menu contains the commands applicable to that type—visibility, always-on-top state, seconds,
+analog size, or date-copy format—followed by `Arrange in a grid`, Time Calculator, Settings, Help, About, and
+Exit. The notification-area menu lists every widget with its ordinal number, then provides Show all, Hide all,
+and Mute all. The separately grouped `Arrange in a grid` command follows before the application commands.
 
 Showing or restoring widgets brings them in front of other windows without changing their always-on-top setting. CalClock ensures that at least one widget is visible after startup. A second launch activates the existing CalClock instance and restores the widgets hidden most recently when none are visible. The notification icon is registered again automatically if Windows Explorer restarts. If the system `ClockWndMain` control does not support a second hand at the selected size, the Seconds command is disabled while the stored preference is retained for another supported size.
 

@@ -74,9 +74,9 @@ As alterações de aspeto são imediatamente pré-visualizadas no widget selecio
 
 Relógios digitais, calendários e painéis partilham quatro estilos de contorno. O estilo simples também permite escolher a cor; a largura é configurável quando o widget a suporta. Os relógios digitais transparentes oferecem os mesmos estilos que os opacos. O tamanho do tipo de letra não é selecionável para a aplicação e o calendário; é selecionável para os relógios digitais e os textos do painel. Os tipos de letra personalizados do calendário são suportados com o aspeto clássico do Windows ou com os temas desativados para o widget.
 
-Idioma da aplicação, tipo de letra da interface, suavização, armazenamento, arranque com Windows e encaixe às margens são globais e configurados em Aplicação. Desativar os temas em Aplicação afeta apenas Definições, Ajuda e Acerca de. Cada widget utiliza a sua própria definição de temas. A origem da hora também é global. Idioma do widget, suavização, estilos, fuso, desvio, alarme e sinal horário são independentes. A suavização oferece **ClearType**, **GDI** e **Nenhuma**.
+Idioma da aplicação, tipo de letra da interface, suavização, armazenamento, arranque com Windows e encaixe às margens são globais e configurados em Aplicação. Desativar os temas em Aplicação afeta apenas Definições, Ajuda, Acerca de e Calculadora de tempo. Cada widget utiliza a sua própria definição de temas. A origem da hora também é global. Idioma do widget, suavização, estilos, fuso, desvio, alarme e sinal horário são independentes. A suavização oferece **ClearType**, **GDI** e **Nenhuma**.
 
-Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda e Acerca de. Com o tipo
+Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de e Calculadora de tempo. Com o tipo
 de letra predefinido do sistema, estas janelas usam Tahoma de 8 pt; um tipo de letra personalizado da
 aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo, a suavização só oferece
 GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e é reposta ao desativar o modo. Se os
@@ -88,6 +88,36 @@ O controlo **Volume do áudio** em Alarme regula os ficheiros reproduzidos inter
 Os dias do alarme seguem o primeiro dia da semana da cultura escolhida para a aplicação. Os dias guardados conservam o significado ao mudar o idioma. Ativar pelo menu um alarme sem dias selecionados abre o respetivo separador Alarme em vez de ativar um alarme que não pode tocar.
 
 **Zero à esquerda** oferece **Sim** (predefinido), **Não, reservar espaço** e **Não, sem espaço**. **Não, reservar espaço** oculta o zero mantendo a sua largura real no tipo de letra escolhido, para que os restantes algarismos não se movam mesmo com tipos proporcionais. Os relógios no monitor usam texto branco sobre fundo preto por predefinição.
+
+## Calculadora de tempo
+
+Abra Calculadora de tempo a partir do menu de qualquer widget ou do ícone da área de notificação. O separador
+Intervalo de tempo calcula a diferença entre duas datas e horas. O separador Valores redondos destaca no
+calendário valores redondos, algarismos repetidos e aniversários mensais e anuais desde o início escolhido. O
+separador Datas e horas predefinidas permite adicionar, editar, ordenar e eliminar datas e horas com uma
+descrição. As datas e horas são guardadas separadamente em `%APPDATA%\FortSoft\CalClock\times.xml`. A
+exportação manual inclui-as; a importação mantém as entradas existentes e ignora apenas as que têm a mesma
+data, hora e descrição completa.
+
+Cada entrada tem o seu fuso horário da mesma lista das definições. O predefinido é o fuso atual do Windows.
+São guardados um instante UTC inequívoco e o fuso de apresentação. Alterar o fuso preserva o instante. Para
+uma hora repetida, escolha o desvio UTC; horas locais inexistentes não podem ser guardadas. As horas medem o
+tempo decorrido; as contagens de calendário usam o fuso inicial. Agora usa a hora do sistema Windows sem
+desvio do widget, apresentada no fuso escolhido.
+
+A importação também aceita um ficheiro XML separado de datas e horas guardadas; combina esses registos sem
+alterar as definições da aplicação.
+
+No separador Realce, escolha as regras para realçar as datas no calendário. Por predefinição, são realçados o
+dia inicial (valores zero), os valores redondos terminados em zeros, as primeiras nove semanas completas e os
+aniversários mensais e anuais. Os algarismos repetidos de 1 a 9 (por exemplo, 11, 111 ou 66, 666) podem ser
+ativados individualmente e estão desativados por predefinição.
+
+Clique no cabeçalho de uma coluna para ordenar os dados guardados pelo instante real ou pelo texto da
+descrição. Um novo clique inverte a ordem; uma seta indica o sentido.
+
+A posição da janela, o separador ativo, os valores introduzidos e as opções de realce são guardados com as
+definições da aplicação no Registo ou em XML, conforme o armazenamento escolhido.
 
 ## Hora e alarmes
 
@@ -168,7 +198,10 @@ Alarmes e sinais também podem ser ativados no menu contextual de cada widget co
 
 ## Definições e menus
 
-Cada menu contém os comandos pertinentes ao tipo — visibilidade, sempre no topo, segundos, tamanho analógico ou formato da data copiada — seguidos de `Dispor numa grelha`, Definições, Ajuda, Acerca de e Sair. O menu de notificação enumera todos os widgets com o seu número e oferece Mostrar tudo, Ocultar tudo e Silenciar tudo. `Dispor numa grelha` surge num grupo separado antes dos comandos da aplicação.
+Cada menu contém os comandos pertinentes ao tipo — visibilidade, sempre no topo, segundos, tamanho analógico
+ou formato da data copiada — seguidos de `Dispor numa grelha`, Calculadora de tempo, Definições, Ajuda, Acerca
+de e Sair. O menu de notificação enumera todos os widgets com o seu número e oferece Mostrar tudo, Ocultar
+tudo e Silenciar tudo. `Dispor numa grelha` surge num grupo separado antes dos comandos da aplicação.
 
 Mostrar ou restaurar widgets coloca-os à frente das outras janelas sem alterar o estado sempre no topo. O CalClock garante pelo menos um widget visível ao iniciar. Um segundo arranque ativa a instância existente e restaura os widgets ocultados mais recentemente se nenhum estiver visível. O ícone de notificação é registado novamente de forma automática após o reinício do Explorador do Windows. Se `ClockWndMain` não suportar ponteiro dos segundos no tamanho selecionado, Segundos fica desativado, mas a escolha é conservada para outro tamanho compatível.
 

@@ -59,13 +59,51 @@ A beállítások XML-be exportálhatók. Az importálás azonnal betölti és a 
 
 A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
 
-A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó és Névjegy ablakokra vonatkozik. A rendszer alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. A rendszer alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+
+## Időkalkulátor
+
+Az Időkalkulátort bármely minialkalmazás menüjéből vagy az értesítési területen lévő ikon menüjéből nyithatja
+meg. Az Időtartam két dátum és időpont különbségét számítja ki. A Kerek értékek a választott kezdettől
+számított kerek értékeket, ismétlődő számjegyeket, valamint havi és éves évfordulókat emeli ki a naptárban. A
+Mentett dátumok és időpontok lapon leírással ellátott időpontok adhatók hozzá, szerkeszthetők, rendezhetők és
+törölhetők. A A dátumok és időpontok külön, a `%APPDATA%\FortSoft\CalClock\times.xml` fájlba kerülnek. A kézi
+exportálás tartalmazza őket; az importálás megőrzi a meglévő bejegyzéseket, és csak az azonos dátumú, időpontú
+és teljes leírású bejegyzéseket hagyja ki.
+
+Minden bemenet saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális időzónája.
+Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása megőrzi az időpontot.
+Ismétlődő óránál válassza ki az UTC-eltolást; nem létező helyi idő nem menthető. Az órák az eltelt időt mérik,
+a naptári számítások a kezdő zónát használják. A Most a Windows rendszeridejét használja widgeteltolás nélkül,
+a választott zónában megjelenítve.
+
+Az importálás külön XML-fájlt is elfogad mentett dátumokkal és időpontokkal; a bejegyzéseket az alkalmazás
+beállításainak módosítása nélkül egyesíti.
+
+A Kiemelés lapon kiválaszthatók a naptári dátumok kiemelésének szabályai. Alapértelmezés szerint a kezdőnap
+(nulla értékek), a nullákra végződő kerek értékek, az első kilenc teljes hét, valamint a havi és éves
+évfordulók vannak kiemelve. Az ismétlődő 1–9 számjegyek (például 11, 111 vagy 66, 666) külön-külön
+bekapcsolhatók; alapértelmezés szerint ki vannak kapcsolva.
+
+Kattintson egy oszlop fejlécére a mentett adatok tényleges időpont vagy leírásszöveg szerinti rendezéséhez.
+Újabb kattintással megfordítható a sorrend; a nyíl mutatja az irányt.
+
+Az ablak helye, az aktív fül, a megadott értékek és a kiemelési beállítások az alkalmazás beállításaival
+együtt a beállításjegyzékbe vagy XML-fájlba kerülnek a választott tárolási mód szerint.
 
 ## Beállítások és menük
 
-A nyelv, betűtípus, élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás fülön. A témák kikapcsolása az Alkalmazás fülön csak a Beállítások, Súgó és Névjegy ablakokra vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows felületének nyelve, nem támogatott nyelvnél az amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek.
+A nyelv, betűtípus, élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás fülön. A témák kikapcsolása az Alkalmazás fülön csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows felületének nyelve, nem támogatott nyelvnél az amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek.
 
-A minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, másodperc-, méret- és dátummásolási választásokat, majd a Rácsba rendezés, Beállítások, Súgó, Névjegy és Kilépés parancsokat tartalmazza. Az ikon menüje számozott minialkalmazásokat, Összes megjelenítése, Összes elrejtése és Összes némítása parancsot, majd külön rácsparancsot ad. A megjelenítés vagy visszaállítás előtérbe hoz a Mindig felül módosítása nélkül. Az újabb indítás szükség esetén visszahozza a legutóbb elrejtetteket. A számlapméret és másodpercmutató a Windowstól függ. Az Ébresztés és Időjelzés a menüből is kapcsolható; az idő, intervallum és részleges hétnél a kijelölt napok is látszanak. A Némítás a Némítva állapotnak felel meg az Általános fülön. Az Összes némítása és az M mindent némít, ismételve csak az általa némított hangokat állítja vissza. Nap nélküli ébresztés engedélyezése megnyitja az Ébresztés fület.
+A minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, másodperc-, méret- és dátummásolási
+választásokat, majd a Rácsba rendezés, Időkalkulátor, Beállítások, Súgó, Névjegy és Kilépés parancsokat
+tartalmazza. Az ikon menüje számozott minialkalmazásokat, Összes megjelenítése, Összes elrejtése és Összes
+némítása parancsot, majd külön rácsparancsot ad. A megjelenítés vagy visszaállítás előtérbe hoz a Mindig felül
+módosítása nélkül. Az újabb indítás szükség esetén visszahozza a legutóbb elrejtetteket. A számlapméret és
+másodpercmutató a Windowstól függ. Az Ébresztés és Időjelzés a menüből is kapcsolható; az idő, intervallum és
+részleges hétnél a kijelölt napok is látszanak. A Némítás a Némítva állapotnak felel meg az Általános fülön.
+Az Összes némítása és az M mindent némít, ismételve csak az általa némított hangokat állítja vissza. Nap
+nélküli ébresztés engedélyezése megnyitja az Ébresztés fület.
 
 ## Hallható időjelzés
 

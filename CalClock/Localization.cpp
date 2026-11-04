@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.2
+ * Last modified for version 1.7.1.3
  */
 
 #include "Localization.h"
@@ -231,6 +231,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Ztlumit vše" },
         LocalizedText{ TXT_MUTED_LABEL, L"Zt&lumeno" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"OVLÁDÁNÍ\r\nLevým tlačítkem a tažením přesunete hodiny nebo panel. Samostatný kalendář se "
             L"přesouvá za volnou plochu. Pravým tlačítkem na widgetu nebo na ikoně v oznamovací oblasti "
             L"otevřete nabídku. Levé kliknutí na ikonu skryje právě viditelné widgety; jsou-li všechny "
@@ -319,7 +320,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Automatické XML je v %AppData%\\FortSoft\\CalClock\\settings.xml. Po úspěšném zápisu XML se "
             L"odstraní větev HKCU\\SOFTWARE\\FortSoft\\CalClock; při ukládání do registru se automatické XML "
             L"odstraní.\r\n\r\nVyhlazování písma nabízí ClearType, GDI a Žádné.\r\n\r\nStyl Windows 2000 "
-            L"vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu a O programu. Při výchozím "
+            L"vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu a Časový "
+            L"kalkulátor. Při výchozím "
             L"systémovém písmu používají tato okna Tahomu 8 pt; vlastní aplikační písmo má přednost. Text "
             L"licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování GDI nebo "
             L"Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li "
@@ -330,12 +332,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"u proporcionálního písma. Hodiny na monitoru zůstávají zarovnané na střed včetně rezervovaného "
             L"místa. Řádek UTC si zachovává vlastní zarovnání na střed.\r\n\r\nNASTAVENÍ A NABÍDKY\r\nJazyk, "
             L"písmo, vyhlazování, úložiště, spouštění s Windows a přichytávání jsou globální a nastavují se "
-            L"na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Nastavení, Nápovědu a O "
-            L"programu. Každý widget používá vlastní nastavení motivů. "
+            L"na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Časový kalkulátor, "
+            L"Nastavení, Nápovědu a O programu. Každý widget používá vlastní nastavení motivů. "
             L"Při prvním spuštění se jazyk volí podle uživatelského jazyka "
             L"Windows, neznámý jazyk se nahradí angličtinou (USA); jazyk, vyhlazování a motivy widgetu platí "
             L"jen pro něj. \r\n\r\nNabídka widgetu obsahuje příslušné volby viditelnosti, režimu navrchu, "
-            L"sekund, velikosti a kopírování data a dále Zarovnat do mřížky, Nastavení, Nápovědu, O programu "
+            L"sekund, velikosti a kopírování data a dále Zarovnat do mřížky, Časový kalkulátor, Nastavení, "
+            L"Nápovědu, O programu "
             L"a Konec. Nabídka ikony uvádí widgety s pořadovými čísly a příkazy Zobrazit vše, Skrýt vše a "
             L"Ztlumit vše. Samostatně oddělený příkaz Zarovnat do mřížky následuje za nimi. Zobrazení či "
             L"obnovení přenese widgety dopředu bez změny Vždy navrchu. Další spuštění aktivuje běžící "
@@ -417,7 +420,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"serverů NTP. NTP koriguje pouze čas zobrazovaný v CalClock; systémové hodiny Windows se nikdy "
             L"nemění. Dokud nebyl získán platný údaj, používá se systémový čas. NTP je výchozí. Automatická "
             L"sada volí podle systémové oblasti české a slovenské servery, PTB pro Evropu nebo celosvětovou "
-            L"skupinu serverů. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. Synchronizovat "
+            L"skupinu serverů. Více měření se filtruje podle síťového zpoždění a odlehlých odpovědí. "
+            L"Synchronizovat "
             L"nyní spustí nové měření okamžitě.\r\n\r\nPo synchronizaci hodiny CalClock pokračují nezávisle "
             L"na pozdějších změnách systémového času Windows. Při výpadku spojení nebo změně serverů "
             L"pokračují od poslední platné synchronizace až do získání nové odpovědi; stav se uchovává do "
@@ -438,7 +442,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Zarovnání do mřížky tento typ nepřesouvá ani s ním nepočítá. Esc hodiny skryje a zatemnění "
             L"odstraní i tehdy, když je aktivní Nastavení.\r\n\r\nNad celomonitorovými hodinami i "
             L"zatemněnými monitory se kurzor po chvíli nečinnosti skryje a při pohybu myši znovu objeví. Nad "
-            L"zmenšeným náhledem v režimu Nastavení zůstává viditelný."
+            L"zmenšeným náhledem v režimu Nastavení zůstává viditelný.\r\n\r\nČasový kalkulátor\r\nČasový "
+            L"kalkulátor otevřete z nabídky libovolného widgetu nebo ikony v oznamovací oblasti. Karta "
+            L"Časový interval počítá rozdíl mezi dvěma údaji data a času. Karta Kulaté hodnoty vyznačuje v "
+            L"kalendáři kulaté hodnoty, opakující se číslice a měsíční i roční výročí od zvoleného počátku. "
+            L"Karta Předvolené časové údaje umožňuje přidávat, upravovat, řadit a mazat uložené údaje s "
+            L"popisem. Časové údaje se ukládají samostatně do %APPDATA%\\FortSoft\\CalClock\\times.xml. "
+            L"Ruční export je zahrnuje; import zachová stávající údaje a vynechá pouze položky se shodným "
+            L"datem, časem i celým popisem.\r\n\r\nKaždý vstup má vlastní časové pásmo ze stejného seznamu "
+            L"jako v Nastavení. Výchozí je aktuální pásmo Windows. Ukládá se jednoznačný okamžik v UTC a "
+            L"pásmo pro zobrazení. Změna pásma zachová okamžik. Při opakované hodině vyberte UTC offset; "
+            L"neexistující místní čas nelze uložit. Hodiny vyjadřují skutečně uplynulý čas, kalendářní "
+            L"počty používají pásmo počátku. Nyní používá systémový čas Windows bez offsetu widgetu, "
+            L"zobrazený ve zvoleném pásmu.\r\n\r\nImport přijímá také samostatný soubor časových údajů v "
+            L"XML; v tom případě pouze sloučí údaje a nastavení aplikace nezmění.\r\n\r\nNa kartě "
+            L"Zvýraznění si můžete vybrat, která pravidla zvýrazňování kalendář použije. Ve výchozím stavu "
+            L"se zvýrazňuje výchozí den (nulové hodnoty), kulaté hodnoty končící nulami, prvních devět "
+            L"celých týdnů a měsíční i roční výročí. Opakující se číslice 1–9 (například 11, 111 nebo 66, "
+            L"666) se zapínají jednotlivě a ve výchozím stavu jsou vypnuté.\r\n\r\nKliknutím na záhlaví "
+            L"sloupce seřadíte předvolené údaje podle skutečného okamžiku nebo podle textu popisu. Dalším "
+            L"kliknutím obrátíte směr řazení, který ukazuje šipka.\r\n\r\nPoloha okna, aktivní karta, "
+            L"zadané hodnoty a volby zvýraznění se ukládají s nastavením aplikace do registru nebo XML "
+            L"podle zvoleného úložiště."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -447,6 +472,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verze:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cílová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Uložené časové údaje nelze načíst." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Časové údaje nelze uložit." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Vyberte UTC offset pro tento opakovaný místní čas." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Tento místní čas v daném pásmu neexistuje nebo pásmo není dostupné."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Časový interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Kulaté hodnoty" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Předvolené časové údaje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Zvýraznění" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Výchozí den (nulové hodnoty)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Kulaté hodnoty končící nulami" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Opakující se číslice %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvních devět celých týdnů" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Měsíční a roční výročí" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nyní" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Počátek:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Předvolba:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum a čas:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum a čas" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Popis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Popis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Upravit" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Smazat" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Vybrat vše" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Hodin:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dnů:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Týdnů:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Měsíců:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Let:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|týd.|měs.|r.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Hodiny zohledňují zadaný čas. Dny, týdny, měsíce a roky se počítají od půlnoci."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Hodnoty pro zvolený den" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Předvolba s tímto datem a časem již existuje. Pokračovat?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Smazat vybrané předvolby?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendář zvýrazňuje kulaté hodnoty, opakující se číslice a měsíční i roční výročí."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Nápověda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Navštívit web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web nelze otevřít ve výchozím prohlížeči." },
@@ -664,6 +735,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Mute all" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Muted" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
             L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
             L"notification icon to hide the currently visible widgets; when all are hidden, it restores only "
@@ -756,7 +828,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
-            L"requires Disable themes and applies only to Settings, Help and About. With the default system "
+            L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
+            L"default system "
             L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
             L"license keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
@@ -767,12 +840,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"with proportional fonts. Monitor clocks remain centered, including the reserved space. The UTC "
             L"row keeps its own center alignment.\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, "
             L"smoothing, storage, Windows startup and edge snapping are global and are configured on the "
-            L"Application tab. Disabling themes on the Application tab affects only Settings, Help, and "
-            L"About. Each widget uses its own theme setting. On first "
+            L"Application tab. Disabling themes on the Application tab affects only Time Calculator, "
+            L"Settings, Help, and About. Each widget uses its own theme setting. On first "
             L"launch, the application language follows the Windows "
             L"user-interface language, with US English as the fallback; widget language, smoothing and "
             L"themes affect that widget only. \r\n\r\nA widget menu contains the applicable visibility, "
-            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Settings, "
+            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Time "
+            L"Calculator, Settings, "
             L"Help, About and Exit. The notification-icon menu lists numbered widgets and provides Show all, "
             L"Hide all and Mute all. The separately grouped Arrange in a grid command follows. Showing or "
             L"restoring widgets brings them forward without changing Always on top. Starting CalClock again "
@@ -877,7 +951,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"position is saved. Grid arrangement ignores and does not move this widget type. Esc hides the "
             L"clock and removes blackouts even when Settings is active.\r\n\r\nThe pointer hides after a "
             L"short period of inactivity over monitor clocks and blacked-out monitors, and reappears when "
-            L"the mouse moves. It stays visible over the small preview while Settings is open."
+            L"the mouse moves. It stays visible over the small preview while Settings is open.\r\n\r\nTime "
+            L"Calculator\r\nOpen Time Calculator from any widget menu or the notification-area icon menu. "
+            L"The Time interval tab calculates the difference between two dates and times. The Round values "
+            L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
+            L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
+            L"and delete saved dates and times with descriptions. Saved dates and times are stored "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
+            L"preserve existing entries and skip only entries with an identical date, time, and complete "
+            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
+            L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
+            L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
+            L"use the starting zone. Now uses the Windows system time without a widget offset, displayed in "
+            L"the selected zone.\r\n\r\nImport also accepts a standalone XML file of saved dates and times; "
+            L"it merges those records without changing application settings.\r\n\r\nOn the Highlights tab, "
+            L"choose which rules the calendar uses to highlight dates. By default, the starting day (zero "
+            L"values), round values ending in zeros, the first nine whole weeks, and monthly and yearly "
+            L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
+            L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
+            L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
+            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
+            L"are saved with application settings in the registry or XML, according to the selected storage "
+            L"option."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -886,6 +982,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"This local time does not exist in the selected zone, or the zone is unavailable."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Time interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Round values" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Preset dates and times" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Highlights" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Starting day (zero values)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Round values ending in zeros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Repeated digit %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"First nine whole weeks" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Monthly and yearly anniversaries" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"From:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"To:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Now" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Preset:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Date and time:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Date and time" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Description:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Description" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Edit" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Delete" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Select all" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Hours:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Days:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Weeks:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Months:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Years:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|wk|mo|yr|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Hours use the specified time. Days, weeks, months, and years are counted from midnight."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Values for the selected day" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"A preset with this date and time already exists. Continue?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Delete the selected presets?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"The calendar highlights round values, repeated digits, and monthly and yearly anniversaries."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
@@ -1105,6 +1247,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Mute all" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Muted" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
             L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
             L"notification icon to hide the currently visible widgets; when all are hidden, it restores only "
@@ -1197,7 +1340,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
-            L"requires Disable themes and applies only to Settings, Help and About. With the default system "
+            L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
+            L"default system "
             L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
             L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
@@ -1208,12 +1352,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"with proportional fonts. Monitor clocks remain centred, including the reserved space. The UTC "
             L"row keeps its own centre alignment.\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, "
             L"smoothing, storage, Windows startup and edge snapping are global and are configured on the "
-            L"Application tab. Disabling themes on the Application tab affects only Settings, Help, and "
-            L"About. Each widget uses its own theme setting. On first "
+            L"Application tab. Disabling themes on the Application tab affects only Time Calculator, "
+            L"Settings, Help, and About. Each widget uses its own theme setting. On first "
             L"launch, the application language follows the Windows "
             L"user-interface language, with US English as the fallback; widget language, smoothing and "
             L"themes affect that widget only. \r\n\r\nA widget menu contains the applicable visibility, "
-            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Settings, "
+            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Time "
+            L"Calculator, Settings, "
             L"Help, About and Exit. The notification-icon menu lists numbered widgets and provides Show all, "
             L"Hide all and Mute all. The separately grouped Arrange in a grid command follows. Showing or "
             L"restoring widgets brings them forward without changing Always on top. Starting CalClock again "
@@ -1318,7 +1463,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"its position is saved. Grid arrangement ignores and does not move this widget type. Esc hides "
             L"the clock and removes blackouts even when Settings is active.\r\n\r\nThe pointer hides after a "
             L"short period of inactivity over monitor clocks and blacked-out monitors, and reappears when "
-            L"the mouse moves. It stays visible over the small preview while Settings is open."
+            L"the mouse moves. It stays visible over the small preview while Settings is open.\r\n\r\nTime "
+            L"Calculator\r\nOpen Time Calculator from any widget menu or the notification-area icon menu. "
+            L"The Time interval tab calculates the difference between two dates and times. The Round values "
+            L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
+            L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
+            L"and delete saved dates and times with descriptions. Saved dates and times are stored "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
+            L"preserve existing entries and skip only entries with an identical date, time, and complete "
+            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
+            L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
+            L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
+            L"use the starting zone. Now uses the Windows system time without a widget offset, displayed in "
+            L"the selected zone.\r\n\r\nImport also accepts a standalone XML file of saved dates and times; "
+            L"it merges those records without changing application settings.\r\n\r\nOn the Highlights tab, "
+            L"choose which rules the calendar uses to highlight dates. By default, the starting day (zero "
+            L"values), round values ending in zeros, the first nine whole weeks, and monthly and yearly "
+            L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
+            L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
+            L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
+            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
+            L"are saved with application settings in the registry or XML, according to the selected storage "
+            L"option."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1327,6 +1494,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"This local time does not exist in the selected zone, or the zone is unavailable."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Time interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Round values" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Preset dates and times" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Highlights" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Starting day (zero values)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Round values ending in zeros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Repeated digit %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"First nine whole weeks" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Monthly and yearly anniversaries" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"From:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"To:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Now" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Preset:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Date and time:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Date and time" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Description:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Description" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Edit" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Delete" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Select all" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Hours:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Days:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Weeks:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Months:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Years:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|wk|mo|yr|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Hours use the specified time. Days, weeks, months, and years are counted from midnight."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Values for the selected day" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"A preset with this date and time already exists. Continue?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Delete the selected presets?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"The calendar highlights round values, repeated digits, and monthly and yearly anniversaries."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
@@ -1546,6 +1759,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Mute all" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Muted" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"CONTROLS\r\nDrag a clock or panel with the left mouse button. Drag a standalone calendar by "
             L"its free area. Right-click a widget or notification icon for its menu. Left-click the "
             L"notification icon to hide the currently visible widgets; when all are hidden, it restores only "
@@ -1638,7 +1852,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
-            L"requires Disable themes and applies only to Settings, Help and About. With the default system "
+            L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
+            L"default system "
             L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
             L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
@@ -1649,12 +1864,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"with proportional fonts. Monitor clocks remain centred, including the reserved space. The UTC "
             L"row keeps its own centre alignment.\r\n\r\nSETTINGS AND MENUS\r\nApplication language, font, "
             L"smoothing, storage, Windows startup and edge snapping are global and are configured on the "
-            L"Application tab. Disabling themes on the Application tab affects only Settings, Help, and "
-            L"About. Each widget uses its own theme setting. On first "
+            L"Application tab. Disabling themes on the Application tab affects only Time Calculator, "
+            L"Settings, Help, and About. Each widget uses its own theme setting. On first "
             L"launch, the application language follows the Windows "
             L"user-interface language, with US English as the fallback; widget language, smoothing and "
             L"themes affect that widget only. \r\n\r\nA widget menu contains the applicable visibility, "
-            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Settings, "
+            L"always-on-top, seconds, size and date-copy choices, followed by Arrange in a grid, Time "
+            L"Calculator, Settings, "
             L"Help, About and Exit. The notification-icon menu lists numbered widgets and provides Show all, "
             L"Hide all and Mute all. The separately grouped Arrange in a grid command follows. Showing or "
             L"restoring widgets brings them forward without changing Always on top. Starting CalClock again "
@@ -1759,7 +1975,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"its position is saved. Grid arrangement ignores and does not move this widget type. Esc hides "
             L"the clock and removes blackouts even when Settings is active.\r\n\r\nThe pointer hides after a "
             L"short period of inactivity over monitor clocks and blacked-out monitors, and reappears when "
-            L"the mouse moves. It stays visible over the small preview while Settings is open."
+            L"the mouse moves. It stays visible over the small preview while Settings is open.\r\n\r\nTime "
+            L"Calculator\r\nOpen Time Calculator from any widget menu or the notification-area icon menu. "
+            L"The Time interval tab calculates the difference between two dates and times. The Round values "
+            L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
+            L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
+            L"and delete saved dates and times with descriptions. Saved dates and times are stored "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
+            L"preserve existing entries and skip only entries with an identical date, time, and complete "
+            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
+            L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
+            L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
+            L"use the starting zone. Now uses the Windows system time without a widget offset, displayed in "
+            L"the selected zone.\r\n\r\nImport also accepts a standalone XML file of saved dates and times; "
+            L"it merges those records without changing application settings.\r\n\r\nOn the Highlights tab, "
+            L"choose which rules the calendar uses to highlight dates. By default, the starting day (zero "
+            L"values), round values ending in zeros, the first nine whole weeks, and monthly and yearly "
+            L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
+            L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
+            L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
+            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
+            L"are saved with application settings in the registry or XML, according to the selected storage "
+            L"option."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1768,6 +2006,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"This local time does not exist in the selected zone, or the zone is unavailable."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Time interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Round values" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Preset dates and times" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Highlights" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Starting day (zero values)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Round values ending in zeros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Repeated digit %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"First nine whole weeks" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Monthly and yearly anniversaries" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"From:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"To:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Now" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Preset:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Date and time:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Date and time" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Description:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Description" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Edit" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Delete" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Select all" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Hours:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Days:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Weeks:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Months:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Years:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|wk|mo|yr|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Hours use the specified time. Days, weeks, months, and years are counted from midnight."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Values for the selected day" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"A preset with this date and time already exists. Continue?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Delete the selected presets?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"The calendar highlights round values, repeated digits, and monthly and yearly anniversaries."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visit %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"The website could not be opened in the default browser." },
@@ -1993,6 +2277,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Alles stummschalten" },
         LocalizedText{ TXT_MUTED_LABEL, L"Stummgesch&altet" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"BEDIENUNG\r\nZiehen Sie eine Uhr oder ein Panel mit der linken Maustaste. Einen einzelnen "
             L"Kalender ziehen Sie an seiner freien Fläche. Rechtsklick auf Widget oder Infobereichsymbol "
             L"öffnet das Menü. Linksklick auf das Symbol verbirgt die gerade sichtbaren Widgets; sind alle "
@@ -2093,7 +2378,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"entfernt HKCU\\SOFTWARE\\FortSoft\\CalClock, Registrierungsspeicherung entfernt das "
             L"automatische XML.\r\n\r\nFür die Schriftglättung stehen ClearType, GDI und Keine zur "
             L"Auswahl.\r\n\r\nWindows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für "
-            L"Einstellungen, Hilfe und Info. Bei ausgewählter Systemschrift verwenden diese Fenster Tahoma 8 "
+            L"Einstellungen, Hilfe, Info und Zeitrechner. Bei ausgewählter Systemschrift verwenden diese "
+            L"Fenster Tahoma 8 "
             L"pt; eine eigene Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale "
             L"Schrift. In diesem Modus stehen nur GDI und Keine für die Schriftglättung zur Verfügung: Eine "
             L"gespeicherte ClearType-Auswahl verwendet vorübergehend GDI und wird beim Ausschalten "
@@ -2107,12 +2393,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"separat zentriert.\r\n\r\nEINSTELLUNGEN UND MENÜS\r\nAnwendungssprache, Schrift, Glättung, "
             L"Speicher, Windows-Start und Randeinrasten sind global und werden auf der Registerkarte "
             L"Anwendung eingestellt. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft "
-            L"nur die Fenster Einstellungen, Hilfe und Info. Jedes Widget verwendet seine eigene "
+            L"nur die Fenster Zeitrechner, Einstellungen, Hilfe und Info. Jedes Widget verwendet seine "
+            L"eigene "
             L"Design-Einstellung. Beim ersten Start folgt die Sprache der "
             L"Windows-Anzeigesprache; sonst wird US-Englisch verwendet. Widget-Sprache, Glättung und Designs "
             L"gelten nur für dieses Widget. \r\n\r\nDas Widget-Menü enthält die zutreffenden Optionen für "
             L"Sichtbarkeit, Vordergrund, Sekunden, Größe und Datumskopie sowie Im Raster anordnen, "
-            L"Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü listet nummerierte Widgets und "
+            L"Zeitrechner, Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü listet nummerierte "
+            L"Widgets und "
             L"bietet Alle anzeigen, Alle ausblenden und Alles stummschalten. Im Raster anordnen folgt als "
             L"getrennte Gruppe. Anzeigen oder Wiederherstellen bringt Widgets nach vorn, ohne Immer im "
             L"Vordergrund zu ändern. Ein erneuter Start aktiviert die laufende Instanz und stellt bei Bedarf "
@@ -2231,7 +2519,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"diesen Widget-Typ. Esc blendet Uhr und Abdunklung auch bei aktiven Einstellungen "
             L"aus.\r\n\r\nDer Mauszeiger wird über Monitoruhren und abgedunkelten Monitoren nach kurzer "
             L"Inaktivität ausgeblendet und bei Bewegung wieder angezeigt. Über der kleinen Vorschau bei "
-            L"geöffneten Einstellungen bleibt er sichtbar."
+            L"geöffneten Einstellungen bleibt er sichtbar.\r\n\r\nZeitrechner\r\nÖffnen Sie den Zeitrechner "
+            L"im Menü eines beliebigen Widgets oder des Symbols im Infobereich. Die Registerkarte "
+            L"Zeitspanne berechnet die Differenz zwischen zwei Zeitpunkten. Die Registerkarte Runde Werte "
+            L"hebt runde Werte, gleiche Ziffern sowie Monats- und Jahrestage seit dem gewählten Beginn im "
+            L"Kalender hervor. Unter Gespeicherte Zeitpunkte können Sie Zeitpunkte mit Beschreibung "
+            L"hinzufügen, bearbeiten, sortieren und löschen. Gespeicherte Zeitpunkte werden separat in "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml gespeichert. Manuelle Exporte enthalten sie; beim "
+            L"Import bleiben vorhandene Einträge erhalten. Nur Einträge mit identischem Datum, Uhrzeit und "
+            L"vollständiger Beschreibung werden übersprungen.\r\n\r\nJede Eingabe hat eine eigene Zeitzone "
+            L"aus derselben Liste wie in den Einstellungen. Standard ist die aktuelle Windows-Zeitzone. "
+            L"Gespeichert werden ein eindeutiger UTC-Zeitpunkt und seine Anzeigezone. Ein Zonenwechsel "
+            L"erhält den Zeitpunkt. Bei einer wiederholten Stunde wählen Sie den UTC-Versatz; nicht "
+            L"existierende Ortszeiten können nicht gespeichert werden. Stunden messen die verstrichene "
+            L"Zeit, Kalenderangaben verwenden die Ausgangszone. Jetzt verwendet die Windows-Systemzeit ohne "
+            L"Widget-Versatz in der gewählten Zone.\r\n\r\nDer Import akzeptiert auch eine separate "
+            L"XML-Datei mit gespeicherten Zeitangaben; dabei werden nur die Einträge zusammengeführt, ohne "
+            L"die Anwendungseinstellungen zu ändern.\r\n\r\nAuf der Registerkarte Hervorhebung wählen Sie "
+            L"die Regeln für hervorgehobene Kalenderdaten. Standardmäßig werden der Starttag (Nullwerte), "
+            L"runde Werte mit Nullen am Ende, die ersten neun vollen Wochen sowie Monats- und Jahrestage "
+            L"hervorgehoben. Wiederholte Ziffern 1–9 (zum Beispiel 11, 111 oder 66, 666) lassen sich "
+            L"einzeln aktivieren und sind standardmäßig ausgeschaltet.\r\n\r\nKlicken Sie auf eine "
+            L"Spaltenüberschrift, um gespeicherte Einträge nach dem tatsächlichen Zeitpunkt oder dem "
+            L"Beschreibungstext zu sortieren. Ein erneuter Klick kehrt die Reihenfolge um; ein Pfeil zeigt "
+            L"die Richtung.\r\n\r\nFensterposition, aktive Registerkarte, eingegebene Werte und "
+            L"Hervorhebungsoptionen werden mit den Anwendungseinstellungen je nach gewähltem Speicher in "
+            L"der Registrierung oder in XML gespeichert."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2240,6 +2553,55 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Zielplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Zeitrechner" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Gespeicherte Zeitpunkte konnten nicht gelesen werden." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Zeitpunkte konnten nicht gespeichert werden." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Wählen Sie den UTC-Versatz für diese doppelt vorkommende Ortszeit."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Diese Ortszeit existiert in der gewählten Zeitzone nicht, oder die Zone ist nicht verfügbar."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Zeitrechner" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Zeitspanne" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Runde Werte" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Gespeicherte Zeitpunkte" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Hervorhebung" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Starttag (Nullwerte)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Runde Werte mit Nullen am Ende" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Wiederholte Ziffer %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Erste neun volle Wochen" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Monats- und Jahrestage" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Von:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Bis:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Jetzt" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Beginn:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Vorgabe:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum und Uhrzeit:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum und Uhrzeit" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Beschreibung:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Beschreibung" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Bearbeiten" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Löschen" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Alles auswählen" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Stunden:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Tage:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Wochen:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Monate:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Jahre:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"Std.|T.|Wo.|Mon.|J.|Min." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Stunden berücksichtigen die angegebene Uhrzeit. Tage, Wochen, Monate und Jahre werden ab "
+            L"Mitternacht gezählt."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Werte für den ausgewählten Tag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Ein Eintrag mit diesem Datum und dieser Uhrzeit ist bereits vorhanden. Fortfahren?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Ausgewählte Einträge löschen?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Der Kalender hebt runde Werte, gleiche Ziffern sowie Monats- und Jahrestage hervor."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hilfe" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Website %ls besuchen" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -2467,6 +2829,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Couper &tous les sons" },
         LocalizedText{ TXT_MUTED_LABEL, L"Son &coupé" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"COMMANDES\r\nFaites glisser une horloge ou un panneau avec le bouton gauche. Déplacez un "
             L"calendrier autonome par sa zone libre. Un clic droit sur un widget ou l’icône de notification "
             L"ouvre le menu. Un clic gauche sur l’icône masque les widgets visibles ; s’ils sont tous "
@@ -2568,7 +2931,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml ; son écriture retire "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, tandis que le registre retire ce XML.\r\n\r\nLe lissage "
             L"des polices propose ClearType, GDI et Aucun.\r\n\r\nStyle Windows 2000 nécessite Désactiver "
-            L"les thèmes et concerne uniquement Paramètres, Aide et À propos. Avec la police système par "
+            L"les thèmes et concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Avec la "
+            L"police système par "
             L"défaut, ces fenêtres utilisent Tahoma 8 pt ; une police d’application personnalisée reste "
             L"prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun sont proposés "
             L"pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et "
@@ -2580,13 +2944,15 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"position, même avec une police proportionnelle. Les horloges de moniteur restent centrées, "
             L"espace réservé compris. La ligne UTC reste centrée séparément.\r\n\r\nPARAMÈTRES ET "
             L"MENUS\r\nLangue, police, lissage, stockage, démarrage avec Windows et accrochage sont globaux "
-            L"et se règlent dans l’onglet Application. La désactivation des thèmes dans Application concerne "
-            L"uniquement Paramètres, Aide et À propos. Chaque widget utilise son propre réglage de thèmes. "
+            L"et se règlent dans l’onglet Application. La désactivation des thèmes dans Application "
+            L"concerne uniquement Calculateur de temps, Paramètres, Aide et À propos. Chaque widget utilise "
+            L"son propre réglage de thèmes. "
             L"Au premier lancement, la langue suit celle de "
             L"l’interface Windows, avec l’anglais américain par défaut ; langue, lissage et thèmes du widget "
             L"ne concernent que lui. \r\n\r\nLe menu d’un widget contient les choix applicables de "
             L"visibilité, premier plan, secondes, taille et copie de date, puis Aligner sur une grille, "
-            L"Paramètres, Aide, À propos et Quitter. Le menu de notification liste les widgets numérotés et "
+            L"Calculateur de temps, Paramètres, Aide, À propos et Quitter. Le menu de notification liste "
+            L"les widgets numérotés et "
             L"propose Tout afficher, Tout masquer et Couper tous les sons. Aligner sur une grille suit dans "
             L"un groupe séparé. Afficher ou restaurer les widgets les ramène devant sans modifier Toujours "
             L"au premier plan. Un nouveau lancement active l’instance existante et restaure au besoin les "
@@ -2708,7 +3074,33 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"type de widget. Échap masque l’horloge et retire l’assombrissement même si Paramètres est "
             L"actif.\r\n\r\nLe pointeur se masque après une courte inactivité sur les horloges plein écran "
             L"et les moniteurs assombris, puis réapparaît au mouvement de la souris. Il reste visible sur le "
-            L"petit aperçu lorsque Paramètres est ouvert."
+            L"petit aperçu lorsque Paramètres est ouvert.\r\n\r\nCalculateur de temps\r\nOuvrez Calculateur "
+            L"de temps depuis le menu de n’importe quel widget ou de l’icône de la zone de notification. "
+            L"L’onglet Intervalle de temps calcule la différence entre deux dates et heures. L’onglet "
+            L"Valeurs rondes met en évidence dans le calendrier les valeurs rondes, les chiffres répétés et "
+            L"les anniversaires mensuels et annuels depuis le début choisi. L’onglet Dates et heures "
+            L"prédéfinies permet d’ajouter, de modifier, de trier et de supprimer des dates et heures avec "
+            L"une description. Les dates et heures sont enregistrées séparément dans "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. L’exportation manuelle les inclut ; l’importation "
+            L"conserve les entrées existantes et ignore uniquement celles dont la date, l’heure et la "
+            L"description complète sont identiques.\r\n\r\nChaque saisie possède son fuseau horaire, choisi "
+            L"dans la même liste que les paramètres. Le fuseau Windows actuel est utilisé par défaut. Un "
+            L"instant UTC non ambigu et son fuseau d’affichage sont enregistrés. Changer de fuseau conserve "
+            L"l’instant. Pour une heure répétée, choisissez le décalage UTC ; une heure locale inexistante "
+            L"ne peut pas être enregistrée. Les heures mesurent le temps écoulé ; les décomptes calendaires "
+            L"utilisent le fuseau de départ. Maintenant utilise l’heure système Windows sans décalage du "
+            L"widget, affichée dans le fuseau choisi.\r\n\r\nL’import accepte aussi un fichier XML autonome "
+            L"de dates et heures enregistrées ; il fusionne ces données sans modifier les paramètres de "
+            L"l’application.\r\n\r\nDans l’onglet Mise en évidence, choisissez les règles de mise en "
+            L"évidence des dates du calendrier. Par défaut, le jour de départ (valeurs nulles), les valeurs "
+            L"rondes se terminant par des zéros, les neuf premières semaines entières et les anniversaires "
+            L"mensuels et annuels sont mis en évidence. Les chiffres répétés de 1 à 9 (par exemple 11, 111 "
+            L"ou 66, 666) peuvent être activés séparément et sont désactivés par défaut.\r\n\r\nCliquez sur "
+            L"un en-tête de colonne pour trier les données enregistrées par instant réel ou par texte de "
+            L"description. Un second clic inverse l’ordre ; une flèche indique le sens du tri.\r\n\r\nLa "
+            L"position de la fenêtre, l’onglet actif, les valeurs saisies et les choix de mise en évidence "
+            L"sont enregistrés avec les paramètres de l’application dans le Registre ou en XML, selon le "
+            L"stockage choisi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -2717,6 +3109,56 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version :" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plateforme cible :" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web :" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Calculateur de temps" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Impossible de lire les dates et heures enregistrées." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Impossible d’enregistrer les dates et heures." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Choisissez le décalage UTC de cette heure locale répétée."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Cette heure locale n’existe pas dans ce fuseau, ou le fuseau est indisponible."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Calculateur de temps" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Intervalle de temps" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valeurs rondes" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Dates et heures prédéfinies" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Mise en évidence" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Jour de départ (valeurs nulles)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valeurs rondes se terminant par des zéros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Chiffre %u répété (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Neuf premières semaines entières" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Anniversaires mensuels et annuels" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"De :" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"À :" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Maintenant" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Début :" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Préréglage :" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Date et heure :" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Date et heure" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Description :" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Description" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Modifier" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Supprimer" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Tout sélectionner" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Heures :" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Jours :" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Semaines :" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mois :" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Années :" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|j|sem.|mois|ans|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Les heures tiennent compte de l’heure indiquée. Les jours, semaines, mois et années sont "
+            L"comptés depuis minuit."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valeurs pour le jour sélectionné" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Un préréglage avec cette date et cette heure existe déjà. Continuer ?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Supprimer les préréglages sélectionnés ?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Le calendrier met en évidence les valeurs rondes, les chiffres répétés et les anniversaires "
+            L"mensuels et annuels."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Aide" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visiter le site web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -2942,6 +3384,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Silenciar todo" },
         LocalizedText{ TXT_MUTED_LABEL, L"Si&lenciado" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"CONTROLES\r\nArrastre un reloj o panel con el botón izquierdo. El calendario independiente se "
             L"arrastra por su zona libre. El botón derecho sobre un widget o el icono de notificación abre "
             L"el menú. Un clic izquierdo sobre el icono oculta los widgets visibles; si todos están ocultos, "
@@ -3038,7 +3481,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml; al escribirlo se elimina "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock y al usar el registro se elimina el XML "
             L"automático.\r\n\r\nEl suavizado de fuente ofrece ClearType, GDI y Ninguno.\r\n\r\nEstilo de "
-            L"Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda y Acerca de. Si se "
+            L"Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de y "
+            L"Calculadora de tiempo. Si se "
             L"elige la fuente predeterminada del sistema, estas ventanas usan Tahoma de 8 pt; una fuente de "
             L"aplicación personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En "
             L"este modo solo se ofrecen GDI y Ninguno para el suavizado: una elección guardada de ClearType "
@@ -3051,12 +3495,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"centrados, incluido el espacio reservado. La línea UTC mantiene su propio "
             L"centrado.\r\n\r\nCONFIGURACIÓN Y MENÚS\r\nIdioma, fuente, suavizado, almacenamiento, inicio "
             L"con Windows y acoplamiento son globales y se configuran en la pestaña Aplicación. Desactivar "
-            L"los temas en Aplicación solo afecta a Configuración, Ayuda y "
-            L"Acerca de. Cada widget utiliza su propio ajuste de temas. En el "
+            L"los temas en Aplicación solo afecta a Calculadora de tiempo, Configuración, Ayuda y Acerca "
+            L"de. Cada widget utiliza su propio ajuste de temas. En el "
             L"primer inicio, el idioma sigue al de la interfaz de Windows y usa inglés de EE. UU. como "
             L"alternativa; idioma, suavizado y temas del widget solo afectan a este. \r\n\r\nEl menú del "
             L"widget contiene las opciones aplicables de visibilidad, primer plano, segundos, tamaño y copia "
-            L"de fecha, además de Alinear en cuadrícula, Configuración, Ayuda, Acerca de y Salir. El menú "
+            L"de fecha, además de Alinear en cuadrícula, Calculadora de tiempo, Configuración, Ayuda, "
+            L"Acerca de y Salir. El menú "
             L"del icono muestra widgets numerados y ofrece Mostrar todo, Ocultar todo y Silenciar todo. "
             L"Alinear en cuadrícula aparece después como grupo separado. Mostrar o restaurar lleva los "
             L"widgets al frente sin cambiar Siempre en primer plano. Otra ejecución activa la instancia "
@@ -3173,7 +3618,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tipo. Esc oculta el reloj y elimina el oscurecimiento incluso con Configuración "
             L"activa.\r\n\r\nEl puntero se oculta tras un breve período de inactividad sobre los relojes de "
             L"monitor y los monitores oscurecidos, y reaparece al mover el ratón. Permanece visible sobre la "
-            L"vista previa pequeña mientras Configuración está abierta."
+            L"vista previa pequeña mientras Configuración está abierta.\r\n\r\nCalculadora de tiempo\r\n"
+            L"Abra Calculadora de tiempo desde el menú de cualquier widget o del icono del área de "
+            L"notificación. La pestaña Intervalo de tiempo calcula la diferencia entre dos fechas y horas. "
+            L"La pestaña Valores redondos resalta en el calendario valores redondos, dígitos repetidos y "
+            L"aniversarios mensuales y anuales desde el inicio elegido. La pestaña Fechas y horas "
+            L"predefinidas permite añadir, editar, ordenar y eliminar fechas y horas con una descripción. "
+            L"Las fechas y horas se guardan por separado en %APPDATA%\\FortSoft\\CalClock\\times.xml. La "
+            L"exportación manual las incluye; la importación conserva las entradas existentes y omite solo "
+            L"las que tienen la misma fecha, hora y descripción completa.\r\n\r\nCada entrada tiene su "
+            L"propia zona horaria de la misma lista que en Configuración. La predeterminada es la zona "
+            L"actual de Windows. Se guarda un instante UTC inequívoco y su zona de visualización. Cambiar "
+            L"la zona conserva el instante. En una hora repetida, seleccione el desfase UTC; las horas "
+            L"locales inexistentes no se pueden guardar. Las horas miden el tiempo transcurrido; los "
+            L"cómputos de calendario usan la zona inicial. Ahora usa la hora del sistema Windows sin "
+            L"desfase del widget, mostrada en la zona elegida.\r\n\r\nLa importación también acepta un "
+            L"archivo XML independiente de fechas y horas guardadas; combina esos registros sin cambiar la "
+            L"configuración de la aplicación.\r\n\r\nEn la pestaña Resaltado puede elegir las reglas para "
+            L"resaltar fechas en el calendario. De forma predeterminada se resaltan el día inicial (valores "
+            L"cero), los valores redondos terminados en ceros, las primeras nueve semanas completas y los "
+            L"aniversarios mensuales y anuales. Los dígitos repetidos del 1 al 9 (por ejemplo, 11, 111 o "
+            L"66, 666) se pueden activar por separado y están desactivados de forma predeterminada.\r\n\r\n"
+            L"Haga clic en el encabezado de una columna para ordenar los datos guardados por el instante "
+            L"real o por el texto de la descripción. Otro clic invierte el orden; una flecha indica la "
+            L"dirección.\r\n\r\nLa posición de la ventana, la pestaña activa, los valores introducidos y "
+            L"las opciones de resaltado se guardan con la configuración de la aplicación en el Registro o "
+            L"en XML, según el almacenamiento elegido."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -3182,6 +3652,53 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versión:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sitio web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Calculadora de tiempo" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"No se pudieron leer las fechas y horas guardadas." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"No se pudieron guardar las fechas y horas." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Seleccione el desfase UTC de esta hora local repetida." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Esta hora local no existe en la zona seleccionada, o la zona no está disponible."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Calculadora de tiempo" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Intervalo de tiempo" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valores redondos" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Fechas y horas predefinidas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Resaltado" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Día inicial (valores cero)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valores redondos terminados en ceros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Dígito %u repetido (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Primeras nueve semanas completas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Aniversarios mensuales y anuales" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Desde:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Hasta:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Ahora" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Inicio:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Preajuste:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Fecha y hora:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Fecha y hora" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Descripción:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Descripción" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Editar" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Eliminar" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Seleccionar todo" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Horas:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Días:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Semanas:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Meses:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Años:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|sem.|mes.|a|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Las horas tienen en cuenta la hora indicada. Los días, semanas, meses y años se cuentan desde "
+            L"medianoche."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valores del día seleccionado" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Ya existe un preajuste con esta fecha y hora. ¿Desea continuar?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"¿Desea eliminar los preajustes seleccionados?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"El calendario resalta valores redondos, dígitos repetidos y aniversarios mensuales y anuales."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ayuda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visitar el sitio web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -3407,6 +3924,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Disattiva &tutto l'audio" },
         LocalizedText{ TXT_MUTED_LABEL, L"Audio &disattivato" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"COMANDI\r\nTrascinare un orologio o pannello con il pulsante sinistro. Il calendario autonomo "
             L"si trascina dall’area libera. Il pulsante destro su widget o icona di notifica apre il menu. "
             L"Il clic sinistro sull’icona nasconde i widget visibili; se sono tutti nascosti, ripristina "
@@ -3504,7 +4022,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"L’XML automatico è %AppData%\\FortSoft\\CalClock\\settings.xml; scriverlo rimuove "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, mentre il registro rimuove l’XML "
             L"automatico.\r\n\r\nL’antialiasing del carattere offre ClearType, GDI e Nessuno.\r\n\r\nStile "
-            L"Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida e Informazioni. Con "
+            L"Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e "
+            L"Calcolatore di tempi. Con "
             L"il carattere di sistema predefinito, queste finestre usano Tahoma 8 pt; un carattere "
             L"personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a "
             L"larghezza fissa. In questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: "
@@ -3517,12 +4036,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"centrati, incluso lo spazio riservato. La riga UTC mantiene il proprio allineamento "
             L"centrale.\r\n\r\nIMPOSTAZIONI E MENU\r\nLingua, carattere, antialiasing, archivio, avvio con "
             L"Windows e aggancio sono globali e si configurano nella scheda Applicazione. La disattivazione "
-            L"dei temi in Applicazione riguarda solo Impostazioni, Guida e Informazioni. Ogni widget usa la "
+            L"dei temi in Applicazione riguarda solo Calcolatore di tempi, Impostazioni, Guida e "
+            L"Informazioni. Ogni widget usa la "
             L"propria impostazione dei temi. Al primo avvio "
             L"la lingua segue quella dell’interfaccia di Windows, con inglese USA come ripiego; lingua, "
             L"antialiasing e temi del widget valgono solo per esso. \r\n\r\nIl menu del widget contiene le "
             L"scelte pertinenti per visibilità, primo piano, secondi, dimensione e copia della data, oltre a "
-            L"Disponi in griglia, Impostazioni, Guida, Informazioni ed Esci. Il menu dell’icona elenca i "
+            L"Disponi in griglia, Calcolatore di tempi, Impostazioni, Guida, Informazioni ed Esci. Il menu "
+            L"dell’icona elenca i "
             L"widget numerati e offre Mostra tutto, Nascondi tutto e Disattiva tutto l'audio. Disponi in "
             L"griglia segue come gruppo separato. Mostrare o ripristinare porta i widget davanti senza "
             L"cambiare Sempre in primo piano. Un nuovo avvio attiva l’istanza esistente e, se necessario, "
@@ -3637,7 +4158,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"disposizione in griglia ignora questo tipo. Esc nasconde orologio e oscuramento anche con "
             L"Impostazioni attivo.\r\n\r\nIl puntatore si nasconde dopo una breve inattività sugli orologi a "
             L"schermo intero e sui monitor oscurati, e riappare muovendo il mouse. Rimane visibile sulla "
-            L"piccola anteprima quando Impostazioni è aperto."
+            L"piccola anteprima quando Impostazioni è aperto.\r\n\r\nCalcolatore di tempi\r\nAprire "
+            L"Calcolatore di tempi dal menu di un widget o dell’icona nell’area di notifica. La scheda "
+            L"Intervallo di tempo calcola la differenza tra due date e ore. La scheda Valori tondi "
+            L"evidenzia nel calendario valori tondi, cifre ripetute e ricorrenze mensili e annuali "
+            L"dall’inizio scelto. La scheda Date e ore predefinite permette di aggiungere, modificare, "
+            L"ordinare ed eliminare date e ore con una descrizione. Le date e le ore vengono salvate "
+            L"separatamente in %APPDATA%\\FortSoft\\CalClock\\times.xml. L’esportazione manuale le include; "
+            L"l’importazione conserva le voci esistenti e ignora solo quelle con data, ora e descrizione "
+            L"completa identiche.\r\n\r\nOgni dato ha un proprio fuso orario, scelto dallo stesso elenco "
+            L"delle impostazioni. Il valore predefinito è il fuso attuale di Windows. Si salvano un istante "
+            L"UTC univoco e il relativo fuso di visualizzazione. Cambiare fuso conserva l’istante. Per "
+            L"un’ora ripetuta scegliere lo scostamento UTC; le ore locali inesistenti non possono essere "
+            L"salvate. Le ore misurano il tempo trascorso; i conteggi di calendario usano il fuso iniziale. "
+            L"Adesso usa l’ora di sistema Windows senza scostamento del widget, visualizzata nel fuso "
+            L"scelto.\r\n\r\nL’importazione accetta anche un file XML separato con date e ore salvate; "
+            L"unisce questi dati senza modificare le impostazioni dell’applicazione.\r\n\r\nNella scheda "
+            L"Evidenziazione è possibile scegliere le regole per evidenziare le date nel calendario. Per "
+            L"impostazione predefinita sono evidenziati il giorno iniziale (valori zero), i valori tondi "
+            L"che terminano con zeri, le prime nove settimane intere e le ricorrenze mensili e annuali. Le "
+            L"cifre ripetute da 1 a 9 (ad esempio 11, 111 o 66, 666) si possono attivare singolarmente e "
+            L"sono disattivate per impostazione predefinita.\r\n\r\nFare clic sull’intestazione di una "
+            L"colonna per ordinare i dati salvati per istante effettivo o per testo della descrizione. Un "
+            L"altro clic inverte l’ordine; una freccia ne indica la direzione.\r\n\r\nLa posizione della "
+            L"finestra, la scheda attiva, i valori inseriti e le opzioni di evidenziazione vengono salvati "
+            L"con le impostazioni dell’applicazione nel Registro di sistema o in XML, secondo l’archivio "
+            L"scelto."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -3646,6 +4192,55 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versione:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Piattaforma di destinazione:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sito web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Calcolatore di tempi" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Impossibile leggere le date e le ore salvate." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Impossibile salvare le date e le ore." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Scegliere lo scostamento UTC per questa ora locale ripetuta."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Questa ora locale non esiste nel fuso selezionato oppure il fuso non è disponibile."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Calcolatore di tempi" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Intervallo di tempo" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valori tondi" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Date e ore predefinite" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Evidenziazione" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Giorno iniziale (valori zero)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valori tondi che terminano con zeri" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Cifra %u ripetuta (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prime nove settimane intere" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Ricorrenze mensili e annuali" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Da:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"A:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Adesso" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Inizio:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Preimpostazione:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data e ora:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data e ora" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Descrizione:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Descrizione" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Modifica" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Elimina" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Seleziona tutto" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Ore:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Giorni:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Settimane:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mesi:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Anni:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|g|sett.|mesi|anni|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Le ore tengono conto dell’ora specificata. Giorni, settimane, mesi e anni si contano dalla "
+            L"mezzanotte."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valori per il giorno selezionato" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Esiste già una preimpostazione con questa data e ora. Continuare?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Eliminare le preimpostazioni selezionate?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Il calendario evidenzia valori tondi, cifre ripetute e ricorrenze mensili e annuali."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Guida" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visita il sito web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Impossibile aprire il sito nel browser predefinito." },
@@ -3867,6 +4462,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Silenciar &tudo" },
         LocalizedText{ TXT_MUTED_LABEL, L"Si&lenciado" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"CONTROLOS\r\nArraste um relógio ou painel com o botão esquerdo. Arraste um calendário autónomo "
             L"pela área livre. O botão direito abre o menu do widget. Um clique esquerdo no ícone de "
             L"notificação oculta os widgets visíveis ou repõe os ocultados mais recentemente.\r\n\r\nWIDGETS "
@@ -3937,7 +4533,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"anteriores. As definições podem ser exportadas para XML. A importação XML carrega e guarda "
             L"imediatamente as definições no armazenamento selecionado, sem alterar o seu tipo.\r\n\r\nA "
             L"suavização do tipo de letra oferece ClearType, GDI e Nenhuma.\r\n\r\nEstilo do Windows 2000 "
-            L"requer Desativar temas e aplica-se apenas a Definições, Ajuda e Acerca de. Com o tipo de letra "
+            L"requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de e Calculadora de tempo. "
+            L"Com o tipo de letra "
             L"predefinido do sistema, estas janelas usam Tahoma de 8 pt; um tipo de letra personalizado da "
             L"aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo, a "
             L"suavização só oferece GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e "
@@ -3951,8 +4548,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"letra personalizados do calendário são suportados com o aspeto clássico do Windows ou com os "
             L"temas desativados para o widget.\r\n\r\nDEFINIÇÕES E MENUS\r\nO idioma, tipo de letra, "
             L"suavização, armazenamento, arranque com o Windows, ajuste às margens e origem da hora são "
-            L"globais; as opções da aplicação são configuradas no separador Aplicação. Desativar os temas em "
-            L"Aplicação afeta apenas Definições, Ajuda e Acerca de. Cada "
+            L"globais; as opções da aplicação são configuradas no separador Aplicação. Desativar os temas "
+            L"em Aplicação afeta apenas Calculadora de tempo, Definições, Ajuda e Acerca de. Cada "
             L"widget utiliza a sua própria definição de temas. No primeiro "
             L"arranque, o idioma segue a interface do Windows, com inglês dos EUA como alternativa. O idioma "
             L"e outras opções de widget aplicam-se individualmente. No menu do ícone, Mostrar tudo e Ocultar "
@@ -4056,7 +4653,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"pequena pré-visualização arrastável. Esc oculta o relógio e remove o escurecimento.\r\n\r\nO "
             L"ponteiro oculta-se após um curto período de inatividade sobre relógios de monitor e monitores "
             L"escurecidos, e reaparece ao mover o rato. Permanece visível sobre a pequena pré-visualização "
-            L"com as Definições abertas."
+            L"com as Definições abertas.\r\n\r\nCalculadora de tempo\r\nAbra Calculadora de tempo a partir "
+            L"do menu de qualquer widget ou do ícone da área de notificação. O separador Intervalo de tempo "
+            L"calcula a diferença entre duas datas e horas. O separador Valores redondos destaca no "
+            L"calendário valores redondos, algarismos repetidos e aniversários mensais e anuais desde o "
+            L"início escolhido. O separador Datas e horas predefinidas permite adicionar, editar, ordenar e "
+            L"eliminar datas e horas com uma descrição. As datas e horas são guardadas separadamente em "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. A exportação manual inclui-as; a importação mantém "
+            L"as entradas existentes e ignora apenas as que têm a mesma data, hora e descrição "
+            L"completa.\r\n\r\nCada entrada tem o seu fuso horário da mesma lista das definições. O "
+            L"predefinido é o fuso atual do Windows. São guardados um instante UTC inequívoco e o fuso de "
+            L"apresentação. Alterar o fuso preserva o instante. Para uma hora repetida, escolha o desvio "
+            L"UTC; horas locais inexistentes não podem ser guardadas. As horas medem o tempo decorrido; as "
+            L"contagens de calendário usam o fuso inicial. Agora usa a hora do sistema Windows sem desvio "
+            L"do widget, apresentada no fuso escolhido.\r\n\r\nA importação também aceita um ficheiro XML "
+            L"separado de datas e horas guardadas; combina esses registos sem alterar as definições da "
+            L"aplicação.\r\n\r\nNo separador Realce, escolha as regras para realçar as datas no calendário. "
+            L"Por predefinição, são realçados o dia inicial (valores zero), os valores redondos terminados "
+            L"em zeros, as primeiras nove semanas completas e os aniversários mensais e anuais. Os "
+            L"algarismos repetidos de 1 a 9 (por exemplo, 11, 111 ou 66, 666) podem ser ativados "
+            L"individualmente e estão desativados por predefinição.\r\n\r\nClique no cabeçalho de uma "
+            L"coluna para ordenar os dados guardados pelo instante real ou pelo texto da descrição. Um novo "
+            L"clique inverte a ordem; uma seta indica o sentido.\r\n\r\nA posição da janela, o separador "
+            L"ativo, os valores introduzidos e as opções de realce são guardados com as definições da "
+            L"aplicação no Registo ou em XML, conforme o armazenamento escolhido."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -4065,6 +4685,53 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versão:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Calculadora de tempo" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Não foi possível ler as datas e horas guardadas." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Não foi possível guardar as datas e horas." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Escolha o desvio UTC para esta hora local repetida." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Esta hora local não existe no fuso selecionado, ou o fuso não está disponível."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Calculadora de tempo" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Intervalo de tempo" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valores redondos" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Datas e horas predefinidas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Realce" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Dia inicial (valores zero)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valores redondos terminados em zeros" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Algarismo %u repetido (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Primeiras nove semanas completas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Aniversários mensais e anuais" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"De:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Até:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Agora" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Início:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Predefinição:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data e hora:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data e hora" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Descrição:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Descrição" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Editar" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Eliminar" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Selecionar tudo" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Horas:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dias:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Semanas:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Meses:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Anos:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|sem.|meses|anos|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"As horas têm em conta a hora indicada. Os dias, semanas, meses e anos são contados desde a "
+            L"meia-noite."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valores para o dia selecionado" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Já existe uma predefinição com esta data e hora. Continuar?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Eliminar as predefinições selecionadas?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"O calendário destaca valores redondos, algarismos repetidos e aniversários mensais e anuais."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ajuda" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Visitar o site %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Não é possível abrir o sítio no navegador predefinido." },
@@ -4290,6 +4957,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Wycisz wszystko" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Wyciszony" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"STEROWANIE\r\nPrzeciągnij zegar lub panel lewym przyciskiem. Samodzielny kalendarz przeciąga "
             L"się za wolne miejsce. Prawy przycisk na widżecie lub ikonie obszaru powiadomień otwiera menu. "
             L"Lewy przycisk na ikonie ukrywa widoczne widżety; gdy wszystkie są ukryte, przywraca tylko "
@@ -4379,7 +5047,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML to %AppData%\\FortSoft\\CalClock\\settings.xml; zapis XML usuwa "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, a zapis w rejestrze usuwa automatyczny "
             L"XML.\r\n\r\nWygładzanie czcionki oferuje ClearType, GDI i Brak.\r\n\r\nStyl Windows 2000 jest "
-            L"dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc i O programie. Przy "
+            L"dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie i Kalkulator "
+            L"czasu. Przy "
             L"domyślnej czcionce systemowej używa Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. "
             L"Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany "
             L"przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, obie "
@@ -4391,12 +5060,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"z zarezerwowanym miejscem. Wiersz UTC pozostaje osobno wyśrodkowany.\r\n\r\nUSTAWIENIA I "
             L"MENU\r\nJęzyk, czcionka, wygładzanie, magazyn ustawień, uruchamianie z Windows i przyciąganie "
             L"są globalne i ustawia się je na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja "
-            L"dotyczy tylko okien Ustawienia, Pomoc i O programie. Każdy widżet korzysta z własnego "
+            L"dotyczy tylko okien Kalkulator czasu, Ustawienia, Pomoc i O programie. Każdy widżet korzysta "
+            L"z własnego "
             L"ustawienia motywów. Przy pierwszym uruchomieniu "
             L"język wynika z języka interfejsu Windows, a nieznany zastępuje angielski (USA); język, "
             L"wygładzanie i motywy widżetu dotyczą tylko jego. \r\n\r\nMenu widżetu zawiera odpowiednie "
             L"opcje widoczności, położenia na wierzchu, sekund, rozmiaru i kopiowania daty oraz Ułóż w "
-            L"siatce, Ustawienia, Pomoc, O programie i Zakończ. Menu ikony wyświetla numerowane widżety oraz "
+            L"siatce, Kalkulator czasu, Ustawienia, Pomoc, O programie i Zakończ. Menu ikony wyświetla "
+            L"numerowane widżety oraz "
             L"Pokaż wszystkie, Ukryj wszystkie i Wycisz wszystko. Ułóż w siatce znajduje się dalej w "
             L"oddzielnej grupie. Pokazanie lub przywrócenie przenosi widżety do przodu bez zmiany Zawsze na "
             L"wierzchu. Ponowne uruchomienie aktywuje istniejącą instancję i w razie potrzeby przywraca "
@@ -4504,7 +5175,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ten typ. Esc ukrywa zegar i wygaszenie również przy aktywnych Ustawieniach.\r\n\r\nWskaźnik "
             L"znika po krótkiej bezczynności nad zegarami pełnoekranowymi i zaciemnionymi monitorami, a "
             L"pojawia się po poruszeniu myszą. Nad małym podglądem przy otwartych Ustawieniach pozostaje "
-            L"widoczny."
+            L"widoczny.\r\n\r\nKalkulator czasu\r\nOtwórz Kalkulator czasu z menu dowolnego widżetu lub "
+            L"ikony w obszarze powiadomień. Karta Przedział czasu oblicza różnicę między dwiema datami i "
+            L"godzinami. Karta Okrągłe wartości wyróżnia w kalendarzu okrągłe wartości, powtarzające się "
+            L"cyfry oraz miesięcznice i rocznice od wybranego początku. Karta Zapisane daty i godziny "
+            L"umożliwia dodawanie, edycję, sortowanie i usuwanie dat i godzin z opisem. Daty i godziny są "
+            L"zapisywane osobno w %APPDATA%\\FortSoft\\CalClock\\times.xml. Eksport ręczny je uwzględnia; "
+            L"import zachowuje istniejące wpisy i pomija tylko te z identyczną datą, godziną i pełnym "
+            L"opisem.\r\n\r\nKażde pole ma własną strefę czasową z tej samej listy co w Ustawieniach. "
+            L"Domyślna jest bieżąca strefa Windows. Zapisywane są jednoznaczna chwila w UTC i strefa "
+            L"wyświetlania. Zmiana strefy zachowuje chwilę. Dla powtórzonej godziny wybierz przesunięcie "
+            L"UTC; nieistniejącego czasu lokalnego nie można zapisać. Godziny mierzą upływ czasu, a "
+            L"obliczenia kalendarzowe używają strefy początku. Teraz używa czasu systemowego Windows bez "
+            L"przesunięcia widżetu, wyświetlanego w wybranej strefie.\r\n\r\nImport przyjmuje również "
+            L"osobny plik XML z zapisanymi datami i godzinami; scala te wpisy bez zmiany ustawień "
+            L"aplikacji.\r\n\r\nNa karcie Wyróżnianie można wybrać reguły wyróżniania dat w kalendarzu. "
+            L"Domyślnie wyróżniane są dzień początkowy (wartości zerowe), okrągłe wartości zakończone "
+            L"zerami, pierwszych dziewięć pełnych tygodni oraz miesięcznice i rocznice. Powtarzające się "
+            L"cyfry 1–9 (na przykład 11, 111 lub 66, 666) można włączać osobno; domyślnie są "
+            L"wyłączone.\r\n\r\nKliknij nagłówek kolumny, aby posortować zapisane dane według rzeczywistego "
+            L"momentu lub tekstu opisu. Kolejne kliknięcie odwraca kolejność; strzałka wskazuje kierunek "
+            L"sortowania.\r\n\r\nPołożenie okna, aktywna karta, wprowadzone wartości i opcje wyróżniania są "
+            L"zapisywane z ustawieniami aplikacji w rejestrze lub pliku XML, zgodnie z wybranym magazynem "
+            L"ustawień."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -4513,6 +5206,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Wersja:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platforma docelowa:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Witryna:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator czasu" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Nie można odczytać zapisanych dat i godzin." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Nie można zapisać dat i godzin." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Wybierz przesunięcie UTC dla tego powtórzonego czasu lokalnego."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ten czas lokalny nie istnieje w wybranej strefie lub strefa jest niedostępna."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Kalkulator czasu" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Przedział czasu" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrągłe wartości" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Zapisane daty i godziny" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Wyróżnianie" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Dzień początkowy (wartości zerowe)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrągłe wartości zakończone zerami" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Powtarzająca się cyfra %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Pierwszych dziewięć pełnych tygodni" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Miesięcznice i rocznice" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Teraz" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Początek:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Zapisany wpis:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data i godzina:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data i godzina" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Opis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Opis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Edytuj" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Usuń" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Zaznacz wszystko" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Godziny:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dni:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Tygodnie:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Miesiące:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Lata:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"godz.|dni|tyg.|mies.|lat|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Godziny uwzględniają podaną godzinę. Dni, tygodnie, miesiące i lata są liczone od północy."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Wartości dla wybranego dnia" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE, L"Wpis z tą datą i godziną już istnieje. Kontynuować?" },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Usunąć zaznaczone wpisy?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendarz wyróżnia okrągłe wartości, powtarzające się cyfry oraz miesięcznice i rocznice."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoc" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Odwiedź witrynę %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nie można otworzyć witryny w domyślnej przeglądarce." },
@@ -4732,6 +5471,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Stlmiť všetko" },
         LocalizedText{ TXT_MUTED_LABEL, L"St&lmené" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"OVLÁDANIE\r\nĽavým tlačidlom a ťahaním presuniete hodiny alebo panel. Samostatný kalendár sa "
             L"presúva za voľnú plochu. Pravé tlačidlo na widgete alebo ikone v oznamovacej oblasti otvorí "
             L"ponuku. Ľavé kliknutie na ikonu skryje viditeľné widgety; ak sú všetky skryté, obnoví iba "
@@ -4815,7 +5555,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml; zápis XML odstráni "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické "
             L"XML.\r\n\r\nVyhladzovanie písma ponúka ClearType, GDI a Žiadne.\r\n\r\nŠtýl Windows 2000 je "
-            L"dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc a O programe. Pri "
+            L"dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový "
+            L"kalkulátor. Pri "
             L"predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. "
             L"Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a "
             L"po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne "
@@ -4826,11 +5567,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervovaného miesta. Riadok UTC si zachováva vlastné zarovnanie na stred.\r\n\r\nNASTAVENIA A "
             L"PONUKY\r\nJazyk, písmo, vyhladzovanie, úložisko, spúšťanie s Windows a prichytávanie sú "
             L"globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre "
-            L"Nastavenia, Pomoc a O programe. Každý widget používa vlastné "
+            L"Časový kalkulátor, Nastavenia, Pomoc a O programe. Každý widget používa vlastné "
             L"nastavenie motívov. Pri prvom spustení sa jazyk volí podľa jazyka "
             L"rozhrania Windows, neznámy jazyk sa nahradí angličtinou (USA); jazyk, vyhladzovanie a motívy "
             L"widgetu platia iba preň. \r\n\r\nPonuka widgetu obsahuje príslušné voľby viditeľnosti, režimu "
-            L"navrchu, sekúnd, veľkosti a kopírovania dátumu a ďalej Zarovnať do mriežky, Nastavenia, Pomoc, "
+            L"navrchu, sekúnd, veľkosti a kopírovania dátumu a ďalej Zarovnať do mriežky, Časový "
+            L"kalkulátor, Nastavenia, Pomoc, "
             L"O programe a Koniec. Ponuka ikony uvádza očíslované widgety a príkazy Zobraziť všetko, Skryť "
             L"všetko a Stlmiť všetko. Samostatne oddelený príkaz Zarovnať do mriežky nasleduje za nimi. "
             L"Zobrazenie alebo obnovenie prenesie widgety dopredu bez zmeny Vždy navrchu. Ďalšie spustenie "
@@ -4935,7 +5677,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"do mriežky tento typ ignoruje. Esc skryje hodiny aj stmavenie aj pri aktívnom "
             L"Nastavení.\r\n\r\nNad celomonitorovými hodinami aj zatemnenými monitormi sa kurzor po chvíli "
             L"nečinnosti skryje a pri pohybe myši sa znovu objaví. Nad zmenšeným náhľadom v režime "
-            L"Nastavenia zostáva viditeľný."
+            L"Nastavenia zostáva viditeľný.\r\n\r\nČasový kalkulátor\r\nČasový kalkulátor otvoríte z ponuky "
+            L"ľubovoľného widgetu alebo ikony v oblasti oznámení. Karta Časový interval počíta rozdiel "
+            L"medzi dvoma údajmi dátumu a času. Karta Okrúhle hodnoty vyznačuje v kalendári okrúhle "
+            L"hodnoty, opakujúce sa číslice a mesačné aj ročné výročia od zvoleného začiatku. Karta "
+            L"Predvolené časové údaje umožňuje pridávať, upravovať, triediť a odstraňovať údaje s popisom. "
+            L"Časové údaje sa ukladajú samostatne do %APPDATA%\\FortSoft\\CalClock\\times.xml. Ručný export "
+            L"ich zahŕňa; import zachová existujúce údaje a vynechá iba položky so zhodným dátumom, časom "
+            L"aj celým popisom.\r\n\r\nKaždý vstup má vlastné časové pásmo z rovnakého zoznamu ako v "
+            L"Nastaveniach. Predvolené je aktuálne pásmo Windows. Ukladá sa jednoznačný okamih v UTC a "
+            L"pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej hodine vyberte posun voči "
+            L"UTC; neexistujúci miestny čas nemožno uložiť. Hodiny vyjadrujú skutočne uplynutý čas, "
+            L"kalendárne počty používajú pásmo začiatku. Teraz používa systémový čas Windows bez posunu "
+            L"widgetu, zobrazený vo zvolenom pásme.\r\n\r\nImport prijíma aj samostatný súbor časových "
+            L"údajov v XML; v tom prípade iba zlúči údaje a nastavenia aplikácie nezmení.\r\n\r\nNa karte "
+            L"Zvýraznenie si môžete vybrať pravidlá zvýrazňovania dátumov v kalendári. V predvolenom stave "
+            L"sa zvýrazňuje počiatočný deň (nulové hodnoty), okrúhle hodnoty končiace nulami, prvých deväť "
+            L"celých týždňov a mesačné aj ročné výročia. Opakujúce sa číslice 1–9 (napríklad 11, 111 alebo "
+            L"66, 666) sa zapínajú jednotlivo a v predvolenom stave sú vypnuté.\r\n\r\nKliknutím na "
+            L"hlavičku stĺpca zoradíte predvolené údaje podľa skutočného okamihu alebo podľa textu popisu. "
+            L"Ďalším kliknutím obrátite smer zoradenia, ktorý ukazuje šípka.\r\n\r\nPoloha okna, aktívna "
+            L"karta, zadané hodnoty a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do registra "
+            L"alebo XML podľa zvoleného úložiska."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -4944,6 +5707,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzia:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cieľová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Uložené časové údaje sa nedajú načítať." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Časové údaje sa nedajú uložiť." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Vyberte posun voči UTC pre tento opakovaný miestny čas." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Tento miestny čas v zvolenom pásme neexistuje alebo pásmo nie je dostupné."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Časový interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrúhle hodnoty" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Predvolené časové údaje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Zvýraznenie" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Počiatočný deň (nulové hodnoty)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrúhle hodnoty končiace nulami" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Opakujúca sa číslica %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvých deväť celých týždňov" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mesačné a ročné výročia" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Teraz" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Začiatok:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Predvoľba:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dátum a čas:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dátum a čas" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Popis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Popis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Upraviť" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Odstrániť" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Vybrať všetko" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Hodín:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dní:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Týždňov:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mesiacov:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Rokov:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|týž.|mes.|r.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Hodiny zohľadňujú zadaný čas. Dni, týždne, mesiace a roky sa počítajú od polnoci."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Hodnoty pre zvolený deň" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Predvoľba s týmto dátumom a časom už existuje. Pokračovať?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Odstrániť vybrané predvoľby?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendár zvýrazňuje okrúhle hodnoty, opakujúce sa číslice a mesačné aj ročné výročia."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoc" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Navštíviť web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web nemožno otvoriť v predvolenom prehliadači." },
@@ -5163,6 +5972,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Slå al lyd &fra" },
         LocalizedText{ TXT_MUTED_LABEL, L"Lyd &fra" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"BETJENING\r\nTræk et ur eller panel med venstre museknap. Træk en selvstændig kalender i det "
             L"frie område. Højreklik åbner widgetmenuen. Et venstreklik på meddelelsesikonet skjuler synlige "
             L"widgets eller gendanner de senest skjulte.\r\n\r\nWIDGETS OG INDSTILLINGER\r\nDu kan tilføje, "
@@ -5230,7 +6040,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
             L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning tilbyder "
             L"ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil kræver Deaktiver temaer og gælder kun "
-            L"Indstillinger, Hjælp og Om. Med systemets standardskrifttype bruger disse vinduer Tahoma 8 pt; "
+            L"Indstillinger, Hjælp, Om og Tidsberegner. Med systemets standardskrifttype bruger disse vinduer "
+            L"Tahoma 8 pt; "
             L"en brugerdefineret programskrifttype har forrang. Licensen beholder skrifttypen med fast "
             L"tegnbredde. I denne tilstand er kun GDI og Ingen tilgængelige for skriftudjævning: et gemt "
             L"valg af ClearType bruger midlertidigt GDI og gendannes, når tilstanden slås fra. Hvis visuelle "
@@ -5244,7 +6055,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"udseende, eller når temaer er slået fra for widgeten.\r\n\r\nINDSTILLINGER OG "
             L"MENUER\r\nProgramsprog, skrifttype, udjævning, lager, start med Windows, kantfastgørelse og "
             L"tidskilde er globale; programvalgene indstilles på fanen Program. Deaktivering af temaer på "
-            L"Program gælder kun Indstillinger, Hjælp og Om. "
+            L"Program gælder kun Tidsberegner, Indstillinger, Hjælp og Om. "
             L"Hver widget bruger sin egen temaindstilling. Ved "
             L"første start følger sproget Windows-grænsefladen, med amerikansk engelsk som reserve. "
             L"Widgetsprog og andre widgetvalg gælder enkeltvis. I ikonmenuen kommer Vis alle og Skjul alle "
@@ -5337,7 +6148,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"altid en lille flytbar forhåndsvisning. Esc skjuler uret og fjerner "
             L"mørklægningen.\r\n\r\nMarkøren skjules efter kort inaktivitet over skærmure og mørklagte "
             L"skærme og vises igen, når musen bevæges. Den forbliver synlig over den lille forhåndsvisning, "
-            L"når Indstillinger er åbent."
+            L"når Indstillinger er åbent.\r\n\r\nTidsberegner\r\nÅbn Tidsberegner fra en widgets menu eller "
+            L"menuen for ikonet i meddelelsesområdet. Tidsinterval beregner forskellen mellem to datoer og "
+            L"tider. Runde værdier fremhæver runde værdier, gentagne cifre samt månedlige og årlige "
+            L"mærkedage i kalenderen fra den valgte start. Gemte datoer og tider giver mulighed for at "
+            L"tilføje, redigere, sortere og slette datoer og tider med beskrivelser. Datoer og tider gemmes "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuel eksport medtager dem; import "
+            L"bevarer eksisterende poster og springer kun poster over med identisk dato, tid og fuld "
+            L"beskrivelse.\r\n\r\nHvert input har sin egen tidszone fra samme liste som i Indstillinger. "
+            L"Den aktuelle Windows-tidszone er standard. Et entydigt UTC-tidspunkt og visningszonen gemmes. "
+            L"Et zoneskift bevarer tidspunktet. Vælg UTC-forskydningen ved en gentaget time; lokale "
+            L"tidspunkter, der ikke findes, kan ikke gemmes. Timer måler forløbet tid; kalenderberegninger "
+            L"bruger startzonen. Nu bruger Windows-systemtiden uden widgetforskydning, vist i den valgte "
+            L"zone.\r\n\r\nImport accepterer også en separat XML-fil med gemte datoer og klokkeslæt; "
+            L"posterne flettes uden at ændre programmets indstillinger.\r\n\r\nPå fanen Fremhævning kan du "
+            L"vælge reglerne for fremhævning af datoer i kalenderen. Som standard fremhæves startdagen "
+            L"(nulværdier), runde værdier, der ender på nuller, de første ni hele uger samt måneds- og "
+            L"årsdage. Gentagne cifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres enkeltvis og "
+            L"er slået fra som standard.\r\n\r\nKlik på en kolonneoverskrift for at sortere gemte poster "
+            L"efter det faktiske tidspunkt eller beskrivelsens tekst. Klik igen for at vende rækkefølgen; "
+            L"en pil viser retningen.\r\n\r\nVinduets placering, den aktive fane, indtastede værdier og "
+            L"fremhævningsvalg gemmes med programindstillingerne i registreringsdatabasen eller XML "
+            L"afhængigt af det valgte lager."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -5346,6 +6178,54 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Websted:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Tidsberegner" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Gemte datoer og tider kunne ikke læses." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datoer og tider kunne ikke gemmes." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Vælg UTC-forskydningen for dette gentagne lokale tidspunkt."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Dette lokale tidspunkt findes ikke i den valgte zone, eller zonen er utilgængelig."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Tidsberegner" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Tidsinterval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Runde værdier" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Gemte datoer og tider" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Fremhævning" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Startdag (nulværdier)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Runde værdier, der ender på nuller" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Gentaget ciffer %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"De første ni hele uger" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Måneds- og årsdage" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Fra:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Til:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nu" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Forudindstilling:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dato og tid:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dato og tid" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Beskrivelse:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Beskrivelse" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Rediger" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Slet" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Vælg alle" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Timer:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dage:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Uger:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Måneder:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"År:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"t.|d.|u.|md.|år|min." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Timer tager højde for det angivne klokkeslæt. Dage, uger, måneder og år tælles fra midnat."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Værdier for den valgte dag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Der findes allerede en forudindstilling med denne dato og tid. Fortsæt?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Slet de valgte forudindstillinger?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalenderen fremhæver runde værdier, gentagne cifre samt månedlige og årlige mærkedage."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjælp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besøg webstedet %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Webstedet kan ikke åbnes i standardbrowseren." },
@@ -5565,6 +6445,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Mykistä &kaikki" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Mykistetty" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"OHJAUS\r\nVedä kelloa tai paneelia hiiren vasemmalla painikkeella. Vedä erillistä kalenteria "
             L"vapaalta alueelta. Napsauta hiiren kakkospainikkeella avataksesi pienoisohjelman valikon. "
             L"Ilmoitusalueen kuvakkeen napsautus piilottaa näkyvät pienoisohjelmat tai palauttaa viimeksi "
@@ -5642,7 +6523,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan muuttamatta "
             L"tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja Ei "
             L"mitään.\r\n\r\nWindows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain "
-            L"Asetukset-, Ohje- ja Tietoja-ikkunoita. Järjestelmän oletusfonttina käytetään Tahomaa 8 pt; "
+            L"Asetukset-, Ohje-, Tietoja- ja Aikalaskin-ikkunoita. Järjestelmän oletusfonttina käytetään "
+            L"Tahomaa 8 pt; "
             L"itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. "
             L"Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä "
             L"ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat "
@@ -5656,7 +6538,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"teemat on poistettu käytöstä.\r\n\r\nASETUKSET JA VALIKOT\r\nSovelluksen kieli, fontti, "
             L"pehmennys, tallennus, Windowsin mukana käynnistys, reunakiinnitys ja aikalähde ovat yleisiä; "
             L"sovellusasetukset määritetään Sovellus-välilehdellä. Teemojen poistaminen käytöstä "
-            L"Sovellus-välilehdellä vaikuttaa vain Asetukset-, Ohje- ja Tietoja-ikkunoihin. Kukin "
+            L"Sovellus-välilehdellä vaikuttaa vain Aikalaskin-, Asetukset-, Ohje- ja Tietoja-ikkunoihin. "
+            L"Kukin "
             L"pienoisohjelma käyttää omaa teema-asetustaan. Ensimmäisellä "
             L"käynnistyksellä kieli seuraa Windowsin käyttöliittymäkieltä, varalla on amerikanenglanti. "
             L"Pienoisohjelman kieli ja muut valinnat ovat yksilöllisiä. Kuvakevalikossa Näytä kaikki ja "
@@ -5758,11 +6641,36 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"CSV-tiedostoon, mukaan lukien aikaerot ja virhetiedot. Merkintöjä ei säilytetä "
             L"käynnistyskertojen välillä; tallenna ne ennen sulkemista, jos haluat säilyttää "
             L"ne.\r\n\r\nNÄYTTÖKELLO\r\nDigitaalinen kello voi täyttää yhden tai useita näyttöjä ja pimentää "
-            L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja sisämarginaali "
+            L"muut. Fonttikoko on prosenttiosuus näytön korkeudesta; myös fontti, pehmennys, värit ja "
+            L"sisämarginaali "
             L"voidaan määrittää. Kun Asetukset on avoinna, näytetään aina pieni siirrettävä esikatselu. Esc "
             L"piilottaa kellon ja poistaa pimennyksen.\r\n\r\nOsoitin piilotetaan lyhyen käyttämättömyyden "
             L"jälkeen näyttökellojen ja pimennettyjen näyttöjen päällä. Se palaa näkyviin hiirtä "
-            L"liikuttamalla. Pienen esikatselun päällä osoitin pysyy näkyvissä Asetusten ollessa auki."
+            L"liikuttamalla. Pienen esikatselun päällä osoitin pysyy näkyvissä Asetusten ollessa "
+            L"auki.\r\n\r\nAikalaskin\r\nAvaa Aikalaskin minkä tahansa pienoisohjelman valikosta tai "
+            L"ilmoitusalueen kuvakkeen valikosta. Aikaväli-välilehti laskee kahden päivämäärän ja ajan "
+            L"eron. Tasaluvut-välilehti korostaa kalenterissa tasaluvut, toistuvat numerot sekä kuukausi- "
+            L"ja vuosipäivät valitusta alusta. Tallennetut päivämäärät ja ajat -välilehti mahdollistaa "
+            L"päivämäärien ja aikojen lisäämisen, muokkaamisen, lajittelun ja poistamisen kuvauksineen. "
+            L"Päivämäärät ja ajat tallennetaan erikseen tiedostoon "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Manuaalinen vienti sisältää ne; tuonti säilyttää "
+            L"nykyiset merkinnät ja ohittaa vain merkinnät, joiden päivämäärä, aika ja koko kuvaus ovat "
+            L"samat.\r\n\r\nJokaisella syötteellä on oma aikavyöhyke samasta luettelosta kuin asetuksissa. "
+            L"Oletuksena on Windowsin nykyinen aikavyöhyke. Tallennetaan yksiselitteinen UTC-ajanhetki ja "
+            L"näyttövyöhyke. Vyöhykkeen vaihtaminen säilyttää ajanhetken. Valitse UTC-poikkeama toistuvalle "
+            L"tunnille; olematonta paikallista aikaa ei voi tallentaa. Tunnit mittaavat kulunutta aikaa, ja "
+            L"kalenterilaskelmat käyttävät aloitusvyöhykettä. Nyt käyttää Windowsin järjestelmäaikaa ilman "
+            L"pienoisohjelman siirtymää valitulla vyöhykkeellä.\r\n\r\nTuonti hyväksyy myös erillisen "
+            L"XML-tiedoston tallennetuista päivämääristä ja ajoista; tietueet yhdistetään sovelluksen "
+            L"asetuksia muuttamatta.\r\n\r\nKorostus-välilehdellä voit valita kalenterin päivämäärien "
+            L"korostussäännöt. Oletuksena korostetaan aloituspäivä (nolla-arvot), nolliin päättyvät "
+            L"tasaluvut, ensimmäiset yhdeksän täyttä viikkoa sekä kuukausi- ja vuosipäivät. Toistuvat "
+            L"numerot 1–9 (esimerkiksi 11, 111 tai 66, 666) voi ottaa käyttöön erikseen, ja ne ovat "
+            L"oletuksena poissa käytöstä.\r\n\r\nNapsauta sarakeotsikkoa lajitellaksesi tallennetut tiedot "
+            L"todellisen ajanhetken tai kuvaustekstin mukaan. Uusi napsautus kääntää järjestyksen; nuoli "
+            L"näyttää suunnan.\r\n\r\nIkkunan sijainti, aktiivinen välilehti, syötetyt arvot ja "
+            L"korostusvalinnat tallennetaan sovelluksen asetusten mukana rekisteriin tai XML-tiedostoon "
+            L"valitun tallennustavan mukaan."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
@@ -5771,6 +6679,54 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versio:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Kohdealusta:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Verkkosivusto:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Aikalaskin" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Tallennettuja päivämääriä ja aikoja ei voitu lukea." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Päivämääriä ja aikoja ei voitu tallentaa." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Valitse UTC-poikkeama tälle toistuvalle paikalliselle ajalle."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Tätä paikallista aikaa ei ole valitulla vyöhykkeellä tai vyöhyke ei ole käytettävissä."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Aikalaskin" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Aikaväli" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Tasaluvut" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Tallennetut päivämäärät ja ajat" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Korostus" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Aloituspäivä (nolla-arvot)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Nolliin päättyvät tasaluvut" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Toistuva numero %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Ensimmäiset yhdeksän täyttä viikkoa" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Kuukausi- ja vuosipäivät" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Alkaen:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Asti:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nyt" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Alku:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Esiasetus:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Päivämäärä ja aika:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Päivämäärä ja aika" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Kuvaus:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Kuvaus" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Muokkaa" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Poista" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Valitse kaikki" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Tunteja:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Päiviä:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Viikkoja:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Kuukausia:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Vuosia:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"t|pv|vk|kk|v|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Tunnit huomioivat annetun kellonajan. Päivät, viikot, kuukaudet ja vuodet lasketaan keskiyöstä."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valitun päivän arvot" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Tälle päivämäärälle ja kellonajalle on jo esiasetus. Jatketaanko?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Poistetaanko valitut esiasetukset?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalenteri korostaa tasaluvut, toistuvat numerot sekä kuukausi- ja vuosipäivät."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ohje" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Käy verkkosivustolla %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Sivustoa ei voi avata oletusselaimessa." },
@@ -5988,6 +6944,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Þagga &allt" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Þaggað" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"STJÓRNUN\r\nDragðu klukku eða spjald með vinstri músarhnappi. Dragðu sjálfstætt dagatal á auðu "
             L"svæði. Hægrismellur opnar valmynd græju. Vinstrismellur á tilkynningatáknið felur sýnilegar "
             L"græjur eða endurheimtir þær sem síðast voru faldar.\r\n\r\nGRÆJUR OG STILLINGAR\r\nHægt er að "
@@ -6056,7 +7013,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"fjarlægja aðeins eldri CalClock-gögn. Hægt er að flytja stillingar út sem XML. Innflutningur "
             L"XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta gerð "
             L"hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nWindows 2000-stíll "
-            L"krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp og Um. Tahoma "
+            L"krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um og "
+            L"Tímareiknivél. Tahoma "
             L"8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og "
             L"leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað "
             L"ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með "
@@ -6069,7 +7027,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"slökkt er á þemum fyrir græjuna.\r\n\r\nSTILLINGAR OG VALMYNDIR\r\nTungumál forrits, letur, "
             L"jöfnun, geymsla, ræsing með Windows, festing við brúnir og tímagjafi gilda alls staðar; "
             L"forritsvalkostir eru stilltir á Forrit-flipanum. Þegar slökkt er á þemum á flipanum Forrit "
-            L"gildir það aðeins fyrir Stillingar, Hjálp og Um. Hver græja "
+            L"gildir það aðeins fyrir Tímareiknivél, Stillingar, Hjálp og Um. Hver græja "
             L"notar sína eigin þemastillingu. Við fyrstu ræsingu fylgir "
             L"tungumálið viðmóti Windows, en bandarísk enska er varaval. Tungumál og aðrir valkostir græju "
             L"gilda fyrir hverja græju. Í táknvalmyndinni koma Sýna allt og Fela allt á undan Þagga allt; "
@@ -6164,7 +7122,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"jöfnun, liti og bil. Þegar Stillingar eru opnar birtist alltaf lítil færanleg forskoðun. Esc "
             L"felur klukkuna og fjarlægir myrkvun.\r\n\r\nBendillinn felst eftir stutt aðgerðaleysi yfir "
             L"skjáklukkum og myrkvuðum skjám og birtist aftur þegar músin hreyfist. Hann er sýnilegur yfir "
-            L"litlu forskoðuninni meðan Stillingar eru opnar."
+            L"litlu forskoðuninni meðan Stillingar eru opnar.\r\n\r\nTímareiknivél\r\nOpnaðu Tímareiknivél "
+            L"úr valmynd hvaða græju sem er eða valmynd táknsins á tilkynningasvæðinu. Flipinn Tímabil "
+            L"reiknar mismun tveggja dagsetninga og tíma. Flipinn Sléttar tölur auðkennir sléttar tölur, "
+            L"endurtekna tölustafi og mánaðarleg og árleg tímamót í dagatalinu frá völdu upphafi. Flipinn "
+            L"Vistaðar dagsetningar og tímar gerir kleift að bæta við, breyta, raða og eyða dagsetningum og "
+            L"tímum með lýsingu. Dagsetningar og tímar eru vistaðir sérstaklega í "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Handvirkur útflutningur inniheldur þau; "
+            L"innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sömu "
+            L"dagsetningu, tíma og heildarlýsingu.\r\n\r\nHvert inntak hefur eigið tímabelti úr sama lista "
+            L"og í stillingum. Núverandi tímabelti Windows er sjálfgefið. Vistaður er ótvíræður tímapunktur "
+            L"í UTC ásamt tímabelti birtingar. Breyting á tímabelti varðveitir tímapunktinn. Veldu "
+            L"UTC-hliðrun fyrir endurtekna klukkustund; ekki er hægt að vista staðartíma sem er ekki til. "
+            L"Klukkustundir mæla liðinn tíma; dagatalsútreikningar nota upphafstímabeltið. Núna notar "
+            L"kerfistíma Windows án hliðrunar græju, birtan á völdu tímabelti.\r\n\r\nInnflutningur tekur "
+            L"einnig við sérstakri XML-skrá með vistuðum dagsetningum og tímum; færslurnar eru sameinaðar "
+            L"án þess að stillingum forritsins sé breytt.\r\n\r\nÁ flipanum Auðkenning geturðu valið "
+            L"reglurnar sem auðkenna dagsetningar í dagatalinu. Sjálfgefið eru upphafsdagurinn (núllgildi), "
+            L"sléttar tölur sem enda á núllum, fyrstu níu heilu vikurnar og mánaðar- og ársafmæli auðkennd. "
+            L"Hægt er að virkja endurtekna tölustafi 1–9 (til dæmis 11, 111 eða 66, 666) hvern fyrir sig; "
+            L"sjálfgefið er slökkt á þeim.\r\n\r\nSmelltu á dálkhaus til að raða vistuðum færslum eftir "
+            L"raunverulegu augnabliki eða lýsingartexta. Smelltu aftur til að snúa röðinni við; ör sýnir "
+            L"röðunarstefnuna.\r\n\r\nStaðsetning gluggans, virkur flipi, innslegin gildi og val á "
+            L"auðkenningu eru vistuð með forritsstillingum í skrásetningunni eða XML eftir völdum "
+            L"geymslumáta."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -6173,6 +7154,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Útgáfa:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Markvettvangur:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Vefsvæði:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Tímareiknivél" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Ekki tókst að lesa vistaðar dagsetningar og tíma." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Ekki tókst að vista dagsetningar og tíma." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Veldu UTC-hliðrun fyrir þennan endurtekna staðartíma." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Þessi staðartími er ekki til á völdu tímabelti eða tímabeltið er ekki tiltækt."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Tímareiknivél" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Tímabil" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Sléttar tölur" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Vistaðar dagsetningar og tímar" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Auðkenning" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Upphafsdagur (núllgildi)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Sléttar tölur sem enda á núllum" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Endurtekinn tölustafur %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Fyrstu níu heilu vikurnar" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mánaðar- og ársafmæli" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Frá:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Til:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Núna" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Upphaf:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Forstilling:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dagsetning og tími:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dagsetning og tími" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Lýsing:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Lýsing" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Breyta" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Eyða" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Velja allt" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Klukkustundir:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dagar:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Vikur:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mánuðir:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Ár:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"klst.|d.|vik.|mán.|ár|mín." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Klukkustundir taka mið af tilgreindum tíma. Dagar, vikur, mánuðir og ár eru talin frá miðnætti."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Gildi fyrir valinn dag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Forstilling með þessari dagsetningu og tíma er þegar til. Halda áfram?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Eyða völdum forstillingum?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Dagatalið auðkennir sléttar tölur, endurtekna tölustafi og mánaðarleg og árleg tímamót."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjálp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Heimsækja vefsvæði %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Ekki er hægt að opna vefsvæðið í sjálfgefnum vafra." },
@@ -6394,6 +7421,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Demp &alle" },
         LocalizedText{ TXT_MUTED_LABEL, L"De&mpet" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"KONTROLLER\r\nDra en klokke eller et panel med venstre museknapp. Dra en frittstående kalender "
             L"i det ledige området. Høyreklikk åpner widgetmenyen. Et venstreklikk på systemstatusikonet "
             L"skjuler synlige widgeter eller gjenoppretter de sist skjulte.\r\n\r\nWIDGETER OG "
@@ -6462,7 +7490,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tidligere CalClock-data. Innstillinger kan eksporteres til XML. XML-import laster inn og "
             L"lagrer innstillingene umiddelbart i valgt lagring uten å endre "
             L"lagringstypen.\r\n\r\nSkriftutjevning tilbyr ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil "
-            L"krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp og Om. Tahoma 8 pt brukes i "
+            L"krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. Tahoma 8 pt "
+            L"brukes i "
             L"stedet for systemets standardskrift; en egendefinert programskrift har forrang, og "
             L"lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret "
             L"ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk "
@@ -6474,8 +7503,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"beholder sin egen sentrering.\r\n\r\nEgendefinerte kalenderskrifter støttes med klassisk "
             L"Windows-utseende eller når temaer er deaktivert for widgeten.\r\n\r\nINNSTILLINGER OG "
             L"MENYER\r\nProgramspråk, skrift, utjevning, lagring, oppstart med Windows, kantfesting og "
-            L"tidskilde er globale; programvalgene angis på fanen Program. Deaktivering av temaer på Program "
-            L"gjelder bare Innstillinger, Hjelp og Om. Hver widget bruker sin egen temainnstilling. Ved "
+            L"tidskilde er globale; programvalgene angis på fanen Program. Deaktivering av temaer på "
+            L"Program gjelder bare Tidskalkulator, Innstillinger, Hjelp og Om. Hver widget bruker sin egen "
+            L"temainnstilling. Ved "
             L"første start følger språket Windows-grensesnittet, med amerikansk engelsk som "
             L"reserve. Widgetspråk og andre widgetvalg gjelder enkeltvis. I ikonmenyen kommer Vis alle og "
             L"Skjul alle før Demp alle; Ordne i et rutenett står i en egen gruppe etter dem. Demp i "
@@ -6568,7 +7598,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"farger og luft kan også angis. Når Innstillinger er åpent, vises alltid en liten, flyttbar "
             L"forhåndsvisning. Esc skjuler klokken og fjerner mørklegging.\r\n\r\nPekeren skjules etter kort "
             L"inaktivitet over skjermklokker og mørklagte skjermer, og vises igjen når musen beveges. Den "
-            L"forblir synlig over den lille forhåndsvisningen når Innstillinger er åpent."
+            L"forblir synlig over den lille forhåndsvisningen når Innstillinger er "
+            L"åpent.\r\n\r\nTidskalkulator\r\nÅpne Tidskalkulator fra menyen til en widget eller ikonet i "
+            L"systemstatusfeltet. Tidsintervall beregner forskjellen mellom to datoer og klokkeslett. Runde "
+            L"verdier fremhever runde verdier, gjentatte sifre samt månedlige og årlige merkedager i "
+            L"kalenderen fra valgt start. Lagrede datoer og klokkeslett lar deg legge til, redigere, "
+            L"sortere og slette datoer og klokkeslett med beskrivelser. Datoer og klokkeslett lagres "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuell eksport inkluderer dem; import "
+            L"bevarer eksisterende oppføringer og hopper bare over oppføringer med identisk dato, "
+            L"klokkeslett og fullstendig beskrivelse.\r\n\r\nHver inndata har egen tidssone fra samme liste "
+            L"som i Innstillinger. Gjeldende Windows-tidssone er standard. Et entydig UTC-tidspunkt og "
+            L"visningssonen lagres. Bytte av sone bevarer tidspunktet. Velg UTC-forskyvningen ved en "
+            L"gjentatt time; lokale klokkeslett som ikke finnes, kan ikke lagres. Timer måler medgått tid; "
+            L"kalenderberegninger bruker startsonen. Nå bruker Windows-systemtiden uten widgetforskyvning, "
+            L"vist i valgt sone.\r\n\r\nImport godtar også en separat XML-fil med lagrede datoer og "
+            L"klokkeslett; oppføringene slås sammen uten å endre programinnstillingene.\r\n\r\nPå fanen "
+            L"Utheving velger du reglene for utheving av datoer i kalenderen. Som standard utheves "
+            L"startdagen (nullverdier), runde verdier som slutter på nuller, de første ni hele ukene samt "
+            L"måneds- og årsdager. Gjentatte sifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres "
+            L"enkeltvis og er slått av som standard.\r\n\r\nKlikk på en kolonneoverskrift for å sortere "
+            L"lagrede oppføringer etter faktisk tidspunkt eller beskrivelsestekst. Klikk igjen for å snu "
+            L"rekkefølgen; en pil viser retningen.\r\n\r\nVindusposisjonen, den aktive fanen, innskrevne "
+            L"verdier og valg av utheving lagres sammen med programinnstillingene i registeret eller XML, "
+            L"avhengig av valgt lagringsmåte."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -6577,6 +7629,54 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versjon:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Nettsted:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Tidskalkulator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Lagrede datoer og klokkeslett kunne ikke leses." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datoer og klokkeslett kunne ikke lagres." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Velg UTC-forskyvningen for dette gjentatte lokale klokkeslettet."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Dette lokale klokkeslettet finnes ikke i valgt sone, eller sonen er utilgjengelig."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Tidskalkulator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Tidsintervall" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Runde verdier" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Lagrede datoer og klokkeslett" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Utheving" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Startdag (nullverdier)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Runde verdier som slutter på nuller" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Gjentatt siffer %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"De første ni hele ukene" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Måneds- og årsdager" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Fra:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Til:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nå" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Forhåndsinnstilling:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dato og klokkeslett:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dato og klokkeslett" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Beskrivelse:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Beskrivelse" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Rediger" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Slett" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Velg alle" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Timer:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dager:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Uker:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Måneder:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"År:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"t|d|u|md.|år|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Timer tar hensyn til angitt klokkeslett. Dager, uker, måneder og år telles fra midnatt."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Verdier for valgt dag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Det finnes allerede en forhåndsinnstilling med denne datoen og dette klokkeslettet. Fortsette?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Slette de valgte forhåndsinnstillingene?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalenderen fremhever runde verdier, gjentatte sifre samt månedlige og årlige merkedager."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjelp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besøk nettstedet %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nettstedet kan ikke åpnes i standardnettleseren." },
@@ -6798,6 +7898,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Tysta &alla" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Tyst" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"KONTROLLER\r\nDra en klocka eller panel med vänster musknapp. Dra en fristående kalender i det "
             L"fria området. Högerklick öppnar widgetmenyn. Ett vänsterklick på meddelandeikonen döljer "
             L"synliga widgetar eller återställer de senast dolda.\r\n\r\nWIDGETAR OCH INSTÄLLNINGAR\r\nDu "
@@ -6865,7 +7966,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tar bara bort tidigare CalClock-data. Inställningar kan exporteras till XML. XML-import läser "
             L"in och sparar inställningarna direkt i vald lagring utan att ändra "
             L"lagringstypen.\r\n\r\nTeckensnittsutjämning erbjuder ClearType, GDI och Ingen.\r\n\r\nWindows "
-            L"2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp och Om. Med systemets "
+            L"2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. "
+            L"Med systemets "
             L"standardteckensnitt använder dessa fönster Tahoma 8 pt; ett anpassat programteckensnitt har "
             L"företräde. Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast GDI "
             L"och Ingen tillgängliga för teckensnittsutjämning: ett sparat val av ClearType använder "
@@ -6879,7 +7981,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"teman är avstängda för widgeten.\r\n\r\nINSTÄLLNINGAR OCH MENYER\r\nProgramspråk, teckensnitt, "
             L"utjämning, lagring, start med Windows, kantfästning och tidskälla är globala; "
             L"programalternativen ställs in på fliken Program. Avstängning av teman på Program gäller bara "
-            L"Inställningar, Hjälp och Om. Varje widget använder sin egen temainställning. Vid "
+            L"Tidskalkylator, Inställningar, Hjälp och Om. Varje widget använder sin egen temainställning. "
+            L"Vid "
             L"första starten följer språket Windows gränssnittsspråk, med amerikansk engelska som reserv. "
             L"Widgetspråk och andra widgetval gäller separat. I ikonmenyn kommer Visa alla och Dölj alla "
             L"före Tysta alla; Ordna i ett rutnät står i en egen grupp efter dem. Tysta i widgetmenyn "
@@ -6974,7 +8077,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"en liten flyttbar förhandsvisning. Esc döljer klockan och tar bort släckningen.\r\n\r\nPekaren "
             L"döljs efter en kort stunds inaktivitet över skärmklockor och mörklagda skärmar och visas igen "
             L"när musen rör sig. Den förblir synlig över den lilla förhandsvisningen när Inställningar är "
-            L"öppet."
+            L"öppet.\r\n\r\nTidskalkylator\r\nÖppna Tidskalkylator från en widgets meny eller menyn för "
+            L"ikonen i meddelandefältet. Tidsintervall beräknar skillnaden mellan två datum och tider. "
+            L"Runda värden markerar runda värden, upprepade siffror samt månatliga och årliga "
+            L"bemärkelsedagar i kalendern från vald start. Sparade datum och tider låter dig lägga till, "
+            L"redigera, sortera och ta bort datum och tider med beskrivningar. Datum och tider sparas "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuell export inkluderar dem; import "
+            L"bevarar befintliga poster och hoppar bara över poster med identiskt datum, tid och "
+            L"fullständig beskrivning.\r\n\r\nVarje inmatning har en egen tidszon från samma lista som i "
+            L"Inställningar. Aktuell Windows-tidszon är standard. En entydig UTC-tidpunkt och visningszonen "
+            L"sparas. Byte av zon bevarar tidpunkten. Välj UTC-förskjutning vid en upprepad timme; lokala "
+            L"tider som inte finns kan inte sparas. Timmar mäter förfluten tid; kalenderberäkningar "
+            L"använder startzonen. Nu använder Windows systemtid utan widgetförskjutning, visad i vald "
+            L"zon.\r\n\r\nImport accepterar även en separat XML-fil med sparade datum och tider; posterna "
+            L"slås samman utan att ändra programmets inställningar.\r\n\r\nPå fliken Markering väljer du "
+            L"reglerna för markering av datum i kalendern. Som standard markeras startdagen (nollvärden), "
+            L"runda värden som slutar med nollor, de första nio hela veckorna samt månads- och årsdagar. "
+            L"Upprepade siffror 1–9 (till exempel 11, 111 eller 66, 666) kan aktiveras var för sig och är "
+            L"avstängda som standard.\r\n\r\nKlicka på en kolumnrubrik för att sortera sparade poster efter "
+            L"den faktiska tidpunkten eller beskrivningstexten. Klicka igen för att vända ordningen; en pil "
+            L"visar riktningen.\r\n\r\nFönstrets position, den aktiva fliken, inmatade värden och "
+            L"markeringsval sparas tillsammans med programinställningarna i registret eller XML enligt vald "
+            L"lagringsmetod."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -6983,6 +8107,55 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Version:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webbplats:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Tidskalkylator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sparade datum och tider kunde inte läsas." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datum och tider kunde inte sparas." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Välj UTC-förskjutningen för den här upprepade lokala tiden."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Den lokala tiden finns inte i vald zon, eller zonen är inte tillgänglig."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Tidskalkylator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Tidsintervall" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Runda värden" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Sparade datum och tider" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Markering" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Startdag (nollvärden)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Runda värden som slutar med nollor" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Upprepad siffra %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"De första nio hela veckorna" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Månads- och årsdagar" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Från:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Till:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nu" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Start:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Förinställning:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum och tid:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum och tid" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Beskrivning:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Beskrivning" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Redigera" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Ta bort" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Markera alla" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Timmar:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dagar:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Veckor:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Månader:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"År:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"tim|d|v|mån|år|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Timmar tar hänsyn till det angivna klockslaget. Dagar, veckor, månader och år räknas från "
+            L"midnatt."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Värden för vald dag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Det finns redan en förinställning med detta datum och denna tid. Fortsätta?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Ta bort de markerade förinställningarna?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendern markerar runda värden, upprepade siffror samt månatliga och årliga bemärkelsedagar."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Hjälp" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Besök webbplatsen %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Webbplatsen kan inte öppnas i standardwebbläsaren." },
@@ -7204,6 +8377,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Tümünü sessize al" },
         LocalizedText{ TXT_MUTED_LABEL, L"Sessi&z" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"DENETİMLER\r\nBir saati veya paneli sol fare düğmesiyle sürükleyin. Bağımsız takvimi boş "
             L"alanından sürükleyin. Sağ tıklama araç menüsünü açar. Bildirim simgesine sol tıklamak görünür "
             L"araçları gizler veya en son gizlenenleri geri getirir.\r\n\r\nARAÇLAR VE AYARLAR\r\nAnalog "
@@ -7272,7 +8446,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"aktarılabilir. XML içe aktarma, depolama türünü değiştirmeden ayarları hemen yükler ve seçili "
             L"depolamaya kaydeder.\r\n\r\nYazı tipi kenar yumuşatma seçenekleri ClearType, GDI ve Yok "
             L"şeklindedir.\r\n\r\nWindows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve "
-            L"yalnızca Ayarlar, Yardım ve Hakkında pencerelerine uygulanır. Sistem varsayılan yazı tipi "
+            L"yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerine uygulanır. Sistem "
+            L"varsayılan yazı tipi "
             L"yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas "
             L"olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI "
             L"ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema "
@@ -7285,7 +8460,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"kapatıldığında desteklenir.\r\n\r\nAYARLAR VE MENÜLER\r\nUygulama dili, yazı tipi, kenar "
             L"yumuşatma, depolama, Windows ile başlatma, kenara yaslama ve zaman kaynağı geneldir; uygulama "
             L"seçenekleri Uygulama sekmesinde ayarlanır. Uygulama sekmesinde temaları kapatmak yalnızca "
-            L"Ayarlar, Yardım ve Hakkında pencerelerini etkiler. Her araç kendi "
+            L"Zaman hesaplayıcı, Ayarlar, Yardım ve Hakkında pencerelerini etkiler. Her araç kendi "
             L"tema ayarını kullanır. İlk açılışta dil Windows arayüz dilinden "
             L"alınır; desteklenmiyorsa ABD İngilizcesi kullanılır. Araç dili ve diğer araç seçenekleri her "
             L"araç için ayrıdır. Simge menüsünde Tümünü göster ve Tümünü gizle, Tümünü sessize al "
@@ -7382,7 +8557,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"küçük, sürüklenebilir bir önizleme gösterilir. Esc saati gizler ve karartmayı "
             L"kaldırır.\r\n\r\nİşaretçi, monitör saatleri ve karartılmış monitörler üzerinde kısa bir "
             L"hareketsizlikten sonra gizlenir ve fare hareket edince yeniden görünür. Ayarlar açıkken küçük "
-            L"önizleme üzerinde görünür kalır."
+            L"önizleme üzerinde görünür kalır.\r\n\r\nZaman hesaplayıcı\r\nHerhangi bir aracın menüsünden "
+            L"veya bildirim alanı simgesinin menüsünden Zaman hesaplayıcı seçeneğini açın. Zaman aralığı "
+            L"iki tarih ve saat arasındaki farkı hesaplar. Yuvarlak değerler, seçilen başlangıçtan itibaren "
+            L"yuvarlak değerleri, yinelenen rakamları ve aylık ve yıllık dönümleri takvimde vurgular. "
+            L"Kayıtlı tarih ve saatler, açıklamalı tarih ve saatleri eklemenizi, düzenlemenizi, "
+            L"sıralamanızı ve silmenizi sağlar. Tarih ve saatler ayrı olarak "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml dosyasına kaydedilir. Elle dışa aktarma bunları "
+            L"içerir; içe aktarma mevcut kayıtları korur ve yalnızca tarihi, saati ve açıklamasının tamamı "
+            L"aynı olan kayıtları atlar.\r\n\r\nHer girişin Ayarlar ile aynı listedeki seçeneklerden kendi "
+            L"saat dilimi vardır. Varsayılan, Windows’un geçerli saat dilimidir. Kesin bir UTC anı ve "
+            L"görüntüleme saat dilimi kaydedilir. Saat dilimini değiştirmek anı korur. Tekrarlanan saatte "
+            L"UTC farkını seçin; var olmayan yerel saatler kaydedilemez. Saatler geçen süreyi ölçer; takvim "
+            L"hesapları başlangıç saat dilimini kullanır. Şimdi, widget farkı olmadan Windows sistem "
+            L"saatini seçili saat diliminde gösterir.\r\n\r\nİçe aktarma, kayıtlı tarih ve saatleri içeren "
+            L"ayrı bir XML dosyasını da kabul eder; uygulama ayarlarını değiştirmeden kayıtları "
+            L"birleştirir.\r\n\r\nVurgulama sekmesinde takvimdeki tarihleri vurgulamak için kullanılacak "
+            L"kuralları seçebilirsiniz. Varsayılan olarak başlangıç günü (sıfır değerleri), sıfırlarla "
+            L"biten yuvarlak değerler, ilk dokuz tam hafta ve aylık ve yıllık dönümler vurgulanır. "
+            L"Tekrarlanan 1–9 rakamları (örneğin 11, 111 veya 66, 666) ayrı ayrı etkinleştirilebilir ve "
+            L"varsayılan olarak kapalıdır.\r\n\r\nKaydedilmiş kayıtları gerçek zaman noktasına veya "
+            L"açıklama metnine göre sıralamak için sütun başlığına tıklayın. Yeniden tıklamak sıralamayı "
+            L"tersine çevirir; ok, yönü gösterir.\r\n\r\nPencere konumu, etkin sekme, girilen değerler ve "
+            L"vurgulama seçimleri, seçilen depolama seçeneğine göre uygulama ayarlarıyla birlikte kayıt "
+            L"defterine veya XML dosyasına kaydedilir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -7391,6 +8589,53 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Sürüm:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Hedef platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web sitesi:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Zaman hesaplayıcı" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Kayıtlı tarih ve saatler okunamadı." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Tarih ve saatler kaydedilemedi." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Tekrarlanan bu yerel saat için UTC farkını seçin." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Bu yerel saat seçili bölgede yok veya saat dilimi kullanılamıyor."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Zaman hesaplayıcı" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Zaman aralığı" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Yuvarlak değerler" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Kayıtlı tarih ve saatler" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Vurgulama" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Başlangıç günü (sıfır değerleri)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Sıfırlarla biten yuvarlak değerler" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Tekrarlanan %u rakamı (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"İlk dokuz tam hafta" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Aylık ve yıllık dönümler" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Başlangıç:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Bitiş:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Şimdi" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Başlangıç:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Ön ayar:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Tarih ve saat:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Tarih ve saat" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Açıklama:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Açıklama" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Düzenle" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Sil" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Tümünü seç" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Saat:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Gün:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Hafta:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Ay:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Yıl:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"sa|gün|hf|ay|yıl|dk" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Saatler belirtilen saati dikkate alır. Günler, haftalar, aylar ve yıllar gece yarısından "
+            L"itibaren sayılır."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Seçilen günün değerleri" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Bu tarih ve saat için bir ön ayar zaten var. Devam edilsin mi?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Seçili ön ayarlar silinsin mi?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Takvim yuvarlak değerleri, yinelenen rakamları ve aylık ve yıllık dönümleri vurgular."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Yardım" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"%ls web sitesini ziyaret et" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Web sitesi varsayılan tarayıcıda açılamıyor." },
@@ -7607,6 +8852,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Vaigista &kõik" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Vaigistatud" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Juhtimine\r\nLohistage kella või paneeli hiire vasaku nupuga. Eraldi kalendrit saab lohistada "
             L"vabast alast. Paremklõps vidinal või olekuala ikoonil avab menüü. Vasakklõps ikoonil peidab "
             L"nähtavad vidinad; kui kõik on peidetud, taastab see ainult viimati peidetud "
@@ -7701,19 +8947,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka "
             L"proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on "
             L"oma keskjoondus.\r\n\r\nWindows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult "
-            L"aknaid Sätted, Spikker ja Teave. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 pt; "
+            L"aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 "
+            L"pt; "
             L"kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab "
             L"valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; "
             L"stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad "
             L"kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused "
             L"säilivad.\r\n\r\nSätted ja menüüd\r\nRakenduse keel, font, silumine, salvestuskoht, "
             L"Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste "
-            L"keelamine vahekaardil Rakendus mõjutab ainult aknaid Sätted, "
-            L"Spikker ja Teave. Iga vidin kasutab oma kujundussätet. "
+            L"keelamine vahekaardil Rakendus mõjutab ainult aknaid Ajakalkulaator, Sätted, Spikker ja "
+            L"Teave. Iga vidin kasutab oma kujundussätet. "
             L"Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise "
             L"keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat. \r\n\r\nVidina menüüs "
             L"on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, sekundite, suuruse ja kuupäeva "
-            L"kopeerimise valikud, seejärel Paiguta ruudustikku, Sätted, Spikker, Teave ja Välju. Olekuala "
+            L"kopeerimise valikud, seejärel Paiguta ruudustikku, Ajakalkulaator, Sätted, Spikker, Teave ja "
+            L"Välju. Olekuala "
             L"menüü loetleb nummerdatud vidinad, Kuva kõik, Peida kõik ja Vaigista kõik ning eraldi "
             L"ruudustikukäsu. Kuvamine või taastamine toob vidina ette suvandit Alati pealmine muutmata. "
             L"Korduskäivitus taastab vajaduse korral viimati peidetud vidinad. Sihverplaadisuurused ja "
@@ -7805,7 +9053,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"kuvari kuvasuhte ja mille asukoht salvestatakse. Ruudustikupaigutus seda tüüpi ei liiguta. Esc "
             L"peidab kella ja eemaldab tumenduse ka avatud sätetega.\r\n\r\nHiirekursor peitub ekraanikella "
             L"või tumendatud kuvarite kohal pärast lühikest tegevusetust ning ilmub hiire liigutamisel. "
-            L"Väikese eelvaate kohal jääb see nähtavaks."
+            L"Väikese eelvaate kohal jääb see nähtavaks.\r\n\r\nAjakalkulaator\r\nAva Ajakalkulaator mis "
+            L"tahes vidina menüüst või olekuala ikooni menüüst. Vahekaart Ajavahemik arvutab kahe kuupäeva "
+            L"ja kellaaja vahe. Vahekaart Ümmargused väärtused tõstab kalendris esile ümmargused väärtused, "
+            L"korduvad numbrid ning igakuised ja iga-aastased tähtpäevad alates valitud algusest. Vahekaart "
+            L"Salvestatud kuupäevad ja kellaajad võimaldab kirjeldusega kuupäevi ja kellaaegu lisada, "
+            L"muuta, sortida ja kustutada. Kuupäevad ja kellaajad salvestatakse eraldi faili "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Käsitsi eksport sisaldab neid; import säilitab "
+            L"olemasolevad kirjed ja jätab vahele ainult kirjed, mille kuupäev, kellaaeg ja kogu kirjeldus "
+            L"on identsed.\r\n\r\nIgal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi "
+            L"kasutatakse Windowsi praegust ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja "
+            L"kuvamisvöönd. Vööndi muutmine säilitab ajahetke. Korduva tunni korral valige UTC-nihe; "
+            L"olematut kohalikku aega ei saa salvestada. Tunnid mõõdavad möödunud aega; kalendriarvutused "
+            L"kasutavad algusvööndit. Praegu kasutab Windowsi süsteemiaega ilma vidina nihketa, kuvatuna "
+            L"valitud vööndis.\r\n\r\nImport toetab ka eraldi XML-faili salvestatud kuupäevade ja "
+            L"kellaaegadega; kirjed ühendatakse rakenduse seadeid muutmata.\r\n\r\nVahekaardil "
+            L"Esiletõstmine saate valida kalendri kuupäevade esiletõstmise reeglid. Vaikimisi tõstetakse "
+            L"esile alguspäev (nullväärtused), nullidega lõppevad ümmargused väärtused, esimesed üheksa "
+            L"täisnädalat ning kuu- ja aastapäevad. Korduvad numbrid 1–9 (näiteks 11, 111 või 66, 666) saab "
+            L"eraldi sisse lülitada; vaikimisi on need välja lülitatud.\r\n\r\nKlõpsa veerupäist, et "
+            L"sortida salvestatud kirjeid tegeliku ajahetke või kirjelduse teksti järgi. Uus klõps pöörab "
+            L"järjestuse ümber; nool näitab suunda.\r\n\r\nAkna asukoht, aktiivne vahekaart, sisestatud "
+            L"väärtused ja esiletõstmise valikud salvestatakse koos rakenduse sätetega registrisse või "
+            L"XML-faili vastavalt valitud salvestuskohale."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -7814,6 +9084,53 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versioon:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sihtplatvorm:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veebisait:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Ajakalkulaator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Salvestatud kuupäevi ja kellaaegu ei saanud lugeda." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Kuupäevi ja kellaaegu ei saanud salvestada." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Valige selle korduva kohaliku aja UTC-nihe." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Seda kohalikku aega valitud vööndis ei eksisteeri või vöönd pole saadaval."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Ajakalkulaator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Ajavahemik" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Ümmargused väärtused" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Salvestatud kuupäevad ja kellaajad" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Esiletõstmine" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Alguspäev (nullväärtused)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Nullidega lõppevad ümmargused väärtused" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Korduv number %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Esimesed üheksa täisnädalat" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Kuu- ja aastapäevad" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Alates:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Kuni:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Praegu" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Algus:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Eelseadistus:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Kuupäev ja kellaaeg:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Kuupäev ja kellaaeg" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Kirjeldus:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Kirjeldus" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Muuda" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Kustuta" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Vali kõik" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Tunde:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Päevi:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Nädalaid:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Kuid:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Aastaid:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"t|p|näd|k|a|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Tunnid arvestavad määratud kellaaega. Päevi, nädalaid, kuid ja aastaid loetakse keskööst."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valitud päeva väärtused" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Selle kuupäeva ja kellaajaga eelseadistus on juba olemas. Kas jätkata?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Kas kustutada valitud eelseadistused?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalender tõstab esile ümmargused väärtused, korduvad numbrid ning igakuised ja iga-aastased "
+            L"tähtpäevad."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Spikker" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Ava veebisait %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Veebisaiti ei saa vaikebrauseris avada." },
@@ -8031,6 +9348,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Balbhaigh &uile" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Balbhaithe" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Rialuithe\r\nTarraing clog nó painéal leis an gcnaipe luiche ar chlé. Tarraing féilire "
             L"neamhspleách ón achar saor. Osclaíonn deaschliceáil ar ghiuirléid nó ar dheilbhín an limistéir "
             L"fógraí an roghchlár. Folaíonn clé-chliceáil ar an deilbhín na giuirléidí infheicthe; má tá "
@@ -8141,7 +9459,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig "
             L"scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith "
             L"UTC.\r\n\r\nÉilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach "
-            L"leis na fuinneoga Socruithe, Cabhair agus Maidir leis. Úsáidtear Tahoma 8 pt in áit chló "
+            L"leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáidtear Tahoma 8 pt in "
+            L"áit chló "
             L"réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann "
             L"Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go "
             L"sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma "
@@ -8149,12 +9468,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"bhfeidhm iad; coinnítear na roghanna sábháilte.\r\n\r\nSocruithe agus roghchláir\r\nIs "
             L"socruithe comhroinnte ar an gcluaisín Feidhmchlár "
             L"iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Ní "
-            L"bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Socruithe, "
-            L"Cabhair agus Maidir leis. Úsáideann gach giuirléid a socrú téama féin. Ar "
+            L"bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Áireamhán ama, "
+            L"Socruithe, Cabhair agus Maidir leis. Úsáideann gach giuirléid a socrú téama féin. Ar "
             L"an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní "
             L"bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin. \r\n\r\nTaispeánann "
             L"roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcónaí, soicindí, méid agus "
-            L"cóipeáil dáta a bhaineann léi, agus ansin Eagraigh in eangach, Socruithe, Cabhair, Maidir leis "
+            L"cóipeáil dáta a bhaineann léi, agus ansin Eagraigh in eangach, Áireamhán ama, Socruithe, "
+            L"Cabhair, Maidir leis "
             L"agus Scoir. Liostaíonn an roghchlár fógraí giuirléidí uimhrithe agus Taispeáin uile, Folaigh "
             L"uile agus Balbhaigh uile, agus an t-ordú eangaí i ngrúpa ar leith. Tugann taispeáint nó "
             L"athchóiriú giuirléid chun tosaigh gan Ar barr i gcónaí a athrú. Má sheoltar CalClock arís, "
@@ -8261,7 +9581,31 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"seo. Folaíonn Esc an clog agus baintear dorchú fiú nuair atá Socruithe "
             L"oscailte.\r\n\r\nFolaítear an pointeoir tar éis tréimhse ghairid gan ghníomhaíocht os cionn an "
             L"chloig nó monatóirí dorchaithe agus tagann sé ar ais le gluaiseacht luiche. Fanann sé "
-            L"infheicthe os cionn an réamhamhairc bhig."
+            L"infheicthe os cionn an réamhamhairc bhig.\r\n\r\nÁireamhán ama\r\nOscail Áireamhán ama ó "
+            L"roghchlár aon ghiuirléide nó ó roghchlár an deilbhín sa limistéar fógraí. Ríomhann Eatramh "
+            L"ama an difríocht idir dhá dháta agus am. Aibhsíonn Uimhreacha cothroma uimhreacha cothroma, "
+            L"digití athfhillteacha agus comóradh míosúil agus bliantúil san fhéilire ón tús roghnaithe. Le "
+            L"Dátaí agus amanna réamhshocraithe is féidir dátaí agus amanna le cur síos a chur leis, a chur "
+            L"in eagar, a shórtáil agus a scriosadh. Úsáideann Sábháiltear dátaí agus amanna ar leithligh "
+            L"in %APPDATA%\\FortSoft\\CalClock\\times.xml. Cuirtear san áireamh iad in easpórtáil láimhe; "
+            L"coinníonn iompórtáil na hiontrálacha atá ann agus ní scipeálann sí ach iontrálacha a bhfuil "
+            L"an dáta, an t-am agus an cur síos iomlán céanna acu.\r\n\r\nTá crios ama dá chuid féin ag "
+            L"gach ionchur, ón liosta céanna agus atá sna Socruithe. Is é crios ama reatha Windows an "
+            L"réamhshocrú. Sábháiltear meandar soiléir UTC agus a chrios taispeána. Caomhnaítear an meandar "
+            L"nuair a athraítear an crios. Roghnaigh an fritháireamh UTC d’uair athfhillteach; ní féidir am "
+            L"áitiúil nach bhfuil ann a shábháil. Tomhaiseann uaireanta an t-am caite; úsáideann ríomhanna "
+            L"féilire an crios tosaigh. Úsáideann Anois am córais Windows gan fritháireamh giuirléide, "
+            L"léirithe sa chrios roghnaithe.\r\n\r\nGlacann iompórtáil le comhad XML ar leith de dhátaí "
+            L"agus amanna sábháilte freisin; cumasctar na taifid gan socruithe an fheidhmchláir a "
+            L"athrú.\r\n\r\nAr an gcluaisín Aibhsiú, roghnaigh na rialacha chun dátaí a aibhsiú san "
+            L"fhéilire. De réir réamhshocraithe, aibhsítear an lá tosaigh (luachanna nialasacha), luachanna "
+            L"cruinne a chríochnaíonn le nialais, na chéad naoi seachtaine iomlána agus cothrom míosa agus "
+            L"bliana. Is féidir digití athfhillteacha 1–9 (mar shampla 11, 111 nó 66, 666) a chumasú ina "
+            L"n-aonar; tá siad díchumasaithe de réir réamhshocraithe.\r\n\r\nCliceáil ceanntásc colúin chun "
+            L"iontrálacha sábháilte a shórtáil de réir an fhíor-mheandair nó théacs an chuir síos. Cliceáil "
+            L"arís chun an t-ord a aisiompú; léiríonn saighead an treo.\r\n\r\nSábháiltear suíomh na "
+            L"fuinneoige, an chluaisín gníomhach, na luachanna iontráilte agus na roghanna aibhsithe le "
+            L"socruithe an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -8270,6 +9614,58 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Leagan:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sprioc-ardán:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Suíomh gréasáin:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Áireamhán ama" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Níorbh fhéidir dátaí agus amanna sábháilte a léamh." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Níorbh fhéidir dátaí agus amanna a shábháil." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Roghnaigh an fritháireamh UTC don am áitiúil athfhillteach seo."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Níl an t-am áitiúil seo ann sa chrios roghnaithe, nó níl an crios ar fáil."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Áireamhán ama" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Eatramh ama" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Uimhreacha cothroma" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Dátaí agus amanna réamhshocraithe" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Aibhsiú" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Lá tosaigh (luachanna nialasacha)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Luachanna cruinne a chríochnaíonn le nialais" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Digit %u arís agus arís eile (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Na chéad naoi seachtaine iomlána" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Cothrom míosa agus bliana" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Ó:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Go:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Anois" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Tús:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Réamhshocrú:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dáta agus am:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dáta agus am" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Cur síos:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Cur síos" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Cuir in eagar" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Scrios" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Roghnaigh uile" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Uaireanta:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Laethanta:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Seachtainí:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Míonna:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Blianta:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"uair|lá|seacht.|mí|bl.|nóim." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Cuirtear an t-am sonraithe san áireamh sna huaireanta. Áirítear laethanta, seachtainí, míonna "
+            L"agus blianta ó mheán oíche."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Luachanna don lá roghnaithe" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Tá réamhshocrú leis an dáta agus an t-am seo ann cheana. Ar aghaidh?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM,
+            L"An bhfuil fonn ort na réamhshocruithe roghnaithe a scriosadh?"
+        },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Aibhsíonn an féilire uimhreacha cothroma, digití athfhillteacha agus comóradh míosúil agus "
+            L"bliantúil."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Cabhair" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Oscail an suíomh gréasáin %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -8497,6 +9893,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Nutildyti &visus" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Nutildyta" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Valdymas\r\nVilkite laikrodį arba skydelį kairiuoju pelės mygtuku. Atskiras kalendorius "
             L"velkamas už laisvos srities. Dešiniuoju mygtuku spustelėjus valdiklį arba pranešimų srities "
             L"piktogramą atidaromas meniu. Kairysis piktogramos spustelėjimas paslepia matomus valdiklius; "
@@ -8599,19 +9996,22 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį "
             L"šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama "
             L"atskirai.\r\n\r\nWindows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik "
-            L"langams Parametrai, Žinynas ir Apie. Vietoj numatytojo sistemos šrifto naudojamas Tahoma 8 pt; "
+            L"langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Vietoj numatytojo sistemos šrifto "
+            L"naudojamas Tahoma 8 pt; "
             L"pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima "
             L"rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas "
             L"išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos "
             L"nepažymėtos ir neaktyvios, jos netaikomos; įrašyti pasirinkimai išlieka.\r\n\r\nParametrai ir "
             L"meniu\r\nProgramos kalba, šriftas, glodinimas, saugykla, "
             L"paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų "
-            L"išjungimas skirtuke Programa taikomas tik langams Parametrai, Žinynas ir Apie. Kiekvienas "
+            L"išjungimas skirtuke Programa taikomas tik langams Laiko skaičiuotuvas, Parametrai, Žinynas ir "
+            L"Apie. Kiekvienas "
             L"valdiklis naudoja savo temų nuostatą. Pirmą kartą "
             L"parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, "
             L"glodinimas ir temos taikomi tik jam. \r\n\r\nValdiklio meniu turi jam tinkamus matomumo, "
             L"Visada viršuje, sekundžių, dydžio ir datos kopijavimo pasirinkimus, po jų – Išdėstyti "
-            L"tinkleliu, Parametrai, Žinynas, Apie ir Išeiti. Piktogramos meniu pateikia numeruotus "
+            L"tinkleliu, Laiko skaičiuotuvas, Parametrai, Žinynas, Apie ir Išeiti. Piktogramos meniu "
+            L"pateikia numeruotus "
             L"valdiklius, Rodyti visus, Slėpti visus ir Nutildyti visus, tada atskirą tinklelio komandą. "
             L"Rodant ar atkuriant valdiklis iškeliamas į priekį nekeičiant Visada viršuje. Pakartotinis "
             L"paleidimas prireikus atkuria paskutinį kartą paslėptus valdiklius. Ciferblatų dydžiai ir "
@@ -8710,7 +10110,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"įrašomą padėtį. Tinklelis šio tipo neperkelia. Esc paslepia laikrodį ir pašalina užtemdymą net "
             L"atidarius parametrus.\r\n\r\nPelės žymeklis virš ekrano laikrodžio ir užtemdytų monitorių "
             L"pasislepia po trumpos neveiklos ir vėl pasirodo pajudinus pelę. Virš mažos peržiūros jis lieka "
-            L"matomas."
+            L"matomas.\r\n\r\nLaiko skaičiuotuvas\r\nAtverkite Laiko skaičiuotuvą iš bet kurio valdiklio "
+            L"meniu arba pranešimų srities piktogramos meniu. Laiko intervalas skaičiuoja skirtumą tarp "
+            L"dviejų datų ir laikų. Apvalios reikšmės kalendoriuje paryškina apvalias reikšmes, "
+            L"pasikartojančius skaitmenis ir mėnesines bei metines sukaktis nuo pasirinktos pradžios. "
+            L"Išsaugotos datos ir laikai leidžia pridėti, redaguoti, rikiuoti ir naikinti datas bei laikus "
+            L"su aprašais. Datos ir laikai saugomi atskirai faile %APPDATA%\\FortSoft\\CalClock\\times.xml. "
+            L"Rankinis eksportas juos įtraukia; importas išsaugo esamus įrašus ir praleidžia tik įrašus, "
+            L"kurių data, laikas ir visas aprašas yra vienodi.\r\n\r\nKiekvienas įvesties laikas turi savo "
+            L"laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra dabartinė Windows laiko "
+            L"juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas "
+            L"išlieka. Pasikartojančiai valandai pasirinkite UTC poslinkį; neegzistuojančio vietinio laiko "
+            L"įrašyti negalima. Valandos matuoja praėjusį laiką, o kalendoriniai skaičiavimai naudoja "
+            L"pradžios juostą. Dabar naudoja Windows sistemos laiką be valdiklio poslinkio, rodomą "
+            L"pasirinktoje juostoje.\r\n\r\nImportuoti galima ir atskirą XML failą su įrašytomis datomis "
+            L"bei laikais; įrašai sujungiami nekeičiant programos nuostatų.\r\n\r\nKortelėje Paryškinimas "
+            L"galite pasirinkti kalendoriaus datų paryškinimo taisykles. Pagal numatytąsias nuostatas "
+            L"paryškinama pradinė diena (nulinės reikšmės), apvalios reikšmės, kurios baigiasi nuliais, "
+            L"pirmosios devynios pilnos savaitės ir mėnesių bei metų sukaktys. Pasikartojančius skaitmenis "
+            L"1–9 (pavyzdžiui, 11, 111 arba 66, 666) galima įjungti atskirai; pagal numatytąsias nuostatas "
+            L"jie išjungti.\r\n\r\nSpustelėkite stulpelio antraštę, kad surikiuotumėte išsaugotus įrašus "
+            L"pagal tikrąjį laiko momentą arba aprašo tekstą. Dar kartą spustelėjus tvarka apverčiama; "
+            L"rodyklė nurodo kryptį.\r\n\r\nLango padėtis, aktyvus skirtukas, įvestos reikšmės ir "
+            L"paryškinimo parinktys išsaugomos su programos parametrais registre arba XML faile pagal "
+            L"pasirinktą saugojimo būdą."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -8719,6 +10142,56 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Tikslinė platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Svetainė:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Laiko skaičiuotuvas" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Nepavyko perskaityti išsaugotų datų ir laikų." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Nepavyko išsaugoti datų ir laikų." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Pasirinkite šio pasikartojančio vietinio laiko UTC poslinkį."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Šio vietinio laiko pasirinktoje juostoje nėra arba juosta nepasiekiama."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Laiko skaičiuotuvas" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Laiko intervalas" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Apvalios reikšmės" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Išsaugotos datos ir laikai" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Paryškinimas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Pradinė diena (nulinės reikšmės)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Apvalios reikšmės, kurios baigiasi nuliais" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Pasikartojantis skaitmuo %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Pirmosios devynios pilnos savaitės" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mėnesių ir metų sukaktys" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Nuo:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Iki:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Dabar" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Pradžia:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Išankstinė nuostata:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data ir laikas:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data ir laikas" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Aprašas:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Aprašas" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Redaguoti" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Naikinti" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Pasirinkti viską" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Valandų:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dienų:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Savaičių:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mėnesių:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Metų:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"val.|d.|sav.|mėn.|m.|min." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Valandos skaičiuojamos pagal nurodytą laiką. Dienos, savaitės, mėnesiai ir metai skaičiuojami "
+            L"nuo vidurnakčio."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Pasirinktos dienos reikšmės" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Išankstinė nuostata su šia data ir laiku jau yra. Tęsti?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Naikinti pasirinktas išankstines nuostatas?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendorius paryškina apvalias reikšmes, pasikartojančius skaitmenis ir mėnesines bei metines "
+            L"sukaktis."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Žinynas" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Atidaryti svetainę %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nepavyko atverti svetainės numatytojoje naršyklėje." },
@@ -8938,6 +10411,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Izslēgt &visu skaņu" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Skaņa izslēgta" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Vadība\r\nVelciet pulksteni vai paneli ar peles kreiso pogu. Atsevišķu kalendāru velciet aiz "
             L"brīvās zonas. Labais klikšķis uz logrīka vai paziņojumu apgabala ikonas atver izvēlni. "
             L"Kreisais klikšķis uz ikonas paslēpj redzamos logrīkus; ja visi ir paslēpti, atjauno tikai "
@@ -9033,19 +10507,22 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. "
             L"Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa "
             L"centrēšana.\r\n\r\nWindows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz "
-            L"logiem Iestatījumi, Palīdzība un Par programmu. Sistēmas noklusējuma fonta vietā izmanto "
+            L"logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Sistēmas noklusējuma fonta "
+            L"vietā izmanto "
             L"Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek "
             L"Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI "
             L"un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek "
             L"rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek "
             L"nemainītas.\r\n\r\nIestatījumi un izvēlnes\r\nProgrammas valoda, fonts, nogludināšana, "
             L"krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. "
-            L"Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Iestatījumi, Palīdzība un Par "
-            L"programmu. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows "
+            L"Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Laika kalkulators, Iestatījumi, "
+            L"Palīdzība un Par programmu. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā "
+            L"izmanto Windows "
             L"saskarnes valodu vai ASV angļu valodu, ja tā "
             L"netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to. \r\n\r\nLogrīka "
             L"izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu, lieluma un datuma kopēšanas "
-            L"izvēles, tad Sakārtot režģī, Iestatījumi, Palīdzība, Par programmu un Iziet. Ikonas izvēlnē ir "
+            L"izvēles, tad Sakārtot režģī, Laika kalkulators, Iestatījumi, Palīdzība, Par programmu un "
+            L"Iziet. Ikonas izvēlnē ir "
             L"numurēti logrīki, Rādīt visus, Paslēpt visus un Izslēgt visu skaņu, pēc tam atsevišķa režģa "
             L"komanda. Parādīšana vai atjaunošana izvirza logrīku priekšplānā bez Vienmēr virspusē maiņas. "
             L"Atkārtota palaišana vajadzības gadījumā atjauno pēdējos paslēptos logrīkus. Ciparnīcas un "
@@ -9138,7 +10615,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tipu nepārvieto. Esc paslēpj pulksteni un noņem aptumšojumu arī tad, ja iestatījumi ir "
             L"atvērti.\r\n\r\nPeles rādītājs virs ekrāna pulksteņa un aptumšotajiem monitoriem pēc īsas "
             L"neaktivitātes pazūd un atgriežas, pakustinot peli. Virs mazā priekšskatījuma tas paliek "
-            L"redzams."
+            L"redzams.\r\n\r\nLaika kalkulators\r\nAtveriet Laika kalkulatoru jebkura logrīka izvēlnē vai "
+            L"paziņojumu apgabala ikonas izvēlnē. Laika intervāls aprēķina starpību starp diviem datumiem "
+            L"un laikiem. Apaļas vērtības kalendārā izceļ apaļas vērtības, atkārtotus ciparus un ikmēneša "
+            L"un ikgadējas jubilejas no izvēlētā sākuma. Saglabātie datumi un laiki ļauj pievienot, "
+            L"rediģēt, kārtot un dzēst datumus un laikus ar aprakstiem. Datumi un laiki tiek saglabāti "
+            L"atsevišķi failā %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuālā eksportēšana tos iekļauj; "
+            L"importēšana saglabā esošos ierakstus un izlaiž tikai tos, kuriem ir vienāds datums, laiks un "
+            L"pilns apraksts.\r\n\r\nKatrai ievadei ir sava laika josla no tā paša saraksta kā "
+            L"iestatījumos. Noklusējums ir pašreizējā Windows laika josla. Tiek saglabāts nepārprotams UTC "
+            L"brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās. Atkārtotai stundai izvēlieties "
+            L"UTC nobīdi; neeksistējošu vietējo laiku nevar saglabāt. Stundas mēra pagājušo laiku; "
+            L"kalendāra aprēķini izmanto sākuma joslu. Tagad izmanto Windows sistēmas laiku bez logrīka "
+            L"nobīdes, attēlotu izvēlētajā joslā.\r\n\r\nImportēšana pieņem arī atsevišķu XML failu ar "
+            L"saglabātajiem datumiem un laikiem; ieraksti tiek apvienoti, nemainot lietotnes "
+            L"iestatījumus.\r\n\r\nCilnē Izcēlums varat izvēlēties kalendāra datumu izcelšanas noteikumus. "
+            L"Pēc noklusējuma tiek izcelta sākuma diena (nulles vērtības), apaļas vērtības, kas beidzas ar "
+            L"nullēm, pirmās deviņas pilnās nedēļas un mēnešu un gadu jubilejas. Atkārtotus ciparus 1–9 "
+            L"(piemēram, 11, 111 vai 66, 666) var ieslēgt atsevišķi; pēc noklusējuma tie ir "
+            L"izslēgti.\r\n\r\nNoklikšķiniet uz kolonnas virsraksta, lai kārtotu saglabātos ierakstus pēc "
+            L"faktiskā laika brīža vai apraksta teksta. Vēlreiz noklikšķinot, secība tiek apgriezta; "
+            L"bultiņa norāda virzienu.\r\n\r\nLoga novietojums, aktīvā cilne, ievadītās vērtības un "
+            L"izcelšanas izvēles tiek saglabātas kopā ar programmas iestatījumiem reģistrā vai XML failā "
+            L"atbilstoši izvēlētajam glabāšanas veidam."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -9147,6 +10646,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Mērķa platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Tīmekļa vietne:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Laika kalkulators" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Neizdevās nolasīt saglabātos datumus un laikus." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Neizdevās saglabāt datumus un laikus." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izvēlieties šī atkārtotā vietējā laika UTC nobīdi." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Šis vietējais laiks izvēlētajā joslā neeksistē, vai josla nav pieejama."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Laika kalkulators" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Laika intervāls" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Apaļas vērtības" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Saglabātie datumi un laiki" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Izcēlums" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Sākuma diena (nulles vērtības)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Apaļas vērtības, kas beidzas ar nullēm" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Atkārtots cipars %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Pirmās deviņas pilnās nedēļas" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mēnešu un gadu jubilejas" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"No:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Līdz:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Tagad" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Sākums:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Priekšiestatījums:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datums un laiks:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datums un laiks" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Apraksts:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Apraksts" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Rediģēt" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Dzēst" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Atlasīt visu" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Stundas:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dienas:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Nedēļas:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mēneši:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Gadi:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"st.|d.|ned.|mēn.|g.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Stundas ņem vērā norādīto laiku. Dienas, nedēļas, mēneši un gadi tiek skaitīti no pusnakts."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Atlasītās dienas vērtības" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Priekšiestatījums ar šo datumu un laiku jau pastāv. Vai turpināt?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Vai dzēst atlasītos priekšiestatījumus?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendārs izceļ apaļas vērtības, atkārtotus ciparus un ikmēneša un ikgadējas jubilejas."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Palīdzība" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Atvērt tīmekļa vietni %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nevar atvērt vietni noklusējuma pārlūkā." },
@@ -9368,6 +10913,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Összes &némítása" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Némítva" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Kezelés\r\nAz órát vagy panelt a bal egérgombbal húzhatja. Az önálló naptárt a szabad "
             L"területénél fogva mozgathatja. A minialkalmazásra vagy az értesítési terület ikonjára "
             L"kattintva a jobb gombbal menüt nyithat. Az ikonra kattintva a bal gombbal elrejtheti a látható "
@@ -9472,7 +11018,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos "
             L"betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. "
             L"Az UTC-sor külön igazodik középre.\r\n\r\nA Windows 2000 stílushoz be kell jelölni a Témák "
-            L"letiltása lehetőséget; csak a Beállítások, Súgó és Névjegy ablakokra vonatkozik. A rendszer "
+            L"letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. A "
+            L"rendszer "
             L"alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus "
             L"elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A "
             L"mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. "
@@ -9480,12 +11027,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"érvényesül; a mentett választások megmaradnak.\r\n\r\nBeállítások és menük\r\nA nyelv, "
             L"betűtípus, "
             L"élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás "
-            L"fülön. A témák kikapcsolása az Alkalmazás fülön csak a Beállítások, Súgó és Névjegy ablakokra "
-            L"vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows "
+            L"fülön. A témák kikapcsolása az Alkalmazás fülön csak az Időkalkulátor, Beállítások, Súgó és "
+            L"Névjegy ablakokra vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első "
+            L"indításkor a Windows "
             L"felületének nyelve, nem támogatott nyelvnél az "
             L"amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek. "
             L"\r\n\r\nA minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, másodperc-, méret- "
-            L"és dátummásolási választásokat, majd a Rácsba rendezés, Beállítások, Súgó, Névjegy és Kilépés "
+            L"és dátummásolási választásokat, majd a Rácsba rendezés, Időkalkulátor, Beállítások, Súgó, "
+            L"Névjegy és Kilépés "
             L"parancsokat tartalmazza. Az ikon menüje számozott minialkalmazásokat, Összes megjelenítése, "
             L"Összes elrejtése és Összes némítása parancsot, majd külön rácsparancsot ad. A megjelenítés "
             L"vagy visszaállítás előtérbe hoz a Mindig felül módosítása nélkül. Az újabb indítás szükség "
@@ -9584,7 +11133,31 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"előnézet a monitor képarányával, mentett helyzettel. A rács ezt a típust nem mozgatja. Az Esc "
             L"nyitott Beállítások mellett is elrejti az órát és megszünteti az elsötétítést.\r\n\r\nAz "
             L"egérmutató rövid tétlenség után eltűnik a képernyőóra és az elsötétített monitorok fölött, és "
-            L"egérmozgáskor visszatér. A kis előnézet fölött látható marad."
+            L"egérmozgáskor visszatér. A kis előnézet fölött látható marad.\r\n\r\nIdőkalkulátor\r\nAz "
+            L"Időkalkulátort bármely minialkalmazás menüjéből vagy az értesítési területen lévő ikon "
+            L"menüjéből nyithatja meg. Az Időtartam két dátum és időpont különbségét számítja ki. A Kerek "
+            L"értékek a választott kezdettől számított kerek értékeket, ismétlődő számjegyeket, valamint "
+            L"havi és éves évfordulókat emeli ki a naptárban. A Mentett dátumok és időpontok lapon "
+            L"leírással ellátott időpontok adhatók hozzá, szerkeszthetők, rendezhetők és törölhetők. A A "
+            L"dátumok és időpontok külön, a %APPDATA%\\FortSoft\\CalClock\\times.xml fájlba kerülnek. A "
+            L"kézi exportálás tartalmazza őket; az importálás megőrzi a meglévő bejegyzéseket, és csak az "
+            L"azonos dátumú, időpontú és teljes leírású bejegyzéseket hagyja ki.\r\n\r\nMinden bemenet "
+            L"saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális "
+            L"időzónája. Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása "
+            L"megőrzi az időpontot. Ismétlődő óránál válassza ki az UTC-eltolást; nem létező helyi idő nem "
+            L"menthető. Az órák az eltelt időt mérik, a naptári számítások a kezdő zónát használják. A Most "
+            L"a Windows rendszeridejét használja widgeteltolás nélkül, a választott zónában "
+            L"megjelenítve.\r\n\r\nAz importálás külön XML-fájlt is elfogad mentett dátumokkal és "
+            L"időpontokkal; a bejegyzéseket az alkalmazás beállításainak módosítása nélkül egyesíti.\r\n\r\n"
+            L"A Kiemelés lapon kiválaszthatók a naptári dátumok kiemelésének szabályai. Alapértelmezés "
+            L"szerint a kezdőnap (nulla értékek), a nullákra végződő kerek értékek, az első kilenc teljes "
+            L"hét, valamint a havi és éves évfordulók vannak kiemelve. Az ismétlődő 1–9 számjegyek (például "
+            L"11, 111 vagy 66, 666) külön-külön bekapcsolhatók; alapértelmezés szerint ki vannak "
+            L"kapcsolva.\r\n\r\nKattintson egy oszlop fejlécére a mentett adatok tényleges időpont vagy "
+            L"leírásszöveg szerinti rendezéséhez. Újabb kattintással megfordítható a sorrend; a nyíl "
+            L"mutatja az irányt.\r\n\r\nAz ablak helye, az aktív fül, a megadott értékek és a kiemelési "
+            L"beállítások az alkalmazás beállításaival együtt a beállításjegyzékbe vagy XML-fájlba kerülnek "
+            L"a választott tárolási mód szerint."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Órák és naptárak\r\n\r\nNatív Win32-alkalmazás legfeljebb 32, egymástól függetlenül "
@@ -9593,6 +11166,54 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzió:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Célplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webhely:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Időkalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"A mentett dátumok és időpontok nem olvashatók." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"A dátumok és időpontok nem menthetők." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Válassza ki az ismétlődő helyi idő UTC-eltolását." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ez a helyi idő nem létezik a kiválasztott zónában, vagy a zóna nem érhető el."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Időkalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Időtartam" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Kerek értékek" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Mentett dátumok és időpontok" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Kiemelés" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Kezdőnap (nulla értékek)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Nullákra végződő kerek értékek" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ismétlődő %u számjegy (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Az első kilenc teljes hét" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Havi és éves évfordulók" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Ettől:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Eddig:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Most" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Kezdet:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Előbeállítás:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Dátum és idő:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Dátum és idő" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Leírás:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Leírás" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Szerkesztés" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Törlés" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Összes kijelölése" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Óra:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Nap:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Hét:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Hónap:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Év:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"ó|nap|hét|hó|év|perc" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Az órák figyelembe veszik a megadott időpontot. A napok, hetek, hónapok és évek számlálása "
+            L"éjféltől indul."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"A kijelölt nap értékei" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Ezzel a dátummal és időponttal már létezik előbeállítás. Folytatja?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Törli a kijelölt előbeállításokat?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"A naptár kiemeli a kerek értékeket, az ismétlődő számjegyeket, valamint a havi és éves "
+            L"évfordulókat."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Súgó" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Webhely megnyitása: %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -9816,6 +11437,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Iddiżattiva l-ħoss &kollu" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Ħoss diżattivat" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Kontrolli\r\nMexxi arloġġ jew panew billi tkaxkru bil-buttuna tax-xellug tal-maws. Kalendarju "
             L"separat jitmexxa miż-żona vojta tiegħu. Klikk bil-lemin fuq widget jew l-ikona taż-żona "
             L"tan-notifiki jiftaħ il-menu. Klikk bix-xellug fuq l-ikona jaħbi l-widgets viżibbli; jekk "
@@ -9916,7 +11538,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki "
             L"b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. "
             L"Ir-ringiela UTC tiġi ċċentrata separatament.\r\n\r\nStil Windows 2000 jeħtieġ Iddiżattiva "
-            L"t-temi u japplika biss għat-twieqi Settings, Għajnuna u Dwar. Tahoma 8 pt tintuża minflok "
+            L"t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. Tahoma 8 pt "
+            L"tintuża minflok "
             L"il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test "
             L"tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ "
             L"ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra "
@@ -9924,12 +11547,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"applikati; l-għażliet issejvjati jinżammu.\r\n\r\nSettings u menus\r\nIl-lingwa, il-font, "
             L"l-anti-aliasing, il-ħażna, il-bidu mal-Windows u t-twaħħil mat-truf huma settings komuni "
             L"fit-tab Applikazzjoni. Id-diżattivazzjoni tat-temi fit-tab Applikazzjoni taffettwa biss "
-            L"it-twieqi Settings, Għajnuna u Dwar. Kull widget juża s-setting tat-temi tiegħu stess. "
+            L"it-twieqi Kalkulatur tal-ħin, Settings, Għajnuna u Dwar. Kull widget juża s-setting tat-temi "
+            L"tiegħu stess. "
             L"Mal-ewwel tnedija tintgħażel il-lingwa tal-interfaċċa "
             L"tal-Windows jew l-Ingliż Amerikan jekk mhijiex appoġġjata. Il-lingwa, l-anti-aliasing u t-temi "
             L"tal-widget jaffettwaw biss lilu. \r\n\r\nIl-menu tal-widget fih l-għażliet xierqa "
             L"għall-viżibbiltà, Dejjem fuq nett, sekondi, daqs u kkupjar tad-data, imbagħad Irranġa fi "
-            L"gradilja, Settings, Għajnuna, Dwar u Oħroġ. Il-menu tal-ikona jelenka widgets innumerati, Uri "
+            L"gradilja, Kalkulatur tal-ħin, Settings, Għajnuna, Dwar u Oħroġ. Il-menu tal-ikona jelenka "
+            L"widgets innumerati, Uri "
             L"kollox, Aħbi kollox u Iddiżattiva l-ħoss kollu, imbagħad il-kmand tal-gradilja separat. "
             L"Il-wiri jew ir-restawr iġib il-widget quddiem mingħajr ma jibdel Dejjem fuq nett. Tnedija oħra "
             L"tirrestawra l-aħħar widgets moħbija jekk meħtieġ. Id-daqsijiet u l-appoġġ għall-id tas-sekondi "
@@ -10029,7 +11654,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"previżjoni żgħira li tista’ titmexxa bil-proporzjonijiet tal-moniter u pożizzjoni ssejvjata. "
             L"Il-gradilja ma tmexxix dan it-tip. Esc jaħbi l-arloġġ u jneħħi d-dlam anki bis-Settings "
             L"miftuħa.\r\n\r\nIl-pointer tal-maws jinħeba wara ftit inattività fuq l-arloġġ jew il-moniters "
-            L"mudlama u jerġa’ jidher meta jiċċaqlaq il-maws. Fuq il-previżjoni żgħira jibqa’ viżibbli."
+            L"mudlama u jerġa’ jidher meta jiċċaqlaq il-maws. Fuq il-previżjoni żgħira jibqa’ "
+            L"viżibbli.\r\n\r\nKalkulatur tal-ħin\r\nIftaħ Kalkulatur tal-ħin mill-menu ta’ kwalunkwe "
+            L"widget jew mill-menu tal-ikona fiż-żona tan-notifiki. Intervall ta’ ħin jikkalkula "
+            L"d-differenza bejn żewġ dati u ħinijiet. Valuri tondi jenfasizza valuri tondi, ċifri ripetuti "
+            L"u anniversarji ta’ kull xahar u ta’ kull sena fil-kalendarju mill-bidu magħżul. Dati u "
+            L"ħinijiet issettjati minn qabel jippermetti li żżid, teditja, tordna u tħassar dati u ħinijiet "
+            L"b’deskrizzjoni. Id-dati u l-ħinijiet jiġu ssejvjati separatament "
+            L"f’%APPDATA%\\FortSoft\\CalClock\\times.xml. L-esportazzjoni manwali tinkludihom; "
+            L"l-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess data, ħin u "
+            L"deskrizzjoni sħiħa.\r\n\r\nKull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal "
+            L"fis-Settings. Il-valur prestabbilit huwa ż-żona attwali tal-Windows. Jiġu ssejvjati mument "
+            L"UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess mument. Għal siegħa ripetuta "
+            L"agħżel l-offset UTC; ħinijiet lokali li ma jeżistux ma jistgħux jiġu ssejvjati. Is-sigħat "
+            L"ikejlu l-ħin li għadda; il-kalkoli tal-kalendarju jużaw iż-żona tal-bidu. Issa juża l-ħin "
+            L"tas-sistema Windows mingħajr offset tal-widget, muri fiż-żona magħżula.\r\n\r\n"
+            L"L-importazzjoni taċċetta wkoll fajl XML separat bid-dati u l-ħinijiet issejvjati; tgħaqqad "
+            L"dawk ir-rekords mingħajr ma tibdel is-settings tal-applikazzjoni.\r\n\r\nFit-tab Enfasizzar, "
+            L"agħżel ir-regoli biex tenfasizza d-dati fil-kalendarju. B’mod awtomatiku jiġu enfasizzati "
+            L"l-jum tal-bidu (valuri żero), il-valuri tondi li jispiċċaw b’żerijiet, l-ewwel disa’ ġimgħat "
+            L"sħaħ u l-anniversarji ta’ kull xahar u sena. Iċ-ċifri ripetuti 1–9 (pereżempju 11, 111 jew "
+            L"66, 666) jistgħu jiġu attivati waħda waħda u huma diżattivati b’mod awtomatiku.\r\n\r\n"
+            L"Ikklikkja fuq l-intestatura ta’ kolonna biex tordna l-entrati ssejvjati skont il-mument reali "
+            L"jew it-test tad-deskrizzjoni. Ikklikkja mill-ġdid biex taqleb l-ordni; vleġġa turi "
+            L"d-direzzjoni.\r\n\r\nIl-pożizzjoni tat-tieqa, it-tab attiva, il-valuri mdaħħla u l-għażliet "
+            L"tal-enfasizzar jiġu ssejvjati mas-settings tal-applikazzjoni fir-reġistru jew f’XML, skont "
+            L"il-ħażna magħżula."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -10038,6 +11688,54 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verżjoni:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Pjattaforma fil-mira:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sit web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulatur tal-ħin" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Ma setgħux jinqraw id-dati u l-ħinijiet issejvjati." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Ma setgħux jiġu ssejvjati d-dati u l-ħinijiet." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Agħżel l-offset UTC għal dan il-ħin lokali ripetut." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Dan il-ħin lokali ma jeżistix fiż-żona magħżula, jew iż-żona mhix disponibbli."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Kalkulatur tal-ħin" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Intervall ta’ ħin" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valuri tondi" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Dati u ħinijiet issettjati minn qabel" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Enfasizzar" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Jum tal-bidu (valuri żero)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valuri tondi li jispiċċaw b’żerijiet" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ċifra %u ripetuta (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"L-ewwel disa’ ġimgħat sħaħ" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Anniversarji ta’ kull xahar u sena" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Minn:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Sa:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Issa" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Bidu:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Issettjar minn qabel:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data u ħin:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data u ħin" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Deskrizzjoni:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Deskrizzjoni" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Editja" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Ħassar" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Agħżel kollox" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Sigħat:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Ġranet:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Ġimgħat:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Xhur:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Snin:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|j|ġimgħ.|xhur|snin|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Is-sigħat iqisu l-ħin speċifikat. Il-ġranet, il-ġimgħat, ix-xhur u s-snin jingħaddu minn "
+            L"nofsillejl."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valuri għall-jum magħżul" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Diġà jeżisti ssettjar minn qabel b’din id-data u dan il-ħin. Tkompli?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Tħassar is-settings minn qabel magħżula?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Il-kalendarju jenfasizza valuri tondi, ċifri ripetuti u anniversarji ta’ kull xahar u ta’ kull "
+            L"sena."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Għajnuna" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Iftaħ is-sit web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Is-sit ma jistax jinfetaħ fil-brawżer predefinit." },
@@ -10259,6 +11957,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"&Alles dempen" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Gedempt" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Bediening\r\nSleep een klok of paneel met de linkermuisknop. Sleep een losse kalender via de "
             L"vrije ruimte. Klik met rechts op een widget of het pictogram in het systeemvak voor het menu. "
             L"Klik met links op het pictogram om zichtbare widgets te verbergen; als alles verborgen is, "
@@ -10357,7 +12056,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Automatische XML staat in %AppData%\\FortSoft\\CalClock\\settings.xml. Na XML-opslag wordt "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock verwijderd; opslag in het register verwijdert de "
             L"automatische XML.\r\n\r\nLettertypevereffening biedt ClearType, GDI en Geen.\r\n\r\nWindows "
-            L"2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help en Info. Met "
+            L"2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en "
+            L"Tijdcalculator. Met "
             L"het standaardlettertype van het systeem gebruiken deze vensters Tahoma 8 pt; een eigen "
             L"toepassingslettertype heeft voorrang. De licentie behoudt het lettertype met vaste "
             L"tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: "
@@ -10370,13 +12070,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief "
             L"die ruimte. De UTC-rij heeft een eigen centrering.\r\n\r\nInstellingen en menu’s\r\nTaal, "
             L"lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene "
-            L"instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor Instellingen, "
-            L"Help en Info. Elke widget gebruikt zijn eigen thema-instelling. "
+            L"instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor "
+            L"Tijdcalculator, Instellingen, Help en Info. Elke widget gebruikt zijn eigen thema-instelling. "
             L"Bij de eerste start wordt de Windows-weergavetaal "
             L"gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en "
             L"thema’s gelden alleen voor die widget. \r\n\r\nEen widgetmenu bevat toepasselijke keuzes voor "
             L"zichtbaarheid, Altijd op voorgrond, seconden, grootte en datumkopie, gevolgd door Schikken in "
-            L"raster, Instellingen, Help, Info en Afsluiten. Het pictogrammenu bevat genummerde widgets, "
+            L"raster, Tijdcalculator, Instellingen, Help, Info en Afsluiten. Het pictogrammenu bevat "
+            L"genummerde widgets, "
             L"Alles weergeven, Alles verbergen en Alles dempen, gevolgd door een afzonderlijke "
             L"rasteropdracht. Tonen of herstellen brengt een widget naar voren zonder Altijd op voorgrond te "
             L"wijzigen. Opnieuw starten herstelt zo nodig de laatst verborgen widgets. Wijzerplaatgroottes "
@@ -10474,7 +12175,31 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"beeldverhouding van het scherm en een opgeslagen positie. Het raster verplaatst dit type niet. "
             L"Esc verbergt de klok en verwijdert verduistering, ook met Instellingen geopend.\r\n\r\nDe "
             L"muisaanwijzer verdwijnt na korte inactiviteit boven de schermklok en verduisterde schermen en "
-            L"verschijnt bij bewegen. Boven het kleine voorbeeld blijft deze zichtbaar."
+            L"verschijnt bij bewegen. Boven het kleine voorbeeld blijft deze "
+            L"zichtbaar.\r\n\r\nTijdcalculator\r\nOpen Tijdcalculator via het menu van een widget of het "
+            L"pictogram in het systeemvak. Tijdsinterval berekent het verschil tussen twee datums en "
+            L"tijden. Ronde waarden markeert ronde waarden, herhaalde cijfers en maandelijkse en jaarlijkse "
+            L"gedenkdagen in de kalender vanaf het gekozen begin. Opgeslagen datums en tijden laat u datums "
+            L"en tijden met beschrijvingen toevoegen, bewerken, sorteren en verwijderen. Datums en tijden "
+            L"worden afzonderlijk opgeslagen in %APPDATA%\\FortSoft\\CalClock\\times.xml. Handmatige export "
+            L"neemt ze op; import behoudt bestaande vermeldingen en slaat alleen vermeldingen met een "
+            L"identieke datum, tijd en volledige beschrijving over.\r\n\r\nElke invoer heeft een eigen "
+            L"tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de standaard. "
+            L"Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt "
+            L"het tijdstip. Kies bij een herhaald uur de UTC-afwijking; niet-bestaande lokale tijden kunnen "
+            L"niet worden opgeslagen. Uren meten verstreken tijd; kalenderberekeningen gebruiken de "
+            L"beginzone. Nu gebruikt de Windows-systeemtijd zonder widgetafwijking, weergegeven in de "
+            L"gekozen zone.\r\n\r\nImport accepteert ook een afzonderlijk XML-bestand met opgeslagen datums "
+            L"en tijden; deze gegevens worden samengevoegd zonder de toepassingsinstellingen te "
+            L"wijzigen.\r\n\r\nOp het tabblad Markering kiest u de regels voor het markeren van datums in "
+            L"de kalender. Standaard worden de begindag (nulwaarden), ronde waarden die eindigen op nullen, "
+            L"de eerste negen volle weken en maandelijkse en jaarlijkse herdenkingsdagen gemarkeerd. "
+            L"Herhaalde cijfers 1–9 (bijvoorbeeld 11, 111 of 66, 666) kunnen afzonderlijk worden "
+            L"ingeschakeld en staan standaard uit.\r\n\r\nKlik op een kolomkop om opgeslagen gegevens op "
+            L"het werkelijke tijdstip of de beschrijvingstekst te sorteren. Klik nogmaals om de volgorde om "
+            L"te keren; een pijl geeft de richting aan.\r\n\r\nDe vensterpositie, het actieve tabblad, "
+            L"ingevoerde waarden en markeringskeuzes worden samen met de toepassingsinstellingen in het "
+            L"register of XML opgeslagen, afhankelijk van de gekozen opslagmethode."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokken en kalenders\r\n\r\nEen native Win32-toepassing voor maximaal 32 afzonderlijk "
@@ -10483,6 +12208,56 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versie:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Doelplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Tijdcalculator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Opgeslagen datums en tijden konden niet worden gelezen." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datums en tijden konden niet worden opgeslagen." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Kies de UTC-afwijking voor deze herhaalde lokale tijd." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Deze lokale tijd bestaat niet in de gekozen zone, of de zone is niet beschikbaar."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Tijdcalculator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Tijdsinterval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Ronde waarden" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Opgeslagen datums en tijden" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Markering" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Begindag (nulwaarden)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Ronde waarden die eindigen op nullen" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Herhaald cijfer %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Eerste negen volle weken" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES,
+            L"Maandelijkse en jaarlijkse herdenkingsdagen"
+        },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Van:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Tot:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Nu" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Begin:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Voorinstelling:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum en tijd:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum en tijd" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Beschrijving:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Beschrijving" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Bewerken" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Verwijderen" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Alles selecteren" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Uren:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dagen:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Weken:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Maanden:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Jaren:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"u|d|wk|mnd|jr|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Uren houden rekening met de opgegeven tijd. Dagen, weken, maanden en jaren worden vanaf "
+            L"middernacht geteld."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Waarden voor de geselecteerde dag" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Er bestaat al een voorinstelling met deze datum en tijd. Doorgaan?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"De geselecteerde voorinstellingen verwijderen?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"De kalender markeert ronde waarden, herhaalde cijfers en maandelijkse en jaarlijkse "
+            L"gedenkdagen."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Help" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Website %ls openen" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Kan de website niet in de standaardbrowser openen." },
@@ -10706,6 +12481,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Dezactivare &totală sunet" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Sunet dezactivat" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Comenzi\r\nGlisați ceasul sau panoul cu butonul stâng al mouse-ului. Un calendar separat se "
             L"glisează din zona liberă. Un clic dreapta pe widget sau pe pictograma din zona de notificare "
             L"deschide meniul. Un clic stânga pe pictogramă ascunde widgeturile vizibile; dacă toate sunt "
@@ -10807,19 +12583,22 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi "
             L"proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are "
             L"centrare separată.\r\n\r\nStil Windows 2000 necesită Dezactivare teme și se aplică doar "
-            L"ferestrelor Setări, Ajutor și Despre. Tahoma 8 pt înlocuiește fontul implicit al sistemului; "
+            L"ferestrelor Setări, Ajutor, Despre și Calculator de timp. Tahoma 8 pt înlocuiește fontul implicit "
+            L"al sistemului; "
             L"fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se "
             L"poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și "
             L"revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar "
             L"debifate și dezactivate și nu se aplică; preferințele salvate se păstrează.\r\n\r\nSetări și "
             L"meniuri\r\nLimba aplicației, fontul, netezirea, stocarea, "
             L"pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea "
-            L"temelor în fila Aplicație afectează numai ferestrele Setări, Ajutor și Despre. Fiecare widget "
+            L"temelor în fila Aplicație afectează numai ferestrele Calculator de timp, Setări, Ajutor și "
+            L"Despre. Fiecare widget "
             L"folosește propria setare a temelor. La prima "
             L"pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, "
             L"netezirea și temele widgetului afectează numai acel widget. \r\n\r\nMeniul widgetului conține "
             L"alegerile aplicabile de vizibilitate, Întotdeauna deasupra, secunde, dimensiune și copiere a "
-            L"datei, apoi Aranjare în grilă, Setări, Ajutor, Despre și Ieșire. Meniul pictogramei enumeră "
+            L"datei, apoi Aranjare în grilă, Calculator de timp, Setări, Ajutor, Despre și Ieșire. Meniul "
+            L"pictogramei enumeră "
             L"widgeturile numerotate, Afișare totală, Ascundere totală și Dezactivare totală sunet, apoi "
             L"comanda de grilă separată. Afișarea sau restabilirea aduce widgetul în față fără schimbarea "
             L"Întotdeauna deasupra. O nouă pornire restabilește la nevoie ultimele widgeturi ascunse. "
@@ -10916,7 +12695,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"previzualizare mică, mobilă, cu proporțiile monitorului și poziție salvată. Grila nu mută "
             L"acest tip. Esc ascunde ceasul și elimină întunecarea chiar cu Setări "
             L"deschis.\r\n\r\nIndicatorul mouse-ului se ascunde după o scurtă inactivitate deasupra ceasului "
-            L"și monitoarelor întunecate și reapare la mișcare. Deasupra previzualizării mici rămâne vizibil."
+            L"și monitoarelor întunecate și reapare la mișcare. Deasupra previzualizării mici rămâne "
+            L"vizibil.\r\n\r\nCalculator de timp\r\nDeschideți Calculator de timp din meniul oricărui "
+            L"widget sau din meniul pictogramei din zona de notificare. Interval de timp calculează "
+            L"diferența dintre două date și ore. Valori rotunde evidențiază în calendar valori rotunde, "
+            L"cifre repetate și aniversări lunare și anuale de la începutul ales. Date și ore presetate "
+            L"permite adăugarea, editarea, sortarea și ștergerea datelor și orelor cu descrieri. Datele și "
+            L"orele sunt salvate separat în %APPDATA%\\FortSoft\\CalClock\\times.xml. Exportul manual le "
+            L"include; importul păstrează intrările existente și omite numai intrările cu data, ora și "
+            L"descrierea completă identice.\r\n\r\nFiecare intrare are propriul fus orar din aceeași listă "
+            L"ca în Setări. Implicit se folosește fusul orar curent Windows. Se salvează un moment UTC "
+            L"neechivoc și fusul de afișare. Schimbarea fusului păstrează momentul. Pentru o oră repetată, "
+            L"alegeți decalajul UTC; orele locale inexistente nu pot fi salvate. Orele măsoară timpul "
+            L"scurs; calculele calendaristice folosesc fusul inițial. Acum folosește ora sistemului Windows "
+            L"fără decalajul widgetului, afișată în fusul ales.\r\n\r\nImportul acceptă și un fișier XML "
+            L"separat cu date și ore salvate; îmbină acele înregistrări fără a schimba setările "
+            L"aplicației.\r\n\r\nÎn fila Evidențiere puteți alege regulile pentru evidențierea datelor în "
+            L"calendar. Implicit sunt evidențiate ziua de început (valori zero), valorile rotunde care se "
+            L"termină cu zerouri, primele nouă săptămâni întregi și aniversările lunare și anuale. Cifrele "
+            L"repetate 1–9 (de exemplu, 11, 111 sau 66, 666) pot fi activate individual și sunt dezactivate "
+            L"implicit.\r\n\r\nFaceți clic pe antetul unei coloane pentru a sorta datele salvate după "
+            L"momentul real sau după textul descrierii. Un nou clic inversează ordinea; o săgeată indică "
+            L"direcția.\r\n\r\nPoziția ferestrei, fila activă, valorile introduse și opțiunile de "
+            L"evidențiere sunt salvate împreună cu setările aplicației în registry sau în XML, în funcție "
+            L"de stocarea aleasă."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -10925,6 +12727,55 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Versiune:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platformă țintă:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Calculator de timp" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Datele și orele salvate nu au putut fi citite." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datele și orele nu au putut fi salvate." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Alegeți decalajul UTC pentru această oră locală repetată."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Această oră locală nu există în fusul ales sau fusul nu este disponibil."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Calculator de timp" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Interval de timp" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Valori rotunde" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Date și ore presetate" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Evidențiere" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Ziua de început (valori zero)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Valori rotunde care se termină cu zerouri" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Cifra %u repetată (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Primele nouă săptămâni întregi" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Aniversări lunare și anuale" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"De la:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Până la:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Acum" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Început:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Presetare:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Data și ora:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Data și ora" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Descriere:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Descriere" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Editare" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Ștergere" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Selectare totală" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Ore:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Zile:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Săptămâni:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Luni:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Ani:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|z|săpt.|luni|ani|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Orele țin cont de ora specificată. Zilele, săptămânile, lunile și anii sunt numărați de la "
+            L"miezul nopții."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Valori pentru ziua selectată" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Există deja o presetare cu această dată și oră. Continuați?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Ștergeți presetările selectate?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Calendarul evidențiază valori rotunde, cifre repetate și aniversări lunare și anuale."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Ajutor" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Deschidere site web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Site-ul nu poate fi deschis în browserul implicit." },
@@ -11148,6 +12999,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Σίγαση &όλων" },
         LocalizedText{ TXT_MUTED_LABEL, L"Σε &σίγαση" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Χειρισμός\r\nΣύρετε ένα ρολόι ή πλαίσιο με το αριστερό κουμπί του ποντικιού. Σύρετε ένα "
             L"ανεξάρτητο ημερολόγιο από την ελεύθερη περιοχή του. Το δεξί κλικ σε γραφικό στοιχείο ή στο "
             L"εικονίδιο της περιοχής ειδοποιήσεων ανοίγει το μενού. Το αριστερό κλικ στο εικονίδιο κρύβει τα "
@@ -11258,7 +13110,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"γραμματοσειρά· τα άλλα ψηφία μένουν στη θέση τους και με αναλογικές γραμματοσειρές. Το "
             L"κεντράρισμα των ρολογιών οθόνης περιλαμβάνει τον δεσμευμένο χώρο. Η γραμμή UTC κεντράρεται "
             L"χωριστά.\r\n\r\nΤο Στυλ Windows 2000 απαιτεί την επιλογή Χωρίς θέματα και αφορά μόνο τα "
-            L"παράθυρα Ρυθμίσεις, Βοήθεια και Πληροφορίες. Χρησιμοποιεί Tahoma 8 pt αντί της προεπιλεγμένης "
+            L"παράθυρα Ρυθμίσεις, Βοήθεια, Πληροφορίες και Υπολογιστής χρόνου. Χρησιμοποιεί Tahoma 8 pt αντί "
+            L"της προεπιλεγμένης "
             L"γραμματοσειράς συστήματος· η προσαρμοσμένη γραμματοσειρά εφαρμογής έχει προτεραιότητα και η "
             L"άδεια παραμένει σε Consolas. Διατίθενται μόνο GDI ή Καμία εξομάλυνση. Η αποθηκευμένη επιλογή "
             L"ClearType χρησιμοποιεί προσωρινά GDI και επανέρχεται όταν απενεργοποιηθεί το στυλ. Με κλασική "
@@ -11266,12 +13119,14 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"εφαρμόζονται· οι αποθηκευμένες προτιμήσεις διατηρούνται.\r\n\r\nΡυθμίσεις και μενού\r\nΗ "
             L"γλώσσα, η γραμματοσειρά, η εξομάλυνση, η αποθήκευση, "
             L"η εκκίνηση με Windows και η προσκόλληση είναι κοινές ρυθμίσεις στην καρτέλα Εφαρμογή. Η "
-            L"απενεργοποίηση θεμάτων στην καρτέλα Εφαρμογή επηρεάζει μόνο τα παράθυρα Ρυθμίσεις, Βοήθεια και "
-            L"Πληροφορίες. Κάθε στοιχείο χρησιμοποιεί τη δική του ρύθμιση θεμάτων. Στην πρώτη εκκίνηση "
+            L"απενεργοποίηση θεμάτων στην καρτέλα Εφαρμογή επηρεάζει μόνο τα παράθυρα Υπολογιστής χρόνου, "
+            L"Ρυθμίσεις, Βοήθεια και Πληροφορίες. Κάθε στοιχείο χρησιμοποιεί τη δική του ρύθμιση θεμάτων. "
+            L"Στην πρώτη εκκίνηση "
             L"επιλέγεται η γλώσσα των Windows ή τα Αγγλικά ΗΠΑ αν δεν "
             L"υποστηρίζεται. Η γλώσσα, η εξομάλυνση και τα θέματα ενός στοιχείου επηρεάζουν μόνο αυτό. "
             L"\r\n\r\nΤο μενού στοιχείου έχει τις κατάλληλες επιλογές ορατότητας, Πάντα σε πρώτο πλάνο, "
-            L"δευτερολέπτων, μεγέθους και αντιγραφής ημερομηνίας και μετά Τακτοποίηση σε πλέγμα, Ρυθμίσεις, "
+            L"δευτερολέπτων, μεγέθους και αντιγραφής ημερομηνίας και μετά Τακτοποίηση σε πλέγμα, "
+            L"Υπολογιστής χρόνου, Ρυθμίσεις, "
             L"Βοήθεια, Πληροφορίες και Έξοδος. Το μενού εικονιδίου έχει αριθμημένα στοιχεία, Εμφάνιση όλων, "
             L"Απόκρυψη όλων και Σίγαση όλων και χωριστά την εντολή πλέγματος. Η εμφάνιση ή επαναφορά φέρνει "
             L"το στοιχείο μπροστά χωρίς αλλαγή του Πάντα σε πρώτο πλάνο. Η νέα εκκίνηση επαναφέρει όσα "
@@ -11376,7 +13231,33 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"θέση. Το πλέγμα δεν μετακινεί αυτόν τον τύπο. Το Esc κρύβει το ρολόι και αφαιρεί τη συσκότιση "
             L"ακόμη και με ανοιχτές Ρυθμίσεις.\r\n\r\nΟ δείκτης ποντικιού κρύβεται μετά από λίγη αδράνεια "
             L"πάνω από το ρολόι και τις συσκοτισμένες οθόνες και επιστρέφει με κίνηση. Πάνω από τη μικρή "
-            L"προεπισκόπηση παραμένει ορατός."
+            L"προεπισκόπηση παραμένει ορατός.\r\n\r\nΥπολογιστής χρόνου\r\nΑνοίξτε τον Υπολογιστή χρόνου "
+            L"από το μενού οποιουδήποτε γραφικού στοιχείου ή του εικονιδίου στην περιοχή ειδοποιήσεων. Το "
+            L"Χρονικό διάστημα υπολογίζει τη διαφορά μεταξύ δύο ημερομηνιών και ωρών. Οι Στρογγυλές τιμές "
+            L"επισημαίνουν στο ημερολόγιο στρογγυλές τιμές, επαναλαμβανόμενα ψηφία και μηνιαίες και ετήσιες "
+            L"επετείους από την επιλεγμένη έναρξη. Οι Προκαθορισμένες ημερομηνίες και ώρες επιτρέπουν "
+            L"προσθήκη, επεξεργασία, ταξινόμηση και διαγραφή ημερομηνιών και ωρών με περιγραφές. Το Οι "
+            L"ημερομηνίες και ώρες αποθηκεύονται χωριστά στο %APPDATA%\\FortSoft\\CalClock\\times.xml. Η "
+            L"χειροκίνητη εξαγωγή τις περιλαμβάνει· η εισαγωγή διατηρεί τις υπάρχουσες καταχωρίσεις και "
+            L"παραλείπει μόνο όσες έχουν πανομοιότυπη ημερομηνία, ώρα και πλήρη περιγραφή.\r\n\r\nΚάθε τιμή "
+            L"έχει δική της ζώνη ώρας από την ίδια λίστα με τις Ρυθμίσεις. Προεπιλογή είναι η τρέχουσα ζώνη "
+            L"των Windows. Αποθηκεύονται μια μοναδική χρονική στιγμή UTC και η ζώνη εμφάνισης. Η αλλαγή "
+            L"ζώνης διατηρεί τη χρονική στιγμή. Για επαναλαμβανόμενη ώρα επιλέξτε τη μετατόπιση UTC· "
+            L"ανύπαρκτες τοπικές ώρες δεν αποθηκεύονται. Οι ώρες μετρούν τον χρόνο που πέρασε· οι "
+            L"ημερολογιακοί υπολογισμοί χρησιμοποιούν την αρχική ζώνη. Το Τώρα χρησιμοποιεί την ώρα "
+            L"συστήματος Windows χωρίς μετατόπιση γραφικού στοιχείου, στην επιλεγμένη ζώνη.\r\n\r\nΗ "
+            L"εισαγωγή δέχεται επίσης ανεξάρτητο αρχείο XML με αποθηκευμένες ημερομηνίες και ώρες· "
+            L"συγχωνεύει τις εγγραφές χωρίς να αλλάζει τις ρυθμίσεις της εφαρμογής.\r\n\r\nΣτην καρτέλα "
+            L"Επισήμανση επιλέγετε τους κανόνες επισήμανσης ημερομηνιών στο ημερολόγιο. Από προεπιλογή "
+            L"επισημαίνονται η αρχική ημέρα (μηδενικές τιμές), οι στρογγυλές τιμές που τελειώνουν σε "
+            L"μηδενικά, οι πρώτες εννέα πλήρεις εβδομάδες και οι μηνιαίες και ετήσιες επέτειοι. Τα "
+            L"επαναλαμβανόμενα ψηφία 1–9 (για παράδειγμα 11, 111 ή 66, 666) μπορούν να ενεργοποιηθούν "
+            L"χωριστά και είναι απενεργοποιημένα από προεπιλογή.\r\n\r\nΚάντε κλικ στην κεφαλίδα μιας "
+            L"στήλης για ταξινόμηση των αποθηκευμένων εγγραφών κατά την πραγματική χρονική στιγμή ή το "
+            L"κείμενο περιγραφής. Ένα δεύτερο κλικ αντιστρέφει τη σειρά· ένα βέλος δείχνει την "
+            L"κατεύθυνση.\r\n\r\nΗ θέση του παραθύρου, η ενεργή καρτέλα, οι τιμές που εισάγονται και οι "
+            L"επιλογές επισήμανσης αποθηκεύονται μαζί με τις ρυθμίσεις της εφαρμογής στο μητρώο ή σε XML, "
+            L"ανάλογα με την επιλεγμένη αποθήκευση."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -11385,6 +13266,56 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Έκδοση:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Πλατφόρμα προορισμού:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Τοποθεσία web:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Υπολογιστής χρόνου" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Δεν ήταν δυνατή η ανάγνωση των αποθηκευμένων ημερομηνιών και ωρών." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Δεν ήταν δυνατή η αποθήκευση των ημερομηνιών και ωρών." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Επιλέξτε τη μετατόπιση UTC για αυτή την επαναλαμβανόμενη τοπική ώρα."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Αυτή η τοπική ώρα δεν υπάρχει στην επιλεγμένη ζώνη ή η ζώνη δεν είναι διαθέσιμη."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Υπολογιστής χρόνου" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Χρονικό διάστημα" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Στρογγυλές τιμές" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Προκαθορισμένες ημερομηνίες και ώρες" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Επισήμανση" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Αρχική ημέρα (μηδενικές τιμές)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Στρογγυλές τιμές που τελειώνουν σε μηδενικά" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Επαναλαμβανόμενο ψηφίο %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Οι πρώτες εννέα πλήρεις εβδομάδες" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Μηνιαίες και ετήσιες επέτειοι" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Από:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Έως:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Τώρα" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Έναρξη:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Προεπιλογή:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Ημερομηνία και ώρα:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Ημερομηνία και ώρα" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Περιγραφή:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Περιγραφή" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Επεξεργασία" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Διαγραφή" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Επιλογή όλων" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Ώρες:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Ημέρες:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Εβδομάδες:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Μήνες:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Έτη:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"ώρ.|ημ.|εβδ.|μήν.|έτη|λεπ." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Οι ώρες λαμβάνουν υπόψη την καθορισμένη ώρα. Ημέρες, εβδομάδες, μήνες και έτη μετρώνται από τα "
+            L"μεσάνυχτα."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Τιμές για την επιλεγμένη ημέρα" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Υπάρχει ήδη προεπιλογή με αυτή την ημερομηνία και ώρα. Συνέχεια;"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Διαγραφή των επιλεγμένων προεπιλογών;" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Το ημερολόγιο επισημαίνει στρογγυλές τιμές, επαναλαμβανόμενα ψηφία και μηνιαίες και ετήσιες "
+            L"επετείους."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Βοήθεια" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Άνοιγμα τοποθεσίας web %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -11605,6 +13536,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Isključi &sav zvuk" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Zvuk isključen" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Upravljanje\r\nPovucite sat ili ploču lijevom tipkom miša. Samostalni kalendar povlači se za "
             L"slobodno područje. Desnom tipkom kliknite vidžet ili ikonu u području obavijesti za otvaranje "
             L"menija. Lijevi klik na ikonu skriva vidljive vidžete; ako su svi skriveni, vraća samo "
@@ -11703,19 +13635,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
             L"proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani razmak. "
             L"Red UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
-            L"važi samo za Postavke, Pomoć i O programu. Uz podrazumijevani sistemski font koristi Tahomu 8 "
+            L"važi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font "
+            L"koristi Tahomu 8 "
             L"pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Sačuvani "
             L"ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows "
             L"koristi klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani "
             L"izbori ostaju nepromijenjeni.\r\n\r\nPostavke i meniji\r\nJezik programa, font, "
             L"izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz ivice vrijede globalno i "
             L"postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na "
-            L"prozore Postavke, Pomoć i O programu. Svaki vidžet koristi vlastitu "
+            L"prozore Kalkulator vremena, Postavke, Pomoć i O programu. Svaki vidžet koristi vlastitu "
             L"postavku tema. Pri prvom pokretanju jezik se bira prema jeziku "
             L"interfejsa Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i "
             L"teme vidžeta utječu samo na taj vidžet. \r\n\r\nMeni vidžeta sadrži primjenjive postavke "
             L"vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika kopiranja datuma, a zatim "
-            L"Rasporedi u mrežu, Postavke, Pomoć, O programu i Izlaz. Meni ikone u području obavijesti "
+            L"Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O programu i Izlaz. Meni ikone u "
+            L"području obavijesti "
             L"navodi numerisane vidžete i naredbe Prikaži sve, Sakrij sve i Isključi sav zvuk. Slijedi "
             L"zasebno grupirana naredba Rasporedi u mrežu. Prikazivanje ili vraćanje vidžeta dovodi ga "
             L"naprijed bez promjene postavke Uvijek na vrhu. Ponovno pokretanje CalClocka aktivira postojeću "
@@ -11819,7 +13753,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"položaj čuva. Raspoređivanje u mrežu izostavlja tu vrstu vidžeta. Esc skriva sat i uklanja "
             L"zatamnjenje i kada su Postavke otvorene.\r\n\r\nPokazivač miša skriva se nakon kratke "
             L"neaktivnosti iznad sata na ekranu i zatamnjenih ekrana te se ponovno prikazuje nakon pomicanja "
-            L"miša. Iznad malog pregleda u Postavkama ostaje vidljiv."
+            L"miša. Iznad malog pregleda u Postavkama ostaje vidljiv.\r\n\r\nKalkulator vremena\r\nOtvorite "
+            L"Kalkulator vremena iz menija bilo kojeg vidžeta ili ikone u području obavještenja. Vremenski "
+            L"interval računa razliku između dva datuma i vremena. Okrugle vrijednosti ističe u kalendaru "
+            L"okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina od odabranog "
+            L"početka. Sačuvani datumi i vremena omogućava dodavanje, uređivanje, sortiranje i brisanje "
+            L"datuma i vremena s opisom. Datumi i vremena čuvaju se odvojeno u "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
+            L"stavke i preskače samo stavke s istim datumom, vremenom i potpunim opisom.\r\n\r\nSvaki unos "
+            L"ima vlastitu vremensku zonu s istog spiska kao u Postavkama. Zadana je trenutna zona "
+            L"Windowsa. Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. "
+            L"Za ponovljeni sat odaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće sačuvati. Sati "
+            L"mjere proteklo vrijeme, a kalendarski proračuni koriste početnu zonu. Sada koristi sistemsko "
+            L"vrijeme Windowsa bez pomaka widgeta, prikazano u odabranoj zoni.\r\n\r\nUvoz prihvata i "
+            L"zasebnu XML datoteku sa sačuvanim datumima i vremenima; spaja te zapise bez promjene postavki "
+            L"aplikacije.\r\n\r\nNa kartici Isticanje možete odabrati pravila za isticanje datuma u "
+            L"kalendaru. Podrazumijevano se ističu početni dan (nulte vrijednosti), okrugle vrijednosti "
+            L"koje završavaju nulama, prvih devet punih sedmica te mjesečne i godišnje obljetnice. "
+            L"Ponavljajuće cifre 1–9 (na primjer 11, 111 ili 66, 666) mogu se uključiti pojedinačno i "
+            L"podrazumijevano su isključene.\r\n\r\nKliknite zaglavlje kolone da sortirate sačuvane podatke "
+            L"prema stvarnom trenutku ili tekstu opisa. Ponovni klik obrće redoslijed; strelica pokazuje "
+            L"smjer.\r\n\r\nPoložaj prozora, aktivna kartica, unesene vrijednosti i izbori isticanja čuvaju "
+            L"se s postavkama aplikacije u registru ili XML-u, prema odabranom spremištu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -11828,6 +13783,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sačuvani datumi i vremena ne mogu se učitati." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se sačuvati." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Odaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ovo lokalno vrijeme ne postoji u odabranoj zoni ili zona nije dostupna."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Vremenski interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrugle vrijednosti" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Sačuvani datumi i vremena" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Isticanje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Početni dan (nulte vrijednosti)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrugle vrijednosti koje završavaju nulama" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ponavljajuća cifra %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvih devet punih sedmica" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mjesečne i godišnje obljetnice" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Sada" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Početak:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Predložak:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum i vrijeme:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum i vrijeme" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Opis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Opis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Uredi" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Izbriši" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Odaberi sve" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Sati:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dana:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Sedmica:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mjeseci:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Godina:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|sed.|mj.|god.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Sati uzimaju u obzir zadano vrijeme. Dani, sedmice, mjeseci i godine računaju se od ponoći."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Vrijednosti za odabrani dan" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Predložak s ovim datumom i vremenom već postoji. Nastaviti?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Izbrisati odabrane predloške?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendar ističe okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Posjeti web-mjesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -12048,6 +14049,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Isključi &sav zvuk" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Zvuk isključen" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Upravljanje\r\nPovucite sat ili ploču lijevom tipkom miša. Samostalni kalendar povlači se za "
             L"slobodno područje. Desnom tipkom kliknite widget ili ikonu u području obavijesti za otvaranje "
             L"izbornika. Lijevi klik na ikonu skriva vidljive widgete; ako su svi skriveni, vraća samo "
@@ -12146,19 +14148,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
             L"proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. "
             L"Redak UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
-            L"vrijedi samo za Postavke, Pomoć i O programu. Uz zadani sistemski font koristi Tahomu 8 pt; "
+            L"vrijedi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz zadani sistemski font "
+            L"koristi Tahomu 8 pt; "
             L"vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni "
             L"ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows "
             L"koristi klasični izgled, obje su opcije izgleda nedostupne i ne primjenjuju se; spremljeni "
             L"odabiri ostaju nepromijenjeni.\r\n\r\nPostavke i izbornici\r\nJezik programa, font, "
             L"izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz rubove vrijede globalno i "
             L"postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na "
-            L"prozore Postavke, Pomoć i O programu. Svaki widget koristi vlastitu "
+            L"prozore Kalkulator vremena, Postavke, Pomoć i O programu. Svaki widget koristi vlastitu "
             L"postavku tema. Pri prvom pokretanju jezik se bira prema jeziku "
             L"sučelja Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme "
             L"widgeta utječu samo na taj widget. \r\n\r\nIzbornik widgeta sadrži primjenjive postavke "
             L"vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika kopiranja datuma, a zatim "
-            L"Rasporedi u mrežu, Postavke, Pomoć, O programu i Izlaz. Izbornik ikone u području obavijesti "
+            L"Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O programu i Izlaz. Izbornik ikone u "
+            L"području obavijesti "
             L"navodi numerirane widgete i naredbe Prikaži sve, Sakrij sve i Isključi sav zvuk. Slijedi "
             L"zasebno grupirana naredba Rasporedi u mrežu. Prikazivanje ili vraćanje widgeta dovodi ga "
             L"naprijed bez promjene postavke Uvijek na vrhu. Ponovno pokretanje CalClocka aktivira postojeću "
@@ -12264,7 +14268,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"vrstu widgeta. Esc skriva sat i uklanja zatamnjenje i kada su Postavke "
             L"otvorene.\r\n\r\nPokazivač miša skriva se nakon kratke neaktivnosti iznad sata na zaslonu i "
             L"zatamnjenih zaslona te se ponovno prikazuje nakon pomicanja miša. Iznad malog pretpregleda u "
-            L"Postavkama ostaje vidljiv."
+            L"Postavkama ostaje vidljiv.\r\n\r\nKalkulator vremena\r\nOtvorite Kalkulator vremena iz "
+            L"izbornika bilo kojeg widgeta ili ikone u području obavijesti. Vremenski interval računa "
+            L"razliku između dva datuma i vremena. Okrugle vrijednosti ističe u kalendaru okrugle "
+            L"vrijednosti, ponovljene znamenke te datume navršenih mjeseci i godina od odabranog početka. "
+            L"Spremljeni datumi i vremena omogućuje dodavanje, uređivanje, sortiranje i brisanje datuma i "
+            L"vremena s opisom. Datumi i vremena spremaju se zasebno u "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
+            L"stavke i preskače samo stavke s istim datumom, vremenom i cijelim opisom.\r\n\r\nSvaki unos "
+            L"ima vlastitu vremensku zonu s istog popisa kao u Postavkama. Zadana je trenutačna zona "
+            L"Windowsa. Spremaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava "
+            L"trenutak. Za ponovljeni sat odaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće "
+            L"spremiti. Sati mjere proteklo vrijeme, a kalendarski izračuni koriste početnu zonu. Sada "
+            L"koristi sistemsko vrijeme Windowsa bez pomaka widgeta, prikazano u odabranoj zoni.\r\n\r\n"
+            L"Uvoz prihvaća i zasebnu XML datoteku sa spremljenim datumima i vremenima; spaja te zapise bez "
+            L"promjene postavki aplikacije.\r\n\r\nNa kartici Isticanje možete odabrati pravila za "
+            L"isticanje datuma u kalendaru. Prema zadanim postavkama ističu se početni dan (nulte "
+            L"vrijednosti), okrugle vrijednosti koje završavaju nulama, prvih devet punih tjedana te "
+            L"mjesečne i godišnje obljetnice. Ponavljajuće znamenke 1–9 (na primjer 11, 111 ili 66, 666) "
+            L"mogu se uključiti pojedinačno i prema zadanim su postavkama isključene.\r\n\r\nKliknite "
+            L"zaglavlje stupca da biste sortirali spremljene podatke prema stvarnom trenutku ili tekstu "
+            L"opisa. Ponovni klik obrće redoslijed; strelica pokazuje smjer.\r\n\r\nPoložaj prozora, "
+            L"aktivna kartica, unesene vrijednosti i odabiri isticanja spremaju se s postavkama aplikacije "
+            L"u registar ili XML, prema odabranom spremištu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -12273,6 +14299,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Spremljeni datumi i vremena ne mogu se učitati." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se spremiti." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Odaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ovo lokalno vrijeme ne postoji u odabranoj zoni ili zona nije dostupna."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Vremenski interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrugle vrijednosti" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Spremljeni datumi i vremena" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Isticanje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Početni dan (nulte vrijednosti)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrugle vrijednosti koje završavaju nulama" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ponavljajuća znamenka %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvih devet punih tjedana" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mjesečne i godišnje obljetnice" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Sada" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Početak:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Predložak:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum i vrijeme:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum i vrijeme" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Opis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Opis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Uredi" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Izbriši" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Odaberi sve" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Sati:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dana:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Tjedana:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mjeseci:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Godina:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|tj.|mj.|god.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Sati uzimaju u obzir zadano vrijeme. Dani, tjedni, mjeseci i godine računaju se od ponoći."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Vrijednosti za odabrani dan" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Predložak s ovim datumom i vremenom već postoji. Nastaviti?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Izbrisati odabrane predloške?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendar ističe okrugle vrijednosti, ponovljene znamenke te datume navršenih mjeseci i godina."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Posjeti web-mjesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Nije moguće otvoriti stranicu u zadanom pregledniku." },
@@ -12491,6 +14563,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Izklopi &ves zvok" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Zvok izklopljen" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Upravljanje\r\nUro ali ploščo povlecite z levim miškinim gumbom. Samostojni koledar premikate "
             L"za prosti del. Desni klik na gradnik ali ikono v območju za obvestila odpre meni. Levi klik na "
             L"ikono skrije vidne gradnike; če so vsi skriti, obnovi samo nazadnje skrite.\r\n\r\nGradniki in "
@@ -12582,18 +14655,20 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri "
             L"proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem "
             L"rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.\r\n\r\nSlog Windows 2000 "
-            L"je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč in O programu. Pri "
+            L"je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni "
+            L"kalkulator. Pri "
             L"privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na "
             L"voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob "
             L"izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza "
             L"onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.\r\n\r\nNastavitve in "
             L"meniji\r\nJezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne "
-            L"nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Nastavitve, "
-            L"Pomoč in O programu. Vsak gradnik uporablja svojo nastavitev tem. "
+            L"nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Časovni "
+            L"kalkulator, Nastavitve, Pomoč in O programu. Vsak gradnik uporablja svojo nastavitev tem. "
             L"Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če "
             L"ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo "
             L"nanj. \r\n\r\nMeni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti "
-            L"in kopiranja datuma, nato Razporedi v mrežo, Nastavitve, Pomoč, O programu in Izhod. Meni "
+            L"in kopiranja datuma, nato Razporedi v mrežo, Časovni kalkulator, Nastavitve, Pomoč, O "
+            L"programu in Izhod. Meni "
             L"ikone vsebuje oštevilčene gradnike ter Pokaži vse, Skrij vse in Izklopi ves zvok; sledi ločeni "
             L"ukaz Razporedi v mrežo. Prikaz ali obnova postavi gradnik v ospredje brez spremembe Vedno na "
             L"vrhu. Ponovni zagon aktivira obstoječi primerek in po potrebi obnovi nazadnje skrite gradnike. "
@@ -12686,7 +14761,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"izbranega zaslona; njegov položaj se shrani. Razporeditev v mrežo tega gradnika ne premika. "
             L"Esc skrije uro in odstrani zatemnitev tudi med odprtimi Nastavitvami.\r\n\r\nKazalec se po "
             L"kratki nedejavnosti nad uro na zaslonu ali zatemnjenimi zasloni skrije in ob premiku miške "
-            L"spet pokaže. Nad majhnim predogledom ostane viden."
+            L"spet pokaže. Nad majhnim predogledom ostane viden.\r\n\r\nČasovni kalkulator\r\nOdprite "
+            L"Časovni kalkulator iz menija poljubnega gradnika ali ikone v območju za obvestila. Časovni "
+            L"interval izračuna razliko med dvema datumoma in časoma. Okrogle vrednosti v koledarju poudari "
+            L"okrogle vrednosti, ponavljajoče se števke ter mesečne in letne obletnice od izbranega "
+            L"začetka. Shranjeni datumi in časi omogoča dodajanje, urejanje, razvrščanje in brisanje "
+            L"datumov in časov z opisom. Datumi in časi se shranijo ločeno v "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ročni izvoz jih vključuje; uvoz ohrani obstoječe "
+            L"vnose in preskoči samo vnose z enakim datumom, časom in celotnim opisom.\r\n\r\nVsak vnos ima "
+            L"svoj časovni pas z istega seznama kot v Nastavitvah. Privzet je trenutni časovni pas Windows. "
+            L"Shranita se enoličen trenutek UTC in pas prikaza. Sprememba pasu ohrani trenutek. Pri "
+            L"ponovljeni uri izberite odmik UTC; neobstoječega lokalnega časa ni mogoče shraniti. Ure "
+            L"merijo pretečeni čas, koledarski izračuni pa uporabljajo začetni pas. Zdaj uporablja "
+            L"sistemski čas Windows brez odmika gradnika, prikazan v izbranem pasu.\r\n\r\nUvoz sprejme "
+            L"tudi ločeno datoteko XML s shranjenimi datumi in časi; združi te zapise brez spreminjanja "
+            L"nastavitev aplikacije.\r\n\r\nNa zavihku Označevanje lahko izberete pravila za označevanje "
+            L"datumov v koledarju. Privzeto so označeni začetni dan (ničelne vrednosti), okrogle vrednosti, "
+            L"ki se končajo z ničlami, prvih devet polnih tednov ter mesečne in letne obletnice. "
+            L"Ponavljajoče se števke 1–9 (na primer 11, 111 ali 66, 666) lahko vklopite posamično; privzeto "
+            L"so izklopljene.\r\n\r\nKliknite glavo stolpca, da shranjene podatke razvrstite po dejanskem "
+            L"časovnem trenutku ali besedilu opisa. Ponovni klik obrne vrstni red; puščica kaže "
+            L"smer.\r\n\r\nPoložaj okna, aktivni zavihek, vnesene vrednosti in izbire označevanja se "
+            L"shranijo z nastavitvami programa v register ali XML, odvisno od izbrane shrambe."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -12695,6 +14791,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Različica:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Spletno mesto:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Časovni kalkulator" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Shranjenih datumov in časov ni mogoče prebrati." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumov in časov ni mogoče shraniti." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izberite odmik UTC za ta ponovljeni lokalni čas." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ta lokalni čas v izbranem pasu ne obstaja ali pas ni na voljo."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Časovni kalkulator" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Časovni interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrogle vrednosti" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Shranjeni datumi in časi" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Označevanje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Začetni dan (ničelne vrednosti)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrogle vrednosti, ki se končajo z ničlami" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ponavljajoča se števka %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvih devet polnih tednov" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mesečne in letne obletnice" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Zdaj" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Začetek:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Prednastavitev:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum in čas:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum in čas" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Opis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Opis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Uredi" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Izbriši" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Izberi vse" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Ur:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dni:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Tednov:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mesecev:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Let:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|ted.|mes.|let|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Ure upoštevajo navedeni čas. Dnevi, tedni, meseci in leta se štejejo od polnoči."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Vrednosti za izbrani dan" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Prednastavitev s tem datumom in časom že obstaja. Nadaljujem?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Izbrišem izbrane prednastavitve?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Koledar poudari okrogle vrednosti, ponavljajoče se števke ter mesečne in letne obletnice."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoč" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Obišči spletno mesto %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -12913,6 +15055,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Isključi &sav zvuk" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Zvuk isključen" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Upravljanje\r\nPovucite sat ili panel lijevim tasterom miša. Samostalni kalendar se pomjera "
             L"preko slobodne površine. Desni klik na vidžet ili ikonu u oblasti za obavještenja otvara meni. "
             L"Lijevi klik na ikonu skriva vidljive vidžete; ako su svi skriveni, vraća samo posljednje "
@@ -13006,18 +15149,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ali čuva njenu širinu u izabranom fontu; ostale cifre zadržavaju položaje i kod "
             L"proporcionalnih fontova. Satovi na monitoru ostaju centrirani sa uračunatim razmakom. Red UTC "
             L"ima sopstveno centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i važi samo "
-            L"za Podešavanja, Pomoć i O programu. Uz podrazumijevani sistemski font koristi Tahomu 8 pt; "
+            L"za Podešavanja, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font koristi "
+            L"Tahomu 8 pt; "
             L"vlastiti font programa ima prednost. Dostupno je umekšavanje GDI ili Nema. Sačuvani ClearType "
             L"privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi "
             L"klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju "
             L"nepromijenjeni.\r\n\r\nPodešavanja i meniji\r\nJezik programa, font, umekšavanje, "
             L"skladište, pokretanje uz Windows i priljepljivanje su zajedničke postavke na kartici Program. "
-            L"Isključivanje tema na kartici Program utiče samo na prozore Podešavanja, Pomoć i O programu. "
+            L"Isključivanje tema na kartici Program utiče samo na prozore Kalkulator vremena, Podešavanja, "
+            L"Pomoć i O programu. "
             L"Svaki vidžet koristi sopstvenu postavku tema. Pri prvom pokretanju "
             L"bira se jezik interfejsa Windows-a; ako nije podržan, koristi se "
             L"američki engleski. Jezik, umekšavanje i teme vidžeta utiču samo na njega. \r\n\r\nMeni vidžeta "
             L"sadrži primjenjive postavke vidljivosti, Uvijek na vrhu, sekundi, veličine i kopiranja datuma, "
-            L"zatim Rasporedi u mrežu, Podešavanja, Pomoć, O programu i Izlaz. Meni ikone navodi numerisane "
+            L"zatim Rasporedi u mrežu, Kalkulator vremena, Podešavanja, Pomoć, O programu i Izlaz. Meni "
+            L"ikone navodi numerisane "
             L"vidžete, Prikaži sve, Sakrij sve i Isključi sav zvuk, pa odvojeno Rasporedi u mrežu. Prikaz "
             L"ili vraćanje dovodi vidžet naprijed bez promjene Uvijek na vrhu. Ponovni start aktivira "
             L"postojeću instancu i po potrebi vraća posljednje skrivene vidžete. Veličine brojčanika i "
@@ -13114,7 +15260,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"monitora; njegov položaj se čuva. Rasporedi u mrežu ne premješta tu vrstu vidžeta. Esc skriva "
             L"sat i uklanja zatamnjenje i kada su Podešavanja otvorena.\r\n\r\nPokazivač miša skriva se "
             L"poslije kratke neaktivnosti iznad sata na monitoru i zatamnjenih monitora, a pojavljuje pri "
-            L"pomjeranju miša. Iznad malog pregleda ostaje vidljiv."
+            L"pomjeranju miša. Iznad malog pregleda ostaje vidljiv.\r\n\r\nKalkulator vremena\r\nOtvorite "
+            L"Kalkulator vremena iz menija bilo kojeg vidžeta ili ikone u oblasti obavještenja. Vremenski "
+            L"interval računa razliku između dva datuma i vremena. Okrugle vrijednosti ističe u kalendaru "
+            L"okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina od izabranog "
+            L"početka. Sačuvani datumi i vremena omogućava dodavanje, uređivanje, sortiranje i brisanje "
+            L"datuma i vremena s opisom. Datumi i vremena čuvaju se odvojeno u "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
+            L"stavke i preskače samo stavke s istim datumom, vremenom i potpunim opisom.\r\n\r\nSvaki unos "
+            L"ima svoju vremensku zonu sa iste liste kao u Podešavanjima. Podrazumijevana je trenutna zona "
+            L"Windowsa. Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. "
+            L"Za ponovljeni sat izaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće sačuvati. Sati "
+            L"mjere proteklo vrijeme, a kalendarski proračuni koriste početnu zonu. Sada koristi sistemsko "
+            L"vrijeme Windowsa bez pomaka vidžeta, prikazano u izabranoj zoni.\r\n\r\nUvoz prihvata i "
+            L"zasebnu XML datoteku sa sačuvanim datumima i vremenima; spaja te zapise bez promjene "
+            L"podešavanja aplikacije.\r\n\r\nNa kartici Isticanje možete izabrati pravila za isticanje "
+            L"datuma u kalendaru. Podrazumijevano se ističu početni dan (nulte vrijednosti), okrugle "
+            L"vrijednosti koje se završavaju nulama, prvih devet punih sedmica te mjesečne i godišnje "
+            L"godišnjice. Ponavljajuće cifre 1–9 (na primjer 11, 111 ili 66, 666) mogu se uključiti "
+            L"pojedinačno i podrazumijevano su isključene.\r\n\r\nKliknite zaglavlje kolone da sortirate "
+            L"sačuvane podatke prema stvarnom trenutku ili tekstu opisa. Ponovni klik obrće redosljed; "
+            L"strelica pokazuje smjer.\r\n\r\nPoložaj prozora, aktivna kartica, unesene vrijednosti i "
+            L"izbori isticanja čuvaju se s podešavanjima aplikacije u registru ili XML-u, prema izabranom "
+            L"skladištu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -13123,6 +15291,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Verzija:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veb-sajt:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sačuvani datumi i vremena ne mogu se učitati." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se sačuvati." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ovo lokalno vrijeme ne postoji u izabranoj zoni ili zona nije dostupna."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Vremenski interval" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Okrugle vrijednosti" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Sačuvani datumi i vremena" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Isticanje" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Početni dan (nulte vrijednosti)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Okrugle vrijednosti koje se završavaju nulama" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Ponavljajuća cifra %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Prvih devet punih sedmica" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Mjesečne i godišnje godišnjice" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Od:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Do:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Sada" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Početak:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Predložak:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Datum i vrijeme:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Datum i vrijeme" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Opis:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Opis" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Uredi" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Izbriši" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Izaberi sve" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Sati:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Dana:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Nedjelja:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Mjeseci:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Godina:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|d|ned.|mj.|god.|min" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Sati uzimaju u obzir zadato vrijeme. Dani, nedjelje, mjeseci i godine računaju se od ponoći."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Vrijednosti za izabrani dan" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Predložak s ovim datumom i vremenom već postoji. Nastaviti?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Izbrisati izabrane predloške?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Kalendar ističe okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Pomoć" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Otvori veb-sajt %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -13343,6 +15557,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Выключыць &увесь гук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Без гуку" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Кіраванне\r\nПерацягвайце гадзіннік або панэль левай кнопкай мышы. Асобны каляндар "
             L"перацягваецца за вольную вобласць. Правая кнопка на віджэце або значку ў вобласці апавяшчэнняў "
             L"адкрывае меню. Левая кнопка на значку хавае бачныя віджэты; калі ўсе схаваныя, аднаўляе толькі "
@@ -13439,19 +15654,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"нуль, але рэзервуе яго шырыню ў выбраным шрыфце; астатнія лічбы захоўваюць пазіцыі і ў "
             L"прапарцыянальных шрыфтах. Гадзіннікі на маніторы застаюцца па цэнтры з улікам зарэзерваванага "
             L"месца. Радок UTC мае асобнае цэнтраванне.\r\n\r\nСтыль Windows 2000 даступны пры адключаных "
-            L"тэмах і дзейнічае толькі ў вокнах «Налады», «Даведка» і «Пра праграму». Пры прадвызначаным "
+            L"тэмах і дзейнічае толькі ў вокнах «Налады», «Даведка», «Пра праграму» і «Калькулятар часу». Пры "
+            L"прадвызначаным "
             L"сістэмным шрыфце выкарыстоўваецца Tahoma 8 pt; уласны шрыфт праграмы мае перавагу. Даступнае "
             L"згладжванне GDI або «Няма». Захаваны выбар ClearType часова замяняецца на GDI і аднаўляецца "
             L"пасля выключэння гэтага стылю. Пры класічным выглядзе Windows абедзве налады выгляду "
             L"неактыўныя і не ўжываюцца; захаваныя значэнні застаюцца нязменнымі.\r\n\r\nНалады і "
             L"меню\r\nМова праграмы, шрыфт, "
             L"згладжванне, сховішча, запуск з Windows і прывязка да краёў задаюцца для ўсёй праграмы на "
-            L"ўкладцы «Праграма». Адключэнне тэм на ўкладцы Праграма ўплывае толькі на вокны Налады, Даведка "
-            L"і Пра праграму. Кожны віджэт выкарыстоўвае ўласную наладу тэм. "
+            L"ўкладцы «Праграма». Адключэнне тэм на ўкладцы Праграма ўплывае толькі на вокны Калькулятар "
+            L"часу, Налады, Даведка і Пра праграму. Кожны віджэт выкарыстоўвае ўласную наладу тэм. "
             L"Пры першым запуску выбіраецца мова інтэрфейсу Windows; калі яна не "
             L"падтрымліваецца, выкарыстоўваецца амерыканская англійская. Мова, згладжванне і тэмы віджэта "
             L"ўплываюць толькі на яго. \r\n\r\nМеню віджэта мае даступныя яму налады бачнасці, «Заўсёды "
-            L"зверху», секунд, памеру і капіявання даты, далей — «Упарадкаваць па сетцы», «Налады», "
+            L"зверху», секунд, памеру і капіявання даты, далей — «Упарадкаваць па сетцы», «Калькулятар "
+            L"часу», «Налады», "
             L"«Даведка», «Пра праграму» і «Выйсці». Меню значка змяшчае нумараваныя віджэты ды «Паказаць "
             L"усё», «Схаваць усё» і «Выключыць увесь гук», затым асобна — «Упарадкаваць па сетцы». Паказ ці "
             L"аднаўленне выводзіць віджэт наперад без змены «Заўсёды зверху». Паўторны запуск актывуе існы "
@@ -13550,7 +15767,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"захоўваецца. Упарадкаванне па сетцы гэты віджэт не перамяшчае. Esc хавае гадзіннік і прыбірае "
             L"зацямненне нават з адкрытымі наладамі.\r\n\r\nПаказальнік мышы хаваецца пасля кароткай "
             L"бяздзейнасці над гадзіннікам на маніторы ці зацемненымі маніторамі і з’яўляецца пры руху мышы. "
-            L"Над маленькім праглядам ён застаецца бачным."
+            L"Над маленькім праглядам ён застаецца бачным.\r\n\r\nКалькулятар часу\r\nАдкрыйце Калькулятар "
+            L"часу з меню любога віджэта або значка ў вобласці апавяшчэнняў. Укладка «Прамежак часу» "
+            L"вылічвае розніцу паміж дзвюма датамі і часам. Укладка «Круглыя значэнні» вылучае ў календары "
+            L"круглыя значэнні, паўтаральныя лічбы і штомесячныя ды штогадовыя памятныя даты ад выбранага "
+            L"пачатку. Укладка «Захаваныя даты і час» дазваляе дадаваць, рэдагаваць, сартаваць і выдаляць "
+            L"даты і час з апісаннямі. Даты і час захоўваюцца асобна ў "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ручны экспарт уключае іх; імпарт захоўвае існуючыя "
+            L"запісы і прапускае толькі запісы з аднолькавай датай, часам і поўным апісаннем.\r\n\r\nКожнае "
+            L"значэнне мае свой часавы пояс з таго ж спіса, што і ў наладах. Па змаўчанні выкарыстоўваецца "
+            L"бягучы пояс Windows. Захоўваюцца адназначны момант UTC і пояс адлюстравання. Змена пояса "
+            L"захоўвае момант. Для паўторнай гадзіны выберыце зрух UTC; неіснуючы мясцовы час захаваць "
+            L"нельга. Гадзіны вымяраюць мінулы час, каляндарныя разлікі выкарыстоўваюць пачатковы пояс. "
+            L"Цяпер выкарыстоўвае сістэмны час Windows без зруху віджэта, паказаны ў выбраным поясе.\r\n\r\n"
+            L"Імпарт таксама прымае асобны XML-файл з захаванымі датамі і часам; запісы аб’ядноўваюцца без "
+            L"змены налад праграмы.\r\n\r\nНа ўкладцы Вылучэнне можна выбраць правілы вылучэння дат у "
+            L"календары. Прадвызначана вылучаюцца пачатковы дзень (нулявыя значэнні), круглыя значэнні, "
+            L"якія заканчваюцца нулямі, першыя дзевяць поўных тыдняў і штомесячныя ды штогадовыя гадавіны. "
+            L"Лічбы 1–9, якія паўтараюцца (напрыклад, 11, 111 або 66, 666), можна ўключаць паасобку; "
+            L"прадвызначана яны выключаны.\r\n\r\nНацісніце загаловак слупка, каб адсартаваць захаваныя "
+            L"запісы паводле фактычнага моманту часу або тэксту апісання. Паўторны націск мяняе парадак на "
+            L"адваротны; стрэлка паказвае кірунак.\r\n\r\nПазіцыя акна, актыўная ўкладка, уведзеныя "
+            L"значэнні і налады вылучэння захоўваюцца разам з наладамі праграмы ў рэестры або XML паводле "
+            L"выбранага сховішча."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -13559,6 +15798,51 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версія:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Мэтавая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вэб-сайт:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятар часу" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не ўдалося прачытаць захаваныя даты і час." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не ўдалося захаваць даты і час." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Выберыце зрух UTC для гэтага паўторнага мясцовага часу." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Гэты мясцовы час не існуе ў выбраным поясе або пояс недаступны."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калькулятар часу" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Прамежак часу" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Круглыя значэнні" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Захаваныя даты і час" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Вылучэнне" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Пачатковы дзень (нулявыя значэнні)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Круглыя значэнні, якія заканчваюцца нулямі" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Лічба %u, якая паўтараецца (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Першыя дзевяць поўных тыдняў" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Штомесячныя і штогадовыя гадавіны" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Ад:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"Да:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Цяпер" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Пачатак:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Набор:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Дата і час:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Дата і час" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Апісанне:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Апісанне" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Рэдагаваць" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Выдаліць" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Выбраць усё" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Гадзін:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Дзён:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Тыдняў:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Месяцаў:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Гадоў:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"гадз.|дз.|тыд.|мес.|г.|хв." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Гадзіны ўлічваюць зададзены час. Дні, тыдні, месяцы і гады адлічваюцца ад поўначы."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Значэнні для выбранага дня" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE, L"Набор з гэтай датай і часам ужо існуе. Працягнуць?" },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Выдаліць выбраныя наборы?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Каляндар вылучае круглыя значэнні, паўтаральныя лічбы і штомесячныя ды штогадовыя памятныя "
+            L"даты."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Даведка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Адкрыць вэб-сайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Немагчыма адкрыць сайт у прадвызначаным браўзеры." },
@@ -13780,6 +16064,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Изключи &целия звук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Без звук" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Управление\r\nПреместете часовник или панел с плъзгане с левия бутон на мишката. "
             L"Самостоятелният календар се премества чрез свободната му област. Десният бутон върху модул или "
             L"иконата в областта за уведомяване отваря меню. Левият бутон върху иконата скрива видимите "
@@ -13880,19 +16165,22 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"запазва ширината ѝ в избрания шрифт; другите цифри остават на място дори при пропорционални "
             L"шрифтове. Часовниците на монитор остават центрирани с включено запазено място. Редът UTC има "
             L"отделно центриране.\r\n\r\nСтилът Windows 2000 е достъпен при забранени теми и важи само за "
-            L"прозорците „Настройки“, „Помощ“ и „За програмата“. При системния шрифт по подразбиране се "
+            L"прозорците „Настройки“, „Помощ“, „За програмата“ и „Калкулатор за време“. При системния шрифт по "
+            L"подразбиране се "
             L"използва Tahoma 8 pt; избраният шрифт на програмата има предимство. Достъпно е изглаждане GDI "
             L"или „Няма“. Записаният избор ClearType временно се заменя с GDI и се възстановява след "
             L"изключване на този стил. При класически изглед на Windows двете опции за изглед са неактивни и "
             L"не се прилагат; записаните стойности се запазват.\r\n\r\nНастройки и менюта\r\nЕзикът, "
             L"шрифтът, изглаждането, хранилището, "
             L"стартирането с Windows и прилепването са общи настройки в раздела „Програма“. Изключването на "
-            L"темите в раздела Програма засяга само прозорците Настройки, Помощ и За програмата. Всеки модул "
+            L"темите в раздела Програма засяга само прозорците Калкулатор за време, Настройки, Помощ и За "
+            L"програмата. Всеки модул "
             L"използва собствената си настройка за теми. При "
             L"първо стартиране се избира езикът на интерфейса на Windows; ако не се поддържа, се използва "
             L"американски английски. Езикът, изглаждането и темите на модула влияят само на него. "
             L"\r\n\r\nМенюто на модул съдържа приложимите настройки за видимост, „Винаги отгоре“, секунди, "
-            L"размер и копиране на дата, следвани от „Подреди в мрежа“, „Настройки“, „Помощ“, „За "
+            L"размер и копиране на дата, следвани от „Подреди в мрежа“, „Калкулатор за време“, „Настройки“, "
+            L"„Помощ“, „За "
             L"програмата“ и „Изход“. Менюто на иконата изброява номерирани модули и „Покажи всички“, „Скрий "
             L"всички“, „Изключи целия звук“, след което отделно е „Подреди в мрежа“. Показването или "
             L"възстановяването извежда модула отпред без промяна на „Винаги отгоре“. Повторният старт "
@@ -13996,7 +16284,31 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"съотношението на страните на монитора; позицията му се пази. Подреждането в мрежа не го "
             L"премества. Esc скрива часовника и премахва затъмнението дори при отворени "
             L"настройки.\r\n\r\nПоказалецът се скрива след кратко бездействие над часовника или затъмнените "
-            L"монитори и се показва отново при движение на мишката. Над малкия преглед остава видим."
+            L"монитори и се показва отново при движение на мишката. Над малкия преглед остава "
+            L"видим.\r\n\r\nКалкулатор за време\r\nОтворете Калкулатор за време от менюто на произволен "
+            L"модул или на иконата в областта за уведомяване. Разделът Времеви интервал изчислява разликата "
+            L"между две дати и часове. Разделът Кръгли стойности откроява в календара кръгли стойности, "
+            L"повтарящи се цифри и месечни и годишни повторения на началната дата от избраното начало. "
+            L"Разделът Запазени дати и часове позволява добавяне, редактиране, сортиране и изтриване на "
+            L"дати и часове с описания. Датите и часовете се запазват отделно в "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ръчният експорт ги включва; импортът запазва "
+            L"съществуващите записи и пропуска само записи с еднакви дата, час и пълно описание.\r\n\r\n"
+            L"Всяка стойност има своя часова зона от същия списък като в Настройки. По подразбиране се "
+            L"използва текущата зона на Windows. Записват се еднозначен момент в UTC и зоната за показване. "
+            L"Смяната на зоната запазва момента. При повтарящ се час изберете отместването спрямо UTC; "
+            L"несъществуващ местен час не може да се запише. Часовете измерват изминалото време, а "
+            L"календарните изчисления използват началната зона. Сега използва системния час на Windows без "
+            L"отместване на уиджета, показан в избраната зона.\r\n\r\nИмпортът приема и отделен XML файл "
+            L"със запазени дати и часове; записите се сливат без промяна на настройките на "
+            L"приложението.\r\n\r\nВ раздела Открояване можете да изберете правилата за открояване на дати "
+            L"в календара. По подразбиране се открояват началният ден (нулеви стойности), кръглите "
+            L"стойности, завършващи на нули, първите девет пълни седмици и месечните и годишните годишнини. "
+            L"Повтарящите се цифри 1–9 (например 11, 111 или 66, 666) могат да се включват поотделно и са "
+            L"изключени по подразбиране.\r\n\r\nЩракнете върху заглавието на колона, за да сортирате "
+            L"запазените записи по действителния момент или по текста на описанието. Повторното щракване "
+            L"обръща реда; стрелка показва посоката.\r\n\r\nПозицията на прозореца, активният раздел, "
+            L"въведените стойности и опциите за открояване се записват с настройките на приложението в "
+            L"системния регистър или XML според избраното хранилище."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -14005,6 +16317,53 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версия:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целева платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Уебсайт:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Запазените дати и часове не могат да бъдат прочетени." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датите и часовете не могат да бъдат запазени." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Изберете отместването спрямо UTC за този повтарящ се местен час."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Този местен час не съществува в избраната зона или зоната не е достъпна."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Времеви интервал" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Кръгли стойности" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Запазени дати и часове" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Открояване" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Начален ден (нулеви стойности)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Кръгли стойности, завършващи на нули" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Повтаряща се цифра %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Първите девет пълни седмици" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Месечни и годишни годишнини" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"От:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"До:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Сега" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Начало:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Готов набор:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Дата и час:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Дата и час" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Описание:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Описание" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Редактиране" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Изтриване" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Избор на всички" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Часове:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Дни:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Седмици:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Месеци:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Години:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"ч.|д.|седм.|мес.|г.|мин." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Часовете отчитат посочения час. Дните, седмиците, месеците и годините се броят от полунощ."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Стойности за избрания ден" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE, L"Вече съществува набор с тази дата и час. Продължаване?" },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Да се изтрият ли избраните набори?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Календарът откроява кръгли стойности, повтарящи се цифри и месечни и годишни повторения на "
+            L"началната дата."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помощ" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори уебсайта %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Сайтът не може да се отвори в браузъра по подразбиране." },
@@ -14223,6 +16582,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Исклучи го &целиот звук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Без звук" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Управување\r\nПовлечете часовник или панел со левото копче на глувчето. Самостојниот календар "
             L"се поместува преку слободната површина. Десен клик на виџет или иконата во областа за "
             L"известување го отвора менито. Лев клик на иконата ги крие видливите виџети; ако сите се "
@@ -14324,7 +16684,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"задржува нејзината ширина во избраниот фонт; другите цифри остануваат на место и кај "
             L"пропорционални фонтови. Часовниците на монитор остануваат центрирани со вклучено резервирано "
             L"место. Редот UTC има свое центрирање.\r\n\r\nСтилот Windows 2000 е достапен со оневозможени "
-            L"теми и важи само за прозорците „Поставки“, „Помош“ и „За програмата“. Со стандардниот "
+            L"теми и важи само за прозорците „Поставки“, „Помош“, „За програмата“ и „Калкулатор за време“. Со "
+            L"стандардниот "
             L"системски фонт се користи Tahoma 8 pt; избраниот фонт на програмата има предност. Достапно е "
             L"измазнување GDI или „Нема“. Зачуваниот избор ClearType привремено се заменува со GDI и се "
             L"враќа по исклучувањето на овој стил. При класичен изглед на Windows двете опции за изглед се "
@@ -14332,11 +16693,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"менија\r\nЈазикот, фонтот, "
             L"измазнувањето, складиштето, стартувањето со Windows и прилепувањето се општи поставки на "
             L"картичката „Програма“. Исклучувањето на темите на картичката Програма влијае само на "
-            L"прозорците Поставки, Помош и За програмата. Секој виџет користи сопствена поставка за теми. "
+            L"прозорците Калкулатор за време, Поставки, Помош и За програмата. Секој виџет користи "
+            L"сопствена поставка за теми. "
             L"При првото стартување се избира јазикот на интерфејсот на Windows; "
             L"ако не е поддржан, се користи американски англиски. Јазикот, измазнувањето и темите на виџетот "
             L"влијаат само на него. \r\n\r\nМенито на виџетот содржи достапни поставки за видливост, "
-            L"„Секогаш најгоре“, секунди, големина и копирање датум, потоа „Распореди во мрежа“, „Поставки“, "
+            L"„Секогаш најгоре“, секунди, големина и копирање датум, потоа „Распореди во мрежа“, "
+            L"„Калкулатор за време“, „Поставки“, "
             L"„Помош“, „За програмата“ и „Излез“. Менито на иконата ги наведува нумерираните виџети, "
             L"„Прикажи ги сите“, „Скриј ги сите“ и „Исклучи го целиот звук“, па одделно „Распореди во "
             L"мрежа“. Покажувањето или враќањето го носи виџетот напред без промена на „Секогаш најгоре“. "
@@ -14440,7 +16803,31 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"односот на страните на мониторот; положбата му се зачувува. Распоредувањето во мрежа не го "
             L"поместува овој виџет. Esc го крие часовникот и го отстранува затемнувањето и при отворени "
             L"поставки.\r\n\r\nПокажувачот на глувчето се крие по кратка неактивност над часовникот или "
-            L"затемнетите монитори и се појавува при движење. Над малиот преглед останува видлив."
+            L"затемнетите монитори и се појавува при движење. Над малиот преглед останува "
+            L"видлив.\r\n\r\nКалкулатор за време\r\nОтворете Калкулатор за време од менито на кој било "
+            L"виџет или на иконата во областа за известувања. Картичката Временски интервал ја пресметува "
+            L"разликата меѓу два датума и времиња. Картичката Заокружени вредности истакнува во календарот "
+            L"заокружени вредности, повторени цифри и месечни и годишни повторувања на почетниот датум од "
+            L"избраниот почеток. Картичката Зачувани датуми и времиња овозможува додавање, уредување, "
+            L"сортирање и бришење датуми и времиња со описи. Датумите и времињата се зачувуваат одделно во "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Рачниот извоз ги вклучува; увозот ги задржува "
+            L"постојните записи и ги прескокнува само записите со ист датум, време и целосен опис.\r\n\r\n"
+            L"Секој внес има своја временска зона од истиот список како во Поставки. Стандардна е тековната "
+            L"зона на Windows. Се зачувуваат еднозначен момент во UTC и зоната за приказ. Промената на "
+            L"зоната го задржува моментот. За повторен час изберете го поместувањето од UTC; непостоечко "
+            L"локално време не може да се зачува. Часовите го мерат изминатото време, а календарските "
+            L"пресметки ја користат почетната зона. Сега го користи системското време на Windows без "
+            L"поместување на виџетот, прикажано во избраната зона.\r\n\r\nУвозот прифаќа и посебна "
+            L"XML-датотека со зачувани датуми и времиња; ги спојува записите без да ги менува поставките на "
+            L"апликацијата.\r\n\r\nНа картичката Истакнување може да ги изберете правилата за истакнување "
+            L"датуми во календарот. Стандардно се истакнуваат почетниот ден (нулти вредности), заокружените "
+            L"вредности што завршуваат со нули, првите девет цели недели и месечните и годишните годишнини. "
+            L"Повторените цифри 1–9 (на пример 11, 111 или 66, 666) може да се вклучат поединечно и "
+            L"стандардно се исклучени.\r\n\r\nКликнете на заглавието на колона за да ги подредите "
+            L"зачуваните записи според вистинскиот временски момент или текстот на описот. Повторното "
+            L"кликнување го превртува редоследот; стрелка ја покажува насоката.\r\n\r\nПоложбата на "
+            L"прозорецот, активната картичка, внесените вредности и опциите за истакнување се зачувуваат со "
+            L"поставките на апликацијата во регистарот или XML, според избраното складиште."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -14449,6 +16836,56 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Верзија:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-страница:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Зачуваните датуми и времиња не може да се прочитаат." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датумите и времињата не може да се зачуваат." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Изберете го поместувањето од UTC за ова повторено локално време."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ова локално време не постои во избраната зона или зоната не е достапна."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Временски интервал" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Заокружени вредности" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Зачувани датуми и времиња" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Истакнување" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Почетен ден (нулти вредности)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Заокружени вредности што завршуваат со нули" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Повторена цифра %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Првите девет цели недели" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Месечни и годишни годишнини" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Од:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"До:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Сега" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Почеток:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Готов избор:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Датум и време:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Датум и време" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Опис:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Опис" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Уреди" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Избриши" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Избери сè" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Часови:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Денови:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Седмици:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Месеци:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Години:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"ч.|д.|сед.|мес.|г.|мин." },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Часовите го земаат предвид зададеното време. Деновите, седмиците, месеците и годините се "
+            L"бројат од полноќ."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Вредности за избраниот ден" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Веќе постои готов избор со овој датум и време. Да се продолжи?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Да се избришат избраните готови избори?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Календарот истакнува заокружени вредности, повторени цифри и месечни и годишни повторувања на "
+            L"почетниот датум."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помош" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори ја веб-страницата %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -14671,6 +17108,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Искључи &сав звук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Звук искључен" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"Управљање\r\nПовуците сат или панел левим тастером миша. Самостални календар се помера преко "
             L"слободне површине. Десни клик на виџет или икону у области за обавештења отвара мени. Леви "
             L"клик на икону скрива видљиве виџете; ако су сви скривени, враћа само последње "
@@ -14760,18 +17198,20 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"„Не, без размака“. „Не, задржи размак“ скрива нулу, али чува њену ширину у изабраном фонту; "
             L"остале цифре задржавају положаје и код пропорционалних фонтова. Сатови на монитору остају "
             L"центрирани са урачунатим размаком. Ред UTC има сопствено центрирање.\r\n\r\nСтил Windows 2000 "
-            L"доступан је уз искључене теме и важи само за Подешавања, Помоћ и О програму. Уз подразумевани "
+            L"доступан је уз искључене теме и важи само за Подешавања, Помоћ, О програму и Калкулатор времена. "
+            L"Уз подразумевани "
             L"системски фонт користи Тахому 8 pt; властити фонт програма има предност. Доступно је "
             L"умекшавање GDI или Нема. Сачувани ClearType привремено се замењује са GDI и враћа након "
             L"искључивања овог стила. Када Windows користи класични изглед, обе опције изгледа су недоступне "
             L"и не примењују се; сачувани избори остају непромењени.\r\n\r\nПодешавања и "
             L"менији\r\nЈезик програма, фонт, умекшавање, складиште, покретање уз Windows и прилепљивање су "
             L"заједничке поставке на картици Програм. Искључивање тема на картици Програм утиче само на "
-            L"прозоре Подешавања, Помоћ и О програму. Сваки виџет користи "
+            L"прозоре Калкулатор времена, Подешавања, Помоћ и О програму. Сваки виџет користи "
             L"сопствену поставку тема. При првом покретању бира се језик "
             L"интерфејса Windows-а; ако није подржан, користи се амерички енглески. Језик, умекшавање и теме "
             L"виџета утичу само на њега. \r\n\r\nМени виџета садржи примењиве поставке видљивости, Увек на "
-            L"врху, секунди, величине и копирања датума, затим Распореди у мрежу, Подешавања, Помоћ, О "
+            L"врху, секунди, величине и копирања датума, затим Распореди у мрежу, Калкулатор времена, "
+            L"Подешавања, Помоћ, О "
             L"програму и Излаз. Мени иконе наводи нумерисане виџете, Прикажи све, Сакриј све и Искључи сав "
             L"звук, па одвојено Распореди у мрежу. Приказ или враћање доводи виџет напред без промене Увек "
             L"на врху. Поновни старт активира постојећу инстанцу и по потреби враћа последње скривене "
@@ -14866,7 +17306,28 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"страница монитора; његов положај се чува. Распореди у мрежу не премешта ту врсту виџета. Esc "
             L"скрива сат и уклања затамњење и када су Подешавања отворена.\r\n\r\nПоказивач миша скрива се "
             L"после кратке неактивности изнад сата на монитору и затамњених монитора, а појављује при "
-            L"померању миша. Изнад малог прегледа остаје видљив."
+            L"померању миша. Изнад малог прегледа остаје видљив.\r\n\r\nКалкулатор времена\r\nОтворите "
+            L"Калкулатор времена из менија било ког виџета или иконе у области обавештења. Временски "
+            L"интервал рачуна разлику између два датума и времена. Округле вредности истиче у календару "
+            L"округле вредности, поновљене цифре те датуме навршених месеци и година од изабраног почетка. "
+            L"Сачувани датуми и времена омогућава додавање, уређивање, сортирање и брисање датума и времена "
+            L"са описом. Датуми и времена чувају се одвојено у %APPDATA%\\FortSoft\\CalClock\\times.xml. "
+            L"Ручни извоз их укључује; увоз задржава постојеће ставке и прескаче само ставке са истим "
+            L"датумом, временом и потпуним описом.\r\n\r\nСваки унос има своју временску зону са исте листе "
+            L"као у Подешавањима. Подразумевана је тренутна зона Windows-а. Чувају се једнозначан UTC "
+            L"тренутак и зона приказа. Промена зоне задржава тренутак. За поновљени сат изаберите UTC "
+            L"помак; непостојеће локално време није могуће сачувати. Сати мере протекло време, а "
+            L"календарски прорачуни користе почетну зону. Сада користи системско време Windows-а без помака "
+            L"виџета, приказано у изабраној зони.\r\n\r\nУвоз прихвата и засебну XML датотеку са сачуваним "
+            L"датумима и временима; спаја те записе без промене подешавања апликације.\r\n\r\nНа картици "
+            L"Истицање можете изабрати правила за истицање датума у календару. Подразумевано се истичу "
+            L"почетни дан (нулте вредности), округле вредности које се завршавају нулама, првих девет пуних "
+            L"недеља те месечне и годишње годишњице. Понављајуће цифре 1–9 (на пример 11, 111 или 66, 666) "
+            L"могу се укључити појединачно и подразумевано су искључене.\r\n\r\nКликните на заглавље колоне "
+            L"да сортирате сачуване податке према стварном тренутку или тексту описа. Поновни клик обрће "
+            L"редослед; стрелица показује смер.\r\n\r\nПоложај прозора, активна картица, унете вредности и "
+            L"избори истицања чувају се с подешавањима апликације у регистру или XML-у, према изабраном "
+            L"складишту."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -14875,6 +17336,52 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Верзија:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Циљна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сајт:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор времена" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Сачувани датуми и времена не могу се учитати." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датуми и времена не могу се сачувати." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Изаберите UTC помак за ово поновљено локално време." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Ово локално време не постоји у изабраној зони или зона није доступна."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калкулатор времена" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Временски интервал" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Округле вредности" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Сачувани датуми и времена" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Истицање" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Почетни дан (нулте вредности)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Округле вредности које се завршавају нулама" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Понављајућа цифра %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Првих девет пуних недеља" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Месечне и годишње годишњице" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Од:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"До:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Сада" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Почетак:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Предложак:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Датум и време:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Датум и време" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Опис:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Опис" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Уреди" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Избриши" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Изабери све" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Сати:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Дана:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Недеља:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Месеци:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Година:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"h|д|нед.|мес.|год.|мин" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Сати узимају у обзир задато време. Дани, недеље, месеци и године рачунају се од поноћи."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Вредности за изабрани дан" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Предложак са овим датумом и временом већ постоји. Наставити?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Избрисати изабране предлошке?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Календар истиче округле вредности, поновљене цифре те датуме навршених месеци и година."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Помоћ" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Отвори веб-сајт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED,
@@ -15095,6 +17602,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Вимкнути &весь звук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Без звуку" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"КЕРУВАННЯ\r\nПеретягуйте годинник або панель лівою кнопкою миші. Окремий календар "
             L"перетягується за вільну область. Клацніть віджет або піктограму в області сповіщень правою "
             L"кнопкою миші, щоб відкрити меню. Ліве клацання піктограми приховує видимі віджети; якщо всі "
@@ -15196,7 +17704,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Після запису XML розділ HKCU\\SOFTWARE\\FortSoft\\CalClock видаляється; вибір зберігання в "
             L"реєстрі видаляє автоматичний файл XML.\r\n\r\nДля згладжування шрифту доступні ClearType, GDI "
             L"та «Немає».\r\n\r\nСтиль Windows 2000 доступний за вимкнених тем і діє лише у вікнах "
-            L"«Налаштування», «Довідка» та «Про програму». За типового системного шрифту використовується "
+            L"«Налаштування», «Довідка», «Про програму» та «Калькулятор часу». За типового системного шрифту "
+            L"використовується "
             L"Tahoma 8 pt; власний шрифт програми має перевагу. Доступне згладжування GDI або «Немає». "
             L"Збережений вибір ClearType тимчасово замінюється на GDI й відновлюється після вимкнення цього "
             L"стилю. За класичного вигляду Windows обидва параметри вигляду неактивні й не застосовуються; "
@@ -15207,13 +17716,15 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"моніторі зберігають центрування з урахуванням зарезервованого місця. Рядок UTC має власне "
             L"центрування.\r\n\r\nНАЛАШТУВАННЯ ТА МЕНЮ\r\nМова програми, шрифт, згладжування, сховище, "
             L"запуск разом із Windows і прив’язка до країв задаються для всієї програми на вкладці "
-            L"«Програма». Вимкнення тем на вкладці Програма впливає лише на вікна Налаштування, Довідка та "
-            L"Про програму. Кожен віджет використовує власне налаштування тем. Під час першого запуску мова "
+            L"«Програма». Вимкнення тем на вкладці Програма впливає лише на вікна Калькулятор часу, "
+            L"Налаштування, Довідка та Про програму. Кожен віджет використовує власне налаштування тем. Під "
+            L"час першого запуску мова "
             L"вибирається за мовою інтерфейсу Windows; якщо вона не "
             L"підтримується, використовується англійська (США). Мова, згладжування та теми віджета впливають "
             L"лише на нього. \r\n\r\nМеню віджета містить доступні для нього команди видимості, режиму "
             L"«Завжди зверху», секунд, розміру та формату копіювання дати, а далі — «Упорядкувати за "
-            L"сіткою», «Налаштування», «Довідка», «Про програму» та «Вийти». Меню піктограми в області "
+            L"сіткою», «Калькулятор часу», «Налаштування», «Довідка», «Про програму» та «Вийти». Меню "
+            L"піктограми в області "
             L"сповіщень містить нумерований список віджетів і команди «Показати все», «Приховати все» та "
             L"«Вимкнути весь звук». Далі окремо розташовано команду «Упорядкувати за сіткою». Показ або "
             L"відновлення віджета виводить його на передній план без зміни режиму «Завжди зверху». Повторний "
@@ -15323,7 +17834,29 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Упорядкування за сіткою не переміщує цей тип віджета. Esc приховує годинник і прибирає "
             L"затемнення навіть із відкритим вікном налаштувань.\r\n\r\nВказівник миші приховується після "
             L"короткої бездіяльності над годинником на моніторі та затемненими моніторами й з’являється "
-            L"знову під час руху миші. Над малим вікном попереднього перегляду він залишається видимим."
+            L"знову під час руху миші. Над малим вікном попереднього перегляду він залишається "
+            L"видимим.\r\n\r\nКалькулятор часу\r\nВідкрийте Калькулятор часу з меню будь-якого віджета або "
+            L"піктограми в області сповіщень. Вкладка «Проміжок часу» обчислює різницю між двома датами й "
+            L"часом. Вкладка «Круглі значення» виділяє в календарі круглі значення, повторювані цифри та "
+            L"щомісячні й щорічні пам’ятні дати від вибраного початку. Вкладка «Збережені дати й час» дає "
+            L"змогу додавати, редагувати, сортувати й видаляти дати й час з описами. Дати й час "
+            L"зберігаються окремо у %APPDATA%\\FortSoft\\CalClock\\times.xml. Ручний експорт включає їх; "
+            L"імпорт зберігає наявні записи й пропускає лише записи з однаковими датою, часом і повним "
+            L"описом.\r\n\r\nКожне значення має власний часовий пояс із того самого списку, що й у "
+            L"налаштуваннях. Типовим є поточний пояс Windows. Зберігаються однозначний момент UTC і пояс "
+            L"відображення. Зміна пояса зберігає момент. Для повторної години виберіть зсув UTC; неіснуючий "
+            L"місцевий час зберегти не можна. Години вимірюють минулий час, календарні обчислення "
+            L"використовують початковий пояс. Зараз використовує системний час Windows без зсуву віджета, "
+            L"показаний у вибраному поясі.\r\n\r\nІмпорт також приймає окремий XML-файл зі збереженими "
+            L"датами й часом; записи об’єднуються без зміни налаштувань програми.\r\n\r\nНа вкладці "
+            L"Виділення можна вибрати правила виділення дат у календарі. Типово виділяються початковий день "
+            L"(нульові значення), круглі значення, що закінчуються нулями, перші дев’ять повних тижнів і "
+            L"щомісячні та щорічні річниці. Повторювані цифри 1–9 (наприклад, 11, 111 або 66, 666) можна "
+            L"вмикати окремо; типово вони вимкнені.\r\n\r\nНатисніть заголовок стовпця, щоб відсортувати "
+            L"збережені записи за фактичним моментом часу або текстом опису. Повторне натискання змінює "
+            L"порядок на зворотний; стрілка показує напрямок.\r\n\r\nПоложення вікна, активна вкладка, "
+            L"введені значення й параметри виділення зберігаються разом із налаштуваннями програми в "
+            L"реєстрі або XML відповідно до вибраного сховища."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -15332,6 +17865,50 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версія:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Цільова платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вебсайт:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятор часу" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не вдалося прочитати збережені дати й час." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не вдалося зберегти дати й час." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Виберіть зсув UTC для цього повторного місцевого часу." },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Цей місцевий час не існує у вибраному поясі або пояс недоступний."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калькулятор часу" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Проміжок часу" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Круглі значення" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Збережені дати й час" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Виділення" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Початковий день (нульові значення)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Круглі значення, що закінчуються нулями" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Повторювана цифра %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Перші дев’ять повних тижнів" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Щомісячні та щорічні річниці" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"Від:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"До:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Зараз" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Початок:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Набір:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Дата й час:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Дата й час" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Опис:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Опис" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Редагувати" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Видалити" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Вибрати все" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Годин:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Днів:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Тижнів:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Місяців:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Років:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"год|дн.|тиж.|міс.|р.|хв" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Години враховують указаний час. Дні, тижні, місяці й роки відлічуються від півночі."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Значення для вибраного дня" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE, L"Набір із цією датою й часом уже існує. Продовжити?" },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Видалити вибрані набори?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Календар виділяє круглі значення, повторювані цифри та щомісячні й щорічні пам’ятні дати."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Довідка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Відкрити вебсайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Не вдається відкрити сайт у типовому браузері." },
@@ -15552,6 +18129,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_MUTE_ALL_LABEL, L"Выключить &весь звук" },
         LocalizedText{ TXT_MUTED_LABEL, L"&Без звука" },
         LocalizedText{ TXT_HELP_TEXT,
+
             L"УПРАВЛЕНИЕ\r\nПеретаскивайте часы или панель левой кнопкой мыши. Отдельный календарь "
             L"перетаскивается за свободную область. Щёлкните виджет или значок в области уведомлений правой "
             L"кнопкой мыши, чтобы открыть меню. Щелчок значка левой кнопкой скрывает видимые виджеты; если "
@@ -15655,8 +18233,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. После записи XML раздел "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock удаляется; выбор хранения в реестре удаляет автоматический "
             L"файл XML.\r\n\r\nДля сглаживания шрифта доступны ClearType, GDI и «Нет».\r\n\r\nСтиль Windows "
-            L"2000 доступен при отключённых темах и действует только в окнах «Настройки», «Справка» и «О "
-            L"программе». При системном шрифте по умолчанию используется Tahoma 8 pt; собственный шрифт "
+            L"2000 доступен при отключённых темах и действует только в окнах «Настройки», «Справка», «О "
+            L"программе» и «Калькулятор времени». При системном шрифте по умолчанию используется Tahoma 8 pt; "
+            L"собственный шрифт "
             L"программы имеет приоритет. Доступно сглаживание GDI или «Нет». Сохранённый выбор ClearType "
             L"временно заменяется на GDI и восстанавливается после отключения этого стиля. При классическом "
             L"оформлении Windows оба параметра оформления недоступны и не применяются; сохранённые значения "
@@ -15666,13 +18245,15 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"цифры остаются на месте даже в пропорциональных шрифтах. Часы на мониторе сохраняют "
             L"центрирование с учётом зарезервированного места. Строка UTC имеет собственное "
             L"центрирование.\r\n\r\nНАСТРОЙКИ И МЕНЮ\r\nЯзык программы, шрифт, сглаживание, хранилище, "
-            L"запуск вместе с Windows и привязка к краям задаются для всей программы на вкладке «Программа». "
-            L"Отключение тем на вкладке Программа влияет только на окна Настройки, Справка и О программе. "
+            L"запуск вместе с Windows и привязка к краям задаются для всей программы на вкладке "
+            L"«Программа». Отключение тем на вкладке Программа влияет только на окна Калькулятор времени, "
+            L"Настройки, Справка и О программе. "
             L"Каждый виджет использует собственную настройку тем. "
             L"При первом запуске язык выбирается по языку интерфейса Windows; если он не поддерживается, "
             L"используется английский (США). Язык, сглаживание и темы виджета влияют только на него. "
             L"\r\n\r\nМеню виджета содержит доступные для него команды видимости, режима «Поверх всех окон», "
-            L"секунд, размера и формата копирования даты, а затем — «Упорядочить по сетке», «Настройки», "
+            L"секунд, размера и формата копирования даты, а затем — «Упорядочить по сетке», «Калькулятор "
+            L"времени», «Настройки», "
             L"«Справка», «О программе» и «Выход». Меню значка в области уведомлений содержит нумерованный "
             L"список виджетов и команды «Показать всё», «Скрыть всё» и «Выключить весь звук». Далее отдельно "
             L"расположена команда «Упорядочить по сетке». Показ или восстановление виджета выводит его на "
@@ -15787,7 +18368,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"сохраняется. Упорядочение по сетке не перемещает этот тип виджета. Esc скрывает часы и убирает "
             L"затемнение даже при открытом окне настроек.\r\n\r\nУказатель мыши скрывается после короткого "
             L"бездействия над часами на мониторе и затемнёнными мониторами и появляется снова при движении "
-            L"мыши. Над небольшим окном предварительного просмотра он остаётся видимым."
+            L"мыши. Над небольшим окном предварительного просмотра он остаётся видимым.\r\n\r\nКалькулятор "
+            L"времени\r\nОткройте Калькулятор времени из меню любого виджета или значка в области "
+            L"уведомлений. Вкладка «Промежуток времени» вычисляет разницу между двумя датами и временем. "
+            L"Вкладка «Круглые значения» выделяет в календаре круглые значения, повторяющиеся цифры и "
+            L"ежемесячные и ежегодные памятные даты от выбранного начала. Вкладка «Сохранённые даты и "
+            L"время» позволяет добавлять, изменять, сортировать и удалять даты и время с описаниями. Даты и "
+            L"время сохраняются отдельно в %APPDATA%\\FortSoft\\CalClock\\times.xml. Ручной экспорт "
+            L"включает их; импорт сохраняет существующие записи и пропускает только записи с одинаковыми "
+            L"датой, временем и полным описанием.\r\n\r\nКаждое значение имеет свой часовой пояс из того же "
+            L"списка, что и в настройках. По умолчанию используется текущий пояс Windows. Сохраняются "
+            L"однозначный момент UTC и пояс отображения. Смена пояса сохраняет момент. Для повторяющегося "
+            L"часа выберите смещение UTC; несуществующее местное время сохранить нельзя. Часы измеряют "
+            L"прошедшее время, календарные вычисления используют начальный пояс. Сейчас использует "
+            L"системное время Windows без смещения виджета, отображаемое в выбранном поясе.\r\n\r\nИмпорт "
+            L"также принимает отдельный XML-файл с сохранёнными датами и временем; записи объединяются без "
+            L"изменения настроек приложения.\r\n\r\nНа вкладке Выделение можно выбрать правила выделения "
+            L"дат в календаре. По умолчанию выделяются начальный день (нулевые значения), круглые значения, "
+            L"оканчивающиеся нулями, первые девять полных недель и ежемесячные и ежегодные годовщины. "
+            L"Повторяющиеся цифры 1–9 (например, 11, 111 или 66, 666) можно включать по отдельности; по "
+            L"умолчанию они отключены.\r\n\r\nНажмите заголовок столбца, чтобы отсортировать сохранённые "
+            L"записи по фактическому моменту времени или тексту описания. Повторное нажатие меняет порядок "
+            L"на обратный; стрелка показывает направление.\r\n\r\nПоложение окна, активная вкладка, "
+            L"введённые значения и параметры выделения сохраняются вместе с настройками приложения в "
+            L"реестре или XML в соответствии с выбранным хранилищем."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "
@@ -15796,6 +18400,55 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_VERSION_LABEL, L"Версия:" },
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целевая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сайт:" },
+        LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятор времени" },
+        LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не удалось прочитать сохранённые даты и время." },
+        LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не удалось сохранить даты и время." },
+        LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
+            L"Выберите смещение UTC для этого повторяющегося местного времени."
+        },
+        LocalizedText{ TXT_CALCULATOR_TIME_GAP,
+            L"Это местное время не существует в выбранном поясе или пояс недоступен."
+        },
+        LocalizedText{ TXT_CALCULATOR_WINDOW_TITLE, L"%ls — Калькулятор времени" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL, L"Промежуток времени" },
+        LocalizedText{ TXT_CALCULATOR_ROUND, L"Круглые значения" },
+        LocalizedText{ TXT_CALCULATOR_PRESETS, L"Сохранённые даты и время" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHTS, L"Выделение" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_START, L"Начальный день (нулевые значения)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ROUND, L"Круглые значения, оканчивающиеся нулями" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_DIGITS, L"Повторяющаяся цифра %u (%u, %u, …)" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_WEEKS, L"Первые девять полных недель" },
+        LocalizedText{ TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES, L"Ежемесячные и ежегодные годовщины" },
+        LocalizedText{ TXT_CALCULATOR_FROM, L"От:" },
+        LocalizedText{ TXT_CALCULATOR_TO, L"До:" },
+        LocalizedText{ TXT_CALCULATOR_NOW, L"Сейчас" },
+        LocalizedText{ TXT_CALCULATOR_START, L"Начало:" },
+        LocalizedText{ TXT_CALCULATOR_PRESET, L"Набор:" },
+        LocalizedText{ TXT_CALCULATOR_DATE, L"Дата и время:" },
+        LocalizedText{ TXT_CALCULATOR_DATE_COLUMN, L"Дата и время" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION, L"Описание:" },
+        LocalizedText{ TXT_CALCULATOR_DESCRIPTION_COLUMN, L"Описание" },
+        LocalizedText{ TXT_CALCULATOR_EDIT, L"Изменить" },
+        LocalizedText{ TXT_CALCULATOR_DELETE, L"Удалить" },
+        LocalizedText{ TXT_CALCULATOR_SELECT_ALL, L"Выбрать всё" },
+        LocalizedText{ TXT_CALCULATOR_HOURS, L"Часов:" },
+        LocalizedText{ TXT_CALCULATOR_DAYS, L"Дней:" },
+        LocalizedText{ TXT_CALCULATOR_WEEKS, L"Недель:" },
+        LocalizedText{ TXT_CALCULATOR_MONTHS, L"Месяцев:" },
+        LocalizedText{ TXT_CALCULATOR_YEARS, L"Лет:" },
+        LocalizedText{ TXT_CALCULATOR_UNITS, L"ч|дн.|нед.|мес.|г.|мин" },
+        LocalizedText{ TXT_CALCULATOR_INTERVAL_NOTE,
+            L"Часы учитывают указанное время. Дни, недели, месяцы и годы отсчитываются от полуночи."
+        },
+        LocalizedText{ TXT_CALCULATOR_SELECTED_DAY, L"Значения для выбранного дня" },
+        LocalizedText{ TXT_CALCULATOR_DUPLICATE,
+            L"Набор с этой датой и временем уже существует. Продолжить?"
+        },
+        LocalizedText{ TXT_CALCULATOR_DELETE_CONFIRM, L"Удалить выбранные наборы?" },
+        LocalizedText{ TXT_CALCULATOR_ROUND_NOTE,
+            L"Календарь выделяет круглые значения, повторяющиеся цифры и ежемесячные и ежегодные памятные "
+            L"даты."
+        },
         LocalizedText{ TXT_HELP_WINDOW_TITLES, L"%ls — Справка" },
         LocalizedText{ TXT_ABOUT_VISIT_TOOLTIP, L"Открыть веб-сайт %ls" },
         LocalizedText{ TXT_ABOUT_WEBSITE_FAILED, L"Не удаётся открыть сайт в браузере по умолчанию." },

@@ -74,9 +74,9 @@ Darstellungsänderungen erscheinen sofort in der Vorschau des ausgewählten Widg
 
 Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfache Rahmen bietet eine einstellbare Farbe; die Rahmenbreite lässt sich dort ändern, wo das Widget dies unterstützt. Transparente Digitaluhren bieten dieselben Stile wie undurchsichtige. Für Anwendungs- und Kalenderschrift gibt es keine Größenwahl, für Digitaluhren und Paneltexte dagegen schon. Eigene Kalenderschriftarten werden beim klassischen Windows-Erscheinungsbild oder bei deaktivierten Designs für das Widget unterstützt.
 
-Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft nur die Fenster Einstellungen, Hilfe und Info. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
+Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft nur die Fenster Einstellungen, Hilfe, Info und Zeitrechner. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
 
-Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe und Info. Bei
+Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info und Zeitrechner. Bei
 ausgewählter Systemschrift verwenden diese Fenster Tahoma 8 pt; eine eigene Anwendungsschrift hat Vorrang. Die
 Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur GDI und Keine für die
 Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet vorübergehend GDI und wird beim
@@ -88,6 +88,36 @@ Der Regler **Audiolautstärke** auf Wecker steuert intern abgespielte Audiodatei
 Die Wochentagsauswahl des Weckers folgt dem Wochenanfang der gewählten Anwendungskultur. Gespeicherte Weckertage behalten beim Sprachwechsel ihre Bedeutung. Wird ein Wecker ohne ausgewählte Wochentage über das Widget-Menü aktiviert, öffnet sich dessen Registerkarte Wecker, statt einen nicht ausführbaren Wecker einzuschalten.
 
 **Führende Null** bietet **Ja** (Standard), **Nein, Platz freihalten** und **Nein, ohne Platz**. **Nein, Platz freihalten** verbirgt die Null, reserviert aber ihre tatsächliche Breite in der gewählten Schrift. So bleiben die übrigen Ziffern auch bei proportionalen Schriften an ihrem Platz. Monitoruhren verwenden standardmäßig weiße Schrift auf schwarzem Hintergrund.
+
+## Zeitrechner
+
+Öffnen Sie den Zeitrechner im Menü eines beliebigen Widgets oder des Symbols im Infobereich. Die Registerkarte
+Zeitspanne berechnet die Differenz zwischen zwei Zeitpunkten. Die Registerkarte Runde Werte hebt runde Werte,
+gleiche Ziffern sowie Monats- und Jahrestage seit dem gewählten Beginn im Kalender hervor. Unter Gespeicherte
+Zeitpunkte können Sie Zeitpunkte mit Beschreibung hinzufügen, bearbeiten, sortieren und löschen. Gespeicherte
+Zeitpunkte werden separat in `%APPDATA%\FortSoft\CalClock\times.xml` gespeichert. Manuelle Exporte enthalten
+sie; beim Import bleiben vorhandene Einträge erhalten. Nur Einträge mit identischem Datum, Uhrzeit und
+vollständiger Beschreibung werden übersprungen.
+
+Jede Eingabe hat eine eigene Zeitzone aus derselben Liste wie in den Einstellungen. Standard ist die aktuelle
+Windows-Zeitzone. Gespeichert werden ein eindeutiger UTC-Zeitpunkt und seine Anzeigezone. Ein Zonenwechsel
+erhält den Zeitpunkt. Bei einer wiederholten Stunde wählen Sie den UTC-Versatz; nicht existierende Ortszeiten
+können nicht gespeichert werden. Stunden messen die verstrichene Zeit, Kalenderangaben verwenden die
+Ausgangszone. Jetzt verwendet die Windows-Systemzeit ohne Widget-Versatz in der gewählten Zone.
+
+Der Import akzeptiert auch eine separate XML-Datei mit gespeicherten Zeitangaben; dabei werden nur die
+Einträge zusammengeführt, ohne die Anwendungseinstellungen zu ändern.
+
+Auf der Registerkarte Hervorhebung wählen Sie die Regeln für hervorgehobene Kalenderdaten. Standardmäßig
+werden der Starttag (Nullwerte), runde Werte mit Nullen am Ende, die ersten neun vollen Wochen sowie Monats-
+und Jahrestage hervorgehoben. Wiederholte Ziffern 1–9 (zum Beispiel 11, 111 oder 66, 666) lassen sich einzeln
+aktivieren und sind standardmäßig ausgeschaltet.
+
+Klicken Sie auf eine Spaltenüberschrift, um gespeicherte Einträge nach dem tatsächlichen Zeitpunkt oder dem
+Beschreibungstext zu sortieren. Ein erneuter Klick kehrt die Reihenfolge um; ein Pfeil zeigt die Richtung.
+
+Fensterposition, aktive Registerkarte, eingegebene Werte und Hervorhebungsoptionen werden mit den
+Anwendungseinstellungen je nach gewähltem Speicher in der Registrierung oder in XML gespeichert.
 
 ## Zeit und Wecker
 
@@ -168,7 +198,11 @@ Wecker und Zeitzeichen lassen sich auch im Kontextmenü jedes klangfähigen Widg
 
 ## Einstellungen und Menüs
 
-Jedes Widget-Menü enthält die für den Typ passenden Befehle — Sichtbarkeit, Vordergrund, Sekunden, Analoggröße oder Datumskopierformat — gefolgt von `Im Raster anordnen`, Einstellungen, Hilfe, Info und Beenden. Das Infobereichsmenü führt alle Widgets mit ihrer laufenden Nummer auf, danach Alle anzeigen, Alle ausblenden und Alles stummschalten. Der getrennt gruppierte Befehl `Im Raster anordnen` folgt vor den Anwendungsbefehlen.
+Jedes Widget-Menü enthält die für den Typ passenden Befehle — Sichtbarkeit, Vordergrund, Sekunden, Analoggröße
+oder Datumskopierformat — gefolgt von `Im Raster anordnen`, Zeitrechner, Einstellungen, Hilfe, Info und
+Beenden. Das Infobereichsmenü führt alle Widgets mit ihrer laufenden Nummer auf, danach Alle anzeigen, Alle
+ausblenden und Alles stummschalten. Der getrennt gruppierte Befehl `Im Raster anordnen` folgt vor den
+Anwendungsbefehlen.
 
 Anzeigen oder Wiederherstellen holt Widgets vor andere Fenster, ohne ihren Vordergrundstatus zu ändern. CalClock sorgt nach dem Start für mindestens ein sichtbares Widget. Ein zweiter Start aktiviert die vorhandene Instanz und stellt die zuletzt ausgeblendeten Widgets wieder her, falls keines sichtbar ist. Nach einem Neustart des Windows-Explorers wird das Infobereichssymbol automatisch neu registriert. Unterstützt `ClockWndMain` bei der gewählten Größe keinen Sekundenzeiger, ist Sekunden deaktiviert; die gespeicherte Wahl bleibt für eine andere unterstützte Größe erhalten.
 

@@ -74,9 +74,9 @@ Le modifiche all’aspetto sono mostrate subito nell’anteprima del widget sele
 
 Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bordo semplice ha anche un colore configurabile; la larghezza è disponibile quando supportata dal widget. Gli orologi digitali trasparenti mantengono le stesse scelte di quelli opachi. La dimensione del carattere non è selezionabile per l’applicazione e il calendario; lo è invece per gli orologi digitali e i testi del pannello. I caratteri personalizzati del calendario sono supportati con l’aspetto classico di Windows o con i temi disattivati per il widget.
 
-Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida e Informazioni. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
+Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di tempi. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
-Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida e Informazioni. Con il
+Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di tempi. Con il
 carattere di sistema predefinito, queste finestre usano Tahoma 8 pt; un carattere personalizzato
 dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza fissa. In questa modalità
 sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata usa temporaneamente GDI e
@@ -88,6 +88,35 @@ Il cursore **Volume audio** in Sveglia controlla i file riprodotti internamente 
 I giorni della sveglia seguono il primo giorno della settimana della cultura selezionata per l’applicazione. I giorni salvati mantengono il significato dopo un cambio di lingua. Attivare dal menu una sveglia senza giorni selezionati apre la relativa scheda Sveglia invece di abilitare una sveglia che non può suonare.
 
 **Zero iniziale** offre **Sì** (predefinito), **No, riserva spazio** e **No, senza spazio**. **No, riserva spazio** nasconde lo zero riservandone la larghezza reale nel carattere scelto; le altre cifre mantengono così la posizione anche con caratteri proporzionali. Gli orologi su monitor usano testo bianco su sfondo nero per impostazione predefinita.
+
+## Calcolatore di tempi
+
+Aprire Calcolatore di tempi dal menu di un widget o dell’icona nell’area di notifica. La scheda Intervallo di
+tempo calcola la differenza tra due date e ore. La scheda Valori tondi evidenzia nel calendario valori tondi,
+cifre ripetute e ricorrenze mensili e annuali dall’inizio scelto. La scheda Date e ore predefinite permette di
+aggiungere, modificare, ordinare ed eliminare date e ore con una descrizione. Le date e le ore vengono salvate
+separatamente in `%APPDATA%\FortSoft\CalClock\times.xml`. L’esportazione manuale le include; l’importazione
+conserva le voci esistenti e ignora solo quelle con data, ora e descrizione completa identiche.
+
+Ogni dato ha un proprio fuso orario, scelto dallo stesso elenco delle impostazioni. Il valore predefinito è il
+fuso attuale di Windows. Si salvano un istante UTC univoco e il relativo fuso di visualizzazione. Cambiare
+fuso conserva l’istante. Per un’ora ripetuta scegliere lo scostamento UTC; le ore locali inesistenti non
+possono essere salvate. Le ore misurano il tempo trascorso; i conteggi di calendario usano il fuso iniziale.
+Adesso usa l’ora di sistema Windows senza scostamento del widget, visualizzata nel fuso scelto.
+
+L’importazione accetta anche un file XML separato con date e ore salvate; unisce questi dati senza modificare
+le impostazioni dell’applicazione.
+
+Nella scheda Evidenziazione è possibile scegliere le regole per evidenziare le date nel calendario. Per
+impostazione predefinita sono evidenziati il giorno iniziale (valori zero), i valori tondi che terminano con
+zeri, le prime nove settimane intere e le ricorrenze mensili e annuali. Le cifre ripetute da 1 a 9 (ad esempio
+11, 111 o 66, 666) si possono attivare singolarmente e sono disattivate per impostazione predefinita.
+
+Fare clic sull’intestazione di una colonna per ordinare i dati salvati per istante effettivo o per testo della
+descrizione. Un altro clic inverte l’ordine; una freccia ne indica la direzione.
+
+La posizione della finestra, la scheda attiva, i valori inseriti e le opzioni di evidenziazione vengono
+salvati con le impostazioni dell’applicazione nel Registro di sistema o in XML, secondo l’archivio scelto.
 
 ## Ora e sveglie
 
@@ -169,7 +198,11 @@ Sveglia e segnale si possono attivare anche nel menu di ogni widget con supporto
 
 ## Impostazioni e menu
 
-Ogni menu widget include i comandi pertinenti al tipo — visibilità, primo piano, secondi, dimensioni analogiche o formato della data copiata — seguiti da `Disponi in griglia`, Impostazioni, Guida, Informazioni ed Esci. Il menu di notifica elenca i widget con il loro numero, poi Mostra tutto, Nascondi tutto e Disattiva tutto l'audio. `Disponi in griglia`, in un gruppo separato, precede i comandi dell’applicazione.
+Ogni menu widget include i comandi pertinenti al tipo — visibilità, primo piano, secondi, dimensioni
+analogiche o formato della data copiata — seguiti da `Disponi in griglia`, Calcolatore di tempi, Impostazioni,
+Guida, Informazioni ed Esci. Il menu di notifica elenca i widget con il loro numero, poi Mostra tutto,
+Nascondi tutto e Disattiva tutto l'audio. `Disponi in griglia`, in un gruppo separato, precede i comandi
+dell’applicazione.
 
 Mostrare o ripristinare widget li porta davanti alle altre finestre senza cambiare il loro stato sempre in primo piano. CalClock assicura almeno un widget visibile all’avvio. Un secondo avvio attiva l’istanza esistente e ripristina i widget nascosti più di recente se nessuno è visibile. Dopo il riavvio di Esplora risorse l’icona di notifica viene registrata di nuovo automaticamente. Se `ClockWndMain` non supporta i secondi nelle dimensioni scelte, Secondi è disattivato, ma la preferenza resta salvata per un’altra dimensione compatibile.
 

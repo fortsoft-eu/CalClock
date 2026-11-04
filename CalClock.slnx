@@ -16,5 +16,13 @@
     <File Path="tests\AlarmWaveformTests.cpp" />
     <File Path="tests\ClockTimeTests.cpp" />
     <File Path="tests\RunClockTests.ps1" />
+    <File Path="tests\TimeCalculator.cpp" />
+    <File Path="tests\RunTimeCalculatorTests.ps1" />
+    <File Path="tests\TimeCalculatorHighlights.cpp" />
+    <File Path="tests\RunTimeCalculatorHighlightsTests.ps1" />
+    <File Path="tests\TimeCalculatorStorageTests.cpp" />
+    <File Path="tests\RunTimeCalculatorStorageTests.ps1" />
+    <File Path="tests\TimeCalculatorFormTests.cpp" />
+    <File Path="tests\RunTimeCalculatorFormTests.ps1" />
   </Folder>
 </Solution>

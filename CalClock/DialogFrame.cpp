@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.1.3
  */
 
 #define NOMINMAX
@@ -381,7 +381,10 @@ bool DialogFrame::Refresh(bool preserveClient) {
     if (updating) {
         return true;
     }
-    bool next = disableThemes || !IsThemeActive();
+    bool next = disableThemes && IsThemeActive() && IsAppThemed();
+    if (!enabled && !next) {
+        return true;
+    }
     bool captionChanged = false;
     if (next) {
         NONCLIENTMETRICSW metrics{};

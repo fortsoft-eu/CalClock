@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.2
+ * Last modified for version 1.7.1.3
  */
 
 #define NOMINMAX
@@ -49,6 +49,7 @@
 #include "SettingsStorage.h"
 #include "SettingsEdit.h"
 #include "SystemDialogTemplate.h"
+#include "TimeCalculatorForm.h"
 #include "TimeFormats.h"
 #include "TimeSignal.h"
 #include "TimeZoneSupport.h"
@@ -301,6 +302,7 @@ const int ID_PANEL_TIME_ZONE_LINK = 116;
 const int ID_MENU_ABOUT = 1023;
 const int ID_MENU_ALARM_ENABLED = 1006;
 const int ID_MENU_ARRANGE_WIDGETS = 1050;
+const int ID_MENU_TIME_CALCULATOR = 1051;
 const int ID_MENU_DATE_FORMAT_BASE = 1060;
 const int ID_MENU_EXIT = 1024;
 const int ID_MENU_HELP = 1022;
@@ -348,7 +350,6 @@ HWND hSettings = nullptr;
 HWND hSettingsDefaultButton = nullptr;
 
 /// Settings pages and widget list
-static HWND hSettingsOpenCombo = nullptr;
 HWND hWidgetList = nullptr;
 HWND hAddType = nullptr;
 HWND hTabs = nullptr;
@@ -504,6 +505,7 @@ NOTIFYICONDATAW trayIcon = {};
 /// Independent information forms and their shared Unicode boundary analysis
 static HelpForm helpForm;
 static AboutForm aboutForm;
+static TimeCalculatorForm calculatorForm;
 static InformationWordBreakState informationWordBreakState;
 static std::unique_ptr<SettingsOpenData> settingsOpenData;
 
@@ -511,6 +513,7 @@ static std::unique_ptr<SettingsOpenData> settingsOpenData;
 static PersistWindowState settingsWindowState;
 static PersistWindowState helpWindowState;
 static PersistWindowState aboutWindowState;
+static PersistWindowState calculatorWindowState;
 
 /// Mouse interaction positions
 static POINT fullscreenCursorPosition = {};
@@ -527,7 +530,6 @@ static bool monitorColumnsInitialized = false;
 static bool monitorSortAscending = true;
 static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
-static bool settingsComboAccepted = false;
 static bool settingsGeneralCheckboxReferenceValid = false;
 static bool settingsLayoutSuspended = false;
 static bool windows2000Style = false;
@@ -559,7 +561,6 @@ bool winsockReady = false;
 /// Numeric settings and positions
 static int monitorSortColumn = -1;
 static int ntpLogSortColumn = -1;
-static int settingsComboInitialSelection = CB_ERR;
 int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
 int appFontDialogSize = 90;
 int appFontWeight = FW_NORMAL;
@@ -621,6 +622,7 @@ static LONG settingsGeneralCheckboxBaselineDistances[3] = {};
 std::vector<std::unique_ptr<Widget>> widgets;
 
 /// Widget configuration drafts
+static ApplicationComboState settingsComboState;
 std::vector<WidgetConfig> settingsAppearanceOriginals;
 std::vector<WidgetConfig> settingsDraft;
 std::vector<WidgetConfig> settingsAppliedWidgets;
@@ -685,11 +687,6 @@ static void UpdateNtpLabelHeights();
 /// Dispatches controller, widget, settings-page, and information-window messages. Coordinates painting,
 /// input, timers, background-worker results, settings actions, and orderly application shutdown.
 static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
-
-/// Keeps the settings default button in step with focus and prevents clicks on covered controls.
-/// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
-static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
-    UINT_PTR subclassId, DWORD_PTR referenceData);
 
 /// Integrates the primary native clock with widget dragging, face-only second-hand toggling, context menus,
 /// and identification painting.
@@ -826,9 +823,6 @@ static bool RecreatePanelWidgetBuffered(Widget* widget, const WidgetConfig& conf
 /// Creates a calendar font from system message-font metrics and widget face and style settings.
 /// Returns null on failure; the caller owns the returned GDI font.
 static HFONT CreateCalendarUiFont(const WidgetConfig& config, UINT dpi = 0);
-
-/// Moves or resizes a control only when necessary, retaining combo height and resource-authored text widths.
-static void SetControlPosition(HWND control, int x, int y, int width, int height);
 
 /// Returns a control's resource-authored bounds in pixels using the current dialog units.
 static RECT GetSettingsResourceRect(HWND parent, int id);
@@ -1296,7 +1290,7 @@ static bool PatchCommonControlsImport(const char* functionName, ULONG_PTR replac
             }
             DWORD oldProtect = 0;
             if (!VirtualProtect(&addresses->u1.Function, sizeof(addresses->u1.Function), PAGE_READWRITE,
-                    &oldProtect)) {
+                &oldProtect)) {
                 return false;
             }
             *original = addresses->u1.Function;
@@ -1747,6 +1741,8 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.lastAddedWidgetType = lastAddedWidgetType;
     snapshot.helpWindowState = helpWindowState.Save();
     snapshot.aboutWindowState = aboutWindowState.Save();
+    snapshot.calculatorWindowState = calculatorWindowState.Save();
+    snapshot.calculator = calculatorForm.GetState();
     for (size_t index = 0; index < widgets.size(); index++) {
         snapshot.widgets.push_back(widgets[index]->config);
     }
@@ -1791,6 +1787,8 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
         0, WIDGET_TYPE_COUNT - 1));
     helpWindowState.Load(snapshot.helpWindowState);
     aboutWindowState.Load(snapshot.aboutWindowState);
+    calculatorWindowState.Load(snapshot.calculatorWindowState);
+    calculatorForm.Load(snapshot.calculator);
     lastHiddenWidgetIds.clear();
     widgets.clear();
     nextWidgetId = 1;
@@ -1902,7 +1900,13 @@ static bool SetStartWithWindowsEnabled(bool enabled) {
 /// Loads language, time zones, and persisted XML or registry settings. Removes a stale Windows startup entry
 /// and creates an initial analog widget if no stored settings can be loaded.
 static void LoadAllSettings() {
-    for (PersistWindowState* placement : { &settingsWindowState, &helpWindowState, &aboutWindowState }) {
+    PersistWindowState* windowStates[] = {
+        &settingsWindowState,
+        &helpWindowState,
+        &aboutWindowState,
+        &calculatorWindowState
+    };
+    for (PersistWindowState* placement : windowStates) {
         placement->SetSavingOptions(PersistWindowStateSavingOptions::None);
         placement->SetDetectionOptions(WindowDetectionOptions::NoDetection);
         placement->SetUseWindowsDefaultLocation(false);
@@ -3579,7 +3583,12 @@ static void RefreshApplicationFonts(bool rebuildSettings = true) {
     }
     HFONT previous = hUiFont;
     hUiFont = font;
-    const HWND windows[] = { hSettings, helpForm.GetWindow(), aboutForm.GetWindow() };
+    const HWND windows[] = {
+        hSettings,
+        helpForm.GetWindow(),
+        aboutForm.GetWindow(),
+        calculatorForm.GetWindow()
+    };
     for (HWND window : windows) {
         if (window != nullptr) {
             ApplyUiStyle(window);
@@ -3609,7 +3618,7 @@ static void RestoreApplicationFontPreview() {
 }
 
 /// Returns the native combo inside a ComboBoxEx, or the original handle for other controls.
-static HWND GetSettingsComboBox(HWND window) {
+HWND GetSettingsComboBox(HWND window) {
     wchar_t className[32] = {};
     GetClassNameW(window, className, ARRAYSIZE(className));
     if (_wcsicmp(className, WC_COMBOBOXEXW) == 0) {
@@ -3663,7 +3672,8 @@ static UiTextLine GetUiTextLine(HDC dc, const std::wstring& text) {
         return line;
     }
     UiTextLine typographic = {
-        outline->otmAscent, std::abs(outline->otmDescent),
+        outline->otmAscent,
+        std::abs(outline->otmDescent),
         static_cast<LONG>(outline->otmLineGap)
     };
     MAT2 transform = {
@@ -3848,7 +3858,7 @@ static bool GetSettingsTextMetrics(HWND control, TEXTMETRICW* metrics) {
 
 /// Sizes combo rows from their font and native borders, limiting only oversized fields to the fixed height
 /// cap.
-static void UpdateSettingsComboMetrics(HWND control) {
+void UpdateSettingsComboMetrics(HWND control) {
     HWND combo = GetSettingsComboBox(control);
     RECT bounds = {};
     if (combo == nullptr || !GetWindowRect(combo, &bounds)) {
@@ -3868,7 +3878,8 @@ static void UpdateSettingsComboMetrics(HWND control) {
     if (selectionHeight != desired) {
         SendMessageW(combo, CB_SETITEMHEIGHT, static_cast<WPARAM>(-1), desired);
     }
-    LONG itemHeight = std::min(metrics.tmHeight, static_cast<LONG>(SettingsDialogHeight(11)));
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(combo, WM_GETFONT, 0, 0));
+    LONG itemHeight = std::min(metrics.tmHeight, InformationDialogUnits(font, 0, 11).cy);
     if (SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0) != itemHeight) {
         SendMessageW(combo, CB_SETITEMHEIGHT, 0, itemHeight);
     }
@@ -3887,7 +3898,7 @@ static void UpdateSettingsComboMetrics(HWND control) {
 
 /// Sizes the edit viewport from its font and native combo margins, retaining the fixed cap for oversized
 /// fields. Uses current theme or system borders and preserves position, width, and the right margin.
-static void UpdateEditMetrics(HWND edit) {
+void UpdateEditMetrics(HWND edit) {
     HWND frame = SettingsEdit::GetFrame(edit);
     WINDOWINFO information = {};
     information.cbSize = sizeof(information);
@@ -3965,17 +3976,27 @@ static void UpdateSettingsReportMetrics(HWND list) {
     }
 }
 
+/// Restores native tab sizing and limits excessive header height using the tab control's actual font.
+void UpdateDialogTabMetrics(HWND tabs) {
+    if (tabs == nullptr || TabCtrl_GetItemCount(tabs) == 0) {
+        return;
+    }
+    TabCtrl_SetItemSize(tabs, 0, 0);
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(tabs, WM_GETFONT, 0, 0));
+    LONG maximumHeight = InformationDialogUnits(font, 0, 11).cy;
+    RECT header = {};
+    if (TabCtrl_GetItemRect(tabs, 0, &header) && header.bottom - header.top > maximumHeight) {
+        TabCtrl_SetItemSize(tabs, 0, maximumHeight);
+    }
+}
+
 /// Restores native tab sizing for the selected font, limits excessive header height, and fits each page to
 /// its display area.
 static void UpdateSettingsTabLayout() {
     if (hTabs == nullptr || TabCtrl_GetItemCount(hTabs) == 0) {
         return;
     }
-    TabCtrl_SetItemSize(hTabs, 0, 0);
-    RECT header = {};
-    if (TabCtrl_GetItemRect(hTabs, 0, &header) && header.bottom - header.top > SettingsDialogHeight(11)) {
-        TabCtrl_SetItemSize(hTabs, 0, SettingsDialogHeight(11));
-    }
+    UpdateDialogTabMetrics(hTabs);
     RECT display = {};
     GetClientRect(hTabs, &display);
     TabCtrl_AdjustRect(hTabs, FALSE, &display);
@@ -4904,7 +4925,9 @@ static void UpdateSettingsControlMetrics() {
 /// requests repainting.
 void ApplyUiStyle(HWND window) {
     bool disableThemes = themesDisabled && AreVisualStylesActive();
-    if (window == helpForm.GetWindow() || window == aboutForm.GetWindow()) {
+    if (window == helpForm.GetWindow()
+            || window == aboutForm.GetWindow()
+            || window == calculatorForm.GetWindow()) {
         const wchar_t* theme = disableThemes ? L"" : nullptr;
         SetWindowTheme(window, theme, theme);
         DialogFrame::Apply(window, disableThemes, windows2000Style);
@@ -8290,7 +8313,10 @@ static void HandleWidgetMenuCommand(Widget* widget, int command) {
         ArrangeVisibleWidgets(widget);
     } else if (command == ID_MENU_SETTINGS) {
         ShowSettingsWindow(widget->config.id);
-    } else if (command == ID_MENU_HELP || command == ID_MENU_ABOUT || command == ID_MENU_EXIT) {
+    } else if (command == ID_MENU_HELP
+            || command == ID_MENU_ABOUT
+            || command == ID_MENU_EXIT
+            || command == ID_MENU_TIME_CALCULATOR) {
         SendMessageW(hController, WM_COMMAND, MAKEWPARAM(command, 0), 0);
     }
     if (recreate) {
@@ -8445,6 +8471,9 @@ static void ShowWidgetContextMenu(Widget* widget, HWND owner) {
             &menuMnemonics);
     }
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_TIME_CALCULATOR,
+        GetLocalizedText(widget->config.language, TXT_TIME_CALCULATOR), &menuMnemonics);
+    AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     AppendApplicationMenuCommands(menu, widget->config.language, &menuMnemonics);
     POINT point = {};
     GetCursorPos(&point);
@@ -8562,6 +8591,8 @@ static void ShowTrayContextMenu() {
     UINT arrangeFlags = WidgetArrangementMenuFlags(nullptr);
     AppendMenuCommand(menu, arrangeFlags, ID_MENU_ARRANGE_WIDGETS, T(TXT_ARRANGE_WIDGET_LABEL),
         &menuMnemonics);
+    AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
+    AppendMenuCommand(menu, MF_STRING, ID_MENU_TIME_CALCULATOR, T(TXT_TIME_CALCULATOR), &menuMnemonics);
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     AppendApplicationMenuCommands(menu, appLanguage, &menuMnemonics);
     POINT point = {};
@@ -8706,7 +8737,7 @@ static HWND BindSettingsControl(HWND parent, int id, const wchar_t* text,
         SetWindowTextW(control, text);
     }
     if (control != nullptr && nativeCombo) {
-        if (!SetWindowSubclass(control, SettingsControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0)) {
+        if (!SetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0)) {
             DestroyWindow(control);
             control = nullptr;
         }
@@ -8716,7 +8747,7 @@ static HWND BindSettingsControl(HWND parent, int id, const wchar_t* text,
             DestroyWindow(SettingsEdit::GetFrame(control));
             control = nullptr;
         } else if (singleLineEdit) {
-            SetWindowSubclass(control, SettingsControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0);
+            SetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0);
         }
     } else if (control != nullptr && (id == ID_LIST_WIDGETS || id == ID_REMOVE || id == ID_DUPLICATE)) {
         SetWindowSubclass(control, WidgetListSubclassProc, static_cast<UINT_PTR>(id), 0);
@@ -9007,54 +9038,52 @@ static bool ScrollSettingsWindow(int bar, int request) {
     return true;
 }
 
-/// Scrolls overflowing tab headers under the pointer by one tab per wheel message, without changing
-/// selection or focus. Uses the native scroll-button bounds and handles wheel input only while the scroll
-/// buttons are visible. Includes transparent header gaps where native hit testing returns the settings
-/// window.
-static bool ScrollSettingsTabHeaders(WPARAM wParam, LPARAM lParam) {
+/// Scrolls overflowing tab headers under the pointer without requiring activation or changing selection
+/// or focus. Uses the native scroll-button bounds and handles wheel input only while the scroll buttons
+/// are visible, including transparent gaps where native hit testing returns the parent window.
+bool ScrollDialogTabHeaders(HWND window, HWND tabs, WPARAM wParam, LPARAM lParam) {
     int delta = GET_WHEEL_DELTA_WPARAM(wParam);
     if (delta == 0
-            || hSettings == nullptr
-            || hTabs == nullptr
-            || GetActiveWindow() != hSettings
-            || !IsWindowEnabled(hSettings)
-            || !IsWindowVisible(hTabs)) {
+            || window == nullptr
+            || tabs == nullptr
+            || !IsWindowEnabled(window)
+            || !IsWindowVisible(tabs)) {
         return false;
     }
-    int count = TabCtrl_GetItemCount(hTabs);
+    int count = TabCtrl_GetItemCount(tabs);
     RECT header = {};
     RECT client = {};
-    if (count <= 0 || !TabCtrl_GetItemRect(hTabs, 0, &header) || !GetClientRect(hTabs, &client)) {
+    if (count <= 0 || !TabCtrl_GetItemRect(tabs, 0, &header) || !GetClientRect(tabs, &client)) {
         return false;
     }
     POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     HWND hovered = WindowFromPoint(point);
-    if (hovered != hTabs && hovered != hSettings && !IsChild(hTabs, hovered)) {
+    if (hovered != tabs && hovered != window && !IsChild(tabs, hovered)) {
         return false;
     }
-    ScreenToClient(hTabs, &point);
+    ScreenToClient(tabs, &point);
     header.left = client.left;
     header.right = client.right;
     if (!PtInRect(&header, point)) {
         return false;
     }
-    HWND scrollButtons = FindWindowExW(hTabs, nullptr, UPDOWN_CLASSW, nullptr);
+    HWND scrollButtons = FindWindowExW(tabs, nullptr, UPDOWN_CLASSW, nullptr);
     if (scrollButtons == nullptr || !IsWindowVisible(scrollButtons)) {
         return false;
     }
     RECT last = {};
     RECT buttons = {};
-    if (!TabCtrl_GetItemRect(hTabs, count - 1, &last) || !GetWindowRect(scrollButtons, &buttons)) {
+    if (!TabCtrl_GetItemRect(tabs, count - 1, &last) || !GetWindowRect(scrollButtons, &buttons)) {
         return true;
     }
-    MapWindowPoints(HWND_DESKTOP, hTabs, reinterpret_cast<POINT*>(&buttons), 2);
+    MapWindowPoints(HWND_DESKTOP, tabs, reinterpret_cast<POINT*>(&buttons), 2);
     if (delta < 0 && last.right <= buttons.left) {
         return true;
     }
     int firstVisible = 0;
     for (int index = 0; index < count; index++) {
         RECT item = {};
-        if (!TabCtrl_GetItemRect(hTabs, index, &item)) {
+        if (!TabCtrl_GetItemRect(tabs, index, &item)) {
             return true;
         }
         if (item.left >= 0) {
@@ -9064,8 +9093,8 @@ static bool ScrollSettingsTabHeaders(WPARAM wParam, LPARAM lParam) {
     }
     int direction = delta > 0 ? -1 : 1;
     int position = std::clamp(firstVisible + direction, 0, count - 1);
-    SendMessageW(hTabs, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, position), 0);
-    SendMessageW(hTabs, WM_HSCROLL, MAKEWPARAM(SB_ENDSCROLL, position), 0);
+    SendMessageW(tabs, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, position), 0);
+    SendMessageW(tabs, WM_HSCROLL, MAKEWPARAM(SB_ENDSCROLL, position), 0);
     return true;
 }
 
@@ -9087,7 +9116,7 @@ static bool ScrollSettingsWheel(WPARAM wParam) {
 
 /// Moves or resizes a control only when necessary, retaining combo height and extending settings text
 /// controls to the common right edge.
-static void SetControlPosition(HWND control, int x, int y, int width, int height) {
+void SetControlPosition(HWND control, int x, int y, int width, int height) {
     if (control == nullptr) {
         return;
     }
@@ -9475,11 +9504,11 @@ static void UpdateSettingsDefaultButton(HWND focused) {
 /// Temporarily bypasses covered-control mouse guards while a native programmatic button click is processed.
 static LRESULT ClickSettingsControl(HWND window, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId,
         DWORD_PTR referenceData) {
-    SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, 1);
+    SetWindowSubclass(window, ApplicationControlSubclassProc, subclassId, 1);
     LRESULT result = DefSubclassProc(window, BM_CLICK, wParam, lParam);
     DWORD_PTR currentData = 0;
-    if (GetWindowSubclass(window, SettingsControlSubclassProc, subclassId, &currentData)) {
-        SetWindowSubclass(window, SettingsControlSubclassProc, subclassId, referenceData);
+    if (GetWindowSubclass(window, ApplicationControlSubclassProc, subclassId, &currentData)) {
+        SetWindowSubclass(window, ApplicationControlSubclassProc, subclassId, referenceData);
     }
     return result;
 }
@@ -9541,7 +9570,11 @@ static LRESULT InsertSettingsComboString(HWND window, UINT msg, WPARAM wParam, L
 /// Applies the native font or theme change before recalculating the settings control's metrics.
 static LRESULT HandleSettingsControlMetricsChange(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
     LRESULT result = DefSubclassProc(window, msg, wParam, lParam);
-    UpdateSettingsFieldMetrics(window, 0);
+    if (GetSettingsComboBox(window) != window) {
+        UpdateSettingsComboMetrics(window);
+    } else {
+        UpdateSettingsFieldMetrics(window, 0);
+    }
     return result;
 }
 
@@ -9599,42 +9632,47 @@ static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lPa
             || item->itemID == static_cast<UINT>(-1)) {
         return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
     }
-    LRESULT length = SendMessageW(window, CB_GETLBTEXTLEN, item->itemID, 0);
-    if (length == CB_ERR) {
-        return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
-    }
-    std::wstring text(static_cast<size_t>(length) + 1, L'\0');
-    SendMessageW(window, CB_GETLBTEXT, item->itemID, reinterpret_cast<LPARAM>(text.data()));
-    int saved = SaveDC(item->hDC);
-    HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
-    if (font != nullptr) {
-        SelectObject(item->hDC, font);
-    }
-    bool disabled = (item->itemState & ODS_DISABLED) != 0;
     bool themed = !themesDisabled && AreVisualStylesActive();
-    bool selected = !disabled && (item->itemState & ODS_SELECTED) != 0 && !themed;
-    if (selected) {
-        RECT selection = item->rcItem;
-        selection.left += GetSystemMetrics(SM_CXBORDER);
-        selection.right -= GetSystemMetrics(SM_CXBORDER);
-        FillRect(item->hDC, &selection, DialogFrame::GetBrush(window, COLOR_HIGHLIGHT));
-        SetBkColor(item->hDC, DialogFrame::GetColor(window, COLOR_HIGHLIGHT));
+    bool drawContent = (item->itemAction & (ODA_DRAWENTIRE | ODA_SELECT)) != 0;
+    if (drawContent) {
+        LRESULT length = SendMessageW(window, CB_GETLBTEXTLEN, item->itemID, 0);
+        if (length == CB_ERR) {
+            return DefSubclassProc(window, WM_DRAWITEM, wParam, lParam);
+        }
+        std::wstring text(static_cast<size_t>(length) + 1, L'\0');
+        SendMessageW(window, CB_GETLBTEXT, item->itemID, reinterpret_cast<LPARAM>(text.data()));
+        int saved = SaveDC(item->hDC);
+        HFONT font = reinterpret_cast<HFONT>(SendMessageW(item->hwndItem, WM_GETFONT, 0, 0));
+        if (font != nullptr) {
+            SelectObject(item->hDC, font);
+        }
+        bool disabled = (item->itemState & ODS_DISABLED) != 0;
+        bool selected = !disabled && (item->itemState & ODS_SELECTED) != 0 && !themed;
+        if (selected) {
+            RECT selection = item->rcItem;
+            selection.left += GetSystemMetrics(SM_CXBORDER);
+            selection.right -= GetSystemMetrics(SM_CXBORDER);
+            FillRect(item->hDC, &selection, DialogFrame::GetBrush(window, COLOR_HIGHLIGHT));
+            SetBkColor(item->hDC, DialogFrame::GetColor(window, COLOR_HIGHLIGHT));
+        }
+        int textColor;
+        if (disabled) {
+            textColor = COLOR_GRAYTEXT;
+        } else if (selected) {
+            textColor = COLOR_HIGHLIGHTTEXT;
+        } else {
+            textColor = COLOR_WINDOWTEXT;
+        }
+        SetTextColor(item->hDC, DialogFrame::GetColor(window, textColor));
+        SetBkMode(item->hDC, selected ? OPAQUE : TRANSPARENT);
+        RECT content = item->rcItem;
+        DrawTextW(item->hDC, text.data(), static_cast<int>(length), &content,
+            DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+        RestoreDC(item->hDC, saved);
     }
-    int textColor;
-    if (disabled) {
-        textColor = COLOR_GRAYTEXT;
-    } else if (selected) {
-        textColor = COLOR_HIGHLIGHTTEXT;
-    } else {
-        textColor = COLOR_WINDOWTEXT;
-    }
-    SetTextColor(item->hDC, DialogFrame::GetColor(window, textColor));
-    SetBkMode(item->hDC, selected ? OPAQUE : TRANSPARENT);
-    RECT content = item->rcItem;
-    DrawTextW(item->hDC, text.data(), static_cast<int>(length), &content,
-        DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-    RestoreDC(item->hDC, saved);
-    if ((item->itemState & ODS_FOCUS) != 0 && (item->itemState & ODS_NOFOCUSRECT) == 0) {
+    bool drawFocus = drawContent && (item->itemState & ODS_FOCUS) != 0
+            || !drawContent && (item->itemAction & ODA_FOCUS) != 0;
+    if (drawFocus && (item->itemState & ODS_NOFOCUSRECT) == 0) {
         RECT focus = item->rcItem;
         focus.left += GetSystemMetrics(SM_CXBORDER);
         if (!themed) {
@@ -9669,7 +9707,7 @@ static LRESULT DrawSettingsComboItem(HWND window, WPARAM wParam, LPARAM lParam) 
 
 /// Keeps the settings default button in step with focus and prevents clicks on covered controls.
 /// Allows programmatic BM_CLICK activation and removes the subclass when the control is destroyed.
-static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
+LRESULT CALLBACK ApplicationControlSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     if (GetSettingsControlLayer(window) != SETTINGS_CONTROL_FOREGROUND) {
         if (msg == WM_PAINT && wParam == 0) {
@@ -9692,10 +9730,14 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         case CB_INSERTSTRING:
             return InsertSettingsComboString(window, msg, wParam, lParam);
         case WM_SETFOCUS:
-            UpdateSettingsDefaultButton(window);
+            if (GetAncestor(window, GA_ROOT) == hSettings) {
+                UpdateSettingsDefaultButton(window);
+            }
             break;
         case WM_KILLFOCUS:
-            UpdateSettingsDefaultButton(reinterpret_cast<HWND>(wParam));
+            if (GetAncestor(window, GA_ROOT) == hSettings) {
+                UpdateSettingsDefaultButton(reinterpret_cast<HWND>(wParam));
+            }
             break;
         case BM_CLICK:
             return ClickSettingsControl(window, wParam, lParam, subclassId, referenceData);
@@ -9711,10 +9753,10 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
         case WM_THEMECHANGED:
             return HandleSettingsControlMetricsChange(window, msg, wParam, lParam);
         case WM_NCDESTROY:
-            if (window == hSettingsOpenCombo) {
-                hSettingsOpenCombo = nullptr;
-                settingsComboInitialSelection = CB_ERR;
-                settingsComboAccepted = false;
+            if (window == settingsComboState.open) {
+                settingsComboState.open = nullptr;
+                settingsComboState.initialSelection = CB_ERR;
+                settingsComboState.accepted = false;
             }
             RemovePropW(window, SETTINGS_FIELD_LABEL_PROPERTY);
             RemovePropW(window, SETTINGS_COLOR_PREVIEW_PROPERTY);
@@ -9722,7 +9764,7 @@ static LRESULT CALLBACK SettingsControlSubclassProc(HWND window, UINT msg, WPARA
             if (window == hSettingsDefaultButton) {
                 hSettingsDefaultButton = nullptr;
             }
-            RemoveWindowSubclass(window, SettingsControlSubclassProc, subclassId);
+            RemoveWindowSubclass(window, ApplicationControlSubclassProc, subclassId);
             break;
     }
     return DefSubclassProc(window, msg, wParam, lParam);
@@ -9740,9 +9782,9 @@ static void UpdateSettingsTextControlLayout(HWND parent,
             control != nullptr;
             control = GetWindow(control, GW_HWNDNEXT)) {
         DWORD_PTR referenceData = 0;
-        if (!GetWindowSubclass(control, SettingsControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID,
+        if (!GetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID,
                 &referenceData)) {
-            SetWindowSubclass(control, SettingsControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0);
+            SetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0);
         }
         RECT rect = {};
         if (!GetWindowRect(control, &rect)) {
@@ -10260,8 +10302,9 @@ static bool DrawNtpLogItem(const DRAWITEMSTRUCT* item) {
     return true;
 }
 
-/// Draws a wrapped label over its parent background using the selected font and native text colors.
-INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item) {
+/// Draws wrapped text in native colors; an optional reference-row height fixes the first baseline to its
+// font.
+INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item, LONG referenceHeight) {
     int savedState = SaveDC(item->hDC);
     DrawThemeParentBackground(item->hwndItem, item->hDC, nullptr);
     SetBkMode(item->hDC, TRANSPARENT);
@@ -10283,6 +10326,14 @@ INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item) {
     } else if (item->hwndItem == hNtpStatus) {
         statusLine = GetNtpStatusLine(item->hDC);
         fixedLine = &statusLine;
+    }
+    if (referenceHeight > 0) {
+        TEXTMETRICW metrics = {};
+        if (GetTextMetricsW(item->hDC, &metrics)) {
+            statusLine = GetUiTextLine(item->hDC, text);
+            statusLine.ascent = (referenceHeight - metrics.tmHeight) / 2 + metrics.tmAscent;
+            fixedLine = &statusLine;
+        }
     }
     DrawWordWrappedText(item->hDC, text, textRect, prefix, fixedLine);
     RestoreDC(item->hDC, savedState);
@@ -11512,6 +11563,71 @@ static HWND GetSettingsPageBoundaryControl(bool last) {
     return last ? controls.back() : controls.front();
 }
 
+/// Preserves Settings tab order while letting the native dialog manager update focus, cues and edit
+/// selection.
+static bool HandleSettingsTabNavigation(const MSG& msg) {
+    if (msg.message != WM_KEYDOWN
+            || msg.wParam != VK_TAB
+            || GetKeyState(VK_CONTROL) < 0
+            || hTabs == nullptr
+            || !IsChild(hSettings, msg.hwnd)) {
+        return false;
+    }
+    if ((SendMessageW(msg.hwnd, WM_GETDLGCODE, msg.wParam, reinterpret_cast<LPARAM>(&msg)) & DLGC_WANTTAB)
+            != 0) {
+        return false;
+    }
+    HWND focused = msg.hwnd;
+    HWND firstPageControl = GetSettingsPageBoundaryControl(false);
+    HWND lastPageControl = GetSettingsPageBoundaryControl(true);
+    HWND importButton = GetDlgItem(hSettings, ID_IMPORT_SETTINGS);
+    HWND lastSettingsButton = GetDlgItem(hSettings, ID_APPLY);
+    if (lastSettingsButton == nullptr || !IsWindowEnabled(lastSettingsButton)) {
+        lastSettingsButton = GetDlgItem(hSettings, ID_CANCEL);
+    }
+    HWND target = nullptr;
+    bool backwards = GetKeyState(VK_SHIFT) < 0;
+    HWND activePage = GetActiveSettingsPage();
+    if (activePage != nullptr && (focused == activePage || IsChild(activePage, focused))) {
+        std::vector<HWND> tabControls = GetSettingsTabOrder();
+        for (size_t index = 0; index < tabControls.size(); index++) {
+            if (focused != tabControls[index] && !IsChild(tabControls[index], focused)) {
+                continue;
+            }
+            if (backwards) {
+                target = index == 0 ? hTabs : tabControls[index - 1];
+            } else {
+                target = index + 1 == tabControls.size() ? importButton : tabControls[index + 1];
+            }
+            break;
+        }
+    }
+    if (target == nullptr && !backwards) {
+        if (focused == hTabs) {
+            target = firstPageControl;
+        } else if (focused == lastPageControl) {
+            target = importButton;
+        } else if (focused == lastSettingsButton) {
+            target = hAddType;
+        }
+    } else if (target == nullptr) {
+        if (focused == firstPageControl) {
+            target = hTabs;
+        } else if (focused == importButton) {
+            target = lastPageControl;
+        } else if (focused == hAddType) {
+            target = lastSettingsButton;
+        }
+    }
+    if (target != nullptr && IsWindowVisible(target) && IsWindowEnabled(target)) {
+        SendMessageW(hSettings, WM_CHANGEUISTATE, MAKEWPARAM(UIS_CLEAR, UISF_HIDEFOCUS), 0);
+        SendMessageW(hSettings, WM_NEXTDLGCTL, reinterpret_cast<WPARAM>(target), TRUE);
+        UpdateSettingsDefaultButton(target);
+        return true;
+    }
+    return false;
+}
+
 /// Returns the selected listbox indices in list order, or an empty vector when selection cannot be read.
 static std::vector<int> GetSelectedWidgetIndices() {
     std::vector<int> selected;
@@ -12505,8 +12621,8 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPAR
     return DefSubclassProc(window, msg, wParam, lParam);
 }
 
-/// Calculates current time-zone captions once for reuse across the three Settings selectors.
-static std::vector<std::wstring> BuildSettingsTimeZoneLabels(
+/// Builds the identical time-zone captions for Settings and the calculator from their common catalog.
+std::vector<std::wstring> BuildSettingsTimeZoneLabels(
         const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones, const SYSTEMTIME& utc,
         const std::wstring& systemLabel) {
     std::vector<std::wstring> labels;
@@ -12572,7 +12688,7 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
 /// Measures current items in the dropdown font immediately before opening, adding borders, padding, and
 /// scrollbar space. Keeps the dropdown at least as wide as its combo and installs integral-height and
 /// work-area sizing.
-static void UpdateComboBoxDropDownMetrics(HWND combo) {
+void UpdateComboBoxDropDownMetrics(HWND combo) {
     if (combo == nullptr) {
         return;
     }
@@ -12588,7 +12704,7 @@ static void UpdateComboBoxDropDownMetrics(HWND combo) {
     HWND list = combo;
     if (GetComboBoxInfo(GetSettingsComboBox(combo), &information) && information.hwndList != nullptr) {
         list = information.hwndList;
-        DialogFrame::ApplyControl(list, hSettings);
+        DialogFrame::ApplyControl(list, GetAncestor(combo, GA_ROOT));
         SetWindowSubclass(information.hwndList, ComboBoxDropDownSubclassProc,
             COMBO_BOX_DROPDOWN_SUBCLASS_ID, reinterpret_cast<DWORD_PTR>(combo));
     }
@@ -13238,7 +13354,7 @@ static bool HasPendingSettingsChanges() {
 static void UpdateSettingsApplyButton() {
     if (hSettings == nullptr
             || updatingSettingsControls
-            || hSettingsOpenCombo != nullptr
+            || settingsComboState.open != nullptr
             || !IsWindowEnabled(hSettings)) {
         return;
     }
@@ -15272,9 +15388,9 @@ static void RebuildSettingsControls(bool preserveValues = false) {
 /// Stops tests, restores uncommitted previews, remembers the form position, tab and widget, and destroys
 /// settings controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow() {
-    hSettingsOpenCombo = nullptr;
-    settingsComboInitialSelection = CB_ERR;
-    settingsComboAccepted = false;
+    settingsComboState.open = nullptr;
+    settingsComboState.initialSelection = CB_ERR;
+    settingsComboState.accepted = false;
     timeSignalVolumeDragging = false;
     settingsTimeSignalTestActive = false;
     StopTimeSignalVolumePreview();
@@ -15369,6 +15485,7 @@ static void CloseSettingsWindow() {
 static void RecreateStyledDialogs(bool reopenSettings) {
     bool reopenHelp = helpForm.GetWindow() != nullptr;
     bool reopenAbout = aboutForm.GetWindow() != nullptr;
+    bool reopenCalculator = calculatorForm.GetWindow() != nullptr;
     CloseSettingsWindow();
     ResetUiFont();
     if (reopenHelp) {
@@ -15378,6 +15495,10 @@ static void RecreateStyledDialogs(bool reopenSettings) {
     if (reopenAbout) {
         aboutForm.Close();
         aboutForm.Show(hInstance, aboutWindowState);
+    }
+    if (reopenCalculator) {
+        calculatorForm.Close();
+        calculatorForm.Show(hInstance, calculatorWindowState);
     }
     if (reopenSettings) {
         ShowSettingsWindow();
@@ -15400,17 +15521,17 @@ static bool ChooseSettingsXmlFile(bool save, std::wstring* path) {
 }
 
 /// Validates and applies the current draft before exporting a settings snapshot to the chosen XML file,
-/// reporting write failure.
+/// including the independent saved-date collection and reporting write failure.
 static void ExportSettings() {
     std::wstring path;
     if (!ChooseSettingsXmlFile(true, &path)) {
         return;
     }
-    if (!SaveControlsToDraft(true)) {
+    if (!SaveControlsToDraft(true) || !calculatorForm.EnsurePresetsLoaded()) {
         return;
     }
     bool recreateDialogs = ApplySettingsDraft();
-    if (!WriteSettingsXml(path, CaptureSettingsSnapshot())) {
+    if (!WriteSettingsXml(path, CaptureSettingsSnapshot(), &calculatorForm.GetPresets())) {
         MessageBoxW(hSettings, T(TXT_SETTINGS_EXPORT_FAILED), T(TXT_SETTINGS), MB_OK | MB_ICONERROR);
     }
     if (recreateDialogs) {
@@ -15419,15 +15540,20 @@ static void ExportSettings() {
 }
 
 /// Validates a chosen XML snapshot, replaces application and widget settings, rebuilds affected windows,
-/// and saves using the selected backend.
+/// and saves using the selected backend. Exported user dates are merged into times.xml before applying settings.
 static void ImportSettings() {
     std::wstring path;
     if (!ChooseSettingsXmlFile(false, &path)) {
         return;
     }
     SettingsSnapshot snapshot = {};
-    if (!ReadSettingsXml(path, appLanguage, CreateStoredWidgetDefaults, &snapshot)) {
+    std::vector<TimeCalculatorPreset> importedPresets;
+    bool presetsOnly = false;
+    if (!ReadSettingsXml(path, appLanguage, CreateStoredWidgetDefaults, &snapshot, &importedPresets, &presetsOnly)) {
         MessageBoxW(hSettings, T(TXT_INVALID_SETTINGS_FILE), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
+        return;
+    }
+    if (!calculatorForm.MergePresets(importedPresets) || presetsOnly) {
         return;
     }
     snapshot.fileDialogDirectory = fileDialogDirectory;
@@ -15451,6 +15577,9 @@ static void ImportSettings() {
         }
         if (aboutForm.GetWindow() != nullptr) {
             ApplyUiStyle(aboutForm.GetWindow());
+        }
+        if (calculatorForm.GetWindow() != nullptr) {
+            ApplyUiStyle(calculatorForm.GetWindow());
         }
     }
     UpdateTrayIcon();
@@ -15667,6 +15796,7 @@ int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int length, i
 void RefreshInformationWindows() {
     helpForm.Refresh();
     aboutForm.Refresh();
+    calculatorForm.Refresh();
 }
 
 /// Positions an information-window child without activation or Z-order changes, enforcing positive
@@ -16229,8 +16359,8 @@ static void RequestCloseSettingsWindow() {
     if (hSettings == nullptr || !IsWindowEnabled(hSettings)) {
         return;
     }
-    if (hSettingsOpenCombo != nullptr) {
-        SendMessageW(hSettingsOpenCombo, CB_SHOWDROPDOWN, FALSE, 0);
+    if (settingsComboState.open != nullptr) {
+        SendMessageW(settingsComboState.open, CB_SHOWDROPDOWN, FALSE, 0);
     }
     UpdateSettingsApplyButton();
     HWND applyButton = GetDlgItem(hSettings, ID_APPLY);
@@ -16650,11 +16780,6 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
     if (GetSettingsComboBox(parent) == control) {
         control = parent;
     }
-    wchar_t className[32] = {};
-    GetClassNameW(control, className, ARRAYSIZE(className));
-    if (_wcsicmp(className, WC_COMBOBOXW) != 0 && _wcsicmp(className, WC_COMBOBOXEXW) != 0) {
-        return false;
-    }
     if (*notification == CBN_DROPDOWN) {
         if (control == hAudioOutputCombo) {
             std::wstring selected = SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
@@ -16666,38 +16791,57 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
         if (control == hAppAntialiasCombo) {
             UpdateApplicationFontAntialiasingCombo();
         }
-        hSettingsOpenCombo = control;
-        settingsComboInitialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
-        settingsComboAccepted = false;
+    }
+    bool requestedModeChanged = control == hAppAntialiasCombo
+        && SelectedFontAntialiasing(control, settingsAppFontAntialiasing) != settingsAppFontAntialiasing;
+    return HandleApplicationComboNotification(control, notification, settingsComboState, requestedModeChanged);
+}
+
+/// Uses the same dropdown sizing, acceptance and cancellation rules in every application form.
+bool HandleApplicationComboNotification(HWND control, int* notification, ApplicationComboState& state,
+        bool requestedModeChanged) {
+    if (control == nullptr) {
+        return false;
+    }
+    HWND parent = GetParent(control);
+    if (GetSettingsComboBox(parent) == control) {
+        control = parent;
+    }
+    wchar_t className[32] = {};
+    GetClassNameW(control, className, ARRAYSIZE(className));
+    if (_wcsicmp(className, WC_COMBOBOXW) != 0 && _wcsicmp(className, WC_COMBOBOXEXW) != 0) {
+        return false;
+    }
+    if (*notification == CBN_DROPDOWN) {
+        state.open = control;
+        state.initialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
+        state.accepted = false;
         UpdateComboBoxDropDownMetrics(control);
         return true;
     }
-    if (control != hSettingsOpenCombo) {
+    if (control != state.open) {
         return false;
     }
     if (*notification == CBN_SELENDOK) {
-        settingsComboAccepted = true;
+        state.accepted = true;
         return true;
     }
     if (*notification == CBN_SELENDCANCEL) {
-        settingsComboAccepted = false;
+        state.accepted = false;
         return true;
     }
     if (*notification == CBN_SELCHANGE) {
         return true;
     }
     if (*notification == CBN_CLOSEUP) {
-        bool requestedModeChanged = control == hAppAntialiasCombo
-            && SelectedFontAntialiasing(control, settingsAppFontAntialiasing) != settingsAppFontAntialiasing;
-        bool changed = settingsComboAccepted
-            && (requestedModeChanged
-                || SendMessageW(control, CB_GETCURSEL, 0, 0) != settingsComboInitialSelection);
-        if (!settingsComboAccepted) {
-            SetComboSelection(control, settingsComboInitialSelection);
+        bool changed = state.accepted
+            && (requestedModeChanged || SendMessageW(control, CB_GETCURSEL, 0, 0) != state.initialSelection);
+        if (!state.accepted) {
+            SetComboSelection(control, state.initialSelection);
         }
-        hSettingsOpenCombo = nullptr;
-        settingsComboInitialSelection = CB_ERR;
-        settingsComboAccepted = false;
+        state.open = nullptr;
+        state.initialSelection = CB_ERR;
+        state.accepted = false;
         *notification = CBN_SELCHANGE;
         return !changed;
     }
@@ -16748,6 +16892,8 @@ static LRESULT HandleWindowCommand(HWND window, Widget* widget, WPARAM wParam, L
             helpForm.Show(hInstance, helpWindowState);
         } else if (id == ID_MENU_ABOUT) {
             aboutForm.Show(hInstance, aboutWindowState);
+        } else if (id == ID_MENU_TIME_CALCULATOR) {
+            calculatorForm.Show(hInstance, calculatorWindowState);
         } else if (id == ID_MENU_EXIT) {
             RequestExitApplication();
         }
@@ -17122,7 +17268,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             break;
         case WM_MOUSEWHEEL:
             if (window == hSettings
-                    && (ScrollSettingsTabHeaders(wParam, lParam) || ScrollSettingsWheel(wParam))) {
+                && (ScrollDialogTabHeaders(hSettings, hTabs, wParam, lParam)
+                    || ScrollSettingsWheel(wParam))) {
                 return 0;
             }
             break;
@@ -17549,13 +17696,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     StartNtpSynchronization(true);
     MSG msg = {};
     while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
-        if (msg.message == WM_MOUSEWHEEL && ScrollSettingsTabHeaders(msg.wParam, msg.lParam)) {
+        if (msg.message == WM_MOUSEWHEEL
+                && ScrollDialogTabHeaders(hSettings, hTabs, msg.wParam, msg.lParam)) {
             continue;
         }
         if (helpForm.GetWindow() != nullptr && IsDialogMessageW(helpForm.GetWindow(), &msg)) {
             continue;
         }
         if (aboutForm.GetWindow() != nullptr && IsDialogMessageW(aboutForm.GetWindow(), &msg)) {
+            continue;
+        }
+        if (calculatorForm.ProcessMessage(&msg)) {
             continue;
         }
         Widget* inputWidget = WidgetFromInputWindow(msg.hwnd);
@@ -17586,56 +17737,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
                 && IsDialogMessageW(inputWidget->window, &msg)) {
             continue;
         }
-        if (msg.message == WM_KEYDOWN
-                && msg.wParam == VK_TAB
-                && GetKeyState(VK_CONTROL) >= 0
-                && hTabs != nullptr) {
-            HWND focused = GetFocus();
-            HWND firstPageControl = GetSettingsPageBoundaryControl(false);
-            HWND lastPageControl = GetSettingsPageBoundaryControl(true);
-            HWND importButton = GetDlgItem(hSettings, ID_IMPORT_SETTINGS);
-            HWND lastSettingsButton = GetDlgItem(hSettings, ID_APPLY);
-            if (lastSettingsButton == nullptr || !IsWindowEnabled(lastSettingsButton)) {
-                lastSettingsButton = GetDlgItem(hSettings, ID_CANCEL);
-            }
-            HWND target = nullptr;
-            bool backwards = GetKeyState(VK_SHIFT) < 0;
-            HWND activePage = GetActiveSettingsPage();
-            if (activePage != nullptr && (focused == activePage || IsChild(activePage, focused))) {
-                std::vector<HWND> tabControls = GetSettingsTabOrder();
-                for (size_t index = 0; index < tabControls.size(); index++) {
-                    if (focused != tabControls[index] && !IsChild(tabControls[index], focused)) {
-                        continue;
-                    }
-                    if (backwards) {
-                        target = index == 0 ? hTabs : tabControls[index - 1];
-                    } else {
-                        target = index + 1 == tabControls.size() ? importButton : tabControls[index + 1];
-                    }
-                    break;
-                }
-            }
-            if (target == nullptr && !backwards) {
-                if (focused == hTabs) {
-                    target = firstPageControl;
-                } else if (focused == lastPageControl) {
-                    target = importButton;
-                } else if (focused == lastSettingsButton) {
-                    target = hAddType;
-                }
-            } else if (target == nullptr) {
-                if (focused == firstPageControl) {
-                    target = hTabs;
-                } else if (focused == importButton) {
-                    target = lastPageControl;
-                } else if (focused == hAddType) {
-                    target = lastSettingsButton;
-                }
-            }
-            if (target != nullptr && IsWindowVisible(target) && IsWindowEnabled(target)) {
-                SetFocus(target);
-                continue;
-            }
+        if (HandleSettingsTabNavigation(msg)) {
+            continue;
         }
         if (hSettings != nullptr && IsDialogMessageW(hSettings, &msg)) {
             continue;
@@ -17656,6 +17759,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     }
     aboutForm.Close();
     helpForm.Close();
+    calculatorForm.Close();
     ShutdownDirectTextRendering();
     if (hSingleInstanceMutex != nullptr) {
         CloseHandle(hSingleInstanceMutex);

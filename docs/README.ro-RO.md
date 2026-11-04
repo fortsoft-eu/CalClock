@@ -58,13 +58,50 @@ Setările pot fi exportate în XML. Importul încarcă și salvează imediat set
 
 Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
-Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor și Despre. Tahoma 8 pt înlocuiește fontul implicit al sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu se aplică; preferințele salvate se păstrează.
+Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre și Calculator de timp. Tahoma 8 pt înlocuiește fontul implicit al sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu se aplică; preferințele salvate se păstrează.
+
+## Calculator de timp
+
+Deschideți Calculator de timp din meniul oricărui widget sau din meniul pictogramei din zona de notificare.
+Interval de timp calculează diferența dintre două date și ore. Valori rotunde evidențiază în calendar valori
+rotunde, cifre repetate și aniversări lunare și anuale de la începutul ales. Date și ore presetate permite
+adăugarea, editarea, sortarea și ștergerea datelor și orelor cu descrieri. Datele și orele sunt salvate
+separat în `%APPDATA%\FortSoft\CalClock\times.xml`. Exportul manual le include; importul păstrează intrările
+existente și omite numai intrările cu data, ora și descrierea completă identice.
+
+Fiecare intrare are propriul fus orar din aceeași listă ca în Setări. Implicit se folosește fusul orar curent
+Windows. Se salvează un moment UTC neechivoc și fusul de afișare. Schimbarea fusului păstrează momentul.
+Pentru o oră repetată, alegeți decalajul UTC; orele locale inexistente nu pot fi salvate. Orele măsoară timpul
+scurs; calculele calendaristice folosesc fusul inițial. Acum folosește ora sistemului Windows fără decalajul
+widgetului, afișată în fusul ales.
+
+Importul acceptă și un fișier XML separat cu date și ore salvate; îmbină acele înregistrări fără a schimba
+setările aplicației.
+
+În fila Evidențiere puteți alege regulile pentru evidențierea datelor în calendar. Implicit sunt evidențiate
+ziua de început (valori zero), valorile rotunde care se termină cu zerouri, primele nouă săptămâni întregi și
+aniversările lunare și anuale. Cifrele repetate 1–9 (de exemplu, 11, 111 sau 66, 666) pot fi activate
+individual și sunt dezactivate implicit.
+
+Faceți clic pe antetul unei coloane pentru a sorta datele salvate după momentul real sau după textul
+descrierii. Un nou clic inversează ordinea; o săgeată indică direcția.
+
+Poziția ferestrei, fila activă, valorile introduse și opțiunile de evidențiere sunt salvate împreună cu
+setările aplicației în registry sau în XML, în funcție de stocarea aleasă.
 
 ## Setări și meniuri
 
-Limba aplicației, fontul, netezirea, stocarea, pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea temelor în fila Aplicație afectează numai ferestrele Setări, Ajutor și Despre. Fiecare widget folosește propria setare a temelor. La prima pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, netezirea și temele widgetului afectează numai acel widget.
+Limba aplicației, fontul, netezirea, stocarea, pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea temelor în fila Aplicație afectează numai ferestrele Setări, Ajutor, Despre și Calculator de timp. Fiecare widget folosește propria setare a temelor. La prima pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, netezirea și temele widgetului afectează numai acel widget.
 
-Meniul widgetului conține alegerile aplicabile de vizibilitate, Întotdeauna deasupra, secunde, dimensiune și copiere a datei, apoi Aranjare în grilă, Setări, Ajutor, Despre și Ieșire. Meniul pictogramei enumeră widgeturile numerotate, Afișare totală, Ascundere totală și Dezactivare totală sunet, apoi comanda de grilă separată. Afișarea sau restabilirea aduce widgetul în față fără schimbarea Întotdeauna deasupra. O nouă pornire restabilește la nevoie ultimele widgeturi ascunse. Dimensiunile și secundarul depind de Windows. Alarmă și Semnal se pot comuta din meniu, care arată ora, intervalul și zilele active când nu este selectată întreaga săptămână. Dezactivare sunet corespunde cu Sunet dezactivat din General. Dezactivare totală sunet și M dezactivează sunetul tuturor widgeturilor; repetarea îl restabilește numai celor afectate de acea comandă. Activarea unei alarme fără zi selectată deschide fila Alarmă.
+Meniul widgetului conține alegerile aplicabile de vizibilitate, Întotdeauna deasupra, secunde, dimensiune și
+copiere a datei, apoi Aranjare în grilă, Calculator de timp, Setări, Ajutor, Despre și Ieșire. Meniul
+pictogramei enumeră widgeturile numerotate, Afișare totală, Ascundere totală și Dezactivare totală sunet, apoi
+comanda de grilă separată. Afișarea sau restabilirea aduce widgetul în față fără schimbarea Întotdeauna
+deasupra. O nouă pornire restabilește la nevoie ultimele widgeturi ascunse. Dimensiunile și secundarul depind
+de Windows. Alarmă și Semnal se pot comuta din meniu, care arată ora, intervalul și zilele active când nu este
+selectată întreaga săptămână. Dezactivare sunet corespunde cu Sunet dezactivat din General. Dezactivare totală
+sunet și M dezactivează sunetul tuturor widgeturilor; repetarea îl restabilește numai celor afectate de acea
+comandă. Activarea unei alarme fără zi selectată deschide fila Alarmă.
 
 ## Semnal orar sonor
 

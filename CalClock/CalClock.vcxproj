@@ -104,6 +104,8 @@
     <ClCompile Include="SettingsStorage.cpp" />
     <ClCompile Include="SystemDialogTemplate.cpp" />
     <ClCompile Include="TimeDateNotices.cpp" />
+    <ClCompile Include="TimeCalculator.cpp" />
+    <ClCompile Include="TimeCalculatorForm.cpp" />
     <ClCompile Include="TimeFormats.cpp" />
     <ClCompile Include="TimeSignal.cpp" />
     <ClCompile Include="TimeZoneSupport.cpp" />
@@ -137,6 +139,8 @@
     <ClInclude Include="SettingsStorage.h" />
     <ClInclude Include="SystemDialogTemplate.h" />
     <ClInclude Include="TimeDateNotices.h" />
+    <ClInclude Include="TimeCalculator.h" />
+    <ClInclude Include="TimeCalculatorForm.h" />
     <ClInclude Include="TimeFormats.h" />
     <ClInclude Include="TimeSignal.h" />
     <ClInclude Include="TimeZoneSupport.h" />

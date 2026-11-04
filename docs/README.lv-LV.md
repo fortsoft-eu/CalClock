@@ -58,13 +58,50 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
-Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība un Par programmu. Sistēmas noklusējuma fonta vietā izmanto Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek nemainītas.
+Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Sistēmas noklusējuma fonta vietā izmanto Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek nemainītas.
+
+## Laika kalkulators
+
+Atveriet Laika kalkulatoru jebkura logrīka izvēlnē vai paziņojumu apgabala ikonas izvēlnē. Laika intervāls
+aprēķina starpību starp diviem datumiem un laikiem. Apaļas vērtības kalendārā izceļ apaļas vērtības,
+atkārtotus ciparus un ikmēneša un ikgadējas jubilejas no izvēlētā sākuma. Saglabātie datumi un laiki ļauj
+pievienot, rediģēt, kārtot un dzēst datumus un laikus ar aprakstiem. Datumi un laiki tiek saglabāti atsevišķi
+failā `%APPDATA%\FortSoft\CalClock\times.xml`. Manuālā eksportēšana tos iekļauj; importēšana saglabā esošos
+ierakstus un izlaiž tikai tos, kuriem ir vienāds datums, laiks un pilns apraksts.
+
+Katrai ievadei ir sava laika josla no tā paša saraksta kā iestatījumos. Noklusējums ir pašreizējā Windows
+laika josla. Tiek saglabāts nepārprotams UTC brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās.
+Atkārtotai stundai izvēlieties UTC nobīdi; neeksistējošu vietējo laiku nevar saglabāt. Stundas mēra pagājušo
+laiku; kalendāra aprēķini izmanto sākuma joslu. Tagad izmanto Windows sistēmas laiku bez logrīka nobīdes,
+attēlotu izvēlētajā joslā.
+
+Importēšana pieņem arī atsevišķu XML failu ar saglabātajiem datumiem un laikiem; ieraksti tiek apvienoti,
+nemainot lietotnes iestatījumus.
+
+Cilnē Izcēlums varat izvēlēties kalendāra datumu izcelšanas noteikumus. Pēc noklusējuma tiek izcelta sākuma
+diena (nulles vērtības), apaļas vērtības, kas beidzas ar nullēm, pirmās deviņas pilnās nedēļas un mēnešu un
+gadu jubilejas. Atkārtotus ciparus 1–9 (piemēram, 11, 111 vai 66, 666) var ieslēgt atsevišķi; pēc noklusējuma
+tie ir izslēgti.
+
+Noklikšķiniet uz kolonnas virsraksta, lai kārtotu saglabātos ierakstus pēc faktiskā laika brīža vai apraksta
+teksta. Vēlreiz noklikšķinot, secība tiek apgriezta; bultiņa norāda virzienu.
+
+Loga novietojums, aktīvā cilne, ievadītās vērtības un izcelšanas izvēles tiek saglabātas kopā ar programmas
+iestatījumiem reģistrā vai XML failā atbilstoši izvēlētajam glabāšanas veidam.
 
 ## Iestatījumi un izvēlnes
 
-Programmas valoda, fonts, nogludināšana, krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Iestatījumi, Palīdzība un Par programmu. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows saskarnes valodu vai ASV angļu valodu, ja tā netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to.
+Programmas valoda, fonts, nogludināšana, krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows saskarnes valodu vai ASV angļu valodu, ja tā netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to.
 
-Logrīka izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu, lieluma un datuma kopēšanas izvēles, tad Sakārtot režģī, Iestatījumi, Palīdzība, Par programmu un Iziet. Ikonas izvēlnē ir numurēti logrīki, Rādīt visus, Paslēpt visus un Izslēgt visu skaņu, pēc tam atsevišķa režģa komanda. Parādīšana vai atjaunošana izvirza logrīku priekšplānā bez Vienmēr virspusē maiņas. Atkārtota palaišana vajadzības gadījumā atjauno pēdējos paslēptos logrīkus. Ciparnīcas un sekunžu rādītāja atbalsts atkarīgs no Windows. Modinātāju un Signālu var pārslēgt izvēlnē, kur redzams laiks, intervāls un atlasītās dienas, ja nav atlasīta visa nedēļa. Izslēgt skaņu atbilst Skaņa izslēgta cilnē Vispārīgi. Izslēgt visu skaņu un M izslēdz visu logrīku skaņu; atkārtoti ieslēdz tikai to, ko šī komanda izslēgusi. Modinātāja ieslēgšana bez atlasītas dienas atver tā cilni.
+Logrīka izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu, lieluma un datuma kopēšanas izvēles,
+tad Sakārtot režģī, Laika kalkulators, Iestatījumi, Palīdzība, Par programmu un Iziet. Ikonas izvēlnē ir
+numurēti logrīki, Rādīt visus, Paslēpt visus un Izslēgt visu skaņu, pēc tam atsevišķa režģa komanda.
+Parādīšana vai atjaunošana izvirza logrīku priekšplānā bez Vienmēr virspusē maiņas. Atkārtota palaišana
+vajadzības gadījumā atjauno pēdējos paslēptos logrīkus. Ciparnīcas un sekunžu rādītāja atbalsts atkarīgs no
+Windows. Modinātāju un Signālu var pārslēgt izvēlnē, kur redzams laiks, intervāls un atlasītās dienas, ja nav
+atlasīta visa nedēļa. Izslēgt skaņu atbilst Skaņa izslēgta cilnē Vispārīgi. Izslēgt visu skaņu un M izslēdz
+visu logrīku skaņu; atkārtoti ieslēdz tikai to, ko šī komanda izslēgusi. Modinātāja ieslēgšana bez atlasītas
+dienas atver tā cilni.
 
 ## Skaņas laika signāls
 

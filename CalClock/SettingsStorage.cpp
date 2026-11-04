@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.1.3
  */
 
 #define NOMINMAX
@@ -103,19 +103,23 @@ static bool ReadQword(HKEY key, const wchar_t* name, LONGLONG* value) {
 
 /// Reads a registry string without expanding environment variables, replacing the destination only on
 /// success.
-static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value) {
+static bool ReadString(HKEY key, const wchar_t* name, std::wstring* value, size_t maximumLength = SIZE_MAX) {
     DWORD type = 0;
     DWORD size = 0;
     if (RegQueryValueExW(key, name, nullptr, &type, nullptr, &size) != ERROR_SUCCESS
             || type != REG_SZ && type != REG_EXPAND_SZ
             || size < sizeof(wchar_t)
-            || size % sizeof(wchar_t) != 0) {
+            || size % sizeof(wchar_t) != 0
+            || size / sizeof(wchar_t) - 1 > maximumLength) {
         return false;
     }
     std::vector<wchar_t> buffer(size / sizeof(wchar_t) + 1, 0);
     LSTATUS result = RegQueryValueExW(key, name, nullptr, &type,
         reinterpret_cast<BYTE*>(buffer.data()), &size);
     if (result != ERROR_SUCCESS || type != REG_SZ && type != REG_EXPAND_SZ || size % sizeof(wchar_t) != 0) {
+        return false;
+    }
+    if (wcsnlen_s(buffer.data(), buffer.size()) > maximumLength) {
         return false;
     }
     *value = buffer.data();
@@ -136,6 +140,129 @@ static void WriteQword(HKEY key, const wchar_t* name, LONGLONG value) {
 static void WriteString(HKEY key, const wchar_t* name, const std::wstring& value) {
     RegSetValueExW(key, name, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()),
         static_cast<DWORD>((value.size() + 1) * sizeof(wchar_t)));
+}
+
+/// Formats a calculator date independently of regional settings; an empty string denotes an unset date.
+static std::wstring FormatCalculatorTime(const SYSTEMTIME& time, bool utc = true) {
+    if (time.wYear == 0) {
+        return L"";
+    }
+    wchar_t text[25] = {};
+    swprintf_s(text, L"%04u-%02u-%02uT%02u:%02u:%02u.%03u%ls", time.wYear, time.wMonth, time.wDay,
+        time.wHour, time.wMinute, time.wSecond, time.wMilliseconds, utc ? L"Z" : L"");
+    return text;
+}
+
+/// Parses a complete ISO calculator date, rejecting malformed fields and invalid calendar dates.
+static bool ParseCalculatorTime(const std::wstring& text, SYSTEMTIME* time, bool utc = true) {
+    if (text.empty()) {
+        *time = SYSTEMTIME{};
+        return true;
+    }
+    if (text.size() != (utc ? 24U : 23U)
+            || utc && text.back() != L'Z'
+            || text[4] != L'-'
+            || text[7] != L'-'
+            || text[10] != L'T'
+            || text[13] != L':'
+            || text[16] != L':'
+            || text[19] != L'.') {
+        return false;
+    }
+    SYSTEMTIME parsed = {};
+    WORD* fields[] = {
+        &parsed.wYear,
+        &parsed.wMonth,
+        &parsed.wDay,
+        &parsed.wHour,
+        &parsed.wMinute,
+        &parsed.wSecond,
+        &parsed.wMilliseconds
+    };
+    const size_t positions[] = { 0, 5, 8, 11, 14, 17, 20 };
+    const size_t lengths[] = { 4, 2, 2, 2, 2, 2, 3 };
+    for (size_t field = 0; field < ARRAYSIZE(fields); field++) {
+        for (size_t digit = positions[field]; digit < positions[field] + lengths[field]; digit++) {
+            if (text[digit] < L'0' || text[digit] > L'9') {
+                return false;
+            }
+            *fields[field] = static_cast<WORD>(*fields[field] * 10 + text[digit] - L'0');
+        }
+    }
+    SYSTEMTIME validated = parsed;
+    if (parsed.wSecond > 59 || !TimeCalculator::Normalize(&validated)) {
+        return false;
+    }
+    parsed.wDayOfWeek = validated.wDayOfWeek;
+    *time = parsed;
+    return true;
+}
+
+/// Accepts bounded Unicode descriptions that both registry strings and XML attributes can preserve.
+static bool ValidCalculatorDescription(const std::wstring& description) {
+    if (description.size() > TIME_CALCULATOR_MAX_DESCRIPTION) {
+        return false;
+    }
+    for (size_t index = 0; index < description.size(); index++) {
+        wchar_t character = description[index];
+        if (character < 0x20 && character != L'\t' && character != L'\r' && character != L'\n'
+                || character >= 0xDC00 && character <= 0xDFFF
+                || character >= 0xFFFE) {
+            return false;
+        }
+        if (character >= 0xD800 && character <= 0xDBFF) {
+            index++;
+            if (index == description.size() || description[index] < 0xDC00 || description[index] > 0xDFFF) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/// Accepts a bounded Windows zone key or the existing current-Windows and fixed-offset selectors.
+static bool ValidCalculatorZone(const std::wstring& zone) {
+    return !zone.empty() && zone.size() < 128 && ValidCalculatorDescription(zone);
+}
+
+/// Validates calculator window settings independently of its saved user data.
+static bool ValidCalculatorState(const TimeCalculatorState& state) {
+    if (state.tab < 0
+            || state.tab >= TIME_CALCULATOR_PAGE_COUNT
+            || (state.highlights & ~TIME_CALCULATOR_ALL_HIGHLIGHTS) != 0
+            || !ValidCalculatorZone(state.fromZone)
+            || !ValidCalculatorZone(state.toZone)
+            || !ValidCalculatorZone(state.startZone)) {
+        return false;
+    }
+    const SYSTEMTIME dates[] = { state.from, state.to, state.start, state.day };
+    for (SYSTEMTIME time : dates) {
+        if (time.wYear != 0
+            && (time.wSecond > 59
+                || time.wMilliseconds > 999
+                || !TimeCalculator::Normalize(&time))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/// Validates user data independently of application settings before saving or importing the collection.
+static bool ValidCalculatorPresets(const std::vector<TimeCalculatorPreset>& presets) {
+    if (presets.size() > TIME_CALCULATOR_MAX_PRESETS) {
+        return false;
+    }
+    for (const TimeCalculatorPreset& preset : presets) {
+        SYSTEMTIME time = preset.time;
+        if (time.wSecond > 59
+                || time.wMilliseconds > 999
+                || !TimeCalculator::Normalize(&time)
+                || !ValidCalculatorDescription(preset.description)
+                || !ValidCalculatorZone(preset.zone)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /// Formats a double with locale-independent punctuation and enough precision for a round trip.
@@ -184,9 +311,8 @@ static void WriteTimeSignalVolume(HKEY key, double volume) {
     }
 }
 
-/// Returns the per-user CalClock settings.xml path, optionally creating its directories.
-/// Returns an empty string if the location cannot be obtained or created.
-std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
+/// Returns the common roaming application directory, optionally creating the vendor and application folders.
+static std::wstring ApplicationDataDirectory(bool createDirectory) {
     wchar_t appData[MAX_PATH] = {};
     int folderId = CSIDL_APPDATA | (createDirectory ? CSIDL_FLAG_CREATE : 0);
     if (SHGetFolderPathW(nullptr, folderId, nullptr, SHGFP_TYPE_CURRENT, appData) != S_OK) {
@@ -204,7 +330,19 @@ std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
             && GetLastError() != ERROR_ALREADY_EXISTS) {
         return L"";
     }
-    return directory + L"\\settings.xml";
+    return directory;
+}
+
+/// Returns the per-user settings file independently of the calculator's user-data file.
+std::wstring AutomaticXmlSettingsPath(bool createDirectory) {
+    std::wstring directory = ApplicationDataDirectory(createDirectory);
+    return directory.empty() ? L"" : directory + L"\\settings.xml";
+}
+
+/// Returns the calculator's permanent user-data location regardless of the selected settings backend.
+std::wstring CalculatorPresetsPath(bool createDirectory) {
+    std::wstring directory = ApplicationDataDirectory(createDirectory);
+    return directory.empty() ? L"" : directory + L"\\times.xml";
 }
 
 /// Deletes the automatic XML settings file and attempts to remove its now-empty application and vendor
@@ -241,6 +379,137 @@ static HRESULT WriteXmlNumberAttribute(IXmlWriter* writer, const wchar_t* name, 
     return writer->WriteAttributeString(nullptr, name, nullptr, text);
 }
 
+/// Writes only calculator window settings; reusable dates belong to a separate user-data document.
+static HRESULT WriteCalculatorXml(IXmlWriter* writer, const SettingsSnapshot& snapshot) {
+    const TimeCalculatorState& state = snapshot.calculator;
+    HRESULT result = writer->WriteStartElement(nullptr, L"Calculator", nullptr);
+    const wchar_t* names[] = { L"from", L"to", L"start", L"day" };
+    const SYSTEMTIME dates[] = { state.from, state.to, state.start, state.day };
+    for (size_t index = 0; SUCCEEDED(result) && index < ARRAYSIZE(dates); index++) {
+        result = WriteXmlTextAttribute(writer, names[index], FormatCalculatorTime(dates[index], index != 3));
+    }
+    const wchar_t* zoneNames[] = { L"fromZone", L"toZone", L"startZone" };
+    const std::wstring zones[] = { state.fromZone, state.toZone, state.startZone };
+    for (size_t index = 0; SUCCEEDED(result) && index < ARRAYSIZE(zones); index++) {
+        result = WriteXmlTextAttribute(writer, zoneNames[index], zones[index]);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"fromNow", state.fromNow);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"toNow", state.toNow);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"tab", state.tab);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"highlights", state.highlights);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"x", snapshot.calculatorWindowState.x);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"y", snapshot.calculatorWindowState.y);
+    }
+    if (SUCCEEDED(result)) {
+        result = writer->WriteEndElement();
+    }
+    return result;
+}
+
+/// Writes user data as a dedicated document root or an explicit subtree of a manual settings export.
+static HRESULT WriteCalculatorPresetsXml(IXmlWriter* writer,
+        const std::vector<TimeCalculatorPreset>& presets) {
+    HRESULT result = writer->WriteStartElement(nullptr, L"TimeCalculatorPresets", nullptr);
+    if (SUCCEEDED(result)) {
+        result = WriteXmlNumberAttribute(writer, L"version", 2);
+    }
+    for (size_t index = 0; SUCCEEDED(result) && index < presets.size(); index++) {
+        result = writer->WriteStartElement(nullptr, L"Preset", nullptr);
+        if (SUCCEEDED(result)) {
+            result = WriteXmlTextAttribute(writer, L"time", FormatCalculatorTime(presets[index].time));
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlTextAttribute(writer, L"zone", presets[index].zone);
+        }
+        if (SUCCEEDED(result)) {
+            result = WriteXmlTextAttribute(writer, L"description", presets[index].description);
+        }
+        if (SUCCEEDED(result)) {
+            result = writer->WriteEndElement();
+        }
+    }
+    if (SUCCEEDED(result)) {
+        result = writer->WriteEndElement();
+    }
+    return result;
+}
+
+/// Starts a UTF-8 XML stream with its BOM and configures the native writer without emitting another mark.
+static HRESULT CreateUtf8XmlWriter(IStream* stream, IXmlWriter** writer) {
+    const BYTE bom[] = { 0xEF, 0xBB, 0xBF };
+    ULONG written = 0;
+    HRESULT result = stream->Write(bom, sizeof(bom), &written);
+    if (FAILED(result)) {
+        return result;
+    }
+    if (written != sizeof(bom)) {
+        return STG_E_WRITEFAULT;
+    }
+    result = CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(writer), nullptr);
+    if (SUCCEEDED(result)) {
+        result = (*writer)->SetOutput(stream);
+    }
+    if (SUCCEEDED(result)) {
+        result = (*writer)->SetProperty(XmlWriterProperty_ByteOrderMark, FALSE);
+    }
+    if (SUCCEEDED(result)) {
+        result = (*writer)->SetProperty(XmlWriterProperty_Indent, TRUE);
+    }
+    return result;
+}
+
+/// Replaces the user-data file only after a complete XML document has been written successfully.
+bool WriteCalculatorPresets(const std::wstring& path, const std::vector<TimeCalculatorPreset>& presets) {
+    if (path.empty() || !ValidCalculatorPresets(presets)) {
+        return false;
+    }
+    std::wstring temporary = path + L".tmp";
+    IStream* stream = nullptr;
+    HRESULT result = SHCreateStreamOnFileEx(temporary.c_str(),
+        STGM_CREATE | STGM_WRITE | STGM_SHARE_EXCLUSIVE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream);
+    if (FAILED(result)) {
+        return false;
+    }
+    IXmlWriter* writer = nullptr;
+    result = CreateUtf8XmlWriter(stream, &writer);
+    if (SUCCEEDED(result)) {
+        result = writer->WriteStartDocument(XmlStandalone_Omit);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteCalculatorPresetsXml(writer, presets);
+    }
+    if (SUCCEEDED(result)) {
+        result = writer->WriteEndDocument();
+    }
+    if (SUCCEEDED(result)) {
+        result = writer->Flush();
+    }
+    if (writer != nullptr) {
+        writer->Release();
+    }
+    if (SUCCEEDED(result)) {
+        result = stream->Commit(STGC_DEFAULT);
+    }
+    stream->Release();
+    bool saved = SUCCEEDED(result)
+        && MoveFileExW(temporary.c_str(), path.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+    if (!saved) {
+        DeleteFileW(temporary.c_str());
+    }
+    return saved;
+}
+
 /// Copies the widget's primary font properties into a FontSelection value.
 static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
     FontSelection selection = {};
@@ -256,17 +525,23 @@ static FontSelection GetWidgetFontSelection(const WidgetConfig& config) {
 
 /// Serializes global settings and widgets to an XML stream and reports whether writing and flushing
 /// succeeded.
-static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snapshot) {
+static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snapshot,
+        const std::vector<TimeCalculatorPreset>* presets = nullptr) {
+    if (!ValidCalculatorState(snapshot.calculator)
+            || presets != nullptr && !ValidCalculatorPresets(*presets)) {
+        return false;
+    }
+    bool includePresets = presets != nullptr && !presets->empty();
     IXmlWriter* writer = nullptr;
-    HRESULT result = CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), nullptr);
-    if (SUCCEEDED(result)) {
-        result = writer->SetOutput(stream);
-    }
-    if (SUCCEEDED(result)) {
-        result = writer->SetProperty(XmlWriterProperty_Indent, TRUE);
-    }
+    HRESULT result = CreateUtf8XmlWriter(stream, &writer);
     if (SUCCEEDED(result)) {
         result = writer->WriteStartDocument(XmlStandalone_Omit);
+    }
+    if (SUCCEEDED(result) && includePresets) {
+        result = writer->WriteStartElement(nullptr, L"CalClockExport", nullptr);
+        if (SUCCEEDED(result)) {
+            result = WriteXmlNumberAttribute(writer, L"version", 1);
+        }
     }
     if (SUCCEEDED(result)) {
         result = writer->WriteStartElement(nullptr, L"CalClockSettings", nullptr);
@@ -363,6 +638,9 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"aboutY", snapshot.aboutWindowState.y);
+    }
+    if (SUCCEEDED(result)) {
+        result = WriteCalculatorXml(writer, snapshot);
     }
     if (SUCCEEDED(result)) {
         result = writer->WriteStartElement(nullptr, L"Widgets", nullptr);
@@ -664,6 +942,12 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     if (SUCCEEDED(result)) {
         result = writer->WriteEndElement();
     }
+    if (SUCCEEDED(result) && includePresets) {
+        result = WriteCalculatorPresetsXml(writer, *presets);
+        if (SUCCEEDED(result)) {
+            result = writer->WriteEndElement();
+        }
+    }
     if (SUCCEEDED(result)) {
         result = writer->WriteEndDocument();
     }
@@ -678,7 +962,8 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
 
 /// Writes a nonempty, bounded widget snapshot to the specified XML file, creating or replacing that file.
 /// Returns false for invalid input or a file or serialization error.
-bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot) {
+bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot,
+        const std::vector<TimeCalculatorPreset>* presets) {
     if (path.empty() || snapshot.widgets.empty() || snapshot.widgets.size() > MAX_WIDGET_COUNT) {
         return false;
     }
@@ -687,7 +972,7 @@ bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot
         STGM_CREATE | STGM_WRITE | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, TRUE, nullptr, &stream))) {
         return false;
     }
-    bool success = WriteSettingsXmlStream(stream, snapshot);
+    bool success = WriteSettingsXmlStream(stream, snapshot, presets);
     stream->Release();
     return success;
 }
@@ -761,6 +1046,160 @@ static bool ParseXmlNumber(const std::wstring& text, LONGLONG* value) {
 static bool ReadXmlNumberAttribute(IXmlReader* reader, const wchar_t* name, LONGLONG* value) {
     std::wstring text;
     return ReadXmlAttribute(reader, name, &text) && ParseXmlNumber(text, value);
+}
+
+/// Loads calculator window settings without reading or replacing the separate user-data collection.
+static bool ReadCalculatorXml(IXmlReader* reader, SettingsSnapshot* snapshot) {
+    TimeCalculatorState state;
+    const wchar_t* names[] = { L"from", L"to", L"start", L"day" };
+    SYSTEMTIME* dates[] = { &state.from, &state.to, &state.start, &state.day };
+    std::wstring text;
+    for (size_t index = 0; index < ARRAYSIZE(dates); index++) {
+        if (ReadXmlAttribute(reader, names[index], &text)
+                && !ParseCalculatorTime(text, dates[index], index != 3)) {
+            return false;
+        }
+    }
+    const wchar_t* zoneNames[] = { L"fromZone", L"toZone", L"startZone" };
+    std::wstring* zones[] = { &state.fromZone, &state.toZone, &state.startZone };
+    for (size_t index = 0; index < ARRAYSIZE(zones); index++) {
+        if (ReadXmlAttribute(reader, zoneNames[index], zones[index])
+                && !ValidCalculatorZone(*zones[index])) {
+            return false;
+        }
+    }
+    LONGLONG number = 0;
+    if (ReadXmlNumberAttribute(reader, L"fromNow", &number) && number >= 0 && number <= 1) {
+        state.fromNow = number != 0;
+    }
+    if (ReadXmlNumberAttribute(reader, L"toNow", &number) && number >= 0 && number <= 1) {
+        state.toNow = number != 0;
+    }
+    if (ReadXmlNumberAttribute(reader, L"tab", &number) && number >= 0
+            && number < TIME_CALCULATOR_PAGE_COUNT) {
+        state.tab = static_cast<int>(number);
+    }
+    if (ReadXmlAttribute(reader, L"highlights", &text)) {
+        if (!ParseXmlNumber(text, &number) || number < 0 || number > TIME_CALCULATOR_ALL_HIGHLIGHTS) {
+            return false;
+        }
+        state.highlights = static_cast<DWORD>(number);
+    }
+    if (ReadXmlNumberAttribute(reader, L"x", &number) && number >= INT_MIN && number <= INT_MAX) {
+        snapshot->calculatorWindowState.x = static_cast<int>(number);
+    }
+    if (ReadXmlNumberAttribute(reader, L"y", &number) && number >= INT_MIN && number <= INT_MAX) {
+        snapshot->calculatorWindowState.y = static_cast<int>(number);
+    }
+    snapshot->calculator = std::move(state);
+    return true;
+}
+
+/// Parses one bounded user-data collection and leaves the destination unchanged on malformed input.
+static bool ReadCalculatorPresetsXml(IXmlReader* reader, std::vector<TimeCalculatorPreset>* presets) {
+    LONGLONG version = 0;
+    UINT rootDepth = 0;
+    if (!ReadXmlNumberAttribute(reader, L"version", &version)
+            || version != 2
+            || FAILED(reader->GetDepth(&rootDepth))) {
+        return false;
+    }
+    std::vector<TimeCalculatorPreset> loaded;
+    bool closed = reader->IsEmptyElement() != FALSE;
+    XmlNodeType node = XmlNodeType_None;
+    HRESULT result = S_OK;
+    while (!closed && (result = reader->Read(&node)) == S_OK) {
+        UINT depth = 0;
+        if (FAILED(reader->GetDepth(&depth))) {
+            return false;
+        }
+        if (node == XmlNodeType_EndElement && depth == rootDepth + 1) {
+            closed = true;
+        } else if (node == XmlNodeType_Element) {
+            const wchar_t* name = nullptr;
+            UINT length = 0;
+            std::wstring text;
+            TimeCalculatorPreset preset;
+            if (depth != rootDepth + 1
+                    || FAILED(reader->GetLocalName(&name, &length))
+                    || name == nullptr
+                    || wcscmp(name, L"Preset") != 0
+                    || loaded.size() >= TIME_CALCULATOR_MAX_PRESETS
+                    || !ReadXmlAttribute(reader, L"time", &text)
+                    || !ParseCalculatorTime(text, &preset.time)
+                    || preset.time.wYear == 0
+                    || !ReadXmlAttribute(reader, L"description", &preset.description)
+                    || !ValidCalculatorDescription(preset.description)
+                    || !ReadXmlAttribute(reader, L"zone", &preset.zone)
+                    || !ValidCalculatorZone(preset.zone)) {
+                return false;
+            }
+            loaded.push_back(std::move(preset));
+        }
+    }
+    if (FAILED(result) || !closed) {
+        return false;
+    }
+    *presets = std::move(loaded);
+    return true;
+}
+
+/// Reads the standalone user-data document; an absent file denotes an empty collection.
+bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets) {
+    if (path.empty() || presets == nullptr) {
+        return false;
+    }
+    WIN32_FILE_ATTRIBUTE_DATA data = {};
+    if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &data)) {
+        DWORD error = GetLastError();
+        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) {
+            presets->clear();
+            return true;
+        }
+        return false;
+    }
+    if (data.nFileSizeHigh != 0 || data.nFileSizeLow > 32 * 1024 * 1024) {
+        return false;
+    }
+    IStream* stream = nullptr;
+    HRESULT result = SHCreateStreamOnFileEx(path.c_str(),
+        STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream);
+    if (FAILED(result)) {
+        return false;
+    }
+    IXmlReader* reader = nullptr;
+    result = CreateXmlReader(__uuidof(IXmlReader), reinterpret_cast<void**>(&reader), nullptr);
+    if (SUCCEEDED(result)) {
+        result = reader->SetInput(stream);
+    }
+    std::vector<TimeCalculatorPreset> loaded;
+    bool found = false;
+    XmlNodeType node = XmlNodeType_None;
+    while (SUCCEEDED(result) && (result = reader->Read(&node)) == S_OK) {
+        if (node != XmlNodeType_Element) {
+            continue;
+        }
+        const wchar_t* name = nullptr;
+        UINT length = 0;
+        if (found
+                || FAILED(reader->GetLocalName(&name, &length))
+                || name == nullptr
+                || wcscmp(name, L"TimeCalculatorPresets") != 0
+                || !ReadCalculatorPresetsXml(reader, &loaded)) {
+            result = E_FAIL;
+            break;
+        }
+        found = true;
+    }
+    bool valid = SUCCEEDED(result) && found;
+    if (reader != nullptr) {
+        reader->Release();
+    }
+    stream->Release();
+    if (valid) {
+        *presets = std::move(loaded);
+    }
+    return valid;
 }
 
 /// Verifies that stored widgets have distinct positive IDs before replacing application settings.
@@ -896,7 +1335,9 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
             && number < FONT_ANTIALIAS_COUNT) {
         config->fontAntialiasing = static_cast<int>(number);
     }
-    if (ReadXmlNumberAttribute(reader, L"timeFormat", &number) && number >= 0 && number < TIME_FORMAT_COUNT) {
+    if (ReadXmlNumberAttribute(reader, L"timeFormat", &number)
+            && number >= 0
+            && number < TIME_FORMAT_COUNT) {
         config->timeFormat = static_cast<int>(number);
     }
     if (ReadXmlNumberAttribute(reader, L"showAmPm", &number)) {
@@ -1095,7 +1536,8 @@ static void ReadWidgetXml(IXmlReader* reader, int index, AppLanguage defaultLang
 /// Parses and validates a settings XML stream, including its root, widget count, and unique positive widget
 /// IDs. Assigns the destination snapshot only after validation succeeds.
 static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
-        WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+        WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot,
+        std::vector<TimeCalculatorPreset>* presets = nullptr, bool* presetsOnly = nullptr) {
     IXmlReader* reader = nullptr;
     HRESULT result = CreateXmlReader(__uuidof(IXmlReader), reinterpret_cast<void**>(&reader), nullptr);
     if (SUCCEEDED(result)) {
@@ -1104,6 +1546,11 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
     SettingsSnapshot loaded = {};
     loaded.language = defaultLanguage;
     bool rootFound = false;
+    bool exportFound = false;
+    bool standalonePresets = false;
+    bool calculatorFound = false;
+    bool presetsFound = false;
+    std::vector<TimeCalculatorPreset> loadedPresets;
     XmlNodeType nodeType = XmlNodeType_None;
     while (SUCCEEDED(result) && (result = reader->Read(&nodeType)) == S_OK) {
         if (nodeType != XmlNodeType_Element) {
@@ -1116,8 +1563,36 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
             break;
         }
         std::wstring element(localName, nameLength);
-        if (element == L"CalClockSettings") {
-            if (rootFound) {
+        UINT depth = 0;
+        if (FAILED(reader->GetDepth(&depth))) {
+            result = E_FAIL;
+            break;
+        }
+        if (element == L"CalClockExport") {
+            LONGLONG version = 0;
+            if (depth != 0
+                    || exportFound || rootFound
+                    || !ReadXmlNumberAttribute(reader, L"version", &version)
+                    || version != 1) {
+                result = E_FAIL;
+                break;
+            }
+            exportFound = true;
+        } else if (element == L"TimeCalculatorPresets") {
+            UINT expectedDepth = exportFound ? 1 : 0;
+            if (presetsFound
+                    || depth != expectedDepth
+                    || !exportFound && (presets == nullptr || presetsOnly == nullptr || rootFound)
+                    || !ReadCalculatorPresetsXml(reader, &loadedPresets)) {
+                result = E_FAIL;
+                break;
+            }
+            standalonePresets = !exportFound;
+            rootFound = rootFound || standalonePresets;
+            presetsFound = true;
+        } else if (element == L"CalClockSettings") {
+            UINT expectedDepth = exportFound ? 1 : 0;
+            if (rootFound || depth != expectedDepth) {
                 result = E_FAIL;
                 break;
             }
@@ -1247,6 +1722,12 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                     && number <= INT_MAX) {
                 loaded.aboutWindowState.y = static_cast<int>(number);
             }
+        } else if (element == L"Calculator" && rootFound) {
+            if (calculatorFound || !ReadCalculatorXml(reader, &loaded)) {
+                result = E_FAIL;
+                break;
+            }
+            calculatorFound = true;
         } else if (element == L"Widget" && rootFound) {
             if (loaded.widgets.size() >= MAX_WIDGET_COUNT) {
                 result = E_FAIL;
@@ -1260,27 +1741,36 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
     }
     bool valid = SUCCEEDED(result)
         && rootFound
-        && !loaded.widgets.empty()
-        && StoredWidgetIdsAreValid(loaded.widgets);
+        && (!exportFound || presetsFound)
+        && (standalonePresets || !loaded.widgets.empty() && StoredWidgetIdsAreValid(loaded.widgets));
     if (reader != nullptr) {
         reader->Release();
     }
     if (valid) {
-        *snapshot = std::move(loaded);
+        if (!standalonePresets) {
+            *snapshot = std::move(loaded);
+        }
+        if (presetsOnly != nullptr) {
+            *presetsOnly = standalonePresets;
+        }
+        if (presets != nullptr) {
+            *presets = std::move(loadedPresets);
+        }
     }
     return valid;
 }
 
-/// Loads and validates a settings XML file no larger than 4 MiB, leaving snapshot unchanged on failure.
+/// Loads and validates a settings XML file no larger than 32 MiB, leaving snapshot unchanged on failure.
 bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
-        WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot) {
+        WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot,
+        std::vector<TimeCalculatorPreset>* presets, bool* presetsOnly) {
     if (path.empty() || createDefaults == nullptr || snapshot == nullptr) {
         return false;
     }
     WIN32_FILE_ATTRIBUTE_DATA fileData = {};
     if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fileData)
             || fileData.nFileSizeHigh != 0
-            || fileData.nFileSizeLow > 4 * 1024 * 1024) {
+            || fileData.nFileSizeLow > 32 * 1024 * 1024) {
         return false;
     }
     IStream* stream = nullptr;
@@ -1288,7 +1778,7 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
         STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
         return false;
     }
-    bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot);
+    bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot, presets, presetsOnly);
     stream->Release();
     return success;
 }
@@ -1702,8 +2192,8 @@ static void WriteWidgetConfig(HKEY key, const WidgetConfig& config) {
     WriteString(key, L"RemoteScriptUrl", config.remoteScriptUrl);
 }
 
-/// Recognizes numeric widget subkeys outside the saved collection, including indices too large to represent.
-static bool IsObsoleteWidgetRegistryKey(const wchar_t* name, size_t widgetCount) {
+/// Recognizes numeric subkeys outside the saved collection, including indices too large to represent.
+static bool IsObsoleteIndexedRegistryKey(const wchar_t* name, size_t itemCount) {
     if (name == nullptr || name[0] == L'\0') {
         return false;
     }
@@ -1718,11 +2208,11 @@ static bool IsObsoleteWidgetRegistryKey(const wchar_t* name, size_t widgetCount)
         }
         index = index * 10 + digit;
     }
-    return index >= widgetCount;
+    return index >= itemCount;
 }
 
-/// Deletes numeric widget subkeys beyond the saved count while preserving unrelated subkeys.
-static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount) {
+/// Deletes numeric subkeys beyond the saved count while preserving unrelated subkeys.
+static void RemoveObsoleteIndexedRegistryKeys(HKEY collection, size_t itemCount) {
     std::vector<std::wstring> obsoleteKeys;
     for (DWORD keyIndex = 0;; keyIndex++) {
         wchar_t name[256] = {};
@@ -1735,13 +2225,86 @@ static void RemoveObsoleteWidgetRegistryKeys(HKEY collection, size_t widgetCount
         if (result != ERROR_SUCCESS) {
             break;
         }
-        if (IsObsoleteWidgetRegistryKey(name, widgetCount)) {
+        if (IsObsoleteIndexedRegistryKey(name, itemCount)) {
             obsoleteKeys.push_back(name);
         }
     }
     for (size_t index = 0; index < obsoleteKeys.size(); index++) {
         RegDeleteTreeW(collection, obsoleteKeys[index].c_str());
     }
+}
+
+/// Loads calculator inputs and position; user-supplied dates are never read from the registry.
+static void ReadCalculatorRegistry(HKEY root, SettingsSnapshot* snapshot) {
+    HKEY calculator = nullptr;
+    if (RegOpenKeyExW(root, L"Calculator", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, &calculator)
+            != ERROR_SUCCESS) {
+        return;
+    }
+    TimeCalculatorState state;
+    const wchar_t* names[] = { L"From", L"To", L"Start", L"Day" };
+    SYSTEMTIME* dates[] = { &state.from, &state.to, &state.start, &state.day };
+    std::wstring text;
+    for (size_t index = 0; index < ARRAYSIZE(dates); index++) {
+        if (ReadString(calculator, names[index], &text, 24)) {
+            ParseCalculatorTime(text, dates[index], index != 3);
+        }
+    }
+    const wchar_t* zoneNames[] = { L"FromZone", L"ToZone", L"StartZone" };
+    std::wstring* zones[] = { &state.fromZone, &state.toZone, &state.startZone };
+    for (size_t index = 0; index < ARRAYSIZE(zones); index++) {
+        if (ReadString(calculator, zoneNames[index], &text, 127) && ValidCalculatorZone(text)) {
+            *zones[index] = text;
+        }
+    }
+    DWORD number = 0;
+    if (ReadDword(calculator, L"FromNow", &number) && number <= 1) {
+        state.fromNow = number != 0;
+    }
+    if (ReadDword(calculator, L"ToNow", &number) && number <= 1) {
+        state.toNow = number != 0;
+    }
+    if (ReadDword(calculator, L"Tab", &number) && number < TIME_CALCULATOR_PAGE_COUNT) {
+        state.tab = static_cast<int>(number);
+    }
+    if (ReadDword(calculator, L"Highlights", &number) && number <= TIME_CALCULATOR_ALL_HIGHLIGHTS) {
+        state.highlights = number;
+    }
+    if (ReadDword(calculator, L"X", &number)) {
+        snapshot->calculatorWindowState.x = static_cast<int>(number);
+    }
+    if (ReadDword(calculator, L"Y", &number)) {
+        snapshot->calculatorWindowState.y = static_cast<int>(number);
+    }
+    RegCloseKey(calculator);
+    snapshot->calculator = std::move(state);
+}
+
+/// Writes only calculator inputs and position to the registry, excluding all saved user data.
+static bool WriteCalculatorRegistry(HKEY root, const SettingsSnapshot& snapshot) {
+    HKEY calculator = nullptr;
+    DWORD disposition = 0;
+    REGSAM access = KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_CREATE_SUB_KEY | KEY_ENUMERATE_SUB_KEYS | DELETE;
+    if (RegCreateKeyExW(root, L"Calculator", 0, nullptr, 0, access, nullptr, &calculator, &disposition)
+            != ERROR_SUCCESS) {
+        return false;
+    }
+    const TimeCalculatorState& state = snapshot.calculator;
+    WriteString(calculator, L"From", FormatCalculatorTime(state.from));
+    WriteString(calculator, L"To", FormatCalculatorTime(state.to));
+    WriteString(calculator, L"Start", FormatCalculatorTime(state.start));
+    WriteString(calculator, L"Day", FormatCalculatorTime(state.day, false));
+    WriteString(calculator, L"FromZone", state.fromZone);
+    WriteString(calculator, L"ToZone", state.toZone);
+    WriteString(calculator, L"StartZone", state.startZone);
+    WriteDword(calculator, L"FromNow", state.fromNow);
+    WriteDword(calculator, L"ToNow", state.toNow);
+    WriteDword(calculator, L"Tab", state.tab);
+    WriteDword(calculator, L"Highlights", state.highlights);
+    WriteDword(calculator, L"X", snapshot.calculatorWindowState.x);
+    WriteDword(calculator, L"Y", snapshot.calculatorWindowState.y);
+    RegCloseKey(calculator);
+    return true;
 }
 
 /// Loads per-user settings using supplied defaults and a widget-default factory, including the older
@@ -1846,6 +2409,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"AboutY", &value)) {
         loaded.aboutWindowState.y = static_cast<int>(value);
     }
+    ReadCalculatorRegistry(root, &loaded);
     HKEY collection = nullptr;
     DWORD count = 0;
     LSTATUS result = RegOpenKeyExW(root, L"Widgets", 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
@@ -1922,7 +2486,7 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
 /// Writes global settings and widget subkeys, removes obsolete widget keys, and deletes automatic XML after
 /// success. Reports key-creation failures; individual value writes do not return status.
 bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
-    if (snapshot.widgets.size() > MAX_WIDGET_COUNT) {
+    if (snapshot.widgets.size() > MAX_WIDGET_COUNT || !ValidCalculatorState(snapshot.calculator)) {
         return false;
     }
     HKEY root = nullptr;
@@ -1931,7 +2495,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
         KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
         return false;
     }
-    WriteDword(root, L"SchemaVersion", 15);
+    WriteDword(root, L"SchemaVersion", 16);
     WriteDword(root, L"Language", snapshot.language);
     WriteDword(root, L"DisableThemes", snapshot.themesDisabled);
     WriteDword(root, L"Windows2000Style", snapshot.themesDisabled && snapshot.windows2000Style);
@@ -1966,6 +2530,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
     WriteDword(root, L"HelpMaximized", snapshot.helpWindowState.maximized);
     WriteDword(root, L"AboutX", snapshot.aboutWindowState.x);
     WriteDword(root, L"AboutY", snapshot.aboutWindowState.y);
+    bool calculatorWritten = WriteCalculatorRegistry(root, snapshot);
     bool written = false;
     HKEY collection = nullptr;
     REGSAM collectionAccess =
@@ -1988,10 +2553,11 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
                 written = false;
             }
         }
-        RemoveObsoleteWidgetRegistryKeys(collection, snapshot.widgets.size());
+        RemoveObsoleteIndexedRegistryKeys(collection, snapshot.widgets.size());
         RegCloseKey(collection);
     }
     RegCloseKey(root);
+    written = written && calculatorWritten;
     if (written) {
         RemoveAutomaticXmlSettings();
     }

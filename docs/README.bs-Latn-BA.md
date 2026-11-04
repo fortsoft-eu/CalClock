@@ -56,13 +56,52 @@ Promjene izgleda odmah se prikazuju u pregledu odabranog vidžeta. `Podrazumijev
 
 Izglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da“ (podrazumijevano), „Ne, zadrži razmak“ i „Ne, bez razmaka“. „Ne, zadrži razmak“ skriva nulu, ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani razmak. Red UTC ima vlastito centriranje.
 
-Stil Windows 2000 dostupan je uz isključene teme i važi samo za Postavke, Pomoć i O programu. Uz podrazumijevani sistemski font koristi Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.
+Stil Windows 2000 dostupan je uz isključene teme i važi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font koristi Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.
+
+## Kalkulator vremena
+
+Otvorite Kalkulator vremena iz menija bilo kojeg vidžeta ili ikone u području obavještenja. Vremenski interval
+računa razliku između dva datuma i vremena. Okrugle vrijednosti ističe u kalendaru okrugle vrijednosti,
+ponovljene cifre te datume navršenih mjeseci i godina od odabranog početka. Sačuvani datumi i vremena
+omogućava dodavanje, uređivanje, sortiranje i brisanje datuma i vremena s opisom. Datumi i vremena čuvaju se
+odvojeno u `%APPDATA%\FortSoft\CalClock\times.xml`. Ručni izvoz ih uključuje; uvoz zadržava postojeće stavke i
+preskače samo stavke s istim datumom, vremenom i potpunim opisom.
+
+Svaki unos ima vlastitu vremensku zonu s istog spiska kao u Postavkama. Zadana je trenutna zona Windowsa.
+Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni sat
+odaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće sačuvati. Sati mjere proteklo vrijeme, a
+kalendarski proračuni koriste početnu zonu. Sada koristi sistemsko vrijeme Windowsa bez pomaka widgeta,
+prikazano u odabranoj zoni.
+
+Uvoz prihvata i zasebnu XML datoteku sa sačuvanim datumima i vremenima; spaja te zapise bez promjene postavki
+aplikacije.
+
+Na kartici Isticanje možete odabrati pravila za isticanje datuma u kalendaru. Podrazumijevano se ističu
+početni dan (nulte vrijednosti), okrugle vrijednosti koje završavaju nulama, prvih devet punih sedmica te
+mjesečne i godišnje obljetnice. Ponavljajuće cifre 1–9 (na primjer 11, 111 ili 66, 666) mogu se uključiti
+pojedinačno i podrazumijevano su isključene.
+
+Kliknite zaglavlje kolone da sortirate sačuvane podatke prema stvarnom trenutku ili tekstu opisa. Ponovni klik
+obrće redoslijed; strelica pokazuje smjer.
+
+Položaj prozora, aktivna kartica, unesene vrijednosti i izbori isticanja čuvaju se s postavkama aplikacije u
+registru ili XML-u, prema odabranom spremištu.
 
 ## Postavke i meniji
 
-Jezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz ivice vrijede globalno i postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na prozore Postavke, Pomoć i O programu. Svaki vidžet koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema jeziku interfejsa Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme vidžeta utječu samo na taj vidžet.
+Jezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz ivice vrijede globalno i postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na prozore Postavke, Pomoć, O programu i Kalkulator vremena. Svaki vidžet koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema jeziku interfejsa Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme vidžeta utječu samo na taj vidžet.
 
-Meni vidžeta sadrži primjenjive postavke vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika kopiranja datuma, a zatim Rasporedi u mrežu, Postavke, Pomoć, O programu i Izlaz. Meni ikone u području obavijesti navodi numerisane vidžete i naredbe Prikaži sve, Sakrij sve i Isključi sav zvuk. Slijedi zasebno grupirana naredba Rasporedi u mrežu. Prikazivanje ili vraćanje vidžeta dovodi ga naprijed bez promjene postavke Uvijek na vrhu. Ponovno pokretanje CalClocka aktivira postojeću instancu i po potrebi vraća posljednje skrivene vidžete. Dostupne veličine brojčanika i podrška sekundnoj kazaljci zavise od verzije Windowsa. Alarm i Signal mogu se uključiti u meniju vidžeta; Alarm pokazuje vrijeme i, ako nisu odabrani svi dani, aktivne dane u sedmici. Označeni Isključi zvuk odgovara opciji Zvuk isključen na kartici Općenito. Isključi sav zvuk isključuje zvuk svih vidžeta, a ponovnim izvođenjem vraća zvuk samo onima koje je prethodno utišao. M na bilo kojem vidžetu radi isto. Uključivanje alarma bez odabranih dana otvara njegovu karticu Alarm.
+Meni vidžeta sadrži primjenjive postavke vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika
+kopiranja datuma, a zatim Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O programu i Izlaz. Meni
+ikone u području obavijesti navodi numerisane vidžete i naredbe Prikaži sve, Sakrij sve i Isključi sav zvuk.
+Slijedi zasebno grupirana naredba Rasporedi u mrežu. Prikazivanje ili vraćanje vidžeta dovodi ga naprijed bez
+promjene postavke Uvijek na vrhu. Ponovno pokretanje CalClocka aktivira postojeću instancu i po potrebi vraća
+posljednje skrivene vidžete. Dostupne veličine brojčanika i podrška sekundnoj kazaljci zavise od verzije
+Windowsa. Alarm i Signal mogu se uključiti u meniju vidžeta; Alarm pokazuje vrijeme i, ako nisu odabrani svi
+dani, aktivne dane u sedmici. Označeni Isključi zvuk odgovara opciji Zvuk isključen na kartici Općenito.
+Isključi sav zvuk isključuje zvuk svih vidžeta, a ponovnim izvođenjem vraća zvuk samo onima koje je prethodno
+utišao. M na bilo kojem vidžetu radi isto. Uključivanje alarma bez odabranih dana otvara njegovu karticu
+Alarm.
 
 ## Zvučni vremenski signal
 

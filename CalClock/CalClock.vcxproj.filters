@@ -87,6 +87,12 @@
     <ClCompile Include="TimeDateNotices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TimeCalculator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeCalculatorForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="TimeFormats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -180,6 +186,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeDateNotices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCalculatorForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeFormats.h">

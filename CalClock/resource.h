@@ -14,6 +14,51 @@
 #define IDD_SETTINGS_TIME                       111
 #define IDD_SETTINGS_APPLICATION                112
 
+#define IDD_TIME_CALCULATOR                     113
+#define IDD_CALCULATOR_INTERVAL                  114
+#define IDD_CALCULATOR_ROUND                     115
+#define IDD_CALCULATOR_PRESETS                   116
+#define IDD_CALCULATOR_HIGHLIGHTS                117
+#define ID_CALC_HIGHLIGHT_BASE                   3450
+
+#define ID_CALC_TABS                             3300
+#define ID_CALC_FROM_LABEL                       3301
+#define ID_CALC_FROM                             3302
+#define ID_CALC_FROM_NOW                         3303
+#define ID_CALC_FROM_PRESET                      3304
+#define ID_CALC_TO_LABEL                         3305
+#define ID_CALC_TO                               3306
+#define ID_CALC_TO_NOW                           3307
+#define ID_CALC_TO_PRESET                        3308
+#define ID_CALC_INTERVAL_NOTE                    3309
+#define ID_CALC_START_LABEL                      3310
+#define ID_CALC_START                            3311
+#define ID_CALC_PRESET_LABEL                     3312
+#define ID_CALC_PRESET                           3313
+#define ID_CALC_CALENDAR                         3314
+#define ID_CALC_SELECTED_LABEL                   3315
+#define ID_CALC_SELECTED_DATE                    3316
+#define ID_CALC_ROUND_NOTE                       3317
+#define ID_CALC_DATE_LABEL                       3318
+#define ID_CALC_DATE                             3319
+#define ID_CALC_DESCRIPTION_LABEL                3320
+#define ID_CALC_DESCRIPTION                      3321
+#define ID_CALC_ADD                              3322
+#define ID_CALC_EDIT                             3323
+#define ID_CALC_DELETE                           3324
+#define ID_CALC_CANCEL                           3325
+#define ID_CALC_LIST                             3326
+#define ID_CALC_ZONE_BASE                        3400
+#define ID_CALC_OFFSET_BASE                      3410
+#define ID_CALC_ZONE_LABEL_BASE                  3420
+#define ID_CALC_UTC_BASE                         3430
+#define ID_CALC_BUTTON_ROW               3440
+#define ID_CALC_UNIT_BASE                        3340
+#define ID_CALC_TOTAL_BASE                       3350
+#define ID_CALC_PARTS_BASE                       3360
+#define ID_CALC_DAY_UNIT_BASE                    3370
+#define ID_CALC_DAY_TOTAL_BASE                   3380
+
 #define ID_INFO_CLOSE                           IDOK
 #define ID_INFO_TEXT                            3051
 #define ID_INFO_ICON                            3200
@@ -207,7 +252,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE                113
+#define _APS_NEXT_RESOURCE_VALUE                118
 #define _APS_NEXT_COMMAND_VALUE                 40001
 #define _APS_NEXT_CONTROL_VALUE                 5153
 #define _APS_NEXT_SYMED_VALUE                   101

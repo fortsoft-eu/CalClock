@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.1
+ * Last modified for version 1.7.1.3
  */
 
 #pragma once
@@ -30,6 +30,7 @@
 #include "AlarmSchedule.h"
 #include "PersistWindowState.h"
 #include "TimeDateNotices.h"
+#include "TimeCalculator.h"
 #include <string>
 #include <vector>
 
@@ -58,6 +59,13 @@ const int MONITOR_COLUMN_COUNT = 8;
 
 /// Identifies the shared keyboard-navigation subclass for About and Help text controls.
 const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
+
+/// Retains a dropdown's pending selection until it is accepted or cancelled.
+struct ApplicationComboState {
+    HWND open = nullptr;
+    int initialSelection = -1;
+    bool accepted = false;
+};
 
 /// Identifies the supported widget kinds and indexes their localized names.
 enum WidgetType {
@@ -409,6 +417,44 @@ enum TextId {
     TXT_WARN_UNSAVED_CHANGES_LABEL,
     TXT_UNSAVED_SETTINGS_PROMPT,
     TXT_TEST_AUDIO_OUTPUT_LABEL,
+    TXT_TIME_CALCULATOR,
+    TXT_CALCULATOR_WINDOW_TITLE,
+    TXT_CALCULATOR_INTERVAL,
+    TXT_CALCULATOR_ROUND,
+    TXT_CALCULATOR_PRESETS,
+    TXT_CALCULATOR_HIGHLIGHTS,
+    TXT_CALCULATOR_HIGHLIGHT_START,
+    TXT_CALCULATOR_HIGHLIGHT_ROUND,
+    TXT_CALCULATOR_HIGHLIGHT_DIGITS,
+    TXT_CALCULATOR_HIGHLIGHT_WEEKS,
+    TXT_CALCULATOR_HIGHLIGHT_ANNIVERSARIES,
+    TXT_CALCULATOR_FROM,
+    TXT_CALCULATOR_TO,
+    TXT_CALCULATOR_NOW,
+    TXT_CALCULATOR_START,
+    TXT_CALCULATOR_PRESET,
+    TXT_CALCULATOR_DATE,
+    TXT_CALCULATOR_DESCRIPTION,
+    TXT_CALCULATOR_DATE_COLUMN,
+    TXT_CALCULATOR_DESCRIPTION_COLUMN,
+    TXT_CALCULATOR_EDIT,
+    TXT_CALCULATOR_DELETE,
+    TXT_CALCULATOR_SELECT_ALL,
+    TXT_CALCULATOR_HOURS,
+    TXT_CALCULATOR_DAYS,
+    TXT_CALCULATOR_WEEKS,
+    TXT_CALCULATOR_MONTHS,
+    TXT_CALCULATOR_YEARS,
+    TXT_CALCULATOR_UNITS,
+    TXT_CALCULATOR_INTERVAL_NOTE,
+    TXT_CALCULATOR_SELECTED_DAY,
+    TXT_CALCULATOR_DUPLICATE,
+    TXT_CALCULATOR_DELETE_CONFIRM,
+    TXT_CALCULATOR_ROUND_NOTE,
+    TXT_CALCULATOR_READ_FAILED,
+    TXT_CALCULATOR_WRITE_FAILED,
+    TXT_CALCULATOR_SELECT_OFFSET,
+    TXT_CALCULATOR_TIME_GAP,
     TXT_COUNT
 };
 
@@ -530,6 +576,8 @@ struct SettingsSnapshot {
     WidgetType lastAddedWidgetType = WIDGET_ANALOG;
     PersistWindowStateData helpWindowState;
     PersistWindowStateData aboutWindowState;
+    PersistWindowStateData calculatorWindowState;
+    TimeCalculatorState calculator;
     std::vector<WidgetConfig> widgets;
 };
 
@@ -593,6 +641,11 @@ struct Widget {
 /// Stores the global setting that disables visual styles for the application.
 extern bool themesDisabled;
 
+/// Selects the application language used by modeless forms and their native date formatting.
+extern AppLanguage appLanguage;
+
+extern std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
+
 /// Returns a borrowed localized UI string in the current application language.
 const wchar_t* T(TextId id);
 
@@ -652,8 +705,38 @@ HWND CreateControlTooltip(HWND parent, HWND control, const wchar_t* text);
 /// distance. Uses native content rectangles and preserves size, horizontal position, and Z order.
 void AlignSettingsControl(HWND control, HWND reference, LONG baselineDistance = 0);
 
+/// Moves or resizes a native control only when needed, preserving its font and discarding stale copied
+/// pixels.
+void SetControlPosition(HWND control, int x, int y, int width, int height);
+
+/// Measures and positions a combo dropdown using its current font, contents, and monitor work area.
+void UpdateComboBoxDropDownMetrics(HWND combo);
+
+/// Sizes combo fields and dropdown rows from their actual font while preserving the existing height limits.
+void UpdateSettingsComboMetrics(HWND control);
+
+/// Returns the native combo inside a ComboBoxEx, or the supplied ordinary control.
+HWND GetSettingsComboBox(HWND window);
+
+/// Shares the complete control message handler, including native combo drawing, input and font/theme changes.
+LRESULT CALLBACK ApplicationControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+    UINT_PTR subclassId, DWORD_PTR referenceData);
+
+/// Commits a changed dropdown selection only on close; cancelled navigation restores its original value.
+bool HandleApplicationComboNotification(HWND control, int* notification, ApplicationComboState& state,
+    bool requestedModeChanged = false);
+
+/// Sizes an edit's native viewport and left inset without changing its position, width, or right margin.
+void UpdateEditMetrics(HWND edit);
+
+/// Restores native tab sizing and caps header height using the tab control's actual font.
+void UpdateDialogTabMetrics(HWND tabs);
+
+/// Scrolls overflowing tab headers under the pointer without changing selection or focus.
+bool ScrollDialogTabHeaders(HWND window, HWND tabs, WPARAM wParam, LPARAM lParam);
+
 /// Draws a wrapped label over its parent background using the selected font and native text colors.
-INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item);
+INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item, LONG referenceHeight = 0);
 
 /// Measures a label's wrapped height at the requested width using its actual font, or returns zero if a DC
 /// is unavailable.
@@ -695,3 +778,7 @@ int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int length, i
 /// Lets information windows handle Enter, Escape and Tab from their read-only text fields.
 LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
+
+/// Builds the common Settings and calculator catalog captions without changing their order or zone keys.
+std::vector<std::wstring> BuildSettingsTimeZoneLabels(const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones,
+    const SYSTEMTIME& utc, const std::wstring& systemLabel);

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.0.6
+Last modified for version 1.7.1.3
 
 .SYNOPSIS
 Builds CalClock and runs continuous-clock, alarm, wake, playback and isolated Settings regression tests.

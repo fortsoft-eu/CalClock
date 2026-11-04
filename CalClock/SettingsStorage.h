@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.0
+ * Last modified for version 1.7.1.3
  */
 
 #pragma once
@@ -37,6 +37,15 @@ using WidgetDefaultsFactory = WidgetConfig(*)(WidgetType type, int index, AppLan
 /// Returns an empty string if the location cannot be obtained or created.
 std::wstring AutomaticXmlSettingsPath(bool createDirectory);
 
+/// Returns the independent times.xml path in roaming AppData, optionally creating its directories.
+std::wstring CalculatorPresetsPath(bool createDirectory);
+
+/// Reads user-supplied dates from their standalone XML file; a missing file yields an empty collection.
+bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets);
+
+/// Writes user-supplied dates through a temporary file, preserving the existing file on failure.
+bool WriteCalculatorPresets(const std::wstring& path, const std::vector<TimeCalculatorPreset>& presets);
+
 /// Deletes the automatic XML settings file and attempts to remove its now-empty application and vendor
 /// directories.
 void RemoveAutomaticXmlSettings();
@@ -45,12 +54,17 @@ void RemoveAutomaticXmlSettings();
 void RemoveRegistrySettings();
 
 /// Writes a nonempty, bounded widget snapshot to the specified XML file, creating or replacing that file.
-/// Returns false for invalid input or a file or serialization error.
-bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot);
+/// An optional user-data collection is included only for explicit exports, never for automatic settings
+/// saves. Returns false for invalid input or a file or serialization error.
+bool WriteSettingsXml(const std::wstring& path, const SettingsSnapshot& snapshot,
+    const std::vector<TimeCalculatorPreset>* presets = nullptr);
 
-/// Loads and validates a settings XML file no larger than 4 MiB, leaving snapshot unchanged on failure.
+/// Loads and validates a settings XML file no larger than 32 MiB, leaving destinations unchanged on failure.
+/// Returns exported user data separately; the caller merges it rather than replacing existing data.
+/// An explicit presetsOnly output also permits a standalone user-data document, leaving snapshot unchanged.
 bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
-    WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot);
+    WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot,
+    std::vector<TimeCalculatorPreset>* presets = nullptr, bool* presetsOnly = nullptr);
 
 /// Loads per-user settings using supplied defaults and a widget-default factory, including the older
 /// single-widget layout. Returns false if arguments are invalid or the settings root cannot be opened.
@@ -64,6 +78,7 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot);
 /// Serializes selected widgets to bounded XML bytes, replacing data only when serialization succeeds.
 bool SerializeWidgetClipboardData(const std::vector<WidgetConfig>& widgets, std::vector<BYTE>* data);
 
-/// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged on failure.
+/// Validates bounded clipboard XML and returns its widget configurations, leaving widgets unchanged on
+/// failure.
 bool DeserializeWidgetClipboardData(const std::vector<BYTE>& data, AppLanguage defaultLanguage,
     WidgetDefaultsFactory createDefaults, std::vector<WidgetConfig>* widgets);

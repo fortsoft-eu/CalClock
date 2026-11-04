@@ -58,13 +58,52 @@ Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompór
 
 Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
-Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe, Cabhair agus Maidir leis. Úsáidtear Tahoma 8 pt in áit chló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáidtear Tahoma 8 pt in áit chló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+
+## Áireamhán ama
+
+Oscail Áireamhán ama ó roghchlár aon ghiuirléide nó ó roghchlár an deilbhín sa limistéar fógraí. Ríomhann
+Eatramh ama an difríocht idir dhá dháta agus am. Aibhsíonn Uimhreacha cothroma uimhreacha cothroma, digití
+athfhillteacha agus comóradh míosúil agus bliantúil san fhéilire ón tús roghnaithe. Le Dátaí agus amanna
+réamhshocraithe is féidir dátaí agus amanna le cur síos a chur leis, a chur in eagar, a shórtáil agus a
+scriosadh. Úsáideann Sábháiltear dátaí agus amanna ar leithligh in `%APPDATA%\FortSoft\CalClock\times.xml`.
+Cuirtear san áireamh iad in easpórtáil láimhe; coinníonn iompórtáil na hiontrálacha atá ann agus ní scipeálann
+sí ach iontrálacha a bhfuil an dáta, an t-am agus an cur síos iomlán céanna acu.
+
+Tá crios ama dá chuid féin ag gach ionchur, ón liosta céanna agus atá sna Socruithe. Is é crios ama reatha
+Windows an réamhshocrú. Sábháiltear meandar soiléir UTC agus a chrios taispeána. Caomhnaítear an meandar nuair
+a athraítear an crios. Roghnaigh an fritháireamh UTC d’uair athfhillteach; ní féidir am áitiúil nach bhfuil
+ann a shábháil. Tomhaiseann uaireanta an t-am caite; úsáideann ríomhanna féilire an crios tosaigh. Úsáideann
+Anois am córais Windows gan fritháireamh giuirléide, léirithe sa chrios roghnaithe.
+
+Glacann iompórtáil le comhad XML ar leith de dhátaí agus amanna sábháilte freisin; cumasctar na taifid gan
+socruithe an fheidhmchláir a athrú.
+
+Ar an gcluaisín Aibhsiú, roghnaigh na rialacha chun dátaí a aibhsiú san fhéilire. De réir réamhshocraithe,
+aibhsítear an lá tosaigh (luachanna nialasacha), luachanna cruinne a chríochnaíonn le nialais, na chéad naoi
+seachtaine iomlána agus cothrom míosa agus bliana. Is féidir digití athfhillteacha 1–9 (mar shampla 11, 111 nó
+66, 666) a chumasú ina n-aonar; tá siad díchumasaithe de réir réamhshocraithe.
+
+Cliceáil ceanntásc colúin chun iontrálacha sábháilte a shórtáil de réir an fhíor-mheandair nó théacs an chuir
+síos. Cliceáil arís chun an t-ord a aisiompú; léiríonn saighead an treo.
+
+Sábháiltear suíomh na fuinneoige, an chluaisín gníomhach, na luachanna iontráilte agus na roghanna aibhsithe
+le socruithe an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála.
 
 ## Socruithe agus roghchláir
 
-Is socruithe comhroinnte ar an gcluaisín Feidhmchlár iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Ní bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Socruithe, Cabhair agus Maidir leis. Úsáideann gach giuirléid a socrú téama féin. Ar an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin.
+Is socruithe comhroinnte ar an gcluaisín Feidhmchlár iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Ní bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáideann gach giuirléid a socrú téama féin. Ar an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin.
 
-Taispeánann roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcónaí, soicindí, méid agus cóipeáil dáta a bhaineann léi, agus ansin Eagraigh in eangach, Socruithe, Cabhair, Maidir leis agus Scoir. Liostaíonn an roghchlár fógraí giuirléidí uimhrithe agus Taispeáin uile, Folaigh uile agus Balbhaigh uile, agus an t-ordú eangaí i ngrúpa ar leith. Tugann taispeáint nó athchóiriú giuirléid chun tosaigh gan Ar barr i gcónaí a athrú. Má sheoltar CalClock arís, gníomhachtaítear an feidhmchlár atá ar siúl cheana agus athchóirítear na giuirléidí is déanaí a folaíodh más gá. Braitheann méideanna aghaidhe agus tacaíocht don lámh soicindí ar Windows. Is féidir Aláram agus Comhartha a athrú sa roghchlár, a thaispeánann am, eatramh agus na laethanta gníomhacha nuair nach bhfuil an tseachtain iomlán roghnaithe. Freagraíonn Balbhaigh do Balbhaithe ar Ginearálta. Balbhaíonn Balbhaigh uile agus M gach giuirléid; arís, ní athchóiríonn siad ach an fhuaim a bhalbhaigh siad féin. Osclaítear Aláram má chumasaítear aláram gan lá roghnaithe.
+Taispeánann roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcónaí, soicindí, méid agus cóipeáil
+dáta a bhaineann léi, agus ansin Eagraigh in eangach, Áireamhán ama, Socruithe, Cabhair, Maidir leis agus
+Scoir. Liostaíonn an roghchlár fógraí giuirléidí uimhrithe agus Taispeáin uile, Folaigh uile agus Balbhaigh
+uile, agus an t-ordú eangaí i ngrúpa ar leith. Tugann taispeáint nó athchóiriú giuirléid chun tosaigh gan Ar
+barr i gcónaí a athrú. Má sheoltar CalClock arís, gníomhachtaítear an feidhmchlár atá ar siúl cheana agus
+athchóirítear na giuirléidí is déanaí a folaíodh más gá. Braitheann méideanna aghaidhe agus tacaíocht don lámh
+soicindí ar Windows. Is féidir Aláram agus Comhartha a athrú sa roghchlár, a thaispeánann am, eatramh agus na
+laethanta gníomhacha nuair nach bhfuil an tseachtain iomlán roghnaithe. Freagraíonn Balbhaigh do Balbhaithe ar
+Ginearálta. Balbhaíonn Balbhaigh uile agus M gach giuirléid; arís, ní athchóiríonn siad ach an fhuaim a
+bhalbhaigh siad féin. Osclaítear Aláram má chumasaítear aláram gan lá roghnaithe.
 
 ## Comhartha ama inchloiste
 
