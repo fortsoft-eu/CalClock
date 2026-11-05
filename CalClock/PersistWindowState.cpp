@@ -857,8 +857,9 @@ void PersistWindowState::WriteRegistry() {
             readResult = ReadValue(key, L"State", REG_DWORD, &previous, sizeof(previous));
         }
         if (readResult == ERROR_SUCCESS || readResult == ERROR_FILE_NOT_FOUND) {
-            DWORD show = state.minimized && allowSaveMinimized ? 1 : state.maximized
-                || state.minimized && state.restoreMaximized ? 2 : 0;
+            DWORD show = state.minimized && allowSaveMinimized
+                ? 1
+                : state.maximized || state.minimized && state.restoreMaximized ? 2 : 0;
             DWORD value = CanSaveWindowState() ? show : LOWORD(previous);
             value |= allowSaveTopMost ? state.topMost ? 0x10000 : 0 : previous & 0xFFFF0000;
             success = WriteValue(key, L"State", REG_DWORD, &value, sizeof(value)) && success;
