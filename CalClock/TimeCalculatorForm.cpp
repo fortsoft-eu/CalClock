@@ -1496,7 +1496,7 @@ void TimeCalculatorForm::UpdateNow() {
         }
         EnableWindow(GetDlgItem(pages[0], CALCULATOR_INPUT_IDS[index]), !current[index]);
         HWND combo = GetDlgItem(pages[0], combos[index]);
-        EnableWindow(combo, !current[index]);
+        EnableWindow(combo, !current[index] && !presets.empty());
         SelectPreset(combo, current[index] ? now : manual[index]);
     }
     UpdateResults();
@@ -1817,6 +1817,10 @@ void TimeCalculatorForm::FillPresets() {
     SelectPreset(combos[0], state.from);
     SelectPreset(combos[1], state.to);
     SelectPreset(combos[2], state.start);
+    bool hasPresets = !presets.empty();
+    EnableWindow(combos[0], hasPresets && !state.fromNow);
+    EnableWindow(combos[1], hasPresets && !state.toNow);
+    EnableWindow(combos[2], hasPresets);
     updating = false;
     UpdatePresetButtons();
 }

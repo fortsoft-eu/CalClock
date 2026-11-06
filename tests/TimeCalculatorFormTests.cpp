@@ -1529,6 +1529,10 @@ static void TestCalculatorCalendarNotifications() {
 
 /// Checks initial values, all tabs, resource-authored outer margins and live/manual date restoration.
 static void TestCalculatorInitialAndNow() {
+    Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
+        && !IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+        && !IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+        "empty preset selectors are disabled on initial opening");
     HWND window = calculatorForm.GetWindow();
     Require(window != nullptr
         && !IsWindowVisible(window)
@@ -1566,6 +1570,8 @@ static void TestCalculatorInitialAndNow() {
     DateTime_GetSystemtime(CalculatorControl(ID_CALC_FROM), &restored);
     Require(CompareCalculatorDates(manual, restored) == 0 && IsWindowEnabled(CalculatorControl(ID_CALC_FROM)),
         "disabling Now immediately restores the exact manual minute");
+    Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET)),
+        "disabling Now cannot enable an empty preset selector");
 }
 
 /// Verifies native picker roundtrips at both limits and captures the longest interval in three languages.
@@ -1661,6 +1667,24 @@ static void TestCalculatorPresets() {
     Require(CompareCalculatorDates(calculatorForm.GetPresets()[0].time, CalculatorDate(2026, 5, 1, 8)) == 0
         && CompareCalculatorDates(calculatorForm.GetPresets()[1].time, CalculatorDate(2025, 4, 1, 9)) == 0,
         "preset dates reflect genuine user-change notifications");
+    Require(IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
+        && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+        && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+        "saving presets enables all manual preset selectors");
+    CalculatorPage(0);
+    CheckDlgButton(GetParent(CalculatorControl(ID_CALC_FROM_NOW)), ID_CALC_FROM_NOW, BST_CHECKED);
+    CalculatorCommand(ID_CALC_FROM_NOW);
+    RefreshCalculator();
+    Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
+        && !IsWindowEnabled(CalculatorControl(ID_CALC_FROM))
+        && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+        && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+        "Now keeps its picker and populated preset selector disabled after refreshing");
+    CheckDlgButton(GetParent(CalculatorControl(ID_CALC_FROM_NOW)), ID_CALC_FROM_NOW, BST_UNCHECKED);
+    CalculatorCommand(ID_CALC_FROM_NOW);
+    Require(IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET)),
+        "disabling Now enables a populated preset selector");
+    CalculatorPage(2);
     calculatorAnswer = IDNO;
     AddCalculatorPreset(CalculatorDate(2025, 4, 1, 9), L"Another event");
     Require(calculatorForm.GetPresets().size() == 2, "duplicate declined without changing collection");
