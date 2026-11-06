@@ -76,12 +76,12 @@ Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelr
 
 Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller bara Inställningar, Hjälp, Om och Tidskalkylator. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
-Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. Med systemets
-standardteckensnitt använder dessa fönster Tahoma 8 pt; ett anpassat programteckensnitt har företräde.
-Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast GDI och Ingen tillgängliga för
-teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och återställs när läget stängs
-av. Om visuella format är avstängda i Windows visas båda stilalternativen som avmarkerade och inaktiverade
-utan att de sparade valen ändras.
+Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. Med
+systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat
+programteckensnitt har företräde. Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast
+GDI och Ingen tillgängliga för teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och
+återställs när läget stängs av. Om visuella format är avstängda i Windows visas båda stilalternativen som
+avmarkerade och inaktiverade utan att de sparade valen ändras.
 
 Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per widget och visar nivån i dB. Standardvärdet **−18 dB** bevarar filens ursprungliga nivå (**100%**). Åt höger förstärks ljudet; maximum **0 dB** motsvarar cirka **794%** av ursprunglig amplitud. Längst till vänster är **−∞ dB** (tystnad). Ändringar gäller under ljudtestet. Reglaget är avstängt för filer som öppnas i externa program. Förstärkning gäller avkodat ljud, inklusive WAV, MP3, WMA, AAC, M4A och FLAC när Windows stöder dem. Äldre uppspelning av filer som inte kan avkodas, exempelvis MIDI, är begränsad till 100%.
 
@@ -95,8 +95,9 @@ Alarmets veckodagar följer första veckodagen i vald programkultur. Sparade dag
 skillnaden mellan två datum och tider. Runda värden markerar runda värden, upprepade siffror samt månatliga
 och årliga bemärkelsedagar i kalendern från vald start. Sparade datum och tider låter dig lägga till,
 redigera, sortera och ta bort datum och tider med beskrivningar. Datum och tider sparas separat i
-`%APPDATA%\FortSoft\CalClock\times.xml`. Manuell export inkluderar dem; import bevarar befintliga poster och
-hoppar bara över poster med identiskt datum, tid och fullständig beskrivning.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Export av inställningar inkluderar dessa poster. Import bevarar
+befintliga poster och hoppar bara över poster med samma UTC-tidpunkt och identisk fullständig beskrivning,
+oavsett visningens tidszon.
 
 Varje inmatning har en egen tidszon från samma lista som i Inställningar. Aktuell Windows-tidszon är standard.
 En entydig UTC-tidpunkt och visningszonen sparas. Byte av zon bevarar tidpunkten. Välj UTC-förskjutning vid en
@@ -114,8 +115,12 @@ standard.
 Klicka på en kolumnrubrik för att sortera sparade poster efter den faktiska tidpunkten eller
 beskrivningstexten. Klicka igen för att vända ordningen; en pil visar riktningen.
 
-Fönstrets position, den aktiva fliken, inmatade värden och markeringsval sparas tillsammans med
+Fönstrets position, den aktiva fliken, beräkningsdata och markeringsval sparas tillsammans med
 programinställningarna i registret eller XML enligt vald lagringsmetod.
+
+Export på fliken med sparade datum och tider sparar bara dessa poster i en separat XML-fil. Import på denna
+flik hämtar bara datum och tider, även från exporterade inställningar, och slår samman dem med befintliga
+poster.
 
 ## Tid och alarm
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #define NOMINMAX
@@ -44,8 +44,10 @@
 #include <utility>
 #include <vector>
 #include <xmllite.h>
+#include <oleauto.h>
 
 #pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "OleAut32.lib")
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "XmlLite.lib")
 
@@ -1075,7 +1077,8 @@ static bool ReadCalculatorXml(IXmlReader* reader, SettingsSnapshot* snapshot) {
     if (ReadXmlNumberAttribute(reader, L"toNow", &number) && number >= 0 && number <= 1) {
         state.toNow = number != 0;
     }
-    if (ReadXmlNumberAttribute(reader, L"tab", &number) && number >= 0
+    if (ReadXmlNumberAttribute(reader, L"tab", &number)
+            && number >= 0
             && number < TIME_CALCULATOR_PAGE_COUNT) {
         state.tab = static_cast<int>(number);
     }
@@ -1144,15 +1147,16 @@ static bool ReadCalculatorPresetsXml(IXmlReader* reader, std::vector<TimeCalcula
     return true;
 }
 
-/// Reads the standalone user-data document; an absent file denotes an empty collection.
-bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets) {
+/// Reads user dates without applying settings; standalone application data may be absent.
+bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets,
+        bool allowSettings) {
     if (path.empty() || presets == nullptr) {
         return false;
     }
     WIN32_FILE_ATTRIBUTE_DATA data = {};
     if (!GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &data)) {
         DWORD error = GetLastError();
-        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) {
+        if (!allowSettings && (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND)) {
             presets->clear();
             return true;
         }
@@ -1173,6 +1177,8 @@ bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorP
         result = reader->SetInput(stream);
     }
     std::vector<TimeCalculatorPreset> loaded;
+    bool rootFound = false;
+    bool container = false;
     bool found = false;
     XmlNodeType node = XmlNodeType_None;
     while (SUCCEEDED(result) && (result = reader->Read(&node)) == S_OK) {
@@ -1181,17 +1187,40 @@ bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorP
         }
         const wchar_t* name = nullptr;
         UINT length = 0;
-        if (found
-                || FAILED(reader->GetLocalName(&name, &length))
+        UINT depth = 0;
+        if (FAILED(reader->GetLocalName(&name, &length))
                 || name == nullptr
-                || wcscmp(name, L"TimeCalculatorPresets") != 0
-                || !ReadCalculatorPresetsXml(reader, &loaded)) {
+                || FAILED(reader->GetDepth(&depth))) {
             result = E_FAIL;
             break;
         }
-        found = true;
+        if (!rootFound) {
+            LONGLONG version = 0;
+            container = allowSettings
+                && (wcscmp(name, L"CalClockSettings") == 0 || wcscmp(name, L"CalClockExport") == 0);
+            if (depth != 0 || container
+                    && (!ReadXmlNumberAttribute(reader, L"version", &version) || version != 1)) {
+                result = E_FAIL;
+                break;
+            }
+            rootFound = true;
+        } else if (!container) {
+            result = E_FAIL;
+            break;
+        }
+        if (wcscmp(name, L"TimeCalculatorPresets") == 0) {
+            UINT expectedDepth = container ? 1 : 0;
+            if (found || depth != expectedDepth || !ReadCalculatorPresetsXml(reader, &loaded)) {
+                result = E_FAIL;
+                break;
+            }
+            found = true;
+        } else if (!container) {
+            result = E_FAIL;
+            break;
+        }
     }
-    bool valid = SUCCEEDED(result) && found;
+    bool valid = SUCCEEDED(result) && rootFound && (container || found);
     if (reader != nullptr) {
         reader->Release();
     }
@@ -1200,6 +1229,104 @@ bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorP
         *presets = std::move(loaded);
     }
     return valid;
+}
+
+/// Reads legacy tab-separated dates using native locale parsing, with the original blank/invalid-row
+/// handling. XML containers are delegated to the existing reader and never apply any application settings.
+bool ReadCalculatorPresetImport(const std::wstring& path, const DYNAMIC_TIME_ZONE_INFORMATION& zone,
+        const std::wstring& zoneKey, std::vector<TimeCalculatorPreset>* presets) {
+    if (presets == nullptr || !ValidCalculatorZone(zoneKey)) {
+        return false;
+    }
+    HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
+    if (file == INVALID_HANDLE_VALUE) {
+        return false;
+    }
+    LARGE_INTEGER size = {};
+    bool valid = GetFileSizeEx(file, &size) && size.QuadPart >= 0 && size.QuadPart <= 32 * 1024 * 1024;
+    std::string bytes;
+    DWORD read = 0;
+    if (valid) {
+        bytes.resize(static_cast<size_t>(size.QuadPart));
+        valid = bytes.empty()
+            || ReadFile(file, bytes.data(), static_cast<DWORD>(bytes.size()), &read, nullptr)
+                && read == bytes.size();
+    }
+    CloseHandle(file);
+    if (!valid) {
+        return false;
+    }
+    size_t first = 0;
+    if (bytes.starts_with("\xEF\xBB\xBF")) {
+        first = 3;
+    }
+    first = std::min(bytes.find_first_not_of(" \t\r\n", first), bytes.size());
+    bool utf16 = bytes.size() >= 2
+        && (bytes[0] == '\xFF' && bytes[1] == '\xFE' || bytes[0] == '\xFE' && bytes[1] == '\xFF');
+    if (first < bytes.size() && bytes[first] == '<' || utf16) {
+        return ReadCalculatorPresets(path, presets, true);
+    }
+    int length = static_cast<int>(bytes.size() - first);
+    int characters = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes.data() + first, length,
+        nullptr, 0);
+    if (length != 0 && characters == 0) {
+        return false;
+    }
+    std::wstring text(static_cast<size_t>(characters), L'\0');
+    if (characters != 0
+        && MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, bytes.data() + first, length, text.data(),
+            characters) != characters) {
+        return false;
+    }
+    std::vector<TimeCalculatorPreset> loaded;
+    size_t position = 0;
+    while (position < text.size()) {
+        size_t end = text.find_first_of(L"\r\n", position);
+        if (end == std::wstring::npos) {
+            end = text.size();
+        }
+        std::wstring line = text.substr(position, end - position);
+        position = end;
+        if (position < text.size()
+                && text[position++] == L'\r'
+                && position < text.size()
+                && text[position] == L'\n') {
+            position++;
+        }
+        size_t separator = line.find(L'\t');
+        if (separator == std::wstring::npos) {
+            continue;
+        }
+        std::wstring dateText = line.substr(0, separator);
+        DATE parsed = 0;
+        SYSTEMTIME local = {};
+        if (FAILED(VarDateFromStr(dateText.c_str(), LOCALE_USER_DEFAULT, 0, &parsed))
+                || !VariantTimeToSystemTime(parsed, &local)) {
+            continue;
+        }
+        TimeCalculatorPreset preset;
+        size_t descriptionEnd = line.find(L'\t', separator + 1);
+        preset.description = line.substr(separator + 1, descriptionEnd - separator - 1);
+        preset.zone = zoneKey;
+        ULONGLONG candidates[2] = {};
+        unsigned int count = 0;
+        if (loaded.size() >= TIME_CALCULATOR_MAX_PRESETS
+                || !ValidCalculatorDescription(preset.description)
+                || !GetTimeZoneUtcCandidates(zone, local, candidates, count)
+                || count != 1) {
+            return false;
+        }
+        ULARGE_INTEGER ticks = {};
+        ticks.QuadPart = candidates[0];
+        FILETIME utc = { ticks.LowPart, ticks.HighPart };
+        if (!FileTimeToSystemTime(&utc, &preset.time)) {
+            return false;
+        }
+        loaded.push_back(std::move(preset));
+    }
+    *presets = std::move(loaded);
+    return true;
 }
 
 /// Verifies that stored widgets have distinct positive IDs before replacing application settings.
@@ -1571,7 +1698,8 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
         if (element == L"CalClockExport") {
             LONGLONG version = 0;
             if (depth != 0
-                    || exportFound || rootFound
+                    || exportFound
+                    || rootFound
                     || !ReadXmlNumberAttribute(reader, L"version", &version)
                     || version != 1) {
                 result = E_FAIL;
@@ -1659,8 +1787,7 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                 loaded.ntpPreset = static_cast<int>(number);
             }
             std::wstring text;
-            if (ReadXmlAttribute(reader, L"ntpServers", &text)
-                    && text.size() <= 1024) {
+            if (ReadXmlAttribute(reader, L"ntpServers", &text) && text.size() <= 1024) {
                 loaded.ntpServers = text;
             }
             ReadXmlAttribute(reader, L"fileDialogDirectory", &loaded.fileDialogDirectory);
@@ -1778,7 +1905,8 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
         STGM_READ | STGM_SHARE_DENY_WRITE, FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, &stream))) {
         return false;
     }
-    bool success = ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot, presets, presetsOnly);
+    bool success =
+        ReadSettingsXmlStream(stream, defaultLanguage, createDefaults, snapshot, presets, presetsOnly);
     stream->Release();
     return success;
 }

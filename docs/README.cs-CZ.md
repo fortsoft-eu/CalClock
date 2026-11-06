@@ -76,11 +76,12 @@ Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly r�
 
 Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pouze pro Nastavení, Nápovědu, O programu a Časový kalkulátor. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
-Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu a Časový kalkulátor. Při
-výchozím systémovém písmu používají tato okna Tahomu 8 pt; vlastní aplikační písmo má přednost. Text licence
-zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování GDI nebo Žádné: uložená volba
-ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li vizuální styly vypnuté přímo ve Windows,
-obě volby vzhledu se zobrazí nezaškrtnuté a neaktivní, aniž se změní uložené nastavení.
+Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu a Časový
+kalkulátor. Při výchozím systémovém písmu používají ovládací prvky těchto oken Tahomu 8 pt; vlastní aplikační
+písmo má přednost. Text licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování
+GDI nebo Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li vizuální
+styly vypnuté přímo ve Windows, obě volby vzhledu se zobrazí nezaškrtnuté a neaktivní, aniž se změní uložené
+nastavení.
 
 Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvukové soubory samostatně pro každý widget a zobrazuje úroveň v dB. Výchozí hodnota **−18 dB** zachovává původní úroveň souboru (**100 %**). Posun doprava zvuk zesiluje; maximum **0 dB** odpovídá přibližně **794 %** původní amplitudy. Levá krajní poloha je **−∞ dB** (ticho). Změny se projevují i během testu zvuku. Zesílení se vztahuje na dekódovaný zvuk včetně WAV, MP3, WMA, AAC, M4A a FLAC, pokud je Windows podporují. Starší způsob přehrávání souborů, které nelze dekódovat, například MIDI, je omezen na 100 %.
 
@@ -94,8 +95,9 @@ Ovládací prvky dnů budíku respektují první den týdne používaný zvoleno
 interval počítá rozdíl mezi dvěma údaji data a času. Karta Kulaté hodnoty vyznačuje v kalendáři kulaté
 hodnoty, opakující se číslice a měsíční i roční výročí od zvoleného počátku. Karta Předvolené časové údaje
 umožňuje přidávat, upravovat, řadit a mazat uložené údaje s popisem. Časové údaje se ukládají samostatně do
-`%APPDATA%\FortSoft\CalClock\times.xml`. Ruční export je zahrnuje; import zachová stávající údaje a vynechá
-pouze položky se shodným datem, časem i celým popisem.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Export nastavení tyto údaje zahrnuje. Import zachová stávající údaje
+a vynechá pouze položky se shodným okamžikem v UTC i přesně shodným celým popisem, bez ohledu na pásmo
+zobrazení.
 
 Každý vstup má vlastní časové pásmo ze stejného seznamu jako v Nastavení. Výchozí je aktuální pásmo Windows.
 Ukládá se jednoznačný okamžik v UTC a pásmo pro zobrazení. Změna pásma zachová okamžik. Při opakované hodině
@@ -114,8 +116,11 @@ stavu jsou vypnuté.
 Kliknutím na záhlaví sloupce seřadíte předvolené údaje podle skutečného okamžiku nebo podle textu popisu.
 Dalším kliknutím obrátíte směr řazení, který ukazuje šipka.
 
-Poloha okna, aktivní karta, zadané hodnoty a volby zvýraznění se ukládají s nastavením aplikace do registru
+Poloha okna, aktivní karta, vstupy výpočtu a volby zvýraznění se ukládají s nastavením aplikace do registru
 nebo XML podle zvoleného úložiště.
+
+Export na kartě Předvolené časové údaje uloží pouze tyto údaje do samostatného XML. Import na této kartě načte
+pouze časové údaje i z exportu nastavení a sloučí je se stávajícími položkami.
 
 ## Čas a budíky
 

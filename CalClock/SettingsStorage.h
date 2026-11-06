@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #pragma once
@@ -40,8 +40,15 @@ std::wstring AutomaticXmlSettingsPath(bool createDirectory);
 /// Returns the independent times.xml path in roaming AppData, optionally creating its directories.
 std::wstring CalculatorPresetsPath(bool createDirectory);
 
-/// Reads user-supplied dates from their standalone XML file; a missing file yields an empty collection.
-bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets);
+/// Reads standalone user XML; optionally extracts only user dates from a settings or export document.
+/// A missing file denotes an empty collection only when loading the standalone application data.
+bool ReadCalculatorPresets(const std::wstring& path, std::vector<TimeCalculatorPreset>* presets,
+    bool allowSettings = false);
+
+/// Reads XML or legacy UTF-8 text with an optional BOM, converting local text dates in the supplied zone.
+/// Preserves the destination on failure, including ambiguous or nonexistent local timestamps.
+bool ReadCalculatorPresetImport(const std::wstring& path, const DYNAMIC_TIME_ZONE_INFORMATION& zone,
+    const std::wstring& zoneKey, std::vector<TimeCalculatorPreset>* presets);
 
 /// Writes user-supplied dates through a temporary file, preserving the existing file on failure.
 bool WriteCalculatorPresets(const std::wstring& path, const std::vector<TimeCalculatorPreset>& presets);

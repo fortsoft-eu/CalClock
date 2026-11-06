@@ -76,7 +76,12 @@ Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaş
 
 Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
 
-Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerine uygulanır. Sistem varsayılan yazı tipi yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler korunur.
+Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında ve
+Zaman hesaplayıcı pencerelerine uygulanır. Sistemin varsayılan yazı tipi seçildiğinde bu pencerelerin
+denetimleri Tahoma 8 pt kullanır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır.
+Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil
+kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür,
+uygulanmaz; kayıtlı tercihler korunur.
 
 Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her araç için ayrı ayarlar ve düzeyi dB cinsinden gösterir. Varsayılan **−18 dB**, dosyanın özgün düzeyini (**100%**) korur. Sağa taşımak sesi yükseltir; en yüksek **0 dB**, özgün genliğin yaklaşık **794%** değeridir. En sol **−∞ dB** (sessizlik) konumudur. Değişiklikler ses testi sırasında etkilidir. Yükseltme, Windows desteklediğinde WAV, MP3, WMA, AAC, M4A ve FLAC dahil çözülmüş sese uygulanır. MIDI gibi çözülemeyen dosyaların eski çalma yöntemi 100% ile sınırlıdır.
 
@@ -90,9 +95,9 @@ Herhangi bir aracın menüsünden veya bildirim alanı simgesinin menüsünden Z
 Zaman aralığı iki tarih ve saat arasındaki farkı hesaplar. Yuvarlak değerler, seçilen başlangıçtan itibaren
 yuvarlak değerleri, yinelenen rakamları ve aylık ve yıllık dönümleri takvimde vurgular. Kayıtlı tarih ve
 saatler, açıklamalı tarih ve saatleri eklemenizi, düzenlemenizi, sıralamanızı ve silmenizi sağlar. Tarih ve
-saatler ayrı olarak `%APPDATA%\FortSoft\CalClock\times.xml` dosyasına kaydedilir. Elle dışa aktarma bunları
-içerir; içe aktarma mevcut kayıtları korur ve yalnızca tarihi, saati ve açıklamasının tamamı aynı olan
-kayıtları atlar.
+saatler ayrı olarak `%APPDATA%\FortSoft\CalClock\times.xml` dosyasına kaydedilir. Ayarların dışa aktarımı bu
+kayıtları içerir. İçe aktarma mevcut kayıtları korur ve yalnızca aynı UTC anına ve tamamen aynı açıklamaya
+sahip kayıtları, görüntüleme saat diliminden bağımsız olarak atlar.
 
 Her girişin Ayarlar ile aynı listedeki seçeneklerden kendi saat dilimi vardır. Varsayılan, Windows’un geçerli
 saat dilimidir. Kesin bir UTC anı ve görüntüleme saat dilimi kaydedilir. Saat dilimini değiştirmek anı korur.
@@ -111,8 +116,12 @@ etkinleştirilebilir ve varsayılan olarak kapalıdır.
 Kaydedilmiş kayıtları gerçek zaman noktasına veya açıklama metnine göre sıralamak için sütun başlığına
 tıklayın. Yeniden tıklamak sıralamayı tersine çevirir; ok, yönü gösterir.
 
-Pencere konumu, etkin sekme, girilen değerler ve vurgulama seçimleri, seçilen depolama seçeneğine göre
+Pencere konumu, etkin sekme, hesaplama girdileri ve vurgulama seçimleri, seçilen depolama seçeneğine göre
 uygulama ayarlarıyla birlikte kayıt defterine veya XML dosyasına kaydedilir.
+
+Kayıtlı tarih ve saatler sekmesindeki dışa aktarma yalnızca bu kayıtları ayrı bir XML dosyasına kaydeder. Bu
+sekmedeki içe aktarma, ayarların dışa aktarıldığı bir dosyadan bile yalnızca tarih ve saatleri alıp mevcut
+kayıtlarla birleştirir.
 
 ## Saat ve alarmlar
 

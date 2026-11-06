@@ -76,12 +76,13 @@ Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfa
 
 Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft nur die Fenster Einstellungen, Hilfe, Info und Zeitrechner. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
 
-Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info und Zeitrechner. Bei
-ausgewählter Systemschrift verwenden diese Fenster Tahoma 8 pt; eine eigene Anwendungsschrift hat Vorrang. Die
-Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur GDI und Keine für die
-Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet vorübergehend GDI und wird beim
-Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows selbst deaktiviert, erscheinen beide
-Stiloptionen ausgeschaltet und nicht verfügbar; die gespeicherten Einstellungen bleiben erhalten.
+Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info und
+Zeitrechner. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
+Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur
+GDI und Keine für die Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet
+vorübergehend GDI und wird beim Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows selbst
+deaktiviert, erscheinen beide Stiloptionen ausgeschaltet und nicht verfügbar; die gespeicherten Einstellungen
+bleiben erhalten.
 
 Der Regler **Audiolautstärke** auf Wecker steuert intern abgespielte Audiodateien für jedes Widget getrennt und zeigt den Pegel in dB. Der Standard **−18 dB** erhält den ursprünglichen Dateipegel (**100%**). Nach rechts wird verstärkt; das Maximum **0 dB** entspricht ungefähr **794%** der ursprünglichen Amplitude. Ganz links liegt **−∞ dB** (Stille). Änderungen wirken auch während des Audiotests. Die Verstärkung gilt für dekodiertes Audio einschließlich WAV, MP3, WMA, AAC, M4A und FLAC, sofern Windows diese unterstützt. Die ältere Wiedergabe nicht dekodierbarer Dateien, etwa MIDI, ist auf 100% begrenzt.
 
@@ -95,9 +96,10 @@ Die Wochentagsauswahl des Weckers folgt dem Wochenanfang der gewählten Anwendun
 Zeitspanne berechnet die Differenz zwischen zwei Zeitpunkten. Die Registerkarte Runde Werte hebt runde Werte,
 gleiche Ziffern sowie Monats- und Jahrestage seit dem gewählten Beginn im Kalender hervor. Unter Gespeicherte
 Zeitpunkte können Sie Zeitpunkte mit Beschreibung hinzufügen, bearbeiten, sortieren und löschen. Gespeicherte
-Zeitpunkte werden separat in `%APPDATA%\FortSoft\CalClock\times.xml` gespeichert. Manuelle Exporte enthalten
-sie; beim Import bleiben vorhandene Einträge erhalten. Nur Einträge mit identischem Datum, Uhrzeit und
-vollständiger Beschreibung werden übersprungen.
+Zeitpunkte werden separat in `%APPDATA%\FortSoft\CalClock\times.xml` gespeichert. Exporte der Einstellungen
+enthalten diese Einträge. Beim Import bleiben vorhandene Einträge erhalten; übersprungen werden nur Einträge
+mit demselben UTC-Zeitpunkt und exakt derselben vollständigen Beschreibung, unabhängig von der
+Anzeigezeitzone.
 
 Jede Eingabe hat eine eigene Zeitzone aus derselben Liste wie in den Einstellungen. Standard ist die aktuelle
 Windows-Zeitzone. Gespeichert werden ein eindeutiger UTC-Zeitpunkt und seine Anzeigezone. Ein Zonenwechsel
@@ -116,8 +118,12 @@ aktivieren und sind standardmäßig ausgeschaltet.
 Klicken Sie auf eine Spaltenüberschrift, um gespeicherte Einträge nach dem tatsächlichen Zeitpunkt oder dem
 Beschreibungstext zu sortieren. Ein erneuter Klick kehrt die Reihenfolge um; ein Pfeil zeigt die Richtung.
 
-Fensterposition, aktive Registerkarte, eingegebene Werte und Hervorhebungsoptionen werden mit den
+Fensterposition, aktive Registerkarte, Berechnungseingaben und Hervorhebungsoptionen werden mit den
 Anwendungseinstellungen je nach gewähltem Speicher in der Registrierung oder in XML gespeichert.
+
+Export auf der Registerkarte für gespeicherte Zeitpunkte speichert nur diese Einträge in einer separaten
+XML-Datei. Import auf dieser Registerkarte liest auch aus einem Einstellungsexport nur Zeitpunkte und führt
+sie mit vorhandenen Einträgen zusammen.
 
 ## Zeit und Wecker
 

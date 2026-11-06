@@ -76,12 +76,12 @@ Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har ju
 
 Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på Program gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Med systemets
-standardskrifttype bruger disse vinduer Tahoma 8 pt; en brugerdefineret programskrifttype har forrang.
-Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI og Ingen tilgængelige for
-skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når tilstanden slås fra. Hvis
-visuelle typografier er deaktiveret i Windows, vises begge stilvalg som umarkerede og deaktiverede, uden at de
-gemte valg ændres.
+Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Med
+systemets standardskrifttype bruger disse vinduers kontrolelementer Tahoma 8 pt; en brugerdefineret
+programskrifttype har forrang. Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI
+og Ingen tilgængelige for skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når
+tilstanden slås fra. Hvis visuelle typografier er deaktiveret i Windows, vises begge stilvalg som umarkerede
+og deaktiverede, uden at de gemte valg ændres.
 
 Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for hver widget og viser niveauet i dB. Standardværdien **−18 dB** bevarer filens oprindelige niveau (**100%**). Mod højre forstærkes lyden; maksimum **0 dB** svarer til cirka **794%** af oprindelig amplitude. Yderst til venstre er **−∞ dB** (stilhed). Ændringer virker under lydtesten. Forstærkning gælder afkodet lyd, herunder WAV, MP3, WMA, AAC, M4A og FLAC, når Windows understøtter dem. Ældre afspilning af filer, der ikke kan afkodes, eksempelvis MIDI, er begrænset til 100%.
 
@@ -95,8 +95,9 @@ Alarmens ugedage følger første ugedag i den valgte programkultur. Gemte dage b
 forskellen mellem to datoer og tider. Runde værdier fremhæver runde værdier, gentagne cifre samt månedlige og
 årlige mærkedage i kalenderen fra den valgte start. Gemte datoer og tider giver mulighed for at tilføje,
 redigere, sortere og slette datoer og tider med beskrivelser. Datoer og tider gemmes separat i
-`%APPDATA%\FortSoft\CalClock\times.xml`. Manuel eksport medtager dem; import bevarer eksisterende poster og
-springer kun poster over med identisk dato, tid og fuld beskrivelse.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Eksport af indstillinger medtager disse poster. Import bevarer
+eksisterende poster og springer kun poster over med samme UTC-tidspunkt og identisk fuld beskrivelse, uanset
+visningens tidszone.
 
 Hvert input har sin egen tidszone fra samme liste som i Indstillinger. Den aktuelle Windows-tidszone er
 standard. Et entydigt UTC-tidspunkt og visningszonen gemmes. Et zoneskift bevarer tidspunktet. Vælg
@@ -114,8 +115,11 @@ Gentagne cifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres enkeltvi
 Klik på en kolonneoverskrift for at sortere gemte poster efter det faktiske tidspunkt eller beskrivelsens
 tekst. Klik igen for at vende rækkefølgen; en pil viser retningen.
 
-Vinduets placering, den aktive fane, indtastede værdier og fremhævningsvalg gemmes med programindstillingerne
-i registreringsdatabasen eller XML afhængigt af det valgte lager.
+Vinduets placering, den aktive fane, beregningsdata og fremhævningsvalg gemmes med programindstillingerne i
+registreringsdatabasen eller XML afhængigt af det valgte lager.
+
+Eksport på fanen med gemte datoer og tider gemmer kun disse poster i en separat XML-fil. Import på denne fane
+udtrækker kun datoer og tider, også fra eksporterede indstillinger, og fletter dem med eksisterende poster.
 
 ## Tid og alarmer
 

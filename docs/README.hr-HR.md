@@ -56,7 +56,11 @@ Promjene izgleda odmah se prikazuju u pretpregledu odabranog widgeta. `Zadani iz
 
 Izglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da” (zadano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. Redak UTC ima vlastito centriranje.
 
-Stil Windows 2000 dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz zadani sistemski font koristi Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje su opcije izgleda nedostupne i ne primjenjuju se; spremljeni odabiri ostaju nepromijenjeni.
+Stil Windows 2000 dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu i Kalkulator
+vremena. Uz zadani sistemski font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa ima
+prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i vraća
+nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje su opcije izgleda nedostupne i ne
+primjenjuju se; spremljeni odabiri ostaju nepromijenjeni.
 
 ## Kalkulator vremena
 
@@ -64,8 +68,9 @@ Otvorite Kalkulator vremena iz izbornika bilo kojeg widgeta ili ikone u područj
 interval računa razliku između dva datuma i vremena. Okrugle vrijednosti ističe u kalendaru okrugle
 vrijednosti, ponovljene znamenke te datume navršenih mjeseci i godina od odabranog početka. Spremljeni datumi
 i vremena omogućuje dodavanje, uređivanje, sortiranje i brisanje datuma i vremena s opisom. Datumi i vremena
-spremaju se zasebno u `%APPDATA%\FortSoft\CalClock\times.xml`. Ručni izvoz ih uključuje; uvoz zadržava
-postojeće stavke i preskače samo stavke s istim datumom, vremenom i cijelim opisom.
+spremaju se zasebno u `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz postavki uključuje te stavke. Uvoz
+zadržava postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim cijelim opisom, bez
+obzira na vremensku zonu prikaza.
 
 Svaki unos ima vlastitu vremensku zonu s istog popisa kao u Postavkama. Zadana je trenutačna zona Windowsa.
 Spremaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni sat
@@ -84,8 +89,11 @@ pojedinačno i prema zadanim su postavkama isključene.
 Kliknite zaglavlje stupca da biste sortirali spremljene podatke prema stvarnom trenutku ili tekstu opisa.
 Ponovni klik obrće redoslijed; strelica pokazuje smjer.
 
-Položaj prozora, aktivna kartica, unesene vrijednosti i odabiri isticanja spremaju se s postavkama aplikacije
-u registar ili XML, prema odabranom spremištu.
+Položaj prozora, aktivna kartica, ulazni podaci izračuna i odabiri isticanja spremaju se s postavkama
+aplikacije u registar ili XML, prema odabranom spremištu.
+
+Izvoz na kartici spremljenih datuma i vremena sprema samo te zapise u zaseban XML. Uvoz na ovoj kartici čita
+samo datume i vremena, čak i iz izvoza postavki, i spaja ih s postojećim zapisima.
 
 ## Postavke i izbornici
 

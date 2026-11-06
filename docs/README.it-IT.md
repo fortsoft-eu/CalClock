@@ -76,12 +76,13 @@ Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bo
 
 Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di tempi. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
-Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di tempi. Con il
-carattere di sistema predefinito, queste finestre usano Tahoma 8 pt; un carattere personalizzato
-dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza fissa. In questa modalità
-sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata usa temporaneamente GDI e
-viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in Windows, entrambe le
-opzioni di stile appaiono deselezionate e disabilitate senza modificare le scelte salvate.
+Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di
+tempi. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt; un carattere
+personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza fissa. In
+questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata usa
+temporaneamente GDI e viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in
+Windows, entrambe le opzioni di stile appaiono deselezionate e disabilitate senza modificare le scelte
+salvate.
 
 Il cursore **Volume audio** in Sveglia controlla i file riprodotti internamente per ciascun widget e mostra il livello in dB. Il valore predefinito **−18 dB** preserva il livello originale del file (**100%**). Verso destra amplifica il suono; il massimo **0 dB** equivale a circa **794%** dell’ampiezza originale. L’estremo sinistro è **−∞ dB** (silenzio). Le modifiche hanno effetto durante la prova. L’amplificazione riguarda l’audio decodificato, inclusi WAV, MP3, WMA, AAC, M4A e FLAC quando supportati da Windows. La riproduzione precedente per file non decodificabili, come MIDI, è limitata al 100%.
 
@@ -95,8 +96,9 @@ Aprire Calcolatore di tempi dal menu di un widget o dell’icona nell’area di 
 tempo calcola la differenza tra due date e ore. La scheda Valori tondi evidenzia nel calendario valori tondi,
 cifre ripetute e ricorrenze mensili e annuali dall’inizio scelto. La scheda Date e ore predefinite permette di
 aggiungere, modificare, ordinare ed eliminare date e ore con una descrizione. Le date e le ore vengono salvate
-separatamente in `%APPDATA%\FortSoft\CalClock\times.xml`. L’esportazione manuale le include; l’importazione
-conserva le voci esistenti e ignora solo quelle con data, ora e descrizione completa identiche.
+separatamente in `%APPDATA%\FortSoft\CalClock\times.xml`. Le esportazioni delle impostazioni includono queste
+voci. L’importazione conserva le voci esistenti e ignora solo quelle con lo stesso istante UTC e la stessa
+descrizione completa, indipendentemente dal fuso di visualizzazione.
 
 Ogni dato ha un proprio fuso orario, scelto dallo stesso elenco delle impostazioni. Il valore predefinito è il
 fuso attuale di Windows. Si salvano un istante UTC univoco e il relativo fuso di visualizzazione. Cambiare
@@ -115,8 +117,12 @@ zeri, le prime nove settimane intere e le ricorrenze mensili e annuali. Le cifre
 Fare clic sull’intestazione di una colonna per ordinare i dati salvati per istante effettivo o per testo della
 descrizione. Un altro clic inverte l’ordine; una freccia ne indica la direzione.
 
-La posizione della finestra, la scheda attiva, i valori inseriti e le opzioni di evidenziazione vengono
+La posizione della finestra, la scheda attiva, i dati del calcolo e le opzioni di evidenziazione vengono
 salvati con le impostazioni dell’applicazione nel Registro di sistema o in XML, secondo l’archivio scelto.
+
+Esporta nella scheda delle date e ore salvate salva solo queste voci in un file XML separato. Importa in
+questa scheda estrae solo date e ore, anche da un’esportazione delle impostazioni, e le unisce alle voci
+esistenti.
 
 ## Ora e sveglie
 

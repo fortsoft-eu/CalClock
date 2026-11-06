@@ -59,7 +59,12 @@ A beállítások XML-be exportálhatók. Az importálás azonnal betölti és a 
 
 A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
 
-A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. A rendszer alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és
+Időkalkulátor ablakokra vonatkozik. A rendszer alapértelmezett betűtípusának kiválasztásakor ezen ablakok
+vezérlőelemei 8 pontos Tahomát használnak; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege
+pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t
+használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás
+jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
 
 ## Időkalkulátor
 
@@ -67,9 +72,10 @@ Az Időkalkulátort bármely minialkalmazás menüjéből vagy az értesítési 
 meg. Az Időtartam két dátum és időpont különbségét számítja ki. A Kerek értékek a választott kezdettől
 számított kerek értékeket, ismétlődő számjegyeket, valamint havi és éves évfordulókat emeli ki a naptárban. A
 Mentett dátumok és időpontok lapon leírással ellátott időpontok adhatók hozzá, szerkeszthetők, rendezhetők és
-törölhetők. A A dátumok és időpontok külön, a `%APPDATA%\FortSoft\CalClock\times.xml` fájlba kerülnek. A kézi
-exportálás tartalmazza őket; az importálás megőrzi a meglévő bejegyzéseket, és csak az azonos dátumú, időpontú
-és teljes leírású bejegyzéseket hagyja ki.
+törölhetők. A A dátumok és időpontok külön, a `%APPDATA%\FortSoft\CalClock\times.xml` fájlba kerülnek. A
+beállítások exportálása ezeket a bejegyzéseket is tartalmazza. Az importálás megőrzi a meglévő bejegyzéseket,
+és csak az azonos UTC-időpontú és megegyező teljes leírású bejegyzéseket hagyja ki, a megjelenítési időzónától
+függetlenül.
 
 Minden bemenet saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális időzónája.
 Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása megőrzi az időpontot.
@@ -88,8 +94,12 @@ bekapcsolhatók; alapértelmezés szerint ki vannak kapcsolva.
 Kattintson egy oszlop fejlécére a mentett adatok tényleges időpont vagy leírásszöveg szerinti rendezéséhez.
 Újabb kattintással megfordítható a sorrend; a nyíl mutatja az irányt.
 
-Az ablak helye, az aktív fül, a megadott értékek és a kiemelési beállítások az alkalmazás beállításaival
-együtt a beállításjegyzékbe vagy XML-fájlba kerülnek a választott tárolási mód szerint.
+Az ablak helye, az aktív fül, a számítás bemeneti adatai és a kiemelési beállítások az alkalmazás
+beállításaival együtt a beállításjegyzékbe vagy XML-fájlba kerülnek a választott tárolási mód szerint.
+
+A mentett dátumok és időpontok lapján az exportálás csak ezeket a bejegyzéseket menti külön XML-fájlba. Az
+importálás ezen a lapon a beállítások exportjából is csak a dátumokat és időpontokat olvassa be, és egyesíti a
+meglévő bejegyzésekkel.
 
 ## Beállítások és menük
 

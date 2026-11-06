@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #include "Localization.h"
@@ -86,7 +86,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Hodiny na monitoru" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Maximální počet widgetů je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopie" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Rozšiřitelný značkovací jazyk (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Textový dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Čárkami oddělené hodnoty (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvuk a "
@@ -322,7 +323,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"odstraní.\r\n\r\nVyhlazování písma nabízí ClearType, GDI a Žádné.\r\n\r\nStyl Windows 2000 "
             L"vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu a Časový "
             L"kalkulátor. Při výchozím "
-            L"systémovém písmu používají tato okna Tahomu 8 pt; vlastní aplikační písmo má přednost. Text "
+            L"systémovém písmu používají ovládací prvky těchto oken Tahomu 8 pt; vlastní aplikační písmo má "
+            L"přednost. Text "
             L"licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování GDI nebo "
             L"Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li "
             L"vizuální styly vypnuté přímo ve Windows, obě volby vzhledu se zobrazí nezaškrtnuté a "
@@ -448,8 +450,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"kalendáři kulaté hodnoty, opakující se číslice a měsíční i roční výročí od zvoleného počátku. "
             L"Karta Předvolené časové údaje umožňuje přidávat, upravovat, řadit a mazat uložené údaje s "
             L"popisem. Časové údaje se ukládají samostatně do %APPDATA%\\FortSoft\\CalClock\\times.xml. "
-            L"Ruční export je zahrnuje; import zachová stávající údaje a vynechá pouze položky se shodným "
-            L"datem, časem i celým popisem.\r\n\r\nKaždý vstup má vlastní časové pásmo ze stejného seznamu "
+            L"Export nastavení tyto údaje zahrnuje. Import zachová stávající údaje a vynechá pouze položky "
+            L"se shodným okamžikem v UTC i přesně shodným celým popisem, bez ohledu na pásmo "
+            L"zobrazení.\r\n\r\nKaždý vstup má vlastní časové pásmo ze stejného seznamu "
             L"jako v Nastavení. Výchozí je aktuální pásmo Windows. Ukládá se jednoznačný okamžik v UTC a "
             L"pásmo pro zobrazení. Změna pásma zachová okamžik. Při opakované hodině vyberte UTC offset; "
             L"neexistující místní čas nelze uložit. Hodiny vyjadřují skutečně uplynulý čas, kalendářní "
@@ -462,8 +465,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"666) se zapínají jednotlivě a ve výchozím stavu jsou vypnuté.\r\n\r\nKliknutím na záhlaví "
             L"sloupce seřadíte předvolené údaje podle skutečného okamžiku nebo podle textu popisu. Dalším "
             L"kliknutím obrátíte směr řazení, který ukazuje šipka.\r\n\r\nPoloha okna, aktivní karta, "
-            L"zadané hodnoty a volby zvýraznění se ukládají s nastavením aplikace do registru nebo XML "
+            L"vstupy výpočtu a volby zvýraznění se ukládají s nastavením aplikace do registru nebo XML "
             L"podle zvoleného úložiště."
+            L"\r\n\r\nExport na kartě Předvolené časové údaje uloží pouze tyto údaje do samostatného XML. "
+            L"Import na této kartě načte pouze časové údaje i z exportu nastavení a sloučí je se "
+            L"stávajícími položkami."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -473,6 +479,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cílová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importovat…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportovat…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Uložené časové údaje nelze načíst." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Časové údaje nelze uložit." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Vyberte UTC offset pro tento opakovaný místní čas." },
@@ -593,6 +601,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"The maximum number of widgets is %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copy" },
         LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Text Document (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Comma-separated values (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio and "
@@ -830,7 +839,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
             L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
             L"default system "
-            L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
+            L"font selected, their controls use Tahoma 8 pt; a custom application font takes precedence. "
+            L"The "
             L"license keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
             L"off. If Windows itself has visual styles turned off, both style options appear unchecked and "
@@ -957,9 +967,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
             L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
             L"and delete saved dates and times with descriptions. Saved dates and times are stored "
-            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
-            L"preserve existing entries and skip only entries with an identical date, time, and complete "
-            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Settings exports include these "
+            L"entries. Imports preserve existing entries and skip only entries with the same UTC instant "
+            L"and an identical complete description, regardless of the display time zone.\r\n\r\nEach input "
+            L"has its own time zone from the same list as Settings, "
             L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
             L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
             L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
@@ -971,9 +982,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
             L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
             L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
-            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
-            L"are saved with application settings in the registry or XML, according to the selected storage "
-            L"option."
+            L"the direction.\r\n\r\nThe window position, active tab, calculation inputs, and highlight "
+            L"choices are saved with application settings in the registry or XML, according to the selected "
+            L"storage option."
+            L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
+            L"file. Import on this tab extracts only dates and times, even from a settings export, and "
+            L"merges them with existing entries."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -983,6 +997,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Import…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Export…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
@@ -1105,6 +1121,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"The maximum number of widgets is %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copy" },
         LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Text Document (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Comma-separated values (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio and "
@@ -1342,7 +1359,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
             L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
             L"default system "
-            L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
+            L"font selected, their controls use Tahoma 8 pt; a custom application font takes precedence. "
+            L"The "
             L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
             L"off. If Windows itself has visual styles turned off, both style options appear unchecked and "
@@ -1469,9 +1487,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
             L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
             L"and delete saved dates and times with descriptions. Saved dates and times are stored "
-            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
-            L"preserve existing entries and skip only entries with an identical date, time, and complete "
-            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Settings exports include these "
+            L"entries. Imports preserve existing entries and skip only entries with the same UTC instant "
+            L"and an identical complete description, regardless of the display time zone.\r\n\r\nEach input "
+            L"has its own time zone from the same list as Settings, "
             L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
             L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
             L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
@@ -1483,9 +1502,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
             L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
             L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
-            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
-            L"are saved with application settings in the registry or XML, according to the selected storage "
-            L"option."
+            L"the direction.\r\n\r\nThe window position, active tab, calculation inputs, and highlight "
+            L"choices are saved with application settings in the registry or XML, according to the selected "
+            L"storage option."
+            L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
+            L"file. Import on this tab extracts only dates and times, even from a settings export, and "
+            L"merges them with existing entries."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1495,6 +1517,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Import…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Export…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
@@ -1617,6 +1641,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"The maximum number of widgets is %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copy" },
         LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Text Document (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Comma-separated values (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio and "
@@ -1854,7 +1879,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
             L"requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the "
             L"default system "
-            L"font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The "
+            L"font selected, their controls use Tahoma 8 pt; a custom application font takes precedence. "
+            L"The "
             L"licence keeps its monospaced font. Only GDI and None are available for font antialiasing in "
             L"this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned "
             L"off. If Windows itself has visual styles turned off, both style options appear unchecked and "
@@ -1981,9 +2007,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tab highlights round values, repeated digits, and monthly and yearly anniversaries in the "
             L"calendar from the selected start. The Preset dates and times tab lets you add, edit, sort, "
             L"and delete saved dates and times with descriptions. Saved dates and times are stored "
-            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Manual exports include them; imports "
-            L"preserve existing entries and skip only entries with an identical date, time, and complete "
-            L"description.\r\n\r\nEach input has its own time zone from the same list as Settings, "
+            L"separately in %APPDATA%\\FortSoft\\CalClock\\times.xml. Settings exports include these "
+            L"entries. Imports preserve existing entries and skip only entries with the same UTC instant "
+            L"and an identical complete description, regardless of the display time zone.\r\n\r\nEach input "
+            L"has its own time zone from the same list as Settings, "
             L"defaulting to the current Windows time zone. An unambiguous UTC instant and its display zone "
             L"are saved. Changing the zone preserves the instant. Choose the UTC offset for a repeated "
             L"hour; nonexistent local times cannot be saved. Hours measure elapsed time; calendar counts "
@@ -1995,9 +2022,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"anniversaries are highlighted. Repeated digits 1–9 (for example, 11, 111 or 66, 666) can be "
             L"enabled individually and are off by default.\r\n\r\nClick a column header to sort presets by "
             L"the actual instant or by description text. Click again to reverse the order; an arrow shows "
-            L"the direction.\r\n\r\nThe window position, active tab, entered values, and highlight choices "
-            L"are saved with application settings in the registry or XML, according to the selected storage "
-            L"option."
+            L"the direction.\r\n\r\nThe window position, active tab, calculation inputs, and highlight "
+            L"choices are saved with application settings in the registry or XML, according to the selected "
+            L"storage option."
+            L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
+            L"file. Import on this tab extracts only dates and times, even from a settings export, and "
+            L"merges them with existing entries."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -2007,6 +2037,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Target platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Time Calculator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Import…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Export…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Saved dates and times could not be read." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Dates and times could not be saved." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Choose the UTC offset for this repeated local time." },
@@ -2128,7 +2160,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Monitoruhr" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Die maximale Anzahl an Widgets beträgt %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - Kopie" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Erweiterbare Auszeichnungssprache (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Textdokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Durch Kommas getrennte Werte (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio und "
@@ -2378,9 +2411,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"entfernt HKCU\\SOFTWARE\\FortSoft\\CalClock, Registrierungsspeicherung entfernt das "
             L"automatische XML.\r\n\r\nFür die Schriftglättung stehen ClearType, GDI und Keine zur "
             L"Auswahl.\r\n\r\nWindows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für "
-            L"Einstellungen, Hilfe, Info und Zeitrechner. Bei ausgewählter Systemschrift verwenden diese "
-            L"Fenster Tahoma 8 "
-            L"pt; eine eigene Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale "
+            L"Einstellungen, Hilfe, Info und Zeitrechner. Bei ausgewählter Systemschrift verwenden deren "
+            L"Steuerelemente Tahoma 8 pt; eine eigene Anwendungsschrift hat Vorrang. Die Lizenz behält ihre "
+            L"nichtproportionale "
             L"Schrift. In diesem Modus stehen nur GDI und Keine für die Schriftglättung zur Verfügung: Eine "
             L"gespeicherte ClearType-Auswahl verwendet vorübergehend GDI und wird beim Ausschalten "
             L"wiederhergestellt. Sind die visuellen Stile in Windows selbst deaktiviert, erscheinen beide "
@@ -2525,9 +2558,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hebt runde Werte, gleiche Ziffern sowie Monats- und Jahrestage seit dem gewählten Beginn im "
             L"Kalender hervor. Unter Gespeicherte Zeitpunkte können Sie Zeitpunkte mit Beschreibung "
             L"hinzufügen, bearbeiten, sortieren und löschen. Gespeicherte Zeitpunkte werden separat in "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml gespeichert. Manuelle Exporte enthalten sie; beim "
-            L"Import bleiben vorhandene Einträge erhalten. Nur Einträge mit identischem Datum, Uhrzeit und "
-            L"vollständiger Beschreibung werden übersprungen.\r\n\r\nJede Eingabe hat eine eigene Zeitzone "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml gespeichert. Exporte der Einstellungen enthalten "
+            L"diese Einträge. Beim Import bleiben vorhandene Einträge erhalten; übersprungen werden nur "
+            L"Einträge mit demselben UTC-Zeitpunkt und exakt derselben vollständigen Beschreibung, "
+            L"unabhängig von der Anzeigezeitzone.\r\n\r\nJede Eingabe hat eine eigene Zeitzone "
             L"aus derselben Liste wie in den Einstellungen. Standard ist die aktuelle Windows-Zeitzone. "
             L"Gespeichert werden ein eindeutiger UTC-Zeitpunkt und seine Anzeigezone. Ein Zonenwechsel "
             L"erhält den Zeitpunkt. Bei einer wiederholten Stunde wählen Sie den UTC-Versatz; nicht "
@@ -2542,9 +2576,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"einzeln aktivieren und sind standardmäßig ausgeschaltet.\r\n\r\nKlicken Sie auf eine "
             L"Spaltenüberschrift, um gespeicherte Einträge nach dem tatsächlichen Zeitpunkt oder dem "
             L"Beschreibungstext zu sortieren. Ein erneuter Klick kehrt die Reihenfolge um; ein Pfeil zeigt "
-            L"die Richtung.\r\n\r\nFensterposition, aktive Registerkarte, eingegebene Werte und "
+            L"die Richtung.\r\n\r\nFensterposition, aktive Registerkarte, Berechnungseingaben und "
             L"Hervorhebungsoptionen werden mit den Anwendungseinstellungen je nach gewähltem Speicher in "
             L"der Registrierung oder in XML gespeichert."
+            L"\r\n\r\nExport auf der Registerkarte für gespeicherte Zeitpunkte speichert nur diese Einträge "
+            L"in einer separaten XML-Datei. Import auf dieser Registerkarte liest auch aus einem "
+            L"Einstellungsexport nur Zeitpunkte und führt sie mit vorhandenen Einträgen zusammen."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2554,6 +2591,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Zielplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Zeitrechner" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importieren…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportieren…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Gespeicherte Zeitpunkte konnten nicht gelesen werden." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Zeitpunkte konnten nicht gespeichert werden." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -2682,7 +2721,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Horloge sur moniteur" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Le nombre maximal de widgets est de %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copie" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Langage de balisage extensible (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Document texte (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valeurs séparées par des virgules (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio et "
@@ -2933,7 +2973,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"des polices propose ClearType, GDI et Aucun.\r\n\r\nStyle Windows 2000 nécessite Désactiver "
             L"les thèmes et concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Avec la "
             L"police système par "
-            L"défaut, ces fenêtres utilisent Tahoma 8 pt ; une police d’application personnalisée reste "
+            L"défaut, leurs contrôles utilisent Tahoma 8 pt ; une police d’application personnalisée reste "
             L"prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun sont proposés "
             L"pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et "
             L"revient à la désactivation du mode. Si les styles visuels sont désactivés dans Windows, les "
@@ -3081,9 +3121,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"les anniversaires mensuels et annuels depuis le début choisi. L’onglet Dates et heures "
             L"prédéfinies permet d’ajouter, de modifier, de trier et de supprimer des dates et heures avec "
             L"une description. Les dates et heures sont enregistrées séparément dans "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. L’exportation manuelle les inclut ; l’importation "
-            L"conserve les entrées existantes et ignore uniquement celles dont la date, l’heure et la "
-            L"description complète sont identiques.\r\n\r\nChaque saisie possède son fuseau horaire, choisi "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Les exports des paramètres incluent ces entrées. "
+            L"L’importation conserve les entrées existantes et ignore uniquement celles dont l’instant UTC "
+            L"et la description complète sont identiques, quel que soit le fuseau "
+            L"d’affichage.\r\n\r\nChaque saisie possède son fuseau horaire, choisi "
             L"dans la même liste que les paramètres. Le fuseau Windows actuel est utilisé par défaut. Un "
             L"instant UTC non ambigu et son fuseau d’affichage sont enregistrés. Changer de fuseau conserve "
             L"l’instant. Pour une heure répétée, choisissez le décalage UTC ; une heure locale inexistante "
@@ -3098,9 +3139,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ou 66, 666) peuvent être activés séparément et sont désactivés par défaut.\r\n\r\nCliquez sur "
             L"un en-tête de colonne pour trier les données enregistrées par instant réel ou par texte de "
             L"description. Un second clic inverse l’ordre ; une flèche indique le sens du tri.\r\n\r\nLa "
-            L"position de la fenêtre, l’onglet actif, les valeurs saisies et les choix de mise en évidence "
-            L"sont enregistrés avec les paramètres de l’application dans le Registre ou en XML, selon le "
-            L"stockage choisi."
+            L"position de la fenêtre, l’onglet actif, les données du calcul et les choix de mise en "
+            L"évidence sont enregistrés avec les paramètres de l’application dans le Registre ou en XML, "
+            L"selon le stockage choisi."
+            L"\r\n\r\nExporter dans l’onglet des dates et heures enregistrées sauvegarde uniquement ces "
+            L"entrées dans un fichier XML distinct. Importer dans cet onglet extrait uniquement les dates "
+            L"et heures, même depuis un export des paramètres, et les fusionne avec les entrées existantes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -3110,6 +3154,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plateforme cible :" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web :" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Calculateur de temps" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importer…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exporter…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Impossible de lire les dates et heures enregistrées." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Impossible d’enregistrer les dates et heures." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -3237,7 +3283,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Reloj de monitor" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"El número máximo de widgets es %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Lenguaje de marcado extensible (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Documento de texto (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valores separados por comas (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio y "
@@ -3483,7 +3530,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"automático.\r\n\r\nEl suavizado de fuente ofrece ClearType, GDI y Ninguno.\r\n\r\nEstilo de "
             L"Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de y "
             L"Calculadora de tiempo. Si se "
-            L"elige la fuente predeterminada del sistema, estas ventanas usan Tahoma de 8 pt; una fuente de "
+            L"elige la fuente predeterminada del sistema, sus controles usan Tahoma de 8 pt; una fuente de "
             L"aplicación personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En "
             L"este modo solo se ofrecen GDI y Ninguno para el suavizado: una elección guardada de ClearType "
             L"usa GDI temporalmente y se restaura al desactivar el modo. Si los estilos visuales están "
@@ -3625,8 +3672,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"aniversarios mensuales y anuales desde el inicio elegido. La pestaña Fechas y horas "
             L"predefinidas permite añadir, editar, ordenar y eliminar fechas y horas con una descripción. "
             L"Las fechas y horas se guardan por separado en %APPDATA%\\FortSoft\\CalClock\\times.xml. La "
-            L"exportación manual las incluye; la importación conserva las entradas existentes y omite solo "
-            L"las que tienen la misma fecha, hora y descripción completa.\r\n\r\nCada entrada tiene su "
+            L"exportación de la configuración incluye estas entradas. La importación conserva las entradas "
+            L"existentes y omite solo las que representan el mismo instante UTC y tienen exactamente la "
+            L"misma descripción completa, independientemente de la zona de visualización.\r\n\r\nCada "
+            L"entrada tiene su "
             L"propia zona horaria de la misma lista que en Configuración. La predeterminada es la zona "
             L"actual de Windows. Se guarda un instante UTC inequívoco y su zona de visualización. Cambiar "
             L"la zona conserva el instante. En una hora repetida, seleccione el desfase UTC; las horas "
@@ -3641,9 +3690,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"66, 666) se pueden activar por separado y están desactivados de forma predeterminada.\r\n\r\n"
             L"Haga clic en el encabezado de una columna para ordenar los datos guardados por el instante "
             L"real o por el texto de la descripción. Otro clic invierte el orden; una flecha indica la "
-            L"dirección.\r\n\r\nLa posición de la ventana, la pestaña activa, los valores introducidos y "
-            L"las opciones de resaltado se guardan con la configuración de la aplicación en el Registro o "
-            L"en XML, según el almacenamiento elegido."
+            L"dirección.\r\n\r\nLa posición de la ventana, la pestaña activa, los datos del cálculo y las "
+            L"opciones de resaltado se guardan con la configuración de la aplicación en el Registro o en "
+            L"XML, según el almacenamiento elegido."
+            L"\r\n\r\nExportar en la pestaña de fechas y horas guardadas guarda solo esas entradas en un "
+            L"XML independiente. Importar en esta pestaña extrae solo fechas y horas, incluso de una "
+            L"exportación de la configuración, y las combina con las existentes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -3653,6 +3705,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sitio web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Calculadora de tiempo" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importar…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportar…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"No se pudieron leer las fechas y horas guardadas." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"No se pudieron guardar las fechas y horas." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Seleccione el desfase UTC de esta hora local repetida." },
@@ -3777,7 +3831,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Orologio su monitor" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Il numero massimo di widget è %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Linguaggio di marcatura estensibile (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Documento di testo (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valori separati da virgole (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Audio e "
@@ -4024,7 +4079,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"automatico.\r\n\r\nL’antialiasing del carattere offre ClearType, GDI e Nessuno.\r\n\r\nStile "
             L"Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e "
             L"Calcolatore di tempi. Con "
-            L"il carattere di sistema predefinito, queste finestre usano Tahoma 8 pt; un carattere "
+            L"il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt; un "
+            L"carattere "
             L"personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a "
             L"larghezza fissa. In questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: "
             L"una scelta ClearType salvata usa temporaneamente GDI e viene ripristinata disattivando la "
@@ -4164,9 +4220,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"evidenzia nel calendario valori tondi, cifre ripetute e ricorrenze mensili e annuali "
             L"dall’inizio scelto. La scheda Date e ore predefinite permette di aggiungere, modificare, "
             L"ordinare ed eliminare date e ore con una descrizione. Le date e le ore vengono salvate "
-            L"separatamente in %APPDATA%\\FortSoft\\CalClock\\times.xml. L’esportazione manuale le include; "
-            L"l’importazione conserva le voci esistenti e ignora solo quelle con data, ora e descrizione "
-            L"completa identiche.\r\n\r\nOgni dato ha un proprio fuso orario, scelto dallo stesso elenco "
+            L"separatamente in %APPDATA%\\FortSoft\\CalClock\\times.xml. Le esportazioni delle impostazioni "
+            L"includono queste voci. L’importazione conserva le voci esistenti e ignora solo quelle con lo "
+            L"stesso istante UTC e la stessa descrizione completa, indipendentemente dal fuso di "
+            L"visualizzazione.\r\n\r\nOgni dato ha un proprio fuso orario, scelto dallo stesso elenco "
             L"delle impostazioni. Il valore predefinito è il fuso attuale di Windows. Si salvano un istante "
             L"UTC univoco e il relativo fuso di visualizzazione. Cambiare fuso conserva l’istante. Per "
             L"un’ora ripetuta scegliere lo scostamento UTC; le ore locali inesistenti non possono essere "
@@ -4181,9 +4238,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sono disattivate per impostazione predefinita.\r\n\r\nFare clic sull’intestazione di una "
             L"colonna per ordinare i dati salvati per istante effettivo o per testo della descrizione. Un "
             L"altro clic inverte l’ordine; una freccia ne indica la direzione.\r\n\r\nLa posizione della "
-            L"finestra, la scheda attiva, i valori inseriti e le opzioni di evidenziazione vengono salvati "
+            L"finestra, la scheda attiva, i dati del calcolo e le opzioni di evidenziazione vengono salvati "
             L"con le impostazioni dell’applicazione nel Registro di sistema o in XML, secondo l’archivio "
             L"scelto."
+            L"\r\n\r\nEsporta nella scheda delle date e ore salvate salva solo queste voci in un file XML "
+            L"separato. Importa in questa scheda estrae solo date e ore, anche da un’esportazione delle "
+            L"impostazioni, e le unisce alle voci esistenti."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -4193,6 +4253,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Piattaforma di destinazione:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sito web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Calcolatore di tempi" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importa…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Esporta…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Impossibile leggere le date e le ore salvate." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Impossibile salvare le date e le ore." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -4317,7 +4379,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Relógio no monitor" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"O número máximo de widgets é %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - cópia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Linguagem de marcação extensível (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Documento de Texto (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valores separados por vírgulas (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Áudio e "
@@ -4535,7 +4598,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"suavização do tipo de letra oferece ClearType, GDI e Nenhuma.\r\n\r\nEstilo do Windows 2000 "
             L"requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de e Calculadora de tempo. "
             L"Com o tipo de letra "
-            L"predefinido do sistema, estas janelas usam Tahoma de 8 pt; um tipo de letra personalizado da "
+            L"predefinido do sistema, os controlos destas janelas usam Tahoma de 8 pt; um tipo de letra "
+            L"personalizado da "
             L"aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo, a "
             L"suavização só oferece GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e "
             L"é reposta ao desativar o modo. Se os estilos visuais estiverem desativados no Windows, ambas "
@@ -4659,9 +4723,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"calendário valores redondos, algarismos repetidos e aniversários mensais e anuais desde o "
             L"início escolhido. O separador Datas e horas predefinidas permite adicionar, editar, ordenar e "
             L"eliminar datas e horas com uma descrição. As datas e horas são guardadas separadamente em "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. A exportação manual inclui-as; a importação mantém "
-            L"as entradas existentes e ignora apenas as que têm a mesma data, hora e descrição "
-            L"completa.\r\n\r\nCada entrada tem o seu fuso horário da mesma lista das definições. O "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. A exportação das definições inclui estas entradas. "
+            L"A importação mantém as entradas existentes e ignora apenas as que têm o mesmo instante UTC e "
+            L"uma descrição completa idêntica, independentemente do fuso de apresentação.\r\n\r\nCada "
+            L"entrada tem o seu fuso horário da mesma lista das definições. O "
             L"predefinido é o fuso atual do Windows. São guardados um instante UTC inequívoco e o fuso de "
             L"apresentação. Alterar o fuso preserva o instante. Para uma hora repetida, escolha o desvio "
             L"UTC; horas locais inexistentes não podem ser guardadas. As horas medem o tempo decorrido; as "
@@ -4675,8 +4740,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"individualmente e estão desativados por predefinição.\r\n\r\nClique no cabeçalho de uma "
             L"coluna para ordenar os dados guardados pelo instante real ou pelo texto da descrição. Um novo "
             L"clique inverte a ordem; uma seta indica o sentido.\r\n\r\nA posição da janela, o separador "
-            L"ativo, os valores introduzidos e as opções de realce são guardados com as definições da "
-            L"aplicação no Registo ou em XML, conforme o armazenamento escolhido."
+            L"ativo, os dados de cálculo e as opções de realce são guardados com as definições da aplicação "
+            L"no Registo ou em XML, conforme o armazenamento escolhido."
+            L"\r\n\r\nExportar no separador de datas e horas guardadas guarda apenas essas entradas num XML "
+            L"separado. Importar neste separador extrai apenas datas e horas, mesmo de uma exportação das "
+            L"definições, e combina-as com as existentes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -4686,6 +4754,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Plataforma de destino:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Calculadora de tempo" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importar…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportar…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Não foi possível ler as datas e horas guardadas." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Não foi possível guardar as datas e horas." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Escolha o desvio UTC para esta hora local repetida." },
@@ -4810,7 +4880,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Zegar na monitorze" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Maksymalna liczba widżetów wynosi %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Rozszerzalny język znaczników (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Dokument tekstowy (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Wartości rozdzielane przecinkami (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Dźwięk i "
@@ -5048,8 +5119,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, a zapis w rejestrze usuwa automatyczny "
             L"XML.\r\n\r\nWygładzanie czcionki oferuje ClearType, GDI i Brak.\r\n\r\nStyl Windows 2000 jest "
             L"dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie i Kalkulator "
-            L"czasu. Przy "
-            L"domyślnej czcionce systemowej używa Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. "
+            L"czasu. Przy domyślnej czcionce systemowej elementy sterujące tych okien używają czcionki "
+            L"Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. "
             L"Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany "
             L"przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, obie "
             L"opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają "
@@ -5180,9 +5251,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"godzinami. Karta Okrągłe wartości wyróżnia w kalendarzu okrągłe wartości, powtarzające się "
             L"cyfry oraz miesięcznice i rocznice od wybranego początku. Karta Zapisane daty i godziny "
             L"umożliwia dodawanie, edycję, sortowanie i usuwanie dat i godzin z opisem. Daty i godziny są "
-            L"zapisywane osobno w %APPDATA%\\FortSoft\\CalClock\\times.xml. Eksport ręczny je uwzględnia; "
-            L"import zachowuje istniejące wpisy i pomija tylko te z identyczną datą, godziną i pełnym "
-            L"opisem.\r\n\r\nKażde pole ma własną strefę czasową z tej samej listy co w Ustawieniach. "
+            L"zapisywane osobno w %APPDATA%\\FortSoft\\CalClock\\times.xml. Eksport ustawień uwzględnia te "
+            L"wpisy. Import zachowuje istniejące wpisy i pomija tylko te z tą samą chwilą UTC i identycznym "
+            L"pełnym opisem, niezależnie od strefy wyświetlania.\r\n\r\nKażde pole ma własną strefę czasową "
+            L"z tej samej listy co w Ustawieniach. "
             L"Domyślna jest bieżąca strefa Windows. Zapisywane są jednoznaczna chwila w UTC i strefa "
             L"wyświetlania. Zmiana strefy zachowuje chwilę. Dla powtórzonej godziny wybierz przesunięcie "
             L"UTC; nieistniejącego czasu lokalnego nie można zapisać. Godziny mierzą upływ czasu, a "
@@ -5195,9 +5267,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"cyfry 1–9 (na przykład 11, 111 lub 66, 666) można włączać osobno; domyślnie są "
             L"wyłączone.\r\n\r\nKliknij nagłówek kolumny, aby posortować zapisane dane według rzeczywistego "
             L"momentu lub tekstu opisu. Kolejne kliknięcie odwraca kolejność; strzałka wskazuje kierunek "
-            L"sortowania.\r\n\r\nPołożenie okna, aktywna karta, wprowadzone wartości i opcje wyróżniania są "
-            L"zapisywane z ustawieniami aplikacji w rejestrze lub pliku XML, zgodnie z wybranym magazynem "
-            L"ustawień."
+            L"sortowania.\r\n\r\nPołożenie okna, aktywna karta, dane wejściowe obliczeń i opcje wyróżniania "
+            L"są zapisywane z ustawieniami aplikacji w rejestrze lub pliku XML, zgodnie z wybranym "
+            L"magazynem ustawień."
+            L"\r\n\r\nEksport na karcie zapisanych dat i godzin zapisuje tylko te wpisy w osobnym pliku "
+            L"XML. Import na tej karcie odczytuje tylko daty i godziny, również z eksportu ustawień, i "
+            L"scala je z istniejącymi wpisami."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -5207,6 +5282,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platforma docelowa:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Witryna:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator czasu" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importuj…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Eksportuj…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Nie można odczytać zapisanych dat i godzin." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Nie można zapisać dat i godzin." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -5326,7 +5403,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Hodiny na monitore" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Maximálny počet widgetov je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kópia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Rozšíriteľný značkovací jazyk (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Textový dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Hodnoty oddelené čiarkami (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvuk a "
@@ -5556,8 +5634,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické "
             L"XML.\r\n\r\nVyhladzovanie písma ponúka ClearType, GDI a Žiadne.\r\n\r\nŠtýl Windows 2000 je "
             L"dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový "
-            L"kalkulátor. Pri "
-            L"predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. "
+            L"kalkulátor. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien Tahomu 8 "
+            L"pt; vlastné písmo aplikácie má prednosť. "
             L"Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a "
             L"po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne "
             L"a neuplatňujú sa; uložené voľby sa zachovajú.\r\n\r\nÚvodná nula ponúka "
@@ -5682,9 +5760,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"medzi dvoma údajmi dátumu a času. Karta Okrúhle hodnoty vyznačuje v kalendári okrúhle "
             L"hodnoty, opakujúce sa číslice a mesačné aj ročné výročia od zvoleného začiatku. Karta "
             L"Predvolené časové údaje umožňuje pridávať, upravovať, triediť a odstraňovať údaje s popisom. "
-            L"Časové údaje sa ukladajú samostatne do %APPDATA%\\FortSoft\\CalClock\\times.xml. Ručný export "
-            L"ich zahŕňa; import zachová existujúce údaje a vynechá iba položky so zhodným dátumom, časom "
-            L"aj celým popisom.\r\n\r\nKaždý vstup má vlastné časové pásmo z rovnakého zoznamu ako v "
+            L"Časové údaje sa ukladajú samostatne do %APPDATA%\\FortSoft\\CalClock\\times.xml. Export "
+            L"nastavení tieto údaje zahŕňa. Import zachová existujúce údaje a vynechá iba položky so "
+            L"zhodným okamihom v UTC aj celým popisom, bez ohľadu na pásmo zobrazenia.\r\n\r\nKaždý vstup "
+            L"má vlastné časové pásmo z rovnakého zoznamu ako v "
             L"Nastaveniach. Predvolené je aktuálne pásmo Windows. Ukladá sa jednoznačný okamih v UTC a "
             L"pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej hodine vyberte posun voči "
             L"UTC; neexistujúci miestny čas nemožno uložiť. Hodiny vyjadrujú skutočne uplynutý čas, "
@@ -5697,8 +5776,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"66, 666) sa zapínajú jednotlivo a v predvolenom stave sú vypnuté.\r\n\r\nKliknutím na "
             L"hlavičku stĺpca zoradíte predvolené údaje podľa skutočného okamihu alebo podľa textu popisu. "
             L"Ďalším kliknutím obrátite smer zoradenia, ktorý ukazuje šípka.\r\n\r\nPoloha okna, aktívna "
-            L"karta, zadané hodnoty a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do registra "
+            L"karta, vstupy výpočtu a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do registra "
             L"alebo XML podľa zvoleného úložiska."
+            L"\r\n\r\nExport na karte predvolených časových údajov uloží iba tieto údaje do samostatného "
+            L"XML. Import na tejto karte načíta iba časové údaje aj z exportu nastavení a zlúči ich s "
+            L"existujúcimi položkami."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -5708,6 +5790,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Cieľová platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Časový kalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importovať…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportovať…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Uložené časové údaje sa nedajú načítať." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Časové údaje sa nedajú uložiť." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Vyberte posun voči UTC pre tento opakovaný miestny čas." },
@@ -5827,7 +5911,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Skærmur" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Det maksimale antal widgets er %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopi" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Udvideligt opmærkningssprog (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstdokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Kommaseparerede værdier (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Lyd og "
@@ -6040,8 +6125,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
             L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning tilbyder "
             L"ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil kræver Deaktiver temaer og gælder kun "
-            L"Indstillinger, Hjælp, Om og Tidsberegner. Med systemets standardskrifttype bruger disse vinduer "
-            L"Tahoma 8 pt; "
+            L"Indstillinger, Hjælp, Om og Tidsberegner. Med systemets standardskrifttype bruger disse "
+            L"vinduers kontrolelementer Tahoma 8 pt; "
             L"en brugerdefineret programskrifttype har forrang. Licensen beholder skrifttypen med fast "
             L"tegnbredde. I denne tilstand er kun GDI og Ingen tilgængelige for skriftudjævning: et gemt "
             L"valg af ClearType bruger midlertidigt GDI og gendannes, når tilstanden slås fra. Hvis visuelle "
@@ -6153,9 +6238,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tider. Runde værdier fremhæver runde værdier, gentagne cifre samt månedlige og årlige "
             L"mærkedage i kalenderen fra den valgte start. Gemte datoer og tider giver mulighed for at "
             L"tilføje, redigere, sortere og slette datoer og tider med beskrivelser. Datoer og tider gemmes "
-            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuel eksport medtager dem; import "
-            L"bevarer eksisterende poster og springer kun poster over med identisk dato, tid og fuld "
-            L"beskrivelse.\r\n\r\nHvert input har sin egen tidszone fra samme liste som i Indstillinger. "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Eksport af indstillinger medtager disse "
+            L"poster. Import bevarer eksisterende poster og springer kun poster over med samme "
+            L"UTC-tidspunkt og identisk fuld beskrivelse, uanset visningens tidszone.\r\n\r\nHvert input "
+            L"har sin egen tidszone fra samme liste som i Indstillinger. "
             L"Den aktuelle Windows-tidszone er standard. Et entydigt UTC-tidspunkt og visningszonen gemmes. "
             L"Et zoneskift bevarer tidspunktet. Vælg UTC-forskydningen ved en gentaget time; lokale "
             L"tidspunkter, der ikke findes, kan ikke gemmes. Timer måler forløbet tid; kalenderberegninger "
@@ -6167,9 +6253,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"årsdage. Gentagne cifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres enkeltvis og "
             L"er slået fra som standard.\r\n\r\nKlik på en kolonneoverskrift for at sortere gemte poster "
             L"efter det faktiske tidspunkt eller beskrivelsens tekst. Klik igen for at vende rækkefølgen; "
-            L"en pil viser retningen.\r\n\r\nVinduets placering, den aktive fane, indtastede værdier og "
+            L"en pil viser retningen.\r\n\r\nVinduets placering, den aktive fane, beregningsdata og "
             L"fremhævningsvalg gemmes med programindstillingerne i registreringsdatabasen eller XML "
             L"afhængigt af det valgte lager."
+            L"\r\n\r\nEksport på fanen med gemte datoer og tider gemmer kun disse poster i en separat "
+            L"XML-fil. Import på denne fane udtrækker kun datoer og tider, også fra eksporterede "
+            L"indstillinger, og fletter dem med eksisterende poster."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -6179,6 +6268,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Websted:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Tidsberegner" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importer…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Eksporter…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Gemte datoer og tider kunne ikke læses." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datoer og tider kunne ikke gemmes." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -6302,7 +6393,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Näyttökello" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Pienoisohjelmien enimmäismäärä on %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopio" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Laajennettava merkintäkieli (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstitiedosto (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Pilkuilla erotetut arvot (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Ääni ja "
@@ -6523,8 +6615,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan muuttamatta "
             L"tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja Ei "
             L"mitään.\r\n\r\nWindows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain "
-            L"Asetukset-, Ohje-, Tietoja- ja Aikalaskin-ikkunoita. Järjestelmän oletusfonttina käytetään "
-            L"Tahomaa 8 pt; "
+            L"Asetukset-, Ohje-, Tietoja- ja Aikalaskin-ikkunoita. Kun järjestelmän oletusfontti on "
+            L"valittu, näiden ikkunoiden ohjausobjektit käyttävät Tahomaa 8 pt; "
             L"itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. "
             L"Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä "
             L"ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat "
@@ -6653,9 +6745,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ja vuosipäivät valitusta alusta. Tallennetut päivämäärät ja ajat -välilehti mahdollistaa "
             L"päivämäärien ja aikojen lisäämisen, muokkaamisen, lajittelun ja poistamisen kuvauksineen. "
             L"Päivämäärät ja ajat tallennetaan erikseen tiedostoon "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Manuaalinen vienti sisältää ne; tuonti säilyttää "
-            L"nykyiset merkinnät ja ohittaa vain merkinnät, joiden päivämäärä, aika ja koko kuvaus ovat "
-            L"samat.\r\n\r\nJokaisella syötteellä on oma aikavyöhyke samasta luettelosta kuin asetuksissa. "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Asetusten vienti sisältää nämä merkinnät. Tuonti "
+            L"säilyttää nykyiset merkinnät ja ohittaa vain merkinnät, joiden UTC-ajanhetki ja koko kuvaus "
+            L"ovat täsmälleen samat näyttöaikavyöhykkeestä riippumatta.\r\n\r\nJokaisella syötteellä on oma "
+            L"aikavyöhyke samasta luettelosta kuin asetuksissa. "
             L"Oletuksena on Windowsin nykyinen aikavyöhyke. Tallennetaan yksiselitteinen UTC-ajanhetki ja "
             L"näyttövyöhyke. Vyöhykkeen vaihtaminen säilyttää ajanhetken. Valitse UTC-poikkeama toistuvalle "
             L"tunnille; olematonta paikallista aikaa ei voi tallentaa. Tunnit mittaavat kulunutta aikaa, ja "
@@ -6668,9 +6761,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"numerot 1–9 (esimerkiksi 11, 111 tai 66, 666) voi ottaa käyttöön erikseen, ja ne ovat "
             L"oletuksena poissa käytöstä.\r\n\r\nNapsauta sarakeotsikkoa lajitellaksesi tallennetut tiedot "
             L"todellisen ajanhetken tai kuvaustekstin mukaan. Uusi napsautus kääntää järjestyksen; nuoli "
-            L"näyttää suunnan.\r\n\r\nIkkunan sijainti, aktiivinen välilehti, syötetyt arvot ja "
+            L"näyttää suunnan.\r\n\r\nIkkunan sijainti, aktiivinen välilehti, laskennan lähtötiedot ja "
             L"korostusvalinnat tallennetaan sovelluksen asetusten mukana rekisteriin tai XML-tiedostoon "
             L"valitun tallennustavan mukaan."
+            L"\r\n\r\nTallennettujen päivämäärien ja aikojen välilehden vienti tallentaa vain nämä "
+            L"merkinnät erilliseen XML-tiedostoon. Tämän välilehden tuonti lukee vain päivämäärät ja ajat "
+            L"myös asetusten vientitiedostosta ja yhdistää ne nykyisiin merkintöihin."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
@@ -6680,6 +6776,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Kohdealusta:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Verkkosivusto:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Aikalaskin" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Tuo…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Vie…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Tallennettuja päivämääriä ja aikoja ei voitu lukea." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Päivämääriä ja aikoja ei voitu tallentaa." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -6801,7 +6899,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Skjáklukka" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Hámarksfjöldi græja er %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - afrit" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Útvíkkanlegt ívafsmál (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Textaskjal (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Gildi aðskilin með kommum (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Hljóð og "
@@ -7014,8 +7113,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta gerð "
             L"hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nWindows 2000-stíll "
             L"krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um og "
-            L"Tímareiknivél. Tahoma "
-            L"8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og "
+            L"Tímareiknivél. Stýringar þessara glugga nota Tahoma 8 pt þegar sjálfgefið kerfisletur er "
+            L"valið; sérvalið forritsletur hefur forgang og "
             L"leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað "
             L"ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með "
             L"hefðbundnu Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; "
@@ -7128,9 +7227,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"endurtekna tölustafi og mánaðarleg og árleg tímamót í dagatalinu frá völdu upphafi. Flipinn "
             L"Vistaðar dagsetningar og tímar gerir kleift að bæta við, breyta, raða og eyða dagsetningum og "
             L"tímum með lýsingu. Dagsetningar og tímar eru vistaðir sérstaklega í "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Handvirkur útflutningur inniheldur þau; "
-            L"innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sömu "
-            L"dagsetningu, tíma og heildarlýsingu.\r\n\r\nHvert inntak hefur eigið tímabelti úr sama lista "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Útflutningur stillinga inniheldur þessar færslur. "
+            L"Innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sama "
+            L"UTC-tímapunkt og nákvæmlega sömu heildarlýsingu, óháð tímabelti birtingar.\r\n\r\nHvert "
+            L"inntak hefur eigið tímabelti úr sama lista "
             L"og í stillingum. Núverandi tímabelti Windows er sjálfgefið. Vistaður er ótvíræður tímapunktur "
             L"í UTC ásamt tímabelti birtingar. Breyting á tímabelti varðveitir tímapunktinn. Veldu "
             L"UTC-hliðrun fyrir endurtekna klukkustund; ekki er hægt að vista staðartíma sem er ekki til. "
@@ -7143,9 +7243,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Hægt er að virkja endurtekna tölustafi 1–9 (til dæmis 11, 111 eða 66, 666) hvern fyrir sig; "
             L"sjálfgefið er slökkt á þeim.\r\n\r\nSmelltu á dálkhaus til að raða vistuðum færslum eftir "
             L"raunverulegu augnabliki eða lýsingartexta. Smelltu aftur til að snúa röðinni við; ör sýnir "
-            L"röðunarstefnuna.\r\n\r\nStaðsetning gluggans, virkur flipi, innslegin gildi og val á "
+            L"röðunarstefnuna.\r\n\r\nStaðsetning gluggans, virkur flipi, inntaksgögn útreikninga og val á "
             L"auðkenningu eru vistuð með forritsstillingum í skrásetningunni eða XML eftir völdum "
             L"geymslumáta."
+            L"\r\n\r\nÚtflutningur á flipanum með vistuðum dagsetningum og tímum vistar aðeins þessar "
+            L"færslur í sérstakri XML-skrá. Innflutningur á þessum flipa les aðeins dagsetningar og tíma, "
+            L"einnig úr útfluttum stillingum, og sameinar við núverandi færslur."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -7155,6 +7258,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Markvettvangur:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Vefsvæði:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Tímareiknivél" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Flytja inn…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Flytja út…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Ekki tókst að lesa vistaðar dagsetningar og tíma." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Ekki tókst að vista dagsetningar og tíma." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Veldu UTC-hliðrun fyrir þennan endurtekna staðartíma." },
@@ -7276,7 +7381,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Skjermklokke" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Maksimalt antall widgeter er %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopi" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Utvidbart markeringsspråk (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstdokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Kommaseparerte verdier (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Lyd og "
@@ -7490,9 +7596,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tidligere CalClock-data. Innstillinger kan eksporteres til XML. XML-import laster inn og "
             L"lagrer innstillingene umiddelbart i valgt lagring uten å endre "
             L"lagringstypen.\r\n\r\nSkriftutjevning tilbyr ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil "
-            L"krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. Tahoma 8 pt "
-            L"brukes i "
-            L"stedet for systemets standardskrift; en egendefinert programskrift har forrang, og "
+            L"krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. "
+            L"Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er valgt; en "
+            L"egendefinert programskrift har forrang, og "
             L"lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret "
             L"ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk "
             L"Windows-utseende vises begge temavalgene uten hake og nedtonet, og brukes ikke; de lagrede "
@@ -7604,9 +7710,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"verdier fremhever runde verdier, gjentatte sifre samt månedlige og årlige merkedager i "
             L"kalenderen fra valgt start. Lagrede datoer og klokkeslett lar deg legge til, redigere, "
             L"sortere og slette datoer og klokkeslett med beskrivelser. Datoer og klokkeslett lagres "
-            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuell eksport inkluderer dem; import "
-            L"bevarer eksisterende oppføringer og hopper bare over oppføringer med identisk dato, "
-            L"klokkeslett og fullstendig beskrivelse.\r\n\r\nHver inndata har egen tidssone fra samme liste "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Eksport av innstillinger inkluderer disse "
+            L"oppføringene. Import bevarer eksisterende oppføringer og hopper bare over oppføringer med "
+            L"samme UTC-tidspunkt og identisk fullstendig beskrivelse, uavhengig av "
+            L"visningstidssonen.\r\n\r\nHver inndata har egen tidssone fra samme liste "
             L"som i Innstillinger. Gjeldende Windows-tidssone er standard. Et entydig UTC-tidspunkt og "
             L"visningssonen lagres. Bytte av sone bevarer tidspunktet. Velg UTC-forskyvningen ved en "
             L"gjentatt time; lokale klokkeslett som ikke finnes, kan ikke lagres. Timer måler medgått tid; "
@@ -7618,9 +7725,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"måneds- og årsdager. Gjentatte sifre 1–9 (for eksempel 11, 111 eller 66, 666) kan aktiveres "
             L"enkeltvis og er slått av som standard.\r\n\r\nKlikk på en kolonneoverskrift for å sortere "
             L"lagrede oppføringer etter faktisk tidspunkt eller beskrivelsestekst. Klikk igjen for å snu "
-            L"rekkefølgen; en pil viser retningen.\r\n\r\nVindusposisjonen, den aktive fanen, innskrevne "
-            L"verdier og valg av utheving lagres sammen med programinnstillingene i registeret eller XML, "
-            L"avhengig av valgt lagringsmåte."
+            L"rekkefølgen; en pil viser retningen.\r\n\r\nVindusposisjonen, den aktive fanen, "
+            L"beregningsdata og valg av utheving lagres sammen med programinnstillingene i registeret eller "
+            L"XML, avhengig av valgt lagringsmåte."
+            L"\r\n\r\nEksport på fanen med lagrede datoer og klokkeslett lagrer bare disse oppføringene i "
+            L"en egen XML-fil. Import på denne fanen henter bare datoer og klokkeslett, også fra "
+            L"eksporterte innstillinger, og slår dem sammen med eksisterende oppføringer."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -7630,6 +7740,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Nettsted:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Tidskalkulator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importer…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Eksporter…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Lagrede datoer og klokkeslett kunne ikke leses." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datoer og klokkeslett kunne ikke lagres." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -7753,7 +7865,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Skärmklocka" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Det maximala antalet widgetar är %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Utökningsbart märkspråk (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Textdokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Kommaseparerade värden (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Ljud och "
@@ -7968,7 +8081,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"lagringstypen.\r\n\r\nTeckensnittsutjämning erbjuder ClearType, GDI och Ingen.\r\n\r\nWindows "
             L"2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. "
             L"Med systemets "
-            L"standardteckensnitt använder dessa fönster Tahoma 8 pt; ett anpassat programteckensnitt har "
+            L"standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat "
+            L"programteckensnitt har "
             L"företräde. Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast GDI "
             L"och Ingen tillgängliga för teckensnittsutjämning: ett sparat val av ClearType använder "
             L"tillfälligt GDI och återställs när läget stängs av. Om visuella format är avstängda i Windows "
@@ -8082,9 +8196,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Runda värden markerar runda värden, upprepade siffror samt månatliga och årliga "
             L"bemärkelsedagar i kalendern från vald start. Sparade datum och tider låter dig lägga till, "
             L"redigera, sortera och ta bort datum och tider med beskrivningar. Datum och tider sparas "
-            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuell export inkluderar dem; import "
-            L"bevarar befintliga poster och hoppar bara över poster med identiskt datum, tid och "
-            L"fullständig beskrivning.\r\n\r\nVarje inmatning har en egen tidszon från samma lista som i "
+            L"separat i %APPDATA%\\FortSoft\\CalClock\\times.xml. Export av inställningar inkluderar dessa "
+            L"poster. Import bevarar befintliga poster och hoppar bara över poster med samma UTC-tidpunkt "
+            L"och identisk fullständig beskrivning, oavsett visningens tidszon.\r\n\r\nVarje inmatning har "
+            L"en egen tidszon från samma lista som i "
             L"Inställningar. Aktuell Windows-tidszon är standard. En entydig UTC-tidpunkt och visningszonen "
             L"sparas. Byte av zon bevarar tidpunkten. Välj UTC-förskjutning vid en upprepad timme; lokala "
             L"tider som inte finns kan inte sparas. Timmar mäter förfluten tid; kalenderberäkningar "
@@ -8096,9 +8211,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Upprepade siffror 1–9 (till exempel 11, 111 eller 66, 666) kan aktiveras var för sig och är "
             L"avstängda som standard.\r\n\r\nKlicka på en kolumnrubrik för att sortera sparade poster efter "
             L"den faktiska tidpunkten eller beskrivningstexten. Klicka igen för att vända ordningen; en pil "
-            L"visar riktningen.\r\n\r\nFönstrets position, den aktiva fliken, inmatade värden och "
+            L"visar riktningen.\r\n\r\nFönstrets position, den aktiva fliken, beräkningsdata och "
             L"markeringsval sparas tillsammans med programinställningarna i registret eller XML enligt vald "
             L"lagringsmetod."
+            L"\r\n\r\nExport på fliken med sparade datum och tider sparar bara dessa poster i en separat "
+            L"XML-fil. Import på denna flik hämtar bara datum och tider, även från exporterade "
+            L"inställningar, och slår samman dem med befintliga poster."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -8108,6 +8226,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Målplattform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webbplats:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Tidskalkylator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importera…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportera…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sparade datum och tider kunde inte läsas." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datum och tider kunde inte sparas." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -8232,7 +8352,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Monitör saati" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"En fazla %d araç kullanılabilir." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopya" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Genişletilebilir işaretleme dili (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Metin belgesi (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Virgülle ayrılmış değerler (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Ses ve "
@@ -8446,9 +8567,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"aktarılabilir. XML içe aktarma, depolama türünü değiştirmeden ayarları hemen yükler ve seçili "
             L"depolamaya kaydeder.\r\n\r\nYazı tipi kenar yumuşatma seçenekleri ClearType, GDI ve Yok "
             L"şeklindedir.\r\n\r\nWindows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve "
-            L"yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerine uygulanır. Sistem "
-            L"varsayılan yazı tipi "
-            L"yerine Tahoma 8 pt kullanılır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas "
+            L"yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerine uygulanır. Sistemin "
+            L"varsayılan yazı tipi seçildiğinde bu pencerelerin denetimleri Tahoma 8 pt kullanır; özel "
+            L"uygulama yazı tipi önceliklidir ve lisans metni Consolas "
             L"olarak kalır. Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI "
             L"ile uygulanır; stil kapatıldığında geri gelir. Windows klasik görünümünde her iki tema "
             L"seçeneği işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler korunur.\r\n\r\nBaştaki sıfır "
@@ -8563,9 +8684,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"yuvarlak değerleri, yinelenen rakamları ve aylık ve yıllık dönümleri takvimde vurgular. "
             L"Kayıtlı tarih ve saatler, açıklamalı tarih ve saatleri eklemenizi, düzenlemenizi, "
             L"sıralamanızı ve silmenizi sağlar. Tarih ve saatler ayrı olarak "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml dosyasına kaydedilir. Elle dışa aktarma bunları "
-            L"içerir; içe aktarma mevcut kayıtları korur ve yalnızca tarihi, saati ve açıklamasının tamamı "
-            L"aynı olan kayıtları atlar.\r\n\r\nHer girişin Ayarlar ile aynı listedeki seçeneklerden kendi "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml dosyasına kaydedilir. Ayarların dışa aktarımı bu "
+            L"kayıtları içerir. İçe aktarma mevcut kayıtları korur ve yalnızca aynı UTC anına ve tamamen "
+            L"aynı açıklamaya sahip kayıtları, görüntüleme saat diliminden bağımsız olarak "
+            L"atlar.\r\n\r\nHer girişin Ayarlar ile aynı listedeki seçeneklerden kendi "
             L"saat dilimi vardır. Varsayılan, Windows’un geçerli saat dilimidir. Kesin bir UTC anı ve "
             L"görüntüleme saat dilimi kaydedilir. Saat dilimini değiştirmek anı korur. Tekrarlanan saatte "
             L"UTC farkını seçin; var olmayan yerel saatler kaydedilemez. Saatler geçen süreyi ölçer; takvim "
@@ -8578,9 +8700,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Tekrarlanan 1–9 rakamları (örneğin 11, 111 veya 66, 666) ayrı ayrı etkinleştirilebilir ve "
             L"varsayılan olarak kapalıdır.\r\n\r\nKaydedilmiş kayıtları gerçek zaman noktasına veya "
             L"açıklama metnine göre sıralamak için sütun başlığına tıklayın. Yeniden tıklamak sıralamayı "
-            L"tersine çevirir; ok, yönü gösterir.\r\n\r\nPencere konumu, etkin sekme, girilen değerler ve "
-            L"vurgulama seçimleri, seçilen depolama seçeneğine göre uygulama ayarlarıyla birlikte kayıt "
+            L"tersine çevirir; ok, yönü gösterir.\r\n\r\nPencere konumu, etkin sekme, hesaplama girdileri "
+            L"ve vurgulama seçimleri, seçilen depolama seçeneğine göre uygulama ayarlarıyla birlikte kayıt "
             L"defterine veya XML dosyasına kaydedilir."
+            L"\r\n\r\nKayıtlı tarih ve saatler sekmesindeki dışa aktarma yalnızca bu kayıtları ayrı bir XML "
+            L"dosyasına kaydeder. Bu sekmedeki içe aktarma, ayarların dışa aktarıldığı bir dosyadan bile "
+            L"yalnızca tarih ve saatleri alıp mevcut kayıtlarla birleştirir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -8590,6 +8715,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Hedef platform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web sitesi:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Zaman hesaplayıcı" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&İçe aktar…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Dışa aktar…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Kayıtlı tarih ve saatler okunamadı." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Tarih ve saatler kaydedilemedi." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Tekrarlanan bu yerel saat için UTC farkını seçin." },
@@ -8710,7 +8837,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ekraanikell" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Vidinaid võib olla kuni %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - koopia" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Laiendatav märgistuskeel (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstidokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Komaga eraldatud väärtused (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Heli ja "
@@ -8947,8 +9075,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka "
             L"proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on "
             L"oma keskjoondus.\r\n\r\nWindows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult "
-            L"aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 "
-            L"pt; "
+            L"aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Kui valitud on süsteemi vaikefont, kasutavad "
+            L"nende akende juhtelemendid fonti Tahoma 8 pt; "
             L"kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab "
             L"valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; "
             L"stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad "
@@ -9059,9 +9187,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"korduvad numbrid ning igakuised ja iga-aastased tähtpäevad alates valitud algusest. Vahekaart "
             L"Salvestatud kuupäevad ja kellaajad võimaldab kirjeldusega kuupäevi ja kellaaegu lisada, "
             L"muuta, sortida ja kustutada. Kuupäevad ja kellaajad salvestatakse eraldi faili "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Käsitsi eksport sisaldab neid; import säilitab "
-            L"olemasolevad kirjed ja jätab vahele ainult kirjed, mille kuupäev, kellaaeg ja kogu kirjeldus "
-            L"on identsed.\r\n\r\nIgal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Sätete eksport sisaldab neid kirjeid. Import "
+            L"säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille UTC-ajahetk ja kogu "
+            L"kirjeldus on täpselt samad, olenemata kuvamiseks valitud ajavööndist.\r\n\r\nIgal sisendil on "
+            L"oma ajavöönd samast loendist nagu seadetes. Vaikimisi "
             L"kasutatakse Windowsi praegust ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja "
             L"kuvamisvöönd. Vööndi muutmine säilitab ajahetke. Korduva tunni korral valige UTC-nihe; "
             L"olematut kohalikku aega ei saa salvestada. Tunnid mõõdavad möödunud aega; kalendriarvutused "
@@ -9073,9 +9202,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"täisnädalat ning kuu- ja aastapäevad. Korduvad numbrid 1–9 (näiteks 11, 111 või 66, 666) saab "
             L"eraldi sisse lülitada; vaikimisi on need välja lülitatud.\r\n\r\nKlõpsa veerupäist, et "
             L"sortida salvestatud kirjeid tegeliku ajahetke või kirjelduse teksti järgi. Uus klõps pöörab "
-            L"järjestuse ümber; nool näitab suunda.\r\n\r\nAkna asukoht, aktiivne vahekaart, sisestatud "
-            L"väärtused ja esiletõstmise valikud salvestatakse koos rakenduse sätetega registrisse või "
+            L"järjestuse ümber; nool näitab suunda.\r\n\r\nAkna asukoht, aktiivne vahekaart, arvutuse "
+            L"lähteandmed ja esiletõstmise valikud salvestatakse koos rakenduse sätetega registrisse või "
             L"XML-faili vastavalt valitud salvestuskohale."
+            L"\r\n\r\nSalvestatud kuupäevade ja kellaaegade vahekaardi eksport salvestab ainult need kirjed "
+            L"eraldi XML-faili. Selle vahekaardi import loeb ka sätete ekspordist ainult kuupäevad ja "
+            L"kellaajad ning ühendab need olemasolevate kirjetega."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -9085,6 +9217,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sihtplatvorm:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veebisait:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Ajakalkulaator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Impordi…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Ekspordi…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Salvestatud kuupäevi ja kellaaegu ei saanud lugeda." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Kuupäevi ja kellaaegu ei saanud salvestada." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Valige selle korduva kohaliku aja UTC-nihe." },
@@ -9205,7 +9339,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Clog scáileáin" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Is é %d an líon uasta giuirléidí." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - cóip" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Teanga Mharcála Inbhreisithe (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Doiciméad téacs (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Luachanna scartha le camóga (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Fuaim agus "
@@ -9459,9 +9594,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig "
             L"scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith "
             L"UTC.\r\n\r\nÉilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach "
-            L"leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáidtear Tahoma 8 pt in "
-            L"áit chló "
-            L"réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann "
+            L"leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáideann rialtáin na "
+            L"bhfuinneog seo Tahoma 8 pt nuair a roghnaítear cló réamhshocraithe an chórais; bíonn "
+            L"tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann "
             L"Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go "
             L"sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma "
             L"chlasaiceach Windows, taispeántar an dá rogha téama gan tic agus liath agus ní chuirtear i "
@@ -9587,9 +9722,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"digití athfhillteacha agus comóradh míosúil agus bliantúil san fhéilire ón tús roghnaithe. Le "
             L"Dátaí agus amanna réamhshocraithe is féidir dátaí agus amanna le cur síos a chur leis, a chur "
             L"in eagar, a shórtáil agus a scriosadh. Úsáideann Sábháiltear dátaí agus amanna ar leithligh "
-            L"in %APPDATA%\\FortSoft\\CalClock\\times.xml. Cuirtear san áireamh iad in easpórtáil láimhe; "
-            L"coinníonn iompórtáil na hiontrálacha atá ann agus ní scipeálann sí ach iontrálacha a bhfuil "
-            L"an dáta, an t-am agus an cur síos iomlán céanna acu.\r\n\r\nTá crios ama dá chuid féin ag "
+            L"in %APPDATA%\\FortSoft\\CalClock\\times.xml. Cuirtear na hiontrálacha seo san áireamh in "
+            L"easpórtáil socruithe. Coinníonn iompórtáil na hiontrálacha atá ann agus ní scipeálann sí ach "
+            L"iontrálacha a bhfuil an meandar UTC céanna agus an cur síos iomlán céanna acu, beag beann ar "
+            L"an gcrios ama taispeána.\r\n\r\nTá crios ama dá chuid féin ag "
             L"gach ionchur, ón liosta céanna agus atá sna Socruithe. Is é crios ama reatha Windows an "
             L"réamhshocrú. Sábháiltear meandar soiléir UTC agus a chrios taispeána. Caomhnaítear an meandar "
             L"nuair a athraítear an crios. Roghnaigh an fritháireamh UTC d’uair athfhillteach; ní féidir am "
@@ -9604,8 +9740,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"n-aonar; tá siad díchumasaithe de réir réamhshocraithe.\r\n\r\nCliceáil ceanntásc colúin chun "
             L"iontrálacha sábháilte a shórtáil de réir an fhíor-mheandair nó théacs an chuir síos. Cliceáil "
             L"arís chun an t-ord a aisiompú; léiríonn saighead an treo.\r\n\r\nSábháiltear suíomh na "
-            L"fuinneoige, an chluaisín gníomhach, na luachanna iontráilte agus na roghanna aibhsithe le "
-            L"socruithe an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála."
+            L"fuinneoige, an chluaisín gníomhach, ionchuir an ríofa agus na roghanna aibhsithe le socruithe "
+            L"an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála."
+            L"\r\n\r\nSábhálann Easpórtáil ar chluaisín na ndátaí agus na n-amanna sábháilte na "
+            L"hiontrálacha sin amháin i gcomhad XML ar leith. Ní léann Iompórtáil ar an gcluaisín seo ach "
+            L"dátaí agus amanna, fiú ó easpórtáil socruithe, agus cumascann sí iad leis na hiontrálacha atá "
+            L"ann."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -9615,6 +9755,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Sprioc-ardán:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Suíomh gréasáin:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Áireamhán ama" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Iompórtáil…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Easpórtáil…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Níorbh fhéidir dátaí agus amanna sábháilte a léamh." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Níorbh fhéidir dátaí agus amanna a shábháil." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -9746,7 +9888,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ekrano laikrodis" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Didžiausias valdiklių skaičius – %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Išplečiamoji ženklinimo kalba (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstinis dokumentas (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Kableliais atskirtos reikšmės (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Garsas ir "
@@ -9996,8 +10139,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį "
             L"šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama "
             L"atskirai.\r\n\r\nWindows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik "
-            L"langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Vietoj numatytojo sistemos šrifto "
-            L"naudojamas Tahoma 8 pt; "
+            L"langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Pasirinkus numatytąjį sistemos "
+            L"šriftą, šių langų valdikliai naudoja Tahoma 8 pt; "
             L"pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima "
             L"rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas "
             L"išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos "
@@ -10116,8 +10259,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"pasikartojančius skaitmenis ir mėnesines bei metines sukaktis nuo pasirinktos pradžios. "
             L"Išsaugotos datos ir laikai leidžia pridėti, redaguoti, rikiuoti ir naikinti datas bei laikus "
             L"su aprašais. Datos ir laikai saugomi atskirai faile %APPDATA%\\FortSoft\\CalClock\\times.xml. "
-            L"Rankinis eksportas juos įtraukia; importas išsaugo esamus įrašus ir praleidžia tik įrašus, "
-            L"kurių data, laikas ir visas aprašas yra vienodi.\r\n\r\nKiekvienas įvesties laikas turi savo "
+            L"Parametrų eksportas įtraukia šiuos įrašus. Importas išsaugo esamus įrašus ir praleidžia tik "
+            L"įrašus, kurių UTC laiko momentas ir visas aprašas yra visiškai vienodi, nepriklausomai nuo "
+            L"rodymo laiko juostos.\r\n\r\nKiekvienas įvesties laikas turi savo "
             L"laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra dabartinė Windows laiko "
             L"juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas "
             L"išlieka. Pasikartojančiai valandai pasirinkite UTC poslinkį; neegzistuojančio vietinio laiko "
@@ -10131,9 +10275,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"1–9 (pavyzdžiui, 11, 111 arba 66, 666) galima įjungti atskirai; pagal numatytąsias nuostatas "
             L"jie išjungti.\r\n\r\nSpustelėkite stulpelio antraštę, kad surikiuotumėte išsaugotus įrašus "
             L"pagal tikrąjį laiko momentą arba aprašo tekstą. Dar kartą spustelėjus tvarka apverčiama; "
-            L"rodyklė nurodo kryptį.\r\n\r\nLango padėtis, aktyvus skirtukas, įvestos reikšmės ir "
-            L"paryškinimo parinktys išsaugomos su programos parametrais registre arba XML faile pagal "
+            L"rodyklė nurodo kryptį.\r\n\r\nLango padėtis, aktyvus skirtukas, skaičiavimo įvesties duomenys "
+            L"ir paryškinimo parinktys išsaugomos su programos parametrais registre arba XML faile pagal "
             L"pasirinktą saugojimo būdą."
+            L"\r\n\r\nIšsaugotų datų ir laikų skirtuko eksportas įrašo tik šiuos įrašus į atskirą XML "
+            L"failą. Šio skirtuko importas net iš parametrų eksporto paima tik datas ir laikus bei sujungia "
+            L"juos su esamais įrašais."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -10143,6 +10290,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Tikslinė platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Svetainė:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Laiko skaičiuotuvas" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importuoti…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Eksportuoti…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Nepavyko perskaityti išsaugotų datų ir laikų." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Nepavyko išsaugoti datų ir laikų." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -10266,7 +10415,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ekrāna pulkstenis" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Maksimālais logrīku skaits ir %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Paplašināmā iezīmēšanas valoda (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Teksta dokuments (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Ar komatiem atdalītas vērtības (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Skaņa un "
@@ -10507,9 +10657,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. "
             L"Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa "
             L"centrēšana.\r\n\r\nWindows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz "
-            L"logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Sistēmas noklusējuma fonta "
-            L"vietā izmanto "
-            L"Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek "
+            L"logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Ja izvēlēts sistēmas "
+            L"noklusējuma fonts, šo logu vadīklas izmanto Tahoma 8 pt; pielāgotajam programmas fontam ir "
+            L"priekšroka, un licences tekstam paliek "
             L"Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI "
             L"un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek "
             L"rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek "
@@ -10620,9 +10770,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"un laikiem. Apaļas vērtības kalendārā izceļ apaļas vērtības, atkārtotus ciparus un ikmēneša "
             L"un ikgadējas jubilejas no izvēlētā sākuma. Saglabātie datumi un laiki ļauj pievienot, "
             L"rediģēt, kārtot un dzēst datumus un laikus ar aprakstiem. Datumi un laiki tiek saglabāti "
-            L"atsevišķi failā %APPDATA%\\FortSoft\\CalClock\\times.xml. Manuālā eksportēšana tos iekļauj; "
-            L"importēšana saglabā esošos ierakstus un izlaiž tikai tos, kuriem ir vienāds datums, laiks un "
-            L"pilns apraksts.\r\n\r\nKatrai ievadei ir sava laika josla no tā paša saraksta kā "
+            L"atsevišķi failā %APPDATA%\\FortSoft\\CalClock\\times.xml. Iestatījumu eksports iekļauj šos "
+            L"ierakstus. Imports saglabā esošos ierakstus un izlaiž tikai tos, kuriem ir tas pats UTC laika "
+            L"moments un pilnīgi vienāds pilns apraksts neatkarīgi no attēlošanas laika "
+            L"joslas.\r\n\r\nKatrai ievadei ir sava laika josla no tā paša saraksta kā "
             L"iestatījumos. Noklusējums ir pašreizējā Windows laika josla. Tiek saglabāts nepārprotams UTC "
             L"brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās. Atkārtotai stundai izvēlieties "
             L"UTC nobīdi; neeksistējošu vietējo laiku nevar saglabāt. Stundas mēra pagājušo laiku; "
@@ -10635,9 +10786,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(piemēram, 11, 111 vai 66, 666) var ieslēgt atsevišķi; pēc noklusējuma tie ir "
             L"izslēgti.\r\n\r\nNoklikšķiniet uz kolonnas virsraksta, lai kārtotu saglabātos ierakstus pēc "
             L"faktiskā laika brīža vai apraksta teksta. Vēlreiz noklikšķinot, secība tiek apgriezta; "
-            L"bultiņa norāda virzienu.\r\n\r\nLoga novietojums, aktīvā cilne, ievadītās vērtības un "
+            L"bultiņa norāda virzienu.\r\n\r\nLoga novietojums, aktīvā cilne, aprēķina ievaddati un "
             L"izcelšanas izvēles tiek saglabātas kopā ar programmas iestatījumiem reģistrā vai XML failā "
             L"atbilstoši izvēlētajam glabāšanas veidam."
+            L"\r\n\r\nSaglabāto datumu un laiku cilnes eksports saglabā tikai šos ierakstus atsevišķā XML "
+            L"failā. Šīs cilnes imports arī no iestatījumu eksporta nolasa tikai datumus un laikus un "
+            L"apvieno tos ar esošajiem ierakstiem."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -10647,6 +10801,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Mērķa platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Tīmekļa vietne:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Laika kalkulators" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importēt…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Eksportēt…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Neizdevās nolasīt saglabātos datumus un laikus." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Neizdevās saglabāt datumus un laikus." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izvēlieties šī atkārtotā vietējā laika UTC nobīdi." },
@@ -10766,7 +10922,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Képernyőóra" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"A minialkalmazások maximális száma: %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - másolat" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Bővíthető jelölőnyelv (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Szöveges dokumentum (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Vesszővel tagolt értékek (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Hangfájlok és "
@@ -11018,9 +11175,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos "
             L"betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. "
             L"Az UTC-sor külön igazodik középre.\r\n\r\nA Windows 2000 stílushoz be kell jelölni a Témák "
-            L"letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. A "
-            L"rendszer "
-            L"alapértelmezett betűtípusa helyett 8 pontos Tahoma jelenik meg; az egyéni alkalmazás-betűtípus "
+            L"letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra "
+            L"vonatkozik. A rendszer alapértelmezett betűtípusának kiválasztásakor ezen ablakok "
+            L"vezérlőelemei 8 pontos Tahomát használnak; az egyéni alkalmazás-betűtípus "
             L"elsőbbséget élvez, a licenc szövege pedig Consolas marad. Csak GDI vagy Nincs választható. A "
             L"mentett ClearType-beállítás átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. "
             L"Klasszikus Windows-megjelenésnél mindkét témabeállítás jelöletlen és szürke, és nem "
@@ -11140,8 +11297,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"havi és éves évfordulókat emeli ki a naptárban. A Mentett dátumok és időpontok lapon "
             L"leírással ellátott időpontok adhatók hozzá, szerkeszthetők, rendezhetők és törölhetők. A A "
             L"dátumok és időpontok külön, a %APPDATA%\\FortSoft\\CalClock\\times.xml fájlba kerülnek. A "
-            L"kézi exportálás tartalmazza őket; az importálás megőrzi a meglévő bejegyzéseket, és csak az "
-            L"azonos dátumú, időpontú és teljes leírású bejegyzéseket hagyja ki.\r\n\r\nMinden bemenet "
+            L"beállítások exportálása ezeket a bejegyzéseket is tartalmazza. Az importálás megőrzi a "
+            L"meglévő bejegyzéseket, és csak az azonos UTC-időpontú és megegyező teljes leírású "
+            L"bejegyzéseket hagyja ki, a megjelenítési időzónától függetlenül.\r\n\r\nMinden bemenet "
             L"saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális "
             L"időzónája. Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása "
             L"megőrzi az időpontot. Ismétlődő óránál válassza ki az UTC-eltolást; nem létező helyi idő nem "
@@ -11155,9 +11313,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"11, 111 vagy 66, 666) külön-külön bekapcsolhatók; alapértelmezés szerint ki vannak "
             L"kapcsolva.\r\n\r\nKattintson egy oszlop fejlécére a mentett adatok tényleges időpont vagy "
             L"leírásszöveg szerinti rendezéséhez. Újabb kattintással megfordítható a sorrend; a nyíl "
-            L"mutatja az irányt.\r\n\r\nAz ablak helye, az aktív fül, a megadott értékek és a kiemelési "
-            L"beállítások az alkalmazás beállításaival együtt a beállításjegyzékbe vagy XML-fájlba kerülnek "
-            L"a választott tárolási mód szerint."
+            L"mutatja az irányt.\r\n\r\nAz ablak helye, az aktív fül, a számítás bemeneti adatai és a "
+            L"kiemelési beállítások az alkalmazás beállításaival együtt a beállításjegyzékbe vagy "
+            L"XML-fájlba kerülnek a választott tárolási mód szerint."
+            L"\r\n\r\nA mentett dátumok és időpontok lapján az exportálás csak ezeket a bejegyzéseket menti "
+            L"külön XML-fájlba. Az importálás ezen a lapon a beállítások exportjából is csak a dátumokat és "
+            L"időpontokat olvassa be, és egyesíti a meglévő bejegyzésekkel."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Órák és naptárak\r\n\r\nNatív Win32-alkalmazás legfeljebb 32, egymástól függetlenül "
@@ -11167,6 +11328,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Célplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Webhely:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Időkalkulátor" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importálás…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exportálás…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"A mentett dátumok és időpontok nem olvashatók." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"A dátumok és időpontok nem menthetők." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Válassza ki az ismétlődő helyi idő UTC-eltolását." },
@@ -11290,7 +11453,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Arloġġ tal-iskrin" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"L-għadd massimu ta’ widgets huwa %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopja" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Lingwa tal-markatura estensibbli (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Dokument tat-test (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valuri separati b’virgoli (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Awdjo u "
@@ -11538,9 +11702,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki "
             L"b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. "
             L"Ir-ringiela UTC tiġi ċċentrata separatament.\r\n\r\nStil Windows 2000 jeħtieġ Iddiżattiva "
-            L"t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. Tahoma 8 pt "
-            L"tintuża minflok "
-            L"il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test "
+            L"t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. "
+            L"Il-kontrolli ta’ dawn it-twieqi jużaw Tahoma 8 pt meta jintgħażel il-font predefinit "
+            L"tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test "
             L"tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ "
             L"ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra "
             L"klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u ma jiġux "
@@ -11661,9 +11825,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"u anniversarji ta’ kull xahar u ta’ kull sena fil-kalendarju mill-bidu magħżul. Dati u "
             L"ħinijiet issettjati minn qabel jippermetti li żżid, teditja, tordna u tħassar dati u ħinijiet "
             L"b’deskrizzjoni. Id-dati u l-ħinijiet jiġu ssejvjati separatament "
-            L"f’%APPDATA%\\FortSoft\\CalClock\\times.xml. L-esportazzjoni manwali tinkludihom; "
-            L"l-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess data, ħin u "
-            L"deskrizzjoni sħiħa.\r\n\r\nKull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal "
+            L"f’%APPDATA%\\FortSoft\\CalClock\\times.xml. L-esportazzjoni tas-settings tinkludi dawn "
+            L"l-entrati. L-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess mument UTC "
+            L"u bl-istess deskrizzjoni sħiħa, irrispettivament miż-żona tal-ħin tal-wiri.\r\n\r\nKull input "
+            L"għandu ż-żona tal-ħin tiegħu mill-istess lista bħal "
             L"fis-Settings. Il-valur prestabbilit huwa ż-żona attwali tal-Windows. Jiġu ssejvjati mument "
             L"UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess mument. Għal siegħa ripetuta "
             L"agħżel l-offset UTC; ħinijiet lokali li ma jeżistux ma jistgħux jiġu ssejvjati. Is-sigħat "
@@ -11677,9 +11842,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"66, 666) jistgħu jiġu attivati waħda waħda u huma diżattivati b’mod awtomatiku.\r\n\r\n"
             L"Ikklikkja fuq l-intestatura ta’ kolonna biex tordna l-entrati ssejvjati skont il-mument reali "
             L"jew it-test tad-deskrizzjoni. Ikklikkja mill-ġdid biex taqleb l-ordni; vleġġa turi "
-            L"d-direzzjoni.\r\n\r\nIl-pożizzjoni tat-tieqa, it-tab attiva, il-valuri mdaħħla u l-għażliet "
+            L"d-direzzjoni.\r\n\r\nIl-pożizzjoni tat-tieqa, it-tab attiva, id-data tal-kalkolu u l-għażliet "
             L"tal-enfasizzar jiġu ssejvjati mas-settings tal-applikazzjoni fir-reġistru jew f’XML, skont "
             L"il-ħażna magħżula."
+            L"\r\n\r\nL-esportazzjoni fit-tab tad-dati u l-ħinijiet issejvjati tissejvja biss dawn "
+            L"l-entrati f’fajl XML separat. L-importazzjoni f’din it-tab taqra biss dati u ħinijiet, anki "
+            L"minn esportazzjoni tas-settings, u tgħaqqadhom mal-entrati eżistenti."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -11689,6 +11857,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Pjattaforma fil-mira:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Sit web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulatur tal-ħin" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importa…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Esporta…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Ma setgħux jinqraw id-dati u l-ħinijiet issejvjati." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Ma setgħux jiġu ssejvjati d-dati u l-ħinijiet." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Agħżel l-offset UTC għal dan il-ħin lokali ripetut." },
@@ -11812,7 +11982,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Schermklok" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Het maximumaantal widgets is %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopie" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Uitbreidbare opmaaktaal (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstdocument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Door komma’s gescheiden waarden (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Geluid en "
@@ -12058,7 +12229,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"automatische XML.\r\n\r\nLettertypevereffening biedt ClearType, GDI en Geen.\r\n\r\nWindows "
             L"2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en "
             L"Tijdcalculator. Met "
-            L"het standaardlettertype van het systeem gebruiken deze vensters Tahoma 8 pt; een eigen "
+            L"het standaardlettertype van het systeem gebruiken de besturingselementen van deze vensters "
+            L"Tahoma 8 pt; een eigen "
             L"toepassingslettertype heeft voorrang. De licentie behoudt het lettertype met vaste "
             L"tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: "
             L"een opgeslagen ClearType-keuze gebruikt tijdelijk GDI en keert terug bij het uitschakelen van "
@@ -12181,9 +12353,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tijden. Ronde waarden markeert ronde waarden, herhaalde cijfers en maandelijkse en jaarlijkse "
             L"gedenkdagen in de kalender vanaf het gekozen begin. Opgeslagen datums en tijden laat u datums "
             L"en tijden met beschrijvingen toevoegen, bewerken, sorteren en verwijderen. Datums en tijden "
-            L"worden afzonderlijk opgeslagen in %APPDATA%\\FortSoft\\CalClock\\times.xml. Handmatige export "
-            L"neemt ze op; import behoudt bestaande vermeldingen en slaat alleen vermeldingen met een "
-            L"identieke datum, tijd en volledige beschrijving over.\r\n\r\nElke invoer heeft een eigen "
+            L"worden afzonderlijk opgeslagen in %APPDATA%\\FortSoft\\CalClock\\times.xml. Een "
+            L"instellingenexport bevat deze vermeldingen. Import behoudt bestaande vermeldingen en slaat "
+            L"alleen vermeldingen met hetzelfde UTC-tijdstip en een identieke volledige beschrijving over, "
+            L"ongeacht de weergavetijdzone.\r\n\r\nElke invoer heeft een eigen "
             L"tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de standaard. "
             L"Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt "
             L"het tijdstip. Kies bij een herhaald uur de UTC-afwijking; niet-bestaande lokale tijden kunnen "
@@ -12198,8 +12371,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ingeschakeld en staan standaard uit.\r\n\r\nKlik op een kolomkop om opgeslagen gegevens op "
             L"het werkelijke tijdstip of de beschrijvingstekst te sorteren. Klik nogmaals om de volgorde om "
             L"te keren; een pijl geeft de richting aan.\r\n\r\nDe vensterpositie, het actieve tabblad, "
-            L"ingevoerde waarden en markeringskeuzes worden samen met de toepassingsinstellingen in het "
+            L"berekeningsgegevens en markeringskeuzes worden samen met de toepassingsinstellingen in het "
             L"register of XML opgeslagen, afhankelijk van de gekozen opslagmethode."
+            L"\r\n\r\nExporteren op het tabblad met opgeslagen datums en tijden slaat alleen deze gegevens "
+            L"op in een afzonderlijk XML-bestand. Importeren op dit tabblad haalt ook uit een "
+            L"instellingenexport alleen datums en tijden en voegt ze samen met bestaande gegevens."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokken en kalenders\r\n\r\nEen native Win32-toepassing voor maximaal 32 afzonderlijk "
@@ -12209,6 +12385,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Doelplatform:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Website:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Tijdcalculator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Importeren…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Exporteren…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Opgeslagen datums en tijden konden niet worden gelezen." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datums en tijden konden niet worden opgeslagen." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Kies de UTC-afwijking voor deze herhaalde lokale tijd." },
@@ -12334,7 +12512,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ceas pe ecran" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Numărul maxim de widgeturi este %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - copie" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Limbaj de marcare extensibil (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Document text (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Valori separate prin virgulă (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Sunet și "
@@ -12583,8 +12762,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi "
             L"proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are "
             L"centrare separată.\r\n\r\nStil Windows 2000 necesită Dezactivare teme și se aplică doar "
-            L"ferestrelor Setări, Ajutor, Despre și Calculator de timp. Tahoma 8 pt înlocuiește fontul implicit "
-            L"al sistemului; "
+            L"ferestrelor Setări, Ajutor, Despre și Calculator de timp. Controalele acestor ferestre "
+            L"folosesc Tahoma de 8 pt când este selectat fontul implicit al sistemului; "
             L"fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se "
             L"poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și "
             L"revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar "
@@ -12701,9 +12880,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"diferența dintre două date și ore. Valori rotunde evidențiază în calendar valori rotunde, "
             L"cifre repetate și aniversări lunare și anuale de la începutul ales. Date și ore presetate "
             L"permite adăugarea, editarea, sortarea și ștergerea datelor și orelor cu descrieri. Datele și "
-            L"orele sunt salvate separat în %APPDATA%\\FortSoft\\CalClock\\times.xml. Exportul manual le "
-            L"include; importul păstrează intrările existente și omite numai intrările cu data, ora și "
-            L"descrierea completă identice.\r\n\r\nFiecare intrare are propriul fus orar din aceeași listă "
+            L"orele sunt salvate separat în %APPDATA%\\FortSoft\\CalClock\\times.xml. Exportul setărilor "
+            L"include aceste înregistrări. Importul păstrează înregistrările existente și omite numai "
+            L"înregistrările cu același moment UTC și aceeași descriere completă, indiferent de fusul de "
+            L"afișare.\r\n\r\nFiecare intrare are propriul fus orar din aceeași listă "
             L"ca în Setări. Implicit se folosește fusul orar curent Windows. Se salvează un moment UTC "
             L"neechivoc și fusul de afișare. Schimbarea fusului păstrează momentul. Pentru o oră repetată, "
             L"alegeți decalajul UTC; orele locale inexistente nu pot fi salvate. Orele măsoară timpul "
@@ -12716,9 +12896,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"repetate 1–9 (de exemplu, 11, 111 sau 66, 666) pot fi activate individual și sunt dezactivate "
             L"implicit.\r\n\r\nFaceți clic pe antetul unei coloane pentru a sorta datele salvate după "
             L"momentul real sau după textul descrierii. Un nou clic inversează ordinea; o săgeată indică "
-            L"direcția.\r\n\r\nPoziția ferestrei, fila activă, valorile introduse și opțiunile de "
-            L"evidențiere sunt salvate împreună cu setările aplicației în registry sau în XML, în funcție "
-            L"de stocarea aleasă."
+            L"direcția.\r\n\r\nPoziția ferestrei, fila activă, datele de intrare ale calculului și "
+            L"opțiunile de evidențiere sunt salvate împreună cu setările aplicației în registry sau în XML, "
+            L"în funcție de stocarea aleasă."
+            L"\r\n\r\nExportul din fila datelor și orelor salvate păstrează numai aceste înregistrări "
+            L"într-un XML separat. Importul din această filă extrage numai date și ore, chiar și dintr-un "
+            L"export al setărilor, și le îmbină cu înregistrările existente."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -12728,6 +12911,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Platformă țintă:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Site web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Calculator de timp" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Import…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Export…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Datele și orele salvate nu au putut fi citite." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datele și orele nu au putut fi salvate." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -12852,7 +13037,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ρολόι οθόνης" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Ο μέγιστος αριθμός γραφικών στοιχείων είναι %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - αντίγραφο" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Επεκτάσιμη γλώσσα σήμανσης (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Έγγραφο κειμένου (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Τιμές διαχωρισμένες με κόμματα (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Ήχος και "
@@ -13110,9 +13296,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"γραμματοσειρά· τα άλλα ψηφία μένουν στη θέση τους και με αναλογικές γραμματοσειρές. Το "
             L"κεντράρισμα των ρολογιών οθόνης περιλαμβάνει τον δεσμευμένο χώρο. Η γραμμή UTC κεντράρεται "
             L"χωριστά.\r\n\r\nΤο Στυλ Windows 2000 απαιτεί την επιλογή Χωρίς θέματα και αφορά μόνο τα "
-            L"παράθυρα Ρυθμίσεις, Βοήθεια, Πληροφορίες και Υπολογιστής χρόνου. Χρησιμοποιεί Tahoma 8 pt αντί "
-            L"της προεπιλεγμένης "
-            L"γραμματοσειράς συστήματος· η προσαρμοσμένη γραμματοσειρά εφαρμογής έχει προτεραιότητα και η "
+            L"παράθυρα Ρυθμίσεις, Βοήθεια, Πληροφορίες και Υπολογιστής χρόνου. Όταν επιλέγεται η "
+            L"προεπιλεγμένη γραμματοσειρά συστήματος, τα στοιχεία ελέγχου αυτών των παραθύρων χρησιμοποιούν "
+            L"Tahoma 8 pt· η προσαρμοσμένη γραμματοσειρά εφαρμογής έχει προτεραιότητα και η "
             L"άδεια παραμένει σε Consolas. Διατίθενται μόνο GDI ή Καμία εξομάλυνση. Η αποθηκευμένη επιλογή "
             L"ClearType χρησιμοποιεί προσωρινά GDI και επανέρχεται όταν απενεργοποιηθεί το στυλ. Με κλασική "
             L"εμφάνιση Windows, οι δύο επιλογές θεμάτων εμφανίζονται μη επιλεγμένες και ανενεργές και δεν "
@@ -13238,8 +13424,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"επετείους από την επιλεγμένη έναρξη. Οι Προκαθορισμένες ημερομηνίες και ώρες επιτρέπουν "
             L"προσθήκη, επεξεργασία, ταξινόμηση και διαγραφή ημερομηνιών και ωρών με περιγραφές. Το Οι "
             L"ημερομηνίες και ώρες αποθηκεύονται χωριστά στο %APPDATA%\\FortSoft\\CalClock\\times.xml. Η "
-            L"χειροκίνητη εξαγωγή τις περιλαμβάνει· η εισαγωγή διατηρεί τις υπάρχουσες καταχωρίσεις και "
-            L"παραλείπει μόνο όσες έχουν πανομοιότυπη ημερομηνία, ώρα και πλήρη περιγραφή.\r\n\r\nΚάθε τιμή "
+            L"εξαγωγή ρυθμίσεων περιλαμβάνει αυτές τις εγγραφές. Η εισαγωγή διατηρεί τις υπάρχουσες "
+            L"εγγραφές και παραλείπει μόνο όσες έχουν την ίδια χρονική στιγμή UTC και ακριβώς την ίδια "
+            L"πλήρη περιγραφή, ανεξάρτητα από τη ζώνη εμφάνισης.\r\n\r\nΚάθε τιμή "
             L"έχει δική της ζώνη ώρας από την ίδια λίστα με τις Ρυθμίσεις. Προεπιλογή είναι η τρέχουσα ζώνη "
             L"των Windows. Αποθηκεύονται μια μοναδική χρονική στιγμή UTC και η ζώνη εμφάνισης. Η αλλαγή "
             L"ζώνης διατηρεί τη χρονική στιγμή. Για επαναλαμβανόμενη ώρα επιλέξτε τη μετατόπιση UTC· "
@@ -13255,9 +13442,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"χωριστά και είναι απενεργοποιημένα από προεπιλογή.\r\n\r\nΚάντε κλικ στην κεφαλίδα μιας "
             L"στήλης για ταξινόμηση των αποθηκευμένων εγγραφών κατά την πραγματική χρονική στιγμή ή το "
             L"κείμενο περιγραφής. Ένα δεύτερο κλικ αντιστρέφει τη σειρά· ένα βέλος δείχνει την "
-            L"κατεύθυνση.\r\n\r\nΗ θέση του παραθύρου, η ενεργή καρτέλα, οι τιμές που εισάγονται και οι "
-            L"επιλογές επισήμανσης αποθηκεύονται μαζί με τις ρυθμίσεις της εφαρμογής στο μητρώο ή σε XML, "
-            L"ανάλογα με την επιλεγμένη αποθήκευση."
+            L"κατεύθυνση.\r\n\r\nΗ θέση του παραθύρου, η ενεργή καρτέλα, τα δεδομένα εισόδου του "
+            L"υπολογισμού και οι επιλογές επισήμανσης αποθηκεύονται μαζί με τις ρυθμίσεις της εφαρμογής στο "
+            L"μητρώο ή σε XML, ανάλογα με την επιλεγμένη αποθήκευση."
+            L"\r\n\r\nΗ εξαγωγή στην καρτέλα αποθηκευμένων ημερομηνιών και ωρών αποθηκεύει μόνο αυτές τις "
+            L"εγγραφές σε ξεχωριστό XML. Η εισαγωγή σε αυτή την καρτέλα διαβάζει μόνο ημερομηνίες και ώρες, "
+            L"ακόμη και από εξαγωγή ρυθμίσεων, και τις συγχωνεύει με τις υπάρχουσες εγγραφές."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -13267,6 +13457,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Πλατφόρμα προορισμού:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Τοποθεσία web:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Υπολογιστής χρόνου" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Εισαγωγή…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Εξαγωγή…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Δεν ήταν δυνατή η ανάγνωση των αποθηκευμένων ημερομηνιών και ωρών." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Δεν ήταν δυνατή η αποθήκευση των ημερομηνιών και ωρών." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -13394,7 +13586,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Sat na ekranu" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Najveći broj vidžeta je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Proširivi označni jezik (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstualni dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Vrijednosti odvojene zarezima (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvuk i programi\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Sve "
@@ -13635,9 +13828,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
             L"proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani razmak. "
             L"Red UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
-            L"važi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font "
-            L"koristi Tahomu 8 "
-            L"pt; vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Sačuvani "
+            L"važi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski "
+            L"font kontrole ovih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno "
+            L"je izglađivanje GDI ili Nema. Sačuvani "
             L"ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows "
             L"koristi klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani "
             L"izbori ostaju nepromijenjeni.\r\n\r\nPostavke i meniji\r\nJezik programa, font, "
@@ -13759,8 +13952,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina od odabranog "
             L"početka. Sačuvani datumi i vremena omogućava dodavanje, uređivanje, sortiranje i brisanje "
             L"datuma i vremena s opisom. Datumi i vremena čuvaju se odvojeno u "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
-            L"stavke i preskače samo stavke s istim datumom, vremenom i potpunim opisom.\r\n\r\nSvaki unos "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Izvoz postavki uključuje ove stavke. Uvoz zadržava "
+            L"postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim potpunim "
+            L"opisom, bez obzira na vremensku zonu prikaza.\r\n\r\nSvaki unos "
             L"ima vlastitu vremensku zonu s istog spiska kao u Postavkama. Zadana je trenutna zona "
             L"Windowsa. Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. "
             L"Za ponovljeni sat odaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće sačuvati. Sati "
@@ -13773,8 +13967,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ponavljajuće cifre 1–9 (na primjer 11, 111 ili 66, 666) mogu se uključiti pojedinačno i "
             L"podrazumijevano su isključene.\r\n\r\nKliknite zaglavlje kolone da sortirate sačuvane podatke "
             L"prema stvarnom trenutku ili tekstu opisa. Ponovni klik obrće redoslijed; strelica pokazuje "
-            L"smjer.\r\n\r\nPoložaj prozora, aktivna kartica, unesene vrijednosti i izbori isticanja čuvaju "
-            L"se s postavkama aplikacije u registru ili XML-u, prema odabranom spremištu."
+            L"smjer.\r\n\r\nPoložaj prozora, aktivna kartica, ulazni podaci proračuna i izbori isticanja "
+            L"čuvaju se s postavkama aplikacije u registru ili XML-u, prema odabranom spremištu."
+            L"\r\n\r\nIzvoz na kartici sačuvanih datuma i vremena sprema samo te zapise u zaseban XML. Uvoz "
+            L"na ovoj kartici čita samo datume i vremena, čak i iz izvoza postavki, i spaja ih s postojećim "
+            L"zapisima."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -13784,6 +13981,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Uvezi…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Izvezi…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sačuvani datumi i vremena ne mogu se učitati." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se sačuvati." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Odaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
@@ -13907,7 +14106,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Sat na zaslonu" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Najveći broj widgeta je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Proširivi označni jezik (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstni dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Vrijednosti odvojene zarezima (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvuk i programi\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Sve "
@@ -14149,7 +14349,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. "
             L"Redak UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
             L"vrijedi samo za Postavke, Pomoć, O programu i Kalkulator vremena. Uz zadani sistemski font "
-            L"koristi Tahomu 8 pt; "
+            L"kontrole tih prozora koriste Tahomu 8 pt; "
             L"vlastiti font programa ima prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni "
             L"ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows "
             L"koristi klasični izgled, obje su opcije izgleda nedostupne i ne primjenjuju se; spremljeni "
@@ -14274,8 +14474,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"vrijednosti, ponovljene znamenke te datume navršenih mjeseci i godina od odabranog početka. "
             L"Spremljeni datumi i vremena omogućuje dodavanje, uređivanje, sortiranje i brisanje datuma i "
             L"vremena s opisom. Datumi i vremena spremaju se zasebno u "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
-            L"stavke i preskače samo stavke s istim datumom, vremenom i cijelim opisom.\r\n\r\nSvaki unos "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Izvoz postavki uključuje te stavke. Uvoz zadržava "
+            L"postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim cijelim "
+            L"opisom, bez obzira na vremensku zonu prikaza.\r\n\r\nSvaki unos "
             L"ima vlastitu vremensku zonu s istog popisa kao u Postavkama. Zadana je trenutačna zona "
             L"Windowsa. Spremaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava "
             L"trenutak. Za ponovljeni sat odaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće "
@@ -14289,8 +14490,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"mogu se uključiti pojedinačno i prema zadanim su postavkama isključene.\r\n\r\nKliknite "
             L"zaglavlje stupca da biste sortirali spremljene podatke prema stvarnom trenutku ili tekstu "
             L"opisa. Ponovni klik obrće redoslijed; strelica pokazuje smjer.\r\n\r\nPoložaj prozora, "
-            L"aktivna kartica, unesene vrijednosti i odabiri isticanja spremaju se s postavkama aplikacije "
-            L"u registar ili XML, prema odabranom spremištu."
+            L"aktivna kartica, ulazni podaci izračuna i odabiri isticanja spremaju se s postavkama "
+            L"aplikacije u registar ili XML, prema odabranom spremištu."
+            L"\r\n\r\nIzvoz na kartici spremljenih datuma i vremena sprema samo te zapise u zaseban XML. "
+            L"Uvoz na ovoj kartici čita samo datume i vremena, čak i iz izvoza postavki, i spaja ih s "
+            L"postojećim zapisima."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -14300,6 +14504,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Web-mjesto:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Uvezi…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Izvezi…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Spremljeni datumi i vremena ne mogu se učitati." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se spremiti." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Odaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
@@ -14421,7 +14627,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Ura na zaslonu" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Največje število gradnikov je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Razširljivi označevalni jezik (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Besedilni dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Vrednosti, ločene z vejicami (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvok in programi\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Vse "
@@ -14656,8 +14863,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem "
             L"rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.\r\n\r\nSlog Windows 2000 "
             L"je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni "
-            L"kalkulator. Pri "
-            L"privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na "
+            L"kalkulator. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 pt; "
+            L"uporabnikova pisava programa ima prednost. Na "
             L"voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob "
             L"izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza "
             L"onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.\r\n\r\nNastavitve in "
@@ -14767,8 +14974,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"okrogle vrednosti, ponavljajoče se števke ter mesečne in letne obletnice od izbranega "
             L"začetka. Shranjeni datumi in časi omogoča dodajanje, urejanje, razvrščanje in brisanje "
             L"datumov in časov z opisom. Datumi in časi se shranijo ločeno v "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ročni izvoz jih vključuje; uvoz ohrani obstoječe "
-            L"vnose in preskoči samo vnose z enakim datumom, časom in celotnim opisom.\r\n\r\nVsak vnos ima "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Izvoz nastavitev vključuje te vnose. Uvoz ohrani "
+            L"obstoječe vnose in preskoči samo vnose z istim trenutkom UTC in povsem enakim celotnim "
+            L"opisom, ne glede na časovni pas prikaza.\r\n\r\nVsak vnos ima "
             L"svoj časovni pas z istega seznama kot v Nastavitvah. Privzet je trenutni časovni pas Windows. "
             L"Shranita se enoličen trenutek UTC in pas prikaza. Sprememba pasu ohrani trenutek. Pri "
             L"ponovljeni uri izberite odmik UTC; neobstoječega lokalnega časa ni mogoče shraniti. Ure "
@@ -14781,8 +14989,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ponavljajoče se števke 1–9 (na primer 11, 111 ali 66, 666) lahko vklopite posamično; privzeto "
             L"so izklopljene.\r\n\r\nKliknite glavo stolpca, da shranjene podatke razvrstite po dejanskem "
             L"časovnem trenutku ali besedilu opisa. Ponovni klik obrne vrstni red; puščica kaže "
-            L"smer.\r\n\r\nPoložaj okna, aktivni zavihek, vnesene vrednosti in izbire označevanja se "
+            L"smer.\r\n\r\nPoložaj okna, aktivni zavihek, vhodni podatki izračuna in izbire označevanja se "
             L"shranijo z nastavitvami programa v register ali XML, odvisno od izbrane shrambe."
+            L"\r\n\r\nIzvoz na zavihku shranjenih datumov in časov shrani samo te vnose v ločen XML. Uvoz "
+            L"na tem zavihku prebere samo datume in čase tudi iz izvoza nastavitev ter jih združi z "
+            L"obstoječimi vnosi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -14792,6 +15003,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Spletno mesto:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Časovni kalkulator" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Uvozi…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Izvozi…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Shranjenih datumov in časov ni mogoče prebrati." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumov in časov ni mogoče shraniti." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izberite odmik UTC za ta ponovljeni lokalni čas." },
@@ -14913,7 +15126,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Sat na monitoru" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Najveći broj vidžeta je %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - kopija" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Proširivi jezik za označavanje (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Tekstualni dokument (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Vrijednosti razdvojene zarezima (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Zvuk i programi\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Sve "
@@ -15149,8 +15363,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ali čuva njenu širinu u izabranom fontu; ostale cifre zadržavaju položaje i kod "
             L"proporcionalnih fontova. Satovi na monitoru ostaju centrirani sa uračunatim razmakom. Red UTC "
             L"ima sopstveno centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i važi samo "
-            L"za Podešavanja, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font koristi "
-            L"Tahomu 8 pt; "
+            L"za Podešavanja, Pomoć, O programu i Kalkulator vremena. Uz podrazumijevani sistemski font "
+            L"kontrole ovih prozora koriste Tahomu 8 pt; "
             L"vlastiti font programa ima prednost. Dostupno je umekšavanje GDI ili Nema. Sačuvani ClearType "
             L"privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada Windows koristi "
             L"klasični izgled, obje opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju "
@@ -15266,8 +15480,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"okrugle vrijednosti, ponovljene cifre te datume navršenih mjeseci i godina od izabranog "
             L"početka. Sačuvani datumi i vremena omogućava dodavanje, uređivanje, sortiranje i brisanje "
             L"datuma i vremena s opisom. Datumi i vremena čuvaju se odvojeno u "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ručni izvoz ih uključuje; uvoz zadržava postojeće "
-            L"stavke i preskače samo stavke s istim datumom, vremenom i potpunim opisom.\r\n\r\nSvaki unos "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Izvoz podešavanja uključuje ove stavke. Uvoz "
+            L"zadržava postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim "
+            L"potpunim opisom, bez obzira na vremensku zonu prikaza.\r\n\r\nSvaki unos "
             L"ima svoju vremensku zonu sa iste liste kao u Podešavanjima. Podrazumijevana je trenutna zona "
             L"Windowsa. Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. "
             L"Za ponovljeni sat izaberite UTC pomak; nepostojeće lokalno vrijeme nije moguće sačuvati. Sati "
@@ -15280,9 +15495,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"godišnjice. Ponavljajuće cifre 1–9 (na primjer 11, 111 ili 66, 666) mogu se uključiti "
             L"pojedinačno i podrazumijevano su isključene.\r\n\r\nKliknite zaglavlje kolone da sortirate "
             L"sačuvane podatke prema stvarnom trenutku ili tekstu opisa. Ponovni klik obrće redosljed; "
-            L"strelica pokazuje smjer.\r\n\r\nPoložaj prozora, aktivna kartica, unesene vrijednosti i "
+            L"strelica pokazuje smjer.\r\n\r\nPoložaj prozora, aktivna kartica, ulazni podaci proračuna i "
             L"izbori isticanja čuvaju se s podešavanjima aplikacije u registru ili XML-u, prema izabranom "
             L"skladištu."
+            L"\r\n\r\nIzvoz na kartici sačuvanih datuma i vremena čuva samo te zapise u zaseban XML. Uvoz "
+            L"na ovoj kartici čita samo datume i vremena, čak i iz izvoza podešavanja, i spaja ih s "
+            L"postojećim zapisima."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -15292,6 +15510,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Ciljna platforma:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Veb-sajt:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Kalkulator vremena" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Uvezi…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Izvezi…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Sačuvani datumi i vremena ne mogu se učitati." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Datumi i vremena ne mogu se sačuvati." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Izaberite UTC pomak za ovo ponovljeno lokalno vrijeme." },
@@ -15413,7 +15633,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Гадзіннік на маніторы" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Максімальная колькасць віджэтаў — %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копія" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Пашыральная мова разметкі (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Тэкставы дакумент (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Значэнні, падзеленыя коскамі (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Гук і праграмы\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Усе "
@@ -15654,9 +15875,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"нуль, але рэзервуе яго шырыню ў выбраным шрыфце; астатнія лічбы захоўваюць пазіцыі і ў "
             L"прапарцыянальных шрыфтах. Гадзіннікі на маніторы застаюцца па цэнтры з улікам зарэзерваванага "
             L"месца. Радок UTC мае асобнае цэнтраванне.\r\n\r\nСтыль Windows 2000 даступны пры адключаных "
-            L"тэмах і дзейнічае толькі ў вокнах «Налады», «Даведка», «Пра праграму» і «Калькулятар часу». Пры "
-            L"прадвызначаным "
-            L"сістэмным шрыфце выкарыстоўваецца Tahoma 8 pt; уласны шрыфт праграмы мае перавагу. Даступнае "
+            L"тэмах і дзейнічае толькі ў вокнах «Налады», «Даведка», «Пра праграму» і «Калькулятар часу». "
+            L"Калі выбраны прадвызначаны сістэмны шрыфт, элементы кіравання гэтых вокнаў выкарыстоўваюць "
+            L"Tahoma 8 pt; уласны шрыфт праграмы мае перавагу. Даступнае "
             L"згладжванне GDI або «Няма». Захаваны выбар ClearType часова замяняецца на GDI і аднаўляецца "
             L"пасля выключэння гэтага стылю. Пры класічным выглядзе Windows абедзве налады выгляду "
             L"неактыўныя і не ўжываюцца; захаваныя значэнні застаюцца нязменнымі.\r\n\r\nНалады і "
@@ -15773,8 +15994,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"круглыя значэнні, паўтаральныя лічбы і штомесячныя ды штогадовыя памятныя даты ад выбранага "
             L"пачатку. Укладка «Захаваныя даты і час» дазваляе дадаваць, рэдагаваць, сартаваць і выдаляць "
             L"даты і час з апісаннямі. Даты і час захоўваюцца асобна ў "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ручны экспарт уключае іх; імпарт захоўвае існуючыя "
-            L"запісы і прапускае толькі запісы з аднолькавай датай, часам і поўным апісаннем.\r\n\r\nКожнае "
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Экспарт налад уключае гэтыя запісы. Імпарт захоўвае "
+            L"існуючыя запісы і прапускае толькі запісы з аднолькавым момантам UTC і ідэнтычным поўным "
+            L"апісаннем незалежна ад часавага пояса адлюстравання.\r\n\r\nКожнае "
             L"значэнне мае свой часавы пояс з таго ж спіса, што і ў наладах. Па змаўчанні выкарыстоўваецца "
             L"бягучы пояс Windows. Захоўваюцца адназначны момант UTC і пояс адлюстравання. Змена пояса "
             L"захоўвае момант. Для паўторнай гадзіны выберыце зрух UTC; неіснуючы мясцовы час захаваць "
@@ -15787,9 +16009,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Лічбы 1–9, якія паўтараюцца (напрыклад, 11, 111 або 66, 666), можна ўключаць паасобку; "
             L"прадвызначана яны выключаны.\r\n\r\nНацісніце загаловак слупка, каб адсартаваць захаваныя "
             L"запісы паводле фактычнага моманту часу або тэксту апісання. Паўторны націск мяняе парадак на "
-            L"адваротны; стрэлка паказвае кірунак.\r\n\r\nПазіцыя акна, актыўная ўкладка, уведзеныя "
-            L"значэнні і налады вылучэння захоўваюцца разам з наладамі праграмы ў рэестры або XML паводле "
+            L"адваротны; стрэлка паказвае кірунак.\r\n\r\nПазіцыя акна, актыўная ўкладка, уваходныя даныя "
+            L"разліку і налады вылучэння захоўваюцца разам з наладамі праграмы ў рэестры або XML паводле "
             L"выбранага сховішча."
+            L"\r\n\r\nЭкспарт на ўкладцы захаваных дат і часу запісвае толькі гэтыя запісы ў асобны XML. "
+            L"Імпарт на гэтай укладцы чытае толькі даты і час нават з экспарту налад і аб’ядноўвае іх з "
+            L"існымі запісамі."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -15799,6 +16024,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Мэтавая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вэб-сайт:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятар часу" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Імпартаваць…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Экспартаваць…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не ўдалося прачытаць захаваныя даты і час." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не ўдалося захаваць даты і час." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Выберыце зрух UTC для гэтага паўторнага мясцовага часу." },
@@ -15917,7 +16144,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Часовник на монитор" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Максималният брой изпълними модули е %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копие" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Разширяем маркиращ език (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Текстов документ (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Стойности, разделени със запетаи (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Звук и "
@@ -16165,9 +16393,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"запазва ширината ѝ в избрания шрифт; другите цифри остават на място дори при пропорционални "
             L"шрифтове. Часовниците на монитор остават центрирани с включено запазено място. Редът UTC има "
             L"отделно центриране.\r\n\r\nСтилът Windows 2000 е достъпен при забранени теми и важи само за "
-            L"прозорците „Настройки“, „Помощ“, „За програмата“ и „Калкулатор за време“. При системния шрифт по "
-            L"подразбиране се "
-            L"използва Tahoma 8 pt; избраният шрифт на програмата има предимство. Достъпно е изглаждане GDI "
+            L"прозорците „Настройки“, „Помощ“, „За програмата“ и „Калкулатор за време“. При избран системен "
+            L"шрифт по подразбиране контролите в тези прозорци използват Tahoma 8 pt; избраният шрифт на "
+            L"програмата има предимство. Достъпно е изглаждане GDI "
             L"или „Няма“. Записаният избор ClearType временно се заменя с GDI и се възстановява след "
             L"изключване на този стил. При класически изглед на Windows двете опции за изглед са неактивни и "
             L"не се прилагат; записаните стойности се запазват.\r\n\r\nНастройки и менюта\r\nЕзикът, "
@@ -16291,8 +16519,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"повтарящи се цифри и месечни и годишни повторения на началната дата от избраното начало. "
             L"Разделът Запазени дати и часове позволява добавяне, редактиране, сортиране и изтриване на "
             L"дати и часове с описания. Датите и часовете се запазват отделно в "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Ръчният експорт ги включва; импортът запазва "
-            L"съществуващите записи и пропуска само записи с еднакви дата, час и пълно описание.\r\n\r\n"
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Експортът на настройки включва тези записи. "
+            L"Импортът запазва съществуващите записи и пропуска само записи с един и същ момент в UTC и "
+            L"идентично пълно описание, независимо от часовата зона за показване.\r\n\r\n"
             L"Всяка стойност има своя часова зона от същия списък като в Настройки. По подразбиране се "
             L"използва текущата зона на Windows. Записват се еднозначен момент в UTC и зоната за показване. "
             L"Смяната на зоната запазва момента. При повтарящ се час изберете отместването спрямо UTC; "
@@ -16307,8 +16536,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"изключени по подразбиране.\r\n\r\nЩракнете върху заглавието на колона, за да сортирате "
             L"запазените записи по действителния момент или по текста на описанието. Повторното щракване "
             L"обръща реда; стрелка показва посоката.\r\n\r\nПозицията на прозореца, активният раздел, "
-            L"въведените стойности и опциите за открояване се записват с настройките на приложението в "
-            L"системния регистър или XML според избраното хранилище."
+            L"входните данни за изчисленията и опциите за открояване се записват с настройките на "
+            L"приложението в системния регистър или XML според избраното хранилище."
+            L"\r\n\r\nЕкспортът в раздела със запазените дати и часове записва само тези записи в отделен "
+            L"XML. Импортът в този раздел чете само дати и часове дори от експорт на настройки и ги "
+            L"обединява със съществуващите записи."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -16318,6 +16550,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целева платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Уебсайт:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Импортирай…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Експортирай…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Запазените дати и часове не могат да бъдат прочетени." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датите и часовете не могат да бъдат запазени." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -16438,7 +16672,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Часовник на монитор" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Најголемиот број виџети е %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копија" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Проширлив јазик за означување (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Текстуален документ (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Вредности одделени со запирки (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Звук и програми\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Сите "
@@ -16684,9 +16919,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"задржува нејзината ширина во избраниот фонт; другите цифри остануваат на место и кај "
             L"пропорционални фонтови. Часовниците на монитор остануваат центрирани со вклучено резервирано "
             L"место. Редот UTC има свое центрирање.\r\n\r\nСтилот Windows 2000 е достапен со оневозможени "
-            L"теми и важи само за прозорците „Поставки“, „Помош“, „За програмата“ и „Калкулатор за време“. Со "
-            L"стандардниот "
-            L"системски фонт се користи Tahoma 8 pt; избраниот фонт на програмата има предност. Достапно е "
+            L"теми и важи само за прозорците „Поставки“, „Помош“, „За програмата“ и „Калкулатор за време“. "
+            L"Кога е избран стандардниот системски фонт, контролите во овие прозорци користат Tahoma 8 pt; "
+            L"избраниот фонт на програмата има предност. Достапно е "
             L"измазнување GDI или „Нема“. Зачуваниот избор ClearType привремено се заменува со GDI и се "
             L"враќа по исклучувањето на овој стил. При класичен изглед на Windows двете опции за изглед се "
             L"неактивни и не се применуваат; зачуваните вредности се задржуваат.\r\n\r\nПоставки и "
@@ -16810,8 +17045,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"заокружени вредности, повторени цифри и месечни и годишни повторувања на почетниот датум од "
             L"избраниот почеток. Картичката Зачувани датуми и времиња овозможува додавање, уредување, "
             L"сортирање и бришење датуми и времиња со описи. Датумите и времињата се зачувуваат одделно во "
-            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Рачниот извоз ги вклучува; увозот ги задржува "
-            L"постојните записи и ги прескокнува само записите со ист датум, време и целосен опис.\r\n\r\n"
+            L"%APPDATA%\\FortSoft\\CalClock\\times.xml. Извозот на поставки ги вклучува овие записи. Увозот "
+            L"ги задржува постојните записи и ги прескокнува само записите со ист момент во UTC и идентичен "
+            L"целосен опис, без оглед на временската зона за приказ.\r\n\r\n"
             L"Секој внес има своја временска зона од истиот список како во Поставки. Стандардна е тековната "
             L"зона на Windows. Се зачувуваат еднозначен момент во UTC и зоната за приказ. Промената на "
             L"зоната го задржува моментот. За повторен час изберете го поместувањето од UTC; непостоечко "
@@ -16826,8 +17062,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"стандардно се исклучени.\r\n\r\nКликнете на заглавието на колона за да ги подредите "
             L"зачуваните записи според вистинскиот временски момент или текстот на описот. Повторното "
             L"кликнување го превртува редоследот; стрелка ја покажува насоката.\r\n\r\nПоложбата на "
-            L"прозорецот, активната картичка, внесените вредности и опциите за истакнување се зачувуваат со "
-            L"поставките на апликацијата во регистарот или XML, според избраното складиште."
+            L"прозорецот, активната картичка, влезните податоци за пресметките и опциите за истакнување се "
+            L"зачувуваат со поставките на апликацијата во регистарот или XML, според избраното складиште."
+            L"\r\n\r\nИзвозот на картичката со зачувани датуми и времиња ги запишува само тие записи во "
+            L"посебен XML. Увозот на оваа картичка чита само датуми и времиња дури и од извоз на поставки и "
+            L"ги спојува со постојните записи."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -16837,6 +17076,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-страница:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор за време" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Увези…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Извези…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Зачуваните датуми и времиња не може да се прочитаат." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датумите и времињата не може да се зачуваат." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,
@@ -16966,7 +17207,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Сат на монитору" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Највећи број виџета је %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копија" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Прошириви језик за означавање (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Текстуални документ (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Вредности раздвојене зарезима (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Звук и програми\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Све "
@@ -17199,8 +17441,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"остале цифре задржавају положаје и код пропорционалних фонтова. Сатови на монитору остају "
             L"центрирани са урачунатим размаком. Ред UTC има сопствено центрирање.\r\n\r\nСтил Windows 2000 "
             L"доступан је уз искључене теме и важи само за Подешавања, Помоћ, О програму и Калкулатор времена. "
-            L"Уз подразумевани "
-            L"системски фонт користи Тахому 8 pt; властити фонт програма има предност. Доступно је "
+            L"Уз подразумевани системски фонт контроле ових прозора користе Тахому 8 pt; властити фонт "
+            L"програма има предност. Доступно је "
             L"умекшавање GDI или Нема. Сачувани ClearType привремено се замењује са GDI и враћа након "
             L"искључивања овог стила. Када Windows користи класични изглед, обе опције изгледа су недоступне "
             L"и не примењују се; сачувани избори остају непромењени.\r\n\r\nПодешавања и "
@@ -17312,8 +17554,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"округле вредности, поновљене цифре те датуме навршених месеци и година од изабраног почетка. "
             L"Сачувани датуми и времена омогућава додавање, уређивање, сортирање и брисање датума и времена "
             L"са описом. Датуми и времена чувају се одвојено у %APPDATA%\\FortSoft\\CalClock\\times.xml. "
-            L"Ручни извоз их укључује; увоз задржава постојеће ставке и прескаче само ставке са истим "
-            L"датумом, временом и потпуним описом.\r\n\r\nСваки унос има своју временску зону са исте листе "
+            L"Извоз подешавања укључује ове ставке. Увоз задржава постојеће ставке и прескаче само ставке "
+            L"са истим тренутком у UTC-у и идентичним потпуним описом, без обзира на временску зону "
+            L"приказа.\r\n\r\nСваки унос има своју временску зону са исте листе "
             L"као у Подешавањима. Подразумевана је тренутна зона Windows-а. Чувају се једнозначан UTC "
             L"тренутак и зона приказа. Промена зоне задржава тренутак. За поновљени сат изаберите UTC "
             L"помак; непостојеће локално време није могуће сачувати. Сати мере протекло време, а "
@@ -17325,9 +17568,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"недеља те месечне и годишње годишњице. Понављајуће цифре 1–9 (на пример 11, 111 или 66, 666) "
             L"могу се укључити појединачно и подразумевано су искључене.\r\n\r\nКликните на заглавље колоне "
             L"да сортирате сачуване податке према стварном тренутку или тексту описа. Поновни клик обрће "
-            L"редослед; стрелица показује смер.\r\n\r\nПоложај прозора, активна картица, унете вредности и "
-            L"избори истицања чувају се с подешавањима апликације у регистру или XML-у, према изабраном "
-            L"складишту."
+            L"редослед; стрелица показује смер.\r\n\r\nПоложај прозора, активна картица, улазни подаци "
+            L"прорачуна и избори истицања чувају се с подешавањима апликације у регистру или XML-у, према "
+            L"изабраном складишту."
+            L"\r\n\r\nИзвоз на картици сачуваних датума и времена чува само те записе у засебан XML. Увоз "
+            L"на овој картици чита само датуме и времена, чак и из извоза подешавања, и спаја их с "
+            L"постојећим записима."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -17337,6 +17583,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Циљна платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сајт:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калкулатор времена" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Увези…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Извези…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Сачувани датуми и времена не могу се учитати." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Датуми и времена не могу се сачувати." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Изаберите UTC помак за ово поновљено локално време." },
@@ -17458,7 +17706,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Годинник на моніторі" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Максимальна кількість віджетів — %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копія" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Розширювана мова розмітки (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Текстовий документ (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Значення, розділені комами (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Звук і програми\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Усі "
@@ -17704,9 +17953,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Після запису XML розділ HKCU\\SOFTWARE\\FortSoft\\CalClock видаляється; вибір зберігання в "
             L"реєстрі видаляє автоматичний файл XML.\r\n\r\nДля згладжування шрифту доступні ClearType, GDI "
             L"та «Немає».\r\n\r\nСтиль Windows 2000 доступний за вимкнених тем і діє лише у вікнах "
-            L"«Налаштування», «Довідка», «Про програму» та «Калькулятор часу». За типового системного шрифту "
-            L"використовується "
-            L"Tahoma 8 pt; власний шрифт програми має перевагу. Доступне згладжування GDI або «Немає». "
+            L"«Налаштування», «Довідка», «Про програму» та «Калькулятор часу». Якщо вибрано типовий "
+            L"системний шрифт, елементи керування цих вікон використовують Tahoma 8 pt; власний шрифт "
+            L"програми має перевагу. Доступне згладжування GDI або «Немає». "
             L"Збережений вибір ClearType тимчасово замінюється на GDI й відновлюється після вимкнення цього "
             L"стилю. За класичного вигляду Windows обидва параметри вигляду неактивні й не застосовуються; "
             L"збережені значення не змінюються.\r\n\r\nПараметр «Початковий нуль» має значення «Так» "
@@ -17840,9 +18089,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"часом. Вкладка «Круглі значення» виділяє в календарі круглі значення, повторювані цифри та "
             L"щомісячні й щорічні пам’ятні дати від вибраного початку. Вкладка «Збережені дати й час» дає "
             L"змогу додавати, редагувати, сортувати й видаляти дати й час з описами. Дати й час "
-            L"зберігаються окремо у %APPDATA%\\FortSoft\\CalClock\\times.xml. Ручний експорт включає їх; "
-            L"імпорт зберігає наявні записи й пропускає лише записи з однаковими датою, часом і повним "
-            L"описом.\r\n\r\nКожне значення має власний часовий пояс із того самого списку, що й у "
+            L"зберігаються окремо у %APPDATA%\\FortSoft\\CalClock\\times.xml. Експорт налаштувань включає "
+            L"ці записи. Імпорт зберігає наявні записи й пропускає лише записи з однаковим моментом UTC та "
+            L"ідентичним повним описом незалежно від часового поясу відображення.\r\n\r\nКожне значення має "
+            L"власний часовий пояс із того самого списку, що й у "
             L"налаштуваннях. Типовим є поточний пояс Windows. Зберігаються однозначний момент UTC і пояс "
             L"відображення. Зміна пояса зберігає момент. Для повторної години виберіть зсув UTC; неіснуючий "
             L"місцевий час зберегти не можна. Години вимірюють минулий час, календарні обчислення "
@@ -17855,8 +18105,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"вмикати окремо; типово вони вимкнені.\r\n\r\nНатисніть заголовок стовпця, щоб відсортувати "
             L"збережені записи за фактичним моментом часу або текстом опису. Повторне натискання змінює "
             L"порядок на зворотний; стрілка показує напрямок.\r\n\r\nПоложення вікна, активна вкладка, "
-            L"введені значення й параметри виділення зберігаються разом із налаштуваннями програми в "
+            L"вхідні дані обчислень й параметри виділення зберігаються разом із налаштуваннями програми в "
             L"реєстрі або XML відповідно до вибраного сховища."
+            L"\r\n\r\nЕкспорт на вкладці збережених дат і часу записує лише ці записи в окремий XML. Імпорт "
+            L"на цій вкладці читає лише дати й час навіть з експорту налаштувань і об’єднує їх з наявними "
+            L"записами."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -17866,6 +18119,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Цільова платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Вебсайт:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятор часу" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Імпортувати…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Експортувати…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не вдалося прочитати збережені дати й час." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не вдалося зберегти дати й час." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET, L"Виберіть зсув UTC для цього повторного місцевого часу." },
@@ -17985,7 +18240,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_FULLSCREEN_WIDGET_NAME, L"Часы на мониторе" },
         LocalizedText{ TXT_WIDGET_LIMIT_MESSAGE, L"Максимальное количество виджетов — %d." },
         LocalizedText{ TXT_WIDGET_COPY_SUFFIXES, L" - копия" },
-        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Расширяемый язык разметки (*.xml)" },
+        LocalizedText{ TXT_XML_FILE_TYPE_LABEL, L"Extensible Markup Language (*.xml)" },
+        LocalizedText{ TXT_TEXT_FILE_TYPE_LABEL, L"Текстовый документ (*.txt)" },
         LocalizedText{ TXT_CSV_FILE_TYPE_LABEL, L"Значения, разделённые запятыми (*.csv)" },
         LocalizedText{ TXT_COMMAND_FILE_FILTER,
             L"Звук и программы\000*.wav;*.mp3;*.wma;*.mid;*.midi;*.aac;*.m4a;*.flac;*.exe;*.bat;*.cmd\000Все "
@@ -18234,7 +18490,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock удаляется; выбор хранения в реестре удаляет автоматический "
             L"файл XML.\r\n\r\nДля сглаживания шрифта доступны ClearType, GDI и «Нет».\r\n\r\nСтиль Windows "
             L"2000 доступен при отключённых темах и действует только в окнах «Настройки», «Справка», «О "
-            L"программе» и «Калькулятор времени». При системном шрифте по умолчанию используется Tahoma 8 pt; "
+            L"программе» и «Калькулятор времени». При выборе системного шрифта по умолчанию элементы "
+            L"управления этих окон используют Tahoma 8 pt; "
             L"собственный шрифт "
             L"программы имеет приоритет. Доступно сглаживание GDI или «Нет». Сохранённый выбор ClearType "
             L"временно заменяется на GDI и восстанавливается после отключения этого стиля. При классическом "
@@ -18374,9 +18631,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Вкладка «Круглые значения» выделяет в календаре круглые значения, повторяющиеся цифры и "
             L"ежемесячные и ежегодные памятные даты от выбранного начала. Вкладка «Сохранённые даты и "
             L"время» позволяет добавлять, изменять, сортировать и удалять даты и время с описаниями. Даты и "
-            L"время сохраняются отдельно в %APPDATA%\\FortSoft\\CalClock\\times.xml. Ручной экспорт "
-            L"включает их; импорт сохраняет существующие записи и пропускает только записи с одинаковыми "
-            L"датой, временем и полным описанием.\r\n\r\nКаждое значение имеет свой часовой пояс из того же "
+            L"время сохраняются отдельно в %APPDATA%\\FortSoft\\CalClock\\times.xml. Экспорт настроек "
+            L"включает эти записи. Импорт сохраняет существующие записи и пропускает только записи с "
+            L"одинаковым моментом UTC и полностью совпадающим описанием независимо от часового пояса "
+            L"отображения.\r\n\r\nКаждое значение имеет свой часовой пояс из того же "
             L"списка, что и в настройках. По умолчанию используется текущий пояс Windows. Сохраняются "
             L"однозначный момент UTC и пояс отображения. Смена пояса сохраняет момент. Для повторяющегося "
             L"часа выберите смещение UTC; несуществующее местное время сохранить нельзя. Часы измеряют "
@@ -18390,8 +18648,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"умолчанию они отключены.\r\n\r\nНажмите заголовок столбца, чтобы отсортировать сохранённые "
             L"записи по фактическому моменту времени или тексту описания. Повторное нажатие меняет порядок "
             L"на обратный; стрелка показывает направление.\r\n\r\nПоложение окна, активная вкладка, "
-            L"введённые значения и параметры выделения сохраняются вместе с настройками приложения в "
-            L"реестре или XML в соответствии с выбранным хранилищем."
+            L"исходные данные вычислений и параметры выделения сохраняются вместе с настройками приложения "
+            L"в реестре или XML в соответствии с выбранным хранилищем."
+            L"\r\n\r\nЭкспорт на вкладке сохранённых дат и времени записывает только эти записи в отдельный "
+            L"XML. Импорт на этой вкладке читает только даты и время даже из экспорта настроек и объединяет "
+            L"их с существующими записями."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "
@@ -18401,6 +18662,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_ABOUT_PLATFORM_LABEL, L"Целевая платформа:" },
         LocalizedText{ TXT_ABOUT_WEBSITE_LABEL, L"Веб-сайт:" },
         LocalizedText{ TXT_TIME_CALCULATOR, L"Калькулятор времени" },
+        LocalizedText{ TXT_CALCULATOR_IMPORT, L"&Импортировать…" },
+        LocalizedText{ TXT_CALCULATOR_EXPORT, L"&Экспортировать…" },
         LocalizedText{ TXT_CALCULATOR_READ_FAILED, L"Не удалось прочитать сохранённые даты и время." },
         LocalizedText{ TXT_CALCULATOR_WRITE_FAILED, L"Не удалось сохранить даты и время." },
         LocalizedText{ TXT_CALCULATOR_SELECT_OFFSET,

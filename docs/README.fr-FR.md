@@ -76,12 +76,12 @@ Horloges numériques, calendriers et panneaux combinés partagent quatre styles 
 
 La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans Application concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
-Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Avec
-la police système par défaut, ces fenêtres utilisent Tahoma 8 pt ; une police d’application personnalisée
-reste prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun sont proposés pour le
-lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et revient à la désactivation
-du mode. Si les styles visuels sont désactivés dans Windows, les deux options de style apparaissent décochées
-et désactivées sans modifier les choix enregistrés.
+Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos et
+Calculateur de temps. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ; une police
+d’application personnalisée reste prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun
+sont proposés pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et
+revient à la désactivation du mode. Si les styles visuels sont désactivés dans Windows, les deux options de
+style apparaissent décochées et désactivées sans modifier les choix enregistrés.
 
 Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en interne séparément pour chaque widget et indique le niveau en dB. La valeur par défaut **−18 dB** conserve le niveau d’origine du fichier (**100%**). Vers la droite, le son est amplifié ; le maximum **0 dB** correspond à environ **794%** de l’amplitude initiale. Tout à gauche, **−∞ dB** signifie silence. Les modifications s’appliquent pendant le test audio. L’amplification concerne l’audio décodé, dont WAV, MP3, WMA, AAC, M4A et FLAC si Windows les prend en charge. L’ancienne lecture de fichiers non décodables, comme MIDI, est limitée à 100%.
 
@@ -96,9 +96,9 @@ L’onglet Intervalle de temps calcule la différence entre deux dates et heures
 évidence dans le calendrier les valeurs rondes, les chiffres répétés et les anniversaires mensuels et annuels
 depuis le début choisi. L’onglet Dates et heures prédéfinies permet d’ajouter, de modifier, de trier et de
 supprimer des dates et heures avec une description. Les dates et heures sont enregistrées séparément dans
-`%APPDATA%\FortSoft\CalClock\times.xml`. L’exportation manuelle les inclut ; l’importation conserve les
-entrées existantes et ignore uniquement celles dont la date, l’heure et la description complète sont
-identiques.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Les exports des paramètres incluent ces entrées. L’importation
+conserve les entrées existantes et ignore uniquement celles dont l’instant UTC et la description complète sont
+identiques, quel que soit le fuseau d’affichage.
 
 Chaque saisie possède son fuseau horaire, choisi dans la même liste que les paramètres. Le fuseau Windows
 actuel est utilisé par défaut. Un instant UTC non ambigu et son fuseau d’affichage sont enregistrés. Changer
@@ -118,8 +118,12 @@ exemple 11, 111 ou 66, 666) peuvent être activés séparément et sont désacti
 Cliquez sur un en-tête de colonne pour trier les données enregistrées par instant réel ou par texte de
 description. Un second clic inverse l’ordre ; une flèche indique le sens du tri.
 
-La position de la fenêtre, l’onglet actif, les valeurs saisies et les choix de mise en évidence sont
+La position de la fenêtre, l’onglet actif, les données du calcul et les choix de mise en évidence sont
 enregistrés avec les paramètres de l’application dans le Registre ou en XML, selon le stockage choisi.
+
+Exporter dans l’onglet des dates et heures enregistrées sauvegarde uniquement ces entrées dans un fichier XML
+distinct. Importer dans cet onglet extrait uniquement les dates et heures, même depuis un export des
+paramètres, et les fusionne avec les entrées existantes.
 
 ## Heure et alarmes
 

@@ -58,7 +58,12 @@ Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompór
 
 Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
-Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáidtear Tahoma 8 pt in áit chló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe,
+Cabhair, Maidir leis agus Áireamhán ama. Úsáideann rialtáin na bhfuinneog seo Tahoma 8 pt nuair a roghnaítear
+cló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don
+cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte
+ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha
+téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
 
 ## Áireamhán ama
 
@@ -67,8 +72,9 @@ Eatramh ama an difríocht idir dhá dháta agus am. Aibhsíonn Uimhreacha cothro
 athfhillteacha agus comóradh míosúil agus bliantúil san fhéilire ón tús roghnaithe. Le Dátaí agus amanna
 réamhshocraithe is féidir dátaí agus amanna le cur síos a chur leis, a chur in eagar, a shórtáil agus a
 scriosadh. Úsáideann Sábháiltear dátaí agus amanna ar leithligh in `%APPDATA%\FortSoft\CalClock\times.xml`.
-Cuirtear san áireamh iad in easpórtáil láimhe; coinníonn iompórtáil na hiontrálacha atá ann agus ní scipeálann
-sí ach iontrálacha a bhfuil an dáta, an t-am agus an cur síos iomlán céanna acu.
+Cuirtear na hiontrálacha seo san áireamh in easpórtáil socruithe. Coinníonn iompórtáil na hiontrálacha atá ann
+agus ní scipeálann sí ach iontrálacha a bhfuil an meandar UTC céanna agus an cur síos iomlán céanna acu, beag
+beann ar an gcrios ama taispeána.
 
 Tá crios ama dá chuid féin ag gach ionchur, ón liosta céanna agus atá sna Socruithe. Is é crios ama reatha
 Windows an réamhshocrú. Sábháiltear meandar soiléir UTC agus a chrios taispeána. Caomhnaítear an meandar nuair
@@ -87,8 +93,12 @@ seachtaine iomlána agus cothrom míosa agus bliana. Is féidir digití athfhill
 Cliceáil ceanntásc colúin chun iontrálacha sábháilte a shórtáil de réir an fhíor-mheandair nó théacs an chuir
 síos. Cliceáil arís chun an t-ord a aisiompú; léiríonn saighead an treo.
 
-Sábháiltear suíomh na fuinneoige, an chluaisín gníomhach, na luachanna iontráilte agus na roghanna aibhsithe
-le socruithe an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála.
+Sábháiltear suíomh na fuinneoige, an chluaisín gníomhach, ionchuir an ríofa agus na roghanna aibhsithe le
+socruithe an fheidhmchláir sa chlárlann nó in XML, de réir an rogha stórála.
+
+Sábhálann Easpórtáil ar chluaisín na ndátaí agus na n-amanna sábháilte na hiontrálacha sin amháin i gcomhad
+XML ar leith. Ní léann Iompórtáil ar an gcluaisín seo ach dátaí agus amanna, fiú ó easpórtáil socruithe, agus
+cumascann sí iad leis na hiontrálacha atá ann.
 
 ## Socruithe agus roghchláir
 

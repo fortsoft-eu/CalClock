@@ -76,7 +76,11 @@ Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jedn
 
 Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre Nastavenia, Pomoc, O programe a Časový kalkulátor. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
 
-Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový kalkulátor. Pri predvolenom systémovom písme používa Tahomu 8 pt; vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a neuplatňujú sa; uložené voľby sa zachovajú.
+Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový
+kalkulátor. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien Tahomu 8 pt; vlastné písmo
+aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí
+GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a
+neuplatňujú sa; uložené voľby sa zachovajú.
 
 Jazdec **Hlasitosť zvuku** na karte Budík ovláda interne prehrávané súbory samostatne pre každý widget a zobrazuje úroveň v dB. Predvolených **−18 dB** zachováva pôvodnú úroveň súboru (**100%**). Posun doprava zosilňuje; maximum **0 dB** predstavuje približne **794%** pôvodnej amplitúdy. Ľavá krajná poloha je **−∞ dB** (ticho). Zmeny sa prejavujú aj počas testu. Zosilnenie sa týka dekódovaného zvuku vrátane WAV, MP3, WMA, AAC, M4A a FLAC, ak ich Windows podporuje. Starší spôsob prehrávania nedekódovateľných súborov, napríklad MIDI, je obmedzený na 100%.
 
@@ -90,8 +94,8 @@ Dni budíka rešpektujú prvý deň týždňa zvolenej kultúry aplikácie. Ulo�
 počíta rozdiel medzi dvoma údajmi dátumu a času. Karta Okrúhle hodnoty vyznačuje v kalendári okrúhle hodnoty,
 opakujúce sa číslice a mesačné aj ročné výročia od zvoleného začiatku. Karta Predvolené časové údaje umožňuje
 pridávať, upravovať, triediť a odstraňovať údaje s popisom. Časové údaje sa ukladajú samostatne do
-`%APPDATA%\FortSoft\CalClock\times.xml`. Ručný export ich zahŕňa; import zachová existujúce údaje a vynechá
-iba položky so zhodným dátumom, časom aj celým popisom.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Export nastavení tieto údaje zahŕňa. Import zachová existujúce údaje
+a vynechá iba položky so zhodným okamihom v UTC aj celým popisom, bez ohľadu na pásmo zobrazenia.
 
 Každý vstup má vlastné časové pásmo z rovnakého zoznamu ako v Nastaveniach. Predvolené je aktuálne pásmo
 Windows. Ukladá sa jednoznačný okamih v UTC a pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej
@@ -110,8 +114,11 @@ v predvolenom stave sú vypnuté.
 Kliknutím na hlavičku stĺpca zoradíte predvolené údaje podľa skutočného okamihu alebo podľa textu popisu.
 Ďalším kliknutím obrátite smer zoradenia, ktorý ukazuje šípka.
 
-Poloha okna, aktívna karta, zadané hodnoty a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do
+Poloha okna, aktívna karta, vstupy výpočtu a voľby zvýraznenia sa ukladajú s nastaveniami aplikácie do
 registra alebo XML podľa zvoleného úložiska.
+
+Export na karte predvolených časových údajov uloží iba tieto údaje do samostatného XML. Import na tejto karte
+načíta iba časové údaje aj z exportu nastavení a zlúči ich s existujúcimi položkami.
 
 ## Čas a budíky
 

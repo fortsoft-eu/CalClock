@@ -76,7 +76,12 @@ Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ram
 
 Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það aðeins fyrir Stillingar, Hjálp, Um og Tímareiknivél. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
 
-Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um og Tímareiknivél. Tahoma 8 pt kemur í stað sjálfgefins kerfisleturs; sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar haldast óbreyttar.
+Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um og
+Tímareiknivél. Stýringar þessara glugga nota Tahoma 8 pt þegar sjálfgefið kerfisletur er valið; sérvalið
+forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í boði.
+Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu
+Windows-útliti birtast báðir þemavalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar haldast
+óbreyttar.
 
 Sleðinn **Hljóðstyrkur** á Vekjari stjórnar innri spilun hljóðskráa fyrir hverja græju og sýnir styrk í dB. Sjálfgefið **−18 dB** varðveitir upprunalegan styrk skrárinnar (**100%**). Til hægri magnast hljóðið; hámarkið **0 dB** er um **794%** af upprunalegri sveifluvídd. Lengst til vinstri er **−∞ dB** (þögn). Breytingar virka meðan á prófun stendur. Mögnun gildir um afkóðað hljóð, þar á meðal WAV, MP3, WMA, AAC, M4A og FLAC þegar Windows styður það. Eldri spilun skráa sem ekki er hægt að afkóða, svo sem MIDI, er takmörkuð við 100%.
 
@@ -90,9 +95,9 @@ Opnaðu Tímareiknivél úr valmynd hvaða græju sem er eða valmynd táknsins 
 reiknar mismun tveggja dagsetninga og tíma. Flipinn Sléttar tölur auðkennir sléttar tölur, endurtekna
 tölustafi og mánaðarleg og árleg tímamót í dagatalinu frá völdu upphafi. Flipinn Vistaðar dagsetningar og
 tímar gerir kleift að bæta við, breyta, raða og eyða dagsetningum og tímum með lýsingu. Dagsetningar og tímar
-eru vistaðir sérstaklega í `%APPDATA%\FortSoft\CalClock\times.xml`. Handvirkur útflutningur inniheldur þau;
-innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sömu dagsetningu, tíma og
-heildarlýsingu.
+eru vistaðir sérstaklega í `%APPDATA%\FortSoft\CalClock\times.xml`. Útflutningur stillinga inniheldur þessar
+færslur. Innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sama UTC-tímapunkt og
+nákvæmlega sömu heildarlýsingu, óháð tímabelti birtingar.
 
 Hvert inntak hefur eigið tímabelti úr sama lista og í stillingum. Núverandi tímabelti Windows er sjálfgefið.
 Vistaður er ótvíræður tímapunktur í UTC ásamt tímabelti birtingar. Breyting á tímabelti varðveitir
@@ -111,8 +116,12 @@ sig; sjálfgefið er slökkt á þeim.
 Smelltu á dálkhaus til að raða vistuðum færslum eftir raunverulegu augnabliki eða lýsingartexta. Smelltu aftur
 til að snúa röðinni við; ör sýnir röðunarstefnuna.
 
-Staðsetning gluggans, virkur flipi, innslegin gildi og val á auðkenningu eru vistuð með forritsstillingum í
-skrásetningunni eða XML eftir völdum geymslumáta.
+Staðsetning gluggans, virkur flipi, inntaksgögn útreikninga og val á auðkenningu eru vistuð með
+forritsstillingum í skrásetningunni eða XML eftir völdum geymslumáta.
+
+Útflutningur á flipanum með vistuðum dagsetningum og tímum vistar aðeins þessar færslur í sérstakri XML-skrá.
+Innflutningur á þessum flipa les aðeins dagsetningar og tíma, einnig úr útfluttum stillingum, og sameinar við
+núverandi færslur.
 
 ## Tími og vekjarar
 

@@ -65,12 +65,13 @@ Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart d
 
 Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
-Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en Tijdcalculator. Met het
-standaardlettertype van het systeem gebruiken deze vensters Tahoma 8 pt; een eigen toepassingslettertype heeft
-voorrang. De licentie behoudt het lettertype met vaste tekenbreedte. In deze modus zijn alleen GDI en Geen
-beschikbaar voor lettertypevereffening: een opgeslagen ClearType-keuze gebruikt tijdelijk GDI en keert terug
-bij het uitschakelen van de modus. Als Windows zelf geen visuele stijlen gebruikt, worden beide stijlopties
-ongemarkeerd en uitgeschakeld weergegeven zonder de opgeslagen keuzes te veranderen.
+Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en
+Tijdcalculator. Met het standaardlettertype van het systeem gebruiken de besturingselementen van deze vensters
+Tahoma 8 pt; een eigen toepassingslettertype heeft voorrang. De licentie behoudt het lettertype met vaste
+tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: een opgeslagen
+ClearType-keuze gebruikt tijdelijk GDI en keert terug bij het uitschakelen van de modus. Als Windows zelf geen
+visuele stijlen gebruikt, worden beide stijlopties ongemarkeerd en uitgeschakeld weergegeven zonder de
+opgeslagen keuzes te veranderen.
 
 ## Tijdcalculator
 
@@ -78,8 +79,9 @@ Open Tijdcalculator via het menu van een widget of het pictogram in het systeemv
 verschil tussen twee datums en tijden. Ronde waarden markeert ronde waarden, herhaalde cijfers en maandelijkse
 en jaarlijkse gedenkdagen in de kalender vanaf het gekozen begin. Opgeslagen datums en tijden laat u datums en
 tijden met beschrijvingen toevoegen, bewerken, sorteren en verwijderen. Datums en tijden worden afzonderlijk
-opgeslagen in `%APPDATA%\FortSoft\CalClock\times.xml`. Handmatige export neemt ze op; import behoudt bestaande
-vermeldingen en slaat alleen vermeldingen met een identieke datum, tijd en volledige beschrijving over.
+opgeslagen in `%APPDATA%\FortSoft\CalClock\times.xml`. Een instellingenexport bevat deze vermeldingen. Import
+behoudt bestaande vermeldingen en slaat alleen vermeldingen met hetzelfde UTC-tijdstip en een identieke
+volledige beschrijving over, ongeacht de weergavetijdzone.
 
 Elke invoer heeft een eigen tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de
 standaard. Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt het
@@ -98,8 +100,12 @@ afzonderlijk worden ingeschakeld en staan standaard uit.
 Klik op een kolomkop om opgeslagen gegevens op het werkelijke tijdstip of de beschrijvingstekst te sorteren.
 Klik nogmaals om de volgorde om te keren; een pijl geeft de richting aan.
 
-De vensterpositie, het actieve tabblad, ingevoerde waarden en markeringskeuzes worden samen met de
+De vensterpositie, het actieve tabblad, berekeningsgegevens en markeringskeuzes worden samen met de
 toepassingsinstellingen in het register of XML opgeslagen, afhankelijk van de gekozen opslagmethode.
+
+Exporteren op het tabblad met opgeslagen datums en tijden slaat alleen deze gegevens op in een afzonderlijk
+XML-bestand. Importeren op dit tabblad haalt ook uit een instellingenexport alleen datums en tijden en voegt
+ze samen met bestaande gegevens.
 
 ## Instellingen en menu’s
 

@@ -58,7 +58,12 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
-Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Süsteemi vaikefondi asemel kasutatakse Tahoma 8 pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused säilivad.
+Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave ja
+Ajakalkulaator. Kui valitud on süsteemi vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8 pt;
+kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI
+või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub
+kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid
+ei rakendata; salvestatud eelistused säilivad.
 
 ## Ajakalkulaator
 
@@ -66,9 +71,9 @@ Ava Ajakalkulaator mis tahes vidina menüüst või olekuala ikooni menüüst. Va
 kuupäeva ja kellaaja vahe. Vahekaart Ümmargused väärtused tõstab kalendris esile ümmargused väärtused,
 korduvad numbrid ning igakuised ja iga-aastased tähtpäevad alates valitud algusest. Vahekaart Salvestatud
 kuupäevad ja kellaajad võimaldab kirjeldusega kuupäevi ja kellaaegu lisada, muuta, sortida ja kustutada.
-Kuupäevad ja kellaajad salvestatakse eraldi faili `%APPDATA%\FortSoft\CalClock\times.xml`. Käsitsi eksport
-sisaldab neid; import säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille kuupäev, kellaaeg ja
-kogu kirjeldus on identsed.
+Kuupäevad ja kellaajad salvestatakse eraldi faili `%APPDATA%\FortSoft\CalClock\times.xml`. Sätete eksport
+sisaldab neid kirjeid. Import säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille UTC-ajahetk ja
+kogu kirjeldus on täpselt samad, olenemata kuvamiseks valitud ajavööndist.
 
 Igal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi kasutatakse Windowsi praegust
 ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja kuvamisvöönd. Vööndi muutmine säilitab ajahetke.
@@ -87,8 +92,12 @@ välja lülitatud.
 Klõpsa veerupäist, et sortida salvestatud kirjeid tegeliku ajahetke või kirjelduse teksti järgi. Uus klõps
 pöörab järjestuse ümber; nool näitab suunda.
 
-Akna asukoht, aktiivne vahekaart, sisestatud väärtused ja esiletõstmise valikud salvestatakse koos rakenduse
+Akna asukoht, aktiivne vahekaart, arvutuse lähteandmed ja esiletõstmise valikud salvestatakse koos rakenduse
 sätetega registrisse või XML-faili vastavalt valitud salvestuskohale.
+
+Salvestatud kuupäevade ja kellaaegade vahekaardi eksport salvestab ainult need kirjed eraldi XML-faili. Selle
+vahekaardi import loeb ka sätete ekspordist ainult kuupäevad ja kellaajad ning ühendab need olemasolevate
+kirjetega.
 
 ## Sätted ja menüüd
 

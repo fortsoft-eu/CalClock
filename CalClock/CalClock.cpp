@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #define NOMINMAX
@@ -243,6 +243,7 @@ struct InformationWordBreakState {
 struct SettingsOpenData {
     HWND notifyWindow = nullptr;
     int widgetId = -1;
+    int part = -1;
     SYSTEMTIME utc = {};
     std::atomic<bool> cancelled = false;
     std::wstring systemTimeZoneLabel;
@@ -274,6 +275,8 @@ const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
 const UINT WM_ALIGN_SETTINGS_FONT_BUTTON = WM_APP + 10;
 const UINT WM_SETTINGS_DATA_READY = WM_APP + 11;
 const UINT_PTR TIMER_REFRESH = 1;
+const UINT_PTR TIMER_SETTINGS_OPEN = 2;
+const int SETTINGS_CONTROL_CREATION_PARTS = 12;
 const UINT REFRESH_MAX_INTERVAL = 100;
 const LONGLONG REFRESH_SECOND_TICKS = 10000000;
 const LONGLONG REFRESH_MILLISECOND_TICKS = 10000;
@@ -832,9 +835,6 @@ static int SettingsDialogHeight(int value);
 
 /// Maps a horizontal dialog-unit distance using the current interface font.
 static int SettingsDialogWidth(int value);
-
-/// Returns the minimum or measured native button width, including text margins and border edges.
-static LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu = 12);
 
 /// Fits an NTP action button to its caption and margins while preserving its height and requested anchor.
 static void FitSettingsButtonWidth(HWND button, bool alignRight);
@@ -4448,7 +4448,7 @@ static void AlignSettingsFirstRow(HWND control, HWND page, LONG top) {
     }
 }
 
-/// Places Sunday first at its final horizontal position and native text baseline in one move.
+/// Places Sunday first on its native baseline and applies fixed resource widths for the calendar variants.
 static void AlignSettingsSundayFirst(HWND reference, LONG baselineDistance = 0) {
     RECT bounds = {};
     if (!GetWindowRect(hSundayFirstCheck, &bounds)) {
@@ -4463,6 +4463,14 @@ static void AlignSettingsSundayFirst(HWND reference, LONG baselineDistance = 0) 
     LONG top = bounds.top
         + GetSettingsControlBaselineAdjustment(hSundayFirstCheck, reference, baselineDistance);
     SetControlPosition(hSundayFirstCheck, x, top, width, bounds.bottom - bounds.top);
+    RECT weeks = {};
+    if (GetWindowRect(hWeekNumbersCheck, &weeks)) {
+        MapWindowPoints(HWND_DESKTOP, hAppearancePage, reinterpret_cast<POINT*>(&weeks), 2);
+        RECT layout = GetSettingsResourceRect(hAppearancePage,
+            panel ? IDC_LAYOUT_WEEK_NUMBERS_PANEL : IDC_SETTINGS_CONTENT);
+        SetControlPosition(hWeekNumbersCheck, weeks.left, weeks.top, layout.right - layout.left,
+            weeks.bottom - weeks.top);
+    }
 }
 
 /// Aligns a volume value to its fixed label and moves its slider by the same baseline adjustment.
@@ -4921,6 +4929,13 @@ static void UpdateSettingsControlMetrics() {
     UpdateSettingsWindowLayout();
 }
 
+/// Completes the Settings frame and geometry after child fonts and themes have been applied.
+static void FinishSettingsUiStyle() {
+    DialogFrame::Apply(hSettings, themesDisabled && AreVisualStylesActive(), windows2000Style);
+    SendMessageW(hSettings, WM_SETFONT, reinterpret_cast<WPARAM>(hUiFont), FALSE);
+    UpdateSettingsControlMetrics();
+}
+
 /// Creates the application font if needed, applies font and theme settings to a form and its children, and
 /// requests repainting.
 void ApplyUiStyle(HWND window) {
@@ -4940,9 +4955,7 @@ void ApplyUiStyle(HWND window) {
     SetWindowTheme(window, themeName, themeName);
     EnumChildWindows(window, ApplyFontAndTheme, 0);
     if (window == hSettings) {
-        DialogFrame::Apply(window, disableThemes, windows2000Style);
-        SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(hUiFont), FALSE);
-        UpdateSettingsControlMetrics();
+        FinishSettingsUiStyle();
     }
     RedrawWindow(window, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
 }
@@ -9301,7 +9314,7 @@ static void SetSettingsControlPosition(HWND control, int layoutId, int offsetY =
 /// Returns the larger of the minimum pixel width and the native ideal button width. If native measurement
 /// is unavailable, measures the caption with its current font and includes the larger of the requested total
 /// DLU padding and native text margins, plus the border edges.
-static LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu) {
+LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu) {
     SIZE ideal = {};
     if (!SendMessageW(button, BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal))) {
         HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
@@ -9671,7 +9684,7 @@ static LRESULT DrawSettingsComboSelection(HWND window, WPARAM wParam, LPARAM lPa
         RestoreDC(item->hDC, saved);
     }
     bool drawFocus = drawContent && (item->itemState & ODS_FOCUS) != 0
-            || !drawContent && (item->itemAction & ODA_FOCUS) != 0;
+        || !drawContent && (item->itemAction & ODA_FOCUS) != 0;
     if (drawFocus && (item->itemState & ODS_NOFOCUSRECT) == 0) {
         RECT focus = item->rcItem;
         focus.left += GetSystemMetrics(SM_CXBORDER);
@@ -10994,8 +11007,8 @@ static void RememberFileDialogDirectory(const std::wstring& path) {
 
 /// Shows a native file dialog in the shared remembered directory and persists the directory only when
 /// saving.
-static bool ChooseApplicationFile(bool save, const wchar_t* fileName, const COMDLG_FILTERSPEC* filters,
-        UINT filterCount, const wchar_t* title, std::wstring* path) {
+static bool ChooseApplicationFile(HWND owner, bool save, const wchar_t* fileName,
+        const COMDLG_FILTERSPEC* filters, UINT filterCount, const wchar_t* title, std::wstring* path) {
     HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (FAILED(initialized)) {
         return false;
@@ -11039,7 +11052,7 @@ static bool ChooseApplicationFile(bool save, const wchar_t* fileName, const COMD
         folder->Release();
     }
     if (SUCCEEDED(result)) {
-        result = dialog->Show(hSettings);
+        result = dialog->Show(owner);
     }
     IShellItem* selected = nullptr;
     if (SUCCEEDED(result)) {
@@ -11086,7 +11099,7 @@ static void SaveNtpLog() {
     };
     std::wstring fileName = SuggestedSaveFileName(L"CalClock-NTP-log", L"csv");
     std::wstring path;
-    bool selected = ChooseApplicationFile(true, fileName.c_str(), filters, ARRAYSIZE(filters),
+    bool selected = ChooseApplicationFile(hSettings, true, fileName.c_str(), filters, ARRAYSIZE(filters),
         T(TXT_NTP_SAVE_LOG_LABEL), &path);
     if (!selected) {
         return;
@@ -13353,6 +13366,7 @@ static bool HasPendingSettingsChanges() {
 /// action.
 static void UpdateSettingsApplyButton() {
     if (hSettings == nullptr
+            || settingsOpenData != nullptr
             || updatingSettingsControls
             || settingsComboState.open != nullptr
             || !IsWindowEnabled(hSettings)) {
@@ -14238,6 +14252,9 @@ static void SynchronizeOpenSettings(const Widget* widget, int command) {
             }
         }
     }
+    if (settingsOpenData != nullptr) {
+        return;
+    }
     bool isOnlySelectedWidget = selectedDraftIndex >= 0
         && selectedDraftIndex < static_cast<int>(settingsDraft.size())
         && settingsDraft[selectedDraftIndex].id == widget->config.id
@@ -14692,10 +14709,8 @@ static void BrowseForCommand() {
     }
 }
 
-/// Creates all settings pages and controls, populates selectors, and applies shared layout, clipping,
-/// scrolling, fonts, and themes. Returns false when a required control or its text-selection handler
-/// could not be created.
-static bool CreateSettingsControls(int selectedTab) {
+/// Binds root controls and tab captions before individual settings pages are prepared.
+static bool CreateSettingsRootControls(int selectedTab) {
     if (hUiFont == nullptr) {
         hUiFont = CreateApplicationUiFont(hSettings);
         if (hUiFont == nullptr) {
@@ -14703,8 +14718,6 @@ static bool CreateSettingsControls(int selectedTab) {
         }
     }
     settingsGeneralCheckboxReferenceValid = false;
-    bool previousUpdating = updatingSettingsControls;
-    updatingSettingsControls = true;
     generalControls.clear();
     appearanceControls.clear();
     alarmControls.clear();
@@ -14724,7 +14737,6 @@ static bool CreateSettingsControls(int selectedTab) {
     BindSettingsControl(hSettings, ID_DUPLICATE, Mnemonic(TXT_DUPLICATE).c_str());
     hTabs = BindSettingsControl(hSettings, ID_TABS, L"");
     if (hTabs == nullptr) {
-        updatingSettingsControls = previousUpdating;
         return false;
     }
     TCITEMW tab = {};
@@ -14742,21 +14754,15 @@ static bool CreateSettingsControls(int selectedTab) {
     tab.pszText = const_cast<wchar_t*>(T(TXT_APPLICATION_TAB_LABEL));
     TabCtrl_InsertItem(hTabs, 5, &tab);
     TabCtrl_SetCurSel(hTabs, std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1));
+    return true;
+}
+
+/// Creates and populates the General page without exposing unfinished controls.
+static bool CreateSettingsGeneralControls() {
     hGeneralPage = CreateSettingsPage(IDD_SETTINGS_GENERAL);
-    hAppearancePage = CreateSettingsPage(IDD_SETTINGS_APPEARANCE);
-    hAlarmPage = CreateSettingsPage(IDD_SETTINGS_ALARM);
-    hTimeSignalPage = CreateSettingsPage(IDD_SETTINGS_SIGNALS);
-    hTimePage = CreateSettingsPage(IDD_SETTINGS_TIME);
-    hApplicationPage = CreateSettingsPage(IDD_SETTINGS_APPLICATION);
-    for (int index = 0; index < SETTINGS_TAB_COUNT; index++) {
-        if (GetSettingsPage(index) == nullptr) {
-            updatingSettingsControls = previousUpdating;
-            return false;
-        }
+    if (hGeneralPage == nullptr) {
+        return false;
     }
-    UpdateSettingsTabLayout();
-    SetWindowLongPtrW(hAppearancePage, GWL_EXSTYLE,
-        GetWindowLongPtrW(hAppearancePage, GWL_EXSTYLE) | WS_EX_COMPOSITED);
     HWND nameLabel = BindSettingsLabel(hGeneralPage, IDC_NAME_LABEL, Mnemonic(TXT_NAME).c_str(),
         &generalControls);
     hNameEdit = BindSettingsControl(hGeneralPage, ID_NAME, L"", &generalControls, nameLabel);
@@ -14782,7 +14788,6 @@ static bool CreateSettingsControls(int selectedTab) {
     hTimeZoneLabel = BindSettingsLabel(hGeneralPage, IDC_TIME_ZONE_LABEL, Mnemonic(TXT_TIMEZONE).c_str(),
         &generalControls);
     hTimeZoneCombo = BindSettingsControl(hGeneralPage, ID_TIMEZONE, L"", &generalControls, hTimeZoneLabel);
-    FillTimeZoneCombo();
     HWND offsetLabel = BindSettingsLabel(hGeneralPage, IDC_OFFSET_LABEL, Mnemonic(TXT_OFFSET).c_str(),
         &generalControls);
     hOffsetEdit = BindSettingsControl(hGeneralPage, ID_OFFSET, L"", &generalControls, offsetLabel);
@@ -14815,7 +14820,6 @@ static bool CreateSettingsControls(int selectedTab) {
             IDC_ADDITIONAL_TIME_ZONE_LABELS_BASE + index, Mnemonic(TXT_TIMEZONE).c_str(), &generalControls);
         hAdditionalTimeZoneCombos[index] = BindSettingsControl(hGeneralPage,
             ID_ADDITIONAL_TIMEZONE_BASE + index, L"", &generalControls, hAdditionalTimeZoneLabels[index]);
-        FillTimeZoneCombo(hAdditionalTimeZoneCombos[index]);
     }
     hMonitorLabel = BindSettingsLabel(hGeneralPage, IDC_MONITOR_LABEL, T(TXT_MONITOR_LABEL),
         &generalControls);
@@ -14823,6 +14827,15 @@ static bool CreateSettingsControls(int selectedTab) {
     InitializeMonitorList();
     hBlackoutMonitorsCheck = BindSettingsControl(hGeneralPage, ID_BLACKOUT_MONITORS,
         T(TXT_BLACKOUT_MONITOR_LABEL), &generalControls);
+    return true;
+}
+
+/// Creates and populates the Appearance page without exposing unfinished controls.
+static bool CreateSettingsAppearanceControls() {
+    hAppearancePage = CreateSettingsPage(IDD_SETTINGS_APPEARANCE);
+    if (hAppearancePage == nullptr) {
+        return false;
+    }
     hSizeLabel = BindSettingsLabel(hAppearancePage, IDC_SIZE_LABEL, Mnemonic(TXT_SIZE).c_str(),
         &appearanceControls);
     hSizeCombo = BindSettingsControl(hAppearancePage, ID_SIZE, L"", &appearanceControls, hSizeLabel);
@@ -14953,6 +14966,15 @@ static bool CreateSettingsControls(int selectedTab) {
         Mnemonic(TXT_VISUAL_STYLES).c_str(), &appearanceControls);
     hDefaultAppearanceButton = BindSettingsControl(hAppearancePage, ID_DEFAULT_APPEARANCE,
         T(TXT_DEFAULT_APPEARANCE_LABEL), &appearanceControls);
+    return true;
+}
+
+/// Creates and populates the Alarm page without exposing unfinished controls.
+static bool CreateSettingsAlarmControls() {
+    hAlarmPage = CreateSettingsPage(IDD_SETTINGS_ALARM);
+    if (hAlarmPage == nullptr) {
+        return false;
+    }
     hAlarmEnabledCheck = BindSettingsControl(hAlarmPage, ID_ALARM_ENABLED,
         Mnemonic(TXT_ALARM_ACTIVE).c_str(), &alarmControls);
     int firstAlarmDay = GetCultureFirstAlarmDay(appLanguage);
@@ -15002,6 +15024,15 @@ static bool CreateSettingsControls(int selectedTab) {
         T(TXT_ALARM_TIME_SIGNAL_LABEL), &alarmControls);
     hAlarmWakeCheck = BindSettingsControl(hAlarmPage, ID_ALARM_WAKE_COMPUTER,
         T(TXT_ALARM_WAKE_COMPUTER), &alarmControls);
+    return true;
+}
+
+/// Creates and populates the TimeSignal page without exposing unfinished controls.
+static bool CreateSettingsTimeSignalControls() {
+    hTimeSignalPage = CreateSettingsPage(IDD_SETTINGS_SIGNALS);
+    if (hTimeSignalPage == nullptr) {
+        return false;
+    }
     hTimeSignalEnabledCheck = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_ENABLED,
         T(TXT_TIME_SIGNAL_ENABLED_LABEL), &timeSignalControls);
     for (int mode = TIME_SIGNAL_EVERY_MINUTE; mode < TIME_SIGNAL_COUNT; mode++) {
@@ -15019,6 +15050,15 @@ static bool CreateSettingsControls(int selectedTab) {
     HWND timeSignalNote = BindSettingsControl(hTimeSignalPage, ID_TIME_SIGNAL_NOTE,
         T(TXT_TIME_SIGNAL_NOTE));
     timeSignalControls.push_back(timeSignalNote);
+    return true;
+}
+
+/// Creates and populates the Time page without exposing unfinished controls.
+static bool CreateSettingsTimeControls() {
+    hTimePage = CreateSettingsPage(IDD_SETTINGS_TIME);
+    if (hTimePage == nullptr) {
+        return false;
+    }
     HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL,
         T(TXT_TIME_SOURCE_LABEL), &timeControls);
     hTimeSourceCombo = BindSettingsControl(hTimePage, ID_TIME_SOURCE, L"", &timeControls, timeSourceLabel);
@@ -15046,6 +15086,15 @@ static bool CreateSettingsControls(int selectedTab) {
     hTimeGlobalNote = BindSettingsControl(hTimePage, IDC_TIME_GLOBAL_NOTE, T(TXT_TIME_GLOBAL_NOTE));
     timeControls.push_back(hTimeGlobalNote);
     UpdateNtpSettingsControls();
+    return true;
+}
+
+/// Creates and populates the Application page without exposing unfinished controls.
+static bool CreateSettingsApplicationControls() {
+    hApplicationPage = CreateSettingsPage(IDD_SETTINGS_APPLICATION);
+    if (hApplicationPage == nullptr) {
+        return false;
+    }
     hAppFontLabel = BindSettingsLabel(hApplicationPage, IDC_APP_FONT_LABEL, T(TXT_APPLICATION_FONT_LABEL),
         &applicationControls);
     hAppFontButton = BindSettingsControl(hApplicationPage, ID_APP_FONT, L"", &applicationControls);
@@ -15118,6 +15167,12 @@ static bool CreateSettingsControls(int selectedTab) {
     hWarnUnsavedChangesCheck = BindSettingsControl(hApplicationPage, ID_WARN_UNSAVED_CHANGES,
         T(TXT_WARN_UNSAVED_CHANGES_LABEL), &applicationControls);
     SetCheck(hWarnUnsavedChangesCheck, warnOnUnsavedChanges);
+    return true;
+}
+
+/// Validates prepared controls and applies the existing final measurements and style.
+static bool FinishSettingsControls() {
+    UpdateSettingsTabLayout();
     BindSettingsControl(hSettings, ID_IMPORT_SETTINGS, T(TXT_IMPORT_SETTINGS_LABEL));
     BindSettingsControl(hSettings, ID_EXPORT_SETTINGS, T(TXT_EXPORT_SETTINGS_LABEL));
     BindSettingsControl(hSettings, ID_SAVE, Mnemonic(TXT_SAVE).c_str());
@@ -15134,7 +15189,6 @@ static bool CreateSettingsControls(int selectedTab) {
     for (const std::vector<HWND>* group : groups) {
         for (HWND control : *group) {
             if (control == nullptr) {
-                updatingSettingsControls = previousUpdating;
                 return false;
             }
         }
@@ -15152,8 +15206,84 @@ static bool CreateSettingsControls(int selectedTab) {
             &settingsGeneralCheckboxBaselineDistances[1])
         && GetSettingsCheckboxBaselineDistance(hAdditionalEnabledChecks[1], hAdditionalNameLabels[1],
             &settingsGeneralCheckboxBaselineDistances[2]);
-    ApplyUiStyle(hSettings);
+    return true;
+}
+
+/// Runs one creation part while suppressing notifications from unfinished controls.
+static bool CreateSettingsControlsPart(int selectedTab, int part) {
+    bool previousUpdating = updatingSettingsControls;
+    updatingSettingsControls = true;
+    bool created = false;
+    int creationPart = part;
+    if (part > 0 && part <= SETTINGS_TAB_COUNT) {
+        int preferred = std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1) + 1;
+        if (part == 1) {
+            creationPart = preferred;
+        } else if (part <= preferred) {
+            creationPart--;
+        }
+    }
+    switch (creationPart) {
+        case 0:
+            created = CreateSettingsRootControls(selectedTab);
+            break;
+        case 1:
+            created = CreateSettingsGeneralControls();
+            break;
+        case 2:
+            created = CreateSettingsAppearanceControls();
+            break;
+        case 3:
+            created = CreateSettingsAlarmControls();
+            break;
+        case 4:
+            created = CreateSettingsTimeSignalControls();
+            break;
+        case 5:
+            created = CreateSettingsTimeControls();
+            break;
+        case 6:
+            created = CreateSettingsApplicationControls();
+            break;
+        case 7:
+            FillTimeZoneCombo();
+            created = true;
+            break;
+        case 8:
+        case 9:
+            FillTimeZoneCombo(hAdditionalTimeZoneCombos[creationPart - 8]);
+            created = true;
+            break;
+        case 10:
+            created = FinishSettingsControls();
+            break;
+        case 11:
+            FinishSettingsUiStyle();
+            RedrawWindow(hSettings, nullptr, nullptr,
+                RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+            created = true;
+            break;
+    }
+    if (created && part == 0) {
+        const wchar_t* theme = themesDisabled && AreVisualStylesActive() ? L"" : nullptr;
+        SetWindowTheme(hSettings, theme, theme);
+        EnumChildWindows(hSettings, ApplyFontAndTheme, 0);
+    } else if (created && part <= SETTINGS_TAB_COUNT) {
+        HWND page = GetSettingsPage(creationPart - 1);
+        ApplyFontAndTheme(page, 0);
+        EnumChildWindows(page, ApplyFontAndTheme, 0);
+    }
     updatingSettingsControls = previousUpdating;
+    return created;
+}
+
+/// Rebuilds controls using the same creation parts as asynchronous initial opening.
+static bool CreateSettingsControls(int selectedTab) {
+    for (int part = 0; part < SETTINGS_CONTROL_CREATION_PARTS; part++) {
+        if (!CreateSettingsControlsPart(selectedTab, part)) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -15388,6 +15518,10 @@ static void RebuildSettingsControls(bool preserveValues = false) {
 /// Stops tests, restores uncommitted previews, remembers the form position, tab and widget, and destroys
 /// settings controls. Clears draft state and restores normal fullscreen presentation.
 static void CloseSettingsWindow() {
+    KillTimer(hController, TIMER_SETTINGS_OPEN);
+    if (hSettingsOpenThread == nullptr) {
+        settingsOpenData.reset();
+    }
     settingsComboState.open = nullptr;
     settingsComboState.initialSelection = CB_ERR;
     settingsComboState.accepted = false;
@@ -15498,33 +15632,36 @@ static void RecreateStyledDialogs(bool reopenSettings) {
     }
     if (reopenCalculator) {
         calculatorForm.Close();
-        calculatorForm.Show(hInstance, calculatorWindowState);
+        calculatorForm.Show(hInstance, calculatorWindowState, hController);
     }
     if (reopenSettings) {
         ShowSettingsWindow();
     }
 }
 
-/// Shows an XML open or save dialog in the shared remembered directory and returns the accepted path.
-static bool ChooseSettingsXmlFile(bool save, std::wstring* path) {
+/// Shows an XML dialog owned by the caller, sharing the remembered directory and export filename format.
+bool ChooseApplicationXmlFile(HWND owner, bool save, const wchar_t* prefix, std::wstring* path,
+        bool allowText) {
     if (path == nullptr) {
         return false;
     }
     const COMDLG_FILTERSPEC filters[] = {
-        COMDLG_FILTERSPEC{ T(TXT_XML_FILE_TYPE_LABEL), L"*.xml" }
+        COMDLG_FILTERSPEC{ T(TXT_XML_FILE_TYPE_LABEL), L"*.xml" },
+        COMDLG_FILTERSPEC{ T(TXT_TEXT_FILE_TYPE_LABEL), L"*.txt" }
     };
     std::wstring fileName;
     if (save) {
-        fileName = SuggestedSaveFileName(L"CalClock-settings", L"xml");
+        fileName = SuggestedSaveFileName(prefix, L"xml");
     }
-    return ChooseApplicationFile(save, fileName.c_str(), filters, ARRAYSIZE(filters), nullptr, path);
+    UINT filterCount = allowText ? ARRAYSIZE(filters) : 1;
+    return ChooseApplicationFile(owner, save, fileName.c_str(), filters, filterCount, nullptr, path);
 }
 
 /// Validates and applies the current draft before exporting a settings snapshot to the chosen XML file,
 /// including the independent saved-date collection and reporting write failure.
 static void ExportSettings() {
     std::wstring path;
-    if (!ChooseSettingsXmlFile(true, &path)) {
+    if (!ChooseApplicationXmlFile(hSettings, true, L"CalClock-settings", &path)) {
         return;
     }
     if (!SaveControlsToDraft(true) || !calculatorForm.EnsurePresetsLoaded()) {
@@ -15543,13 +15680,14 @@ static void ExportSettings() {
 /// and saves using the selected backend. Exported user dates are merged into times.xml before applying settings.
 static void ImportSettings() {
     std::wstring path;
-    if (!ChooseSettingsXmlFile(false, &path)) {
+    if (!ChooseApplicationXmlFile(hSettings, false, L"CalClock-settings", &path)) {
         return;
     }
     SettingsSnapshot snapshot = {};
     std::vector<TimeCalculatorPreset> importedPresets;
     bool presetsOnly = false;
-    if (!ReadSettingsXml(path, appLanguage, CreateStoredWidgetDefaults, &snapshot, &importedPresets, &presetsOnly)) {
+    if (!ReadSettingsXml(path, appLanguage, CreateStoredWidgetDefaults, &snapshot, &importedPresets,
+            &presetsOnly)) {
         MessageBoxW(hSettings, T(TXT_INVALID_SETTINGS_FILE), T(TXT_SETTINGS), MB_OK | MB_ICONWARNING);
         return;
     }
@@ -15590,7 +15728,7 @@ static void ImportSettings() {
     ShowSettingsWindow();
 }
 
-/// Creates the settings controls on the UI thread after slow system queries have completed.
+/// Creates the hidden Settings shell after slow system queries have completed.
 static void CreateSettingsWindow(int widgetId) {
     settingsThemesDisabled = themesDisabled;
     settingsWindows2000Style = windows2000Style;
@@ -15648,9 +15786,16 @@ static void CreateSettingsWindow(int widgetId) {
         PositionInformationWindowByWindowsDefault(hSettings);
     }
     RefreshFullscreenPresentation();
-    if (!CreateSettingsControls(settingsTab)) {
-        CloseSettingsWindow();
-        return;
+}
+
+/// Loads widget values and shows only the fully initialized settings form.
+static void FinishSettingsWindow() {
+    int requestedWidget = settingsOpenData->widgetId;
+    for (size_t index = 0; index < settingsDraft.size(); index++) {
+        if (settingsDraft[index].id == requestedWidget) {
+            selectedDraftIndex = static_cast<int>(index);
+            break;
+        }
     }
     RefreshWidgetList(true, false);
     LoadDraftIntoControls();
@@ -15665,6 +15810,31 @@ static void CreateSettingsWindow(int widgetId) {
     settingsWindowState.Show();
     SetActiveWindow(hSettings);
     SetFocus(hAddType);
+}
+
+/// Returns to the normal message loop between creation parts to service widget timers and input.
+static void ContinueSettingsOpen() {
+    KillTimer(hController, TIMER_SETTINGS_OPEN);
+    if (settingsOpenData == nullptr || hSettingsOpenThread != nullptr) {
+        return;
+    }
+    int part = settingsOpenData->part++;
+    if (part < 0) {
+        CreateSettingsWindow(settingsOpenData->widgetId);
+    } else if (part < SETTINGS_CONTROL_CREATION_PARTS) {
+        if (!CreateSettingsControlsPart(settingsTab, part)) {
+            CloseSettingsWindow();
+            return;
+        }
+    } else {
+        FinishSettingsWindow();
+        settingsOpenData.reset();
+        UpdateSettingsApplyButton();
+        return;
+    }
+    if (hSettings == nullptr || !SetTimer(hController, TIMER_SETTINGS_OPEN, USER_TIMER_MINIMUM, nullptr)) {
+        CloseSettingsWindow();
+    }
 }
 
 /// Loads monitor metadata, audio endpoints and time-zone captions without accessing live UI state.
@@ -15688,6 +15858,10 @@ static DWORD WINAPI PrepareSettingsOpenData(void* parameter) {
 /// Activates existing Settings or prepares a new form while widget timers continue on the UI thread.
 /// Repeated requests during preparation retain only the latest requested widget.
 static void ShowSettingsWindow(int widgetId) {
+    if (settingsOpenData != nullptr) {
+        settingsOpenData->widgetId = widgetId;
+        return;
+    }
     if (hSettings != nullptr && IsWindow(hSettings)) {
         if (!IsWindowEnabled(hSettings)) {
             HWND dialog = GetLastActivePopup(hSettings);
@@ -15698,10 +15872,6 @@ static void ShowSettingsWindow(int widgetId) {
         }
         SelectDraftWidgetById(widgetId);
         settingsWindowState.BringToFront();
-        return;
-    }
-    if (settingsOpenData != nullptr) {
-        settingsOpenData->widgetId = widgetId;
         return;
     }
     RefreshDisplayMonitors();
@@ -16893,7 +17063,7 @@ static LRESULT HandleWindowCommand(HWND window, Widget* widget, WPARAM wParam, L
         } else if (id == ID_MENU_ABOUT) {
             aboutForm.Show(hInstance, aboutWindowState);
         } else if (id == ID_MENU_TIME_CALCULATOR) {
-            calculatorForm.Show(hInstance, calculatorWindowState);
+            calculatorForm.Show(hInstance, calculatorWindowState, hController);
         } else if (id == ID_MENU_EXIT) {
             RequestExitApplication();
         }
@@ -17091,13 +17261,17 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 return 0;
             }
             break;
+        case TimeCalculatorForm::OPEN_READY:
+            if (window == hController) {
+                calculatorForm.CompleteOpen(wParam);
+                return 0;
+            }
+            break;
         case WM_SETTINGS_DATA_READY:
             if (window == hController && hSettingsOpenThread != nullptr) {
-                WaitForSingleObject(hSettingsOpenThread, INFINITE);
                 CloseHandle(hSettingsOpenThread);
                 hSettingsOpenThread = nullptr;
-                CreateSettingsWindow(settingsOpenData->widgetId);
-                settingsOpenData.reset();
+                ContinueSettingsOpen();
                 return 0;
             }
             break;
@@ -17165,6 +17339,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             break;
         case WM_UPDATE_SETTINGS_CONTROL_METRICS:
             if (window == hSettings) {
+                if (settingsOpenData != nullptr) {
+                    return 0;
+                }
                 WindowRedrawScope redraw(wParam != 0 ? nullptr : hAppearancePage);
                 if (wParam != 0) {
                     RebuildSettingsControls(true);
@@ -17362,6 +17539,14 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             }
             break;
         case WM_TIMER:
+            if (window == hController && wParam == TIMER_SETTINGS_OPEN) {
+                ContinueSettingsOpen();
+                return 0;
+            }
+            if (window == hController && wParam == TimeCalculatorForm::OPEN_TIMER) {
+                calculatorForm.ContinueOpen();
+                return 0;
+            }
             if (window == hController && wParam == TIMER_REFRESH) {
                 static ULONGLONG previousSecond = static_cast<ULONGLONG>(-1);
                 static ULONGLONG previousHalfSecond = static_cast<ULONGLONG>(-1);

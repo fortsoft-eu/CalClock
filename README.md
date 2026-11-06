@@ -76,11 +76,11 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects only Settings, Help, About, and Time Calculator. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
-Windows 2000 style requires Disable themes and applies only to Settings, Help, About and Time Calculator. With the default
-system font selected, these windows use Tahoma 8 pt; a custom application font takes precedence. The license
-keeps its monospaced font. Only GDI and None are available for font antialiasing in this mode: a saved
-ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows itself has visual
-styles turned off, both style options appear unchecked and disabled without changing the saved choices.
+Windows 2000 style requires Disable themes and applies only to Settings, Help, About and Time Calculator. With
+the default system font selected, their controls use Tahoma 8 pt; a custom application font takes precedence.
+The license keeps its monospaced font. Only GDI and None are available for font antialiasing in this mode: a
+saved ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows itself has
+visual styles turned off, both style options appear unchecked and disabled without changing the saved choices.
 
 The **Audio volume** slider on the Alarm tab controls internally played audio files separately for each widget and shows the level in dB. The default is **−18 dB**, which preserves the file’s original level (**100%**). Moving the slider to the right amplifies the audio; the **0 dB** maximum is approximately **794%** of the original amplitude. The leftmost position is **−∞ dB** (silence). Changes take effect during the audio test. Amplification applies to decoded audio, including WAV, MP3, WMA, AAC, M4A, and FLAC when supported by Windows. Legacy playback for files that cannot be decoded, such as MIDI, is limited to 100%.
 
@@ -94,8 +94,9 @@ Open Time Calculator from any widget menu or the notification-area icon menu. Th
 the difference between two dates and times. The Round values tab highlights round values, repeated digits, and
 monthly and yearly anniversaries in the calendar from the selected start. The Preset dates and times tab lets
 you add, edit, sort, and delete saved dates and times with descriptions. Saved dates and times are stored
-separately in `%APPDATA%\FortSoft\CalClock\times.xml`. Manual exports include them; imports preserve existing
-entries and skip only entries with an identical date, time, and complete description.
+separately in `%APPDATA%\FortSoft\CalClock\times.xml`. Settings exports include these entries. Imports
+preserve existing entries and skip only entries with the same UTC instant and an identical complete
+description, regardless of the display time zone.
 
 Each input has its own time zone from the same list as Settings, defaulting to the current Windows time zone.
 An unambiguous UTC instant and its display zone are saved. Changing the zone preserves the instant. Choose the
@@ -114,8 +115,11 @@ by default.
 Click a column header to sort presets by the actual instant or by description text. Click again to reverse the
 order; an arrow shows the direction.
 
-The window position, active tab, entered values, and highlight choices are saved with application settings in
-the registry or XML, according to the selected storage option.
+The window position, active tab, calculation inputs, and highlight choices are saved with application settings
+in the registry or XML, according to the selected storage option.
+
+Export on the Preset dates and times tab saves only these entries to a standalone XML file. Import on this tab
+extracts only dates and times, even from a settings export, and merges them with existing entries.
 
 ## Time and alarms
 

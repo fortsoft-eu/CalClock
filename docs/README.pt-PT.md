@@ -76,12 +76,12 @@ Relógios digitais, calendários e painéis partilham quatro estilos de contorno
 
 Idioma da aplicação, tipo de letra da interface, suavização, armazenamento, arranque com Windows e encaixe às margens são globais e configurados em Aplicação. Desativar os temas em Aplicação afeta apenas Definições, Ajuda, Acerca de e Calculadora de tempo. Cada widget utiliza a sua própria definição de temas. A origem da hora também é global. Idioma do widget, suavização, estilos, fuso, desvio, alarme e sinal horário são independentes. A suavização oferece **ClearType**, **GDI** e **Nenhuma**.
 
-Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de e Calculadora de tempo. Com o tipo
-de letra predefinido do sistema, estas janelas usam Tahoma de 8 pt; um tipo de letra personalizado da
-aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo, a suavização só oferece
-GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e é reposta ao desativar o modo. Se os
-estilos visuais estiverem desativados no Windows, ambas as opções de estilo aparecem desmarcadas e desativadas
-sem alterar as escolhas guardadas.
+Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de e Calculadora
+de tempo. Com o tipo de letra predefinido do sistema, os controlos destas janelas usam Tahoma de 8 pt; um tipo
+de letra personalizado da aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado. Neste modo,
+a suavização só oferece GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e é reposta ao
+desativar o modo. Se os estilos visuais estiverem desativados no Windows, ambas as opções de estilo aparecem
+desmarcadas e desativadas sem alterar as escolhas guardadas.
 
 O controlo **Volume do áudio** em Alarme regula os ficheiros reproduzidos internamente por widget e apresenta o nível em dB. A predefinição **−18 dB** mantém o nível original do ficheiro (**100%**). Para a direita amplifica o áudio; o máximo **0 dB** corresponde a cerca de **794%** da amplitude original. O extremo esquerdo é **−∞ dB** (silêncio). As alterações aplicam-se durante o teste. A amplificação aplica-se a áudio descodificado, incluindo WAV, MP3, WMA, AAC, M4A e FLAC quando suportados pelo Windows. A reprodução antiga de ficheiros que não podem ser descodificados, como MIDI, está limitada a 100%.
 
@@ -96,8 +96,8 @@ Intervalo de tempo calcula a diferença entre duas datas e horas. O separador Va
 calendário valores redondos, algarismos repetidos e aniversários mensais e anuais desde o início escolhido. O
 separador Datas e horas predefinidas permite adicionar, editar, ordenar e eliminar datas e horas com uma
 descrição. As datas e horas são guardadas separadamente em `%APPDATA%\FortSoft\CalClock\times.xml`. A
-exportação manual inclui-as; a importação mantém as entradas existentes e ignora apenas as que têm a mesma
-data, hora e descrição completa.
+exportação das definições inclui estas entradas. A importação mantém as entradas existentes e ignora apenas as
+que têm o mesmo instante UTC e uma descrição completa idêntica, independentemente do fuso de apresentação.
 
 Cada entrada tem o seu fuso horário da mesma lista das definições. O predefinido é o fuso atual do Windows.
 São guardados um instante UTC inequívoco e o fuso de apresentação. Alterar o fuso preserva o instante. Para
@@ -116,8 +116,11 @@ ativados individualmente e estão desativados por predefinição.
 Clique no cabeçalho de uma coluna para ordenar os dados guardados pelo instante real ou pelo texto da
 descrição. Um novo clique inverte a ordem; uma seta indica o sentido.
 
-A posição da janela, o separador ativo, os valores introduzidos e as opções de realce são guardados com as
+A posição da janela, o separador ativo, os dados de cálculo e as opções de realce são guardados com as
 definições da aplicação no Registo ou em XML, conforme o armazenamento escolhido.
+
+Exportar no separador de datas e horas guardadas guarda apenas essas entradas num XML separado. Importar neste
+separador extrai apenas datas e horas, mesmo de uma exportação das definições, e combina-as com as existentes.
 
 ## Hora e alarmes
 

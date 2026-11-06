@@ -58,7 +58,12 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
-Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Sistēmas noklusējuma fonta vietā izmanto Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās izvēles paliek nemainītas.
+Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par
+programmu un Laika kalkulators. Ja izvēlēts sistēmas noklusējuma fonts, šo logu vadīklas izmanto Tahoma 8 pt;
+pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI
+vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows
+klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās
+izvēles paliek nemainītas.
 
 ## Laika kalkulators
 
@@ -66,8 +71,9 @@ Atveriet Laika kalkulatoru jebkura logrīka izvēlnē vai paziņojumu apgabala i
 aprēķina starpību starp diviem datumiem un laikiem. Apaļas vērtības kalendārā izceļ apaļas vērtības,
 atkārtotus ciparus un ikmēneša un ikgadējas jubilejas no izvēlētā sākuma. Saglabātie datumi un laiki ļauj
 pievienot, rediģēt, kārtot un dzēst datumus un laikus ar aprakstiem. Datumi un laiki tiek saglabāti atsevišķi
-failā `%APPDATA%\FortSoft\CalClock\times.xml`. Manuālā eksportēšana tos iekļauj; importēšana saglabā esošos
-ierakstus un izlaiž tikai tos, kuriem ir vienāds datums, laiks un pilns apraksts.
+failā `%APPDATA%\FortSoft\CalClock\times.xml`. Iestatījumu eksports iekļauj šos ierakstus. Imports saglabā
+esošos ierakstus un izlaiž tikai tos, kuriem ir tas pats UTC laika moments un pilnīgi vienāds pilns apraksts
+neatkarīgi no attēlošanas laika joslas.
 
 Katrai ievadei ir sava laika josla no tā paša saraksta kā iestatījumos. Noklusējums ir pašreizējā Windows
 laika josla. Tiek saglabāts nepārprotams UTC brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās.
@@ -86,8 +92,11 @@ tie ir izslēgti.
 Noklikšķiniet uz kolonnas virsraksta, lai kārtotu saglabātos ierakstus pēc faktiskā laika brīža vai apraksta
 teksta. Vēlreiz noklikšķinot, secība tiek apgriezta; bultiņa norāda virzienu.
 
-Loga novietojums, aktīvā cilne, ievadītās vērtības un izcelšanas izvēles tiek saglabātas kopā ar programmas
+Loga novietojums, aktīvā cilne, aprēķina ievaddati un izcelšanas izvēles tiek saglabātas kopā ar programmas
 iestatījumiem reģistrā vai XML failā atbilstoši izvēlētajam glabāšanas veidam.
+
+Saglabāto datumu un laiku cilnes eksports saglabā tikai šos ierakstus atsevišķā XML failā. Šīs cilnes imports
+arī no iestatījumu eksporta nolasa tikai datumus un laikus un apvieno tos ar esošajiem ierakstiem.
 
 ## Iestatījumi un izvēlnes
 

@@ -58,7 +58,12 @@ Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parame
 
 Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
-Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Vietoj numatytojo sistemos šrifto naudojamas Tahoma 8 pt; pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti pasirinkimai išlieka.
+Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas, Apie ir
+Laiko skaičiuotuvas. Pasirinkus numatytąjį sistemos šriftą, šių langų valdikliai naudoja Tahoma 8 pt;
+pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI
+arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant
+klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti
+pasirinkimai išlieka.
 
 ## Laiko skaičiuotuvas
 
@@ -66,8 +71,9 @@ Atverkite Laiko skaičiuotuvą iš bet kurio valdiklio meniu arba pranešimų sr
 intervalas skaičiuoja skirtumą tarp dviejų datų ir laikų. Apvalios reikšmės kalendoriuje paryškina apvalias
 reikšmes, pasikartojančius skaitmenis ir mėnesines bei metines sukaktis nuo pasirinktos pradžios. Išsaugotos
 datos ir laikai leidžia pridėti, redaguoti, rikiuoti ir naikinti datas bei laikus su aprašais. Datos ir laikai
-saugomi atskirai faile `%APPDATA%\FortSoft\CalClock\times.xml`. Rankinis eksportas juos įtraukia; importas
-išsaugo esamus įrašus ir praleidžia tik įrašus, kurių data, laikas ir visas aprašas yra vienodi.
+saugomi atskirai faile `%APPDATA%\FortSoft\CalClock\times.xml`. Parametrų eksportas įtraukia šiuos įrašus.
+Importas išsaugo esamus įrašus ir praleidžia tik įrašus, kurių UTC laiko momentas ir visas aprašas yra
+visiškai vienodi, nepriklausomai nuo rodymo laiko juostos.
 
 Kiekvienas įvesties laikas turi savo laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra
 dabartinė Windows laiko juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas
@@ -86,8 +92,11 @@ pilnos savaitės ir mėnesių bei metų sukaktys. Pasikartojančius skaitmenis 1
 Spustelėkite stulpelio antraštę, kad surikiuotumėte išsaugotus įrašus pagal tikrąjį laiko momentą arba aprašo
 tekstą. Dar kartą spustelėjus tvarka apverčiama; rodyklė nurodo kryptį.
 
-Lango padėtis, aktyvus skirtukas, įvestos reikšmės ir paryškinimo parinktys išsaugomos su programos
-parametrais registre arba XML faile pagal pasirinktą saugojimo būdą.
+Lango padėtis, aktyvus skirtukas, skaičiavimo įvesties duomenys ir paryškinimo parinktys išsaugomos su
+programos parametrais registre arba XML faile pagal pasirinktą saugojimo būdą.
+
+Išsaugotų datų ir laikų skirtuko eksportas įrašo tik šiuos įrašus į atskirą XML failą. Šio skirtuko importas
+net iš parametrų eksporto paima tik datas ir laikus bei sujungia juos su esamais įrašais.
 
 ## Parametrai ir meniu
 

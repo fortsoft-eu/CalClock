@@ -76,7 +76,12 @@ Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyl
 
 Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa vain Asetukset-, Ohje- ja Tietoja-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
 
-Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja- ja Aikalaskin-ikkunoita. Järjestelmän oletusfonttina käytetään Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat teemavalinnat näkyvät valitsemattomina ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
+Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja- ja
+Aikalaskin-ikkunoita. Kun järjestelmän oletusfontti on valittu, näiden ikkunoiden ohjausobjektit käyttävät
+Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa.
+Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu
+tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat teemavalinnat näkyvät valitsemattomina
+ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
 
 Herätyksen **Äänenvoimakkuus**-liukusäädin säätää sisäisesti toistettavia tiedostoja pienoisohjelmakohtaisesti ja näyttää tason dB-yksiköissä. Oletus **−18 dB** säilyttää tiedoston alkuperäisen tason (**100%**). Oikealle siirtäminen vahvistaa ääntä; enimmäistaso **0 dB** vastaa noin **794%** alkuperäisestä amplitudista. Vasemmassa ääriasennossa **−∞ dB** tarkoittaa hiljaisuutta. Muutokset vaikuttavat äänitestin aikana. Vahvistus koskee purettua ääntä, kuten WAV-, MP3-, WMA-, AAC-, M4A- ja FLAC-tiedostoja Windowsin tukemissa muodoissa. Vanhempi toistotapa tiedostoille, joita ei voida purkaa, kuten MIDI, rajoittuu 100%:iin.
 
@@ -91,8 +96,8 @@ Aikaväli-välilehti laskee kahden päivämäärän ja ajan eron. Tasaluvut-väl
 tasaluvut, toistuvat numerot sekä kuukausi- ja vuosipäivät valitusta alusta. Tallennetut päivämäärät ja ajat
 -välilehti mahdollistaa päivämäärien ja aikojen lisäämisen, muokkaamisen, lajittelun ja poistamisen
 kuvauksineen. Päivämäärät ja ajat tallennetaan erikseen tiedostoon `%APPDATA%\FortSoft\CalClock\times.xml`.
-Manuaalinen vienti sisältää ne; tuonti säilyttää nykyiset merkinnät ja ohittaa vain merkinnät, joiden
-päivämäärä, aika ja koko kuvaus ovat samat.
+Asetusten vienti sisältää nämä merkinnät. Tuonti säilyttää nykyiset merkinnät ja ohittaa vain merkinnät,
+joiden UTC-ajanhetki ja koko kuvaus ovat täsmälleen samat näyttöaikavyöhykkeestä riippumatta.
 
 Jokaisella syötteellä on oma aikavyöhyke samasta luettelosta kuin asetuksissa. Oletuksena on Windowsin
 nykyinen aikavyöhyke. Tallennetaan yksiselitteinen UTC-ajanhetki ja näyttövyöhyke. Vyöhykkeen vaihtaminen
@@ -111,8 +116,12 @@ poissa käytöstä.
 Napsauta sarakeotsikkoa lajitellaksesi tallennetut tiedot todellisen ajanhetken tai kuvaustekstin mukaan. Uusi
 napsautus kääntää järjestyksen; nuoli näyttää suunnan.
 
-Ikkunan sijainti, aktiivinen välilehti, syötetyt arvot ja korostusvalinnat tallennetaan sovelluksen asetusten
-mukana rekisteriin tai XML-tiedostoon valitun tallennustavan mukaan.
+Ikkunan sijainti, aktiivinen välilehti, laskennan lähtötiedot ja korostusvalinnat tallennetaan sovelluksen
+asetusten mukana rekisteriin tai XML-tiedostoon valitun tallennustavan mukaan.
+
+Tallennettujen päivämäärien ja aikojen välilehden vienti tallentaa vain nämä merkinnät erilliseen
+XML-tiedostoon. Tämän välilehden tuonti lukee vain päivämäärät ja ajat myös asetusten vientitiedostosta ja
+yhdistää ne nykyisiin merkintöihin.
 
 ## Aika ja herätykset
 

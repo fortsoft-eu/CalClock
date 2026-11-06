@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #define NOMINMAX
@@ -565,6 +565,66 @@ static void TestExplicitInstants() {
         "combined rules choose the earlier event", start, selected, prague, combined);
 }
 
+/// Resolves the civil date of a catalog transition without production calendar arithmetic.
+static SYSTEMTIME CatalogTransitionDate(WORD year, const SYSTEMTIME& rule) {
+    std::chrono::year_month month = std::chrono::year(year) / rule.wMonth;
+    std::chrono::sys_days day;
+    if (rule.wYear != 0) {
+        day = CivilDay(rule);
+    } else if (rule.wDay == 5) {
+        day = std::chrono::sys_days(month / std::chrono::weekday_last(std::chrono::weekday(rule.wDayOfWeek)));
+    } else {
+        day = std::chrono::sys_days(month
+            / std::chrono::weekday_indexed(std::chrono::weekday(rule.wDayOfWeek), rule.wDay));
+    }
+    long long minute = std::chrono::duration_cast<HighlightMinutes>(day.time_since_epoch()).count()
+        + rule.wHour * 60LL + rule.wMinute;
+    return Fields(minute);
+}
+
+/// Compares native calendar masks and displayed milestones with minute enumeration across catalog
+/// transitions.
+static void TestCatalogTransitions() {
+    std::vector<DYNAMIC_TIME_ZONE_INFORMATION> zones;
+    LoadTimeZoneList(&zones);
+    for (const DYNAMIC_TIME_ZONE_INFORMATION& information : zones) {
+        if (information.StandardDate.wMonth == 0
+                || information.DaylightDate.wMonth == 0
+                || wcscmp(information.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
+            continue;
+        }
+        HighlightZone zone{ information.TimeZoneKeyName, 0, true, information };
+        TIME_ZONE_INFORMATION rules = {};
+        bool available = GetTimeZoneInformationForYear(2026,
+            const_cast<DYNAMIC_TIME_ZONE_INFORMATION*>(&information), &rules) != FALSE;
+        Check(available, "catalog transition rules", Date(2026, 1, 1), Date(2026, 1, 1), zone, 0);
+        if (!available) {
+            continue;
+        }
+        const SYSTEMTIME transitions[] = { rules.DaylightDate, rules.StandardDate };
+        const LONG previousBiases[] = { rules.Bias + rules.StandardBias, rules.Bias + rules.DaylightBias };
+        for (size_t index = 0; index < ARRAYSIZE(transitions); index++) {
+            if (transitions[index].wMonth == 0) {
+                continue;
+            }
+            long long transition = Minute(CatalogTransitionDate(2026, transitions[index]))
+                + previousBiases[index];
+            SYSTEMTIME local = {};
+            bool converted = LocalFields(zone, transition, &local);
+            Check(converted, "catalog transition date", Fields(transition), Fields(transition), zone, 0);
+            if (!converted) {
+                continue;
+            }
+            long long midnight = Minute(Date(local.wYear, local.wMonth, local.wDay));
+            for (int adjacent : { -1, 0, 1 }) {
+                SYSTEMTIME selected = Fields(midnight + adjacent * 1440LL);
+                CheckDate(Fields(transition - 111 * 60), selected, zone);
+                CheckDate(Fields(transition - 10 * 60 + 37), selected, zone);
+            }
+        }
+    }
+}
+
 /// Runs independent headless milestone checks without changing system time, fonts, input or saved user data.
 int main() {
     TestPatterns();
@@ -572,6 +632,7 @@ int main() {
     TestCalendarEdges();
     TestTransitions();
     TestExplicitInstants();
+    TestCatalogTransitions();
     if (failures != 0) {
         return EXIT_FAILURE;
     }

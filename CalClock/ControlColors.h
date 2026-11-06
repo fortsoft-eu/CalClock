@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.2.0
  */
 
 #pragma once
@@ -49,6 +49,7 @@ private:
     /// Identifies native controls requiring color properties or direct-paint handling.
     enum class Kind {
         Other,
+        Button,
         Edit,
         ListView,
         TreeView,
@@ -87,8 +88,8 @@ private:
     /// Saves and applies native color properties, or restores those still holding the applied values.
     void SetColors(bool enabled);
 
-    /// Maps exact system-color pixels within the clipped client or nonclient area to the classic palette.
-    void Recolor(HDC dc, bool nonClient) const;
+    /// Maps native colors in the clipped area; faceOnly restricts correction to the button face color.
+    void Recolor(HDC dc, bool nonClient, bool faceOnly = false) const;
 
     /// Recolors native scrollbars after scrolling, range updates or deferred tracking painting.
     void RecolorScrollBars() const;

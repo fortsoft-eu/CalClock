@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #define NOMINMAX
@@ -93,9 +93,19 @@ static void TestValidation() {
     Require(TimeCalculator::Normalize(&maximum), "maximum Gregorian date");
     Require(!TimeCalculator::Normalize(nullptr), "null normalization destination");
     SYSTEMTIME invalid[] = {
-        Date(0, 1, 1), Date(1600, 12, 31), Date(10000, 1, 1), Date(2026, 0, 1), Date(2026, 13, 1),
-        Date(2026, 1, 0), Date(2026, 1, 32), Date(2026, 2, 29), Date(1900, 2, 29), Date(2100, 2, 29),
-        Date(2026, 4, 31), Date(2026, 1, 1, 24), Date(2026, 1, 1, 0, 60)
+        Date(0, 1, 1),
+        Date(1600, 12, 31),
+        Date(10000, 1, 1),
+        Date(2026, 0, 1),
+        Date(2026, 13, 1),
+        Date(2026, 1, 0),
+        Date(2026, 1, 32),
+        Date(2026, 2, 29),
+        Date(1900, 2, 29),
+        Date(2100, 2, 29),
+        Date(2026, 4, 31),
+        Date(2026, 1, 1, 24),
+        Date(2026, 1, 1, 0, 60)
     };
     for (SYSTEMTIME time : invalid) {
         SYSTEMTIME previous = time;
@@ -259,9 +269,8 @@ static void TestMilestones() {
 /// Checks independent milestone switches, default compatibility and the added repeated sixes and nines.
 static void TestHighlightOptions() {
     SYSTEMTIME origin = Date(2001, 1, 1);
-    DWORD repeated = TIME_CALCULATOR_ALL_HIGHLIGHTS
-        & ~(CALCULATOR_HIGHLIGHT_START | CALCULATOR_HIGHLIGHT_ROUND | CALCULATOR_HIGHLIGHT_FIRST_WEEKS
-            | CALCULATOR_HIGHLIGHT_ANNIVERSARIES);
+    DWORD repeated = TIME_CALCULATOR_ALL_HIGHLIGHTS & ~(CALCULATOR_HIGHLIGHT_START
+        | CALCULATOR_HIGHLIGHT_ROUND | CALCULATOR_HIGHLIGHT_FIRST_WEEKS | CALCULATOR_HIGHLIGHT_ANNIVERSARIES);
     Require((TimeCalculatorState{}.highlights & repeated) == 0,
         "every repeated digit is disabled by default");
     DYNAMIC_TIME_ZONE_INFORMATION utc = {};
@@ -403,8 +412,7 @@ static void TestTimeZones() {
     last = TestUtc(prague, Date(2026, 10, 25, 2, 30), 1);
     Require(TimeCalculator::CalculateUtc(first, last, prague, &result)
         && result.totals[HOURS] == 1
-        && result.totals[DAYS] == 0,
-        "identical wall-clock readings in a fold are distinct UTC instants");
+        && result.totals[DAYS] == 0, "identical wall-clock readings in a fold are distinct UTC instants");
     Require(!TimeCalculator::CalculateUtc(last, first, prague, &result), "reverse UTC interval rejected");
     ULONGLONG candidates[2] = {};
     unsigned int count = 0;
@@ -414,17 +422,16 @@ static void TestTimeZones() {
     last = TestUtc(howe, Date(2026, 4, 5, 1, 45), 1);
     Require(TimeCalculator::CalculateUtc(first, last, howe, &result)
         && result.parts[HOURS][HOURS] == 0
-        && result.parts[HOURS][MINUTES] == 30,
-        "half-hour fold measures thirty real minutes");
+        && result.parts[HOURS][MINUTES] == 30, "half-hour fold measures thirty real minutes");
     first = TestUtc(howe, Date(2026, 10, 3, 12));
     last = TestUtc(howe, Date(2026, 10, 4, 12));
     Require(TimeCalculator::CalculateUtc(first, last, howe, &result)
         && result.parts[HOURS][HOURS] == 23
-        && result.parts[HOURS][MINUTES] == 30,
-        "half-hour spring transition is reflected in elapsed time");
+        && result.parts[HOURS][MINUTES] == 30, "half-hour spring transition is reflected in elapsed time");
     first = TestUtc(nepal, Date(2026, 1, 2, 0, 15));
-    Require(first.wDay == 1 && first.wHour == 18 && first.wMinute == 30,
-        "quarter-hour fixed offset crosses the UTC date correctly");
+    Require(first.wDay == 1
+        && first.wHour == 18
+        && first.wMinute == 30, "quarter-hour fixed offset crosses the UTC date correctly");
     SYSTEMTIME local = {};
     Require(ConvertUtcToTimeZone(prague, first, &local), "display in another zone succeeds");
     SYSTEMTIME sameInstant = TestUtc(prague, local);
@@ -534,12 +541,14 @@ static void VerifyReferenceInterval(const SYSTEMTIME& first, const SYSTEMTIME& l
     int months = ReferenceMonths(first, last);
     ReferenceTime anchor = ReferenceAnchor(first, months);
     ULONGLONG remaining = static_cast<ULONGLONG>((ReferenceMinute(last) - anchor).count());
-    Require(result.parts[MONTHS][MONTHS] == months && result.parts[YEARS][YEARS] == months / 12
+    Require(result.parts[MONTHS][MONTHS] == months
+        && result.parts[YEARS][YEARS] == months / 12
         && result.parts[YEARS][MONTHS] == months % 12, "calendar decomposition month/year count");
     for (int row : { MONTHS, YEARS }) {
         Require(result.parts[row][DAYS] == remaining / 1440
             && result.parts[row][HOURS] == remaining % 1440 / 60
-            && result.parts[row][MINUTES] == remaining % 60 && result.parts[row][WEEKS] == 0,
+            && result.parts[row][MINUTES] == remaining % 6
+            && result.parts[row][WEEKS] == 0,
             "calendar decomposition reconstructs its independent anniversary anchor");
     }
 }
@@ -731,36 +740,36 @@ static void TestUtcMonthAnchors() {
             Date(2026, 9, 25, 0, 30),
             Date(2026, 10, 25, 0, 30),
             1
-        }, MonthAnchorCase{
+    }, MonthAnchorCase{
             L"Central Europe Standard Time",
             Date(2025, 10, 25, 0, 30),
             Date(2026, 9, 25, 0, 30),
             Date(2026, 10, 25, 0, 30),
             12
-        }, MonthAnchorCase{
+    }, MonthAnchorCase{
             L"Central Europe Standard Time",
             Date(2026, 1, 29, 1, 30),
             Date(2026, 2, 28, 1, 30),
             Date(2026, 3, 29, 1, 0),
             2
-        }, MonthAnchorCase{
+    }, MonthAnchorCase{
             L"Central Europe Standard Time",
             Date(2025, 3, 29, 1, 30),
             Date(2026, 2, 28, 1, 30),
             Date(2026, 3, 29, 1, 0),
             12
-        }, MonthAnchorCase{
+    }, MonthAnchorCase{
             L"Lord Howe Standard Time",
             Date(2026, 3, 4, 14, 45),
             Date(2026, 3, 4, 14, 45),
             Date(2026, 4, 4, 14, 45),
             1
-        }, MonthAnchorCase{
+    }, MonthAnchorCase{
             L"Lord Howe Standard Time",
             Date(2026, 9, 3, 15, 45),
             Date(2026, 9, 3, 15, 45),
             Date(2026, 10, 3, 15, 30), 1
-        }
+    }
     };
     const int offsets[] = { -15, -1, 0, 1, 15, 30, 45, 60, 75 };
     for (const MonthAnchorCase& item : cases) {
@@ -798,6 +807,84 @@ static void TestUtcMonthAnchors() {
     }
 }
 
+/// Resolves a Windows transition date using standard Gregorian weekday arithmetic.
+static SYSTEMTIME CatalogTransitionDate(WORD year, const SYSTEMTIME& rule) {
+    std::chrono::year_month month = std::chrono::year(year) / rule.wMonth;
+    std::chrono::sys_days day;
+    if (rule.wYear != 0) {
+        day = CalendarDay(rule);
+    } else if (rule.wDay == 5) {
+        day = std::chrono::sys_days(month / std::chrono::weekday_last(std::chrono::weekday(rule.wDayOfWeek)));
+    } else {
+        day = std::chrono::sys_days(month
+            / std::chrono::weekday_indexed(std::chrono::weekday(rule.wDayOfWeek), rule.wDay));
+    }
+    return ReferenceFields(ReferenceTime(day) + std::chrono::hours(rule.wHour)
+        + std::chrono::minutes(rule.wMinute));
+}
+
+/// Checks elapsed rows and local calendar totals at every distinct seasonal transition in the Windows
+/// catalog.
+static void TestCatalogTransitionIntervals() {
+    std::vector<DYNAMIC_TIME_ZONE_INFORMATION> zones;
+    LoadTimeZoneList(&zones);
+    const int starts[] = { -90, -1, 0, 1, 90 };
+    const int spans[] = { 0, 1, 29, 30, 59, 60, 61, 1439, 1440, 1500, 2880 };
+    for (const DYNAMIC_TIME_ZONE_INFORMATION& zone : zones) {
+        if (zone.StandardDate.wMonth == 0
+                || zone.DaylightDate.wMonth == 0
+                || wcscmp(zone.TimeZoneKeyName, SYSTEM_TIME_ZONE_KEY) == 0) {
+            continue;
+        }
+        TIME_ZONE_INFORMATION rules = {};
+        bool available = GetTimeZoneInformationForYear(2026,
+            const_cast<DYNAMIC_TIME_ZONE_INFORMATION*>(&zone), &rules) != FALSE;
+        if (!available) {
+            Require(false, "catalog transition rules are available");
+            return;
+        }
+        const SYSTEMTIME transitions[] = { rules.DaylightDate, rules.StandardDate };
+        const LONG previousBiases[] = { rules.Bias + rules.StandardBias, rules.Bias + rules.DaylightBias };
+        for (size_t index = 0; index < ARRAYSIZE(transitions); index++) {
+            if (transitions[index].wMonth == 0) {
+                continue;
+            }
+            ReferenceTime transition = ReferenceMinute(CatalogTransitionDate(2026, transitions[index]))
+                + std::chrono::minutes(previousBiases[index]);
+            for (int offset : starts) {
+                SYSTEMTIME first = ReferenceFields(transition + std::chrono::minutes(offset));
+                SYSTEMTIME firstLocal = {};
+                Require(SystemTimeToTzSpecificLocalTimeEx(&zone, &first, &firstLocal) != FALSE,
+                    "native catalog starting instant converts");
+                for (int span : spans) {
+                    SYSTEMTIME last = ReferenceFields(ReferenceMinute(first) + std::chrono::minutes(span));
+                    SYSTEMTIME lastLocal = {};
+                    Require(SystemTimeToTzSpecificLocalTimeEx(&zone, &last, &lastLocal) != FALSE,
+                        "native catalog ending instant converts");
+                    TimeCalculatorInterval result = {};
+                    Require(TimeCalculator::CalculateUtc(first, last, zone, &result),
+                        "catalog transition interval is valid");
+                    LONGLONG dayCount = (CalendarDay(lastLocal) - CalendarDay(firstLocal)).count();
+                    ULONGLONG days = static_cast<ULONGLONG>(std::max(0LL, dayCount));
+                    Require(result.totals[HOURS] == span / 60
+                        && result.totals[DAYS] == days
+                        && result.totals[WEEKS] == days / 7
+                        && result.totals[MONTHS] == 0
+                        && result.totals[YEARS] == 0, "catalog interval totals match native local dates");
+                    for (int row = HOURS; row <= YEARS; row++) {
+                        ULONGLONG rebuilt = result.parts[row][WEEKS] * 10080 + result.parts[row][DAYS] * 1440
+                            + result.parts[row][HOURS] * 60 + result.parts[row][MINUTES];
+                        Require(rebuilt == span
+                            && result.parts[row][MONTHS] == 0
+                            && result.parts[row][YEARS] == 0,
+                            "catalog transition decompositions reconstruct the original UTC interval");
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// Runs calculation tests without creating windows, changing system time or starting the supplied executable.
 int main() {
     TestValidation();
@@ -811,6 +898,7 @@ int main() {
     TestIndependentFixedZones();
     TestTransitionMinuteIntervals();
     TestUtcMonthAnchors();
+    TestCatalogTransitionIntervals();
     std::puts("Time Calculator: interval, month-end, leap-year, milestone and validation tests passed.");
     return EXIT_SUCCESS;
 }

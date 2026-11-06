@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #define wmain AlarmSettingsRegressionEntry
 #include "AlarmSettingsTests.cpp"
 #undef wmain
+#include "../CalClock/ControlColors.h"
 
 struct CalculatorThreadCall {
     LPTHREAD_START_ROUTINE procedure;
@@ -37,10 +38,17 @@ struct CalculatorPaintRecord {
     HWND window = nullptr;
     std::wstring text;
     int paints = 0;
+    int textUpdates = 0;
 };
 
 static HANDLE calculatorWorkerGate = nullptr;
 static DWORD calculatorGuiThread = 0;
+static int calculatorCreationTicks = 0;
+static int settingsCreationTicks = 0;
+static ULONGLONG calculatorOpenPartMaximum = 0;
+static ULONGLONG settingsOpenPartMaximum = 0;
+static int settingsSlowestPart = -1;
+static bool settingsPreferredPageFirst = false;
 static std::atomic<int> calculatorWorkers = 0;
 static std::atomic<bool> calculatorWorkerOnGui = false;
 static bool calculatorWaiting = false;
@@ -58,7 +66,58 @@ static std::wstring calculatorArtifacts;
 static HWND calculatorNavigationTarget = nullptr;
 static bool calculatorShiftPressed = false;
 static int calculatorPresetWrites = 0;
+static int calculatorClockTicks = 0;
 static bool calculatorPresetWriteFails = false;
+static void CheckCalculatorPresetButtonRow();
+static bool calculatorFileAccepted = true;
+static bool calculatorFileSave = false;
+static bool calculatorFileAllowsText = false;
+static HWND calculatorFileOwner = nullptr;
+static std::wstring calculatorFilePrefix;
+static std::wstring calculatorFilePath;
+
+/// Routes prepared opening data through a real controller and counts native timer delivery without
+/// activation.
+static LRESULT CALLBACK CalculatorTestController(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    if (message == TimeCalculatorForm::OPEN_READY) {
+        calculatorForm.CompleteOpen(wParam);
+        return 0;
+    }
+    if (message == WM_TIMER && wParam == TimeCalculatorForm::OPEN_TIMER) {
+        ULONGLONG start = GetTickCount64();
+        calculatorForm.ContinueOpen();
+        calculatorOpenPartMaximum = std::max(calculatorOpenPartMaximum, GetTickCount64() - start);
+        return 0;
+    }
+    if (message == WM_TIMER && wParam == TIMER_REFRESH) {
+        return WindowProc(window, message, wParam, lParam);
+    }
+    if (message == WM_TIMER && wParam == TIMER_SETTINGS_OPEN) {
+        ULONGLONG start = GetTickCount64();
+        int part = settingsOpenData == nullptr ? -1 : settingsOpenData->part;
+        ContinueSettingsOpen();
+        if (part == 1) {
+            settingsPreferredPageFirst = hApplicationPage != nullptr && hGeneralPage == nullptr;
+        }
+        ULONGLONG duration = GetTickCount64() - start;
+        if (duration > settingsOpenPartMaximum) {
+            settingsOpenPartMaximum = duration;
+            settingsSlowestPart = part;
+        }
+        return 0;
+    }
+    if (message == WM_TIMER && wParam == 47) {
+        calculatorClockTicks++;
+        if (calculatorForm.IsOpening() && calculatorForm.GetWindow() != nullptr) {
+            calculatorCreationTicks++;
+        }
+        if (settingsOpenData != nullptr && hSettings != nullptr) {
+            settingsCreationTicks++;
+        }
+        return 0;
+    }
+    return DefWindowProcW(window, message, wParam, lParam);
+}
 
 /// Holds worker execution behind a test gate without blocking the GUI message queue.
 static DWORD WINAPI CalculatorThreadEntry(void* parameter) {
@@ -113,11 +172,32 @@ static bool CalculatorTestWritePresets(const std::wstring& path,
     return !calculatorPresetWriteFails && WriteCalculatorPresets(path, presets);
 }
 
+/// Returns an isolated path without opening a shell dialog or changing focus, directories or settings.
+static bool CalculatorChooseXmlFile(HWND owner, bool save, const wchar_t* prefix, std::wstring* path,
+        bool allowText = false) {
+    calculatorFileOwner = owner;
+    calculatorFileSave = save;
+    calculatorFilePrefix = prefix;
+    calculatorFileAllowsText = allowText;
+    if (calculatorFileAccepted) {
+        *path = calculatorFilePath;
+    }
+    return calculatorFileAccepted;
+}
+
 /// Preserves a deliberately presented capture window while retaining nonactivation and hidden default
 /// testing.
 static BOOL WINAPI CalculatorSetWindowPos(HWND window, HWND after, int x, int y, int width, int height,
         UINT flags) {
     flags |= SWP_NOACTIVATE;
+    if (window == calculatorForm.GetWindow() && (flags & SWP_NOSIZE) == 0) {
+        RECT current = {};
+        if (GetWindowRect(window, &current)
+                && (width > current.right - current.left || height > current.bottom - current.top)) {
+            Require(GetPropW(window, L"SysSetRedraw") == nullptr,
+                "outer calculator growth occurs only after native redraw has been restored");
+        }
+    }
     if (!calculatorPresented && (GetWindowLongPtrW(window, GWL_STYLE) & WS_CHILD) == 0) {
         flags = flags & ~SWP_SHOWWINDOW | SWP_HIDEWINDOW;
     }
@@ -172,12 +252,14 @@ static SHORT WINAPI CalculatorGetKeyState(int key) {
 #define MessageBoxW CalculatorMessageBox
 #define GetMonitorInfoW CalculatorMonitorInfo
 #include "../CalClock/PersistWindowState.cpp"
+#define ChooseApplicationXmlFile CalculatorChooseXmlFile
 #define CalculatorPresetsPath CalculatorTestPresetsPath
 #define WriteCalculatorPresets CalculatorTestWritePresets
 #define CreateThread CalculatorCreateThread
 #include "../CalClock/TimeCalculatorForm.cpp"
 #undef CreateThread
 #undef CalculatorPresetsPath
+#undef ChooseApplicationXmlFile
 #undef WriteCalculatorPresets
 #undef GetKeyState
 #undef SetFocus
@@ -210,7 +292,7 @@ static void WaitForCalculator() {
             DispatchMessageW(&message);
             dispatched = true;
         }
-        if (calculatorWorkers.load() == 0 && !dispatched) {
+        if (calculatorWorkers.load() == 0 && !dispatched && !calculatorForm.IsOpening()) {
             idle++;
         } else {
             idle = 0;
@@ -220,6 +302,119 @@ static void WaitForCalculator() {
     Require(idle == 2, "calculator background work and posted results finish without deadlocking the dialog");
     Require(!calculatorWorkerOnGui.load(), "calculator calculations execute outside the GUI thread");
     calculatorWaiting = false;
+}
+
+/// Verifies slow opening can be held indefinitely while the GUI continues processing clock timers.
+static void TestCalculatorOpenPreparation() {
+    ResetEvent(calculatorWorkerGate);
+    calculatorForm.Show(hInstance, calculatorWindowState, hController);
+    Require(calculatorForm.IsOpening() && calculatorForm.GetWindow() == nullptr,
+        "opening returns before blocked preparation creates any native dialog");
+    int workers = calculatorWorkers.load();
+    calculatorForm.Show(hInstance, calculatorWindowState, hController);
+    Require(calculatorWorkers.load() == workers, "repeated opening requests share one preparation");
+    calculatorClockTicks = 0;
+    SetTimer(hController, 47, 10, nullptr);
+    ULONGLONG deadline = GetTickCount64() + 100;
+    while (GetTickCount64() < deadline) {
+        MSG message = {};
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+        Sleep(1);
+    }
+    KillTimer(hController, 47);
+    Require(calculatorClockTicks > 0 && calculatorForm.GetWindow() == nullptr,
+        "GUI clock timers keep advancing while calculator opening remains blocked on its worker");
+    calculatorForm.Close();
+    Require(!calculatorForm.IsOpening(), "pending opening cancels without waiting for a worker");
+    calculatorForm.Show(hInstance, calculatorWindowState, hController);
+    SetTimer(hController, 47, USER_TIMER_MINIMUM, nullptr);
+    SetEvent(calculatorWorkerGate);
+    WaitForCalculator();
+    KillTimer(hController, 47);
+    Require(calculatorCreationTicks > 0,
+        "native clock timers are serviced during native form creation, after background preparation");
+    std::printf("Calculator longest creation part: %llu ms.\n", calculatorOpenPartMaximum);
+    Require(calculatorForm.GetWindow() != nullptr && !calculatorForm.IsOpening(),
+        "only the latest opening creates a ready form after cancelled preparation finishes");
+}
+
+/// Exercises the real Settings creation parts with timer delivery between native page construction.
+static void TestSettingsOpenCreation() {
+    settingsDraft.clear();
+    std::unique_ptr<Widget> widget = std::make_unique<Widget>();
+    widget->config = AlarmConfiguration(103);
+    widget->config.alarmEnabled = false;
+    widgets.push_back(std::move(widget));
+    settingsOpenData = std::make_unique<SettingsOpenData>();
+    settingsOpenData->widgetId = 103;
+    GetApplicationUtcTime(&settingsOpenData->utc);
+    settingsOpenData->timeZoneLabels = BuildSettingsTimeZoneLabels(timeZones, settingsOpenData->utc,
+        T(TXT_SYSTEM_TIME_ZONE_LABEL));
+    settingsCreationTicks = 0;
+    int previousTab = settingsTab;
+    settingsTab = 5;
+    SetTimer(hController, 47, USER_TIMER_MINIMUM, nullptr);
+    ScheduleWidgetRefresh();
+    ContinueSettingsOpen();
+    ULONGLONG deadline = GetTickCount64() + 15000;
+    while (settingsOpenData != nullptr && GetTickCount64() < deadline) {
+        MSG message = {};
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+        Sleep(1);
+    }
+    KillTimer(hController, 47);
+    KillTimer(hController, TIMER_REFRESH);
+    Require(settingsOpenData == nullptr && hSettings != nullptr,
+        "Settings finishes native creation and shows only the completed form");
+    Require(settingsCreationTicks > 0, "clock timers continue during native Settings creation");
+    std::printf("Settings longest creation part: %llu ms (part %d).\n",
+        settingsOpenPartMaximum, settingsSlowestPart);
+    Require(TabCtrl_GetCurSel(hTabs) == 5, "opening preserves the requested Settings page");
+    Require(settingsPreferredPageFirst, "requested page is created before the remaining hidden pages");
+    Require(!IsWindowEnabled(GetDlgItem(hSettings, ID_APPLY)), "opening alone leaves Apply disabled");
+    CloseSettingsWindow();
+    settingsTab = previousTab;
+    widgets.clear();
+}
+
+/// Verifies the deferred enabled-state correction touches only the button face color on a private desktop.
+static void TestButtonEnabledColors() {
+    HWND owner = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_POPUP,
+        0, 0, 120, 40, nullptr, nullptr, hInstance, nullptr);
+    HWND button = TestCreateWindowExW(0, L"BUTTON", L"Test", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+        0, 0, 110, 30, owner, nullptr, hInstance, nullptr);
+    Require(owner != nullptr && button != nullptr, "isolated native color-test button created");
+    SetPropW(owner, CLASSIC_STYLE_ENABLED_PROPERTY, reinterpret_cast<HANDLE>(1));
+    SetPropW(owner, CLASSIC_CONTROL_COLORS_PROPERTY, reinterpret_cast<HANDLE>(1));
+    SetWindowTheme(button, L"", L"");
+    bool changed = false;
+    Require(ControlColors::Apply(button, owner, true, changed), "classic button palette attached");
+    SetWindowPos(owner, nullptr, 0, 0, 0, 0,
+        SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    UINT correction = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorButton");
+    for (BOOL enabled : { FALSE, TRUE }) {
+        EnableWindow(button, enabled);
+        RedrawWindow(button, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE);
+        HDC dc = GetDC(button);
+        SetPixel(dc, 7, 7, GetSysColor(COLOR_BTNFACE));
+        SetPixel(dc, 8, 7, GetSysColor(COLOR_BTNSHADOW));
+        MSG message = {};
+        Require(PeekMessageW(&message, button, correction, correction, PM_REMOVE) != FALSE,
+            "enable/disable queues a correction after native button processing");
+        DispatchMessageW(&message);
+        Require(GetPixel(dc, 7, 7) == RGB(212, 208, 200),
+            "enabled and disabled face uses Windows 2000 color");
+        Require(GetPixel(dc, 8, 7) == GetSysColor(COLOR_BTNSHADOW),
+            "deferred face correction leaves other native colors untouched");
+        ReleaseDC(button, dc);
+    }
+    DestroyWindow(owner);
 }
 
 /// Restores inputs and waits for their asynchronous results before inspecting them.
@@ -236,7 +431,7 @@ static void RefreshCalculator() {
 
 /// Opens a nonactivating calculator and waits only inside the test for its background preparation.
 static void ShowCalculator() {
-    calculatorForm.Show(hInstance, calculatorWindowState);
+    calculatorForm.Show(hInstance, calculatorWindowState, hController);
     WaitForCalculator();
 }
 
@@ -320,7 +515,8 @@ static void CalculatorPage(int index) {
     HWND tabs = CalculatorControl(ID_CALC_TABS);
     TabCtrl_SetCurSel(tabs, index);
     NMHDR notification{ tabs, ID_CALC_TABS, TCN_SELCHANGE };
-    SendMessageW(calculatorForm.GetWindow(), WM_NOTIFY, ID_CALC_TABS, reinterpret_cast<LPARAM>(&notification));
+    SendMessageW(calculatorForm.GetWindow(), WM_NOTIFY, ID_CALC_TABS,
+        reinterpret_cast<LPARAM>(&notification));
     Require(calculatorForm.GetState().tab == index, "native tab notification updates selected page");
     const int representatives[] = { ID_CALC_FROM, ID_CALC_CALENDAR, ID_CALC_LIST, ID_CALC_HIGHLIGHT_BASE };
     for (int page = 0; page < TIME_CALCULATOR_PAGE_COUNT; page++) {
@@ -420,11 +616,13 @@ static void TestComboFocusDrawing(HWND control) {
         item.itemState |= ODS_FOCUS;
         SendMessageW(control, WM_DRAWITEM, 0, reinterpret_cast<LPARAM>(&item));
         GdiFlush();
-        Require(!std::equal(original.begin(), original.end(), first), "focus gain draws the combo focus cue");
+        Require(!std::equal(original.begin(), original.end(), first),
+            "focus gain draws the combo focus cue");
         item.itemState &= ~ODS_FOCUS;
         SendMessageW(control, WM_DRAWITEM, 0, reinterpret_cast<LPARAM>(&item));
         GdiFlush();
-        Require(std::equal(original.begin(), original.end(), first), "focus loss removes the combo focus cue");
+        Require(std::equal(original.begin(), original.end(), first),
+            "focus loss removes the combo focus cue");
         SelectObject(memory, previous);
     }
     if (bitmap != nullptr) {
@@ -526,8 +724,8 @@ static void TestComboHandling(HWND control, UINT_PTR subclassId) {
     HandleApplicationComboNotification(control, &notification, state);
     notification = CBN_CLOSEUP;
     Require(HandleApplicationComboNotification(control, &notification, state)
-        && SendMessageW(control, CB_GETCURSEL, 0, 0) == 0 && state.open == nullptr,
-        "cancel restores the original choice without applying a change");
+        && SendMessageW(control, CB_GETCURSEL, 0, 0) == 0
+        && state.open == nullptr, "cancel restores the original choice without applying a change");
     notification = CBN_DROPDOWN;
     HandleApplicationComboNotification(control, &notification, state);
     SendMessageW(control, CB_SETCURSEL, 1, 0);
@@ -535,17 +733,19 @@ static void TestComboHandling(HWND control, UINT_PTR subclassId) {
     HandleApplicationComboNotification(control, &notification, state);
     notification = CBN_CLOSEUP;
     Require(!HandleApplicationComboNotification(control, &notification, state)
-        && notification == CBN_SELCHANGE && state.open == nullptr,
-        "accepted change is applied once after closing the dropdown");
+        && notification == CBN_SELCHANGE
+        && state.open == nullptr, "accepted change is applied once after closing the dropdown");
     SendMessageW(control, CB_SETCURSEL, selection, 0);
 }
 
-/// Counts native static painting while retaining the production window procedure.
+/// Counts native painting and text changes while retaining the production window procedure.
 static LRESULT CALLBACK CalculatorPaintProbe(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
     CalculatorPaintRecord* record = reinterpret_cast<CalculatorPaintRecord*>(referenceData);
     if (message == WM_PAINT || message == WM_ERASEBKGND) {
         record->paints++;
+    } else if (message == WM_SETTEXT) {
+        record->textUpdates++;
     }
     return DefSubclassProc(window, message, wParam, lParam);
 }
@@ -562,7 +762,7 @@ static BOOL CALLBACK CollectCalculatorStatics(HWND window, LPARAM parameter) {
     return TRUE;
 }
 
-/// Verifies changed dates and presets do not repaint unchanged static text on any calculator page.
+/// Verifies unchanged captions are not reset; native composition may repaint overlapping siblings.
 static void TestCalculatorUpdatePainting() {
     TimeCalculatorState original = calculatorForm.GetState();
     size_t originalCount = calculatorForm.GetPresets().size();
@@ -599,11 +799,15 @@ static void TestCalculatorUpdatePainting() {
         WaitForCalculator();
         for (CalculatorPaintRecord& record : records) {
             if (GetControlText(record.window) == record.text) {
-                Require(record.paints == 0,
-                    "unchanged calculator statics are not repainted after input changes");
-                if (record.paints != 0) {
-                    std::printf("Action %d static %d: %d paint messages\n",
-                        action, GetDlgCtrlID(record.window), record.paints);
+                Require(record.textUpdates == 0, "input changes do not reset unchanged calculator captions");
+                LONG_PTR style = GetWindowLongPtrW(GetParent(record.window), GWL_EXSTYLE);
+                if (!(style & WS_EX_COMPOSITED)) {
+                    Require(record.paints == 0,
+                        "unchanged calculator statics are not repainted after input changes");
+                    if (record.paints != 0) {
+                        std::printf("Action %d static %d: %d paint messages\n",
+                            action, GetDlgCtrlID(record.window), record.paints);
+                    }
                 }
             }
             RemoveWindowSubclass(record.window, CalculatorPaintProbe, 1);
@@ -660,6 +864,8 @@ static void TestCalculatorTabOrder() {
             ID_CALC_EDIT,
             ID_CALC_DELETE,
             ID_CALC_CANCEL,
+            ID_CALC_IMPORT,
+            ID_CALC_EXPORT,
             ID_CALC_LIST
         }, {
             ID_CALC_HIGHLIGHT_BASE,
@@ -829,7 +1035,7 @@ static void CaptureCalculatorImage(HWND window, const wchar_t* name, bool screen
             DWORD written = 0;
             bool saved = WriteFile(file, &header, sizeof(header), &written, nullptr) != FALSE
                 && WriteFile(file, &information.bmiHeader, sizeof(BITMAPINFOHEADER), &written, nullptr)
-                    != FALSE
+                != FALSE
                 && WriteFile(file, pixels, bytes, &written, nullptr) != FALSE;
             Require(saved, "hidden screenshot saved");
             CloseHandle(file);
@@ -867,6 +1073,7 @@ static void CaptureCalculator(const wchar_t* name) {
 }
 /// Captures each resource page and restores the previously selected tab.
 static void CaptureCalculatorPages(const wchar_t* prefix) {
+    CheckCalculatorPresetButtonRow();
     HWND window = calculatorForm.GetWindow();
     int selected = calculatorForm.GetState().tab;
     calculatorPresented = true;
@@ -1161,9 +1368,9 @@ static void TestCalculatorBackgroundWork() {
     calculatorForm.Close();
     Require(calculatorForm.GetWindow() == nullptr && calculatorWorkers.load() == 1,
         "closing the form does not wait for its blocked worker");
-    calculatorForm.Show(hInstance, calculatorWindowState);
-    Require(calculatorForm.GetWindow() != nullptr,
-        "reopening the calculator does not wait for its old worker");
+    calculatorForm.Show(hInstance, calculatorWindowState, hController);
+    Require(calculatorForm.GetWindow() == nullptr && calculatorForm.IsOpening(),
+        "reopening starts independent preparation without waiting for the old worker");
     std::printf("GUI commands and reopen while the worker was paused: %llu ms.\n",
         GetTickCount64() - started);
     SetEvent(calculatorWorkerGate);
@@ -1393,18 +1600,20 @@ static void TestCalculatorRangesAndLanguages() {
     maximum.to = limits[1];
     maximum.tab = 0;
     LoadCalculator(maximum);
-    const AppLanguage languages[] = { LANG_EN_US, LANG_CS, LANG_DE };
+    const AppLanguage languages[] = { LANG_EN_US, LANG_CS, LANG_DE, LANG_RU };
     const wchar_t* names[] = {
         L"calculator-maximum-en",
         L"calculator-maximum-cs",
-        L"calculator-maximum-de"
+        L"calculator-maximum-de",
+        L"calculator-maximum-ru"
     };
     const wchar_t* pages[] = {
         L"calculator-language-en",
         L"calculator-language-cs",
-        L"calculator-language-de"
+        L"calculator-language-de",
+        L"calculator-language-ru"
     };
-    for (int index = 0; index < 3; index++) {
+    for (size_t index = 0; index < ARRAYSIZE(languages); index++) {
         appLanguage = languages[index];
         RefreshCalculator();
         VerifyCalculatorCalendarLanguage();
@@ -1500,6 +1709,118 @@ static void TestCalculatorPresets() {
         && SettingsEdit::GetFrame(calculatorExpectedFocus) == CalculatorControl(ID_CALC_DESCRIPTION),
         "Enter in preset date requests description focus without committing");
     Require(calculatorPresetWrites > 0, "preset changes save to isolated standalone XML");
+}
+
+/// Checks equal button widths and gaps, exact list-edge alignment and the original list height.
+static void CheckCalculatorPresetButtonRow() {
+    RECT first = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_IMPORT)), ID_CALC_IMPORT);
+    RECT second = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_EXPORT)), ID_CALC_EXPORT);
+    RECT list = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_LIST)), ID_CALC_LIST);
+    RECT add = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_ADD)), ID_CALC_ADD);
+    Require(first.top == add.top
+        && first.bottom == add.bottom
+        && first.top == second.top
+        && first.bottom == second.bottom
+        && first.right < second.left
+        && first.bottom < list.top,
+        "import/export buttons share the original row above the full-height list");
+    Require(add.left == list.left && second.right == list.right,
+        "first and last buttons align exactly with the list edges");
+    LONG width = add.right - add.left;
+    const int buttons[] = {
+        ID_CALC_ADD,
+        ID_CALC_EDIT,
+        ID_CALC_DELETE,
+        ID_CALC_CANCEL,
+        ID_CALC_IMPORT,
+        ID_CALC_EXPORT
+    };
+    LONG previousRight = 0;
+    LONG gap = -1;
+    for (int id : buttons) {
+        RECT bounds = CalculatorControlBounds(GetParent(CalculatorControl(id)), id);
+        Require(bounds.right - bounds.left == width && bounds.top == add.top,
+            "all six preset buttons have identical widths and a common baseline");
+        if (previousRight != 0) {
+            if (gap < 0) {
+                gap = bounds.left - previousRight;
+            }
+            Require(bounds.left - previousRight == gap, "all five button gaps are pixel-identical");
+        }
+        previousRight = bounds.right;
+    }
+    SIZE natural = InformationDialogUnits(reinterpret_cast<HFONT>(SendMessageW(calculatorForm.GetWindow(),
+        WM_GETFONT, 0, 0)), 3, 87);
+    Require(list.bottom - list.top >= natural.cy, "preset list retains its original 87-DLU height");
+    std::printf("Preset button row: width %ld, gap %ld pixels.\n", width, gap);
+}
+
+/// Exercises the real import/export buttons with isolated files and verifies settings and editor
+/// preservation.
+static void TestCalculatorPresetFiles() {
+    CalculatorPage(2);
+    calculatorFilePath = calculatorArtifacts + L"\\preset-export.xml";
+    const std::vector<TimeCalculatorPreset> original = calculatorForm.GetPresets();
+    const TimeCalculatorState state = calculatorForm.GetState();
+    const AppLanguage language = appLanguage;
+    CalculatorCommand(ID_CALC_EXPORT);
+    Require(calculatorFileSave
+        && calculatorFileOwner == calculatorForm.GetWindow()
+        && calculatorFilePrefix == L"CalClock-times"
+        && !calculatorFileAllowsText,
+        "preset export uses the calculator owner and the shared naming convention");
+    std::vector<TimeCalculatorPreset> exported;
+    Require(ReadCalculatorPresets(calculatorFilePath, &exported) && exported.size() == original.size(),
+        "export button produces a standalone user-data root");
+    for (size_t index = 0; index < original.size() && index < exported.size(); index++) {
+        Require(CompareCalculatorDates(original[index].time, exported[index].time) == 0
+            && original[index].zone == exported[index].zone
+            && original[index].description == exported[index].description,
+            "export preserves each exact UTC timestamp, zone and description");
+    }
+    CalculatorCommand(ID_CALC_IMPORT);
+    Require(!calculatorFileSave
+        && calculatorFileAllowsText
+        && calculatorForm.GetPresets().size() == original.size(),
+        "import accepts XML and legacy text while merging exact duplicates");
+    std::vector<TimeCalculatorPreset> imported = original;
+    imported[0].description = L"New description at the same instant";
+    SettingsSnapshot settings;
+    settings.language = LANG_DE;
+    settings.calculator.tab = 3;
+    settings.widgets.push_back(CreateStoredWidgetDefaults(WIDGET_ANALOG, 0, LANG_DE, FONT_ANTIALIAS_GDI));
+    Require(WriteSettingsXml(calculatorFilePath, settings, &imported), "write isolated combined export");
+    CalculatorCommand(ID_CALC_IMPORT);
+    Require(calculatorForm.GetPresets().size() == original.size() + 1
+        && appLanguage == language
+        && SameCalculatorState(state, calculatorForm.GetState()),
+        "import from combined settings XML merges values without applying any settings");
+    Require(WriteSettingsXml(calculatorFilePath, settings), "write isolated settings-only document");
+    CalculatorCommand(ID_CALC_IMPORT);
+    Require(calculatorForm.GetPresets().size() == original.size() + 1
+        && appLanguage == language
+        && SameCalculatorState(state, calculatorForm.GetState()),
+        "settings-only import preserves all user data and current settings");
+    SetWindowTextW(CalculatorDescriptionEdit(), L"Unfinished entry");
+    calculatorFileAccepted = false;
+    int writes = calculatorPresetWrites;
+    CalculatorCommand(ID_CALC_IMPORT);
+    CalculatorCommand(ID_CALC_EXPORT);
+    Require(calculatorPresetWrites == writes
+        && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
+        "cancelled file dialogs preserve data and the editor");
+    calculatorFileAccepted = true;
+    imported[0].description = L"Write failure must not add this record";
+    Require(WriteSettingsXml(calculatorFilePath, settings, &imported), "write failed-import fixture");
+    calculatorPresetWriteFails = true;
+    CalculatorCommand(ID_CALC_IMPORT);
+    calculatorPresetWriteFails = false;
+    Require(calculatorForm.GetPresets().size() == original.size() + 1
+        && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
+        "failed import persistence preserves data and unfinished editor text");
+    CheckCalculatorPresetButtonRow();
+    SetWindowTextW(CalculatorDescriptionEdit(), L"");
+    DeleteFileW(calculatorFilePath.c_str());
 }
 
 /// Verifies a settings import preserves user data and invalidates an outstanding modal editing operation.
@@ -1734,8 +2055,24 @@ static void TestCalculatorAppearance() {
     Require((flags & (GDTR_MIN | GDTR_MAX)) == (GDTR_MIN | GDTR_MAX)
         && limits[0].wYear == 1601
         && limits[1].wYear == 9999, "date picker exposes full supported range");
+    calculatorPresented = true;
+    SetWindowPos(original, nullptr, 0, 0, 0, 0,
+        SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
     appFontFace = L"Cambria Math";
     Require(calculatorForm.ApplyStyle(true), "application font change relayout succeeds");
+    RedrawWindow(original, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    RECT expanded = {};
+    GetClientRect(original, &expanded);
+    HDC background = GetDC(original);
+    Require(background != nullptr
+        && GetPixel(background, expanded.right - 2, expanded.bottom - 2) != RGB(0, 0, 0),
+        "newly exposed calculator background is repainted without a black surface");
+    if (background != nullptr) {
+        ReleaseDC(original, background);
+    }
+    SetWindowPos(original, nullptr, 0, 0, 0, 0,
+        SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW);
+    calculatorPresented = false;
     Require(calculatorForm.GetWindow() == original && calculatorForm.GetState().tab == 1,
         "font relayout preserves HWND and selected tab");
     Require(SameCalculatorState(originalState, calculatorForm.GetState()),
@@ -1906,9 +2243,16 @@ int wmain(int argc, wchar_t** argv) {
     bool visibleCheck = argc == 3 && wcscmp(argv[2], L"--visible-check") == 0;
     bool pickerCheck = argc == 3 && wcscmp(argv[2], L"--picker-check") == 0;
     bool appearanceCheck = argc == 3 && wcscmp(argv[2], L"--appearance-check") == 0;
+    bool openingCheck = argc == 3 && wcscmp(argv[2], L"--opening-check") == 0;
     bool calculationCheck = argc == 3 && wcscmp(argv[2], L"--calculation-check") == 0;
     bool wheelCheck = argc == 3 && wcscmp(argv[2], L"--wheel-check") == 0;
-    if (argc != 2 && !visibleCheck && !pickerCheck && !appearanceCheck && !calculationCheck && !wheelCheck) {
+    if (argc != 2
+            && !visibleCheck
+            && !pickerCheck
+            && !appearanceCheck
+            && !openingCheck
+            && !calculationCheck
+            && !wheelCheck) {
         return 2;
     }
     calculatorGuiThread = GetCurrentThreadId();
@@ -1937,6 +2281,14 @@ int wmain(int argc, wchar_t** argv) {
     InstallCalendarLocaleHook();
     LoadTimeZoneList(&timeZones);
     hInstance = GetModuleHandleW(nullptr);
+    WNDCLASSW controller = {};
+    controller.lpfnWndProc = CalculatorTestController;
+    controller.hInstance = hInstance;
+    controller.lpszClassName = L"CalClockCalculatorTestController";
+    RegisterClassW(&controller);
+    hController = TestCreateWindowExW(WS_EX_NOACTIVATE, controller.lpszClassName, L"", 0,
+        0, 0, 0, 0, HWND_MESSAGE, nullptr, hInstance, nullptr);
+    Require(hController != nullptr, "isolated nonactivating calculator controller created");
     appLanguage = LANG_EN_US;
     useNtpTime = false;
     winsockReady = false;
@@ -1961,8 +2313,13 @@ int wmain(int argc, wchar_t** argv) {
         themesDisabled = true;
         windows2000Style = true;
     }
+    TestCalculatorOpenPreparation();
+    TestSettingsOpenCreation();
+    TestButtonEnabledColors();
     ShowCalculator();
-    if (calculatorForm.GetWindow() != nullptr && wheelCheck) {
+    if (calculatorForm.GetWindow() != nullptr && openingCheck) {
+        calculatorForm.Close();
+    } else if (calculatorForm.GetWindow() != nullptr && wheelCheck) {
         TestCalculatorTabWheel();
         calculatorForm.Close();
     } else if (calculatorForm.GetWindow() != nullptr && pickerCheck) {
@@ -1987,6 +2344,7 @@ int wmain(int argc, wchar_t** argv) {
             TestCalculatorRangesAndLanguages();
         }
         TestCalculatorPresets();
+        TestCalculatorPresetFiles();
         TestCalculatorConfirmationImport();
         TestCalculatorMerge();
         if (!calculationCheck) {
@@ -1997,6 +2355,8 @@ int wmain(int argc, wchar_t** argv) {
         Require(false, "calculator form created from linked production resources");
     }
     WaitForCalculator();
+    DestroyWindow(hController);
+    hController = nullptr;
     CloseHandle(calculatorWorkerGate);
     calculatorWorkerGate = nullptr;
     if (desktop != nullptr) {
@@ -2006,7 +2366,9 @@ int wmain(int argc, wchar_t** argv) {
     if (testFailures != 0) {
         return 1;
     }
-    if (wheelCheck) {
+    if (openingCheck) {
+        std::puts("PASS: responsive native form creation and face-only enabled-state color correction.");
+    } else if (wheelCheck) {
         std::puts("PASS: shared combo focus, font/theme updates, dropdown acceptance and tab navigation; "
             "inactive tab scrolling.");
     } else if (pickerCheck) {

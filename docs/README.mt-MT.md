@@ -58,7 +58,12 @@ Is-settings jistgħu jiġu esportati f’XML. L-importazzjoni tgħabbi u tissejv
 
 Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
 
-Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur tal-ħin. Tahoma 8 pt tintuża minflok il-font predefinit tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas. Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ meta jintefa l-istil. Bid-dehra klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u ma jiġux applikati; l-għażliet issejvjati jinżammu.
+Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar u Kalkulatur
+tal-ħin. Il-kontrolli ta’ dawn it-twieqi jużaw Tahoma 8 pt meta jintgħażel il-font predefinit tas-sistema;
+font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas. Jistgħu
+jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol fis-seħħ
+meta jintefa l-istil. Bid-dehra klassika ta’ Windows iż-żewġ għażliet tat-temi jidhru mhux magħżula u griżi u
+ma jiġux applikati; l-għażliet issejvjati jinżammu.
 
 ## Kalkulatur tal-ħin
 
@@ -66,9 +71,9 @@ Iftaħ Kalkulatur tal-ħin mill-menu ta’ kwalunkwe widget jew mill-menu tal-ik
 Intervall ta’ ħin jikkalkula d-differenza bejn żewġ dati u ħinijiet. Valuri tondi jenfasizza valuri tondi,
 ċifri ripetuti u anniversarji ta’ kull xahar u ta’ kull sena fil-kalendarju mill-bidu magħżul. Dati u ħinijiet
 issettjati minn qabel jippermetti li żżid, teditja, tordna u tħassar dati u ħinijiet b’deskrizzjoni. Id-dati u
-l-ħinijiet jiġu ssejvjati separatament f’`%APPDATA%\FortSoft\CalClock\times.xml`. L-esportazzjoni manwali
-tinkludihom; l-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess data, ħin u deskrizzjoni
-sħiħa.
+l-ħinijiet jiġu ssejvjati separatament f’`%APPDATA%\FortSoft\CalClock\times.xml`. L-esportazzjoni tas-settings
+tinkludi dawn l-entrati. L-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess mument UTC u
+bl-istess deskrizzjoni sħiħa, irrispettivament miż-żona tal-ħin tal-wiri.
 
 Kull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal fis-Settings. Il-valur prestabbilit huwa ż-żona
 attwali tal-Windows. Jiġu ssejvjati mument UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess
@@ -87,8 +92,12 @@ attivati waħda waħda u huma diżattivati b’mod awtomatiku.
 Ikklikkja fuq l-intestatura ta’ kolonna biex tordna l-entrati ssejvjati skont il-mument reali jew it-test
 tad-deskrizzjoni. Ikklikkja mill-ġdid biex taqleb l-ordni; vleġġa turi d-direzzjoni.
 
-Il-pożizzjoni tat-tieqa, it-tab attiva, il-valuri mdaħħla u l-għażliet tal-enfasizzar jiġu ssejvjati
+Il-pożizzjoni tat-tieqa, it-tab attiva, id-data tal-kalkolu u l-għażliet tal-enfasizzar jiġu ssejvjati
 mas-settings tal-applikazzjoni fir-reġistru jew f’XML, skont il-ħażna magħżula.
+
+L-esportazzjoni fit-tab tad-dati u l-ħinijiet issejvjati tissejvja biss dawn l-entrati f’fajl XML separat.
+L-importazzjoni f’din it-tab taqra biss dati u ħinijiet, anki minn esportazzjoni tas-settings, u tgħaqqadhom
+mal-entrati eżistenti.
 
 ## Settings u menus
 

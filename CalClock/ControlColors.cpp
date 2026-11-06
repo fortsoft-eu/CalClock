@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.6
+ * Last modified for version 1.7.2.0
  */
 
 #include "ControlColors.h"
@@ -90,6 +90,7 @@ constexpr COLORREF CONTROL_COLORS[]{
     FaceColor
 };
 
+const UINT RecolorButtonMessage = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorButton");
 const UINT RecolorScrollMessage = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorScroll");
 
 thread_local bool recoloringControls = false;
@@ -102,8 +103,7 @@ static DWORD BitmapColor(COLORREF color) {
 }
 
 /// Records the target and controlling window and creates the owned classic background brushes.
-ControlColors::ControlColors(HWND targetWindow, HWND controller)
-        : window(targetWindow), owner(controller) {
+ControlColors::ControlColors(HWND targetWindow, HWND controller) : window(targetWindow), owner(controller) {
     faceBrush = CreateSolidBrush(FaceColor);
     backgroundBrush = CreateSolidBrush(BackgroundColor);
 }
@@ -135,15 +135,17 @@ ControlColors* ControlColors::Attach(HWND window, HWND owner) {
     }
     HMODULE module = nullptr;
     if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
-            reinterpret_cast<LPCWSTR>(Procedure), &module)) {
+        reinterpret_cast<LPCWSTR>(Procedure), &module)) {
         return nullptr;
     }
     state = new (std::nothrow) ControlColors(window, owner);
     if (!state) {
         return nullptr;
     }
-    if (!state->faceBrush || !state->backgroundBrush || !SetWindowSubclass(window, Procedure,
-        ControlColorsSubclassId, reinterpret_cast<DWORD_PTR>(state))) {
+    if (!state->faceBrush
+        || !state->backgroundBrush
+        || !SetWindowSubclass(window, Procedure, ControlColorsSubclassId,
+            reinterpret_cast<DWORD_PTR>(state))) {
         delete state;
         return nullptr;
     }
@@ -211,7 +213,9 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
             return false;
         }
     }
-    if (lstrcmpiW(className, WC_EDITW) == 0) {
+    if (lstrcmpiW(className, WC_BUTTONW) == 0) {
+        state->kind = Kind::Button;
+    } else if (lstrcmpiW(className, WC_EDITW) == 0) {
         state->kind = Kind::Edit;
     } else if (lstrcmpiW(className, WC_LISTVIEWW) == 0) {
         state->kind = Kind::ListView;
@@ -270,8 +274,8 @@ LRESULT ControlColors::ColorControl(UINT message, WPARAM wParam, LPARAM lParam, 
 }
 
 /// Maps exact native system-color pixels to the classic palette within the current clipping region.
-/// Uses window or client coordinates without changing control content, geometry or unrelated pixel colors.
-void ControlColors::Recolor(HDC dc, bool nonClient) const {
+/// Uses window or client coordinates; optional face-only correction preserves text, borders and other colors.
+void ControlColors::Recolor(HDC dc, bool nonClient, bool faceOnly) const {
     if (!dc) {
         return;
     }
@@ -316,7 +320,8 @@ void ControlColors::Recolor(HDC dc, bool nonClient) const {
             for (size_t pixel = 0; pixel < count; ++pixel) {
                 DWORD color = data[pixel] & 0x00FFFFFF;
                 for (size_t index = 0; index < originals.size(); ++index) {
-                    if (color == originals[index]) {
+                    if (color == originals[index]
+                            && (!faceOnly || ControlColorIndices[index] == COLOR_BTNFACE)) {
                         if (color != desired[index]) {
                             data[pixel] = data[pixel] & 0xFF000000 | desired[index];
                             changed = true;
@@ -432,6 +437,10 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
         if (message >= WM_CTLCOLORMSGBOX && message <= WM_CTLCOLORSTATIC) {
             result = state->ColorControl(message, wParam, lParam, result);
         }
+        bool deferredButton = RecolorButtonMessage != 0 && message == RecolorButtonMessage;
+        if (message == WM_ENABLE && state->kind == Kind::Button && state->paintTarget) {
+            PostMessageW(window, RecolorButtonMessage, 0, 0);
+        }
         bool editPainted = false;
         if (state->kind == Kind::Edit) {
             editPainted = message == EM_SETSEL
@@ -460,6 +469,7 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
         }
         bool providedDc = message == WM_PRINT || message == WM_PRINTCLIENT || message == WM_ERASEBKGND;
         bool painted = providedDc
+            || deferredButton
             || editPainted
             || message == WM_PAINT
             || message == WM_NCPAINT
@@ -532,7 +542,8 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
                             information.rcClient.right - information.rcWindow.left,
                             information.rcClient.bottom - information.rcWindow.top);
                     }
-                    state->Recolor(dc, nonClient);
+                    bool faceOnly = deferredButton || message == WM_ENABLE && state->kind == Kind::Button;
+                    state->Recolor(dc, nonClient, faceOnly);
                     RestoreDC(dc, saved);
                 }
                 if (!providedDc) {

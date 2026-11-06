@@ -76,12 +76,12 @@ Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El b
 
 El idioma de la aplicación, fuente de interfaz, suavizado, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. Desactivar los temas en Aplicación solo afecta a Configuración, Ayuda, Acerca de y Calculadora de tiempo. Cada widget utiliza su propio ajuste de temas. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**.
 
-Estilo de Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de y Calculadora de tiempo. Si se elige
-la fuente predeterminada del sistema, estas ventanas usan Tahoma de 8 pt; una fuente de aplicación
-personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En este modo solo se ofrecen GDI
-y Ninguno para el suavizado: una elección guardada de ClearType usa GDI temporalmente y se restaura al
-desactivar el modo. Si los estilos visuales están desactivados en Windows, ambas opciones de estilo aparecen
-desmarcadas y deshabilitadas sin cambiar las opciones guardadas.
+Estilo de Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de y Calculadora
+de tiempo. Si se elige la fuente predeterminada del sistema, sus controles usan Tahoma de 8 pt; una fuente de
+aplicación personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En este modo solo se
+ofrecen GDI y Ninguno para el suavizado: una elección guardada de ClearType usa GDI temporalmente y se
+restaura al desactivar el modo. Si los estilos visuales están desactivados en Windows, ambas opciones de
+estilo aparecen desmarcadas y deshabilitadas sin cambiar las opciones guardadas.
 
 El control **Volumen de audio** de Alarma regula los archivos reproducidos internamente por widget y muestra el nivel en dB. El valor predeterminado **−18 dB** conserva el nivel original (**100%**). Moverlo a la derecha amplifica el audio; el máximo **0 dB** equivale aproximadamente al **794%** de la amplitud original. El extremo izquierdo es **−∞ dB** (silencio). Los cambios actúan durante la prueba de audio. La amplificación se aplica al audio decodificado, incluidos WAV, MP3, WMA, AAC, M4A y FLAC cuando Windows los admite. La reproducción heredada de archivos no decodificables, como MIDI, está limitada al 100%.
 
@@ -96,8 +96,9 @@ Intervalo de tiempo calcula la diferencia entre dos fechas y horas. La pestaña 
 calendario valores redondos, dígitos repetidos y aniversarios mensuales y anuales desde el inicio elegido. La
 pestaña Fechas y horas predefinidas permite añadir, editar, ordenar y eliminar fechas y horas con una
 descripción. Las fechas y horas se guardan por separado en `%APPDATA%\FortSoft\CalClock\times.xml`. La
-exportación manual las incluye; la importación conserva las entradas existentes y omite solo las que tienen la
-misma fecha, hora y descripción completa.
+exportación de la configuración incluye estas entradas. La importación conserva las entradas existentes y
+omite solo las que representan el mismo instante UTC y tienen exactamente la misma descripción completa,
+independientemente de la zona de visualización.
 
 Cada entrada tiene su propia zona horaria de la misma lista que en Configuración. La predeterminada es la zona
 actual de Windows. Se guarda un instante UTC inequívoco y su zona de visualización. Cambiar la zona conserva
@@ -116,8 +117,12 @@ semanas completas y los aniversarios mensuales y anuales. Los dígitos repetidos
 Haga clic en el encabezado de una columna para ordenar los datos guardados por el instante real o por el texto
 de la descripción. Otro clic invierte el orden; una flecha indica la dirección.
 
-La posición de la ventana, la pestaña activa, los valores introducidos y las opciones de resaltado se guardan
-con la configuración de la aplicación en el Registro o en XML, según el almacenamiento elegido.
+La posición de la ventana, la pestaña activa, los datos del cálculo y las opciones de resaltado se guardan con
+la configuración de la aplicación en el Registro o en XML, según el almacenamiento elegido.
+
+Exportar en la pestaña de fechas y horas guardadas guarda solo esas entradas en un XML independiente. Importar
+en esta pestaña extrae solo fechas y horas, incluso de una exportación de la configuración, y las combina con
+las existentes.
 
 ## Hora y alarmas
 

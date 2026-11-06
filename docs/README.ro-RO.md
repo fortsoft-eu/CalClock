@@ -58,7 +58,12 @@ Setările pot fi exportate în XML. Importul încarcă și salvează imediat set
 
 Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
-Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre și Calculator de timp. Tahoma 8 pt înlocuiește fontul implicit al sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu se aplică; preferințele salvate se păstrează.
+Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre și Calculator
+de timp. Controalele acestor ferestre folosesc Tahoma de 8 pt când este selectat fontul implicit al
+sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate
+alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după
+dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu
+se aplică; preferințele salvate se păstrează.
 
 ## Calculator de timp
 
@@ -66,8 +71,9 @@ Deschideți Calculator de timp din meniul oricărui widget sau din meniul pictog
 Interval de timp calculează diferența dintre două date și ore. Valori rotunde evidențiază în calendar valori
 rotunde, cifre repetate și aniversări lunare și anuale de la începutul ales. Date și ore presetate permite
 adăugarea, editarea, sortarea și ștergerea datelor și orelor cu descrieri. Datele și orele sunt salvate
-separat în `%APPDATA%\FortSoft\CalClock\times.xml`. Exportul manual le include; importul păstrează intrările
-existente și omite numai intrările cu data, ora și descrierea completă identice.
+separat în `%APPDATA%\FortSoft\CalClock\times.xml`. Exportul setărilor include aceste înregistrări. Importul
+păstrează înregistrările existente și omite numai înregistrările cu același moment UTC și aceeași descriere
+completă, indiferent de fusul de afișare.
 
 Fiecare intrare are propriul fus orar din aceeași listă ca în Setări. Implicit se folosește fusul orar curent
 Windows. Se salvează un moment UTC neechivoc și fusul de afișare. Schimbarea fusului păstrează momentul.
@@ -86,8 +92,12 @@ individual și sunt dezactivate implicit.
 Faceți clic pe antetul unei coloane pentru a sorta datele salvate după momentul real sau după textul
 descrierii. Un nou clic inversează ordinea; o săgeată indică direcția.
 
-Poziția ferestrei, fila activă, valorile introduse și opțiunile de evidențiere sunt salvate împreună cu
-setările aplicației în registry sau în XML, în funcție de stocarea aleasă.
+Poziția ferestrei, fila activă, datele de intrare ale calculului și opțiunile de evidențiere sunt salvate
+împreună cu setările aplicației în registry sau în XML, în funcție de stocarea aleasă.
+
+Exportul din fila datelor și orelor salvate păstrează numai aceste înregistrări într-un XML separat. Importul
+din această filă extrage numai date și ore, chiar și dintr-un export al setărilor, și le îmbină cu
+înregistrările existente.
 
 ## Setări și meniuri
 

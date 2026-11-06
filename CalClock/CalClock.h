@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.0
  */
 
 #pragma once
@@ -272,6 +272,7 @@ enum TextId {
     TXT_WIDGET_LIMIT_MESSAGE,
     TXT_WIDGET_COPY_SUFFIXES,
     TXT_XML_FILE_TYPE_LABEL,
+    TXT_TEXT_FILE_TYPE_LABEL,
     TXT_CSV_FILE_TYPE_LABEL,
     TXT_COMMAND_FILE_FILTER,
     TXT_LANGUAGE_LOCALE,
@@ -451,6 +452,8 @@ enum TextId {
     TXT_CALCULATOR_DUPLICATE,
     TXT_CALCULATOR_DELETE_CONFIRM,
     TXT_CALCULATOR_ROUND_NOTE,
+    TXT_CALCULATOR_IMPORT,
+    TXT_CALCULATOR_EXPORT,
     TXT_CALCULATOR_READ_FAILED,
     TXT_CALCULATOR_WRITE_FAILED,
     TXT_CALCULATOR_SELECT_OFFSET,
@@ -648,6 +651,14 @@ extern std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
 
 /// Returns a borrowed localized UI string in the current application language.
 const wchar_t* T(TextId id);
+
+/// Returns the minimum or measured native button width using the current font and text margins.
+LONG PreferredButtonWidth(HWND button, LONG minimum, int paddingDlu = 12);
+
+/// Chooses an XML file using the shared directory and timestamped export naming convention.
+/// Optionally offers legacy text files for importing saved calculator dates.
+bool ChooseApplicationXmlFile(HWND owner, bool save, const wchar_t* prefix, std::wstring* path,
+    bool allowText = false);
 
 /// Returns ProductName from the executable's version resource, or a question mark if unavailable.
 std::wstring GetApplicationName();

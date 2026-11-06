@@ -52,7 +52,11 @@ Spremembe videza so takoj vidne v predogledu izbranega gradnika. `Privzeti videz
 
 Glajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja »Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.
 
-Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni kalkulator. Pri privzeti sistemski pisavi uporablja Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in se ne uporabljata; shranjeni izbiri se ohranita.
+Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni
+kalkulator. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 pt; uporabnikova pisava
+programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se
+povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in
+se ne uporabljata; shranjeni izbiri se ohranita.
 
 ## Časovni kalkulator
 
@@ -60,8 +64,8 @@ Odprite Časovni kalkulator iz menija poljubnega gradnika ali ikone v območju z
 izračuna razliko med dvema datumoma in časoma. Okrogle vrednosti v koledarju poudari okrogle vrednosti,
 ponavljajoče se števke ter mesečne in letne obletnice od izbranega začetka. Shranjeni datumi in časi omogoča
 dodajanje, urejanje, razvrščanje in brisanje datumov in časov z opisom. Datumi in časi se shranijo ločeno v
-`%APPDATA%\FortSoft\CalClock\times.xml`. Ročni izvoz jih vključuje; uvoz ohrani obstoječe vnose in preskoči
-samo vnose z enakim datumom, časom in celotnim opisom.
+`%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz nastavitev vključuje te vnose. Uvoz ohrani obstoječe vnose in
+preskoči samo vnose z istim trenutkom UTC in povsem enakim celotnim opisom, ne glede na časovni pas prikaza.
 
 Vsak vnos ima svoj časovni pas z istega seznama kot v Nastavitvah. Privzet je trenutni časovni pas Windows.
 Shranita se enoličen trenutek UTC in pas prikaza. Sprememba pasu ohrani trenutek. Pri ponovljeni uri izberite
@@ -79,8 +83,11 @@ so izklopljene.
 Kliknite glavo stolpca, da shranjene podatke razvrstite po dejanskem časovnem trenutku ali besedilu opisa.
 Ponovni klik obrne vrstni red; puščica kaže smer.
 
-Položaj okna, aktivni zavihek, vnesene vrednosti in izbire označevanja se shranijo z nastavitvami programa v
-register ali XML, odvisno od izbrane shrambe.
+Položaj okna, aktivni zavihek, vhodni podatki izračuna in izbire označevanja se shranijo z nastavitvami
+programa v register ali XML, odvisno od izbrane shrambe.
+
+Izvoz na zavihku shranjenih datumov in časov shrani samo te vnose v ločen XML. Uvoz na tem zavihku prebere
+samo datume in čase tudi iz izvoza nastavitev ter jih združi z obstoječimi vnosi.
 
 ## Nastavitve in meniji
 
