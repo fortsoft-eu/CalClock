@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.1
  */
 
 #define NOMINMAX
@@ -2237,6 +2237,18 @@ bool TimeCalculatorForm::ProcessMessage(MSG* message) {
     bool belongs = message->hwnd == window || IsChild(window, message->hwnd);
     if (!belongs) {
         return false;
+    }
+    if (message->message == WM_KEYDOWN
+            && message->wParam == VK_TAB
+            && GetKeyState(VK_CONTROL) < 0) {
+        bool backwards = GetKeyState(VK_SHIFT) < 0;
+        state.tab = (state.tab + (backwards ? TIME_CALCULATOR_PAGE_COUNT - 1 : 1))
+            % TIME_CALCULATOR_PAGE_COUNT;
+        SelectPage();
+        HWND tabs = GetDlgItem(window, ID_CALC_TABS);
+        SendMessageW(window, WM_CHANGEUISTATE, MAKEWPARAM(UIS_CLEAR, UISF_HIDEFOCUS), 0);
+        SendMessageW(window, WM_NEXTDLGCTL, reinterpret_cast<WPARAM>(tabs), TRUE);
+        return true;
     }
     if (message->message == WM_KEYDOWN
             && message->wParam == VK_TAB
