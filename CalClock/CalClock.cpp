@@ -14379,7 +14379,7 @@ static void UpdateFontDescription(const WidgetConfig& config) {
     if (hFontButton != nullptr) {
         std::wstring caption = config.fontFace;
         if ((config.type == WIDGET_CALENDAR
-            || config.type == WIDGET_PANEL) && !IsWindowEnabled(hFontButton)) {
+                || config.type == WIDGET_PANEL) && !IsWindowEnabled(hFontButton)) {
             caption = T(TXT_SYSTEM_DEFAULT_FONT_LABEL);
         }
         caption += L"…";
@@ -15099,8 +15099,8 @@ static bool CreateSettingsTimeControls() {
     if (hTimePage == nullptr) {
         return false;
     }
-    HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL,
-        T(TXT_TIME_SOURCE_LABEL), &timeControls);
+    HWND timeSourceLabel = BindSettingsLabel(hTimePage, IDC_TIME_SOURCE_LABEL, T(TXT_TIME_SOURCE_LABEL),
+        &timeControls);
     hTimeSourceCombo = BindSettingsControl(hTimePage, ID_TIME_SOURCE, L"", &timeControls, timeSourceLabel);
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_SYSTEM_TIME_LABEL)));
     SendMessageW(hTimeSourceCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(T(TXT_NTP_TIME_LABEL)));
@@ -15544,8 +15544,8 @@ static void RebuildSettingsControls(bool preserveValues = false) {
     }
     int selectedTab = hTabs == nullptr ? 0 : TabCtrl_GetCurSel(hTabs);
     settingsTab = std::clamp(selectedTab, 0, SETTINGS_TAB_COUNT - 1);
-    bool controlsCreated =
-        RecreateSettingsChildControls(preserveValues, selectedTab, values, selectedWidgets, applyEnabled);
+    bool controlsCreated = RecreateSettingsChildControls(preserveValues,
+        selectedTab, values, selectedWidgets, applyEnabled);
     if (!controlsCreated) {
         CloseSettingsWindow();
         return;
@@ -16843,8 +16843,9 @@ static LRESULT CALLBACK CalendarChildProc(HWND window, UINT msg, WPARAM wParam, 
             hit.pt.x = GET_X_LPARAM(lParam);
             hit.pt.y = GET_Y_LPARAM(lParam);
             MonthCal_HitTest(window, &hit);
-            bool titleArea =
-                hit.uHit == MCHT_TITLEBK || hit.uHit == MCHT_TITLEMONTH || hit.uHit == MCHT_TITLEYEAR;
+            bool titleArea = hit.uHit == MCHT_TITLEBK
+                || hit.uHit == MCHT_TITLEMONTH
+                || hit.uHit == MCHT_TITLEYEAR;
             if (titleArea) {
                 widget->calendarTitlePressed = true;
                 widget->calendarTitlePressPosition = lParam;
