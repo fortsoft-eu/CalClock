@@ -48,7 +48,7 @@ Irranġa fi gradilja iżomm bejn wieħed u ieħor it-tqassim manwali, iwaħħal 
 
 Il-pannelli tal-kalendarju bl-arloġġ jistgħu juru l-avviżi tad-data u l-ħin ta’ Windows fuq il-link t’isfel. L-għażla **Avviżi dwar id-data u l-ħin** fit-tab **Ġenerali** tkun attivata b’mod awtomatiku u tinħażen separatament għal kull pannell. Meta japplikaw diversi avviżi, jidhru wieħed taħt l-ieħor bħal fil-Windows. Jekk l-għażla tkun mitfija jew ma jkun hemm ebda avviż applikabbli, id-daqs u t-tqassim oriġinali tal-pannell jibqgħu l-istess, mingħajr spazju vojt riżervat.
 
-F’kalendarju separat, Ringiela tal-lum fit-tab Dehra jew fil-menu turi jew taħbi r-ringiela t’isfel. Mur għad-data tal-lum jagħżel illum u jirritorna għall-vista tax-xahar. Meta d-data tinbidel skont il-ħin tal-widget, illum jintgħażel awtomatikament waqt li tinżamm il-vista kurrenti.
+F’kalendarju separat, Ringiela tal-lum fit-tab Dehra jew fil-menu turi jew taħbi r-ringiela t’isfel. Mur għad-data tal-lum jagħżel illum u jirritorna għall-vista tax-xahar. Meta d-data tinbidel skont il-ħin tal-widget, il-kalendarju jgħaddi għall-jum il-ġdid biss jekk illum ikun magħżul u jidher fil-vista tax-xahar. Data magħżula manwalment jew vista oħra tinżamm; il-marka u r-ringiela Illum dejjem jiġu aġġornati.
 
 ## Dehra u ħażna
 
@@ -74,6 +74,8 @@ issettjati minn qabel jippermetti li żżid, teditja, tordna u tħassar dati u �
 l-ħinijiet jiġu ssejvjati separatament f’`%APPDATA%\FortSoft\CalClock\times.xml`. L-esportazzjoni tas-settings
 tinkludi dawn l-entrati. L-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess mument UTC u
 bl-istess deskrizzjoni sħiħa, irrispettivament miż-żona tal-ħin tal-wiri.
+
+Il-kalendarju jsegwi l-jum kurrenti wara nofsillejl fiż-żona tal-ħin tal-bidu meta illum ikun magħżul u jidher fil-vista tax-xahar. Data magħżula manwalment jew vista oħra tinżamm; il-marka u r-ringiela Illum dejjem jiġu aġġornati.
 
 Kull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal fis-Settings. Il-valur prestabbilit huwa ż-żona
 attwali tal-Windows. Jiġu ssejvjati mument UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess

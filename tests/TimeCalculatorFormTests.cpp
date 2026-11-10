@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.1
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -65,6 +65,9 @@ static HWND calculatorExpectedFocus = nullptr;
 static std::wstring calculatorArtifacts;
 static HWND calculatorNavigationTarget = nullptr;
 static bool calculatorShiftPressed = false;
+
+/// Overrides calculator UTC for rollover tests; a zero year keeps the real system clock.
+static SYSTEMTIME calculatorTestNow = {};
 static int calculatorPresetWrites = 0;
 static int calculatorClockTicks = 0;
 static bool calculatorPresetWriteFails = false;
@@ -237,6 +240,15 @@ static SHORT WINAPI CalculatorGetKeyState(int key) {
     return 0;
 }
 
+/// Supplies controlled UTC to calculator code without changing the host clock or other native controls.
+static void WINAPI CalculatorGetSystemTime(SYSTEMTIME* time) {
+    if (calculatorTestNow.wYear != 0) {
+        *time = calculatorTestNow;
+    } else {
+        GetSystemTime(time);
+    }
+}
+
 #define GetKeyState CalculatorGetKeyState
 #define SetFocus CalculatorSetFocus
 #define SetActiveWindow TestSetActiveWindow
@@ -256,7 +268,9 @@ static SHORT WINAPI CalculatorGetKeyState(int key) {
 #define CalculatorPresetsPath CalculatorTestPresetsPath
 #define WriteCalculatorPresets CalculatorTestWritePresets
 #define CreateThread CalculatorCreateThread
+#define GetSystemTime CalculatorGetSystemTime
 #include "../CalClock/TimeCalculatorForm.cpp"
+#undef GetSystemTime
 #undef CreateThread
 #undef CalculatorPresetsPath
 #undef ChooseApplicationXmlFile
@@ -1527,6 +1541,146 @@ static void TestCalculatorCalendarNotifications() {
     LoadCalculator(original);
 }
 
+/// Compares native calendar dates independently of their time-of-day and weekday fields.
+static bool SameCalendarDay(const SYSTEMTIME& left, const SYSTEMTIME& right) {
+    return left.wYear == right.wYear && left.wMonth == right.wMonth && left.wDay == right.wDay;
+}
+
+/// Verifies midnight following, manual dates and views, zone boundaries, and both calendar widget types.
+static void TestCalendarDayRollover() {
+    TimeCalculatorState original = calculatorForm.GetState();
+    SYSTEMTIME originalNow = calculatorTestNow;
+    TimeCalculatorState state = original;
+    state.start = CalculatorDate(2020, 1, 1);
+    state.startZone = L"UTC+00:00";
+    state.fromNow = false;
+    state.toNow = false;
+    state.tab = 1;
+    const SYSTEMTIME before[] = {
+        CalculatorDate(2026, 1, 31, 23, 59),
+        CalculatorDate(2028, 2, 28, 23, 59),
+        CalculatorDate(2026, 12, 31, 23, 59)
+    };
+    const SYSTEMTIME after[] = {
+        CalculatorDate(2026, 2, 1),
+        CalculatorDate(2028, 2, 29),
+        CalculatorDate(2027, 1, 1)
+    };
+    HWND calendar = CalculatorControl(ID_CALC_CALENDAR);
+    for (int index = 0; index < ARRAYSIZE(before); index++) {
+        calculatorTestNow = before[index];
+        state.day = CalculatorDate(before[index].wYear, before[index].wMonth, before[index].wDay);
+        MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+        LoadCalculator(state);
+        SYSTEMTIME today = {};
+        MonthCal_GetToday(calendar, &today);
+        Require(SameCalendarDay(today, before[index]), "calculator initializes Today in the starting zone");
+        calculatorTestNow = after[index];
+        SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+        WaitForCalculator();
+        SYSTEMTIME selected = {};
+        MonthCal_GetCurSel(calendar, &selected);
+        Require(SameCalendarDay(selected, after[index]),
+            "calculator follows Today through month, leap-day and year rollover without Now inputs");
+        Require(SameCalendarDay(calculatorForm.GetState().day, after[index]),
+            "calculator saves the new selected calendar date");
+        Require(GetControlText(CalculatorControl(ID_CALC_SELECTED_DATE)) == FormatCalculatorDate(after[index],
+            false), "calculator refreshes the selected date and results after midnight");
+        MonthCal_GetToday(calendar, &today);
+        Require(SameCalendarDay(today, after[index]), "calculator updates the Today marker and row");
+    }
+    SYSTEMTIME manual = CalculatorDate(2027, 4, 15);
+    MonthCal_SetCurSel(calendar, &manual);
+    NMHDR selection{ calendar, ID_CALC_CALENDAR, MCN_SELCHANGE };
+    SendMessageW(GetParent(calendar), WM_NOTIFY, ID_CALC_CALENDAR, reinterpret_cast<LPARAM>(&selection));
+    SYSTEMTIME visibleBefore[2] = {};
+    MonthCal_GetMonthRange(calendar, GMR_VISIBLE, visibleBefore);
+    calculatorTestNow = CalculatorDate(2027, 1, 2);
+    SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+    WaitForCalculator();
+    SYSTEMTIME selected = {};
+    SYSTEMTIME today = {};
+    SYSTEMTIME visibleAfter[2] = {};
+    MonthCal_GetCurSel(calendar, &selected);
+    MonthCal_GetToday(calendar, &today);
+    MonthCal_GetMonthRange(calendar, GMR_VISIBLE, visibleAfter);
+    Require(SameCalendarDay(selected, manual) && SameCalendarDay(calculatorForm.GetState().day, manual),
+        "calculator preserves a manually selected date after midnight");
+    Require(SameCalendarDay(visibleBefore[0], visibleAfter[0]),
+        "calculator preserves a manually browsed month after midnight");
+    Require(SameCalendarDay(today, calculatorTestNow),
+        "manual browsing still refreshes the calculator Today row");
+    state.day = calculatorTestNow;
+    LoadCalculator(state);
+    Require(MonthCal_SetCurrentView(calendar, MCMV_YEAR) != FALSE, "calculator can browse the year view");
+    calculatorTestNow = CalculatorDate(2027, 1, 3);
+    SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+    WaitForCalculator();
+    Require(MonthCal_GetCurrentView(calendar) == MCMV_YEAR, "midnight preserves the calculator year view");
+    Require(SameCalendarDay(calculatorForm.GetState().day, state.day),
+        "year browsing preserves the selected date");
+    MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+    state.startZone = L"UTC+02:00";
+    state.day = CalculatorDate(2026, 2, 1);
+    calculatorTestNow = CalculatorDate(2026, 1, 31, 23, 59);
+    LoadCalculator(state);
+    calculatorTestNow = CalculatorDate(2026, 2, 1);
+    SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+    Require(SameCalendarDay(calculatorForm.GetState().day, state.day), "UTC midnight does not advance another zone");
+    calculatorTestNow = CalculatorDate(2026, 2, 1, 22);
+    SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+    WaitForCalculator();
+    Require(SameCalendarDay(calculatorForm.GetState().day, CalculatorDate(2026, 2, 2)),
+        "calculator follows midnight in the starting time zone");
+    SYSTEMTIME widgetToday = CalculatorDate(2027, 1, 1, 12);
+    FILETIME file = {};
+    SystemTimeToFileTime(&widgetToday, &file);
+    ULARGE_INTEGER ticks = {};
+    ticks.LowPart = file.dwLowDateTime;
+    ticks.HighPart = file.dwHighDateTime;
+    SYSTEMTIME widgetPrevious = CalculatorDate(2026, 12, 31);
+    for (WidgetType type : { WIDGET_CALENDAR, WIDGET_PANEL }) {
+        Widget widget;
+        widget.config = DefaultConfig(type, 1);
+        widget.config.showUtc = true;
+        widget.config.offsetMilliseconds = (static_cast<LONGLONG>(ticks.QuadPart)
+            - static_cast<LONGLONG>(GetApplicationFileTimeValue())) / 10000;
+        widget.window = calculatorForm.GetWindow();
+        widget.calendarChild = calendar;
+        widget.lastCalendarDateKey = 20261231;
+        MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+        MonthCal_SetToday(calendar, &widgetPrevious);
+        MonthCal_SetCurSel(calendar, &widgetPrevious);
+        UpdateCalendarDate(&widget);
+        MonthCal_GetCurSel(calendar, &selected);
+        MonthCal_GetToday(calendar, &today);
+        Require(SameCalendarDay(selected, widgetToday),
+            "standalone and panel widgets follow Today after midnight");
+        Require(SameCalendarDay(today, widgetToday), "both widget types update the Today marker and row");
+        MonthCal_SetToday(calendar, &widgetPrevious);
+        MonthCal_SetCurSel(calendar, &manual);
+        MonthCal_GetMonthRange(calendar, GMR_VISIBLE, visibleBefore);
+        widget.lastCalendarDateKey = 20261231;
+        UpdateCalendarDate(&widget);
+        MonthCal_GetCurSel(calendar, &selected);
+        MonthCal_GetToday(calendar, &today);
+        MonthCal_GetMonthRange(calendar, GMR_VISIBLE, visibleAfter);
+        Require(SameCalendarDay(selected, manual), "both widget types preserve a manually selected date");
+        Require(SameCalendarDay(visibleBefore[0], visibleAfter[0]),
+            "both widget types preserve the browsed month");
+        Require(SameCalendarDay(today, widgetToday), "manual widget browsing still updates the Today row");
+        MonthCal_SetToday(calendar, &widgetPrevious);
+        MonthCal_SetCurSel(calendar, &widgetPrevious);
+        MonthCal_SetCurrentView(calendar, MCMV_YEAR);
+        widget.lastCalendarDateKey = 20261231;
+        UpdateCalendarDate(&widget);
+        Require(MonthCal_GetCurrentView(calendar) == MCMV_YEAR, "both widget types preserve the year view");
+    }
+    MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+    calculatorTestNow = originalNow;
+    LoadCalculator(original);
+}
+
 /// Checks initial values, all tabs, resource-authored outer margins and live/manual date restoration.
 static void TestCalculatorInitialAndNow() {
     Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
@@ -2362,6 +2516,7 @@ int wmain(int argc, wchar_t** argv) {
         TestCalculatorInitialAndNow();
         TestCalculatorResultNotifications();
         TestCalculatorCalendarNotifications();
+        TestCalendarDayRollover();
         TestCalculatorBackgroundWork();
         TestCalculatorTabWheel();
         if (!calculationCheck) {

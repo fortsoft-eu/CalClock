@@ -68,7 +68,7 @@ Takvim ve saat panelleri, alt bağlantının üzerinde Windows tarih ve saat bil
 
 ## Görünüm
 
-Bağımsız takvimlerde menüdeki veya Görünüm sekmesindeki **Bugün satırı**, alttaki satırın görünürlüğünü denetler. Varsayılan olarak işaretlidir; işareti kaldırmak satırı gizler ve takvimi küçültür. Seçim araç başına saklanır. **Bugüne git** menüde kullanılabilir kalır ve ay görünümüne döner. Aracın zamanına göre tarih değiştiğinde takvim bugünü otomatik seçer ve geçerli görünümünü korur.
+Bağımsız takvimlerde menüdeki veya Görünüm sekmesindeki **Bugün satırı**, alttaki satırın görünürlüğünü denetler. Varsayılan olarak işaretlidir; işareti kaldırmak satırı gizler ve takvimi küçültür. Seçim araç başına saklanır. **Bugüne git** menüde kullanılabilir kalır ve ay görünümüne döner. Aracın saatine göre tarih değiştiğinde takvim, yalnızca bugün ay görünümünde seçili ve görünürse yeni güne ilerler. Elle seçilen tarih ve diğer görünümler korunur; Bugün işareti ve satırı her zaman güncellenir.
 
 Görünüm değişiklikleri seçili araçta hemen önizlenir. `Varsayılan görünüm`, o araç türünün varsayılan değerlerini geri yükler. Uygulanmamış değişiklikler varken Ayarlar kapatılırsa bunların kaydedilip kaydedilmeyeceği sorulur. Bu uyarı varsayılan olarak açıktır ve Uygulama sekmesinden kapatılabilir.
 
@@ -98,6 +98,8 @@ saatler, açıklamalı tarih ve saatleri eklemenizi, düzenlemenizi, sıralaman�
 saatler ayrı olarak `%APPDATA%\FortSoft\CalClock\times.xml` dosyasına kaydedilir. Ayarların dışa aktarımı bu
 kayıtları içerir. İçe aktarma mevcut kayıtları korur ve yalnızca aynı UTC anına ve tamamen aynı açıklamaya
 sahip kayıtları, görüntüleme saat diliminden bağımsız olarak atlar.
+
+Takvim, bugün ay görünümünde seçili ve görünürken başlangıç saat diliminde gece yarısı geçildiğinde yeni güne ilerler. Elle seçilen tarih ve diğer görünümler korunur; Bugün işareti ve satırı her zaman güncellenir.
 
 Her girişin Ayarlar ile aynı listedeki seçeneklerden kendi saat dilimi vardır. Varsayılan, Windows’un geçerli
 saat dilimidir. Kesin bir UTC anı ve görüntüleme saat dilimi kaydedilir. Saat dilimini değiştirmek anı korur.

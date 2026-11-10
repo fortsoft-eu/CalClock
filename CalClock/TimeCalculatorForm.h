@@ -170,6 +170,8 @@ private:
     SIZE dialogUnits = {};
     SIZE contentSize = {};
     unsigned long presetsRevision = 0;
+    /// Caches Today as YYYYMMDD in the starting time zone; -1 leaves a restored selection unchanged.
+    int lastCalendarDateKey = -1;
     int editing = -1;
     int sortColumn = 0;
     bool sortDescending = false;
@@ -194,6 +196,8 @@ private:
     void FillTimeZones(int index);
     void UpdateTimeInput(int index, bool fromUtc, int choice = -1);
     void UpdateNow();
+    /// Updates Today in the starting zone and advances the selection and results only while following Today.
+    void UpdateCalendarDate();
     void UpdateResults();
     void RequestCalculation(bool highlights = false, bool labels = false);
     void StartCalculation();

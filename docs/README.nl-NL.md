@@ -55,7 +55,7 @@ Schikken in raster behoudt de globale handmatige indeling, lijnt middelpunten ui
 
 Panelen met een kalender en klok kunnen boven de onderste koppeling Windows-meldingen over datum en tijd tonen. **Meldingen over datum en tijd** op het tabblad **Algemeen** is standaard ingeschakeld en wordt voor elk paneel afzonderlijk opgeslagen. Als meerdere meldingen van toepassing zijn, staan ze net als in Windows onder elkaar. Wanneer de optie is uitgeschakeld of er geen toepasselijke melding is, blijven de oorspronkelijke afmetingen en indeling van het paneel behouden zonder lege ruimte te reserveren.
 
-Bij een losse kalender toont of verbergt Rij Vandaag op Vormgeving of in het menu de onderste rij. Naar vandaag kiest vandaag en herstelt de maandweergave. Bij een datumwisseling volgens de widgettijd wordt vandaag automatisch gekozen zonder de huidige kalenderweergave te veranderen.
+Bij een losse kalender toont of verbergt Rij Vandaag op Vormgeving of in het menu de onderste rij. Naar vandaag kiest vandaag en herstelt de maandweergave. Wanneer de datum volgens de widgettijd verandert, gaat de kalender alleen naar de nieuwe dag als vandaag is geselecteerd en zichtbaar is in de maandweergave. Een handmatig gekozen datum of een andere weergave blijft behouden; de markering en de rij Vandaag worden altijd bijgewerkt.
 
 ## Vormgeving en opslag
 
@@ -82,6 +82,8 @@ tijden met beschrijvingen toevoegen, bewerken, sorteren en verwijderen. Datums e
 opgeslagen in `%APPDATA%\FortSoft\CalClock\times.xml`. Een instellingenexport bevat deze vermeldingen. Import
 behoudt bestaande vermeldingen en slaat alleen vermeldingen met hetzelfde UTC-tijdstip en een identieke
 volledige beschrijving over, ongeacht de weergavetijdzone.
+
+De kalender gaat bij middernacht in de tijdzone van het beginpunt naar de nieuwe dag, zolang vandaag is geselecteerd en zichtbaar is in de maandweergave. Een handmatig gekozen datum of een andere weergave blijft behouden; de markering en de rij Vandaag worden altijd bijgewerkt.
 
 Elke invoer heeft een eigen tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de
 standaard. Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt het

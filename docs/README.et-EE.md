@@ -48,7 +48,7 @@ Paiguta ruudustikku säilitab ligikaudse käsitsi paigutuse, tõmbab keskpunktid
 
 Kalendri ja kellaga paneelid võivad alumise lingi kohal näidata Windowsi kuupäeva- ja kellaajateateid. Vahekaardi **Üldine** valik **Kuupäeva ja kellaaja teated** on vaikimisi sisse lülitatud ja salvestatakse iga paneeli jaoks eraldi. Kui kehtib mitu teadet, kuvatakse need nagu Windowsis üksteise all. Kui valik on välja lülitatud või asjakohast teadet pole, säilivad paneeli algne suurus ja paigutus ning tühja ruumi ei reserveerita.
 
-Eraldi kalendris kuvab või peidab Tänase kuupäeva rida vahekaardil Ilme või menüüs alumise rea. Mine tänasele kuupäevale valib tänase päeva ja taastab kuuvaate. Kui vidina aja järgi kuupäev muutub, valitakse tänane kuupäev automaatselt praegust kalendrivaadet säilitades.
+Eraldi kalendris kuvab või peidab Tänase kuupäeva rida vahekaardil Ilme või menüüs alumise rea. Mine tänasele kuupäevale valib tänase päeva ja taastab kuuvaate. Kui kuupäev muutub vidina aja järgi, liigub kalender uuele päevale ainult siis, kui tänane kuupäev on kuuvaates valitud ja nähtav. Käsitsi valitud kuupäev või muu vaade säilib; tänase kuupäeva tähis ja rida uuenevad alati.
 
 ## Ilme ja salvestamine
 
@@ -74,6 +74,8 @@ kuupäevad ja kellaajad võimaldab kirjeldusega kuupäevi ja kellaaegu lisada, m
 Kuupäevad ja kellaajad salvestatakse eraldi faili `%APPDATA%\FortSoft\CalClock\times.xml`. Sätete eksport
 sisaldab neid kirjeid. Import säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille UTC-ajahetk ja
 kogu kirjeldus on täpselt samad, olenemata kuvamiseks valitud ajavööndist.
+
+Kalender järgib tänast kuupäeva üle kesköö algusaja ajavööndis, kui tänane kuupäev on kuuvaates valitud ja nähtav. Käsitsi valitud kuupäev või muu vaade säilib; tänase kuupäeva tähis ja rida uuenevad alati.
 
 Igal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi kasutatakse Windowsi praegust
 ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja kuvamisvöönd. Vööndi muutmine säilitab ajahetke.

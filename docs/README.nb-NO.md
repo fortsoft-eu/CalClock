@@ -68,7 +68,7 @@ Paneler med kalender og klokke kan vise Windows-varsler om dato og klokkeslett o
 
 ## Utseende
 
-For frittstående kalendere styrer **I dag-raden** i menyen eller på Utseende den nederste raden. Valget er på som standard; fjern merket for å skjule raden og redusere kalenderen. Innstillingen lagres per widget. **Gå til i dag** er fortsatt tilgjengelig og går tilbake til månedsvisningen. Når datoen endres etter widgetens egen tid, velger kalenderen i dag automatisk uten å endre gjeldende visning.
+For frittstående kalendere styrer **I dag-raden** i menyen eller på Utseende den nederste raden. Valget er på som standard; fjern merket for å skjule raden og redusere kalenderen. Innstillingen lagres per widget. **Gå til i dag** er fortsatt tilgjengelig og går tilbake til månedsvisningen. Når datoen endres etter widgetens tid, går kalenderen videre til den nye dagen bare hvis i dag er valgt og synlig i månedsvisningen. En manuelt valgt dato eller en annen visning beholdes; markeringen og raden I dag oppdateres alltid.
 
 Utseendeendringer forhåndsvises straks på den valgte widgeten. `Standardutseende` gjenoppretter standardverdiene for denne widgettypen. Når Innstillinger lukkes med endringer som ikke er tatt i bruk, blir du spurt om de skal lagres. Advarselen er aktivert som standard og kan slås av på fanen Program.
 
@@ -97,6 +97,8 @@ redigere, sortere og slette datoer og klokkeslett med beskrivelser. Datoer og kl
 `%APPDATA%\FortSoft\CalClock\times.xml`. Eksport av innstillinger inkluderer disse oppføringene. Import
 bevarer eksisterende oppføringer og hopper bare over oppføringer med samme UTC-tidspunkt og identisk
 fullstendig beskrivelse, uavhengig av visningstidssonen.
+
+Kalenderen følger dagens dato over midnatt i starttidens tidssone når i dag er valgt og synlig i månedsvisningen. En manuelt valgt dato eller en annen visning beholdes; markeringen og raden I dag oppdateres alltid.
 
 Hver inndata har egen tidssone fra samme liste som i Innstillinger. Gjeldende Windows-tidssone er standard. Et
 entydig UTC-tidspunkt og visningssonen lagres. Bytte av sone bevarer tidspunktet. Velg UTC-forskyvningen ved

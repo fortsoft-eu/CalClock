@@ -68,7 +68,7 @@ Kalendáre s hodinami môžu nad dolným odkazom zobrazovať oznámenia dátumu 
 
 ## Vzhľad
 
-Pri samostatných kalendároch voľba **Riadok Dnes** v ponuke alebo na karte Vzhľad ovláda spodný riadok. Predvolene je zaškrtnutá; odškrtnutím sa riadok skryje a kalendár zmenší. Voľba sa ukladá samostatne. **Prejsť na dnešný deň** zostáva dostupné a vracia mesačné zobrazenie. Pri zmene dátumu podľa času widgetu kalendáre automaticky vyberú dnešok a zachovajú aktuálny spôsob zobrazenia.
+Pri samostatných kalendároch voľba **Riadok Dnes** v ponuke alebo na karte Vzhľad ovláda spodný riadok. Predvolene je zaškrtnutá; odškrtnutím sa riadok skryje a kalendár zmenší. Voľba sa ukladá samostatne. **Prejsť na dnešný deň** zostáva dostupné a vracia mesačné zobrazenie. Pri zmene dátumu podľa času widgetu kalendár prejde na nový deň iba vtedy, keď je dnešok vybraný a viditeľný v mesačnom zobrazení. Ručne vybraný dátum aj iné zobrazenie zostanú zachované; značka a riadok Dnes sa aktualizujú vždy.
 
 Zmeny vzhľadu sa ihneď zobrazujú v náhľade vybraného widgetu. `Predvolený vzhľad` obnoví predvolené hodnoty daného typu widgetu. Pri zatváraní Nastavení s nepoužitými zmenami sa zobrazí otázka na uloženie. Upozornenie je predvolene zapnuté a možno ho vypnúť na karte Aplikácia.
 
@@ -96,6 +96,8 @@ opakujúce sa číslice a mesačné aj ročné výročia od zvoleného začiatku
 pridávať, upravovať, triediť a odstraňovať údaje s popisom. Časové údaje sa ukladajú samostatne do
 `%APPDATA%\FortSoft\CalClock\times.xml`. Export nastavení tieto údaje zahŕňa. Import zachová existujúce údaje
 a vynechá iba položky so zhodným okamihom v UTC aj celým popisom, bez ohľadu na pásmo zobrazenia.
+
+Kalendár sleduje dnešok pri prechode cez polnoc v pásme počiatku, ak je dnešok vybraný a viditeľný v mesačnom zobrazení. Ručne vybraný dátum aj iné zobrazenie zostanú zachované; značka a riadok Dnes sa aktualizujú vždy.
 
 Každý vstup má vlastné časové pásmo z rovnakého zoznamu ako v Nastaveniach. Predvolené je aktuálne pásmo
 Windows. Ukladá sa jednoznačný okamih v UTC a pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej

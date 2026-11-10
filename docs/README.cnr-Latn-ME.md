@@ -44,7 +44,7 @@ Rasporedi u mrežu čuva približan ručni raspored, priljepljuje središta uz n
 
 Paneli kalendara sa satom mogu iznad donje veze prikazivati obavještenja Windowsa o datumu i vremenu. Opcija **Obavještenja o datumu i vremenu** na kartici **Opšte** podrazumijevano je uključena i čuva se zasebno za svaki panel. Ako je primjenjivo više obavještenja, prikazuju se jedno ispod drugog kao u Windowsu. Kada je opcija isključena ili nema primjenjivih obavještenja, panel zadržava izvornu veličinu i raspored, bez rezervisanja praznog prostora.
 
-U samostalnom kalendaru Red Danas na kartici Izgled ili u meniju prikazuje ili skriva donji red. Idi na današnji datum bira danas i vraća mjesečni prikaz. Pri promjeni datuma po vremenu vidžeta današnji datum se bira automatski uz očuvanje trenutnog prikaza kalendara.
+U samostalnom kalendaru Red Danas na kartici Izgled ili u meniju prikazuje ili skriva donji red. Idi na današnji datum bira danas i vraća mjesečni prikaz. Pri promjeni datuma po vremenu vidžeta kalendar prelazi na novi dan samo ako je današnji datum izabran i vidljiv u mjesečnom prikazu. Ručno izabrani datum i drugi prikazi ostaju sačuvani; oznaka i red Danas uvijek se ažuriraju.
 
 ## Izgled i čuvanje
 
@@ -67,6 +67,8 @@ omogućava dodavanje, uređivanje, sortiranje i brisanje datuma i vremena s opis
 odvojeno u `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz podešavanja uključuje ove stavke. Uvoz zadržava
 postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim potpunim opisom, bez obzira na
 vremensku zonu prikaza.
+
+Kalendar prati današnji datum pri prelasku preko ponoći u vremenskoj zoni početka, ako je današnji datum izabran i vidljiv u mjesečnom prikazu. Ručno izabrani datum i drugi prikazi ostaju sačuvani; oznaka i red Danas uvijek se ažuriraju.
 
 Svaki unos ima svoju vremensku zonu sa iste liste kao u Podešavanjima. Podrazumijevana je trenutna zona
 Windowsa. Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni

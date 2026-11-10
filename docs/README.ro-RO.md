@@ -48,7 +48,7 @@ Aranjare în grilă păstrează aproximativ pozițiile manuale, aliniază centre
 
 Panourile cu calendar și ceas pot afișa notificările Windows despre dată și oră deasupra legăturii de jos. Opțiunea **Notificări despre dată și oră** din fila **General** este activată implicit și se salvează separat pentru fiecare panou. Dacă sunt aplicabile mai multe notificări, acestea apar una sub alta, ca în Windows. Dacă opțiunea este dezactivată sau nu există nicio notificare aplicabilă, panoul își păstrează dimensiunea și aspectul inițial, fără a rezerva spațiu gol.
 
-Pentru un calendar separat, Rândul Azi din Aspect sau meniu afișează ori ascunde rândul inferior. Salt la ziua de azi selectează azi și restabilește vizualizarea lunară. Când data se schimbă după ora widgetului, ziua de azi se selectează automat, păstrând vizualizarea curentă.
+Pentru un calendar separat, Rândul Azi din Aspect sau meniu afișează ori ascunde rândul inferior. Salt la ziua de azi selectează azi și restabilește vizualizarea lunară. Când data se schimbă după ora widgetului, calendarul trece la noua zi numai dacă ziua de azi este selectată și vizibilă în vizualizarea lunară. O dată selectată manual sau altă vizualizare este păstrată; marcajul și rândul Azi se actualizează întotdeauna.
 
 ## Aspect și stocare
 
@@ -74,6 +74,8 @@ adăugarea, editarea, sortarea și ștergerea datelor și orelor cu descrieri. D
 separat în `%APPDATA%\FortSoft\CalClock\times.xml`. Exportul setărilor include aceste înregistrări. Importul
 păstrează înregistrările existente și omite numai înregistrările cu același moment UTC și aceeași descriere
 completă, indiferent de fusul de afișare.
+
+Calendarul urmărește ziua curentă la trecerea peste miezul nopții în fusul orar de început, dacă ziua de azi este selectată și vizibilă în vizualizarea lunară. O dată selectată manual sau altă vizualizare este păstrată; marcajul și rândul Azi se actualizează întotdeauna.
 
 Fiecare intrare are propriul fus orar din aceeași listă ca în Setări. Implicit se folosește fusul orar curent
 Windows. Se salvează un moment UTC neechivoc și fusul de afișare. Schimbarea fusului păstrează momentul.

@@ -16919,8 +16919,29 @@ static void SelectCalendarToday(Widget* widget, bool preserveView) {
     }
 }
 
-/// Moves the calendar selection to the displayed current day when its date changes, preserving the current
-/// calendar view.
+/// Reports whether month view selects the supplied YYYYMMDD date within the fully displayed month range.
+bool IsCalendarFollowingToday(HWND calendar, int todayDateKey) {
+    if (MonthCal_GetCurrentView(calendar) != MCMV_MONTH) {
+        return false;
+    }
+    SYSTEMTIME selected = {};
+    if (!MonthCal_GetCurSel(calendar, &selected)) {
+        return false;
+    }
+    int selectedDateKey = selected.wYear * 10000 + selected.wMonth * 100 + selected.wDay;
+    if (selectedDateKey != todayDateKey) {
+        return false;
+    }
+    SYSTEMTIME range[2] = {};
+    if (MonthCal_GetMonthRange(calendar, GMR_VISIBLE, range) == 0) {
+        return false;
+    }
+    int firstDateKey = range[0].wYear * 10000 + range[0].wMonth * 100 + range[0].wDay;
+    int lastDateKey = range[1].wYear * 10000 + range[1].wMonth * 100 + range[1].wDay;
+    return firstDateKey <= todayDateKey && todayDateKey <= lastDateKey;
+}
+
+/// Updates the current-day marker and advances only a calendar that was following today.
 static void UpdateCalendarDate(Widget* widget) {
     if (widget == nullptr || widget->calendarChild == nullptr) {
         return;
@@ -16929,7 +16950,12 @@ static void UpdateCalendarDate(Widget* widget) {
     GetDisplayedTime(widget->config, &displayed);
     int dateKey = displayed.wYear * 10000 + displayed.wMonth * 100 + displayed.wDay;
     if (widget->lastCalendarDateKey != dateKey) {
-        SelectCalendarToday(widget, true);
+        if (IsCalendarFollowingToday(widget->calendarChild, widget->lastCalendarDateKey)) {
+            SelectCalendarToday(widget, true);
+        } else {
+            MonthCal_SetToday(widget->calendarChild, &displayed);
+            widget->lastCalendarDateKey = dateKey;
+        }
     }
 }
 

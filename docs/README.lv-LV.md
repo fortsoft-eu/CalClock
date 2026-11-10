@@ -48,7 +48,7 @@ Sakārtot režģī saglabā aptuveno manuālo izkārtojumu, pievelk centrus tuv�
 
 Kalendāra un pulksteņa paneļos virs apakšējās saites var rādīt Windows datuma un laika paziņojumus. Cilnes **Vispārīgi** opcija **Datuma un laika paziņojumi** pēc noklusējuma ir ieslēgta un tiek saglabāta katram panelim atsevišķi. Ja vienlaikus ir vairāki attiecināmi paziņojumi, tie tiek rādīti cits zem cita tāpat kā Windows. Ja opcija ir izslēgta vai nav neviena attiecināma paziņojuma, panelis saglabā sākotnējo izmēru un izkārtojumu, nerezervējot tukšu vietu.
 
-Atsevišķā kalendārā Šodienas rinda cilnē Izskats vai izvēlnē rāda vai slēpj apakšējo rindu. Pāriet uz šodienu atlasa šodienas datumu un atjauno mēneša skatu. Mainoties datumam pēc logrīka laika, šodiena tiek atlasīta automātiski, saglabājot pašreizējo skatu.
+Atsevišķā kalendārā Šodienas rinda cilnē Izskats vai izvēlnē rāda vai slēpj apakšējo rindu. Pāriet uz šodienu atlasa šodienas datumu un atjauno mēneša skatu. Mainoties datumam pēc logrīka laika, kalendārs pāriet uz jauno dienu tikai tad, ja šodiena ir atlasīta un redzama mēneša skatā. Manuāli atlasītais datums un citi skati tiek saglabāti; šodienas atzīme un rinda vienmēr tiek atjauninātas.
 
 ## Izskats un glabāšana
 
@@ -74,6 +74,8 @@ pievienot, rediģēt, kārtot un dzēst datumus un laikus ar aprakstiem. Datumi 
 failā `%APPDATA%\FortSoft\CalClock\times.xml`. Iestatījumu eksports iekļauj šos ierakstus. Imports saglabā
 esošos ierakstus un izlaiž tikai tos, kuriem ir tas pats UTC laika moments un pilnīgi vienāds pilns apraksts
 neatkarīgi no attēlošanas laika joslas.
+
+Kalendārs seko šodienai pāri pusnaktij sākuma laika joslā, ja šodiena ir atlasīta un redzama mēneša skatā. Manuāli atlasītais datums un citi skati tiek saglabāti; šodienas atzīme un rinda vienmēr tiek atjauninātas.
 
 Katrai ievadei ir sava laika josla no tā paša saraksta kā iestatījumos. Noklusējums ir pašreizējā Windows
 laika josla. Tiek saglabāts nepārprotams UTC brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās.

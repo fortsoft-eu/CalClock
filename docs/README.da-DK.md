@@ -68,7 +68,7 @@ Paneler med kalender og ur kan vise Windows-meddelelser om dato og klokkeslæt o
 
 ## Udseende
 
-For selvstændige kalendere styrer **Rækken I dag** i menuen eller på Udseende den nederste række. Den er markeret som standard; fjern markeringen for at skjule rækken og gøre kalenderen mindre. Valget gemmes pr. widget. **Gå til i dag** forbliver tilgængeligt og vender tilbage til månedsvisningen. Når datoen skifter efter widgetens tid, vælger kalenderen automatisk i dag og bevarer sin aktuelle visning.
+For selvstændige kalendere styrer **Rækken I dag** i menuen eller på Udseende den nederste række. Den er markeret som standard; fjern markeringen for at skjule rækken og gøre kalenderen mindre. Valget gemmes pr. widget. **Gå til i dag** forbliver tilgængeligt og vender tilbage til månedsvisningen. Når datoen skifter efter widgetens tid, går kalenderen kun videre til den nye dag, hvis i dag er valgt og synlig i månedsvisningen. En manuelt valgt dato eller en anden visning bevares; markeringen og rækken I dag opdateres altid.
 
 Udseendeændringer vises straks som et eksempel på den valgte widget. `Standardudseende` gendanner standardværdierne for denne widgettype. Når Indstillinger lukkes med ændringer, der ikke er anvendt, bliver du spurgt, om de skal gemmes. Advarslen er slået til som standard og kan slås fra på fanen Program.
 
@@ -98,6 +98,8 @@ redigere, sortere og slette datoer og tider med beskrivelser. Datoer og tider ge
 `%APPDATA%\FortSoft\CalClock\times.xml`. Eksport af indstillinger medtager disse poster. Import bevarer
 eksisterende poster og springer kun poster over med samme UTC-tidspunkt og identisk fuld beskrivelse, uanset
 visningens tidszone.
+
+Kalenderen følger dagens dato over midnat i starttidens tidszone, når i dag er valgt og synlig i månedsvisningen. En manuelt valgt dato eller en anden visning bevares; markeringen og rækken I dag opdateres altid.
 
 Hvert input har sin egen tidszone fra samme liste som i Indstillinger. Den aktuelle Windows-tidszone er
 standard. Et entydigt UTC-tidspunkt og visningszonen gemmes. Et zoneskift bevarer tidspunktet. Vælg

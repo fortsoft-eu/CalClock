@@ -48,7 +48,7 @@ Rasporedi u mrežu čuva približan ručni raspored, priljubljuje središta vid�
 
 Ploče kalendara sa satom mogu iznad donje veze prikazivati obavještenja Windowsa o datumu i vremenu. Opcija **Obavještenja o datumu i vremenu** na kartici **Općenito** uključena je prema zadanim postavkama i čuva se zasebno za svaku ploču. Ako je primjenjivo više obavještenja, prikazuju se jedno ispod drugog kao u Windowsu. Kada je opcija isključena ili nema primjenjivih obavještenja, ploča zadržava izvornu veličinu i raspored, bez rezervisanja praznog prostora.
 
-Za samostalni kalendar prikažite ili sakrijte Red Danas na kartici Izgled ili u meniju vidžeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu vidžeta, današnji se datum odabire automatski uz očuvanje trenutnog prikaza kalendara.
+Za samostalni kalendar prikažite ili sakrijte Red Danas na kartici Izgled ili u meniju vidžeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu vidžeta, kalendar prelazi na novi dan samo ako je današnji datum odabran i vidljiv u mjesečnom prikazu. Ručno odabrani datum i drugi prikazi ostaju sačuvani; oznaka i red Danas uvijek se ažuriraju.
 
 ## Izgled i čuvanje postavki
 
@@ -71,6 +71,8 @@ omogućava dodavanje, uređivanje, sortiranje i brisanje datuma i vremena s opis
 odvojeno u `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz postavki uključuje ove stavke. Uvoz zadržava
 postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim potpunim opisom, bez obzira na
 vremensku zonu prikaza.
+
+Kalendar prati današnji datum pri prelasku preko ponoći u vremenskoj zoni početka, ako je današnji datum odabran i vidljiv u mjesečnom prikazu. Ručno odabrani datum i drugi prikazi ostaju sačuvani; oznaka i red Danas uvijek se ažuriraju.
 
 Svaki unos ima vlastitu vremensku zonu s istog spiska kao u Postavkama. Zadana je trenutna zona Windowsa.
 Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni sat

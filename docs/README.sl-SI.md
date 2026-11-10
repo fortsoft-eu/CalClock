@@ -44,7 +44,7 @@ Razporedi v mrežo ohrani približno ročno razporeditev, pripne središča na n
 
 Plošče koledarja z uro lahko nad spodnjo povezavo prikazujejo obvestila sistema Windows o datumu in času. Možnost **Obvestila o datumu in času** na zavihku **Splošno** je privzeto vklopljena in se shrani za vsako ploščo posebej. Če je ustreznih obvestil več, so prikazana drugo pod drugim kot v sistemu Windows. Če je možnost izklopljena ali ni ustreznih obvestil, plošča ohrani prvotno velikost in razporeditev, brez rezerviranega praznega prostora.
 
-V samostojnem koledarju možnost Vrstica Danes na zavihku Videz ali v meniju pokaže ali skrije spodnjo vrstico. Pojdi na današnji datum izbere danes in vrne mesečni pogled. Ob spremembi datuma po času gradnika se današnji datum izbere samodejno, trenutni pogled koledarja pa se ohrani.
+V samostojnem koledarju možnost Vrstica Danes na zavihku Videz ali v meniju pokaže ali skrije spodnjo vrstico. Pojdi na današnji datum izbere danes in vrne mesečni pogled. Ko se datum spremeni po času gradnika, koledar preide na nov dan samo, če je današnji datum izbran in viden v mesečnem pogledu. Ročno izbrani datum in drugi pogledi se ohranijo; oznaka in vrstica Danes se vedno posodobita.
 
 ## Videz in shranjevanje
 
@@ -66,6 +66,8 @@ ponavljajoče se števke ter mesečne in letne obletnice od izbranega začetka. 
 dodajanje, urejanje, razvrščanje in brisanje datumov in časov z opisom. Datumi in časi se shranijo ločeno v
 `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz nastavitev vključuje te vnose. Uvoz ohrani obstoječe vnose in
 preskoči samo vnose z istim trenutkom UTC in povsem enakim celotnim opisom, ne glede na časovni pas prikaza.
+
+Koledar sledi današnjemu datumu ob prehodu čez polnoč v časovnem pasu začetnega časa, ko je današnji datum izbran in viden v mesečnem pogledu. Ročno izbrani datum in drugi pogledi se ohranijo; oznaka in vrstica Danes se vedno posodobita.
 
 Vsak vnos ima svoj časovni pas z istega seznama kot v Nastavitvah. Privzet je trenutni časovni pas Windows.
 Shranita se enoličen trenutek UTC in pas prikaza. Sprememba pasu ohrani trenutek. Pri ponovljeni uri izberite

@@ -68,7 +68,7 @@ Paneler med kalender och klocka kan visa Windows-meddelanden om datum och tid ov
 
 ## Utseende
 
-För fristående kalendrar styr **Raden I dag** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid väljer kalendern idag automatiskt och behåller sin aktuella vy.
+För fristående kalendrar styr **Raden I dag** i menyn eller på Utseende den nedersta raden. Den är markerad som standard; avmarkera för att dölja raden och minska kalendern. Valet sparas separat per widget. **Gå till i dag** finns kvar i menyn och återgår till månadsvyn. När datumet ändras enligt widgetens tid går kalendern vidare till den nya dagen endast om idag är valt och synligt i månadsvyn. Ett manuellt valt datum eller en annan vy bevaras; markeringen och raden I dag uppdateras alltid.
 
 Utseendeändringar förhandsvisas direkt på den valda widgeten. `Standardutseende` återställer standardvärdena för den widgettypen. När Inställningar stängs med ändringar som inte har verkställts får du frågan om de ska sparas. Varningen är aktiverad som standard och kan stängas av på fliken Program.
 
@@ -98,6 +98,8 @@ redigera, sortera och ta bort datum och tider med beskrivningar. Datum och tider
 `%APPDATA%\FortSoft\CalClock\times.xml`. Export av inställningar inkluderar dessa poster. Import bevarar
 befintliga poster och hoppar bara över poster med samma UTC-tidpunkt och identisk fullständig beskrivning,
 oavsett visningens tidszon.
+
+Kalendern följer dagens datum över midnatt i starttidens tidszon när idag är valt och synligt i månadsvyn. Ett manuellt valt datum eller en annan vy bevaras; markeringen och raden I dag uppdateras alltid.
 
 Varje inmatning har en egen tidszon från samma lista som i Inställningar. Aktuell Windows-tidszon är standard.
 En entydig UTC-tidpunkt och visningszonen sparas. Byte av zon bevarar tidpunkten. Välj UTC-förskjutning vid en

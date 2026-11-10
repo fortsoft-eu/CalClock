@@ -68,7 +68,7 @@ I pannelli con calendario e orologio possono mostrare gli avvisi di data e ora d
 
 ## Aspetto
 
-Nei calendari autonomi, **Riga Oggi** nel menu o nella scheda Aspetto controlla la visibilità della riga inferiore. È selezionata per impostazione predefinita; deselezionandola si nasconde la riga e il calendario si riduce. La scelta viene salvata per widget. **Vai a oggi** resta disponibile e torna alla vista mensile. Al cambio di data secondo l’ora del widget, il calendario seleziona automaticamente oggi mantenendo la vista attuale.
+Nei calendari autonomi, **Riga Oggi** nel menu o nella scheda Aspetto controlla la visibilità della riga inferiore. È selezionata per impostazione predefinita; deselezionandola si nasconde la riga e il calendario si riduce. La scelta viene salvata per widget. **Vai a oggi** resta disponibile e torna alla vista mensile. Quando cambia la data secondo l’ora del widget, il calendario passa al nuovo giorno solo se oggi è selezionato e visibile nella vista mensile. La data scelta manualmente e le altre viste vengono conservate; l’indicatore e la riga Oggi vengono sempre aggiornati.
 
 Le modifiche all’aspetto sono mostrate subito nell’anteprima del widget selezionato. `Aspetto predefinito` ripristina i valori predefiniti di quel tipo di widget. Chiudendo le impostazioni con modifiche non applicate, viene chiesto se salvarle. Questo avviso è attivo per impostazione predefinita e può essere disattivato nella scheda Applicazione.
 
@@ -99,6 +99,8 @@ aggiungere, modificare, ordinare ed eliminare date e ore con una descrizione. Le
 separatamente in `%APPDATA%\FortSoft\CalClock\times.xml`. Le esportazioni delle impostazioni includono queste
 voci. L’importazione conserva le voci esistenti e ignora solo quelle con lo stesso istante UTC e la stessa
 descrizione completa, indipendentemente dal fuso di visualizzazione.
+
+Il calendario segue il giorno corrente al passaggio della mezzanotte nel fuso orario iniziale, se oggi è selezionato e visibile nella vista mensile. La data scelta manualmente e le altre viste vengono conservate; l’indicatore e la riga Oggi vengono sempre aggiornati.
 
 Ogni dato ha un proprio fuso orario, scelto dallo stesso elenco delle impostazioni. Il valore predefinito è il
 fuso attuale di Windows. Si salvano un istante UTC univoco e il relativo fuso di visualizzazione. Cambiare

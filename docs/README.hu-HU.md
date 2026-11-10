@@ -49,7 +49,7 @@ A Rácsba rendezés megőrzi a hozzávetőleges kézi elrendezést, a középpon
 
 A naptárt és órát tartalmazó panelek az alsó hivatkozás fölött jeleníthetik meg a Windows dátum- és időértesítéseit. Az **Általános** lap **Dátum- és időértesítések** beállítása alapértelmezés szerint be van kapcsolva, és panelenként külön mentődik. Ha több értesítés is aktuális, azok a Windowshoz hasonlóan egymás alatt jelennek meg. Kikapcsolt beállítás esetén, illetve ha nincs aktuális értesítés, a panel eredeti mérete és elrendezése változatlan marad, üres hely lefoglalása nélkül.
 
-Önálló naptárban a Mai dátum sora a Megjelenés fülön vagy menüben az alsó sort kapcsolja. Az Ugrás a mai napra kiválasztja a mai dátumot és visszaállítja a havi nézetet. A minialkalmazás szerinti dátumváltáskor a mai nap automatikusan kijelölődik az aktuális nézet megtartásával.
+Önálló naptárban a Mai dátum sora a Megjelenés fülön vagy menüben az alsó sort kapcsolja. Az Ugrás a mai napra kiválasztja a mai dátumot és visszaállítja a havi nézetet. Amikor a minialkalmazás ideje szerint dátumváltás történik, a naptár csak akkor lép az új napra, ha a mai nap ki van jelölve és látható a havi nézetben. A kézzel kiválasztott dátum és a többi nézet megmarad; a mai nap jelölése és sora mindig frissül.
 
 ## Megjelenés és tárolás
 
@@ -76,6 +76,8 @@ törölhetők. A A dátumok és időpontok külön, a `%APPDATA%\FortSoft\CalClo
 beállítások exportálása ezeket a bejegyzéseket is tartalmazza. Az importálás megőrzi a meglévő bejegyzéseket,
 és csak az azonos UTC-időpontú és megegyező teljes leírású bejegyzéseket hagyja ki, a megjelenítési időzónától
 függetlenül.
+
+A naptár a kezdő időpont időzónája szerinti éjfélkor követi az új napot, ha a mai nap ki van jelölve és látható a havi nézetben. A kézzel kiválasztott dátum és a többi nézet megmarad; a mai nap jelölése és sora mindig frissül.
 
 Minden bemenet saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális időzónája.
 Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása megőrzi az időpontot.

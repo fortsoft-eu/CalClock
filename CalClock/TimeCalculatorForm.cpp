@@ -525,6 +525,7 @@ bool TimeCalculatorForm::MergePresets(const std::vector<TimeCalculatorPreset>& i
 /// Replaces imported window settings while retaining the native window and independent user data.
 void TimeCalculatorForm::Load(const TimeCalculatorState& saved) {
     state = saved;
+    lastCalendarDateKey = -1;
     presetsRevision++;
     editing = -1;
     if (window != nullptr) {
@@ -727,6 +728,7 @@ void TimeCalculatorForm::CreatePreparedWindow() {
     int part = opening->part++;
     if (part == 0) {
         initializing = true;
+        lastCalendarDateKey = -1;
         InitializeDates();
         controls.clear();
         dialogUnits = SIZE{};
@@ -1502,6 +1504,33 @@ void TimeCalculatorForm::UpdateNow() {
     UpdateResults();
 }
 
+/// Updates Today in the starting zone and advances the selection and results only while following Today.
+void TimeCalculatorForm::UpdateCalendarDate() {
+    const DYNAMIC_TIME_ZONE_INFORMATION* zone = CalculatorZone(state.startZone);
+    SYSTEMTIME now = {};
+    SYSTEMTIME today = {};
+    GetSystemTime(&now);
+    if (zone == nullptr || !ConvertUtcToTimeZone(*zone, now, &today)) {
+        return;
+    }
+    int dateKey = today.wYear * 10000 + today.wMonth * 100 + today.wDay;
+    if (lastCalendarDateKey == dateKey) {
+        return;
+    }
+    HWND calendar = GetDlgItem(pages[1], ID_CALC_CALENDAR);
+    bool followingToday = IsCalendarFollowingToday(calendar, lastCalendarDateKey);
+    today.wHour = 0;
+    today.wMinute = 0;
+    today.wSecond = 0;
+    today.wMilliseconds = 0;
+    MonthCal_SetToday(calendar, &today);
+    lastCalendarDateKey = dateKey;
+    if (followingToday && MonthCal_SetCurSel(calendar, &today)) {
+        state.day = today;
+        UpdateResults();
+    }
+}
+
 /// Queues results without running calendar or time-zone calculations on the dialog thread.
 void TimeCalculatorForm::UpdateResults() {
     RequestCalculation();
@@ -1737,6 +1766,7 @@ void TimeCalculatorForm::UpdateHighlights() {
         MonthCal_SetCurSel(calendar, &state.day);
     }
     updating = previousUpdate;
+    UpdateCalendarDate();
     UpdateResults();
     SYSTEMTIME range[2] = {};
     int count = MonthCal_GetMonthRange(calendar, GMR_DAYSTATE, range);
@@ -2358,6 +2388,7 @@ INT_PTR TimeCalculatorForm::HandleMessage(HWND dialog, UINT message, WPARAM wPar
         return TRUE;
     }
     if (message == WM_TIMER && wParam == CALCULATOR_TIMER) {
+        UpdateCalendarDate();
         if (state.fromNow || state.toNow) {
             SYSTEMTIME now = {};
             GetSystemTime(&now);

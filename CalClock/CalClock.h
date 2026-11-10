@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.1
  */
 
 #pragma once
@@ -745,6 +745,9 @@ void UpdateDialogTabMetrics(HWND tabs);
 
 /// Scrolls overflowing tab headers under the pointer without changing selection or focus.
 bool ScrollDialogTabHeaders(HWND window, HWND tabs, WPARAM wParam, LPARAM lParam);
+
+/// Reports whether month view selects the supplied YYYYMMDD date within the fully displayed month range.
+bool IsCalendarFollowingToday(HWND calendar, int todayDateKey);
 
 /// Draws a wrapped label over its parent background using the selected font and native text colors.
 INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item, LONG referenceHeight = 0);

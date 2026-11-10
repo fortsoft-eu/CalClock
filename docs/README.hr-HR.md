@@ -48,7 +48,7 @@ Rasporedi u mrežu čuva približan ručni raspored, priljubljuje središta widg
 
 Ploče kalendara sa satom mogu iznad donje poveznice prikazivati obavijesti sustava Windows o datumu i vremenu. Mogućnost **Obavijesti o datumu i vremenu** na kartici **Općenito** uključena je prema zadanim postavkama i sprema se zasebno za svaku ploču. Ako je primjenjivo više obavijesti, prikazuju se jedna ispod druge kao u sustavu Windows. Kada je mogućnost isključena ili nema primjenjivih obavijesti, ploča zadržava izvornu veličinu i raspored, bez rezerviranja praznog prostora.
 
-Za samostalni kalendar prikažite ili sakrijte Redak Danas na kartici Izgled ili u izborniku widgeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu widgeta, današnji se datum odabire automatski uz očuvanje trenutačnog prikaza kalendara.
+Za samostalni kalendar prikažite ili sakrijte Redak Danas na kartici Izgled ili u izborniku widgeta. Idi na današnji datum odabire danas i vraća mjesečni prikaz. Kada se datum promijeni prema vremenu widgeta, kalendar prelazi na novi dan samo ako je današnji datum odabran i vidljiv u mjesečnom prikazu. Ručno odabrani datum i drugi prikazi ostaju očuvani; oznaka i redak Danas uvijek se ažuriraju.
 
 ## Izgled i spremanje postavki
 
@@ -71,6 +71,8 @@ i vremena omogućuje dodavanje, uređivanje, sortiranje i brisanje datuma i vrem
 spremaju se zasebno u `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz postavki uključuje te stavke. Uvoz
 zadržava postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim cijelim opisom, bez
 obzira na vremensku zonu prikaza.
+
+Kalendar prati današnji datum pri prelasku preko ponoći u vremenskoj zoni početka, ako je današnji datum odabran i vidljiv u mjesečnom prikazu. Ručno odabrani datum i drugi prikazi ostaju očuvani; oznaka i redak Danas uvijek se ažuriraju.
 
 Svaki unos ima vlastitu vremensku zonu s istog popisa kao u Postavkama. Zadana je trenutačna zona Windowsa.
 Spremaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni sat

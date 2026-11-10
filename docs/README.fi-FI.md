@@ -68,7 +68,7 @@ Kalenterin ja kellon sisältävät paneelit voivat näyttää Windowsin päiväm
 
 ## Ulkoasu
 
-Erillisissä kalentereissa **Tänään-rivi** pikavalikossa tai Ulkoasu-välilehdellä säätää alarivin näkyvyyttä. Se on oletuksena valittuna; valinnan poistaminen piilottaa rivin ja pienentää kalenteria. Valinta tallennetaan pienoisohjelmakohtaisesti. **Siirry tähän päivään** pysyy käytettävissä ja palauttaa kuukausinäkymän. Päivämäärän vaihtuessa pienoisohjelman ajan mukaan kalenteri valitsee tämän päivän automaattisesti ja säilyttää nykyisen näkymän.
+Erillisissä kalentereissa **Tänään-rivi** pikavalikossa tai Ulkoasu-välilehdellä säätää alarivin näkyvyyttä. Se on oletuksena valittuna; valinnan poistaminen piilottaa rivin ja pienentää kalenteria. Valinta tallennetaan pienoisohjelmakohtaisesti. **Siirry tähän päivään** pysyy käytettävissä ja palauttaa kuukausinäkymän. Päivämäärän vaihtuessa pienoisohjelman ajan mukaan kalenteri siirtyy uuteen päivään vain, jos tämä päivä on valittuna ja näkyvissä kuukausinäkymässä. Käsin valittu päivämäärä ja muut näkymät säilyvät; Tänään-merkintä ja -rivi päivittyvät aina.
 
 Ulkoasumuutokset näkyvät heti valitun pienoisohjelman esikatselussa. `Oletusulkoasu` palauttaa kyseisen pienoisohjelmatyypin oletusasetukset. Kun asetukset suljetaan ja muutoksia on ottamatta käyttöön, ohjelma kysyy niiden tallentamisesta. Varoitus on oletusarvoisesti käytössä, ja sen voi poistaa käytöstä Sovellus-välilehdellä.
 
@@ -98,6 +98,8 @@ tasaluvut, toistuvat numerot sekä kuukausi- ja vuosipäivät valitusta alusta. 
 kuvauksineen. Päivämäärät ja ajat tallennetaan erikseen tiedostoon `%APPDATA%\FortSoft\CalClock\times.xml`.
 Asetusten vienti sisältää nämä merkinnät. Tuonti säilyttää nykyiset merkinnät ja ohittaa vain merkinnät,
 joiden UTC-ajanhetki ja koko kuvaus ovat täsmälleen samat näyttöaikavyöhykkeestä riippumatta.
+
+Kalenteri seuraa tätä päivää aloitusajan aikavyöhykkeen keskiyön yli, kun tämä päivä on valittuna ja näkyvissä kuukausinäkymässä. Käsin valittu päivämäärä ja muut näkymät säilyvät; Tänään-merkintä ja -rivi päivittyvät aina.
 
 Jokaisella syötteellä on oma aikavyöhyke samasta luettelosta kuin asetuksissa. Oletuksena on Windowsin
 nykyinen aikavyöhyke. Tallennetaan yksiselitteinen UTC-ajanhetki ja näyttövyöhyke. Vyöhykkeen vaihtaminen

@@ -48,7 +48,7 @@ Išdėstyti tinkleliu išlaiko apytikslį rankinį išdėstymą, prikabina centr
 
 Kalendoriaus ir laikrodžio skydeliai virš apatinės nuorodos gali rodyti „Windows“ datos ir laiko pranešimus. Skirtuko **Bendra** parinktis **Datos ir laiko pranešimai** įjungta pagal numatytąsias nuostatas ir išsaugoma atskirai kiekvienam skydeliui. Kai aktualūs keli pranešimai, jie rodomi vienas po kito vertikaliai, kaip „Windows“. Jei parinktis išjungta arba aktualių pranešimų nėra, išlaikomas pradinis skydelio dydis ir išdėstymas, nepaliekant rezervuotos tuščios vietos.
 
-Atskiro kalendoriaus Šiandienos eilutė skirtuke Išvaizda arba meniu rodo ar slepia apatinę eilutę. Pereiti į šiandieną pasirenka šiandienos datą ir atkuria mėnesio rodinį. Pasikeitus datai pagal valdiklio laiką šiandiena pasirenkama automatiškai išlaikant dabartinį rodinį.
+Atskiro kalendoriaus Šiandienos eilutė skirtuke Išvaizda arba meniu rodo ar slepia apatinę eilutę. Pereiti į šiandieną pasirenka šiandienos datą ir atkuria mėnesio rodinį. Pasikeitus datai pagal valdiklio laiką, kalendorius pereina į naują dieną tik tada, kai šiandiena pasirinkta ir matoma mėnesio rodinyje. Rankiniu būdu pasirinkta data ir kiti rodiniai išsaugomi; šiandienos žyma ir eilutė visada atnaujinamos.
 
 ## Išvaizda ir saugojimas
 
@@ -74,6 +74,8 @@ datos ir laikai leidžia pridėti, redaguoti, rikiuoti ir naikinti datas bei lai
 saugomi atskirai faile `%APPDATA%\FortSoft\CalClock\times.xml`. Parametrų eksportas įtraukia šiuos įrašus.
 Importas išsaugo esamus įrašus ir praleidžia tik įrašus, kurių UTC laiko momentas ir visas aprašas yra
 visiškai vienodi, nepriklausomai nuo rodymo laiko juostos.
+
+Kalendorius seka šiandieną per vidurnaktį pradžios laiko juostoje, kai šiandiena pasirinkta ir matoma mėnesio rodinyje. Rankiniu būdu pasirinkta data ir kiti rodiniai išsaugomi; šiandienos žyma ir eilutė visada atnaujinamos.
 
 Kiekvienas įvesties laikas turi savo laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra
 dabartinė Windows laiko juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas

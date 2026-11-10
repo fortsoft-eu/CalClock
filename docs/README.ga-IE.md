@@ -48,7 +48,7 @@ Coinníonn Eagraigh in eangach an leagan amach láimhe gar dá bhunleagan, léim
 
 Is féidir le painéil féilire agus cloig fógraí dáta agus ama Windows a thaispeáint os cionn an naisc íochtair. Tá an rogha **Fógraí dáta agus ama** ar an gcluaisín **Ginearálta** cumasaithe de réir réamhshocraithe agus sábháiltear í ar leithligh do gach painéal. Nuair atá roinnt fógraí infheidhme, taispeántar iad ceann faoin gceann eile mar a dhéantar in Windows. Má tá an rogha múchta nó mura bhfuil aon fhógra infheidhme ann, coinníonn an painéal a mhéid agus a leagan amach bunaidh gan spás folamh a chur in áirithe.
 
-I bhféilire neamhspleách, taispeánann nó folaíonn Sraith an lae inniu ar an gcluaisín Cuma nó sa roghchlár an tsraith íochtarach. Roghnaíonn Téigh go dtí an lá inniu an dáta reatha agus filleann sé ar amharc na míosa. Nuair a athraíonn an dáta de réir am na giuirléide, roghnaítear an lá inniu go huathoibríoch agus coinnítear an t-amharc reatha.
+I bhféilire neamhspleách, taispeánann nó folaíonn Sraith an lae inniu ar an gcluaisín Cuma nó sa roghchlár an tsraith íochtarach. Roghnaíonn Téigh go dtí an lá inniu an dáta reatha agus filleann sé ar amharc na míosa. Nuair a athraíonn an dáta de réir am na giuirléide, ní théann an féilire ar aghaidh go dtí an lá nua ach amháin má tá an lá inniu roghnaithe agus le feiceáil san amharc míosa. Coinnítear dáta a roghnaítear de láimh nó amharc eile; nuashonraítear an marcóir agus an ró Inniu i gcónaí.
 
 ## Cuma agus stóras
 
@@ -75,6 +75,8 @@ scriosadh. Úsáideann Sábháiltear dátaí agus amanna ar leithligh in `%APPDA
 Cuirtear na hiontrálacha seo san áireamh in easpórtáil socruithe. Coinníonn iompórtáil na hiontrálacha atá ann
 agus ní scipeálann sí ach iontrálacha a bhfuil an meandar UTC céanna agus an cur síos iomlán céanna acu, beag
 beann ar an gcrios ama taispeána.
+
+Leanann an féilire an lá inniu thar mheán oíche i gcrios ama an tosaithe nuair atá an lá inniu roghnaithe agus le feiceáil san amharc míosa. Coinnítear dáta a roghnaítear de láimh nó amharc eile; nuashonraítear an marcóir agus an ró Inniu i gcónaí.
 
 Tá crios ama dá chuid féin ag gach ionchur, ón liosta céanna agus atá sna Socruithe. Is é crios ama reatha
 Windows an réamhshocrú. Sábháiltear meandar soiléir UTC agus a chrios taispeána. Caomhnaítear an meandar nuair
