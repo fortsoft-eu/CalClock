@@ -68,7 +68,7 @@ Panele kalendarza z zegarem mogą wyświetlać powiadomienia systemu Windows o d
 
 ## Wygląd
 
-Dla samodzielnych kalendarzy **Wiersz Dzisiaj** w menu lub na karcie Wygląd kontroluje dolny wiersz. Domyślnie jest zaznaczony; odznaczenie ukrywa wiersz i zmniejsza kalendarz. Wybór zapisuje się dla każdego widżetu osobno. **Przejdź do dnia dzisiejszego** pozostaje dostępne i wraca do widoku miesiąca. Gdy data zmienia się według czasu widżetu, kalendarz przechodzi na nowy dzień tylko wtedy, gdy dzisiejszy dzień jest wybrany i widoczny w widoku miesiąca. Ręcznie wybrana data i inny widok pozostają zachowane; oznaczenie i wiersz Dzisiaj są zawsze aktualizowane.
+Dla samodzielnych kalendarzy **Wiersz Dzisiaj** w menu lub na karcie Wygląd kontroluje dolny wiersz. Domyślnie jest zaznaczony; odznaczenie ukrywa wiersz i zmniejsza kalendarz. Wybór zapisuje się dla każdego widżetu osobno. **Przejdź do dnia dzisiejszego** pozostaje dostępne i wraca do widoku miesiąca. Gdy data zmienia się zgodnie z czasem widżetu, wybór zgodny z Dzisiaj przesuwa się na nowy dzień. Inne wybrane daty pozostają stałe; zaczynają śledzić Dzisiaj tylko wtedy, gdy przy otwartym kalendarzu pokrywają się z dzisiejszą datą. Widok kalendarza zostaje zachowany, a znacznik i wiersz Dzisiaj są zawsze aktualizowane.
 
 Zmiany wyglądu są od razu widoczne w podglądzie wybranego widżetu. `Wygląd domyślny` przywraca domyślne wartości dla tego typu widżetu. Przy zamykaniu ustawień z niezastosowanymi zmianami pojawia się pytanie o ich zapisanie. Ostrzeżenie jest domyślnie włączone i można je wyłączyć na karcie Aplikacja.
 
@@ -98,7 +98,7 @@ osobno w `%APPDATA%\FortSoft\CalClock\times.xml`. Eksport ustawień uwzględnia 
 istniejące wpisy i pomija tylko te z tą samą chwilą UTC i identycznym pełnym opisem, niezależnie od strefy
 wyświetlania.
 
-Kalendarz śledzi bieżący dzień przy przejściu przez północ w strefie czasowej początku, gdy dzisiejszy dzień jest wybrany i widoczny w widoku miesiąca. Ręcznie wybrana data i inny widok pozostają zachowane; oznaczenie i wiersz Dzisiaj są zawsze aktualizowane.
+Wybór zgodny z Dzisiaj śledzi bieżącą datę w początkowej strefie czasowej, także po ponownym otwarciu kalkulatora lub uruchomieniu aplikacji. Inne wybrane daty pozostają stałe; zaczynają śledzić Dzisiaj tylko wtedy, gdy przy otwartym kalendarzu pokrywają się z dzisiejszą datą. Widok kalendarza zostaje zachowany, a znacznik i wiersz Dzisiaj są zawsze aktualizowane.
 
 Każde pole ma własną strefę czasową z tej samej listy co w Ustawieniach. Domyślna jest bieżąca strefa Windows.
 Zapisywane są jednoznaczna chwila w UTC i strefa wyświetlania. Zmiana strefy zachowuje chwilę. Dla powtórzonej

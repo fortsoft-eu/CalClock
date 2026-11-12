@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.1
+ * Last modified for version 1.7.2.2
  */
 
 #define NOMINMAX
@@ -1742,7 +1742,7 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.helpWindowState = helpWindowState.Save();
     snapshot.aboutWindowState = aboutWindowState.Save();
     snapshot.calculatorWindowState = calculatorWindowState.Save();
-    snapshot.calculator = calculatorForm.GetState();
+    snapshot.calculator = calculatorForm.Save();
     for (size_t index = 0; index < widgets.size(); index++) {
         snapshot.widgets.push_back(widgets[index]->config);
     }
@@ -16920,26 +16920,14 @@ static void SelectCalendarToday(Widget* widget, bool preserveView) {
     }
 }
 
-/// Reports whether month view selects the supplied YYYYMMDD date within the fully displayed month range.
+/// Reports whether the selected date matches the supplied YYYYMMDD Today, regardless of calendar view.
 bool IsCalendarFollowingToday(HWND calendar, int todayDateKey) {
-    if (MonthCal_GetCurrentView(calendar) != MCMV_MONTH) {
-        return false;
-    }
     SYSTEMTIME selected = {};
     if (!MonthCal_GetCurSel(calendar, &selected)) {
         return false;
     }
     int selectedDateKey = selected.wYear * 10000 + selected.wMonth * 100 + selected.wDay;
-    if (selectedDateKey != todayDateKey) {
-        return false;
-    }
-    SYSTEMTIME range[2] = {};
-    if (MonthCal_GetMonthRange(calendar, GMR_VISIBLE, range) == 0) {
-        return false;
-    }
-    int firstDateKey = range[0].wYear * 10000 + range[0].wMonth * 100 + range[0].wDay;
-    int lastDateKey = range[1].wYear * 10000 + range[1].wMonth * 100 + range[1].wDay;
-    return firstDateKey <= todayDateKey && todayDateKey <= lastDateKey;
+    return selectedDateKey == todayDateKey;
 }
 
 /// Updates the current-day marker and advances only a calendar that was following today.

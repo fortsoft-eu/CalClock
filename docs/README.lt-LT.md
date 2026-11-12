@@ -22,7 +22,7 @@ Laikrodžiai ir skydeliai palaiko žadintuvą. Programa pati leidžia garso fail
 
 ## Laiko įvedimas ir žadintuvo veiksmai
 
-Žadintuvo laikas priima HH:mm su dvitaškiu, tašku, tarpu ar kitu skirtuku arba be skirtuko. Vienas ar du skaitmenys reiškia valandas, trys ar keturi – valandas ir minutes: 7, 12, 730, 0730 arba 7:30. Išėjus iš lauko nustatomas HH:mm formatas. Poslinkis skaitomas iš dešinės nuo sekundžių: 2 reiškia 00:00:02.00, 230 ir 0230 – 00:02:30.00, 12345 – 01:23:45.00. Su skirtukais dvi grupės reiškia minutes ir sekundes, trys – valandas, minutes ir sekundes, ketvirta – šimtąsias sekundės dalis; leidžiamas ženklas. Dienos po Žadintuvas įjungtas nustato suveikimo dienas; iš pradžių pasirinktos visos. Jų tvarka priklauso nuo programos kalbos, tačiau pakeitus kalbą įrašytos dienos nesikeičia.
+Žadintuvo laikas priima HH:mm su dvitaškiu, tašku, tarpu ar kitu skirtuku arba be skirtuko. Vienas ar du skaitmenys reiškia valandas, trys ar keturi – valandas ir minutes: 7, 12, 730, 0730 arba 7:30. Išėjus iš lauko nustatomas HH:mm formatas. Poslinkis skaitomas iš dešinės nuo sekundžių: 2 reiškia 00:00:02.00, 230 ir 0230 – 00:02:30.00, 12345 – 01:23:45.00. Su skirtukais dvi grupės reiškia minutes ir sekundes, trys – valandas, minutes ir sekundes, ketvirta – šimtąsias sekundės dalis; leidžiamas ženklas. Kai data pasikeičia pagal valdiklio laiką, pasirinkimas, sutampantis su Šiandien, perkeliamas į naują dieną. Kitos pasirinktos datos lieka fiksuotos; jos pradeda sekti šiandieną tik tada, kai atidarytame kalendoriuje sutampa su šiandienos data. Kalendoriaus rodinys išsaugomas, o Šiandien žymeklis ir eilutė visada atnaujinami.
 
 Žadintuvas parodo paslėptą valdiklį ir iškelia jį į priekį nekeisdamas Visada viršuje visam laikui. Leisti laiko signalą pradeda pirmą trumpą toną likus penkioms sekundėms iki žadintuvo. Ši nuostata nepriklauso nuo skirtuko Signalas; vienalaikės sekos sujungiamos. Tikrinti įjungia ciferblato arba rėmelio mirksėjimą ir tikrina failą, komandą, garsą ir nuotolinio scenarijaus HTTP/HTTPS adresą. Tikrinti galima, kai pasirinkta Žadintuvas įjungtas ir Vykdyti failą arba komandą, o failo arba komandos laukas nėra tuščias. Tikrinimas neatkuria žadintuvo laiko signalo. Stabdyti tikrinimą sustabdo vidinį garsą ir vaizdinę peržiūrą. Sustabdžius žadintuvą sustabdomas jo vidinis garsas. Nutildžius atkūrimas tęsiasi tyliai ir vėl girdimas įjungus garsą. Komandos ir nuotoliniai scenarijai nestabdomi.
 
@@ -75,7 +75,7 @@ saugomi atskirai faile `%APPDATA%\FortSoft\CalClock\times.xml`. Parametrų ekspo
 Importas išsaugo esamus įrašus ir praleidžia tik įrašus, kurių UTC laiko momentas ir visas aprašas yra
 visiškai vienodi, nepriklausomai nuo rodymo laiko juostos.
 
-Kalendorius seka šiandieną per vidurnaktį pradžios laiko juostoje, kai šiandiena pasirinkta ir matoma mėnesio rodinyje. Rankiniu būdu pasirinkta data ir kiti rodiniai išsaugomi; šiandienos žyma ir eilutė visada atnaujinamos.
+Pasirinkimas, sutampantis su Šiandien, seka dabartinę datą pradžios laiko juostoje ir iš naujo atidarius skaičiuoklę ar paleidus programą. Kitos pasirinktos datos lieka fiksuotos; jos pradeda sekti šiandieną tik tada, kai atidarytame kalendoriuje sutampa su šiandienos data. Kalendoriaus rodinys išsaugomas, o Šiandien žymeklis ir eilutė visada atnaujinami.
 
 Kiekvienas įvesties laikas turi savo laiko juostą iš to paties sąrašo kaip nuostatose. Numatytoji yra
 dabartinė Windows laiko juosta. Įrašomas vienareikšmis UTC momentas ir rodymo juosta. Pakeitus juostą momentas

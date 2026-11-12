@@ -68,7 +68,7 @@ Os painéis de calendário e relógio podem apresentar os avisos de data e hora 
 
 ## Aspeto
 
-Nos calendários independentes, **Linha Hoje**, no menu ou em Aspeto, controla a linha inferior. Está selecionada por predefinição; desmarcá-la oculta a linha e reduz o calendário. A escolha é guardada por widget. **Ir para hoje** continua disponível no menu e regressa à vista mensal. Quando a data muda segundo a hora do widget, o calendário avança para o novo dia apenas se hoje estiver selecionado e visível na vista mensal. Uma data selecionada manualmente ou outra vista é preservada; o marcador e a linha Hoje são sempre atualizados.
+Nos calendários independentes, **Linha Hoje**, no menu ou em Aspeto, controla a linha inferior. Está selecionada por predefinição; desmarcá-la oculta a linha e reduz o calendário. A escolha é guardada por widget. **Ir para hoje** continua disponível no menu e regressa à vista mensal. Quando a data muda de acordo com a hora do widget, uma seleção correspondente a Hoje avança para o novo dia. As outras datas selecionadas permanecem fixas; só começam a acompanhar Hoje se coincidirem com a data de hoje enquanto o calendário estiver aberto. A vista do calendário é preservada e o indicador e a linha Hoje são sempre atualizados.
 
 As alterações de aspeto são imediatamente pré-visualizadas no widget selecionado. `Aspeto predefinido` repõe os valores predefinidos desse tipo de widget. Ao fechar as definições com alterações não aplicadas, é perguntado se pretende guardá-las. Este aviso está ativado por predefinição e pode ser desativado no separador Aplicação.
 
@@ -99,7 +99,7 @@ descrição. As datas e horas são guardadas separadamente em `%APPDATA%\FortSof
 exportação das definições inclui estas entradas. A importação mantém as entradas existentes e ignora apenas as
 que têm o mesmo instante UTC e uma descrição completa idêntica, independentemente do fuso de apresentação.
 
-O calendário acompanha o dia atual à passagem da meia-noite no fuso horário do início, enquanto hoje estiver selecionado e visível na vista mensal. Uma data selecionada manualmente ou outra vista é preservada; o marcador e a linha Hoje são sempre atualizados.
+Uma seleção correspondente a Hoje acompanha a data atual no fuso horário inicial, mesmo após reabrir a calculadora ou reiniciar a aplicação. As outras datas selecionadas permanecem fixas; só começam a acompanhar Hoje se coincidirem com a data de hoje enquanto o calendário estiver aberto. A vista do calendário é preservada e o indicador e a linha Hoje são sempre atualizados.
 
 Cada entrada tem o seu fuso horário da mesma lista das definições. O predefinido é o fuso atual do Windows.
 São guardados um instante UTC inequívoco e o fuso de apresentação. Alterar o fuso preserva o instante. Para

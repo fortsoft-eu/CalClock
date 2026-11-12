@@ -68,7 +68,7 @@ Kalendáre s hodinami môžu nad dolným odkazom zobrazovať oznámenia dátumu 
 
 ## Vzhľad
 
-Pri samostatných kalendároch voľba **Riadok Dnes** v ponuke alebo na karte Vzhľad ovláda spodný riadok. Predvolene je zaškrtnutá; odškrtnutím sa riadok skryje a kalendár zmenší. Voľba sa ukladá samostatne. **Prejsť na dnešný deň** zostáva dostupné a vracia mesačné zobrazenie. Pri zmene dátumu podľa času widgetu kalendár prejde na nový deň iba vtedy, keď je dnešok vybraný a viditeľný v mesačnom zobrazení. Ručne vybraný dátum aj iné zobrazenie zostanú zachované; značka a riadok Dnes sa aktualizujú vždy.
+Pri samostatných kalendároch voľba **Riadok Dnes** v ponuke alebo na karte Vzhľad ovláda spodný riadok. Predvolene je zaškrtnutá; odškrtnutím sa riadok skryje a kalendár zmenší. Voľba sa ukladá samostatne. **Prejsť na dnešný deň** zostáva dostupné a vracia mesačné zobrazenie. Pri zmene dátumu podľa času widgetu sa výber zhodný s Dnes posunie na nový deň. Iný vybraný dátum zostáva pevný; sledovanie dneška sa začne iba vtedy, keď sa pri otvorenom kalendári zhoduje s Dnes. Zobrazenie kalendára sa zachová a značka aj riadok Dnes sa aktualizujú vždy.
 
 Zmeny vzhľadu sa ihneď zobrazujú v náhľade vybraného widgetu. `Predvolený vzhľad` obnoví predvolené hodnoty daného typu widgetu. Pri zatváraní Nastavení s nepoužitými zmenami sa zobrazí otázka na uloženie. Upozornenie je predvolene zapnuté a možno ho vypnúť na karte Aplikácia.
 
@@ -97,7 +97,7 @@ pridávať, upravovať, triediť a odstraňovať údaje s popisom. Časové úda
 `%APPDATA%\FortSoft\CalClock\times.xml`. Export nastavení tieto údaje zahŕňa. Import zachová existujúce údaje
 a vynechá iba položky so zhodným okamihom v UTC aj celým popisom, bez ohľadu na pásmo zobrazenia.
 
-Kalendár sleduje dnešok pri prechode cez polnoc v pásme počiatku, ak je dnešok vybraný a viditeľný v mesačnom zobrazení. Ručne vybraný dátum aj iné zobrazenie zostanú zachované; značka a riadok Dnes sa aktualizujú vždy.
+Výber zhodný s Dnes sleduje aktuálny dátum v pásme začiatku aj po opätovnom otvorení kalkulátora alebo reštarte aplikácie. Iný vybraný dátum zostáva pevný; sledovanie dneška sa začne iba vtedy, keď sa pri otvorenom kalendári zhoduje s Dnes. Zobrazenie kalendára sa zachová a značka aj riadok Dnes sa aktualizujú vždy.
 
 Každý vstup má vlastné časové pásmo z rovnakého zoznamu ako v Nastaveniach. Predvolené je aktuálne pásmo
 Windows. Ukladá sa jednoznačný okamih v UTC a pásmo na zobrazenie. Zmena pásma zachová okamih. Pri opakovanej

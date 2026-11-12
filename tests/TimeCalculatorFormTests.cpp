@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.1
+ * Last modified for version 1.7.2.2
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -1617,8 +1617,8 @@ static void TestCalendarDayRollover() {
     SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
     WaitForCalculator();
     Require(MonthCal_GetCurrentView(calendar) == MCMV_YEAR, "midnight preserves the calculator year view");
-    Require(SameCalendarDay(calculatorForm.GetState().day, state.day),
-        "year browsing preserves the selected date");
+    Require(SameCalendarDay(calculatorForm.GetState().day, calculatorTestNow),
+        "a selected Today follows midnight independently of calendar view");
     MonthCal_SetCurrentView(calendar, MCMV_MONTH);
     state.startZone = L"UTC+02:00";
     state.day = CalculatorDate(2026, 2, 1);
@@ -1675,8 +1675,102 @@ static void TestCalendarDayRollover() {
         widget.lastCalendarDateKey = 20261231;
         UpdateCalendarDate(&widget);
         Require(MonthCal_GetCurrentView(calendar) == MCMV_YEAR, "both widget types preserve the year view");
+        MonthCal_GetCurSel(calendar, &selected);
+        Require(SameCalendarDay(selected, widgetToday), "both widget types follow Today in year view");
     }
     MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+    calculatorTestNow = originalNow;
+    LoadCalculator(original);
+}
+
+/// Verifies reopening and settings restoration distinguish a fixed date from following Today.
+static void TestCalendarReopening() {
+    TimeCalculatorState original = calculatorForm.GetState();
+    SYSTEMTIME originalNow = calculatorTestNow;
+    TimeCalculatorState state = original;
+    state.start = CalculatorDate(2020, 1, 1);
+    state.startZone = L"UTC+00:00";
+    state.day = CalculatorDate(2026, 12, 31);
+    state.tab = 1;
+    calculatorTestNow = CalculatorDate(2026, 12, 31, 23, 59);
+    LoadCalculator(state);
+    MonthCal_SetCurrentView(CalculatorControl(ID_CALC_CALENDAR), MCMV_MONTH);
+    TimeCalculatorState saved = CaptureSettingsSnapshot().calculator;
+    calculatorForm.Close();
+    calculatorTestNow = CalculatorDate(2027, 1, 2);
+    ShowCalculator();
+    SYSTEMTIME selected = {};
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, calculatorTestNow),
+        "reopening after multiple midnights resumes Today instead of yesterday's saved date");
+    calculatorForm.Close();
+    calculatorForm.Load(saved);
+    ShowCalculator();
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, calculatorTestNow),
+        "restoring application settings resumes Today after an application restart");
+    calculatorTestNow = CalculatorDate(2027, 1, 1, 12);
+    state.day = CalculatorDate(2027, 1, 3);
+    LoadCalculator(state);
+    saved = CaptureSettingsSnapshot().calculator;
+    calculatorForm.Close();
+    calculatorTestNow = CalculatorDate(2027, 1, 2);
+    ShowCalculator();
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, state.day), "tomorrow preserves the fixed day after tomorrow");
+    calculatorForm.Close();
+    calculatorTestNow = CalculatorDate(2027, 1, 4);
+    calculatorForm.Load(saved);
+    ShowCalculator();
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, state.day),
+        "a fixed date stays fixed when the calculator was not opened on that date");
+    calculatorForm.Close();
+    calculatorTestNow = CalculatorDate(2027, 1, 3, 12);
+    calculatorForm.Load(saved);
+    ShowCalculator();
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, calculatorTestNow), "opening on the fixed date starts following Today");
+    CalculatorPage(0);
+    calculatorForm.Close();
+    calculatorTestNow = CalculatorDate(2027, 1, 5);
+    ShowCalculator();
+    MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &selected);
+    Require(SameCalendarDay(selected, calculatorTestNow),
+        "Today following survives closing while another calculator tab is selected");
+    state.day = CalculatorDate(2027, 1, 31);
+    calculatorTestNow = CalculatorDate(2027, 1, 31, 23, 59);
+    LoadCalculator(state);
+    CalculatorPage(1);
+    HWND calendar = CalculatorControl(ID_CALC_CALENDAR);
+    calculatorTestNow = CalculatorDate(2027, 2, 1);
+    bool timerDelivered = false;
+    ULONGLONG deadline = GetTickCount64() + 3000;
+    while (GetTickCount64() < deadline) {
+        MSG message = {};
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
+            if (message.hwnd == calculatorForm.GetWindow()
+                    && message.message == WM_TIMER
+                    && message.wParam == CALCULATOR_TIMER) {
+                timerDelivered = true;
+            }
+            if (!calculatorForm.ProcessMessage(&message)) {
+                TranslateMessage(&message);
+                DispatchMessageW(&message);
+            }
+        }
+        MonthCal_GetCurSel(calendar, &selected);
+        if (SameCalendarDay(selected, calculatorTestNow)) {
+            break;
+        }
+        MsgWaitForMultipleObjectsEx(0, nullptr, 20, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+    }
+    Require(timerDelivered && SameCalendarDay(selected, calculatorTestNow),
+        "a real queued timer advances the open calculator through the production dialog message path");
+    WaitForCalculator();
+    Require(GetControlText(CalculatorControl(ID_CALC_SELECTED_DATE))
+        == FormatCalculatorDate(calculatorTestNow, false),
+        "the delivered timer updates calendar results as well as the selection");
     calculatorTestNow = originalNow;
     LoadCalculator(original);
 }
@@ -2517,6 +2611,7 @@ int wmain(int argc, wchar_t** argv) {
         TestCalculatorResultNotifications();
         TestCalculatorCalendarNotifications();
         TestCalendarDayRollover();
+        TestCalendarReopening();
         TestCalculatorBackgroundWork();
         TestCalculatorTabWheel();
         if (!calculationCheck) {

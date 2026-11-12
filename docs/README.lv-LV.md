@@ -22,7 +22,7 @@ Pulksteņi un paneļi atbalsta modinātāju. Programma pati atskaņo skaņas fai
 
 ## Laika ievade un modinātāja darbības
 
-Modinātāja laiks pieņem HH:mm ar kolu, punktu, atstarpi, citu atdalītāju vai bez tā. Viens vai divi cipari ir stundas, trīs vai četri – stundas un minūtes: 7, 12, 730, 0730 vai 7:30. Atstājot lauku, vērtība kļūst par HH:mm. Nobīdi lasa no labās puses, sākot ar sekundēm: 2 ir 00:00:02.00, 230 un 0230 ir 00:02:30.00, 12345 ir 01:23:45.00. Ar atdalītājiem divas grupas nozīmē minūtes un sekundes, trīs – stundas, minūtes un sekundes, ceturtā – sekundes simtdaļas; atļauta zīme. Dienas zem Modinātājs ieslēgts nosaka darbības dienas; sākumā atlasītas visas. Secība atbilst programmas valodai, bet valodas maiņa nemaina saglabātās dienas.
+Modinātāja laiks pieņem HH:mm ar kolu, punktu, atstarpi, citu atdalītāju vai bez tā. Viens vai divi cipari ir stundas, trīs vai četri – stundas un minūtes: 7, 12, 730, 0730 vai 7:30. Atstājot lauku, vērtība kļūst par HH:mm. Nobīdi lasa no labās puses, sākot ar sekundēm: 2 ir 00:00:02.00, 230 un 0230 ir 00:02:30.00, 12345 ir 01:23:45.00. Ar atdalītājiem divas grupas nozīmē minūtes un sekundes, trīs – stundas, minūtes un sekundes, ceturtā – sekundes simtdaļas; atļauta zīme. Kad datums mainās atbilstoši logrīka laikam, izvēle, kas sakrīt ar Šodien, pāriet uz jauno dienu. Citi izvēlētie datumi paliek nemainīgi; tie sāk sekot šodienai tikai tad, ja atvērtā kalendārā sakrīt ar šodienas datumu. Kalendāra skats tiek saglabāts, un Šodien atzīme un rinda vienmēr tiek atjauninātas.
 
 Modinātājs parāda paslēpto logrīku un izvirza to priekšplānā bez pastāvīgas Vienmēr virspusē maiņas. Atskaņot laika signālu sāk pirmo īso toni piecas sekundes pirms modinātāja. Šī izvēle ir neatkarīga no cilnes Signāls; vienlaicīgās virknes tiek apvienotas. Pārbaudīt ieslēdz ciparnīcas vai rāmja mirgošanu un pārbauda failu, komandu, skaņu un attālā skripta HTTP/HTTPS adresi. Pārbaudīt ir pieejams, ja ir atzīmēts Modinātājs ieslēgts un Palaist failu vai komandu un faila vai komandas lauks nav tukšs. Pārbaude neatskaņo modinātāja laika signālu. Apturēt pārbaudi aptur iekšējo skaņu un vizuālo priekšskatījumu. Modinātāja apturēšana pārtrauc tā iekšējo skaņu. Izslēdzot skaņu, atskaņošana turpinās nedzirdami un kļūst dzirdama pēc ieslēgšanas. Komandas un attālie skripti netiek apturēti.
 
@@ -75,7 +75,7 @@ failā `%APPDATA%\FortSoft\CalClock\times.xml`. Iestatījumu eksports iekļauj �
 esošos ierakstus un izlaiž tikai tos, kuriem ir tas pats UTC laika moments un pilnīgi vienāds pilns apraksts
 neatkarīgi no attēlošanas laika joslas.
 
-Kalendārs seko šodienai pāri pusnaktij sākuma laika joslā, ja šodiena ir atlasīta un redzama mēneša skatā. Manuāli atlasītais datums un citi skati tiek saglabāti; šodienas atzīme un rinda vienmēr tiek atjauninātas.
+Izvēle, kas sakrīt ar Šodien, seko pašreizējam datumam sākuma laika joslā arī pēc kalkulatora atkārtotas atvēršanas vai lietotnes pārstartēšanas. Citi izvēlētie datumi paliek nemainīgi; tie sāk sekot šodienai tikai tad, ja atvērtā kalendārā sakrīt ar šodienas datumu. Kalendāra skats tiek saglabāts, un Šodien atzīme un rinda vienmēr tiek atjauninātas.
 
 Katrai ievadei ir sava laika josla no tā paša saraksta kā iestatījumos. Noklusējums ir pašreizējā Windows
 laika josla. Tiek saglabāts nepārprotams UTC brīdis un attēlošanas josla. Mainot joslu, brīdis nemainās.

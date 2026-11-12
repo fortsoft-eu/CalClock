@@ -68,7 +68,7 @@ Los paneles de calendario y reloj pueden mostrar los avisos de fecha y hora de W
 
 ## Apariencia
 
-Para calendarios independientes, **Fila Hoy** en el menú o en Apariencia controla la fila inferior. Está marcada de forma predeterminada; al desmarcarla se oculta la fila y se reduce el calendario. La elección se guarda por widget. **Ir a hoy** sigue disponible y vuelve a la vista mensual. Cuando cambia la fecha según la hora del widget, el calendario avanza al nuevo día solo si hoy está seleccionado y visible en la vista mensual. Se conservan la fecha elegida manualmente y cualquier otra vista; la marca y la fila Hoy se actualizan siempre.
+Para calendarios independientes, **Fila Hoy** en el menú o en Apariencia controla la fila inferior. Está marcada de forma predeterminada; al desmarcarla se oculta la fila y se reduce el calendario. La elección se guarda por widget. **Ir a hoy** sigue disponible y vuelve a la vista mensual. Cuando cambia la fecha según la hora del widget, una selección que coincide con Hoy avanza al nuevo día. Las demás fechas seleccionadas permanecen fijas; solo empiezan a seguir Hoy si coinciden con la fecha de hoy mientras el calendario está abierto. Se conserva la vista del calendario y siempre se actualizan el indicador y la fila Hoy.
 
 Los cambios de apariencia se previsualizan inmediatamente en el widget seleccionado. `Aspecto predeterminado` restaura los valores predeterminados de ese tipo de widget. Al cerrar la configuración con cambios sin aplicar, se pregunta si desea guardarlos. Este aviso está activado de forma predeterminada y puede desactivarse en la pestaña Aplicación.
 
@@ -100,7 +100,7 @@ exportación de la configuración incluye estas entradas. La importación conser
 omite solo las que representan el mismo instante UTC y tienen exactamente la misma descripción completa,
 independientemente de la zona de visualización.
 
-El calendario sigue el día actual al pasar la medianoche en la zona horaria de inicio, mientras hoy esté seleccionado y visible en la vista mensual. Se conservan la fecha elegida manualmente y cualquier otra vista; la marca y la fila Hoy se actualizan siempre.
+Una selección que coincide con Hoy sigue la fecha actual de la zona horaria inicial, incluso al volver a abrir la calculadora o reiniciar la aplicación. Las demás fechas seleccionadas permanecen fijas; solo empiezan a seguir Hoy si coinciden con la fecha de hoy mientras el calendario está abierto. Se conserva la vista del calendario y siempre se actualizan el indicador y la fila Hoy.
 
 Cada entrada tiene su propia zona horaria de la misma lista que en Configuración. La predeterminada es la zona
 actual de Windows. Se guarda un instante UTC inequívoco y su zona de visualización. Cambiar la zona conserva

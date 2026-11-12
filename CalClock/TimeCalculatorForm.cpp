@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.1
+ * Last modified for version 1.7.2.2
  */
 
 #define NOMINMAX
@@ -418,9 +418,20 @@ HWND TimeCalculatorForm::GetWindow() const {
     return window;
 }
 
-/// Exposes window settings to the selected application storage backend, excluding saved user data.
+/// Exposes the current inputs and selected calendar date, excluding saved user data.
 const TimeCalculatorState& TimeCalculatorForm::GetState() const {
     return state;
+}
+
+/// Saves inputs with an unset day while following Today so reopening resolves the current date.
+TimeCalculatorState TimeCalculatorForm::Save() const {
+    TimeCalculatorState saved = state;
+    if (window != nullptr
+            && !initializing
+            && IsCalendarFollowingToday(GetDlgItem(pages[1], ID_CALC_CALENDAR), lastCalendarDateKey)) {
+        saved.day = SYSTEMTIME{};
+    }
+    return saved;
 }
 
 /// Exposes saved user data only to explicit exports, separately from the window-settings snapshot.
@@ -859,6 +870,7 @@ void TimeCalculatorForm::CreatePreparedWindow() {
 
 /// Releases native windows while retaining inputs and the unfinished preset for style recreation.
 void TimeCalculatorForm::Close() {
+    state = Save();
     if (opening != nullptr) {
         KillTimer(opening->notifyWindow, OPEN_TIMER);
         opening->cancelled.store(true);
@@ -894,6 +906,24 @@ BOOL CALLBACK TimeCalculatorForm::ApplyControlStyle(HWND control, LPARAM paramet
     return TRUE;
 }
 
+/// Applies the font, control themes and layout while redraw is suspended.
+void TimeCalculatorForm::ApplyWindowStyle(HFONT font, bool updateFont) {
+    WindowRedrawScope redraw(window);
+    HFONT previous = updateFont && ownsFont ? uiFont : nullptr;
+    uiFont = font;
+    ownsFont = ownsFont || updateFont;
+    SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(uiFont), FALSE);
+    EnumChildWindows(window, ApplyControlStyle, reinterpret_cast<LPARAM>(this));
+    for (HWND page : pages) {
+        EnableThemeDialogTexture(page,
+            themesDisabled && AreVisualStylesActive() ? ETDT_DISABLE : ETDT_ENABLETAB);
+    }
+    if (previous != nullptr) {
+        DeleteObject(previous);
+    }
+    Layout();
+}
+
 /// Reuses the application font selection and rebuilds only geometry, preserving all input and window handles.
 bool TimeCalculatorForm::ApplyStyle(bool updateFont) {
     if (window == nullptr || styling) {
@@ -904,22 +934,7 @@ bool TimeCalculatorForm::ApplyStyle(bool updateFont) {
         return false;
     }
     styling = true;
-    {
-        WindowRedrawScope redraw(window);
-        HFONT previous = updateFont && ownsFont ? uiFont : nullptr;
-        uiFont = font;
-        ownsFont = ownsFont || updateFont;
-        SendMessageW(window, WM_SETFONT, reinterpret_cast<WPARAM>(uiFont), FALSE);
-        EnumChildWindows(window, ApplyControlStyle, reinterpret_cast<LPARAM>(this));
-        for (HWND page : pages) {
-            EnableThemeDialogTexture(page,
-                themesDisabled && AreVisualStylesActive() ? ETDT_DISABLE : ETDT_ENABLETAB);
-        }
-        if (previous != nullptr) {
-            DeleteObject(previous);
-        }
-        Layout();
-    }
+    ApplyWindowStyle(font, updateFont);
     styling = false;
     if (!initializing) {
         layingOut = true;
@@ -929,6 +944,102 @@ bool TimeCalculatorForm::ApplyStyle(bool updateFont) {
     return true;
 }
 
+/// Refreshes localized controls, inputs and results within redraw and calendar-locale scopes.
+void TimeCalculatorForm::RefreshControls() {
+    WindowRedrawScope redraw(window);
+    CalendarLocaleScope locale(GetLanguageLocale(appLanguage));
+    RequestCalculation(false, !initializing);
+    SetWindowTextW(window, BuildApplicationWindowTitle(TXT_CALCULATOR_WINDOW_TITLE).c_str());
+    for (int index = 0; index < TIME_CALCULATOR_PAGE_COUNT; index++) {
+        TCITEMW tab = {};
+        tab.mask = TCIF_TEXT;
+        tab.pszText = const_cast<wchar_t*>(T(CALCULATOR_TABS[index]));
+        TabCtrl_SetItem(GetDlgItem(window, ID_CALC_TABS), index, &tab);
+    }
+    SetCalculatorText(pages[0], ID_CALC_FROM_LABEL, T(TXT_CALCULATOR_FROM));
+    SetCalculatorText(pages[0], ID_CALC_TO_LABEL, T(TXT_CALCULATOR_TO));
+    SetCalculatorText(pages[0], ID_CALC_FROM_NOW, T(TXT_CALCULATOR_NOW));
+    SetCalculatorText(pages[0], ID_CALC_TO_NOW, T(TXT_CALCULATOR_NOW));
+    SetCalculatorText(pages[0], ID_CALC_INTERVAL_NOTE, T(TXT_CALCULATOR_INTERVAL_NOTE));
+    SetCalculatorText(pages[1], ID_CALC_START_LABEL, T(TXT_CALCULATOR_START));
+    SetCalculatorText(pages[1], ID_CALC_PRESET_LABEL, T(TXT_CALCULATOR_PRESET));
+    SetCalculatorText(pages[1], ID_CALC_SELECTED_LABEL, T(TXT_CALCULATOR_SELECTED_DAY));
+    SetCalculatorText(pages[1], ID_CALC_ROUND_NOTE, T(TXT_CALCULATOR_ROUND_NOTE));
+    SetCalculatorText(pages[2], ID_CALC_DATE_LABEL, T(TXT_CALCULATOR_DATE));
+    SetCalculatorText(pages[2], ID_CALC_DESCRIPTION_LABEL, T(TXT_CALCULATOR_DESCRIPTION));
+    SetCalculatorText(pages[2], ID_CALC_EDIT, T(TXT_CALCULATOR_EDIT));
+    SetCalculatorText(pages[2], ID_CALC_DELETE, T(TXT_CALCULATOR_DELETE));
+    SetCalculatorText(pages[2], ID_CALC_CANCEL, T(TXT_CANCEL));
+    SetCalculatorText(pages[2], ID_CALC_IMPORT, T(TXT_CALCULATOR_IMPORT));
+    SetCalculatorText(pages[2], ID_CALC_EXPORT, T(TXT_CALCULATOR_EXPORT));
+    for (int index = 0; index < TIME_CALCULATOR_HIGHLIGHT_COUNT; index++) {
+        const wchar_t* label = T(CALCULATOR_HIGHLIGHT_LABELS[index]);
+        wchar_t text[256] = {};
+        unsigned int digit = CALCULATOR_HIGHLIGHT_DIGITS[index];
+        if (digit != 0) {
+            swprintf_s(text, label, digit, digit * 11, digit * 111);
+            label = text;
+        }
+        SetCalculatorText(pages[3], ID_CALC_HIGHLIGHT_BASE + index, label);
+        bool checked = (state.highlights & CALCULATOR_HIGHLIGHT_FLAGS[index]) != 0;
+        CheckDlgButton(pages[3], ID_CALC_HIGHLIGHT_BASE + index, checked ? BST_CHECKED : BST_UNCHECKED);
+    }
+    for (int index = 0; index < TIME_CALCULATOR_TOTAL_COUNT; index++) {
+        SetCalculatorText(pages[0], ID_CALC_UNIT_BASE + index, T(CALCULATOR_UNITS[index]));
+        SetCalculatorText(pages[1], ID_CALC_DAY_UNIT_BASE + index, T(CALCULATOR_UNITS[index]));
+    }
+    wchar_t dateFormat[128] = {};
+    GetLocaleInfoEx(GetLanguageLocale(appLanguage), LOCALE_SSHORTDATE, dateFormat, ARRAYSIZE(dateFormat));
+    std::wstring format = dateFormat;
+    format += L" HH:mm";
+    const HWND pickers[] = {
+        GetDlgItem(pages[0], ID_CALC_FROM),
+        GetDlgItem(pages[0], ID_CALC_TO),
+        GetDlgItem(pages[1], ID_CALC_START),
+        GetDlgItem(pages[2], ID_CALC_DATE)
+    };
+    SYSTEMTIME limits[2] = {};
+    limits[0].wYear = 1601;
+    limits[0].wMonth = 1;
+    limits[0].wDay = 1;
+    limits[1].wYear = 9999;
+    limits[1].wMonth = 12;
+    limits[1].wDay = 31;
+    limits[1].wHour = 23;
+    limits[1].wMinute = 59;
+    bool previousUpdate = updating;
+    updating = true;
+    for (HWND picker : pickers) {
+        SendMessageW(picker, WM_SETTINGCHANGE, 0, reinterpret_cast<LPARAM>(L"intl"));
+        DateTime_SetRange(picker, GDTR_MIN | GDTR_MAX, limits);
+        DateTime_SetFormat(picker, format.c_str());
+    }
+    updating = previousUpdate;
+    LVCOLUMNW column = {};
+    column.mask = LVCF_TEXT;
+    column.pszText = const_cast<wchar_t*>(T(TXT_CALCULATOR_DATE_COLUMN));
+    ListView_SetColumn(GetDlgItem(pages[2], ID_CALC_LIST), 0, &column);
+    column.pszText = const_cast<wchar_t*>(T(TXT_CALCULATOR_DESCRIPTION_COLUMN));
+    ListView_SetColumn(GetDlgItem(pages[2], ID_CALC_LIST), 1, &column);
+    for (int index = 0; index < 4; index++) {
+        SetCalculatorText(pages[CALCULATOR_INPUT_PAGES[index]],
+            ID_CALC_ZONE_LABEL_BASE + index, T(TXT_TIMEZONE));
+        if (!initializing) {
+            FillTimeZones(index);
+            UpdateTimeInput(index, inputValid[index]);
+        }
+    }
+    FillPresets();
+    UpdateNow();
+    updating = true;
+    SendMessageW(GetDlgItem(pages[1], ID_CALC_CALENDAR), WM_SETTINGCHANGE, 0,
+        reinterpret_cast<LPARAM>(L"intl"));
+    updating = previousUpdate;
+    UpdateHighlights();
+    Layout();
+    SelectPage();
+}
+
 /// Updates localized captions, date formatting and results without discarding the active tab or typed data.
 void TimeCalculatorForm::Refresh() {
     if (!initialized) {
@@ -936,100 +1047,7 @@ void TimeCalculatorForm::Refresh() {
     }
     bool previousStyling = styling;
     styling = true;
-    {
-        WindowRedrawScope redraw(window);
-        CalendarLocaleScope locale(GetLanguageLocale(appLanguage));
-        RequestCalculation(false, !initializing);
-        SetWindowTextW(window, BuildApplicationWindowTitle(TXT_CALCULATOR_WINDOW_TITLE).c_str());
-        for (int index = 0; index < TIME_CALCULATOR_PAGE_COUNT; index++) {
-            TCITEMW tab = {};
-            tab.mask = TCIF_TEXT;
-            tab.pszText = const_cast<wchar_t*>(T(CALCULATOR_TABS[index]));
-            TabCtrl_SetItem(GetDlgItem(window, ID_CALC_TABS), index, &tab);
-        }
-        SetCalculatorText(pages[0], ID_CALC_FROM_LABEL, T(TXT_CALCULATOR_FROM));
-        SetCalculatorText(pages[0], ID_CALC_TO_LABEL, T(TXT_CALCULATOR_TO));
-        SetCalculatorText(pages[0], ID_CALC_FROM_NOW, T(TXT_CALCULATOR_NOW));
-        SetCalculatorText(pages[0], ID_CALC_TO_NOW, T(TXT_CALCULATOR_NOW));
-        SetCalculatorText(pages[0], ID_CALC_INTERVAL_NOTE, T(TXT_CALCULATOR_INTERVAL_NOTE));
-        SetCalculatorText(pages[1], ID_CALC_START_LABEL, T(TXT_CALCULATOR_START));
-        SetCalculatorText(pages[1], ID_CALC_PRESET_LABEL, T(TXT_CALCULATOR_PRESET));
-        SetCalculatorText(pages[1], ID_CALC_SELECTED_LABEL, T(TXT_CALCULATOR_SELECTED_DAY));
-        SetCalculatorText(pages[1], ID_CALC_ROUND_NOTE, T(TXT_CALCULATOR_ROUND_NOTE));
-        SetCalculatorText(pages[2], ID_CALC_DATE_LABEL, T(TXT_CALCULATOR_DATE));
-        SetCalculatorText(pages[2], ID_CALC_DESCRIPTION_LABEL, T(TXT_CALCULATOR_DESCRIPTION));
-        SetCalculatorText(pages[2], ID_CALC_EDIT, T(TXT_CALCULATOR_EDIT));
-        SetCalculatorText(pages[2], ID_CALC_DELETE, T(TXT_CALCULATOR_DELETE));
-        SetCalculatorText(pages[2], ID_CALC_CANCEL, T(TXT_CANCEL));
-        SetCalculatorText(pages[2], ID_CALC_IMPORT, T(TXT_CALCULATOR_IMPORT));
-        SetCalculatorText(pages[2], ID_CALC_EXPORT, T(TXT_CALCULATOR_EXPORT));
-        for (int index = 0; index < TIME_CALCULATOR_HIGHLIGHT_COUNT; index++) {
-            const wchar_t* label = T(CALCULATOR_HIGHLIGHT_LABELS[index]);
-            wchar_t text[256] = {};
-            unsigned int digit = CALCULATOR_HIGHLIGHT_DIGITS[index];
-            if (digit != 0) {
-                swprintf_s(text, label, digit, digit * 11, digit * 111);
-                label = text;
-            }
-            SetCalculatorText(pages[3], ID_CALC_HIGHLIGHT_BASE + index, label);
-            bool checked = (state.highlights & CALCULATOR_HIGHLIGHT_FLAGS[index]) != 0;
-            CheckDlgButton(pages[3], ID_CALC_HIGHLIGHT_BASE + index, checked ? BST_CHECKED : BST_UNCHECKED);
-        }
-        for (int index = 0; index < TIME_CALCULATOR_TOTAL_COUNT; index++) {
-            SetCalculatorText(pages[0], ID_CALC_UNIT_BASE + index, T(CALCULATOR_UNITS[index]));
-            SetCalculatorText(pages[1], ID_CALC_DAY_UNIT_BASE + index, T(CALCULATOR_UNITS[index]));
-        }
-        wchar_t dateFormat[128] = {};
-        GetLocaleInfoEx(GetLanguageLocale(appLanguage), LOCALE_SSHORTDATE, dateFormat, ARRAYSIZE(dateFormat));
-        std::wstring format = dateFormat;
-        format += L" HH:mm";
-        const HWND pickers[] = {
-            GetDlgItem(pages[0], ID_CALC_FROM),
-            GetDlgItem(pages[0], ID_CALC_TO),
-            GetDlgItem(pages[1], ID_CALC_START),
-            GetDlgItem(pages[2], ID_CALC_DATE)
-        };
-        SYSTEMTIME limits[2] = {};
-        limits[0].wYear = 1601;
-        limits[0].wMonth = 1;
-        limits[0].wDay = 1;
-        limits[1].wYear = 9999;
-        limits[1].wMonth = 12;
-        limits[1].wDay = 31;
-        limits[1].wHour = 23;
-        limits[1].wMinute = 59;
-        bool previousUpdate = updating;
-        updating = true;
-        for (HWND picker : pickers) {
-            SendMessageW(picker, WM_SETTINGCHANGE, 0, reinterpret_cast<LPARAM>(L"intl"));
-            DateTime_SetRange(picker, GDTR_MIN | GDTR_MAX, limits);
-            DateTime_SetFormat(picker, format.c_str());
-        }
-        updating = previousUpdate;
-        LVCOLUMNW column = {};
-        column.mask = LVCF_TEXT;
-        column.pszText = const_cast<wchar_t*>(T(TXT_CALCULATOR_DATE_COLUMN));
-        ListView_SetColumn(GetDlgItem(pages[2], ID_CALC_LIST), 0, &column);
-        column.pszText = const_cast<wchar_t*>(T(TXT_CALCULATOR_DESCRIPTION_COLUMN));
-        ListView_SetColumn(GetDlgItem(pages[2], ID_CALC_LIST), 1, &column);
-        for (int index = 0; index < 4; index++) {
-            SetCalculatorText(pages[CALCULATOR_INPUT_PAGES[index]],
-                ID_CALC_ZONE_LABEL_BASE + index, T(TXT_TIMEZONE));
-            if (!initializing) {
-                FillTimeZones(index);
-                UpdateTimeInput(index, inputValid[index]);
-            }
-        }
-        FillPresets();
-        UpdateNow();
-        updating = true;
-        SendMessageW(GetDlgItem(pages[1], ID_CALC_CALENDAR), WM_SETTINGCHANGE, 0,
-            reinterpret_cast<LPARAM>(L"intl"));
-        updating = previousUpdate;
-        UpdateHighlights();
-        Layout();
-        SelectPage();
-    }
+    RefreshControls();
     styling = previousStyling;
     if (!styling && !initializing) {
         layingOut = true;
@@ -1037,6 +1055,7 @@ void TimeCalculatorForm::Refresh() {
         layingOut = false;
     }
 }
+
 /// Restores resource DLU geometry using the current font and aligns each mixed row by its rendered text.
 void TimeCalculatorForm::Layout() {
     if (!initialized || initializing || layingOut || IsIconic(window)) {
@@ -1525,9 +1544,15 @@ void TimeCalculatorForm::UpdateCalendarDate() {
     today.wMilliseconds = 0;
     MonthCal_SetToday(calendar, &today);
     lastCalendarDateKey = dateKey;
-    if (followingToday && MonthCal_SetCurSel(calendar, &today)) {
-        state.day = today;
-        UpdateResults();
+    if (followingToday) {
+        WindowRedrawScope redraw(calendar);
+        DWORD view = MonthCal_GetCurrentView(calendar);
+        MonthCal_SetCurrentView(calendar, MCMV_MONTH);
+        if (MonthCal_SetCurSel(calendar, &today)) {
+            state.day = today;
+            UpdateResults();
+        }
+        MonthCal_SetCurrentView(calendar, view);
     }
 }
 

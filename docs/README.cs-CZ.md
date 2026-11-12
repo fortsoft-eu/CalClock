@@ -68,7 +68,7 @@ Příkaz `Zarovnat do mřížky` přichytí viditelné widgety na ploše do stab
 
 ## Vzhled
 
-U samostatných kalendářů volba **Řádek Dnes** v nabídce widgetu nebo na kartě Vzhled v Nastavení ovládá viditelnost spodního řádku Dnes. Ve výchozím stavu je zaškrtnutá; odškrtnutím řádek skryjete a kalendář se zmenší. Volba se ukládá samostatně pro každý widget. Příkaz **Přejít na dnešek** zůstává v nabídce dostupný a vrací kalendář do měsíčního zobrazení. Při změně data podle času widgetu kalendář přejde na nový den jen tehdy, když je dnešek vybraný a viditelný v měsíčním zobrazení. Ručně vybrané datum i jiné zobrazení zůstávají zachované; značka a řádek Dnes se aktualizují vždy.
+U samostatných kalendářů volba **Řádek Dnes** v nabídce widgetu nebo na kartě Vzhled v Nastavení ovládá viditelnost spodního řádku Dnes. Ve výchozím stavu je zaškrtnutá; odškrtnutím řádek skryjete a kalendář se zmenší. Volba se ukládá samostatně pro každý widget. Příkaz **Přejít na dnešek** zůstává v nabídce dostupný a vrací kalendář do měsíčního zobrazení. Při změně data podle času widgetu se výběr shodný s Dnes posune na nový den. Jiné vybrané datum zůstává pevné; sledování dneška začne pouze tehdy, když se při otevřeném kalendáři shodne s Dnes. Zobrazení kalendáře se zachová a značka i řádek Dnes se aktualizují vždy.
 
 Změny vzhledu se ihned zobrazují v náhledu vybraného widgetu. `Výchozí vzhled` obnoví výchozí hodnoty daného typu widgetu. Při zavírání Nastavení s nepoužitými změnami se zobrazí dotaz na uložení. Upozornění je ve výchozím stavu zapnuté a lze je vypnout na kartě Aplikace.
 
@@ -99,7 +99,7 @@ umožňuje přidávat, upravovat, řadit a mazat uložené údaje s popisem. Ča
 a vynechá pouze položky se shodným okamžikem v UTC i přesně shodným celým popisem, bez ohledu na pásmo
 zobrazení.
 
-Kalendář sleduje dnešek při přechodu přes půlnoc v pásmu počátku, pokud je dnešek vybraný a viditelný v měsíčním zobrazení. Ručně vybrané datum i jiné zobrazení zůstávají zachované; značka a řádek Dnes se aktualizují vždy.
+Výběr shodný s Dnes sleduje aktuální datum v pásmu počátku i po opětovném otevření kalkulátoru nebo restartu aplikace. Jiné vybrané datum zůstává pevné; sledování dneška začne pouze tehdy, když se při otevřeném kalendáři shodne s Dnes. Zobrazení kalendáře se zachová a značka i řádek Dnes se aktualizují vždy.
 
 Každý vstup má vlastní časové pásmo ze stejného seznamu jako v Nastavení. Výchozí je aktuální pásmo Windows.
 Ukládá se jednoznačný okamžik v UTC a pásmo pro zobrazení. Změna pásma zachová okamžik. Při opakované hodině

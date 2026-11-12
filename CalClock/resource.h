@@ -1,7 +1,7 @@
 ﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by CalClock.rc
-//
+
 #define IDI_CLOCK                               101
 #define IDR_LICENSE                             102
 #define IDD_ABOUT                               104

@@ -68,7 +68,7 @@ Spjöld með dagatali og klukku geta birt tilkynningar Windows um dagsetningu og
 
 ## Útlit
 
-Fyrir sjálfstæð dagatöl stjórnar **Línan Í dag** í valmynd eða á Útlit neðstu línunni. Hún er sjálfgefið valin; afveldu hana til að fela línuna og minnka dagatalið. Valið er vistað fyrir hverja græju. **Fara á daginn í dag** er áfram tiltækt og snýr aftur í mánaðarsýn. Þegar dagsetning breytist samkvæmt tíma græjunnar færist dagatalið aðeins yfir á nýja daginn ef dagurinn í dag er valinn og sýnilegur í mánaðarsýn. Handvirkt valin dagsetning og aðrar sýnir haldast óbreyttar; merkingin og línan Í dag uppfærast alltaf.
+Fyrir sjálfstæð dagatöl stjórnar **Línan Í dag** í valmynd eða á Útlit neðstu línunni. Hún er sjálfgefið valin; afveldu hana til að fela línuna og minnka dagatalið. Valið er vistað fyrir hverja græju. **Fara á daginn í dag** er áfram tiltækt og snýr aftur í mánaðarsýn. Þegar dagsetningin breytist samkvæmt tíma græjunnar færist val sem samsvarar Í dag yfir á nýja daginn. Aðrar valdar dagsetningar haldast óbreyttar; þær byrja aðeins að fylgja Í dag ef þær samsvara deginum í dag á meðan dagatalið er opið. Sýn dagatalsins helst óbreytt og merkingin og línan Í dag eru alltaf uppfærðar.
 
 Útlitsbreytingar sjást strax í forskoðun valinnar græju. `Sjálfgefið útlit` endurheimtir sjálfgefin gildi þeirrar græjutegundar. Þegar stillingum er lokað með breytingum sem hafa ekki verið staðfestar er spurt hvort vista eigi þær. Viðvörunin er sjálfgefið virk og má slökkva á henni á flipanum Forrit.
 
@@ -99,7 +99,7 @@ eru vistaðir sérstaklega í `%APPDATA%\FortSoft\CalClock\times.xml`. Útflutni
 færslur. Innflutningur varðveitir fyrirliggjandi færslur og sleppir aðeins færslum með sama UTC-tímapunkt og
 nákvæmlega sömu heildarlýsingu, óháð tímabelti birtingar.
 
-Dagatalið fylgir deginum í dag yfir miðnætti á tímabelti upphafstímans þegar dagurinn í dag er valinn og sýnilegur í mánaðarsýn. Handvirkt valin dagsetning og aðrar sýnir haldast óbreyttar; merkingin og línan Í dag uppfærast alltaf.
+Val sem samsvarar Í dag fylgir núverandi dagsetningu á upphafstímabeltinu, einnig þegar reiknivélin er opnuð aftur eða forritið endurræst. Aðrar valdar dagsetningar haldast óbreyttar; þær byrja aðeins að fylgja Í dag ef þær samsvara deginum í dag á meðan dagatalið er opið. Sýn dagatalsins helst óbreytt og merkingin og línan Í dag eru alltaf uppfærðar.
 
 Hvert inntak hefur eigið tímabelti úr sama lista og í stillingum. Núverandi tímabelti Windows er sjálfgefið.
 Vistaður er ótvíræður tímapunktur í UTC ásamt tímabelti birtingar. Breyting á tímabelti varðveitir

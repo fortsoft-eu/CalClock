@@ -23,7 +23,7 @@ Klokken en panelen kunnen een alarm hebben. De toepassing speelt een geluidsbest
 
 ## Tijd invoeren en alarmacties
 
-De alarmtijd accepteert HH:mm met een dubbele punt, punt, spatie of ander scheidingsteken, of zonder scheidingsteken. Een of twee cijfers zijn uren, drie of vier uren en minuten: 7, 12, 730, 0730 of 7:30. Na het verlaten van het veld wordt de waarde HH:mm. Verschuivingen worden vanaf rechts als seconden gelezen: 2 is 00:00:02.00, 230 en 0230 zijn 00:02:30.00, 12345 is 01:23:45.00. Met scheidingstekens zijn twee groepen minuten en seconden, drie uren, minuten en seconden en een vierde honderdsten; een teken is toegestaan. De dagen onder Alarm ingeschakeld bepalen de actieve weekdagen; standaard zijn alle dagen gekozen. Hun volgorde volgt de toepassingstaal; taalwijziging verandert de opgeslagen dagen niet.
+De alarmtijd accepteert HH:mm met een dubbele punt, punt, spatie of ander scheidingsteken, of zonder scheidingsteken. Een of twee cijfers zijn uren, drie of vier uren en minuten: 7, 12, 730, 0730 of 7:30. Na het verlaten van het veld wordt de waarde HH:mm. Verschuivingen worden vanaf rechts als seconden gelezen: 2 is 00:00:02.00, 230 en 0230 zijn 00:02:30.00, 12345 is 01:23:45.00. Met scheidingstekens zijn twee groepen minuten en seconden, drie uren, minuten en seconden en een vierde honderdsten; een teken is toegestaan. Wanneer de datum volgens de tijd van de widget verandert, gaat een selectie die overeenkomt met Vandaag naar de nieuwe dag. Andere geselecteerde datums blijven vast; ze gaan Vandaag pas volgen als ze overeenkomen met de datum van vandaag terwijl de kalender open is. De kalenderweergave blijft behouden en de markering en rij Vandaag worden altijd bijgewerkt.
 
 Een alarm toont een verborgen widget en brengt deze naar voren zonder Altijd op voorgrond blijvend te
 wijzigen. Tijdsignaal afspelen begint de eerste korte toon vijf seconden vóór het alarm. Dit staat los van het
@@ -83,7 +83,7 @@ opgeslagen in `%APPDATA%\FortSoft\CalClock\times.xml`. Een instellingenexport be
 behoudt bestaande vermeldingen en slaat alleen vermeldingen met hetzelfde UTC-tijdstip en een identieke
 volledige beschrijving over, ongeacht de weergavetijdzone.
 
-De kalender gaat bij middernacht in de tijdzone van het beginpunt naar de nieuwe dag, zolang vandaag is geselecteerd en zichtbaar is in de maandweergave. Een handmatig gekozen datum of een andere weergave blijft behouden; de markering en de rij Vandaag worden altijd bijgewerkt.
+Een selectie die overeenkomt met Vandaag volgt de huidige datum in de begintijdzone, ook na het opnieuw openen van de rekenmachine of opnieuw starten van de toepassing. Andere geselecteerde datums blijven vast; ze gaan Vandaag pas volgen als ze overeenkomen met de datum van vandaag terwijl de kalender open is. De kalenderweergave blijft behouden en de markering en rij Vandaag worden altijd bijgewerkt.
 
 Elke invoer heeft een eigen tijdzone uit dezelfde lijst als in Instellingen. De huidige Windows-tijdzone is de
 standaard. Een eenduidig UTC-tijdstip en de weergavezone worden opgeslagen. Een zonewijziging behoudt het

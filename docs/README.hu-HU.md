@@ -23,7 +23,7 @@ Az órákhoz és panelekhez ébresztés állítható be. A program a hangfájlt 
 
 ## Időbevitel és ébresztési műveletek
 
-Az ébresztési idő HH:mm formátumú lehet kettősponttal, ponttal, szóközzel, más elválasztóval vagy anélkül. Egy vagy két számjegy órát, három vagy négy órát és percet jelent: 7, 12, 730, 0730 vagy 7:30. A mező elhagyásakor HH:mm alakra vált. Az eltolást jobbról, a másodpercektől olvassa: 2 jelentése 00:00:02.00, 230 és 0230 jelentése 00:02:30.00, 12345 jelentése 01:23:45.00. Elválasztóval két csoport percet és másodpercet, három órát, percet és másodpercet, a negyedik századmásodpercet jelent; előjel megadható. Az Ébresztés engedélyezve alatti napok adják a működés napjait; alapból mind kijelölt. Sorrendjük a program nyelvét követi, de a nyelvváltás nem módosítja a mentett napokat.
+Az ébresztési idő HH:mm formátumú lehet kettősponttal, ponttal, szóközzel, más elválasztóval vagy anélkül. Egy vagy két számjegy órát, három vagy négy órát és percet jelent: 7, 12, 730, 0730 vagy 7:30. A mező elhagyásakor HH:mm alakra vált. Az eltolást jobbról, a másodpercektől olvassa: 2 jelentése 00:00:02.00, 230 és 0230 jelentése 00:02:30.00, 12345 jelentése 01:23:45.00. Elválasztóval két csoport percet és másodpercet, három órát, percet és másodpercet, a negyedik századmásodpercet jelent; előjel megadható. Amikor a dátum a widget ideje szerint változik, a Mai nappal egyező kijelölés az új napra lép. A többi kijelölt dátum rögzített marad; csak akkor kezdik követni a mai napot, ha nyitott naptár mellett megegyeznek az aznapi dátummal. A naptárnézet megmarad, a Mai nap jelölése és sora pedig mindig frissül.
 
 Az ébresztés megjeleníti a rejtett minialkalmazást, és előtérbe hozza a Mindig felül tartós módosítása nélkül. Az Időjelzés lejátszása az első rövid hangot öt másodperccel az ébresztés előtt indítja. Ez független az Időjelzés fültől; az egyidejű sorozatok egyesülnek. A Tesztelés villogtatja a számlapot vagy keretet, és ellenőrzi a fájlt, parancsot, hangot és a távoli parancsfájl HTTP/HTTPS-címét. A Tesztelés akkor érhető el, ha az Ébresztés engedélyezve és a Fájl vagy parancs futtatása be van jelölve, és a fájl vagy parancs mező nem üres. A teszt nem játssza le az ébresztés időjelzését. A Teszt leállítása a belső hangot és a vizuális előnézetet állítja le. Az ébresztés leállítása annak belső hangját állítja le. Némításkor a lejátszás hangtalanul folytatódik, feloldáskor ismét hallható. A parancsok és távoli parancsfájlok nem állnak le.
 
@@ -77,7 +77,7 @@ beállítások exportálása ezeket a bejegyzéseket is tartalmazza. Az importá
 és csak az azonos UTC-időpontú és megegyező teljes leírású bejegyzéseket hagyja ki, a megjelenítési időzónától
 függetlenül.
 
-A naptár a kezdő időpont időzónája szerinti éjfélkor követi az új napot, ha a mai nap ki van jelölve és látható a havi nézetben. A kézzel kiválasztott dátum és a többi nézet megmarad; a mai nap jelölése és sora mindig frissül.
+A Mai nappal egyező kijelölés a kezdő időzónában követi az aktuális dátumot a számológép újbóli megnyitása vagy az alkalmazás újraindítása után is. A többi kijelölt dátum rögzített marad; csak akkor kezdik követni a mai napot, ha nyitott naptár mellett megegyeznek az aznapi dátummal. A naptárnézet megmarad, a Mai nap jelölése és sora pedig mindig frissül.
 
 Minden bemenet saját időzónát kap a Beállításokkal azonos listából. Az alapérték a Windows aktuális időzónája.
 Egyértelmű UTC-időpont és megjelenítési időzóna kerül mentésre. A zóna módosítása megőrzi az időpontot.

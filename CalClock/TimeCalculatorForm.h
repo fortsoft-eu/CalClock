@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.2
  */
 
 #pragma once
@@ -47,8 +47,11 @@ public:
     /// Returns the calculator's native window while it is open.
     HWND GetWindow() const;
 
-    /// Returns window settings for the selected application settings backend.
+    /// Returns the current inputs and selected calendar date.
     const TimeCalculatorState& GetState() const;
+
+    /// Saves inputs with an unset day while following Today so reopening resolves the current date.
+    TimeCalculatorState Save() const;
 
     /// Returns the independent user-data collection for an explicit manual export.
     const std::vector<TimeCalculatorPreset>& GetPresets() const;
@@ -170,6 +173,7 @@ private:
     SIZE dialogUnits = {};
     SIZE contentSize = {};
     unsigned long presetsRevision = 0;
+
     /// Caches Today as YYYYMMDD in the starting time zone; -1 leaves a restored selection unchanged.
     int lastCalendarDateKey = -1;
     int editing = -1;
@@ -188,6 +192,12 @@ private:
     void InitializeDates();
     HWND CreateFormDialog(UINT resource, HWND parent);
     void ReadTemplateLayout(HWND dialog, UINT resource);
+
+    /// Applies the font, control themes and layout while redraw is suspended.
+    void ApplyWindowStyle(HFONT font, bool updateFont);
+
+    /// Refreshes localized controls, inputs and results within redraw and calendar-locale scopes.
+    void RefreshControls();
     void Layout();
     void FitToWorkArea() const;
     void Scroll(int bar, int request) const;
@@ -196,6 +206,7 @@ private:
     void FillTimeZones(int index);
     void UpdateTimeInput(int index, bool fromUtc, int choice = -1);
     void UpdateNow();
+
     /// Updates Today in the starting zone and advances the selection and results only while following Today.
     void UpdateCalendarDate();
     void UpdateResults();

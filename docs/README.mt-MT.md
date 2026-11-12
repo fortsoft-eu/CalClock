@@ -22,7 +22,7 @@ L-arloġġi u l-panewijiet jistgħu jkollhom allarm. Il-programm idoqq fajl tal-
 
 ## Dħul tal-ħin u azzjonijiet tal-allarm
 
-Il-ħin tal-allarm jaċċetta HH:mm b’żewġ punti, punt, spazju jew separatur ieħor, jew mingħajr separatur. Ċifra waħda jew tnejn ifissru sigħat; tlieta jew erbgħa sigħat u minuti: 7, 12, 730, 0730 jew 7:30. Meta titlaq mill-qasam, il-valur isir HH:mm. Il-kumpens jinqara mil-lemin mis-sekondi: 2 ifisser 00:00:02.00, 230 u 0230 ifissru 00:02:30.00, u 12345 ifisser 01:23:45.00. B’separaturi, żewġ gruppi jfissru minuti u sekondi, tlieta sigħat, minuti u sekondi, u r-raba’ ċentesimi ta’ sekonda; sinjal huwa permess. Il-jiem taħt Allarm attivat jagħżlu l-jiem tal-allarm; kollha magħżula inizjalment. L-ordni jsegwi l-lingwa tal-programm, iżda bidla fil-lingwa ma tbiddilx il-jiem issejvjati.
+Il-ħin tal-allarm jaċċetta HH:mm b’żewġ punti, punt, spazju jew separatur ieħor, jew mingħajr separatur. Ċifra waħda jew tnejn ifissru sigħat; tlieta jew erbgħa sigħat u minuti: 7, 12, 730, 0730 jew 7:30. Meta titlaq mill-qasam, il-valur isir HH:mm. Il-kumpens jinqara mil-lemin mis-sekondi: 2 ifisser 00:00:02.00, 230 u 0230 ifissru 00:02:30.00, u 12345 ifisser 01:23:45.00. B’separaturi, żewġ gruppi jfissru minuti u sekondi, tlieta sigħat, minuti u sekondi, u r-raba’ ċentesimi ta’ sekonda; sinjal huwa permess. Meta d-data tinbidel skont il-ħin tal-widget, għażla li taqbel ma’ Illum timxi għall-jum il-ġdid. Dati oħra magħżula jibqgħu fissi; jibdew isegwu Illum biss jekk jaqblu mad-data tal-lum waqt li l-kalendarju jkun miftuħ. Il-veduta tal-kalendarju tinżamm, u l-marka u r-ringiela Illum dejjem jiġu aġġornati.
 
 L-allarm juri widget moħbi u jġibu fuq quddiem mingħajr ma jibdel Dejjem fuq nett permanentement. Daqq is-sinjal tal-ħin jibda l-ewwel ton qasir ħames sekondi qabel l-allarm. Dan huwa indipendenti mit-tab Sinjal; sekwenzi simultanji jingħaqdu. Ittestja jteptep il-wiċċ jew il-qafas u jittestja l-fajl, il-kmand, l-awdjo u l-indirizz HTTP/HTTPS tal-iskript remot. Ittestja jkun disponibbli meta jintgħażlu Allarm attivat u Ħaddem fajl jew kmand u l-qasam tal-fajl jew tal-kmand ma jkunx vojt. It-test ma jdoqqx is-sinjal tal-ħin tal-allarm. Waqqaf it-test iwaqqaf l-awdjo intern u l-previżjoni viżiva. Il-waqfien tal-allarm iwaqqaf l-awdjo intern tiegħu. Meta ssikket, id-daqq ikompli fis-skiet u jerġa’ jinstema’ meta tneħħi s-sikket. Il-kmandi u l-iskripts remoti jibqgħu attivi.
 
@@ -75,7 +75,7 @@ l-ħinijiet jiġu ssejvjati separatament f’`%APPDATA%\FortSoft\CalClock\times.
 tinkludi dawn l-entrati. L-importazzjoni żżomm l-entrati eżistenti u taqbeż biss dawk bl-istess mument UTC u
 bl-istess deskrizzjoni sħiħa, irrispettivament miż-żona tal-ħin tal-wiri.
 
-Il-kalendarju jsegwi l-jum kurrenti wara nofsillejl fiż-żona tal-ħin tal-bidu meta illum ikun magħżul u jidher fil-vista tax-xahar. Data magħżula manwalment jew vista oħra tinżamm; il-marka u r-ringiela Illum dejjem jiġu aġġornati.
+Għażla li taqbel ma’ Illum issegwi d-data attwali fiż-żona tal-ħin tal-bidu, anki wara li terġa’ tiftaħ il-kalkulatur jew terġa’ tibda l-applikazzjoni. Dati oħra magħżula jibqgħu fissi; jibdew isegwu Illum biss jekk jaqblu mad-data tal-lum waqt li l-kalendarju jkun miftuħ. Il-veduta tal-kalendarju tinżamm, u l-marka u r-ringiela Illum dejjem jiġu aġġornati.
 
 Kull input għandu ż-żona tal-ħin tiegħu mill-istess lista bħal fis-Settings. Il-valur prestabbilit huwa ż-żona
 attwali tal-Windows. Jiġu ssejvjati mument UTC ċar u ż-żona tal-wiri tiegħu. Bidla fiż-żona żżomm l-istess

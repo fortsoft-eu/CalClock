@@ -68,7 +68,7 @@ Les panneaux calendrier et horloge peuvent afficher les notifications de date et
 
 ## Apparence
 
-Pour les calendriers indépendants, **Ligne Aujourd’hui**, dans le menu du widget ou l’onglet Apparence, contrôle la ligne du bas. Elle est cochée par défaut ; la décocher masque la ligne et réduit le calendrier. Le choix est enregistré par widget. **Aller à aujourd’hui** reste disponible dans le menu et revient à la vue mensuelle. Lors d’un changement de date selon l’heure du widget, le calendrier passe au nouveau jour uniquement si aujourd’hui est sélectionné et visible dans la vue mensuelle. Une date choisie manuellement ou une autre vue est conservée ; le repère et la ligne Aujourd’hui sont toujours actualisés.
+Pour les calendriers indépendants, **Ligne Aujourd’hui**, dans le menu du widget ou l’onglet Apparence, contrôle la ligne du bas. Elle est cochée par défaut ; la décocher masque la ligne et réduit le calendrier. Le choix est enregistré par widget. **Aller à aujourd’hui** reste disponible dans le menu et revient à la vue mensuelle. Lorsque la date change selon l’heure du widget, une sélection correspondant à Aujourd’hui passe au nouveau jour. Les autres dates sélectionnées restent fixes ; elles commencent à suivre Aujourd’hui uniquement si elles correspondent à la date du jour pendant que le calendrier est ouvert. La vue du calendrier est conservée, et le repère ainsi que la ligne Aujourd’hui sont toujours actualisés.
 
 Les modifications d’apparence sont immédiatement prévisualisées sur le widget sélectionné. `Apparence par défaut` rétablit les valeurs par défaut de ce type de widget. À la fermeture des paramètres avec des modifications non appliquées, une confirmation d’enregistrement est demandée. Cet avertissement est activé par défaut et peut être désactivé dans l’onglet Application.
 
@@ -100,7 +100,7 @@ supprimer des dates et heures avec une description. Les dates et heures sont enr
 conserve les entrées existantes et ignore uniquement celles dont l’instant UTC et la description complète sont
 identiques, quel que soit le fuseau d’affichage.
 
-Le calendrier suit le jour courant à minuit dans le fuseau du début du calcul, lorsque ce jour est sélectionné et visible dans la vue mensuelle. Une date choisie manuellement ou une autre vue est conservée ; le repère et la ligne Aujourd’hui sont toujours actualisés.
+Une sélection correspondant à Aujourd’hui suit la date actuelle dans le fuseau de départ, y compris après la réouverture du calculateur ou le redémarrage de l’application. Les autres dates sélectionnées restent fixes ; elles commencent à suivre Aujourd’hui uniquement si elles correspondent à la date du jour pendant que le calendrier est ouvert. La vue du calendrier est conservée, et le repère ainsi que la ligne Aujourd’hui sont toujours actualisés.
 
 Chaque saisie possède son fuseau horaire, choisi dans la même liste que les paramètres. Le fuseau Windows
 actuel est utilisé par défaut. Un instant UTC non ambigu et son fuseau d’affichage sont enregistrés. Changer

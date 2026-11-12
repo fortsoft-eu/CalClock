@@ -22,7 +22,7 @@ Satovi i ploče mogu imati alarm. Program sam reproducira zvučnu datoteku jedno
 
 ## Prečaci i čuvanje
 
-Dvostruki klik na brojčanik ili digitalni ekran uključuje ili isključuje sekunde. F1 otvara pomoć, B otvara Postavke, a Esc skriva vidžet ako ne zaustavlja alarm. Položaji vidžeta čuvaju se nakon povlačenja, položaji dijaloških prozora pri zatvaranju, a postavke u odabrano spremište. Ponovno pokretanje aktivira već pokrenutu instancu. Sačuvano priljubljivanje vidžeta uz ivice radnog područja zadržava se i nakon ponovnog pokretanja programa.
+Dvostruki klik na brojčanik ili digitalni ekran uključuje ili isključuje sekunde. F1 otvara pomoć, B otvara Postavke, a Esc skriva vidžet ako ne zaustavlja alarm. Položaji vidžeta čuvaju se nakon povlačenja, položaji dijaloških prozora pri zatvaranju, a postavke u odabrano spremište. Kada se datum promijeni prema vremenu vidžeta, odabir koji odgovara datumu Danas prelazi na novi dan. Ostali odabrani datumi ostaju nepromijenjeni; počinju pratiti Danas samo ako se poklope s današnjim datumom dok je kalendar otvoren. Prikaz kalendara se zadržava, a oznaka i red Danas uvijek se ažuriraju.
 
 ## Unos vremena i radnje alarma
 
@@ -72,7 +72,7 @@ odvojeno u `%APPDATA%\FortSoft\CalClock\times.xml`. Izvoz postavki uključuje ov
 postojeće stavke i preskače samo stavke s istim trenutkom u UTC-u i identičnim potpunim opisom, bez obzira na
 vremensku zonu prikaza.
 
-Kalendar prati današnji datum pri prelasku preko ponoći u vremenskoj zoni početka, ako je današnji datum odabran i vidljiv u mjesečnom prikazu. Ručno odabrani datum i drugi prikazi ostaju sačuvani; oznaka i red Danas uvijek se ažuriraju.
+Odabir koji odgovara datumu Danas prati trenutni datum u početnoj vremenskoj zoni i nakon ponovnog otvaranja kalkulatora ili pokretanja aplikacije. Ostali odabrani datumi ostaju nepromijenjeni; počinju pratiti Danas samo ako se poklope s današnjim datumom dok je kalendar otvoren. Prikaz kalendara se zadržava, a oznaka i red Danas uvijek se ažuriraju.
 
 Svaki unos ima vlastitu vremensku zonu s istog spiska kao u Postavkama. Zadana je trenutna zona Windowsa.
 Čuvaju se jednoznačan UTC trenutak i zona prikaza. Promjena zone zadržava trenutak. Za ponovljeni sat

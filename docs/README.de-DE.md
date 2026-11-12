@@ -68,7 +68,7 @@ Kalender-Uhr-Panels können oberhalb des unteren Links die Datums- und Uhrzeithi
 
 ## Darstellung
 
-Bei eigenständigen Kalendern bestimmt **Heute-Zeile** im Widget-Menü oder auf Darstellung, ob die untere Heute-Zeile sichtbar ist. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Die Wahl wird pro Widget gespeichert. **Zu heute wechseln** bleibt im Menü verfügbar und kehrt zur Monatsansicht zurück. Beim Datumswechsel gemäß der Widget-Zeit wechselt der Kalender nur dann zum neuen Tag, wenn heute in der Monatsansicht ausgewählt und sichtbar ist. Ein manuell ausgewähltes Datum und andere Kalenderansichten bleiben erhalten; die Heute-Markierung und die Heute-Zeile werden immer aktualisiert.
+Bei eigenständigen Kalendern bestimmt **Heute-Zeile** im Widget-Menü oder auf Darstellung, ob die untere Heute-Zeile sichtbar ist. Ein einzelner Kalender unterstützt weder Wecker noch Zeitzeichen oder Stummschaltung. Die Wahl wird pro Widget gespeichert. **Zu heute wechseln** bleibt im Menü verfügbar und kehrt zur Monatsansicht zurück. Wenn sich das Datum nach der Zeit des Widgets ändert, wechselt eine Auswahl, die Heute entspricht, zum neuen Tag. Andere ausgewählte Daten bleiben fest; sie folgen Heute erst, wenn sie bei geöffnetem Kalender dem heutigen Datum entsprechen. Die Kalenderansicht bleibt erhalten, und die Heute-Markierung und die Heute-Zeile werden immer aktualisiert.
 
 Darstellungsänderungen erscheinen sofort in der Vorschau des ausgewählten Widgets. `Standarddarstellung` stellt die Standardwerte dieses Widget-Typs wieder her. Beim Schließen der Einstellungen mit noch nicht übernommenen Änderungen wird gefragt, ob diese gespeichert werden sollen. Die Warnung ist standardmäßig aktiviert und lässt sich auf der Registerkarte Anwendung ausschalten.
 
@@ -101,7 +101,7 @@ enthalten diese Einträge. Beim Import bleiben vorhandene Einträge erhalten; ü
 mit demselben UTC-Zeitpunkt und exakt derselben vollständigen Beschreibung, unabhängig von der
 Anzeigezeitzone.
 
-Der Kalender folgt dem heutigen Tag über Mitternacht in der Startzeitzone, wenn heute in der Monatsansicht ausgewählt und sichtbar ist. Ein manuell ausgewähltes Datum und andere Ansichten bleiben erhalten; die Heute-Markierung und die Heute-Zeile werden immer aktualisiert.
+Eine Auswahl, die Heute entspricht, folgt dem aktuellen Datum in der Startzeitzone, auch nach erneutem Öffnen des Rechners oder einem Neustart der Anwendung. Andere ausgewählte Daten bleiben fest; sie folgen Heute erst, wenn sie bei geöffnetem Kalender dem heutigen Datum entsprechen. Die Kalenderansicht bleibt erhalten, und die Heute-Markierung und die Heute-Zeile werden immer aktualisiert.
 
 Jede Eingabe hat eine eigene Zeitzone aus derselben Liste wie in den Einstellungen. Standard ist die aktuelle
 Windows-Zeitzone. Gespeichert werden ein eindeutiger UTC-Zeitpunkt und seine Anzeigezone. Ein Zonenwechsel

@@ -22,7 +22,7 @@ Kelladel ja paneelidel võib olla äratus. Rakendus esitab helifaili ise ühe ko
 
 ## Aja sisestamine ja äratuse toimingud
 
-Äratuse aeg lubab vormingut HH:mm kooloni, punkti, tühiku või muu eraldajaga või eraldajata. Üks või kaks numbrit tähendavad tunde, kolm või neli tunde ja minuteid: 7, 12, 730, 0730 või 7:30. Väljalt lahkumisel teisendatakse väärtus vormingusse HH:mm. Nihet loetakse paremalt alates sekunditest: 2 tähendab 00:00:02.00, 230 ja 0230 tähendavad 00:02:30.00 ning 12345 tähendab 01:23:45.00. Eraldajatega tähendavad kaks rühma minuteid ja sekundeid, kolm tunde, minuteid ja sekundeid ning neljas sajandiksekundeid; märk on lubatud. Päevad suvandi Äratus lubatud all määravad äratuspäevad; vaikimisi on valitud kõik. Järjestus järgib rakenduse keelt, kuid keele muutmine ei muuda salvestatud päevi.
+Äratuse aeg lubab vormingut HH:mm kooloni, punkti, tühiku või muu eraldajaga või eraldajata. Üks või kaks numbrit tähendavad tunde, kolm või neli tunde ja minuteid: 7, 12, 730, 0730 või 7:30. Väljalt lahkumisel teisendatakse väärtus vormingusse HH:mm. Nihet loetakse paremalt alates sekunditest: 2 tähendab 00:00:02.00, 230 ja 0230 tähendavad 00:02:30.00 ning 12345 tähendab 01:23:45.00. Eraldajatega tähendavad kaks rühma minuteid ja sekundeid, kolm tunde, minuteid ja sekundeid ning neljas sajandiksekundeid; märk on lubatud. Kui kuupäev vidina aja järgi muutub, liigub valik, mis vastab kuupäevale Täna, uuele päevale. Muud valitud kuupäevad jäävad samaks; need hakkavad tänast päeva järgima ainult siis, kui langevad avatud kalendris kokku tänase kuupäevaga. Kalendrivaade säilib ning tähist ja rida Täna värskendatakse alati.
 
 Äratus kuvab peidetud vidina ja toob selle ette, muutmata püsivalt suvandit Alati pealmine. Esita ajasignaal alustab esimest lühikest tooni viis sekundit enne äratust. See on vahekaardist Signaal sõltumatu; samaaegsed jadad ühendatakse. Testi paneb sihverplaadi või raami vilkuma ja kontrollib faili, käsku, heli ja kaugskripti HTTP/HTTPS-aadressi. Testi on saadaval, kui Äratus lubatud ja Käivita fail või käsk on valitud ning faili või käsu väli ei ole tühi. Test ei esita äratuse ajasignaali. Peata test lõpetab sisemise heli ja visuaalse eelvaate. Äratuse peatamine lõpetab selle sisemise heli. Vaigistamisel esitus jätkub hääletult ja muutub vaigistuse eemaldamisel taas kuuldavaks. Käske ja kaugskripte see ei peata.
 
@@ -75,7 +75,7 @@ Kuupäevad ja kellaajad salvestatakse eraldi faili `%APPDATA%\FortSoft\CalClock\
 sisaldab neid kirjeid. Import säilitab olemasolevad kirjed ja jätab vahele ainult kirjed, mille UTC-ajahetk ja
 kogu kirjeldus on täpselt samad, olenemata kuvamiseks valitud ajavööndist.
 
-Kalender järgib tänast kuupäeva üle kesköö algusaja ajavööndis, kui tänane kuupäev on kuuvaates valitud ja nähtav. Käsitsi valitud kuupäev või muu vaade säilib; tänase kuupäeva tähis ja rida uuenevad alati.
+Valik, mis vastab kuupäevale Täna, järgib alguse ajavööndi praegust kuupäeva ka pärast kalkulaatori uuesti avamist või rakenduse taaskäivitamist. Muud valitud kuupäevad jäävad samaks; need hakkavad tänast päeva järgima ainult siis, kui langevad avatud kalendris kokku tänase kuupäevaga. Kalendrivaade säilib ning tähist ja rida Täna värskendatakse alati.
 
 Igal sisendil on oma ajavöönd samast loendist nagu seadetes. Vaikimisi kasutatakse Windowsi praegust
 ajavööndit. Salvestatakse üheselt määratud UTC-ajahetk ja kuvamisvöönd. Vööndi muutmine säilitab ajahetke.

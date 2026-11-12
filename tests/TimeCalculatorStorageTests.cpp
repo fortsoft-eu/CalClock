@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.2
  */
 
 #include "../CalClock/SettingsStorage.cpp"
@@ -182,6 +182,23 @@ static void TestHighlightStorage(HKEY key, const SettingsSnapshot& original) {
     Require(loaded.calculator.highlights == TIME_CALCULATOR_DEFAULT_HIGHLIGHTS,
         "registry ignores unsupported rule bits instead of applying them");
     Require(WriteCalculatorRegistry(key, original), "restore isolated calculator fixture");
+}
+
+/// Verifies both storage backends preserve an unset Today date and leave fixed dates unchanged.
+static void TestCalendarDateStorage(HKEY key, const SettingsSnapshot& original) {
+    for (const SYSTEMTIME& day : { SYSTEMTIME{}, Time(L"2027-01-03T00:00:00.000Z") }) {
+        SettingsSnapshot candidate = original;
+        candidate.calculator.day = day;
+        SettingsSnapshot loaded = RoundTrip(candidate);
+        Require(FormatCalculatorTime(loaded.calculator.day) == FormatCalculatorTime(day),
+            "XML preserves Today following separately from a fixed calendar date");
+        Require(WriteCalculatorRegistry(key, candidate), "isolated calendar date registry write");
+        loaded = SettingsSnapshot{};
+        ReadCalculatorRegistry(key, &loaded);
+        Require(FormatCalculatorTime(loaded.calculator.day) == FormatCalculatorTime(day),
+            "registry preserves Today following separately from a fixed calendar date");
+    }
+    Require(WriteCalculatorRegistry(key, original), "restore isolated calculator date fixture");
 }
 
 /// Replaces an isolated fixture with exact bytes, including optional BOMs and malformed documents.
@@ -420,6 +437,7 @@ int wmain() {
         Require(RegOpenKeyExW(key, L"Calculator\\Presets", 0, KEY_READ, &absent) == ERROR_FILE_NOT_FOUND,
             "registry has no user-data collection");
         TestHighlightStorage(key, original);
+        TestCalendarDateStorage(key, original);
         Require(ReadCalculatorPresets(path, &loadedPresets) && SamePresets(presets, loadedPresets),
             "settings writes never alter the independent user file");
         locked = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);

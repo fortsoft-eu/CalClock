@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.2.2
  */
 
 #pragma once
@@ -89,7 +89,7 @@ struct TimeCalculatorPreset {
 };
 
 /// Stores UTC inputs and their display zones; day is a calendar date in startZone.
-/// A zero year denotes an uninitialized date.
+/// A zero day restores Today; a zero year in another date denotes an uninitialized input.
 struct TimeCalculatorState {
     SYSTEMTIME from = {};
     SYSTEMTIME to = {};

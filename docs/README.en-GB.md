@@ -68,7 +68,7 @@ The `Arrange in a grid` command snaps visible desktop widgets to a stable, non-o
 
 ## Appearance
 
-For standalone calendars, **Today row** in the widget menu or on the Appearance tab in Settings controls whether the bottom Today row is visible. It is checked by default; clear it to hide the row and shrink the calendar to fit. The choice is saved separately for each widget. **Go to Today** remains available in the menu and returns to the month view. When the date changes according to the widget’s time, the calendar advances to the new day only if today is selected and visible in month view. A manually selected date or another calendar view is preserved; the Today marker and row still update.
+For standalone calendars, **Today row** in the widget menu or on the Appearance tab in Settings controls whether the bottom Today row is visible. It is checked by default; clear it to hide the row and shrink the calendar to fit. The choice is saved separately for each widget. **Go to Today** remains available in the menu and returns to the month view. When the date changes according to the widget’s time, a selection matching Today advances to the new day. Other selected dates stay fixed; they start following Today only if they match Today while the calendar is open. The calendar view is preserved, and the Today marker and row always update.
 
 Appearance changes are previewed immediately on the selected widget. `Default appearance` restores the defaults for that widget type. Closing Settings with unapplied changes asks whether to save them. This warning is enabled by default and can be turned off on the Application tab.
 
@@ -98,7 +98,7 @@ separately in `%APPDATA%\FortSoft\CalClock\times.xml`. Settings exports include 
 preserve existing entries and skip only entries with the same UTC instant and an identical complete
 description, regardless of the display time zone.
 
-The calendar follows today across midnight in the starting time zone while today is selected and visible in month view. A manually selected date or another view is preserved, and the Today marker and row still update.
+A selection matching Today follows the current date in the starting time zone, including after reopening the calculator or restarting the application. Other selected dates stay fixed; they start following Today only if they match Today while the calendar is open. The calendar view is preserved, and the Today marker and row always update.
 
 Each input has its own time zone from the same list as Settings, defaulting to the current Windows time zone.
 An unambiguous UTC instant and its display zone are saved. Changing the zone preserves the instant. Choose the
