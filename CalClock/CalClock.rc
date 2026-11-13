@@ -1,7 +1,5 @@
 // Microsoft Visual C++ generated resource script.
 //
-#pragma code_page(65001)
-
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -22,6 +20,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CSY)
 LANGUAGE LANG_CZECH, SUBLANG_DEFAULT
+#pragma code_page(1250)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -294,7 +293,7 @@ BEGIN
     CONTROL         "",ID_INFO_PRODUCT,"Static",SS_OWNERDRAW | SS_NOPREFIX | SS_NOTIFY,33,4,269,70
     LTEXT           "",ID_INFO_WEBSITE,33,78,40,12,SS_NOPREFIX | SS_NOTIFY
     CONTROL         "",ID_INFO_LINK,"SysLink",WS_CLIPSIBLINGS | WS_TABSTOP,77,78,225,12
-    EDITTEXT        ID_INFO_TEXT,8,96,294,143,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL,WS_EX_CLIENTEDGE
+    EDITTEXT        ID_INFO_TEXT,8,96,294,143,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL,WS_EX_CLIENTEDGE
     DEFPUSHBUTTON   "",ID_INFO_CLOSE,259,245,43,12
 END
 
@@ -302,7 +301,7 @@ IDD_HELP DIALOGEX 0, 0, 310, 246
 STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
 BEGIN
-    EDITTEXT        ID_INFO_TEXT,8,8,294,212,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL,WS_EX_CLIENTEDGE
+    EDITTEXT        ID_INFO_TEXT,8,8,294,212,ES_MULTILINE | ES_AUTOVSCROLL | ES_NOHIDESEL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL,WS_EX_CLIENTEDGE
     DEFPUSHBUTTON   "",ID_INFO_CLOSE,259,226,43,12
     SCROLLBAR       ID_INFO_SIZE_GRIP,300,236,10,10,SBS_SIZEBOXBOTTOMRIGHTALIGN | SBS_SIZEGRIP | WS_CLIPSIBLINGS
 END
@@ -457,8 +456,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,2,2
- PRODUCTVERSION 1,7,2,2
+ FILEVERSION 1,7,2,3
+ PRODUCTVERSION 1,7,2,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -475,12 +474,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FortSoft"
             VALUE "FileDescription", "CalClock"
-            VALUE "FileVersion", "1.7.2.2"
+            VALUE "FileVersion", "1.7.2.3"
             VALUE "InternalName", "CalClock.exe"
-            VALUE "LegalCopyright", "Copyright Â© Petr ÄŒervinka â€” FortSoft 2026"
+            VALUE "LegalCopyright", "Copyright © Petr Èervinka — FortSoft 2026"
             VALUE "OriginalFilename", "CalClock.exe"
             VALUE "ProductName", "CalClock"
-            VALUE "ProductVersion", "1.7.2.2"
+            VALUE "ProductVersion", "1.7.2.3"
         END
     END
     BLOCK "VarFileInfo"

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.2.3
  */
 
 #define NOMINMAX
@@ -1854,8 +1854,8 @@ static bool LoadStartWithWindowsSetting() {
     }
     wchar_t actual[MAX_PATH * 2] = {};
     DWORD size = sizeof(actual);
-    LSTATUS result =
-        RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ, nullptr, actual, &size);
+    LSTATUS result = RegGetValueW(HKEY_CURRENT_USER, startupPath, startupValue, RRF_RT_REG_SZ,
+        nullptr, actual, &size);
     bool matches = result == ERROR_SUCCESS && _wcsicmp(actual, expected.c_str()) == 0;
     if (!matches) {
         SetStartWithWindowsEnabled(false);
