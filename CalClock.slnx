@@ -15,6 +15,7 @@
     <File Path="tests\AlarmSettingsTests.cpp" />
     <File Path="tests\AlarmWaveformTests.cpp" />
     <File Path="tests\ClockTimeTests.cpp" />
+    <File Path="tests\NtpSettingsTests.cpp" />
     <File Path="tests\RunClockTests.ps1" />
     <File Path="tests\TimeCalculator.cpp" />
     <File Path="tests\RunTimeCalculatorTests.ps1" />

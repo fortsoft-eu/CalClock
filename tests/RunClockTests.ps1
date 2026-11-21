@@ -21,23 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.1.3
+Last modified for version 1.7.2.4
 
 .SYNOPSIS
-Builds CalClock and runs continuous-clock, alarm, wake, playback and isolated Settings regression tests.
+Builds CalClock and runs continuous-clock, alarm, wake, playback and isolated Settings/NTP tests.
 
 .DESCRIPTION
 Builds Release | x86, then runs clock, alarm scheduling, wake, playback and Settings regression tests.
 Tests use installed time-zone rules and simulated UTC instants for sleep, delayed processing, source changes,
 offsets, weekdays and daylight-saving transitions. Actual production handlers are extracted for isolated
 message and action tests. PCM tests never start audio hardware. Native Settings controls run hidden on a
-private desktop without activation; local and remote alarm actions are captured instead of executed.
+private desktop without activation; alarm actions and NTP requests are captured instead of executed.
 The computer is never suspended and its time is never changed. Actual hardware wake support is not tested.
 Generated files are placed in CalClock/Release/clock-tests. A build or test failure stops the script.
 Creating the private desktop requires a normal Windows process token rather than a restricted sandbox token.
 
 .PARAMETER VisualStudioPath
-Optional Visual Studio installation directory containing VC/Auxiliary/Build/vcvars32.bat and
+Optional Visual Studio installation directory containing Common7/Tools/VsDevCmd.bat and
 MSBuild/Current/Bin.
 When omitted, vswhere selects the latest installed Visual Studio with the C++ build tools, including
 prereleases.
@@ -85,14 +85,15 @@ if (-not $VisualStudioPath) {
 if (-not $VisualStudioPath) {
     throw 'A Visual Studio installation with C++ build tools is required.'
 }
-$vcvars = Join-Path $VisualStudioPath 'VC/Auxiliary/Build/vcvars32.bat'
+$vcvars = Join-Path $VisualStudioPath 'Common7/Tools/VsDevCmd.bat'
+$toolEnvironment = "`"$vcvars`" -arch=x86 -host_arch=x64 >nul"
 $msbuild = Join-Path $VisualStudioPath 'MSBuild/Current/Bin/MSBuild.exe'
 $buildRoot = Join-Path $projectRoot 'CalClock/Release/clock-tests'
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 Push-Location $projectRoot
 try {
-    $buildCommand = "`"$vcvars`" >nul && `"$msbuild`" CalClock.slnx " +
-        '/p:Configuration=Release /p:Platform=x86 /m /v:minimal /nologo'
+    $buildCommand = "$toolEnvironment && `"$msbuild`" CalClock.slnx " +
+        '/p:Configuration=Release /p:Platform=x86 /p:PreferredToolArchitecture=x64 /m /v:minimal /nologo'
     & $env:ComSpec /d /s /c $buildCommand
     if ($LASTEXITCODE -ne 0) {
         throw 'CalClock build failed.'
@@ -127,7 +128,7 @@ try {
     Write-TestHeader 'AlarmSignalMath.h' $signalMath
     $commonOptions = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/Gy', '/DUNICODE', '/D_UNICODE')
     $testNames = @('ClockTimeTests', 'AlarmScheduleTests', 'AlarmIntegrationTests', 'AlarmPlaybackTests',
-        'AlarmWaveformTests', 'AlarmSettingsTests')
+        'AlarmWaveformTests', 'AlarmSettingsTests', 'NtpSettingsTests')
     foreach ($testName in $testNames) {
         $sources = @("tests/$testName.cpp")
         if ($testName -eq 'AlarmScheduleTests') {
@@ -143,7 +144,7 @@ try {
         $extraOptions = @()
         $linkOptions = @('/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF', '/OPT:ICF',
             'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib', 'uuid.lib')
-        if ($testName -eq 'AlarmSettingsTests') {
+        if ($testName -in 'AlarmSettingsTests', 'NtpSettingsTests') {
             $extraOptions += '/DNDEBUG'
             $objects = Get-ChildItem -LiteralPath (Join-Path $projectRoot 'CalClock/Release') -Filter '*.obj'
             $sources += $objects | Where-Object Name -ne 'CalClock.obj' |
@@ -155,15 +156,17 @@ try {
             "/I`"$buildRoot`"") + $sources + $linkOptions
         $responsePath = Join-Path $buildRoot "$testName.rsp"
         Set-Content -LiteralPath $responsePath -Value ($options -join ' ') -Encoding utf8
-        & $env:ComSpec /d /s /c "`"$vcvars`" >nul && cl @`"$responsePath`""
+        & $env:ComSpec /d /s /c "$toolEnvironment && cl @`"$responsePath`""
         if ($LASTEXITCODE -ne 0) {
             throw "$testName build failed."
         }
-        if ($testName -eq 'AlarmSettingsTests') {
-            $manifestCommand = "`"$vcvars`" >nul && mt.exe /nologo /manifest CalClock/CalClock.manifest " +
+        if ($testName -in 'AlarmSettingsTests', 'NtpSettingsTests') {
+            $manifestCommand = "$toolEnvironment && mt.exe /nologo /manifest CalClock/CalClock.manifest " +
                 "/outputresource:`"$buildRoot/$testName.exe;#1`""
             & $env:ComSpec /d /s /c $manifestCommand
-            if ($LASTEXITCODE -ne 0) { throw 'Alarm Settings test manifest failed.' }
+            if ($LASTEXITCODE -ne 0) {
+                throw "$testName manifest failed."
+            }
         }
     }
     foreach ($frequency in '3125000', '3579545', '10000000', '3000000000') {
@@ -177,9 +180,13 @@ try {
         & "$buildRoot/$testName.exe"
         if ($LASTEXITCODE -ne 0) { throw "$testName failed." }
     }
-    $settingsTestXml = Join-Path $buildRoot 'alarm-settings-isolated.xml'
-    & "$buildRoot/AlarmSettingsTests.exe" $settingsTestXml
-    if ($LASTEXITCODE -ne 0) { throw 'AlarmSettingsTests failed.' }
+    foreach ($testName in 'AlarmSettingsTests', 'NtpSettingsTests') {
+        $settingsTestXml = Join-Path $buildRoot "$testName-isolated.xml"
+        & "$buildRoot/$testName.exe" $settingsTestXml
+        if ($LASTEXITCODE -ne 0) {
+            throw "$testName failed."
+        }
+    }
 } finally {
     Pop-Location
 }

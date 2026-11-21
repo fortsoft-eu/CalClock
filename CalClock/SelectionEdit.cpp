@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.3
+ * Last modified for version 1.7.2.4
  */
 
 #include "SelectionEdit.h"
@@ -37,6 +37,7 @@
 typedef DWORD(WINAPI* SelectionTickCountFunction)();
 typedef ULONGLONG(WINAPI* SelectionTickCount64Function)();
 
+/// Tracks whether edit mouse selection is inactive, native, word-based or line-based.
 enum class SelectionUnit {
     None,
     Native,

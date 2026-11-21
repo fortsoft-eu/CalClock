@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.3
+ * Last modified for version 1.7.2.4
  */
 
 #define NOMINMAX
@@ -686,6 +686,9 @@ static void SortNtpLogByColumn(int column);
 
 /// Extends the synchronization status to the fixed log top while preserving its position and width.
 static void UpdateNtpLabelHeights();
+
+/// Refreshes NTP action availability and the displayed synchronization status.
+static void UpdateNtpSettingsControls();
 
 /// Dispatches controller, widget, settings-page, and information-window messages. Coordinates painting,
 /// input, timers, background-worker results, settings actions, and orderly application shutdown.
@@ -1770,7 +1773,7 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     useNtpTime = snapshot.useNtpTime;
     ntpPreset = std::clamp(snapshot.ntpPreset, 0, NTP_PRESET_COUNT - 1);
     ntpServers = ntpPreset == NTP_PRESET_CUSTOM ? snapshot.ntpServers : NtpServersForPreset(ntpPreset);
-    if (ntpServers.empty()) {
+    if (!HasNtpServers(ntpServers)) {
         ntpPreset = NTP_PRESET_GLOBAL;
         ntpServers = NtpServersForPreset(ntpPreset);
     }
@@ -2190,6 +2193,7 @@ static void StartNtpSynchronization(bool force, bool manual = false) {
         ntpQueryRunning = false;
         ntpLastQueryFailed = true;
     }
+    UpdateNtpSettingsControls();
 }
 
 /// Requests NTP cancellation, waits up to three seconds, and releases pending result messages.
@@ -10606,6 +10610,63 @@ static void ApplySelectedNtpPresetToEdit() {
     updatingNtpPresetControls = false;
 }
 
+/// Enables manual synchronization for the current valid selection while no query is in progress.
+static bool CanSynchronizeNtpSettings() {
+    return SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1
+        && winsockReady
+        && !ntpQueryRunning
+        && HasNtpServers(GetControlText(hNtpServersEdit));
+}
+
+/// Applies only the Time page's NTP preferences, retaining a valid correction across server changes.
+static bool ApplyNtpSettingsFromControls() {
+    bool newUseNtpTime = SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1;
+    int selectedPreset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
+    int newNtpPreset = std::clamp(selectedPreset, 0, NTP_PRESET_COUNT - 1);
+    std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
+        ? GetControlText(hNtpServersEdit)
+        : NtpServersForPreset(newNtpPreset);
+    if (!HasNtpServers(newNtpServers)) {
+        newNtpPreset = NTP_PRESET_GLOBAL;
+        newNtpServers = NtpServersForPreset(newNtpPreset);
+    }
+    bool previousUseNtpTime = useNtpTime;
+    bool ntpSettingsChanged = previousUseNtpTime != newUseNtpTime
+        || ntpPreset != newNtpPreset
+        || ntpServers != newNtpServers;
+    bool keepCurrentNtpTime = previousUseNtpTime && newUseNtpTime && ntpTimeValid.load();
+    useNtpTime = newUseNtpTime;
+    ntpPreset = newNtpPreset;
+    ntpServers = newNtpServers;
+    if (ntpSettingsChanged) {
+        ntpGeneration++;
+        if (!keepCurrentNtpTime) {
+            ntpTimeValid = false;
+            ntpActiveServer.clear();
+        }
+        ntpLastQueryFailed = false;
+        lastNtpAttemptTick = 0;
+        nextNtpAttemptTick = 0;
+    }
+    return ntpSettingsChanged;
+}
+
+/// Synchronizes the visible NTP selection without applying drafts from other Settings pages.
+static void SynchronizeNtpSettingsNow() {
+    if (!CanSynchronizeNtpSettings()) {
+        return;
+    }
+    bool previousUseNtpTime = useNtpTime;
+    bool changed = ApplyNtpSettingsFromControls();
+    if (previousUseNtpTime != useNtpTime) {
+        ResetAlarmSchedules();
+    }
+    if (changed) {
+        SaveAllSettings();
+    }
+    StartNtpSynchronization(true, true);
+}
+
 /// Maps stored generator volume to the piecewise decibel slider with -18 dB at its midpoint and silence
 /// at the left endpoint.
 static int TimeSignalVolumeSliderPosition(double volume, HWND trackBar = hTimeSignalVolumeTrackBar) {
@@ -11449,15 +11510,11 @@ static void UpdateNtpSettingsControls() {
     }
     int source = static_cast<int>(SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0));
     bool ntpSelected = source == 1;
-    int selectedPreset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
-    bool settingsApplied = ntpSelected == useNtpTime
-        && selectedPreset == ntpPreset
-        && GetControlText(hNtpServersEdit) == ntpServers;
     SetControlEnabled(hNtpPresetLabel, ntpSelected);
     SetControlEnabled(hNtpPresetCombo, ntpSelected);
     SetControlEnabled(hNtpServersLabel, ntpSelected);
     SetControlEnabled(hNtpServersEdit, ntpSelected);
-    SetControlEnabled(hNtpSyncButton, ntpSelected && winsockReady && settingsApplied);
+    SetControlEnabled(hNtpSyncButton, CanSynchronizeNtpSettings());
     std::wstring status;
     if (!ntpSelected) {
         status = T(TXT_NTP_STATUS_SYSTEM);
@@ -14109,34 +14166,8 @@ static bool ApplySettingsDraft() {
             SetCheck(hStartWithWindowsCheck, startWithWindows);
         }
     }
-    bool newUseNtpTime = SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1;
-    int newNtpPreset = std::clamp(static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0)),
-        0, NTP_PRESET_COUNT - 1);
-    std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
-        ? GetControlText(hNtpServersEdit)
-        : NtpServersForPreset(newNtpPreset);
-    if (!HasNtpServers(newNtpServers)) {
-        newNtpPreset = NTP_PRESET_GLOBAL;
-        newNtpServers = NtpServersForPreset(newNtpPreset);
-    }
     bool previousUseNtpTime = useNtpTime;
-    bool ntpSettingsChanged = previousUseNtpTime != newUseNtpTime
-        || ntpPreset != newNtpPreset
-        || ntpServers != newNtpServers;
-    bool keepCurrentNtpTime = previousUseNtpTime && newUseNtpTime && ntpTimeValid.load();
-    useNtpTime = newUseNtpTime;
-    ntpPreset = newNtpPreset;
-    ntpServers = newNtpServers;
-    if (ntpSettingsChanged) {
-        ntpGeneration++;
-        if (!keepCurrentNtpTime) {
-            ntpTimeValid = false;
-            ntpActiveServer.clear();
-        }
-        ntpLastQueryFailed = false;
-        lastNtpAttemptTick = 0;
-        nextNtpAttemptTick = 0;
-    }
+    bool ntpSettingsChanged = ApplyNtpSettingsFromControls();
     for (const WidgetConfig& configuration : settingsDraft) {
         Widget* current = FindWidgetById(configuration.id);
         if (current == nullptr) {
@@ -16378,8 +16409,7 @@ static void HandleSettingsCommand(int id, int notification) {
         }
         UpdateNtpSettingsControls();
     } else if (id == ID_NTP_SYNC && notification == BN_CLICKED) {
-        StartNtpSynchronization(true, true);
-        UpdateNtpSettingsControls();
+        SynchronizeNtpSettingsNow();
     } else if (id == ID_NTP_SAVE_LOG && notification == BN_CLICKED) {
         SaveNtpLog();
     } else if (id == ID_ADD) {
@@ -17611,6 +17641,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                 ULONGLONG tick = GetTickCount64();
                 UpdateFullscreenCursor();
                 StartNtpSynchronization(false);
+                UpdateNtpSettingsControls();
                 CheckWidgetAlarms();
                 CheckTimeSignals();
                 UpdateSettingsApplyButton();
