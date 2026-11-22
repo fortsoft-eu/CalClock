@@ -622,7 +622,6 @@ bool FindForm::Initialize() {
     RECT bounds = ControlRect(GetDlgItem(window, IDOK), window);
     buttonSize = SIZE{ bounds.right - bounds.left, bounds.bottom - bounds.top };
     templateDpi = GetSystemDialogDpi(window);
-    HWND combo = GetDlgItem(window, IDC_FIND_TEXT);
     HWND input = FindHistoryEdit(window);
     if (!input || !InstallSelectionEditHandler(input)) {
         return false;
@@ -743,7 +742,6 @@ INT_PTR FindForm::HandleClose() const {
 
 /// Restores history options during navigation and selects the text after the choice is committed.
 void FindForm::ChooseHistory(bool selectText) const {
-    HWND combo = GetDlgItem(window, IDC_FIND_TEXT);
     LRESULT index = SendMessageW(FindHistoryControl(window), CB_GETCURSEL, 0, 0);
     if (index >= 0
             && static_cast<UINT>(index) < historyCount
