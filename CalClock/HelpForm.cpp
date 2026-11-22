@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -103,7 +103,7 @@ void HelpForm::Layout() const {
     GetClientRect(window, &client);
     SIZE margin = InformationDialogUnits(uiFont, 8, 8);
     SIZE gap = InformationDialogUnits(uiFont, 4, 6);
-    SIZE button = InformationButtonSize(window, uiFont);
+    SIZE button = InformationButtonSize(window, uiFont, IDD_HELP);
     int textTop = margin.cy;
     int buttonY = client.bottom - margin.cy - button.cy;
     PlaceInformationControl(window, ID_INFO_CLOSE, client.right - margin.cx - button.cx, buttonY,
@@ -221,7 +221,7 @@ void HelpForm::Show(HINSTANCE module, PersistWindowState& state) {
         DestroyWindow(window);
         return;
     }
-    RefreshInformationWindows();
+    Refresh();
     SendMessageW(text, EM_SETSEL, 0, 0);
     placement->SetDisableSaveSize(false);
     placement->SetDisableSaveWindowState(false);

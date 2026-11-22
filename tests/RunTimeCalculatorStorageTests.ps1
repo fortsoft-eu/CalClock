@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.1.3
+Last modified for version 1.7.3.0
 
 .SYNOPSIS
 Builds and runs isolated Time Calculator registry and XML storage tests in Release configuration.
@@ -56,8 +56,8 @@ $commonOptions = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/DNDEBUG', '
     '/DUNICODE', '/D_UNICODE', '/ICalClock')
 $coreOptions = $commonOptions + @('/c', "/Fo`"$buildRoot/TimeCalculatorCore.obj`"",
     'CalClock/TimeCalculator.cpp')
-$testOptions = $commonOptions + @('/Gy', "/Fo`"$buildRoot/TimeCalculatorStorageTests.obj`"",
-    "/Fe`"$buildRoot/TimeCalculatorStorageTests.exe`"", 'tests/TimeCalculatorStorageTests.cpp',
+$testOptions = $commonOptions + @('/Gy', "/Fo`"$buildRoot/TimeCalculatorStorage.obj`"",
+    "/Fe`"$buildRoot/TimeCalculatorStorage.exe`"", 'tests/TimeCalculatorStorage.cpp',
     "`"$buildRoot/TimeCalculatorCore.obj`"", "`"$buildRoot/TimeZoneSupport.obj`"",
     '/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF',
     'user32.lib', 'advapi32.lib', 'ole32.lib')
@@ -66,7 +66,7 @@ $zoneOptions = $commonOptions + @('/c', "/Fo`"$buildRoot/TimeZoneSupport.obj`"",
     'CalClock/TimeZoneSupport.cpp')
 $zoneResponse = Join-Path $buildRoot 'TimeZoneSupport.rsp'
 Set-Content -LiteralPath $zoneResponse -Value ($zoneOptions -join ' ') -Encoding utf8
-$testResponse = Join-Path $buildRoot 'TimeCalculatorStorageTests.rsp'
+$testResponse = Join-Path $buildRoot 'TimeCalculatorStorage.rsp'
 Set-Content -LiteralPath $coreResponse -Value ($coreOptions -join ' ') -Encoding utf8
 Set-Content -LiteralPath $testResponse -Value ($testOptions -join ' ') -Encoding utf8
 Push-Location $projectRoot
@@ -83,7 +83,7 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'Time Calculator storage test build failed.'
     }
-    & "$buildRoot/TimeCalculatorStorageTests.exe"
+    & "$buildRoot/TimeCalculatorStorage.exe"
     if ($LASTEXITCODE -ne 0) {
         throw 'Time Calculator storage tests failed.'
     }

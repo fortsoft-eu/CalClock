@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.2.5
+Last modified for version 1.7.3.0
 
 .SYNOPSIS
 Builds and runs native search, resource-cache, Options, and print-snapshot regression tests.
@@ -59,25 +59,25 @@ try {
         Where-Object Name -notin @('CalClock.obj', 'FindForm.obj', 'PersistWindowState.obj',
             'AboutForm.obj', 'HelpForm.obj')
     $options = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/Gy', '/DNDEBUG', '/DUNICODE',
-        '/D_UNICODE', "/Fo`"$buildRoot/FindFormTests.obj`"", "/Fe`"$buildRoot/FindFormTests.exe`"",
-        'tests/FindFormTests.cpp')
+        '/D_UNICODE', "/Fo`"$buildRoot/FindForm.obj`"", "/Fe`"$buildRoot/FindForm.exe`"",
+        'tests/FindForm.cpp')
     $options += $objects | ForEach-Object { '"' + $_.FullName + '"' }
     $options += @('CalClock/Release/CalClock.res', '/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE',
         '/OPT:REF', '/OPT:ICF', '/LTCG', 'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib',
         'uuid.lib', 'oleaut32.lib', 'Usp10.lib')
-    $response = Join-Path $buildRoot 'FindFormTests.rsp'
+    $response = Join-Path $buildRoot 'FindForm.rsp'
     Set-Content -LiteralPath $response -Value ($options -join ' ') -Encoding utf8
     & $env:ComSpec /d /s /c "$toolEnvironment && cl @`"$response`""
     if ($LASTEXITCODE -ne 0) {
         throw 'Find form test build failed.'
     }
     $manifest = "$toolEnvironment && mt.exe /nologo /manifest CalClock/CalClock.manifest " +
-        "/outputresource:`"$buildRoot/FindFormTests.exe;#1`""
+        "/outputresource:`"$buildRoot/FindForm.exe;#1`""
     & $env:ComSpec /d /s /c $manifest
     if ($LASTEXITCODE -ne 0) {
         throw 'Find form test manifest failed.'
     }
-    & "$buildRoot/FindFormTests.exe" $buildRoot
+    & "$buildRoot/FindForm.exe" $buildRoot
     if ($LASTEXITCODE -ne 0) {
         throw 'Find form tests failed.'
     }

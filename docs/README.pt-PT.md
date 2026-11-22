@@ -76,12 +76,12 @@ Relógios digitais, calendários e painéis partilham quatro estilos de contorno
 
 Idioma da aplicação, tipo de letra da interface, suavização, armazenamento, arranque com Windows e encaixe às margens são globais e configurados em Aplicação. Desativar os temas em Aplicação afeta Definições, Ajuda, Acerca de, Calculadora de tempo e Localizar. Cada widget utiliza a sua própria definição de temas. A origem da hora também é global. Idioma do widget, suavização, estilos, fuso, desvio, alarme e sinal horário são independentes. A suavização oferece **ClearType**, **GDI** e **Nenhuma**.
 
-Estilo do Windows 2000 requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de, Calculadora
-de tempo e Localizar. Com o tipo de letra predefinido do sistema, os controlos destas janelas usam Tahoma de 8
-pt; um tipo de letra personalizado da aplicação tem prioridade. A licença mantém o tipo de letra monoespaçado.
-Neste modo, a suavização só oferece GDI e Nenhuma: uma escolha ClearType guardada usa temporariamente GDI e é
-reposta ao desativar o modo. Se os estilos visuais estiverem desativados no Windows, todas as opções de aspeto
-aparecem desmarcadas e desativadas sem alterar as escolhas guardadas.
+Estilo do Windows Classic requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de,
+Calculadora de tempo e Localizar. Com o tipo de letra predefinido do sistema, os controlos destas janelas usam
+Tahoma de 8 pt; um tipo de letra personalizado da aplicação tem prioridade. A licença mantém o tipo de letra
+monoespaçado. Neste modo, a suavização só oferece GDI e Nenhuma: uma escolha ClearType guardada usa
+temporariamente GDI e é reposta ao desativar o modo. Se os estilos visuais estiverem desativados no Windows,
+todas as opções de aspeto aparecem desmarcadas e desativadas sem alterar as escolhas guardadas.
 
 O controlo **Volume do áudio** em Alarme regula os ficheiros reproduzidos internamente por widget e apresenta o nível em dB. A predefinição **−18 dB** mantém o nível original do ficheiro (**100%**). Para a direita amplifica o áudio; o máximo **0 dB** corresponde a cerca de **794%** da amplitude original. O extremo esquerdo é **−∞ dB** (silêncio). As alterações aplicam-se durante o teste. A amplificação aplica-se a áudio descodificado, incluindo WAV, MP3, WMA, AAC, M4A e FLAC quando suportados pelo Windows. A reprodução antiga de ficheiros que não podem ser descodificados, como MIDI, está limitada a 100%.
 
@@ -257,10 +257,10 @@ linha, pesquisar para trás e usar expressões regulares. O histórico guarda as
 No separador Aplicação, Ícone de notificação alternativo ativa Ícone de notificação retro. Ambas as opções
 alteram apenas o ícone de notificação após Aplicar ou Guardar.
 
-Aspeto das janelas: Sistema; Títulos Windows Basic; Títulos Windows Classic; Windows 2000. Ambos os modos de
-título funcionam com ou sem temas nos controlos. Sistema aplica Desativar temas a toda a janela. Os títulos
+Aspeto das janelas: Sistema; Títulos Windows Basic; Títulos Windows Classic; Windows Classic. Ambos os modos
+de título funcionam com ou sem temas nos controlos. Sistema aplica Desativar temas a toda a janela. Os títulos
 Windows Classic alteram apenas o tipo de letra e o fundo do título; os botões e a moldura 3D mantêm as cores
-do sistema. Windows 2000 exige temas desativados.
+do sistema. Windows Classic exige temas desativados.
 
 ## Licença
 

@@ -26,7 +26,7 @@
 
 #define wmain AlarmSettingsRegressionEntry
 #define StartNtpQueryThread TestStartNtpQueryThread
-#include "AlarmSettingsTests.cpp"
+#include "AlarmSettings.cpp"
 #undef StartNtpQueryThread
 #undef wmain
 

@@ -76,8 +76,8 @@ Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfa
 
 Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft die Fenster Einstellungen, Hilfe, Info, Zeitrechner und Suchen. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
 
-Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info, Zeitrechner
-und Suchen. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
+Windows-Classic-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info,
+Zeitrechner und Suchen. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
 Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur
 GDI und Keine für die Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet
 vorübergehend GDI und wird beim Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows selbst
@@ -262,10 +262,10 @@ Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbo
 Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder Speichern
 wirksam.
 
-Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows 2000.
+Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows Classic.
 Beide Titelleistenmodi funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt
 Designs deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern nur Titelschrift und
-Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. Windows 2000
+Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. Windows Classic
 erfordert deaktivierte Designs.
 
 ## Lizenz

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 #undef WINVER
 #undef _WIN32_WINNT
@@ -283,11 +283,22 @@ void ReleaseModernPrint(ModernPrintDialog* source) {
 /// Adopts the print snapshot and copies the initial printer settings and completion message.
 ModernPrintDialog::ModernPrintDialog(PrintJob* snapshot, const PrintSettings& settings,
         UINT completionMessage)
-        : references(1), canceled(0), job(snapshot), deviceMode(DEVMODEW{}), pages(nullptr), pageCount(0),
-        completeMessage(completionMessage), content(D2D1_RECT_F{}),
+        : references(1),
+        canceled(0),
+        job(snapshot),
+        deviceMode(DEVMODEW{}),
+        pages(nullptr),
+        pageCount(0),
+        completeMessage(completionMessage),
+        content(D2D1_RECT_F{}),
         description(Printing::PrintPageDescription{}),
-        requestedToken(EventRegistrationToken{}), completedToken(EventRegistrationToken{}), requested(false),
-        completed(false), apartment(false), notified(false), failed(false) {
+        requestedToken(EventRegistrationToken{}),
+        completedToken(EventRegistrationToken{}),
+        requested(false),
+        completed(false),
+        apartment(false),
+        notified(false),
+        failed(false) {
     InitializeCriticalSection(&lock);
     settings.GetDeviceMode(deviceMode);
 }

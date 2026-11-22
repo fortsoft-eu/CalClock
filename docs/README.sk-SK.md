@@ -76,7 +76,7 @@ Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jedn
 
 Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí pre Nastavenia, Pomoc, O programe, Časový kalkulátor a Hľadať. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
 
-Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe, Časový
+Štýl Windows Classic je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe, Časový
 kalkulátor a Hľadať. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien Tahomu 8 pt;
 vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa
 dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú všetky voľby vzhľadu
@@ -237,9 +237,9 @@ alebo použiť regulárny výraz. História uchováva posledných 30 hľadaní p
 Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti
 oznámení. Obe voľby menia iba ikonu v oblasti oznámení a prejavia sa po stlačení Použiť alebo Uložiť.
 
-Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows 2000. Obe záhlavia možno
+Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows Classic. Obe záhlavia možno
 použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať motívy pre celé okno. Záhlavia Windows
-Classic menia iba písmo a pozadie záhlavia, nie systémové farby tlačidiel a 3D rámu. Windows 2000 vyžaduje
+Classic menia iba písmo a pozadie záhlavia, nie systémové farby tlačidiel a 3D rámu. Windows Classic vyžaduje
 vypnuté motívy.
 
 ## Licencia

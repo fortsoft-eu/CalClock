@@ -76,7 +76,7 @@ Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den en
 
 Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder Innstillinger, Hjelp, Om, Tidskalkulator og Finn. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator og Finn.
+Windows Classic-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator og Finn.
 Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er valgt; en egendefinert
 programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan
 velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk
@@ -243,10 +243,10 @@ beholder de siste 30 søkene i gjeldende økt.
 På fanen Program aktiverer Alternativt varslingsikon valget Retroikon i systemstatusfeltet. Begge valgene
 endrer bare varslingsikonet etter Bruk eller Lagre.
 
-Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; Windows 2000. Begge
-tittellinjemodusene virker med eller uten temaer på kontrollene. Systemstandard følger Deaktiver temaer for
-hele vinduet. Windows Classic-tittellinjer endrer bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme
-beholder systemfargene. Windows 2000 krever deaktiverte temaer.
+Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; Windows Classic.
+Begge tittellinjemodusene virker med eller uten temaer på kontrollene. Systemstandard følger Deaktiver temaer
+for hele vinduet. Windows Classic-tittellinjer endrer bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme
+beholder systemfargene. Windows Classic krever deaktiverte temaer.
 
 ## Lisens
 

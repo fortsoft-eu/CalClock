@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.4
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -426,15 +426,37 @@ static LONG ConstrainDimension(LONG value, LONG minimum, LONG maximum) {
 
 /// Creates a native state tracker with registry saving and Windows-selected initial bounds.
 PersistWindowState::PersistWindowState()
-        : window(nullptr), instanceMutex(nullptr), attached(false), registrationLocked(false),
-        allowSaveMinimized(false), allowSaveTopMost(false), disableSaveHeight(false),
-        disableSavePosition(false), disableSaveSize(false), disableSaveWidth(false),
-        disableSaveWindowState(false), fixHeight(false), fixWidth(false), placeOnScreenAfterLoad(true),
-        singleInstance(false), useWindowsDefaultLocation(true), useWindowsDefaultSize(true), hasState(false),
-        applying(false), restoredShowState(false), detectionOptions(WindowDetectionOptions::Default),
-        savingOptions(PersistWindowStateSavingOptions::Registry), registryPath(nullptr),
-        initialTitle(nullptr), errorCode(ERROR_SUCCESS), errorHandler(nullptr), loadedHandler(nullptr),
-        savedHandler(nullptr), errorContext(nullptr), loadedContext(nullptr), savedContext(nullptr) {
+        : window(nullptr),
+        instanceMutex(nullptr),
+        attached(false),
+        registrationLocked(false),
+        allowSaveMinimized(false),
+        allowSaveTopMost(false),
+        disableSaveHeight(false),
+        disableSavePosition(false),
+        disableSaveSize(false),
+        disableSaveWidth(false),
+        disableSaveWindowState(false),
+        fixHeight(false),
+        fixWidth(false),
+        placeOnScreenAfterLoad(true),
+        singleInstance(false),
+        useWindowsDefaultLocation(true),
+        useWindowsDefaultSize(true),
+        hasState(false),
+        applying(false),
+        restoredShowState(false),
+        detectionOptions(WindowDetectionOptions::Default),
+        savingOptions(PersistWindowStateSavingOptions::Registry),
+        registryPath(nullptr),
+        initialTitle(nullptr),
+        errorCode(ERROR_SUCCESS),
+        errorHandler(nullptr),
+        loadedHandler(nullptr),
+        savedHandler(nullptr),
+        errorContext(nullptr),
+        loadedContext(nullptr),
+        savedContext(nullptr) {
     identity[0] = 0;
     instanceProperty[0] = 0;
     InitializeRegistryPath();

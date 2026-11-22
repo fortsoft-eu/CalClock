@@ -58,7 +58,7 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
-Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par
+Windows Classic stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par
 programmu, Laika kalkulators un Atrast. Ja izvēlēts sistēmas noklusējuma fonts, šo logu vadīklas izmanto
 Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties
 tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu.
@@ -187,10 +187,10 @@ regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
 
 Cilnē Programma opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc Lietot vai Saglabāt nospiešanas.
 
-Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Classic virsraksti; Windows 2000. Abi virsraksta
+Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Classic virsraksti; Windows Classic. Abi virsraksta
 režīmi darbojas ar ieslēgtiem vai izslēgtiem vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu
 visam logam. Windows Classic virsraksti maina tikai virsraksta fontu un fonu; virsraksta pogas un 3D apmale
-saglabā sistēmas krāsas. Windows 2000 režīmam nepieciešami atspējoti motīvi.
+saglabā sistēmas krāsas. Windows Classic režīmam nepieciešami atspējoti motīvi.
 
 ## Licence
 

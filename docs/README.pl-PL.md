@@ -76,7 +76,7 @@ Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ra
 
 Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy okien Ustawienia, Pomoc, O programie, Kalkulator czasu i Znajdź. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
-Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie,
+Styl Windows Classic jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie,
 Kalkulator czasu i Znajdź. Przy domyślnej czcionce systemowej elementy sterujące tych okien używają czcionki
 Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany
 wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows
@@ -240,10 +240,10 @@ wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich w
 Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona powiadomień w stylu retro.
 Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub Zapisz.
 
-Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; Windows 2000. Oba tryby
+Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; Windows Classic. Oba tryby
 nagłówka działają z motywami elementów sterujących lub bez nich. Systemowy stosuje Wyłącz motywy do całego
 okna. Nagłówki Windows Classic zmieniają tylko czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory
-systemowe. Windows 2000 wymaga wyłączonych motywów.
+systemowe. Windows Classic wymaga wyłączonych motywów.
 
 ## Licencja
 

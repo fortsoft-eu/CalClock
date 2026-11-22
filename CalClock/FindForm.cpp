@@ -101,11 +101,28 @@ static bool FindLiteralAt(const wchar_t* report, const wchar_t* query, int start
 
 /// Initializes forward literal searching and an empty thirty-item session history.
 FindForm::FindForm()
-        : window(nullptr), ownerWindow(nullptr), target(nullptr), lastTarget(nullptr), uiFont(nullptr),
-        buttonSize(SIZE{}), templateDpi(96), minimumWidth(380), fixedHeight(0), query(nullptr), history(),
-        matches(nullptr), historyCount(0), matchCount(0), matchCapacity(0), lastMatchStart(-1),
-        lastMatchLength(0), ownsUiFont(false), matchCase(false), backward(false), wholeWords(false),
-        startsWith(false), endsWith(false), regularExpression(false) {}
+        : window(nullptr),
+        ownerWindow(nullptr),
+        target(nullptr),
+        lastTarget(nullptr),
+        uiFont(nullptr),
+        minimumWidth(380),
+        fixedHeight(0),
+        query(nullptr),
+        history(),
+        matches(nullptr),
+        historyCount(0),
+        matchCount(0),
+        matchCapacity(0),
+        lastMatchStart(-1),
+        lastMatchLength(0),
+        ownsUiFont(false),
+        matchCase(false),
+        backward(false),
+        wholeWords(false),
+        startsWith(false),
+        endsWith(false),
+        regularExpression(false) {}
 
 /// Closes the form and releases its font, expression, history and match buffers.
 FindForm::~FindForm() {
@@ -181,10 +198,10 @@ void FindForm::Layout() {
     SIZE margin = InformationDialogUnits(uiFont, 7, 7);
     LONG top = InformationDialogUnits(uiFont, 0, 6).cy;
     SIZE gap = InformationDialogUnits(uiFont, 4, 3);
-    SIZE button = buttonSize;
+    SIZE button = DialogResourceControlSize(IDD_FIND, IDOK, uiFont);
+    SIZE closeSize = DialogResourceControlSize(IDD_FIND, IDCANCEL, uiFont);
+    button.cx = std::max(button.cx, closeSize.cx);
     UINT dpi = GetSystemDialogDpi(window);
-    button.cx = MulDiv(button.cx, dpi, templateDpi);
-    button.cy = MulDiv(button.cy, dpi, templateDpi);
     button.cx = PreferredButtonSize(next, button).cx;
     button.cx = PreferredButtonSize(close, button).cx;
     LONG inputLeft = InformationDialogUnits(uiFont, 50, 0).cx;
@@ -260,7 +277,7 @@ void FindForm::Layout() {
         PlaceControl(GetDlgItem(window, options[index]), left, rowTop + index % 3 * step,
             controlWidth, optionHeight);
     }
-    PlaceControl(close, rightButton, rowTop + 2 * step, button.cx, button.cy);
+    PlaceControl(close, rightButton, rowTop + 2 * step, button.cx, closeSize.cy);
     AlignControlBaseline(close, GetDlgItem(window, IDC_FIND_WHOLE_WORDS));
     RECT closeBounds = ControlRect(close, window);
     fixedHeight = closeBounds.bottom + margin.cy + frameHeight;
@@ -623,9 +640,7 @@ void FindForm::FindNext(HWND owner, bool reverse) {
 
 /// Initializes the editable combo, native controls, icons and persisted form placement.
 bool FindForm::Initialize() {
-    RECT bounds = ControlRect(GetDlgItem(window, IDOK), window);
-    buttonSize = SIZE{ bounds.right - bounds.left, bounds.bottom - bounds.top };
-    templateDpi = GetSystemDialogDpi(window);
+    RECT bounds = {};
     HWND input = FindHistoryEdit(window);
     if (!input || !InstallSelectionEditHandler(input)) {
         return false;

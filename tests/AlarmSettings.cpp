@@ -308,6 +308,49 @@ static BOOL WINAPI TestSetWaitableTimer(HANDLE timer, const LARGE_INTEGER* due, 
 #undef CreateThread
 #undef SetWaitableTimer
 
+/// Checks each push button against its own RC dimensions using its current font's dialog units.
+static void CheckResourceButtonHeights(HWND window, int resourceId) {
+    for (HWND button = GetWindow(window, GW_CHILD);
+            button != nullptr;
+            button = GetWindow(button, GW_HWNDNEXT)) {
+        wchar_t className[32] = {};
+        GetClassNameW(button, className, ARRAYSIZE(className));
+        if (_wcsicmp(className, L"BUTTON") != 0) {
+            continue;
+        }
+        LONG_PTR type = GetWindowLongPtrW(button, GWL_STYLE) & BS_TYPEMASK;
+        if (type != BS_PUSHBUTTON && type != BS_DEFPUSHBUTTON) {
+            continue;
+        }
+        HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
+        SIZE expected = DialogResourceControlSize(resourceId, GetDlgCtrlID(button), font);
+        RECT bounds = {};
+        Require(expected.cy > 0
+                && GetWindowRect(button, &bounds)
+                && bounds.bottom - bounds.top == expected.cy,
+            "push button retains its own resource height after layout");
+    }
+}
+
+/// Checks the root and every Settings page after repeated metric and baseline recalculation.
+static void TestSettingsButtonHeights() {
+    const int resources[] = {
+        IDD_SETTINGS_GENERAL,
+        IDD_SETTINGS_APPEARANCE,
+        IDD_SETTINGS_ALARM,
+        IDD_SETTINGS_SIGNALS,
+        IDD_SETTINGS_TIME,
+        IDD_SETTINGS_APPLICATION
+    };
+    for (int pass = 0; pass < 2; pass++) {
+        UpdateSettingsControlMetrics();
+        CheckResourceButtonHeights(hSettings, IDD_SETTINGS);
+        for (int index = 0; index < SETTINGS_TAB_COUNT; index++) {
+            CheckResourceButtonHeights(GetSettingsPage(index), resources[index]);
+        }
+    }
+}
+
 /// Creates a distinctive valid alarm whose every stored field can be compared after UI operations.
 static WidgetConfig AlarmConfiguration(int id, WidgetType type = WIDGET_DIGITAL) {
     WidgetConfig config = DefaultConfig(type, 0);
@@ -460,6 +503,7 @@ static void TestRebuild() {
     SetCheck(hAlarmEnabledCheck, false);
     UpdateSettingControlAvailability();
     RebuildSettingsControls(true);
+    TestSettingsButtonHeights();
     WidgetConfig read = expected;
     expected.alarmEnabled = false;
     Require(ReadWidgetControls(read, false), "rebuilt disabled alarm can be read");
@@ -853,6 +897,7 @@ int wmain(int argc, wchar_t** argv) {
             && (GetWindowLongPtrW(hSettings, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
         "Settings window starts hidden and nonactivating");
     if (hSettings != nullptr && CreateSettingsControls(2)) {
+        TestSettingsButtonHeights();
         TestAvailability();
         TestWeekdays();
         TestDisabledValidation();

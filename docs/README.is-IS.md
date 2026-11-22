@@ -76,7 +76,7 @@ Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ram
 
 Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það fyrir Stillingar, Hjálp, Um, Tímareiknivél og Finna. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
 
-Windows 2000-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um,
+Windows Classic-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um,
 Tímareiknivél og Finna. Stýringar þessara glugga nota Tahoma 8 pt þegar sjálfgefið kerfisletur er valið;
 sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í
 boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með
@@ -243,10 +243,10 @@ síðustu 30 leitir í núverandi keyrslu.
 Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á tilkynningasvæði. Báðir valkostir
 breyta aðeins tilkynningatákninu eftir Nota eða Vista.
 
-Útlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic titilstikur; Windows 2000. Báðir
+Útlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic titilstikur; Windows Classic. Báðir
 titilstikuhamir virka með eða án þema á stýringum. Kerfissjálfgefið fylgir Slökkva á þemum fyrir allan
 gluggann. Windows Classic-titilstikur breyta aðeins letri og bakgrunni titilsins; titilhnappar og þrívíður
-rammi halda kerfislitum. Windows 2000 krefst þess að slökkt sé á þemum.
+rammi halda kerfislitum. Windows Classic krefst þess að slökkt sé á þemum.
 
 ## Leyfi
 

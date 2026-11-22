@@ -76,7 +76,7 @@ Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly r�
 
 Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pro Nastavení, Nápovědu, O programu, Časový kalkulátor a hledání. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
-Styl Windows 2000 vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu, Časový
+Styl Windows Classic vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu, Časový
 kalkulátor a hledání. Při výchozím systémovém písmu používají ovládací prvky těchto oken Tahomu 8 pt; vlastní
 aplikační písmo má přednost. Text licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze
 vyhlazování GDI nebo Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li
@@ -254,10 +254,10 @@ Historie uchovává posledních 30 hledání během běhu aplikace.
 Na kartě Aplikace volba Alternativní oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění
 pouze ikonu v oznamovací oblasti a projeví se po stisknutí Použít nebo Uložit.
 
-Vzhled oken: Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows 2000. Obě záhlaví lze použít s
-motivy uvnitř okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. Záhlaví Windows Classic mění
-jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D rámečku. Windows 2000 vyžaduje vypnuté
-motivy.
+Vzhled oken: Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows Classic. Obě záhlaví lze
+použít s motivy uvnitř okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. Záhlaví Windows
+Classic mění jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D rámečku. Windows Classic
+vyžaduje vypnuté motivy.
 
 ## Licence
 

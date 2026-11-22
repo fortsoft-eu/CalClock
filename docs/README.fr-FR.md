@@ -76,7 +76,7 @@ Horloges numériques, calendriers et panneaux combinés partagent quatre styles 
 
 La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans l’onglet Application concerne les fenêtres Paramètres, Aide, À propos, Calculateur de temps et Rechercher. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
-Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos,
+Style Windows Classic nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos,
 Calculateur de temps et Rechercher. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ;
 une police d’application personnalisée reste prioritaire. La licence conserve sa police à chasse fixe. Seuls
 GDI et Aucun sont proposés pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement
@@ -261,10 +261,11 @@ session.
 Dans l’onglet Application, Autre icône de notification active Icône de notification rétro. Ces options
 modifient uniquement l’icône de notification après Appliquer ou Enregistrer.
 
-Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Classic; Windows 2000.
-Les deux modes de barre de titre fonctionnent avec ou sans thèmes dans la fenêtre. Système suit Désactiver les
-thèmes pour toute la fenêtre. Les barres de titre Windows Classic changent seulement la police et le fond du
-titre ; les boutons et la bordure 3D gardent leurs couleurs système. Windows 2000 exige des thèmes désactivés.
+Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Classic; Windows
+Classic. Les deux modes de barre de titre fonctionnent avec ou sans thèmes dans la fenêtre. Système suit
+Désactiver les thèmes pour toute la fenêtre. Les barres de titre Windows Classic changent seulement la police
+et le fond du titre ; les boutons et la bordure 3D gardent leurs couleurs système. Windows Classic exige des
+thèmes désactivés.
 
 ## Licence
 

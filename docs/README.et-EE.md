@@ -58,7 +58,7 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
-Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave,
+Windows Classic stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave,
 Ajakalkulaator ja Otsi. Kui valitud on süsteemi vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8
 pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult
 GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel
@@ -188,10 +188,10 @@ säilitab käesoleva seansi viimased 30 otsingut.
 Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult
 teavitusikooni pärast Rakenda või Salvesta vajutamist.
 
-Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Classic tiitliribad; Windows 2000. Mõlemad
+Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Classic tiitliribad; Windows Classic. Mõlemad
 tiitliribarežiimid toimivad juhtelementide teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise
 valikut kogu aknas. Windows Classic tiitliribad muudavad ainult tiitli fonti ja tausta; tiitlinupud ning
-3D-raam säilitavad süsteemivärvid. Windows 2000 nõuab teemade keelamist.
+3D-raam säilitavad süsteemivärvid. Windows Classic nõuab teemade keelamist.
 
 ## Litsents
 

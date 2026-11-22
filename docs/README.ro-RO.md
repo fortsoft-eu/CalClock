@@ -58,12 +58,12 @@ Setările pot fi exportate în XML. Importul încarcă și salvează imediat set
 
 Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
-Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre, Calculator
-de timp și Caută. Controalele acestor ferestre folosesc Tahoma de 8 pt când este selectat fontul implicit al
-sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate
-alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după
-dezactivarea stilului. Cu aspectul clasic Windows, toate opțiunile de aspect apar debifate și dezactivate și
-nu se aplică; preferințele salvate se păstrează.
+Stil Windows Classic necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre,
+Calculator de timp și Caută. Controalele acestor ferestre folosesc Tahoma de 8 pt când este selectat fontul
+implicit al sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în
+Consolas. Se poate alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și
+revine după dezactivarea stilului. Cu aspectul clasic Windows, toate opțiunile de aspect apar debifate și
+dezactivate și nu se aplică; preferințele salvate se păstrează.
 
 ## Calculator de timp
 
@@ -191,10 +191,10 @@ sesiunea curentă.
 În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă de notificare retro. Ambele
 opțiuni schimbă doar pictograma de notificare după Aplicare sau Salvare.
 
-Aspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; Windows 2000. Ambele moduri ale
-barei de titlu funcționează cu sau fără teme pentru controale. Implicit de sistem aplică Dezactivează temele
-întregii ferestre. Barele de titlu Windows Classic schimbă doar fontul și fundalul titlului; butoanele
-titlului și chenarul 3D păstrează culorile sistemului. Windows 2000 necesită teme dezactivate.
+Aspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; Windows Classic. Ambele moduri
+ale barei de titlu funcționează cu sau fără teme pentru controale. Implicit de sistem aplică Dezactivează
+temele întregii ferestre. Barele de titlu Windows Classic schimbă doar fontul și fundalul titlului; butoanele
+titlului și chenarul 3D păstrează culorile sistemului. Windows Classic necesită teme dezactivate.
 
 ## Licență
 

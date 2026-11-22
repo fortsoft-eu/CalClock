@@ -827,9 +827,11 @@ void PlaceInformationControl(HWND window, int id, int x, int y, int width, int h
 /// Converts current information-dialog font units to native pixel dimensions.
 SIZE InformationDialogUnits(HFONT font, int x, int y);
 
-/// Measures the common native Close button using its current font and existing dialog-unit minimum and
-/// padding.
-SIZE InformationButtonSize(HWND window, HFONT font);
+/// Scales a control's authored dimensions from its extended dialog resource using the current font.
+SIZE DialogResourceControlSize(int resourceId, int id, HFONT font);
+
+/// Measures the native Close button using its resource dimensions, current font and caption width.
+SIZE InformationButtonSize(HWND window, HFONT font, int resourceId);
 
 /// Releases the cached Unicode boundary analysis and its retained text.
 void ResetInformationWordBreak();

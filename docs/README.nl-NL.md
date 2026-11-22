@@ -65,13 +65,13 @@ Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart d
 
 Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
-Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info, Tijdcalculator
-en Zoeken. Met het standaardlettertype van het systeem gebruiken de besturingselementen van deze vensters
-Tahoma 8 pt; een eigen toepassingslettertype heeft voorrang. De licentie behoudt het lettertype met vaste
-tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: een opgeslagen
-ClearType-keuze gebruikt tijdelijk GDI en keert terug bij het uitschakelen van de modus. Als Windows zelf geen
-visuele stijlen gebruikt, worden alle weergaveopties ongemarkeerd en uitgeschakeld weergegeven zonder de
-opgeslagen keuzes te veranderen.
+Windows Classic-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info,
+Tijdcalculator en Zoeken. Met het standaardlettertype van het systeem gebruiken de besturingselementen van
+deze vensters Tahoma 8 pt; een eigen toepassingslettertype heeft voorrang. De licentie behoudt het lettertype
+met vaste tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: een
+opgeslagen ClearType-keuze gebruikt tijdelijk GDI en keert terug bij het uitschakelen van de modus. Als
+Windows zelf geen visuele stijlen gebruikt, worden alle weergaveopties ongemarkeerd en uitgeschakeld
+weergegeven zonder de opgeslagen keuzes te veranderen.
 
 ## Tijdcalculator
 
@@ -206,10 +206,10 @@ zoeken en reguliere expressies. De geschiedenis bewaart de laatste 30 zoekopdrac
 Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Retro-pictogram in het systeemvak
 in. Beide wijzigen alleen het meldingspictogram na Toepassen of Opslaan.
 
-Vensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows Classic-titelbalken; Windows 2000. Beide
-titelbalkmodi werken met of zonder thema's voor besturingselementen. Systeemstandaard volgt Thema's
+Vensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows Classic-titelbalken; Windows Classic.
+Beide titelbalkmodi werken met of zonder thema's voor besturingselementen. Systeemstandaard volgt Thema's
 uitschakelen voor het hele venster. Windows Classic-titelbalken wijzigen alleen het lettertype en de
-achtergrond van de titel; titelknoppen en 3D-rand behouden de systeemkleuren. Windows 2000 vereist
+achtergrond van de titel; titelknoppen en 3D-rand behouden de systeemkleuren. Windows Classic vereist
 uitgeschakelde thema's.
 
 ## Licentie

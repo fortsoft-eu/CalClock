@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -436,7 +436,7 @@ void AboutForm::Layout(bool resize) const {
     UINT dpi = GetSystemDialogDpi(window);
     SIZE margin = InformationDialogUnits(uiFont, 8, 8);
     SIZE gap = InformationDialogUnits(uiFont, 4, 6);
-    SIZE button = InformationButtonSize(window, uiFont);
+    SIZE button = InformationButtonSize(window, uiFont, IDD_ABOUT);
     int textTop = margin.cy;
     if (resize) {
         SIZE license = {
@@ -652,7 +652,7 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
     }
     SendMessageW(tooltip, WM_SETFONT, reinterpret_cast<WPARAM>(uiFont), FALSE);
     DialogFrame::ApplyControl(tooltip, window);
-    RefreshInformationWindows();
+    Refresh();
     SendMessageW(text, EM_SETSEL, 0, 0);
     placement->SetDisableSaveSize(true);
     placement->SetDisableSaveWindowState(true);

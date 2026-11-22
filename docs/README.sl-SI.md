@@ -52,7 +52,7 @@ Spremembe videza so takoj vidne v predogledu izbranega gradnika. `Privzeti videz
 
 Glajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja »Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.
 
-Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu, Časovni
+Slog Windows Classic je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu, Časovni
 kalkulator in Najdi. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 pt; uporabnikova
 pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in
 se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, so vse možnosti videza onemogočene in
@@ -182,10 +182,10 @@ ter regularni izrazi. Zgodovina ohrani zadnjih 30 iskanj trenutne seje.
 Na zavihku Program možnost Druga ikona za obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti
 spremenita samo ikono za obvestila po Uporabi ali Shrani.
 
-Videz oken: Sistemski; Glave Windows Basic; Glave Windows Classic; Windows 2000. Oba načina naslovne vrstice
-delujeta s temami kontrolnikov ali brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice
-Windows Classic spremenijo le pisavo in ozadje naslova; naslovni gumbi in 3D okvir ohranijo sistemske barve.
-Windows 2000 zahteva izklopljene teme.
+Videz oken: Sistemski; Glave Windows Basic; Glave Windows Classic; Windows Classic. Oba načina naslovne
+vrstice delujeta s temami kontrolnikov ali brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne
+vrstice Windows Classic spremenijo le pisavo in ozadje naslova; naslovni gumbi in 3D okvir ohranijo sistemske
+barve. Windows Classic zahteva izklopljene teme.
 
 ## Licenca
 

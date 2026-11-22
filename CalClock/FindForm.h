@@ -85,8 +85,6 @@ private:
     HFONT uiFont;
     PersistWindowState placement;
     ApplicationComboState comboState;
-    SIZE buttonSize;
-    UINT templateDpi;
     LONG minimumWidth;
     LONG fixedHeight;
     wchar_t* query;

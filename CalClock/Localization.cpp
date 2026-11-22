@@ -87,7 +87,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Vybrat…" },
         LocalizedText{ TXT_LANGUAGE, L"Jazyk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Zakázat motivy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Vzhled oken" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systémový" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Záhlaví Windows Basic" },
@@ -351,7 +351,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Import XML okamžitě načte a uloží nastavení do právě zvoleného úložiště; typ úložiště nezmění. "
             L"Automatické XML je v %AppData%\\FortSoft\\CalClock\\settings.xml. Po úspěšném zápisu XML se "
             L"odstraní větev HKCU\\SOFTWARE\\FortSoft\\CalClock; při ukládání do registru se automatické XML "
-            L"odstraní.\r\n\r\nVyhlazování písma nabízí ClearType, GDI a Žádné.\r\n\r\nStyl Windows 2000 "
+            L"odstraní.\r\n\r\nVyhlazování písma nabízí ClearType, GDI a Žádné.\r\n\r\nStyl Windows Classic "
             L"vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu, Časový "
             L"kalkulátor a hledání. Při výchozím systémovém písmu používají ovládací prvky těchto oken "
             L"Tahomu 8 pt; vlastní aplikační písmo má přednost. Text licence zůstává neproporcionálním "
@@ -505,10 +505,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"posledních 30 hledání během běhu aplikace.\r\n\r\nNa kartě Aplikace volba Alternativní "
             L"oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění pouze ikonu v "
             L"oznamovací oblasti a projeví se po stisknutí Použít nebo Uložit.\r\n\r\nVzhled oken: "
-            L"Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows 2000. Obě záhlaví lze "
+            L"Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows Classic. Obě záhlaví lze "
             L"použít s motivy uvnitř okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. "
             L"Záhlaví Windows Classic mění jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D "
-            L"rámečku. Windows 2000 vyžaduje vypnuté motivy."
+            L"rámečku. Windows Classic vyžaduje vypnuté motivy."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -640,7 +640,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
@@ -906,7 +906,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"selected storage without changing the storage type. Automatic XML is "
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
-            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
+            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows Classic style "
             L"requires Disable themes and applies only to Settings, Help, About, Time Calculator and Find. "
             L"With the default system font selected, their controls use Tahoma 8 pt; a custom application "
             L"font takes precedence. The license keeps its monospaced font. Only GDI and None are available "
@@ -1060,11 +1060,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or Save.\r\n\r\nWindow appearance: System "
-            L"default; Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar "
+            L"default; Windows Basic title bars; Windows Classic title bars; Windows Classic. Both title-bar "
             L"modes work with control themes enabled or disabled. System default follows Disable themes for "
             L"the entire window. Windows Classic title bars change only the caption font and background, "
-            L"preserving system colors for caption buttons and the 3D border. Windows 2000 requires disabled "
-            L"themes."
+            L"preserving system colors for caption buttons and the 3D border. Windows Classic requires "
+            L"disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1198,7 +1198,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
@@ -1464,7 +1464,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"selected storage without changing the storage type. Automatic XML is "
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
-            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
+            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows Classic style "
             L"requires Disable themes and applies only to Settings, Help, About, Time Calculator and Find. "
             L"With the default system font selected, their controls use Tahoma 8 pt; a custom application "
             L"font takes precedence. The licence keeps its monospaced font. Only GDI and None are available "
@@ -1618,10 +1618,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or Save.\r\n\r\nWindow appearance: System "
-            L"default; Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar "
+            L"default; Windows Basic title bars; Windows Classic title bars; Windows Classic. Both title-bar "
             L"modes work with control themes enabled or disabled. System default follows Disable themes for "
             L"the entire window. Windows Classic title bars change only the caption font and background, "
-            L"preserving system colours for caption buttons and the 3D border. Windows 2000 requires "
+            L"preserving system colours for caption buttons and the 3D border. Windows Classic requires "
             L"disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -1756,7 +1756,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
@@ -2022,7 +2022,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"selected storage without changing the storage type. Automatic XML is "
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. After writing XML, "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock is removed; registry storage removes the automatic "
-            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows 2000 style "
+            L"XML.\r\n\r\nFont antialiasing offers ClearType, GDI, and None.\r\n\r\nWindows Classic style "
             L"requires Disable themes and applies only to Settings, Help, About, Time Calculator and Find. "
             L"With the default system font selected, their controls use Tahoma 8 pt; a custom application "
             L"font takes precedence. The licence keeps its monospaced font. Only GDI and None are available "
@@ -2176,10 +2176,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or Save.\r\n\r\nWindow appearance: System "
-            L"default; Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar "
+            L"default; Windows Basic title bars; Windows Classic title bars; Windows Classic. Both title-bar "
             L"modes work with control themes enabled or disabled. System default follows Disable themes for "
             L"the entire window. Windows Classic title bars change only the caption font and background, "
-            L"preserving system colours for caption buttons and the 3D border. Windows 2000 requires "
+            L"preserving system colours for caption buttons and the 3D border. Windows Classic requires "
             L"disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -2316,7 +2316,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Durchsuchen…" },
         LocalizedText{ TXT_LANGUAGE, L"Sprache:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Designs deaktivieren" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Fensterdarstellung" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows-Basic-Titelleisten" },
@@ -2596,7 +2596,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Automatisches XML liegt in %AppData%\\FortSoft\\CalClock\\settings.xml; XML-Speicherung "
             L"entfernt HKCU\\SOFTWARE\\FortSoft\\CalClock, Registrierungsspeicherung entfernt das "
             L"automatische XML.\r\n\r\nFür die Schriftglättung stehen ClearType, GDI und Keine zur "
-            L"Auswahl.\r\n\r\nWindows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für "
+            L"Auswahl.\r\n\r\nWindows-Classic-Stil setzt Designs deaktivieren voraus und gilt nur für "
             L"Einstellungen, Hilfe, Info, Zeitrechner und Suchen. Bei ausgewählter Systemschrift verwenden "
             L"deren Steuerelemente Tahoma 8 pt; eine eigene Anwendungsschrift hat Vorrang. Die Lizenz behält "
             L"ihre nichtproportionale Schrift. In diesem Modus stehen nur GDI und Keine für die "
@@ -2771,11 +2771,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option "
             L"Retro-Symbol im Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden "
             L"mit Übernehmen oder Speichern wirksam.\r\n\r\nFensterdarstellung: Systemstandard; "
-            L"Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows 2000. Beide Titelleistenmodi "
-            L"funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt Designs "
-            L"deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern nur Titelschrift und "
-            L"Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. "
-            L"Windows 2000 erfordert deaktivierte Designs."
+            L"Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows Classic. Beide "
+            L"Titelleistenmodi funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard "
+            L"übernimmt Designs deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern "
+            L"nur Titelschrift und Hintergrund; Systemfarben der Titelleistenschaltflächen und des "
+            L"3D-Rahmens bleiben erhalten. Windows Classic erfordert deaktivierte Designs."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2918,7 +2918,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Parcourir…" },
         LocalizedText{ TXT_LANGUAGE, L"Langue :" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Désactiver les thèmes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Apparence des fenêtres" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Système" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Barres de titre Windows Basic" },
@@ -3197,7 +3197,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"stockage sélectionné, sans changer son type. Le XML automatique est "
             L"%AppData%\\FortSoft\\CalClock\\settings.xml ; son écriture retire "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, tandis que le registre retire ce XML.\r\n\r\nLe lissage "
-            L"des polices propose ClearType, GDI et Aucun.\r\n\r\nStyle Windows 2000 nécessite Désactiver "
+            L"des polices propose ClearType, GDI et Aucun.\r\n\r\nStyle Windows Classic nécessite Désactiver "
             L"les thèmes et concerne uniquement Paramètres, Aide, À propos, Calculateur de temps et "
             L"Rechercher. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ; une "
             L"police d’application personnalisée reste prioritaire. La licence conserve sa police à chasse "
@@ -3377,10 +3377,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"session.\r\n\r\nDans l’onglet Application, Autre icône de notification active Icône de "
             L"notification rétro. Ces options modifient uniquement l’icône de notification après Appliquer "
             L"ou Enregistrer.\r\n\r\nApparence des fenêtres: Système; Barres de titre Windows Basic; Barres "
-            L"de titre Windows Classic; Windows 2000. Les deux modes de barre de titre fonctionnent avec ou "
-            L"sans thèmes dans la fenêtre. Système suit Désactiver les thèmes pour toute la fenêtre. Les "
+            L"de titre Windows Classic; Windows Classic. Les deux modes de barre de titre fonctionnent avec "
+            L"ou sans thèmes dans la fenêtre. Système suit Désactiver les thèmes pour toute la fenêtre. Les "
             L"barres de titre Windows Classic changent seulement la police et le fond du titre ; les boutons "
-            L"et la bordure 3D gardent leurs couleurs système. Windows 2000 exige des thèmes désactivés."
+            L"et la bordure 3D gardent leurs couleurs système. Windows Classic exige des thèmes désactivés."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -3522,7 +3522,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Examinar…" },
         LocalizedText{ TXT_LANGUAGE, L"Idioma:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Desactivar temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Apariencia de las ventanas" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Títulos de Windows Basic" },
@@ -3797,7 +3797,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml; al escribirlo se elimina "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock y al usar el registro se elimina el XML "
             L"automático.\r\n\r\nEl suavizado de fuente ofrece ClearType, GDI y Ninguno.\r\n\r\nEstilo de "
-            L"Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de, "
+            L"Windows Classic requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de, "
             L"Calculadora de tiempo y Buscar. Si se elige la fuente predeterminada del sistema, sus "
             L"controles usan Tahoma de 8 pt; una fuente de aplicación personalizada tiene prioridad. La "
             L"licencia conserva su fuente monoespaciada. En este modo solo se ofrecen GDI y Ninguno para el "
@@ -3966,11 +3966,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"regulares. El historial conserva las últimas 30 búsquedas de la sesión.\r\n\r\nEn la pestaña "
             L"Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas "
             L"opciones solo cambian el icono de notificación tras Aplicar o Guardar.\r\n\r\nApariencia de "
-            L"las ventanas: Sistema; Títulos de Windows Basic; Títulos de Windows Classic; Windows 2000. "
+            L"las ventanas: Sistema; Títulos de Windows Basic; Títulos de Windows Classic; Windows Classic. "
             L"Ambos modos de título funcionan con o sin temas en los controles. Sistema aplica Desactivar "
             L"temas a toda la ventana. Los títulos Windows Classic solo cambian la fuente y el fondo del "
-            L"título; los botones y el borde 3D conservan sus colores del sistema. Windows 2000 requiere los "
-            L"temas desactivados."
+            L"título; los botones y el borde 3D conservan sus colores del sistema. Windows Classic requiere "
+            L"los temas desactivados."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -4110,7 +4110,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Sfoglia…" },
         LocalizedText{ TXT_LANGUAGE, L"Lingua:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disattiva temi" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Aspetto delle finestre" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titoli Windows Basic" },
@@ -4386,7 +4386,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"L’XML automatico è %AppData%\\FortSoft\\CalClock\\settings.xml; scriverlo rimuove "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, mentre il registro rimuove l’XML "
             L"automatico.\r\n\r\nL’antialiasing del carattere offre ClearType, GDI e Nessuno.\r\n\r\nStile "
-            L"Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, "
+            L"Windows Classic richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, "
             L"Calcolatore di tempi e Trova. Con il carattere di sistema predefinito, i controlli di queste "
             L"finestre usano Tahoma 8 pt; un carattere personalizzato dell’applicazione ha la precedenza. La "
             L"licenza mantiene il carattere a larghezza fissa. In questa modalità sono disponibili solo GDI "
@@ -4556,10 +4556,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sessione.\r\n\r\nNella scheda Applicazione, Icona di notifica alternativa abilita Icona di "
             L"notifica retrò. Le due opzioni modificano solo l’icona di notifica dopo Applica o "
             L"Salva.\r\n\r\nAspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; "
-            L"Windows 2000. Entrambe le modalità del titolo funzionano con o senza temi nei controlli. "
+            L"Windows Classic. Entrambe le modalità del titolo funzionano con o senza temi nei controlli. "
             L"Sistema segue Disattiva temi per l'intera finestra. I titoli Windows Classic modificano solo "
             L"carattere e sfondo del titolo; pulsanti e bordo 3D mantengono i colori di sistema. Windows "
-            L"2000 richiede temi disattivati."
+            L"Classic richiede temi disattivati."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -4698,7 +4698,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Procurar…" },
         LocalizedText{ TXT_LANGUAGE, L"Idioma:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Desativar temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Aspeto das janelas" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Títulos Windows Basic" },
@@ -4944,7 +4944,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"simples pode ser escolhida. A mudança de armazenamento remove apenas os dados CalClock "
             L"anteriores. As definições podem ser exportadas para XML. A importação XML carrega e guarda "
             L"imediatamente as definições no armazenamento selecionado, sem alterar o seu tipo.\r\n\r\nA "
-            L"suavização do tipo de letra oferece ClearType, GDI e Nenhuma.\r\n\r\nEstilo do Windows 2000 "
+            L"suavização do tipo de letra oferece ClearType, GDI e Nenhuma.\r\n\r\nEstilo do Windows Classic "
             L"requer Desativar temas e aplica-se apenas a Definições, Ajuda, Acerca de, Calculadora de tempo "
             L"e Localizar. Com o tipo de letra predefinido do sistema, os controlos destas janelas usam "
             L"Tahoma de 8 pt; um tipo de letra personalizado da aplicação tem prioridade. A licença mantém o "
@@ -5098,10 +5098,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sessão.\r\n\r\nNo separador Aplicação, Ícone de notificação alternativo ativa Ícone de "
             L"notificação retro. Ambas as opções alteram apenas o ícone de notificação após Aplicar ou "
             L"Guardar.\r\n\r\nAspeto das janelas: Sistema; Títulos Windows Basic; Títulos Windows Classic; "
-            L"Windows 2000. Ambos os modos de título funcionam com ou sem temas nos controlos. Sistema "
+            L"Windows Classic. Ambos os modos de título funcionam com ou sem temas nos controlos. Sistema "
             L"aplica Desativar temas a toda a janela. Os títulos Windows Classic alteram apenas o tipo de "
-            L"letra e o fundo do título; os botões e a moldura 3D mantêm as cores do sistema. Windows 2000 "
-            L"exige temas desativados."
+            L"letra e o fundo do título; os botões e a moldura 3D mantêm as cores do sistema. Windows "
+            L"Classic exige temas desativados."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -5238,7 +5238,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Wybierz…" },
         LocalizedText{ TXT_LANGUAGE, L"Język:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Wyłącz motywy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Wygląd okien" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systemowy" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Paski tytułu Windows Basic" },
@@ -5505,8 +5505,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"wczytuje i zapisuje ustawienia w wybranym magazynie, nie zmieniając jego rodzaju. Automatyczny "
             L"XML to %AppData%\\FortSoft\\CalClock\\settings.xml; zapis XML usuwa "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock, a zapis w rejestrze usuwa automatyczny "
-            L"XML.\r\n\r\nWygładzanie czcionki oferuje ClearType, GDI i Brak.\r\n\r\nStyl Windows 2000 jest "
-            L"dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie, "
+            L"XML.\r\n\r\nWygładzanie czcionki oferuje ClearType, GDI i Brak.\r\n\r\nStyl Windows Classic "
+            L"jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie, "
             L"Kalkulator czasu i Znajdź. Przy domyślnej czcionce systemowej elementy sterujące tych okien "
             L"używają czcionki Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest "
             L"wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany przez GDI i "
@@ -5665,10 +5665,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sesji.\r\n\r\nNa karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona "
             L"powiadomień w stylu retro. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub "
             L"Zapisz.\r\n\r\nWygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows "
-            L"Classic; Windows 2000. Oba tryby nagłówka działają z motywami elementów sterujących lub bez "
+            L"Classic; Windows Classic. Oba tryby nagłówka działają z motywami elementów sterujących lub bez "
             L"nich. Systemowy stosuje Wyłącz motywy do całego okna. Nagłówki Windows Classic zmieniają tylko "
-            L"czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory systemowe. Windows 2000 wymaga "
-            L"wyłączonych motywów."
+            L"czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory systemowe. Windows Classic "
+            L"wymaga wyłączonych motywów."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -5802,7 +5802,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Vybrať…" },
         LocalizedText{ TXT_LANGUAGE, L"Jazyk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Zakázať motívy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Vzhľad okien" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systémový" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Záhlavia Windows Basic" },
@@ -6060,7 +6060,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"práve zvoleného úložiska; typ úložiska nezmení. Automatické XML je "
             L"%AppData%\\FortSoft\\CalClock\\settings.xml; zápis XML odstráni "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock a ukladanie do registra odstráni automatické "
-            L"XML.\r\n\r\nVyhladzovanie písma ponúka ClearType, GDI a Žiadne.\r\n\r\nŠtýl Windows 2000 je "
+            L"XML.\r\n\r\nVyhladzovanie písma ponúka ClearType, GDI a Žiadne.\r\n\r\nŠtýl Windows Classic je "
             L"dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe, Časový "
             L"kalkulátor a Hľadať. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien "
             L"Tahomu 8 pt; vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. "
@@ -6211,10 +6211,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"História uchováva posledných 30 hľadaní počas behu aplikácie.\r\n\r\nNa karte Aplikácia voľba "
             L"Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti oznámení. Obe "
             L"voľby menia iba ikonu v oblasti oznámení a prejavia sa po stlačení Použiť alebo Uložiť.\r\n\r\n"
-            L"Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows 2000. Obe "
-            L"záhlavia možno použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať motívy "
-            L"pre celé okno. Záhlavia Windows Classic menia iba písmo a pozadie záhlavia, nie systémové "
-            L"farby tlačidiel a 3D rámu. Windows 2000 vyžaduje vypnuté motívy."
+            L"Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows Classic. "
+            L"Obe záhlavia možno použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať "
+            L"motívy pre celé okno. Záhlavia Windows Classic menia iba písmo a pozadie záhlavia, nie "
+            L"systémové farby tlačidiel a 3D rámu. Windows Classic vyžaduje vypnuté motívy."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -6347,7 +6347,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Gennemse…" },
         LocalizedText{ TXT_LANGUAGE, L"Sprog:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Deaktiver temaer" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Vinduers udseende" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-titellinjer" },
@@ -6590,7 +6590,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"fælles kanttyper; farven på den enkle kant kan vælges. Skift af lager fjerner kun tidligere "
             L"CalClock-data. Indstillinger kan eksporteres til XML. XML-import indlæser og gemmer straks "
             L"indstillingerne i det valgte lager uden at ændre lagertypen.\r\n\r\nSkriftudjævning tilbyder "
-            L"ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil kræver Deaktiver temaer og gælder kun "
+            L"ClearType, GDI og Ingen.\r\n\r\nWindows Classic-stil kræver Deaktiver temaer og gælder kun "
             L"Indstillinger, Hjælp, Om, Tidsberegner og Find. Med systemets standardskrifttype bruger disse "
             L"vinduers kontrolelementer Tahoma 8 pt; "
             L"en brugerdefineret programskrifttype har forrang. Licensen beholder skrifttypen med fast "
@@ -6730,10 +6730,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sidste 30 søgninger i den aktuelle session.\r\n\r\nPå fanen Program aktiverer Alternativt "
             L"meddelelsesikon valget Retroikon i meddelelsesområdet. Begge indstillinger ændrer kun "
             L"meddelelsesikonet efter Anvend eller Gem.\r\n\r\nVinduers udseende: Systemstandard; Windows "
-            L"Basic-titellinjer; Windows Classic-titellinjer; Windows 2000. Begge titellinjetilstande virker "
-            L"med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer for hele "
-            L"vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper "
-            L"og 3D-kant bevarer systemfarverne. Windows 2000 kræver deaktiverede temaer."
+            L"Basic-titellinjer; Windows Classic-titellinjer; Windows Classic. Begge titellinjetilstande "
+            L"virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer for "
+            L"hele vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; "
+            L"titelknapper og 3D-kant bevarer systemfarverne. Windows Classic kræver deaktiverede temaer."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -6869,7 +6869,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Selaa…" },
         LocalizedText{ TXT_LANGUAGE, L"Kieli:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Poista teemat käytöstä" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Ikkunoiden ulkoasu" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Järjestelmä" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic -otsikot" },
@@ -7120,9 +7120,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"vaihto poistaa vain aiemmat CalClock-tiedot. Asetukset voi viedä XML-tiedostoon. XML-tuonti "
             L"lataa ja tallentaa asetukset heti valittuun tallennuspaikkaan muuttamatta "
             L"tallennustapaa.\r\n\r\nFontin pehmennyksen vaihtoehdot ovat ClearType, GDI ja Ei "
-            L"mitään.\r\n\r\nWindows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain "
-            L"Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoita. Kun järjestelmän oletusfontti on "
-            L"valittu, näiden ikkunoiden ohjausobjektit käyttävät Tahomaa 8 pt; "
+            L"mitään.\r\n\r\nWindows Classic -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee "
+            L"vain Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoita. Kun järjestelmän oletusfontti "
+            L"on valittu, näiden ikkunoiden ohjausobjektit käyttävät Tahomaa 8 pt; "
             L"itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa. "
             L"Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä "
             L"ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa kaikki "
@@ -7277,11 +7277,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Historia säilyttää istunnon 30 viimeisintä hakua.\r\n\r\nSovellus-välilehdellä Vaihtoehtoinen "
             L"ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan. Molemmat muuttavat vain "
             L"ilmoituskuvaketta Käytä- tai Tallenna-painikkeen painamisen jälkeen.\r\n\r\nIkkunoiden "
-            L"ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows 2000. Molemmat "
-            L"otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän "
-            L"oletus noudattaa teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot muuttavat "
-            L"vain otsikon fontin ja taustan; painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. "
-            L"Windows 2000 edellyttää teemojen poistamista käytöstä."
+            L"ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows Classic. "
+            L"Molemmat otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. "
+            L"Järjestelmän oletus noudattaa teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot "
+            L"muuttavat vain otsikon fontin ja taustan; painikkeiden ja 3D-reunuksen järjestelmävärit "
+            L"säilyvät. Windows Classic edellyttää teemojen poistamista käytöstä."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
@@ -7415,7 +7415,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Velja…" },
         LocalizedText{ TXT_LANGUAGE, L"Tungumál:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Slökkva á þemum" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Útlit glugga" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Kerfissjálfgefið" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic titilstikur" },
@@ -7657,7 +7657,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"spjöld hafa fjórar sameiginlegar rammagerðir; velja má lit einfalda rammans. Skipti um geymslu "
             L"fjarlægja aðeins eldri CalClock-gögn. Hægt er að flytja stillingar út sem XML. Innflutningur "
             L"XML hleður og vistar stillingarnar strax í valinni geymslu án þess að breyta gerð "
-            L"hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nWindows 2000-stíll "
+            L"hennar.\r\n\r\nLeturjöfnun býður upp á ClearType, GDI og Engin.\r\n\r\nWindows Classic-stíll "
             L"krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um, "
             L"Tímareiknivél og Finna. Stýringar þessara glugga nota Tahoma 8 pt þegar sjálfgefið kerfisletur "
             L"er valið; sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða "
@@ -7797,10 +7797,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"keyrslu.\r\n\r\nÁ flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á "
             L"tilkynningasvæði. Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða "
             L"Vista.\r\n\r\nÚtlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic "
-            L"titilstikur; Windows 2000. Báðir titilstikuhamir virka með eða án þema á stýringum. "
+            L"titilstikur; Windows Classic. Báðir titilstikuhamir virka með eða án þema á stýringum. "
             L"Kerfissjálfgefið fylgir Slökkva á þemum fyrir allan gluggann. Windows Classic-titilstikur "
             L"breyta aðeins letri og bakgrunni titilsins; titilhnappar og þrívíður rammi halda kerfislitum. "
-            L"Windows 2000 krefst þess að slökkt sé á þemum."
+            L"Windows Classic krefst þess að slökkt sé á þemum."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -7935,7 +7935,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bla gjennom…" },
         LocalizedText{ TXT_LANGUAGE, L"Språk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Deaktiver temaer" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Vindusutseende" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-tittellinjer" },
@@ -8179,10 +8179,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"felles kantstiler; fargen på den enkle kanten kan velges. Bytte av lagring fjerner bare "
             L"tidligere CalClock-data. Innstillinger kan eksporteres til XML. XML-import laster inn og "
             L"lagrer innstillingene umiddelbart i valgt lagring uten å endre "
-            L"lagringstypen.\r\n\r\nSkriftutjevning tilbyr ClearType, GDI og Ingen.\r\n\r\nWindows 2000-stil "
-            L"krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator og Finn. "
-            L"Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er valgt; en "
-            L"egendefinert programskrift har forrang, og "
+            L"lagringstypen.\r\n\r\nSkriftutjevning tilbyr ClearType, GDI og Ingen.\r\n\r\nWindows "
+            L"Classic-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator "
+            L"og Finn. Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er "
+            L"valgt; en egendefinert programskrift har forrang, og "
             L"lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan velges. Et lagret "
             L"ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk "
             L"Windows-utseende vises alle utseendevalgene uten hake og nedtonet, og brukes ikke; de lagrede "
@@ -8321,10 +8321,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"gjeldende økt.\r\n\r\nPå fanen Program aktiverer Alternativt varslingsikon valget Retroikon i "
             L"systemstatusfeltet. Begge valgene endrer bare varslingsikonet etter Bruk eller Lagre.\r\n\r\n"
             L"Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; "
-            L"Windows 2000. Begge tittellinjemodusene virker med eller uten temaer på kontrollene. "
+            L"Windows Classic. Begge tittellinjemodusene virker med eller uten temaer på kontrollene. "
             L"Systemstandard følger Deaktiver temaer for hele vinduet. Windows Classic-tittellinjer endrer "
-            L"bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme beholder systemfargene. Windows 2000 "
-            L"krever deaktiverte temaer."
+            L"bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme beholder systemfargene. Windows "
+            L"Classic krever deaktiverte temaer."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -8462,7 +8462,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bläddra…" },
         LocalizedText{ TXT_LANGUAGE, L"Språk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Inaktivera teman" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Fönsterutseende" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-namnlister" },
@@ -8706,46 +8706,46 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tar bara bort tidigare CalClock-data. Inställningar kan exporteras till XML. XML-import läser "
             L"in och sparar inställningarna direkt i vald lagring utan att ändra "
             L"lagringstypen.\r\n\r\nTeckensnittsutjämning erbjuder ClearType, GDI och Ingen.\r\n\r\nWindows "
-            L"2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om, Tidskalkylator "
-            L"och Sök. Med systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; "
-            L"ett anpassat programteckensnitt har företräde. Licensen behåller teckensnittet med fast "
-            L"teckenbredd. I detta läge är endast GDI och Ingen tillgängliga för teckensnittsutjämning: ett "
-            L"sparat val av ClearType använder tillfälligt GDI och återställs när läget stängs av. Om "
-            L"visuella format är avstängda i Windows visas alla utseendealternativ som avmarkerade och "
-            L"inaktiverade utan att de sparade valen ändras.\r\n\r\nInledande nolla erbjuder ”Ja” "
-            L"(standard), ”Nej, behåll utrymme” och ”Nej, utan utrymme”. ”Nej, behåll utrymme” döljer nollan "
-            L"och reserverar dess bredd i valt teckensnitt; övriga siffror behåller sina positioner även med "
-            L"proportionella teckensnitt. Bildskärmsklockor förblir centrerade, inklusive reserverat "
-            L"utrymme. UTC-raden behåller sin egen centrering.\r\n\r\nEgna kalenderteckensnitt stöds med "
-            L"Windows klassiska utseende eller när teman är avstängda för widgeten.\r\n\r\nINSTÄLLNINGAR OCH "
-            L"MENYER\r\nProgramspråk, teckensnitt, utjämning, lagring, start med Windows, kantfästning och "
-            L"tidskälla är globala; programalternativen ställs in på fliken Program. Avstängning av teman på "
-            L"Program gäller Inställningar, Hjälp, Om, Tidskalkylator och Sök. Varje widget använder sin "
-            L"egen temainställning. Vid första starten följer språket Windows gränssnittsspråk, med "
-            L"amerikansk engelska som reserv. Widgetspråk och andra widgetval gäller separat. I ikonmenyn "
-            L"kommer Visa alla och Dölj alla före Tysta alla; Ordna i ett rutnät står i en egen grupp efter "
-            L"dem. Tysta i widgetmenyn motsvarar Tyst på fliken Allmänt. Tysta alla återställer därefter "
-            L"bara de widgetar som kommandot tystade. M på en widget gör samma globala växling. Om alarmet "
-            L"aktiveras utan valda veckodagar öppnas widgetens Alarm-flik.\r\n\r\nHÖRBAR TIDSSIGNAL\r\n"
-            L"Signalen följer mönstret för Greenwich Time Signal (GTS). Signal-fliken har kryssrutan "
-            L"Tidssignal aktiv och alternativknappar för intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter "
-            L"enligt widgetens visade tid. Signalen är från början avstängd med en timmes intervall valt. "
-            L"Att stänga av och slå på Signal i widgetens meny behåller intervallet. Menyn visar alarmtiden "
-            L"och signalintervallet inom parentes. Gränsen följer widgetens tid, inklusive UTC, tidszon, "
-            L"förskjutning och NTP-korrigering. Fem korta och ett långt pip hörs. Vid tystning får ett "
-            L"påbörjat pip avslutas; följande hoppas över och först nästa schemalagda pip hörs efter "
-            L"återaktivering. En fristående Kalender stöder inte alarm, tidssignal eller "
-            L"tystning.\r\n\r\nMed ett intervall på 20 minuter hörs signalen vid :00, :20 och :40 enligt "
-            L"widgetens tid.\r\n\r\nPå fliken Program kan du under Ljud för tidssignal välja mellan Inbyggd "
-            L"generator och Systempip. Valet gäller tidssignaler från alla widgetar, inklusive tidssignaler "
-            L"för alarm. Inbyggd generator är standardvalet.\r\n\r\nVolymreglaget för tidssignalen på fliken "
-            L"Program visar den inbyggda generatorns nivå i dB. Höger ändläge är 0 dB, maximal sinusamplitud "
-            L"utan distorsion; tystnad är −∞ dB. Standardvolymen är −18 dB. Klicka på Testa vid "
-            L"tidssignalens ljud för att starta kontinuerlig förhandslyssning och på Stoppa test för att "
-            L"avsluta. Båda ljuden kan testas; testet sparas inte. Att hålla volymreglaget startar också "
-            L"förhandslyssning tills musen släpps, om inte knapptestet körs. Uppspelningen börjar vid nästa "
-            L"hela sekund: korta toner varje sekund och en lång vid :00, :05, :10 osv. Ett pip som redan har "
-            L"börjat kan avslutas efter att testet har stoppats. "
+            L"Classic-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om, "
+            L"Tidskalkylator och Sök. Med systemets standardteckensnitt använder kontrollerna i dessa "
+            L"fönster Tahoma 8 pt; ett anpassat programteckensnitt har företräde. Licensen behåller "
+            L"teckensnittet med fast teckenbredd. I detta läge är endast GDI och Ingen tillgängliga för "
+            L"teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och återställs när "
+            L"läget stängs av. Om visuella format är avstängda i Windows visas alla utseendealternativ som "
+            L"avmarkerade och inaktiverade utan att de sparade valen ändras.\r\n\r\nInledande nolla erbjuder "
+            L"”Ja” (standard), ”Nej, behåll utrymme” och ”Nej, utan utrymme”. ”Nej, behåll utrymme” döljer "
+            L"nollan och reserverar dess bredd i valt teckensnitt; övriga siffror behåller sina positioner "
+            L"även med proportionella teckensnitt. Bildskärmsklockor förblir centrerade, inklusive "
+            L"reserverat utrymme. UTC-raden behåller sin egen centrering.\r\n\r\nEgna kalenderteckensnitt "
+            L"stöds med Windows klassiska utseende eller när teman är avstängda för "
+            L"widgeten.\r\n\r\nINSTÄLLNINGAR OCH MENYER\r\nProgramspråk, teckensnitt, utjämning, lagring, "
+            L"start med Windows, kantfästning och tidskälla är globala; programalternativen ställs in på "
+            L"fliken Program. Avstängning av teman på Program gäller Inställningar, Hjälp, Om, "
+            L"Tidskalkylator och Sök. Varje widget använder sin egen temainställning. Vid första starten "
+            L"följer språket Windows gränssnittsspråk, med amerikansk engelska som reserv. Widgetspråk och "
+            L"andra widgetval gäller separat. I ikonmenyn kommer Visa alla och Dölj alla före Tysta alla; "
+            L"Ordna i ett rutnät står i en egen grupp efter dem. Tysta i widgetmenyn motsvarar Tyst på "
+            L"fliken Allmänt. Tysta alla återställer därefter bara de widgetar som kommandot tystade. M på "
+            L"en widget gör samma globala växling. Om alarmet aktiveras utan valda veckodagar öppnas "
+            L"widgetens Alarm-flik.\r\n\r\nHÖRBAR TIDSSIGNAL\r\nSignalen följer mönstret för Greenwich Time "
+            L"Signal (GTS). Signal-fliken har kryssrutan Tidssignal aktiv och alternativknappar för "
+            L"intervall på 1, 5, 10, 15, 20, 30 eller 60 minuter enligt widgetens visade tid. Signalen är "
+            L"från början avstängd med en timmes intervall valt. Att stänga av och slå på Signal i widgetens "
+            L"meny behåller intervallet. Menyn visar alarmtiden och signalintervallet inom parentes. Gränsen "
+            L"följer widgetens tid, inklusive UTC, tidszon, förskjutning och NTP-korrigering. Fem korta och "
+            L"ett långt pip hörs. Vid tystning får ett påbörjat pip avslutas; följande hoppas över och först "
+            L"nästa schemalagda pip hörs efter återaktivering. En fristående Kalender stöder inte alarm, "
+            L"tidssignal eller tystning.\r\n\r\nMed ett intervall på 20 minuter hörs signalen vid :00, :20 "
+            L"och :40 enligt widgetens tid.\r\n\r\nPå fliken Program kan du under Ljud för tidssignal välja "
+            L"mellan Inbyggd generator och Systempip. Valet gäller tidssignaler från alla widgetar, "
+            L"inklusive tidssignaler för alarm. Inbyggd generator är standardvalet.\r\n\r\nVolymreglaget för "
+            L"tidssignalen på fliken Program visar den inbyggda generatorns nivå i dB. Höger ändläge är 0 "
+            L"dB, maximal sinusamplitud utan distorsion; tystnad är −∞ dB. Standardvolymen är −18 dB. Klicka "
+            L"på Testa vid tidssignalens ljud för att starta kontinuerlig förhandslyssning och på Stoppa "
+            L"test för att avsluta. Båda ljuden kan testas; testet sparas inte. Att hålla volymreglaget "
+            L"startar också förhandslyssning tills musen släpps, om inte knapptestet körs. Uppspelningen "
+            L"börjar vid nästa hela sekund: korta toner varje sekund och en lång vid :00, :05, :10 osv. Ett "
+            L"pip som redan har börjat kan avslutas efter att testet har stoppats. "
             L"Widgetförskjutningar gäller även i hundradels sekunder. Överlappande toner från widgetar, "
             L"alarm och tester spelas som en sammanhängande ton tills den sista överlappningen är slut på "
             L"samma ljudutgång.\r\n\r\nExtra klockor: På fliken Allmänt kan Kalender med klocka visa upp "
@@ -8847,10 +8847,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sökningarna under den aktuella sessionen.\r\n\r\nPå fliken Program aktiverar Alternativ "
             L"meddelandeikon alternativet Retroikon i meddelandefältet. Båda alternativen ändrar endast "
             L"meddelandeikonen efter Verkställ eller Spara.\r\n\r\nFönsterutseende: Systemstandard; Windows "
-            L"Basic-namnlister; Windows Classic-namnlister; Windows 2000. Båda titelradsalternativen "
+            L"Basic-namnlister; Windows Classic-namnlister; Windows Classic. Båda titelradsalternativen "
             L"fungerar med eller utan teman för kontrollerna. Systemstandard följer Inaktivera teman för "
             L"hela fönstret. Windows Classic-titelrader ändrar bara titelns teckensnitt och bakgrund; "
-            L"titelknappar och 3D-ram behåller systemfärgerna. Windows 2000 kräver inaktiverade teman."
+            L"titelknappar och 3D-ram behåller systemfärgerna. Windows Classic kräver inaktiverade teman."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -8987,7 +8987,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Gözat…" },
         LocalizedText{ TXT_LANGUAGE, L"Dil:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Temaları devre dışı bırak" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Pencere görünümü" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistem" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic başlıkları" },
@@ -9231,7 +9231,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Depolamayı değiştirmek yalnızca önceki CalClock verilerini kaldırır. Ayarlar XML olarak dışa "
             L"aktarılabilir. XML içe aktarma, depolama türünü değiştirmeden ayarları hemen yükler ve seçili "
             L"depolamaya kaydeder.\r\n\r\nYazı tipi kenar yumuşatma seçenekleri ClearType, GDI ve Yok "
-            L"şeklindedir.\r\n\r\nWindows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve "
+            L"şeklindedir.\r\n\r\nWindows Classic stili, Temaları devre dışı bırak seçeneğini gerektirir ve "
             L"yalnızca Ayarlar, Yardım, Hakkında, Zaman hesaplayıcı ve Bul pencerelerine uygulanır. Sistemin "
             L"varsayılan yazı tipi seçildiğinde bu pencerelerin denetimleri Tahoma 8 pt kullanır; özel "
             L"uygulama yazı tipi önceliklidir ve lisans metni Consolas "
@@ -9376,11 +9376,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"oturumdaki son 30 aramayı tutar.\r\n\r\nUygulama sekmesinde Alternatif bildirim simgesi, Retro "
             L"bildirim simgesi seçeneğini etkinleştirir. Her iki seçenek de yalnızca bildirim simgesini "
             L"Uygula veya Kaydet sonrasında değiştirir.\r\n\r\nPencere görünümü: Sistem; Windows Basic "
-            L"başlıkları; Windows Classic başlıkları; Windows 2000. Her iki başlık modu da denetim temaları "
-            L"açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak seçimini tüm "
-            L"pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka planını "
-            L"değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows 2000 temaların "
-            L"kapatılmasını gerektirir."
+            L"başlıkları; Windows Classic başlıkları; Windows Classic. Her iki başlık modu da denetim "
+            L"temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak "
+            L"seçimini tüm pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka "
+            L"planını değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows Classic "
+            L"temaların kapatılmasını gerektirir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -9513,7 +9513,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Sirvi…" },
         LocalizedText{ TXT_LANGUAGE, L"Keel:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Keela kujundused" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Akende kujundus" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Süsteemne" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basicu tiitliribad" },
@@ -9781,44 +9781,44 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid "
             L"reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka "
             L"proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on "
-            L"oma keskjoondus.\r\n\r\nWindows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult "
-            L"aknaid Sätted, Spikker, Teave, Ajakalkulaator ja Otsi. Kui valitud on süsteemi vaikefont, "
-            L"kasutavad nende akende juhtelemendid fonti Tahoma 8 pt; kohandatud rakenduse font on ülimuslik "
-            L"ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või Puudub. "
-            L"Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel "
-            L"taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse kõik kujundusvalikud märkimata "
-            L"ja hallina ning neid ei rakendata; salvestatud eelistused säilivad.\r\n\r\nSätted ja menüüd\r\n"
-            L"Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised "
-            L"sätted vahekaardil Rakendus. Kujunduste keelamine Rakenduse vahekaardil mõjutab aknaid Sätted, "
-            L"Spikker, Teave, Ajakalkulaator ja Otsi. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel "
-            L"kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina "
-            L"keel, silumine ja kujundused mõjutavad vaid seda vidinat. \r\n\r\nVidina menüüs on selle "
-            L"tüübile sobivad nähtavuse, esiplaanil hoidmise, sekundite, suuruse ja kuupäeva kopeerimise "
-            L"valikud, seejärel Paiguta ruudustikku, Ajakalkulaator, Sätted, Spikker, Teave ja Välju. "
-            L"Olekuala menüü loetleb nummerdatud vidinad, Kuva kõik, Peida kõik ja Vaigista kõik ning eraldi "
-            L"ruudustikukäsu. Kuvamine või taastamine toob vidina ette suvandit Alati pealmine muutmata. "
-            L"Korduskäivitus taastab vajaduse korral viimati peidetud vidinad. Sihverplaadisuurused ja "
-            L"sekundiosuti tugi sõltuvad Windowsist. Äratus ja Signaal on lülitatavad ka menüüs, kus "
-            L"kuvatakse aeg, intervall ning osalise nädala korral aktiivsed päevad. Vaigista vastab "
-            L"vahekaardi Üldine valikule Vaigistatud. Vaigista kõik ja klahv M vaigistavad kõik vidinad ning "
-            L"järgmisel korral taastavad heli ainult neil, mille nad ise vaigistasid. Päevadeta äratuse "
-            L"lubamine avab vahekaardi Äratus.\r\n\r\nKuuldav ajasignaal\r\nSignaal järgib Greenwichi "
-            L"ajasignaali (GTS): viis lühikest tooni viimase viie sekundi jooksul ja pikk toon täpsel "
-            L"ajahetkel. Vahekaardil Signaal on Ajasignaal lubatud ja intervallid 1, 5, 10, 15, 20, 30 või "
-            L"60 minutit vidina kuvatava aja järgi. Vaikimisi on signaal väljas ja valitud tunnine "
-            L"intervall. Menüü lülitus säilitab intervalli. Ajapiir arvestab UTC-d, ajavööndit, nihet ja "
-            L"NTP-d. 20-minutilise intervalliga kõlab signaal :00, :20 ja :40. Vaigistamisel võib praegune "
-            L"toon lõppeda; järgmised jäetakse vahele ja heli taastamisel kõlab alles järgmine kavandatud "
-            L"toon. Eraldi Kalender ei toeta äratust, ajasignaali ega vaigistamist.\r\n\r\nVahekaardi "
-            L"Rakendus Ajasignaali heli pakub Sisseehitatud generaatorit (vaikimisi) ja Süsteemi "
-            L"helisignaali. Valik kehtib kõigile vidinatele ja äratustele. Ajasignaali helitugevus näitab "
-            L"generaatori taset dB-des: parempoolne 0 dB on suurim moonutuseta siinusamplituud, −∞ dB vaikus "
-            L"ja vaikesäte −18 dB. Testi käivitab pideva prooviesituse ning Peata test lõpetab selle. "
-            L"Testida saab mõlemat heli; testi ei salvestata. Liuguri hoidmine esitab samuti heli kuni hiire "
-            L"vabastamiseni, kui nuputest pole käimas. Esitus algab järgmisel täissekundil: lühike toon igal "
-            L"sekundil ja pikk toon :00, :05, :10 jne. Testi peatamisel võib juba alanud toon lõpuni kõlada. "
-            L"Muud samaaegsed ajasignaalid võivad jätkuda. Arvestatakse ka nihke sajandikke ning kattuvad "
-            L"toonid kõlavad "
+            L"oma keskjoondus.\r\n\r\nWindows Classic stiil nõuab valikut Keela kujundused ning mõjutab "
+            L"ainult aknaid Sätted, Spikker, Teave, Ajakalkulaator ja Otsi. Kui valitud on süsteemi "
+            L"vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8 pt; kohandatud rakenduse font "
+            L"on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI või "
+            L"Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili "
+            L"väljalülitamisel taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse kõik "
+            L"kujundusvalikud märkimata ja hallina ning neid ei rakendata; salvestatud eelistused "
+            L"säilivad.\r\n\r\nSätted ja menüüd\r\nRakenduse keel, font, silumine, salvestuskoht, Windowsiga "
+            L"käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine "
+            L"Rakenduse vahekaardil mõjutab aknaid Sätted, Spikker, Teave, Ajakalkulaator ja Otsi. Iga vidin "
+            L"kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või "
+            L"selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda "
+            L"vidinat. \r\n\r\nVidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, "
+            L"sekundite, suuruse ja kuupäeva kopeerimise valikud, seejärel Paiguta ruudustikku, "
+            L"Ajakalkulaator, Sätted, Spikker, Teave ja Välju. Olekuala menüü loetleb nummerdatud vidinad, "
+            L"Kuva kõik, Peida kõik ja Vaigista kõik ning eraldi ruudustikukäsu. Kuvamine või taastamine "
+            L"toob vidina ette suvandit Alati pealmine muutmata. Korduskäivitus taastab vajaduse korral "
+            L"viimati peidetud vidinad. Sihverplaadisuurused ja sekundiosuti tugi sõltuvad Windowsist. "
+            L"Äratus ja Signaal on lülitatavad ka menüüs, kus kuvatakse aeg, intervall ning osalise nädala "
+            L"korral aktiivsed päevad. Vaigista vastab vahekaardi Üldine valikule Vaigistatud. Vaigista kõik "
+            L"ja klahv M vaigistavad kõik vidinad ning järgmisel korral taastavad heli ainult neil, mille "
+            L"nad ise vaigistasid. Päevadeta äratuse lubamine avab vahekaardi Äratus.\r\n\r\nKuuldav "
+            L"ajasignaal\r\nSignaal järgib Greenwichi ajasignaali (GTS): viis lühikest tooni viimase viie "
+            L"sekundi jooksul ja pikk toon täpsel ajahetkel. Vahekaardil Signaal on Ajasignaal lubatud ja "
+            L"intervallid 1, 5, 10, 15, 20, 30 või 60 minutit vidina kuvatava aja järgi. Vaikimisi on "
+            L"signaal väljas ja valitud tunnine intervall. Menüü lülitus säilitab intervalli. Ajapiir "
+            L"arvestab UTC-d, ajavööndit, nihet ja NTP-d. 20-minutilise intervalliga kõlab signaal :00, :20 "
+            L"ja :40. Vaigistamisel võib praegune toon lõppeda; järgmised jäetakse vahele ja heli "
+            L"taastamisel kõlab alles järgmine kavandatud toon. Eraldi Kalender ei toeta äratust, "
+            L"ajasignaali ega vaigistamist.\r\n\r\nVahekaardi Rakendus Ajasignaali heli pakub Sisseehitatud "
+            L"generaatorit (vaikimisi) ja Süsteemi helisignaali. Valik kehtib kõigile vidinatele ja "
+            L"äratustele. Ajasignaali helitugevus näitab generaatori taset dB-des: parempoolne 0 dB on "
+            L"suurim moonutuseta siinusamplituud, −∞ dB vaikus ja vaikesäte −18 dB. Testi käivitab pideva "
+            L"prooviesituse ning Peata test lõpetab selle. Testida saab mõlemat heli; testi ei salvestata. "
+            L"Liuguri hoidmine esitab samuti heli kuni hiire vabastamiseni, kui nuputest pole käimas. Esitus "
+            L"algab järgmisel täissekundil: lühike toon igal sekundil ja pikk toon :00, :05, :10 jne. Testi "
+            L"peatamisel võib juba alanud toon lõpuni kõlada. Muud samaaegsed ajasignaalid võivad jätkuda. "
+            L"Arvestatakse ka nihke sajandikke ning kattuvad toonid kõlavad "
             L"katkestuseta viimase kattumise lõpuni samal heliväljundil.\r\n\r\nHELIVÄLJUND\r\nHeliväljund "
             L"vahekaardil Signaal valib seadme iga helitoega vidina korrapäraste ajasignaalide jaoks. Vidina "
             L"ajavöönd, nihe ja intervall ei muutu. Generaatori valik ja signaali helitugevus jäävad "
@@ -9919,10 +9919,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"käesoleva seansi viimased 30 otsingut.\r\n\r\nRakenduse vahekaardil lubab Alternatiivne "
             L"teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult teavitusikooni pärast "
             L"Rakenda või Salvesta vajutamist.\r\n\r\nAkende kujundus: Süsteemne; Windows Basicu "
-            L"tiitliribad; Windows Classic tiitliribad; Windows 2000. Mõlemad tiitliribarežiimid toimivad "
+            L"tiitliribad; Windows Classic tiitliribad; Windows Classic. Mõlemad tiitliribarežiimid toimivad "
             L"juhtelementide teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise valikut kogu "
             L"aknas. Windows Classic tiitliribad muudavad ainult tiitli fonti ja tausta; tiitlinupud ning "
-            L"3D-raam säilitavad süsteemivärvid. Windows 2000 nõuab teemade keelamist."
+            L"3D-raam säilitavad süsteemivärvid. Windows Classic nõuab teemade keelamist."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -10057,7 +10057,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Brabhsáil…" },
         LocalizedText{ TXT_LANGUAGE, L"Teanga:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Díchumasaigh téamaí" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Cuma na bhfuinneog" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Réamhshocrú córais" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Teidil Windows Basic" },
@@ -10342,7 +10342,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"“Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa "
             L"chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig "
             L"scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith "
-            L"UTC.\r\n\r\nÉilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach "
+            L"UTC.\r\n\r\nÉilíonn Stíl Windows Classic an rogha Díchumasaigh téamaí agus ní bhaineann sí ach "
             L"leis na fuinneoga Socruithe, Cabhair, Maidir leis, Áireamhán ama agus Aimsigh. Úsáideann "
             L"rialtáin na bhfuinneog seo Tahoma 8 pt nuair a roghnaítear cló réamhshocraithe an chórais; "
             L"bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don cheadúnas. Ní "
@@ -10500,10 +10500,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"reatha.\r\n\r\nAr an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín "
             L"fógra i stíl retró. Ní athraíonn na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó "
             L"Sábháil.\r\n\r\nCuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows "
-            L"Classic; Windows 2000. Oibríonn an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann "
-            L"réamhshocrú an chórais an rogha téamaí a dhíchumasú don fhuinneog iomlán. Ní athraíonn barraí "
-            L"teidil Windows Classic ach cló agus cúlra an teidil; coinníonn na cnaipí teidil agus an "
-            L"teorainn 3T dathanna an chórais. Teastaíonn téamaí díchumasaithe ó Windows 2000."
+            L"Classic; Windows Classic. Oibríonn an dá mhodh barra teidil le téamaí rialtán nó gan iad. "
+            L"Leanann réamhshocrú an chórais an rogha téamaí a dhíchumasú don fhuinneog iomlán. Ní athraíonn "
+            L"barraí teidil Windows Classic ach cló agus cúlra an teidil; coinníonn na cnaipí teidil agus an "
+            L"teorainn 3T dathanna an chórais. Teastaíonn téamaí díchumasaithe ó Windows Classic."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -10647,7 +10647,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Naršyti…" },
         LocalizedText{ TXT_LANGUAGE, L"Kalba:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Išjungti temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Langų išvaizda" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemos" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic antraštės" },
@@ -10928,7 +10928,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet "
             L"rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį "
             L"šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama "
-            L"atskirai.\r\n\r\nWindows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik "
+            L"atskirai.\r\n\r\nWindows Classic stilius reikalauja parinkties Išjungti temas ir taikomas tik "
             L"langams Parametrai, Žinynas, Apie, Laiko skaičiuotuvas ir Rasti. Pasirinkus numatytąjį "
             L"sistemos šriftą, šių langų valdikliai naudoja Tahoma 8 pt; pasirinktas programos šriftas turi "
             L"pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI arba Nėra. Įrašytas "
@@ -11072,11 +11072,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.\r\n\r\nKortelėje Programa "
             L"pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma. Abi "
             L"parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Įrašyti.\r\n\r\nLangų "
-            L"išvaizda: Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows 2000. Abu "
+            L"išvaizda: Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows Classic. Abu "
             L"antraštės režimai veikia su įjungtomis arba išjungtomis valdiklių temomis. Sistemos "
             L"numatytasis režimas taiko temų išjungimą visam langui. Windows Classic antraštės keičia tik "
             L"antraštės šriftą ir foną; antraštės mygtukai ir 3D rėmelis išlaiko sistemos spalvas. Windows "
-            L"2000 režimui reikia išjungti temas."
+            L"Classic režimui reikia išjungti temas."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -11212,7 +11212,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pārlūkot…" },
         LocalizedText{ TXT_LANGUAGE, L"Valoda:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Atspējot dizainus" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Logu izskats" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistēmas" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic virsraksti" },
@@ -11484,7 +11484,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, "
             L"rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. "
             L"Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa "
-            L"centrēšana.\r\n\r\nWindows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz "
+            L"centrēšana.\r\n\r\nWindows Classic stils prasa opciju Atspējot dizainus un attiecas tikai uz "
             L"logiem Iestatījumi, Palīdzība, Par programmu, Laika kalkulators un Atrast. Ja izvēlēts "
             L"sistēmas noklusējuma fonts, šo logu vadīklas izmanto Tahoma 8 pt; pielāgotajam programmas "
             L"fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI vai Nav. "
@@ -11624,10 +11624,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" saglabājas sesijas pēdējie 30 meklējumi.\r\n\r\nCilnē Programma opcija Alternatīva paziņojumu "
             L"ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc "
             L"Lietot vai Saglabāt nospiešanas.\r\n\r\nLogu izskats: Sistēmas; Windows Basic virsraksti; "
-            L"Windows Classic virsraksti; Windows 2000. Abi virsraksta režīmi darbojas ar ieslēgtiem vai "
+            L"Windows Classic virsraksti; Windows Classic. Abi virsraksta režīmi darbojas ar ieslēgtiem vai "
             L"izslēgtiem vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu visam logam. "
             L"Windows Classic virsraksti maina tikai virsraksta fontu un fonu; virsraksta pogas un 3D apmale "
-            L"saglabā sistēmas krāsas. Windows 2000 režīmam nepieciešami atspējoti motīvi."
+            L"saglabā sistēmas krāsas. Windows Classic režīmam nepieciešami atspējoti motīvi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -11759,7 +11759,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Tallózás…" },
         LocalizedText{ TXT_LANGUAGE, L"Nyelv:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Témák letiltása" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Ablakok megjelenése" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Rendszer szerinti" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-címsorok" },
@@ -12042,7 +12042,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, "
             L"hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos "
             L"betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. "
-            L"Az UTC-sor külön igazodik középre.\r\n\r\nA Windows 2000 stílushoz be kell jelölni a Témák "
+            L"Az UTC-sor külön igazodik középre.\r\n\r\nA Windows Classic stílushoz be kell jelölni a Témák "
             L"letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy, Időkalkulátor és Keresés ablakokra "
             L"vonatkozik. A rendszer alapértelmezett betűtípusának kiválasztásakor ezen ablakok "
             L"vezérlőelemei 8 pontos Tahomát használnak; az egyéni alkalmazás-betűtípus "
@@ -12194,10 +12194,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"őrzik.\r\n\r\nAz Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon "
             L"lehetőséget. Mindkettő csak az értesítési ikont módosítja az Alkalmaz vagy Mentés megnyomása "
             L"után.\r\n\r\nAblakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows "
-            L"Classic-címsorok; Windows 2000. Mindkét címsormód használható a vezérlők témáival vagy azok "
+            L"Classic-címsorok; Windows Classic. Mindkét címsormód használható a vezérlők témáival vagy azok "
             L"nélkül. A rendszer alapbeállítása az egész ablakra alkalmazza a témák letiltását. A Windows "
             L"Classic-címsorok csak a cím betűtípusát és hátterét módosítják; a címsor gombjai és a 3D keret "
-            L"megtartják a rendszerszíneket. A Windows 2000 módhoz le kell tiltani a témákat."
+            L"megtartják a rendszerszíneket. A Windows Classic módhoz le kell tiltani a témákat."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Órák és naptárak\r\n\r\nNatív Win32-alkalmazás legfeljebb 32, egymástól függetlenül "
@@ -12335,7 +12335,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Ibbrawżja…" },
         LocalizedText{ TXT_LANGUAGE, L"Lingwa:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Iddiżattiva t-temi" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Dehra tat-twieqi" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Tas-sistema" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titli Windows Basic" },
@@ -12614,7 +12614,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"“Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero "
             L"iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki "
             L"b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. "
-            L"Ir-ringiela UTC tiġi ċċentrata separatament.\r\n\r\nStil Windows 2000 jeħtieġ Iddiżattiva "
+            L"Ir-ringiela UTC tiġi ċċentrata separatament.\r\n\r\nStil Windows Classic jeħtieġ Iddiżattiva "
             L"t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar, Kalkulatur tal-ħin u Sib. "
             L"Il-kontrolli ta’ dawn it-twieqi jużaw Tahoma 8 pt meta jintgħażel il-font predefinit "
             L"tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test "
@@ -12765,11 +12765,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.\r\n\r\nFit-tab "
             L"Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ "
             L"għażliet jibdlu biss l-ikona tan-notifika wara Applika jew Issejvja.\r\n\r\nDehra tat-twieqi: "
-            L"Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows 2000. Iż-żewġ modi tal-barra "
-            L"tat-titlu jaħdmu bit-temi tal-kontrolli mixgħula jew mitfija. L-għażla tas-sistema ssegwi Itfi "
-            L"t-temi għat-tieqa kollha. Il-vireg tat-titlu Windows Classic ibiddlu biss it-tipa u l-isfond "
-            L"tat-titlu; il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows 2000 "
-            L"jeħtieġ temi mitfija."
+            L"Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows Classic. Iż-żewġ modi "
+            L"tal-barra tat-titlu jaħdmu bit-temi tal-kontrolli mixgħula jew mitfija. L-għażla tas-sistema "
+            L"ssegwi Itfi t-temi għat-tieqa kollha. Il-vireg tat-titlu Windows Classic ibiddlu biss it-tipa "
+            L"u l-isfond tat-titlu; il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows "
+            L"Classic jeħtieġ temi mitfija."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -12909,7 +12909,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bladeren…" },
         LocalizedText{ TXT_LANGUAGE, L"Taal:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Thema’s uitschakelen" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Vensterweergave" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Systeemstandaard" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-titelbalken" },
@@ -13185,7 +13185,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Automatische XML staat in %AppData%\\FortSoft\\CalClock\\settings.xml. Na XML-opslag wordt "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock verwijderd; opslag in het register verwijdert de "
             L"automatische XML.\r\n\r\nLettertypevereffening biedt ClearType, GDI en Geen.\r\n\r\nWindows "
-            L"2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info, "
+            L"Classic-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info, "
             L"Tijdcalculator en Zoeken. Met het standaardlettertype van het systeem gebruiken de "
             L"besturingselementen van deze vensters Tahoma 8 pt; een eigen toepassingslettertype heeft "
             L"voorrang. De licentie behoudt het lettertype met vaste tekenbreedte. In deze modus zijn alleen "
@@ -13337,10 +13337,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sessie.\r\n\r\nOp het tabblad Toepassing schakelt Alternatief meldingspictogram de optie "
             L"Retro-pictogram in het systeemvak in. Beide wijzigen alleen het meldingspictogram na Toepassen "
             L"of Opslaan.\r\n\r\nVensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows "
-            L"Classic-titelbalken; Windows 2000. Beide titelbalkmodi werken met of zonder thema's voor "
+            L"Classic-titelbalken; Windows Classic. Beide titelbalkmodi werken met of zonder thema's voor "
             L"besturingselementen. Systeemstandaard volgt Thema's uitschakelen voor het hele venster. "
             L"Windows Classic-titelbalken wijzigen alleen het lettertype en de achtergrond van de titel; "
-            L"titelknoppen en 3D-rand behouden de systeemkleuren. Windows 2000 vereist uitgeschakelde "
+            L"titelknoppen en 3D-rand behouden de systeemkleuren. Windows Classic vereist uitgeschakelde "
             L"thema's."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -13483,7 +13483,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Răsfoire…" },
         LocalizedText{ TXT_LANGUAGE, L"Limbă:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Dezactivare teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Aspectul ferestrelor" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistem" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titluri Windows Basic" },
@@ -13763,7 +13763,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde "
             L"zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi "
             L"proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are "
-            L"centrare separată.\r\n\r\nStil Windows 2000 necesită Dezactivare teme și se aplică doar "
+            L"centrare separată.\r\n\r\nStil Windows Classic necesită Dezactivare teme și se aplică doar "
             L"ferestrelor Setări, Ajutor, Despre, Calculator de timp și Caută. Controalele acestor ferestre "
             L"folosesc Tahoma de 8 pt când este selectat fontul implicit al sistemului; "
             L"fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se "
@@ -13909,10 +13909,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" curentă.\r\n\r\nÎn fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă "
             L"de notificare retro. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau "
             L"Salvare.\r\n\r\nAspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; "
-            L"Windows 2000. Ambele moduri ale barei de titlu funcționează cu sau fără teme pentru controale. "
-            L"Implicit de sistem aplică Dezactivează temele întregii ferestre. Barele de titlu Windows "
-            L"Classic schimbă doar fontul și fundalul titlului; butoanele titlului și chenarul 3D păstrează "
-            L"culorile sistemului. Windows 2000 necesită teme dezactivate."
+            L"Windows Classic. Ambele moduri ale barei de titlu funcționează cu sau fără teme pentru "
+            L"controale. Implicit de sistem aplică Dezactivează temele întregii ferestre. Barele de titlu "
+            L"Windows Classic schimbă doar fontul și fundalul titlului; butoanele titlului și chenarul 3D "
+            L"păstrează culorile sistemului. Windows Classic necesită teme dezactivate."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -14051,7 +14051,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Αναζήτηση…" },
         LocalizedText{ TXT_LANGUAGE, L"Γλώσσα:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Χωρίς θέματα" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Εμφάνιση παραθύρων" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Συστήματος" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Τίτλοι Windows Basic" },
@@ -14341,7 +14341,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"«Όχι, διατήρηση χώρου» κρύβει το μηδενικό αλλά δεσμεύει το πλάτος του στην επιλεγμένη "
             L"γραμματοσειρά· τα άλλα ψηφία μένουν στη θέση τους και με αναλογικές γραμματοσειρές. Το "
             L"κεντράρισμα των ρολογιών οθόνης περιλαμβάνει τον δεσμευμένο χώρο. Η γραμμή UTC κεντράρεται "
-            L"χωριστά.\r\n\r\nΤο Στυλ Windows 2000 απαιτεί την επιλογή Χωρίς θέματα και αφορά μόνο τα "
+            L"χωριστά.\r\n\r\nΤο Στυλ Windows Classic απαιτεί την επιλογή Χωρίς θέματα και αφορά μόνο τα "
             L"παράθυρα Ρυθμίσεις, Βοήθεια, Πληροφορίες, Υπολογιστής χρόνου και Εύρεση. Όταν επιλέγεται η "
             L"προεπιλεγμένη γραμματοσειρά συστήματος, τα στοιχεία ελέγχου αυτών των παραθύρων χρησιμοποιούν "
             L"Tahoma 8 pt· η προσαρμοσμένη γραμματοσειρά εφαρμογής έχει προτεραιότητα και η "
@@ -14500,11 +14500,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"τελευταίες 30 αναζητήσεις της συνεδρίας.\r\n\r\nΣτην καρτέλα Εφαρμογή, το Εναλλακτικό "
             L"εικονίδιο ειδοποίησης ενεργοποιεί το Ρετρό εικονίδιο ειδοποιήσεων. Και οι δύο επιλογές "
             L"αλλάζουν μόνο το εικονίδιο ειδοποίησης μετά την επιλογή Εφαρμογή ή Αποθήκευση.\r\n\r\nΕμφάνιση "
-            L"παραθύρων: Συστήματος; Τίτλοι Windows Basic; Τίτλοι Windows Classic; Windows 2000. Και οι δύο "
-            L"λειτουργίες τίτλου λειτουργούν με ενεργά ή ανενεργά θέματα στα στοιχεία ελέγχου. Η προεπιλογή "
-            L"συστήματος ακολουθεί την απενεργοποίηση θεμάτων για όλο το παράθυρο. Οι τίτλοι Windows Classic "
-            L"αλλάζουν μόνο γραμματοσειρά και φόντο τίτλου· τα κουμπιά τίτλου και το τρισδιάστατο περίγραμμα "
-            L"διατηρούν τα χρώματα συστήματος. Το Windows 2000 απαιτεί ανενεργά θέματα."
+            L"παραθύρων: Συστήματος; Τίτλοι Windows Basic; Τίτλοι Windows Classic; Windows Classic. Και οι "
+            L"δύο λειτουργίες τίτλου λειτουργούν με ενεργά ή ανενεργά θέματα στα στοιχεία ελέγχου. Η "
+            L"προεπιλογή συστήματος ακολουθεί την απενεργοποίηση θεμάτων για όλο το παράθυρο. Οι τίτλοι "
+            L"Windows Classic αλλάζουν μόνο γραμματοσειρά και φόντο τίτλου· τα κουμπιά τίτλου και το "
+            L"τρισδιάστατο περίγραμμα διατηρούν τα χρώματα συστήματος. Το Windows Classic απαιτεί ανενεργά "
+            L"θέματα."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -14646,7 +14647,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
@@ -14917,7 +14918,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(podrazumijevano), „Ne, zadrži razmak“ i „Ne, bez razmaka“. „Ne, zadrži razmak“ skriva nulu, "
             L"ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
             L"proporcionalnih fontova. Satovi na ekranu ostaju centrirani, uključujući rezervirani razmak. "
-            L"Red UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
+            L"Red UTC ima vlastito centriranje.\r\n\r\nStil Windows Classic dostupan je uz isključene teme i "
             L"važi samo za Postavke, Pomoć, O programu, Kalkulator vremena i Pronađi. Uz podrazumijevani "
             L"sistemski font kontrole ovih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. "
             L"Dostupno je izglađivanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i "
@@ -15067,10 +15068,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.\r\n\r\nNa kartici Program "
             L"opcija Alternativna ikona obavijesti omogućava Retro ikona u području obavijesti. Obje opcije "
             L"mijenjaju samo ikonu obavijesti nakon Primijeni ili Sačuvaj.\r\n\r\nIzgled prozora: Sistemski; "
-            L"Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina naslovne trake "
+            L"Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows Classic. Oba načina naslovne trake "
             L"rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli prozor. Naslovne "
             L"trake Windows Classic mijenjaju samo font i pozadinu naslova; dugmad naslova i 3D okvir "
-            L"zadržavaju sistemske boje. Windows 2000 zahtijeva isključene teme."
+            L"zadržavaju sistemske boje. Windows Classic zahtijeva isključene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -15207,7 +15208,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
@@ -15478,21 +15479,21 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(zadano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali "
             L"rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod "
             L"proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. "
-            L"Redak UTC ima vlastito centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i "
-            L"vrijedi samo za Postavke, Pomoć, O programu, Kalkulator vremena i Pronađi. Uz zadani sistemski "
-            L"font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno "
-            L"je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i vraća "
-            L"nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve su opcije izgleda "
-            L"nedostupne i ne primjenjuju se; spremljeni odabiri ostaju nepromijenjeni.\r\n\r\nPostavke i "
-            L"izbornici\r\nJezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i "
-            L"priljubljivanje uz rubove vrijede globalno i postavljaju se na kartici Program. Isključivanje "
-            L"tema na kartici Program utječe na prozore Postavke, Pomoć, O programu, Kalkulator vremena i "
-            L"Pronađi. Svaki widget koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema "
-            L"jeziku sučelja Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i "
-            L"teme widgeta utječu samo na taj widget. \r\n\r\nIzbornik widgeta sadrži primjenjive postavke "
-            L"vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika kopiranja datuma, a zatim "
-            L"Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O programu i Izlaz. Izbornik ikone u "
-            L"području obavijesti "
+            L"Redak UTC ima vlastito centriranje.\r\n\r\nStil Windows Classic dostupan je uz isključene teme "
+            L"i vrijedi samo za Postavke, Pomoć, O programu, Kalkulator vremena i Pronađi. Uz zadani "
+            L"sistemski font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. "
+            L"Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i "
+            L"vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve su opcije "
+            L"izgleda nedostupne i ne primjenjuju se; spremljeni odabiri ostaju "
+            L"nepromijenjeni.\r\n\r\nPostavke i izbornici\r\nJezik programa, font, izglađivanje, spremište, "
+            L"pokretanje s Windowsom i priljubljivanje uz rubove vrijede globalno i postavljaju se na "
+            L"kartici Program. Isključivanje tema na kartici Program utječe na prozore Postavke, Pomoć, O "
+            L"programu, Kalkulator vremena i Pronađi. Svaki widget koristi vlastitu postavku tema. Pri prvom "
+            L"pokretanju jezik se bira prema jeziku sučelja Windowsa; ako nije podržan, koristi se američki "
+            L"engleski. Jezik, izglađivanje i teme widgeta utječu samo na taj widget. \r\n\r\nIzbornik "
+            L"widgeta sadrži primjenjive postavke vidljivosti, načina Uvijek na vrhu, sekundi, veličine i "
+            L"oblika kopiranja datuma, a zatim Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O "
+            L"programu i Izlaz. Izbornik ikone u području obavijesti "
             L"navodi numerirane widgete i naredbe Prikaži sve, Sakrij sve i Isključi sav zvuk. Slijedi "
             L"zasebno grupirana naredba Rasporedi u mrežu. Prikazivanje ili vraćanje widgeta dovodi ga "
             L"naprijed bez promjene postavke Uvijek na vrhu. Ponovno pokretanje CalClocka aktivira postojeću "
@@ -15631,10 +15632,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj "
             L"sesiji.\r\n\r\nNa kartici Program opcija Alternativna ikona obavijesti omogućuje Retro ikona u "
             L"području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili Spremi.\r\n\r\n"
-            L"Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. "
-            L"Oba načina naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme "
-            L"za cijeli prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu naslova; gumbi "
-            L"naslova i 3D okvir zadržavaju sistemske boje. Windows 2000 zahtijeva isključene teme."
+            L"Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows "
+            L"Classic. Oba načina naslovne trake rade s temama kontrola ili bez njih. Sistemski prati "
+            L"Isključi teme za cijeli prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu "
+            L"naslova; gumbi naslova i 3D okvir zadržavaju sistemske boje. Windows Classic zahtijeva "
+            L"isključene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -15769,7 +15771,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Prebrskaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogoči teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Videz oken" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Glave Windows Basic" },
@@ -16034,37 +16036,37 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in "
             L"rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri "
             L"proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem "
-            L"rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.\r\n\r\nSlog Windows 2000 "
-            L"je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu, Časovni "
-            L"kalkulator in Najdi. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 "
-            L"pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni "
-            L"ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows uporablja "
-            L"klasični videz, so vse možnosti videza onemogočene in se ne uporabljajo; shranjene izbire se "
-            L"ohranijo.\r\n\r\nNastavitve in meniji\r\nJezik, pisava, glajenje, shramba, zagon z Windows in "
-            L"pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program vpliva na "
-            L"okna Nastavitve, Pomoč, O programu, Časovni kalkulator in Najdi. Vsak gradnik uporablja svojo "
-            L"nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se "
-            L"uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj. \r\n\r\nMeni "
-            L"gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti in kopiranja "
-            L"datuma, nato Razporedi v mrežo, Časovni kalkulator, Nastavitve, Pomoč, O programu in Izhod. "
-            L"Meni ikone vsebuje oštevilčene gradnike ter Pokaži vse, Skrij vse in Izklopi ves zvok; sledi "
-            L"ločeni ukaz Razporedi v mrežo. Prikaz ali obnova postavi gradnik v ospredje brez spremembe "
-            L"Vedno na vrhu. Ponovni zagon aktivira obstoječi primerek in po potrebi obnovi nazadnje skrite "
-            L"gradnike. Velikosti številčnic in podpora sekundnemu kazalcu so odvisne od Windows. Budilko in "
-            L"Signal lahko preklopite v meniju; budilka kaže čas in pri delnem tednu izbrane dneve. Označeni "
-            L"Izklopi zvok ustreza možnosti Zvok izklopljen na zavihku Splošno. Izklopi ves zvok utiša vse "
-            L"gradnike, ob ponovitvi pa obnovi zvok samo tistim, ki jih je sam utišal. Tipka M na katerem "
-            L"koli gradniku naredi isto. Vklop budilke brez izbranega dneva odpre njen zavihek "
-            L"Budilka.\r\n\r\nZvočni časovni signal\r\nSignal sledi vzorcu Greenwich Time Signal (GTS). "
-            L"Zavihek Signal ponuja Časovni signal vključen in intervale 1, 5, 10, 15, 20, 30 ali 60 minut "
-            L"po prikazanem času gradnika. Signal je sprva izključen, izbran pa je enourni interval. Preklop "
-            L"v meniju ohrani interval; čas budilke in interval sta prikazana v oklepajih. Časovna meja "
-            L"upošteva UTC, časovni pas, odmik in NTP. V zadnjih petih sekundah se oglasi pet kratkih "
-            L"piskov, natanko na meji pa dolg. Ob izklopu zvoka se trenutni pisk lahko konča, nadaljnji se "
-            L"izpustijo, po vklopu pa se zasliši šele naslednji načrtovani pisk. Samostojni Koledar nima "
-            L"budilke, časovnega signala ali utišanja.\r\n\r\nPri intervalu 20 minut se signal oglasi ob "
-            L":00, :20 in :40 po času gradnika. Na zavihku Program Zvok časovnega signala ponuja Vgrajeni "
-            L"generator (privzeto) in Sistemski pisk. Izbira velja za vse gradnike, tudi za signale "
+            L"rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.\r\n\r\nSlog Windows "
+            L"Classic je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu, "
+            L"Časovni kalkulator in Najdi. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo "
+            L"Tahomo 8 pt; uporabnikova pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. "
+            L"Shranjeni ClearType začasno nadomesti GDI in se povrne ob izklopu tega sloga. Kadar Windows "
+            L"uporablja klasični videz, so vse možnosti videza onemogočene in se ne uporabljajo; shranjene "
+            L"izbire se ohranijo.\r\n\r\nNastavitve in meniji\r\nJezik, pisava, glajenje, shramba, zagon z "
+            L"Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program "
+            L"vpliva na okna Nastavitve, Pomoč, O programu, Časovni kalkulator in Najdi. Vsak gradnik "
+            L"uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če "
+            L"ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo "
+            L"nanj. \r\n\r\nMeni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti "
+            L"in kopiranja datuma, nato Razporedi v mrežo, Časovni kalkulator, Nastavitve, Pomoč, O programu "
+            L"in Izhod. Meni ikone vsebuje oštevilčene gradnike ter Pokaži vse, Skrij vse in Izklopi ves "
+            L"zvok; sledi ločeni ukaz Razporedi v mrežo. Prikaz ali obnova postavi gradnik v ospredje brez "
+            L"spremembe Vedno na vrhu. Ponovni zagon aktivira obstoječi primerek in po potrebi obnovi "
+            L"nazadnje skrite gradnike. Velikosti številčnic in podpora sekundnemu kazalcu so odvisne od "
+            L"Windows. Budilko in Signal lahko preklopite v meniju; budilka kaže čas in pri delnem tednu "
+            L"izbrane dneve. Označeni Izklopi zvok ustreza možnosti Zvok izklopljen na zavihku Splošno. "
+            L"Izklopi ves zvok utiša vse gradnike, ob ponovitvi pa obnovi zvok samo tistim, ki jih je sam "
+            L"utišal. Tipka M na katerem koli gradniku naredi isto. Vklop budilke brez izbranega dneva odpre "
+            L"njen zavihek Budilka.\r\n\r\nZvočni časovni signal\r\nSignal sledi vzorcu Greenwich Time "
+            L"Signal (GTS). Zavihek Signal ponuja Časovni signal vključen in intervale 1, 5, 10, 15, 20, 30 "
+            L"ali 60 minut po prikazanem času gradnika. Signal je sprva izključen, izbran pa je enourni "
+            L"interval. Preklop v meniju ohrani interval; čas budilke in interval sta prikazana v oklepajih. "
+            L"Časovna meja upošteva UTC, časovni pas, odmik in NTP. V zadnjih petih sekundah se oglasi pet "
+            L"kratkih piskov, natanko na meji pa dolg. Ob izklopu zvoka se trenutni pisk lahko konča, "
+            L"nadaljnji se izpustijo, po vklopu pa se zasliši šele naslednji načrtovani pisk. Samostojni "
+            L"Koledar nima budilke, časovnega signala ali utišanja.\r\n\r\nPri intervalu 20 minut se signal "
+            L"oglasi ob :00, :20 in :40 po času gradnika. Na zavihku Program Zvok časovnega signala ponuja "
+            L"Vgrajeni generator (privzeto) in Sistemski pisk. Izbira velja za vse gradnike, tudi za signale "
             L"budilk.\r\n\r\nGlasnost časovnega signala kaže raven generatorja v dB. Desni konec je 0 dB, "
             L"največja nepopačena amplituda sinusoide; tišina je −∞ dB. Privzeto je −18 dB. Preizkusi ob "
             L"izbiri zvoka začne neprekinjeni predogled, Ustavi preizkus pa ga konča. Preizkusiti je mogoče "
@@ -16171,10 +16173,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" ohrani zadnjih 30 iskanj trenutne seje.\r\n\r\nNa zavihku Program možnost Druga ikona za "
             L"obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti spremenita samo ikono za "
             L"obvestila po Uporabi ali Shrani.\r\n\r\nVidez oken: Sistemski; Glave Windows Basic; Glave "
-            L"Windows Classic; Windows 2000. Oba načina naslovne vrstice delujeta s temami kontrolnikov ali "
-            L"brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice Windows Classic "
+            L"Windows Classic; Windows Classic. Oba načina naslovne vrstice delujeta s temami kontrolnikov "
+            L"ali brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice Windows Classic "
             L"spremenijo le pisavo in ozadje naslova; naslovni gumbi in 3D okvir ohranijo sistemske barve. "
-            L"Windows 2000 zahteva izklopljene teme."
+            L"Windows Classic zahteva izklopljene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -16308,7 +16310,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
@@ -16575,12 +16577,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(podrazumijevano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, "
             L"ali čuva njenu širinu u izabranom fontu; ostale cifre zadržavaju položaje i kod "
             L"proporcionalnih fontova. Satovi na monitoru ostaju centrirani sa uračunatim razmakom. Red UTC "
-            L"ima sopstveno centriranje.\r\n\r\nStil Windows 2000 dostupan je uz isključene teme i važi samo "
-            L"za Podešavanja, Pomoć, O programu, Kalkulator vremena i Pronađi. Uz podrazumijevani sistemski "
-            L"font kontrole ovih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. Dostupno "
-            L"je umekšavanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i vraća nakon "
-            L"isključivanja ovog stila. Kada Windows koristi klasični izgled, sve opcije izgleda su "
-            L"nedostupne i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.\r\n\r\nPodešavanja i "
+            L"ima sopstveno centriranje.\r\n\r\nStil Windows Classic dostupan je uz isključene teme i važi "
+            L"samo za Podešavanja, Pomoć, O programu, Kalkulator vremena i Pronađi. Uz podrazumijevani "
+            L"sistemski font kontrole ovih prozora koriste Tahomu 8 pt; vlastiti font programa ima prednost. "
+            L"Dostupno je umekšavanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i "
+            L"vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve opcije izgleda "
+            L"su nedostupne i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.\r\n\r\nPodešavanja i "
             L"meniji\r\nJezik programa, font, umekšavanje, skladište, pokretanje uz Windows i "
             L"priljepljivanje su zajedničke postavke na kartici Program. Isključivanje tema na kartici "
             L"Program utiče na prozore Podešavanja, Pomoć, O programu, Kalkulator vremena i Pronađi. Svaki "
@@ -16716,10 +16718,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"izrazi. Istorija čuva posljednjih 30 pretraga u tekućoj sesiji.\r\n\r\nNa kartici Program "
             L"opcija Alternativna ikona obavještenja omogućava Retro ikona u oblasti obavještenja. Obje "
             L"mijenjaju samo ikonu obavještenja nakon Primijeni ili Sačuvaj.\r\n\r\nIzgled prozora: "
-            L"Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina "
+            L"Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows Classic. Oba načina "
             L"naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli "
             L"prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu naslova; dugmad naslova "
-            L"i 3D okvir zadržavaju sistemske boje. Windows 2000 zahtijeva isključene teme."
+            L"i 3D okvir zadržavaju sistemske boje. Windows Classic zahtijeva isključene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -16856,7 +16858,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Агляд…" },
         LocalizedText{ TXT_LANGUAGE, L"Мова:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Адключыць тэмы" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Выгляд вокнаў" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Сістэмны" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Загалоўкі Windows Basic" },
@@ -17128,7 +17130,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"«Так» (прадвызначаны), «Не, пакідаць месца» і «Не, без месца». «Не, пакідаць месца» хавае "
             L"нуль, але рэзервуе яго шырыню ў выбраным шрыфце; астатнія лічбы захоўваюць пазіцыі і ў "
             L"прапарцыянальных шрыфтах. Гадзіннікі на маніторы застаюцца па цэнтры з улікам зарэзерваванага "
-            L"месца. Радок UTC мае асобнае цэнтраванне.\r\n\r\nСтыль Windows 2000 даступны пры адключаных "
+            L"месца. Радок UTC мае асобнае цэнтраванне.\r\n\r\nСтыль Windows Classic даступны пры адключаных "
             L"тэмах і дзейнічае толькі ў вокнах «Налады», «Даведка», «Пра праграму», «Калькулятар часу» і "
             L"«Знайсці». Калі выбраны прадвызначаны сістэмны шрыфт, элементы кіравання гэтых вокнаў "
             L"выкарыстоўваюць Tahoma 8 pt; уласны шрыфт праграмы мае перавагу. Даступнае згладжванне GDI або "
@@ -17274,10 +17276,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"захоўвае апошнія 30 пошукаў бягучага сеанса.\r\n\r\nНа ўкладцы Праграма выбар іншага значка "
             L"апавяшчэнняў уключае рэтразначок апавяшчэнняў. Абодва параметры змяняюць толькі значок "
             L"апавяшчэнняў пасля Ужыць або Захаваць.\r\n\r\nВыгляд вокнаў: Сістэмны; Загалоўкі Windows "
-            L"Basic; Загалоўкі Windows Classic; Windows 2000. Абодва рэжымы загалоўка працуюць з тэмамі "
+            L"Basic; Загалоўкі Windows Classic; Windows Classic. Абодва рэжымы загалоўка працуюць з тэмамі "
             L"элементаў кіравання або без іх. Сістэмны рэжым ужывае адключэнне тэм да ўсяго акна. Загалоўкі "
             L"Windows Classic змяняюць толькі шрыфт і фон загалоўка; кнопкі загалоўка і трохмерная рамка "
-            L"захоўваюць сістэмныя колеры. Windows 2000 патрабуе адключаных тэм."
+            L"захоўваюць сістэмныя колеры. Windows Classic патрабуе адключаных тэм."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -17411,7 +17413,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Преглед…" },
         LocalizedText{ TXT_LANGUAGE, L"Език:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Забрани темите" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Облик на прозорците" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Системен" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавия Windows Basic" },
@@ -17690,7 +17692,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"подразбиране), „Не, запази мястото“ и „Не, без място“. „Не, запази мястото“ скрива нулата, но "
             L"запазва ширината ѝ в избрания шрифт; другите цифри остават на място дори при пропорционални "
             L"шрифтове. Часовниците на монитор остават центрирани с включено запазено място. Редът UTC има "
-            L"отделно центриране.\r\n\r\nСтилът Windows 2000 е достъпен при забранени теми и важи само за "
+            L"отделно центриране.\r\n\r\nСтилът Windows Classic е достъпен при забранени теми и важи само за "
             L"прозорците „Настройки“, „Помощ“, „За програмата“, „Калкулатор за време“ и „Търсене“. При "
             L"избран системен шрифт по подразбиране контролите в тези прозорци използват Tahoma 8 pt; "
             L"избраният шрифт на програмата има предимство. Достъпно е изглаждане GDI или „Няма“. Записаният "
@@ -17840,11 +17842,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Историята пази последните 30 търсения в текущата сесия.\r\n\r\nВ раздела Програма опцията "
             L"Алтернативна икона за известия активира Ретро икона за известяване. И двете променят само "
             L"иконата за известия след Прилагане или Запази.\r\n\r\nОблик на прозорците: Системен; Заглавия "
-            L"Windows Basic; Заглавия Windows Classic; Windows 2000. Двата режима на заглавната лента "
+            L"Windows Basic; Заглавия Windows Classic; Windows Classic. Двата режима на заглавната лента "
             L"работят с включени или изключени теми на контролите. Системният режим следва изключването на "
             L"темите за целия прозорец. Заглавията Windows Classic променят само шрифта и фона на "
-            L"заглавието; бутоните и 3D рамката запазват системните цветове. Windows 2000 изисква изключени "
-            L"теми."
+            L"заглавието; бутоните и 3D рамката запазват системните цветове. Windows Classic изисква "
+            L"изключени теми."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -17979,7 +17981,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Прегледај…" },
         LocalizedText{ TXT_LANGUAGE, L"Јазик:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Оневозможи теми" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Изглед на прозорците" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Системски" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавија Windows Basic" },
@@ -18256,7 +18258,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"(стандардно), „Не, зачувај место“ и „Не, без место“. „Не, зачувај место“ ја крие нулата, но ја "
             L"задржува нејзината ширина во избраниот фонт; другите цифри остануваат на место и кај "
             L"пропорционални фонтови. Часовниците на монитор остануваат центрирани со вклучено резервирано "
-            L"место. Редот UTC има свое центрирање.\r\n\r\nСтилот Windows 2000 е достапен со оневозможени "
+            L"место. Редот UTC има свое центрирање.\r\n\r\nСтилот Windows Classic е достапен со оневозможени "
             L"теми и важи само за прозорците „Поставки“, „Помош“, „За програмата“, „Калкулатор за време“ и "
             L"„Најди“. Кога е избран стандардниот системски фонт, контролите во овие прозорци користат "
             L"Tahoma 8 pt; избраниот фонт на програмата има предност. Достапно е измазнување GDI или „Нема“. "
@@ -18411,10 +18413,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"сесија.\r\n\r\nВо јазичето Програма опцијата Алтернативна икона за известувања овозможува "
             L"Ретро икона за известувања. Двете го менуваат само икончето за известувања по Примени или "
             L"Зачувај.\r\n\r\nИзглед на прозорците: Системски; Заглавија Windows Basic; Заглавија Windows "
-            L"Classic; Windows 2000. Двата режима на насловната лента работат со вклучени или исклучени теми "
-            L"на контролите. Системскиот режим го следи исклучувањето на темите за целиот прозорец. "
+            L"Classic; Windows Classic. Двата режима на насловната лента работат со вклучени или исклучени "
+            L"теми на контролите. Системскиот режим го следи исклучувањето на темите за целиот прозорец. "
             L"Насловите Windows Classic ги менуваат само фонтот и заднината на насловот; копчињата и 3D "
-            L"рамката ги задржуваат системските бои. Windows 2000 бара исклучени теми."
+            L"рамката ги задржуваат системските бои. Windows Classic бара исклучени теми."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -18556,7 +18558,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Прегледај…" },
         LocalizedText{ TXT_LANGUAGE, L"Језик:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Онемогући теме" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Изглед прозора" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Системски" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавља Windows Basic" },
@@ -18819,27 +18821,27 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"фонта нуди ClearType, GDI и Нема. Водећа нула нуди „Да“ (подразумевано), „Не, задржи размак“ и "
             L"„Не, без размака“. „Не, задржи размак“ скрива нулу, али чува њену ширину у изабраном фонту; "
             L"остале цифре задржавају положаје и код пропорционалних фонтова. Сатови на монитору остају "
-            L"центрирани са урачунатим размаком. Ред UTC има сопствено центрирање.\r\n\r\nСтил Windows 2000 "
-            L"доступан је уз искључене теме и важи само за Подешавања, Помоћ, О програму, Калкулатор времена "
-            L"и Пронађи. Уз подразумевани системски фонт контроле ових прозора користе Тахому 8 pt; властити "
-            L"фонт програма има предност. Доступно је умекшавање GDI или Нема. Сачувани ClearType привремено "
-            L"се замењује са GDI и враћа након искључивања овог стила. Када Windows користи класични изглед, "
-            L"све опције изгледа су недоступне и не примењују се; сачувани избори остају непромењени.\r\n\r\n"
-            L"Подешавања и менији\r\nЈезик програма, фонт, умекшавање, складиште, покретање уз Windows и "
-            L"прилепљивање су заједничке поставке на картици Програм. Искључивање тема на картици Програм "
-            L"утиче на прозоре Подешавања, Помоћ, О програму, Калкулатор времена и Пронађи. Сваки виџет "
-            L"користи сопствену поставку тема. При првом покретању бира се језик интерфејса Windows-а; ако "
-            L"није подржан, користи се амерички енглески. Језик, умекшавање и теме виџета утичу само на "
-            L"њега. \r\n\r\nМени виџета садржи примењиве поставке видљивости, Увек на врху, секунди, "
-            L"величине и копирања датума, затим Распореди у мрежу, Калкулатор времена, Подешавања, Помоћ, О "
-            L"програму и Излаз. Мени иконе наводи нумерисане виџете, Прикажи све, Сакриј све и Искључи сав "
-            L"звук, па одвојено Распореди у мрежу. Приказ или враћање доводи виџет напред без промене Увек "
-            L"на врху. Поновни старт активира постојећу инстанцу и по потреби враћа последње скривене "
-            L"виџете. Величине бројчаника и секундна казаљка зависе од Windows-а. Аларм и Сигнал пребацују "
-            L"се и из менија; Аларм показује време и активне дане када није изабрана цела недеља. Означено "
-            L"Искључи звук одговара опцији Звук искључен на картици Опште. Искључи сав звук искључује звук "
-            L"свих виџета, а поновљена радња враћа звук само онима које је сама искључила. M на сваком "
-            L"виџету ради исто. Укључивање аларма без изабраних дана отвара његову картицу "
+            L"центрирани са урачунатим размаком. Ред UTC има сопствено центрирање.\r\n\r\nСтил Windows "
+            L"Classic доступан је уз искључене теме и важи само за Подешавања, Помоћ, О програму, Калкулатор "
+            L"времена и Пронађи. Уз подразумевани системски фонт контроле ових прозора користе Тахому 8 pt; "
+            L"властити фонт програма има предност. Доступно је умекшавање GDI или Нема. Сачувани ClearType "
+            L"привремено се замењује са GDI и враћа након искључивања овог стила. Када Windows користи "
+            L"класични изглед, све опције изгледа су недоступне и не примењују се; сачувани избори остају "
+            L"непромењени.\r\n\r\nПодешавања и менији\r\nЈезик програма, фонт, умекшавање, складиште, "
+            L"покретање уз Windows и прилепљивање су заједничке поставке на картици Програм. Искључивање "
+            L"тема на картици Програм утиче на прозоре Подешавања, Помоћ, О програму, Калкулатор времена и "
+            L"Пронађи. Сваки виџет користи сопствену поставку тема. При првом покретању бира се језик "
+            L"интерфејса Windows-а; ако није подржан, користи се амерички енглески. Језик, умекшавање и теме "
+            L"виџета утичу само на њега. \r\n\r\nМени виџета садржи примењиве поставке видљивости, Увек на "
+            L"врху, секунди, величине и копирања датума, затим Распореди у мрежу, Калкулатор времена, "
+            L"Подешавања, Помоћ, О програму и Излаз. Мени иконе наводи нумерисане виџете, Прикажи све, "
+            L"Сакриј све и Искључи сав звук, па одвојено Распореди у мрежу. Приказ или враћање доводи виџет "
+            L"напред без промене Увек на врху. Поновни старт активира постојећу инстанцу и по потреби враћа "
+            L"последње скривене виџете. Величине бројчаника и секундна казаљка зависе од Windows-а. Аларм и "
+            L"Сигнал пребацују се и из менија; Аларм показује време и активне дане када није изабрана цела "
+            L"недеља. Означено Искључи звук одговара опцији Звук искључен на картици Опште. Искључи сав звук "
+            L"искључује звук свих виџета, а поновљена радња враћа звук само онима које је сама искључила. M "
+            L"на сваком виџету ради исто. Укључивање аларма без изабраних дана отвара његову картицу "
             L"Аларм.\r\n\r\nЗвучни временски сигнал\r\nСигнал прати образац Greenwich Time Signal (GTS). "
             L"Картица Сигнал има Временски сигнал укључен и интервале 1, 5, 10, 15, 20, 30 или 60 минута "
             L"према времену виџета. Сигнал је првобитно искључен, а изабран је једночасовни интервал. "
@@ -18958,10 +18960,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Историја чува последњих 30 претрага текуће сесије.\r\n\r\nНа картици Програм опција "
             L"Алтернативна икона обавештења омогућава Ретро икона у области обавештења. Обе мењају само "
             L"икону обавештења након Примени или Сачувај.\r\n\r\nИзглед прозора: Системски; Заглавља Windows "
-            L"Basic; Заглавља Windows Classic; Windows 2000. Оба режима насловне траке раде са темама "
+            L"Basic; Заглавља Windows Classic; Windows Classic. Оба режима насловне траке раде са темама "
             L"контрола или без њих. Системски прати Искључи теме за цео прозор. Насловне траке Windows "
             L"Classic мењају само фонт и позадину наслова; дугмад наслова и 3D оквир задржавају системске "
-            L"боје. Windows 2000 захтева искључене теме."
+            L"боје. Windows Classic захтева искључене теме."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -19095,7 +19097,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Огляд…" },
         LocalizedText{ TXT_LANGUAGE, L"Мова:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Вимкнути теми" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Вигляд вікон" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Системний" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заголовки Windows Basic" },
@@ -19372,7 +19374,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"не змінюючи його типу. Автоматичне сховище XML — %AppData%\\FortSoft\\CalClock\\settings.xml. "
             L"Після запису XML розділ HKCU\\SOFTWARE\\FortSoft\\CalClock видаляється; вибір зберігання в "
             L"реєстрі видаляє автоматичний файл XML.\r\n\r\nДля згладжування шрифту доступні ClearType, GDI "
-            L"та «Немає».\r\n\r\nСтиль Windows 2000 доступний за вимкнених тем і діє лише у вікнах "
+            L"та «Немає».\r\n\r\nСтиль Windows Classic доступний за вимкнених тем і діє лише у вікнах "
             L"«Налаштування», «Довідка», «Про програму», «Калькулятор часу» та «Знайти». Якщо вибрано "
             L"типовий системний шрифт, елементи керування цих вікон використовують Tahoma 8 pt; власний "
             L"шрифт програми має перевагу. Доступне згладжування GDI або «Немає». Збережений вибір ClearType "
@@ -19534,10 +19536,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"останні 30 пошуків поточного сеансу.\r\n\r\nНа вкладці Програма вибір іншої піктограми "
             L"сповіщень вмикає ретропіктограму сповіщень. Обидва параметри змінюють лише піктограму "
             L"сповіщень після Застосувати або Зберегти.\r\n\r\nВигляд вікон: Системний; Заголовки Windows "
-            L"Basic; Заголовки Windows Classic; Windows 2000. Обидва режими заголовка працюють з увімкненими "
-            L"або вимкненими темами елементів керування. Системний режим застосовує вимкнення тем до всього "
-            L"вікна. Заголовки Windows Classic змінюють лише шрифт і тло заголовка; кнопки заголовка й "
-            L"тривимірна рамка зберігають системні кольори. Windows 2000 потребує вимкнених тем."
+            L"Basic; Заголовки Windows Classic; Windows Classic. Обидва режими заголовка працюють з "
+            L"увімкненими або вимкненими темами елементів керування. Системний режим застосовує вимкнення "
+            L"тем до всього вікна. Заголовки Windows Classic змінюють лише шрифт і тло заголовка; кнопки "
+            L"заголовка й тривимірна рамка зберігають системні кольори. Windows Classic потребує вимкнених "
+            L"тем."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -19670,7 +19673,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Обзор…" },
         LocalizedText{ TXT_LANGUAGE, L"Язык:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Отключить темы" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows Classic" },
         LocalizedText{ TXT_STYLE_GROUP, L"Вид окон" },
         LocalizedText{ TXT_STYLE_SYSTEM, L"Системный" },
         LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заголовки Windows Basic" },
@@ -19950,7 +19953,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"%AppData%\\FortSoft\\CalClock\\settings.xml. После записи XML раздел "
             L"HKCU\\SOFTWARE\\FortSoft\\CalClock удаляется; выбор хранения в реестре удаляет автоматический "
             L"файл XML.\r\n\r\nДля сглаживания шрифта доступны ClearType, GDI и «Нет».\r\n\r\nСтиль Windows "
-            L"2000 доступен при отключённых темах и действует только в окнах «Настройки», «Справка», «О "
+            L"Classic доступен при отключённых темах и действует только в окнах «Настройки», «Справка», «О "
             L"программе», «Калькулятор времени» и «Найти». При выборе системного шрифта по умолчанию "
             L"элементы управления этих окон используют Tahoma 8 pt; собственный шрифт программы имеет "
             L"приоритет. Доступно сглаживание GDI или «Нет». Сохранённый выбор ClearType временно заменяется "
@@ -20114,10 +20117,10 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" последние 30 поисков текущего сеанса.\r\n\r\nНа вкладке Программа выбор другого значка "
             L"уведомлений включает ретрозначок уведомлений. Оба параметра меняют только значок уведомлений "
             L"после Применить или Сохранить.\r\n\r\nВид окон: Системный; Заголовки Windows Basic; Заголовки "
-            L"Windows Classic; Windows 2000. Оба режима заголовка работают с включёнными или отключёнными "
+            L"Windows Classic; Windows Classic. Оба режима заголовка работают с включёнными или отключёнными "
             L"темами элементов управления. Системный режим применяет отключение тем ко всему окну. Заголовки "
             L"Windows Classic меняют только шрифт и фон заголовка; кнопки заголовка и трёхмерная рамка "
-            L"сохраняют системные цвета. Windows 2000 требует отключённых тем."
+            L"сохраняют системные цвета. Windows Classic требует отключённых тем."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "

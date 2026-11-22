@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.2.5
+Last modified for version 1.7.3.0
 
 .SYNOPSIS
 Builds CalClock and runs continuous-clock, alarm, wake, playback and isolated Settings/NTP tests.
@@ -127,30 +127,49 @@ try {
     $signalMath += Get-TestFunctions $signalSource @('IsTimeSignalBoundary', 'CalculateTimeSignalTarget')
     Write-TestHeader 'AlarmSignalMath.h' $signalMath
     $commonOptions = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/Gy', '/DUNICODE', '/D_UNICODE')
-    $testNames = @('ClockTimeTests', 'AlarmScheduleTests', 'AlarmIntegrationTests', 'AlarmPlaybackTests',
-        'AlarmWaveformTests', 'AlarmSettingsTests', 'NtpSettingsTests')
+    $testNames = @(
+        'ClockTime',
+        'AlarmSchedule',
+        'AlarmIntegration',
+        'AlarmPlayback',
+        'AlarmWaveform',
+        'AlarmSettings',
+        'NtpSettings'
+    )
     foreach ($testName in $testNames) {
-        $sources = @("tests/$testName.cpp")
-        if ($testName -eq 'AlarmScheduleTests') {
+        $sources = @("`"$buildRoot/$testName-test.obj`"")
+        if ($testName -eq 'AlarmSchedule') {
             $sources += 'CalClock/AlarmSchedule.cpp', 'CalClock/TimeZoneSupport.cpp',
                 'CalClock/TimeSignal.cpp'
         }
-        if ($testName -eq 'AlarmIntegrationTests') {
+        if ($testName -eq 'AlarmIntegration') {
             $sources += 'CalClock/AlarmSchedule.cpp'
         }
-        if ($testName -eq 'AlarmPlaybackTests') {
+        if ($testName -eq 'AlarmPlayback') {
             $sources += 'CalClock/AlarmSchedule.cpp', 'CalClock/TimeZoneSupport.cpp'
         }
         $extraOptions = @()
         $linkOptions = @('/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF', '/OPT:ICF',
             'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib', 'uuid.lib')
-        if ($testName -in 'AlarmSettingsTests', 'NtpSettingsTests') {
+        if ($testName -in 'AlarmSettings', 'NtpSettings') {
             $extraOptions += '/DNDEBUG'
             $objects = Get-ChildItem -LiteralPath (Join-Path $projectRoot 'CalClock/Release') -Filter '*.obj'
             $sources += $objects | Where-Object Name -ne 'CalClock.obj' |
                 ForEach-Object { '"' + $_.FullName + '"' }
             $sources += 'CalClock/Release/CalClock.res'
             $linkOptions += '/LTCG', 'oleaut32.lib', 'Usp10.lib'
+        }
+        $compileOptions = $commonOptions + $extraOptions + @(
+            '/c',
+            "/Fo`"$buildRoot/$testName-test.obj`"",
+            "/I`"$buildRoot`"",
+            "tests/$testName.cpp"
+        )
+        $compileResponse = Join-Path $buildRoot "$testName-compile.rsp"
+        Set-Content -LiteralPath $compileResponse -Value ($compileOptions -join ' ') -Encoding utf8
+        & $env:ComSpec /d /s /c "$toolEnvironment && cl @`"$compileResponse`""
+        if ($LASTEXITCODE -ne 0) {
+            throw "$testName compilation failed."
         }
         $options = $commonOptions + $extraOptions + @("/Fo`"$buildRoot/`"", "/Fe`"$buildRoot/$testName.exe`"",
             "/I`"$buildRoot`"") + $sources + $linkOptions
@@ -160,7 +179,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "$testName build failed."
         }
-        if ($testName -in 'AlarmSettingsTests', 'NtpSettingsTests') {
+        if ($testName -in 'AlarmSettings', 'NtpSettings') {
             $manifestCommand = "$toolEnvironment && mt.exe /nologo /manifest CalClock/CalClock.manifest " +
                 "/outputresource:`"$buildRoot/$testName.exe;#1`""
             & $env:ComSpec /d /s /c $manifestCommand
@@ -170,17 +189,17 @@ try {
         }
     }
     foreach ($frequency in '3125000', '3579545', '10000000', '3000000000') {
-        & "$buildRoot/ClockTimeTests.exe" $frequency
+        & "$buildRoot/ClockTime.exe" $frequency
         if ($LASTEXITCODE -ne 0) {
-            throw "ClockTimeTests failed at $frequency Hz."
+            throw "ClockTime failed at $frequency Hz."
         }
     }
-    foreach ($testName in 'AlarmScheduleTests', 'AlarmIntegrationTests', 'AlarmPlaybackTests',
-        'AlarmWaveformTests') {
+    foreach ($testName in 'AlarmSchedule', 'AlarmIntegration', 'AlarmPlayback',
+        'AlarmWaveform') {
         & "$buildRoot/$testName.exe"
         if ($LASTEXITCODE -ne 0) { throw "$testName failed." }
     }
-    foreach ($testName in 'AlarmSettingsTests', 'NtpSettingsTests') {
+    foreach ($testName in 'AlarmSettings', 'NtpSettings') {
         $settingsTestXml = Join-Path $buildRoot "$testName-isolated.xml"
         & "$buildRoot/$testName.exe" $settingsTestXml
         if ($LASTEXITCODE -ne 0) {

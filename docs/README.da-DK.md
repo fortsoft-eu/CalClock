@@ -76,7 +76,7 @@ Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har ju
 
 Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på fanen Program påvirker Indstillinger, Hjælp, Om, Tidsberegner og Find. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om, Tidsberegner og Find. Med
+Windows Classic-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om, Tidsberegner og Find. Med
 systemets standardskrifttype bruger disse vinduers kontrolelementer Tahoma 8 pt; en brugerdefineret
 programskrifttype har forrang. Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI
 og Ingen tilgængelige for skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når
@@ -253,10 +253,10 @@ udtryk. Historikken gemmer de sidste 30 søgninger i den aktuelle session.
 På fanen Program aktiverer Alternativt meddelelsesikon valget Retroikon i meddelelsesområdet. Begge
 indstillinger ændrer kun meddelelsesikonet efter Anvend eller Gem.
 
-Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Classic-titellinjer; Windows 2000. Begge
-titellinjetilstande virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer
-for hele vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper og
-3D-kant bevarer systemfarverne. Windows 2000 kræver deaktiverede temaer.
+Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Classic-titellinjer; Windows Classic.
+Begge titellinjetilstande virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver
+temaer for hele vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper
+og 3D-kant bevarer systemfarverne. Windows Classic kræver deaktiverede temaer.
 
 ## Licens
 

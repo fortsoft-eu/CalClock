@@ -58,8 +58,8 @@ Is-settings jistgħu jiġu esportati f’XML. L-importazzjoni tgħabbi u tissejv
 
 Anti-aliasing tal-font joffri ClearType, GDI u Xejn. Żero fil-bidu joffri “Iva” (default), “Le, żomm l-ispazju” u “Le, bla spazju”. “Le, żomm l-ispazju” jaħbi ż-żero iżda jirriżerva l-wisa’ tiegħu fil-font magħżul; iċ-ċifri l-oħra jibqgħu f’posthom anki b’fonts proporzjonali. L-arloġġi tal-iskrin jibqgħu ċċentrati inkluż l-ispazju riżervat. Ir-ringiela UTC tiġi ċċentrata separatament.
 
-Stil Windows 2000 jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar, Kalkulatur
-tal-ħin u Sib. Il-kontrolli ta’ dawn it-twieqi jużaw Tahoma 8 pt meta jintgħażel il-font predefinit
+Stil Windows Classic jeħtieġ Iddiżattiva t-temi u japplika biss għat-twieqi Settings, Għajnuna, Dwar,
+Kalkulatur tal-ħin u Sib. Il-kontrolli ta’ dawn it-twieqi jużaw Tahoma 8 pt meta jintgħażel il-font predefinit
 tas-sistema; font personalizzat tal-applikazzjoni jieħu prijorità u t-test tal-liċenzja jibqa’ b’Consolas.
 Jistgħu jintgħażlu biss GDI jew Xejn. Għażla ssejvjata ta’ ClearType tuża GDI temporanjament u terġa’ tidħol
 fis-seħħ meta jintefa l-istil. Bid-dehra klassika ta’ Windows l-għażliet kollha tad-dehra jidhru mhux magħżula
@@ -190,10 +190,10 @@ espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.
 Fit-tab Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ għażliet
 jibdlu biss l-ikona tan-notifika wara Applika jew Issejvja.
 
-Dehra tat-twieqi: Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows 2000. Iż-żewġ modi
+Dehra tat-twieqi: Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows Classic. Iż-żewġ modi
 tal-barra tat-titlu jaħdmu bit-temi tal-kontrolli mixgħula jew mitfija. L-għażla tas-sistema ssegwi Itfi
 t-temi għat-tieqa kollha. Il-vireg tat-titlu Windows Classic ibiddlu biss it-tipa u l-isfond tat-titlu;
-il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows 2000 jeħtieġ temi mitfija.
+il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows Classic jeħtieġ temi mitfija.
 
 ## Liċenzja
 

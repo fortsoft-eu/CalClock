@@ -280,6 +280,7 @@ const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
 const UINT WM_ALIGN_SETTINGS_ACTION_BUTTONS = WM_APP + 10;
 const UINT WM_SETTINGS_DATA_READY = WM_APP + 11;
+const UINT WM_RECOLOR_BUTTON = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorButton");
 const UINT_PTR TIMER_REFRESH = 1;
 const UINT_PTR TIMER_SETTINGS_OPEN = 2;
 const int SETTINGS_CONTROL_CREATION_PARTS = 12;
@@ -4265,20 +4266,6 @@ static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM parameter) 
     } else if (_wcsicmp(className, L"EDIT") == 0
             && (GetWindowLongPtrW(control, GWL_STYLE) & ES_MULTILINE) == 0) {
         UpdateEditMetrics(control);
-    } else if (_wcsicmp(className, L"BUTTON") == 0) {
-        LONG_PTR type = GetWindowLongPtrW(control, GWL_STYLE) & BS_TYPEMASK;
-        if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
-            HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
-            SIZE units = {};
-            RECT bounds = {};
-            if (GetDialogFontBaseUnits(font, &units) && GetWindowRect(control, &bounds)) {
-                LONG height = DialogHeightFromUnits(DIALOG_BUTTON_HEIGHT_DLU, units.cy);
-                if (bounds.bottom - bounds.top != height) {
-                    SetWindowPos(control, nullptr, 0, 0, bounds.right - bounds.left, height,
-                        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-                }
-            }
-        }
     } else if (GetPropW(control, SETTINGS_FIELD_LABEL_PROPERTY) != nullptr) {
         RECT bounds = {};
         TEXTMETRICW metrics = {};
@@ -16350,10 +16337,49 @@ SIZE InformationDialogUnits(HFONT font, int x, int y) {
     return SIZE{ MulDiv(x, units.cx, 4), DialogHeightFromUnits(y, units.cy) };
 }
 
-/// Measures the common native Close button using its current font and existing dialog-unit minimum and
-/// padding.
-SIZE InformationButtonSize(HWND window, HFONT font) {
-    SIZE button = InformationDialogUnits(font, DIALOG_BUTTON_WIDTH_DLU, DIALOG_BUTTON_HEIGHT_DLU);
+/// Skips a native dialog-template string or ordinal resource identifier.
+static const WORD* SkipDialogTemplateString(const WORD* value) {
+    if (*value == 0xFFFF) {
+        return value + 2;
+    }
+    while (*value != 0) {
+        value++;
+    }
+    return value + 1;
+}
+
+/// Scales a control's authored dimensions from its extended dialog resource using the current font.
+SIZE DialogResourceControlSize(int resourceId, int id, HFONT font) {
+    HRSRC resource = FindResourceW(hInstance, MAKEINTRESOURCEW(resourceId), RT_DIALOG);
+    HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(hInstance, resource);
+    const WORD* definition = loaded == nullptr ? nullptr : static_cast<const WORD*>(LockResource(loaded));
+    if (definition == nullptr || SizeofResource(hInstance, resource) < 26 || definition[1] != 0xFFFF) {
+        return SIZE{};
+    }
+    WORD count = definition[8];
+    const WORD* item = SkipDialogTemplateString(definition + 13);
+    item = SkipDialogTemplateString(item);
+    item = SkipDialogTemplateString(item);
+    if ((definition[6] & DS_SETFONT) != 0) {
+        item = SkipDialogTemplateString(item + 3);
+    }
+    for (WORD index = 0; index < count; index++) {
+        item = reinterpret_cast<const WORD*>(reinterpret_cast<UINT_PTR>(item) + 3 & ~UINT_PTR{ 3 });
+        int controlId = item[10] | item[11] << 16;
+        if (controlId == id) {
+            return InformationDialogUnits(font, static_cast<short>(item[8]), static_cast<short>(item[9]));
+        }
+        item = SkipDialogTemplateString(item + 12);
+        item = SkipDialogTemplateString(item);
+        WORD bytes = *item++;
+        item = reinterpret_cast<const WORD*>(reinterpret_cast<const BYTE*>(item) + bytes);
+    }
+    return SIZE{};
+}
+
+/// Measures the native Close button using its resource dimensions, current font and caption width.
+SIZE InformationButtonSize(HWND window, HFONT font, int resourceId) {
+    SIZE button = DialogResourceControlSize(resourceId, ID_INFO_CLOSE, font);
     SIZE ideal = {};
     HWND closeButton = GetDlgItem(window, ID_INFO_CLOSE);
     if (!SendMessageW(closeButton, BCM_GETIDEALSIZE, 0, reinterpret_cast<LPARAM>(&ideal))) {
@@ -18626,8 +18652,12 @@ static bool TranslateInformationMessage(MSG* message) {
     return false;
 }
 
-/// Handles search notifications and releases references to destroyed information windows.
+/// Queues the Close button's color correction on deactivation, handles search notifications and releases
+/// references to destroyed information windows.
 bool HandleInformationMessage(HWND window, UINT message, WPARAM wParam, LPARAM) {
+    if (message == WM_ACTIVATE && LOWORD(wParam) == WA_INACTIVE) {
+        PostMessageW(GetDlgItem(window, ID_INFO_CLOSE), WM_RECOLOR_BUTTON, 0, 0);
+    }
     if (message == findVisibilityChangedMessage || message == findMatchMessage) {
         if (message == findMatchMessage && find.GetWindow() != nullptr) {
             RevealFindTarget(window, find.GetWindow());

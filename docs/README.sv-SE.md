@@ -76,8 +76,8 @@ Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelr
 
 Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller Inställningar, Hjälp, Om, Tidskalkylator och Sök. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
-Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om, Tidskalkylator och Sök.
-Med systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat
+Windows Classic-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om, Tidskalkylator och
+Sök. Med systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat
 programteckensnitt har företräde. Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast
 GDI och Ingen tillgängliga för teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och
 återställs när läget stängs av. Om visuella format är avstängda i Windows visas alla utseendealternativ som
@@ -253,10 +253,10 @@ behåller de senaste 30 sökningarna under den aktuella sessionen.
 På fliken Program aktiverar Alternativ meddelandeikon alternativet Retroikon i meddelandefältet. Båda
 alternativen ändrar endast meddelandeikonen efter Verkställ eller Spara.
 
-Fönsterutseende: Systemstandard; Windows Basic-namnlister; Windows Classic-namnlister; Windows 2000. Båda
+Fönsterutseende: Systemstandard; Windows Basic-namnlister; Windows Classic-namnlister; Windows Classic. Båda
 titelradsalternativen fungerar med eller utan teman för kontrollerna. Systemstandard följer Inaktivera teman
 för hela fönstret. Windows Classic-titelrader ändrar bara titelns teckensnitt och bakgrund; titelknappar och
-3D-ram behåller systemfärgerna. Windows 2000 kräver inaktiverade teman.
+3D-ram behåller systemfärgerna. Windows Classic kräver inaktiverade teman.
 
 ## Licens
 

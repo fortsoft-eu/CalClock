@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #include "PrintSettings.h"
@@ -108,7 +108,9 @@ static void FreePrintHandles(HGLOBAL mode, HGLOBAL names) {
 
 /// Initializes empty printer selections and margins of 12.7 mm on every side.
 PrintSettings::PrintSettings()
-        : deviceMode(nullptr), deviceNames(nullptr), margins(RECT{ 1270, 1270, 1270, 1270 }) {}
+        : deviceMode(nullptr),
+        deviceNames(nullptr),
+        margins(RECT{ 1270, 1270, 1270, 1270 }) {}
 
 /// Releases the retained printer configuration buffers.
 PrintSettings::~PrintSettings() {
@@ -237,8 +239,18 @@ static int PrintedLineLength(HDC dc, const wchar_t* text, int length, int width)
 
 /// Initializes an empty page layout without allocating font or line storage.
 PrintLayout::PrintLayout()
-        : richEdit(nullptr), richTarget(nullptr), font(nullptr), text(nullptr), richArea(RECT{}),
-        richPage(RECT{}), area(RECT{}), lines(nullptr), lineCount(0), capacity(0), rows(0), lineHeight(0) {}
+        : richEdit(nullptr),
+        richTarget(nullptr),
+        font(nullptr),
+        text(nullptr),
+        richArea(RECT{}),
+        richPage(RECT{}),
+        area(RECT{}),
+        lines(nullptr),
+        lineCount(0),
+        capacity(0),
+        rows(0),
+        lineHeight(0) {}
 
 /// Releases the font and line positions owned by the page layout.
 PrintLayout::~PrintLayout() {

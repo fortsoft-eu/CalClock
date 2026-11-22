@@ -58,12 +58,13 @@ Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompór
 
 Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
-Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe,
-Cabhair, Maidir leis, Áireamhán ama agus Aimsigh. Úsáideann rialtáin na bhfuinneog seo Tahoma 8 pt nuair a
-roghnaítear cló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann
-Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha
-shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar na
-roghanna cuma gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+Éilíonn Stíl Windows Classic an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga
+Socruithe, Cabhair, Maidir leis, Áireamhán ama agus Aimsigh. Úsáideann rialtáin na bhfuinneog seo Tahoma 8 pt
+nuair a roghnaítear cló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus
+fanann Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do
+rogha shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows,
+taispeántar na roghanna cuma gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna
+sábháilte.
 
 ## Áireamhán ama
 
@@ -192,11 +193,11 @@ línte, cuardach siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is 
 Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín fógra i stíl retró. Ní athraíonn
 na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó Sábháil.
 
-Cuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows Classic; Windows 2000. Oibríonn
-an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann réamhshocrú an chórais an rogha téamaí a
-dhíchumasú don fhuinneog iomlán. Ní athraíonn barraí teidil Windows Classic ach cló agus cúlra an teidil;
+Cuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows Classic; Windows Classic.
+Oibríonn an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann réamhshocrú an chórais an rogha téamaí
+a dhíchumasú don fhuinneog iomlán. Ní athraíonn barraí teidil Windows Classic ach cló agus cúlra an teidil;
 coinníonn na cnaipí teidil agus an teorainn 3T dathanna an chórais. Teastaíonn téamaí díchumasaithe ó Windows
-2000.
+Classic.
 
 ## Ceadúnas
 

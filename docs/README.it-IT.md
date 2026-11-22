@@ -76,9 +76,9 @@ Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bo
 
 Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda Impostazioni, Guida, Informazioni, Calcolatore di tempi e Trova. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
-Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, Calcolatore di
-tempi e Trova. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt; un
-carattere personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza
+Stile Windows Classic richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, Calcolatore
+di tempi e Trova. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt;
+un carattere personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza
 fissa. In questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata
 usa temporaneamente GDI e viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in
 Windows, tutte le opzioni di aspetto appaiono deselezionate e disabilitate senza modificare le scelte salvate.
@@ -261,10 +261,10 @@ sessione.
 Nella scheda Applicazione, Icona di notifica alternativa abilita Icona di notifica retrò. Le due opzioni
 modificano solo l’icona di notifica dopo Applica o Salva.
 
-Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; Windows 2000. Entrambe le
+Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; Windows Classic. Entrambe le
 modalità del titolo funzionano con o senza temi nei controlli. Sistema segue Disattiva temi per l'intera
 finestra. I titoli Windows Classic modificano solo carattere e sfondo del titolo; pulsanti e bordo 3D
-mantengono i colori di sistema. Windows 2000 richiede temi disattivati.
+mantengono i colori di sistema. Windows Classic richiede temi disattivati.
 
 ## Licenza
 

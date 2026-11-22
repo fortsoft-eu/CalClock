@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.2.5
+Last modified for version 1.7.3.0
 
 .SYNOPSIS
 Builds and runs the real Time Calculator form on a hidden, nonactivating private desktop.
@@ -53,13 +53,13 @@ New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $objects = Get-ChildItem -LiteralPath (Join-Path $projectRoot 'CalClock/Release') -Filter '*.obj' |
     Where-Object Name -notin @('CalClock.obj', 'TimeCalculatorForm.obj', 'PersistWindowState.obj')
 $options = @('/nologo', '/std:c++20', '/EHsc', '/MT', '/O2', '/Gy', '/DNDEBUG', '/DUNICODE', '/D_UNICODE',
-    "/Fo`"$buildRoot/TimeCalculatorFormTests.obj`"", "/Fe`"$buildRoot/TimeCalculatorFormTests.exe`"",
-    'tests/TimeCalculatorFormTests.cpp')
+    "/Fo`"$buildRoot/TimeCalculatorForm.obj`"", "/Fe`"$buildRoot/TimeCalculatorForm.exe`"",
+    'tests/TimeCalculatorForm.cpp')
 $options += $objects | ForEach-Object { '"' + $_.FullName + '"' }
 $options += @("`"$buildRoot/CalClock.res`"", '/link', '/SUBSYSTEM:CONSOLE', '/DEBUG:NONE', '/OPT:REF',
     '/OPT:ICF', '/LTCG', 'user32.lib', 'gdi32.lib', 'advapi32.lib', 'ole32.lib', 'uuid.lib',
     'oleaut32.lib', 'Usp10.lib')
-$responsePath = Join-Path $buildRoot 'TimeCalculatorFormTests.rsp'
+$responsePath = Join-Path $buildRoot 'TimeCalculatorForm.rsp'
 Set-Content -LiteralPath $responsePath -Value ($options -join ' ') -Encoding utf8
 Push-Location $projectRoot
 try {
@@ -81,12 +81,12 @@ try {
     }
     $manifest = "`"$vcvars`" -arch=x86 -host_arch=x64 >nul && " +
         'mt.exe /nologo /manifest CalClock/CalClock.manifest ' +
-        "/outputresource:`"$buildRoot/TimeCalculatorFormTests.exe;#1`""
+        "/outputresource:`"$buildRoot/TimeCalculatorForm.exe;#1`""
     & $env:ComSpec /d /s /c $manifest
     if ($LASTEXITCODE -ne 0) {
         throw 'Time Calculator form test manifest failed.'
     }
-    & "$buildRoot/TimeCalculatorFormTests.exe" $buildRoot
+    & "$buildRoot/TimeCalculatorForm.exe" $buildRoot
     if ($LASTEXITCODE -ne 0) {
         throw 'Time Calculator form tests failed.'
     }

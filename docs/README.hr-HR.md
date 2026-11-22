@@ -56,7 +56,7 @@ Promjene izgleda odmah se prikazuju u pretpregledu odabranog widgeta. `Zadani iz
 
 Izglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da” (zadano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. Redak UTC ima vlastito centriranje.
 
-Stil Windows 2000 dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu, Kalkulator
+Stil Windows Classic dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu, Kalkulator
 vremena i Pronađi. Uz zadani sistemski font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa
 ima prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i
 vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve su opcije izgleda nedostupne i
@@ -192,10 +192,10 @@ pretraživanje unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretra�
 
 Na kartici Program opcija Alternativna ikona obavijesti omogućuje Retro ikona u području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili Spremi.
 
-Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina
+Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows Classic. Oba načina
 naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli prozor. Naslovne
 trake Windows Classic mijenjaju samo font i pozadinu naslova; gumbi naslova i 3D okvir zadržavaju sistemske
-boje. Windows 2000 zahtijeva isključene teme.
+boje. Windows Classic zahtijeva isključene teme.
 
 ## Licencija
 

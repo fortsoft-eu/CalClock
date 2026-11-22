@@ -51,7 +51,7 @@ static SHORT WINAPI FindTestGetKeyState(int key) {
 #define GetActiveWindow FindTestGetActiveWindow
 #define GetKeyState FindTestGetKeyState
 #define wmain AlarmSettingsRegressionEntry
-#include "AlarmSettingsTests.cpp"
+#include "AlarmSettings.cpp"
 #undef wmain
 
 #define SetFocus TestSetFocus
@@ -238,7 +238,34 @@ static void TestInformationForms() {
         HWND edit = GetDlgItem(window, ID_INFO_TEXT);
         Require(GetWindowLongPtrW(edit, GWL_STYLE) & ES_NOHIDESEL,
             "information selection remains visible without focus");
+        HWND button = GetDlgItem(window, ID_INFO_CLOSE);
+        MSG correction = {};
+        while (PeekMessageW(&correction, button, WM_RECOLOR_BUTTON, WM_RECOLOR_BUTTON, PM_REMOVE)) {
+            DispatchMessageW(&correction);
+        }
+        SendMessageW(window, WM_ACTIVATE, WA_INACTIVE, 0);
+        BOOL queued = PeekMessageW(&correction, button, WM_RECOLOR_BUTTON, WM_RECOLOR_BUTTON, PM_REMOVE);
+        Require(queued != FALSE, "form deactivation queues the existing Close button color correction");
+        if (queued) {
+            DispatchMessageW(&correction);
+        }
     }
+    CheckResourceButtonHeights(aboutForm.GetWindow(), IDD_ABOUT);
+    CheckResourceButtonHeights(helpForm.GetWindow(), IDD_HELP);
+    const int sizes[] = { 90, 130 };
+    for (int size : sizes) {
+        appFontDialogSize = size;
+        for (bool disabled : { false, true }) {
+            themesDisabled = disabled;
+            Require(aboutForm.ApplyStyle(true) && helpForm.ApplyStyle(true),
+                "information form relayout succeeds after font and theme changes");
+            CheckResourceButtonHeights(aboutForm.GetWindow(), IDD_ABOUT);
+            CheckResourceButtonHeights(helpForm.GetWindow(), IDD_HELP);
+        }
+    }
+    appFontDialogSize = 90;
+    themesDisabled = false;
+    Require(aboutForm.ApplyStyle(true) && helpForm.ApplyStyle(true), "restore information form styles");
     LOGFONTW license = {};
     HFONT font = reinterpret_cast<HFONT>(SendDlgItemMessageW(aboutForm.GetWindow(), ID_INFO_TEXT,
         WM_GETFONT, 0, 0));
@@ -445,11 +472,15 @@ static void TestFindLayout() {
                 for (int language = 0; language < LANG_COUNT; language++) {
                     appLanguage = static_cast<AppLanguage>(language);
                     find.RefreshLanguage();
+                    CheckResourceButtonHeights(dialog, IDD_FIND);
                     LONG input = ControlTextBaseline(FindHistoryControl(dialog));
                     Require(std::abs(ControlTextBaseline(GetDlgItem(dialog, IDC_FIND_LABEL)) - input) <= 1,
                         "Find label shares the query text baseline");
                     Require(std::abs(ControlTextBaseline(GetDlgItem(dialog, IDOK)) - input) <= 1,
                         "Find Next shares the query text baseline");
+                    Require(std::abs(ControlTextBaseline(GetDlgItem(dialog, IDCANCEL))
+                            - ControlTextBaseline(GetDlgItem(dialog, IDC_FIND_WHOLE_WORDS))) <= 1,
+                        "Find Close shares the last option row's text baseline");
                 }
             }
         }

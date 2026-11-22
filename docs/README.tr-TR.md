@@ -76,7 +76,7 @@ Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaş
 
 Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak Ayarlar, Yardım, Hakkında, Zaman hesaplayıcı ve Bul pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
 
-Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında,
+Windows Classic stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında,
 Zaman hesaplayıcı ve Bul pencerelerine uygulanır. Sistemin varsayılan yazı tipi seçildiğinde bu pencerelerin
 denetimleri Tahoma 8 pt kullanır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır.
 Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil
@@ -244,10 +244,10 @@ Geçmiş, geçerli oturumdaki son 30 aramayı tutar.
 Uygulama sekmesinde Alternatif bildirim simgesi, Retro bildirim simgesi seçeneğini etkinleştirir. Her iki
 seçenek de yalnızca bildirim simgesini Uygula veya Kaydet sonrasında değiştirir.
 
-Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Classic başlıkları; Windows 2000. Her iki başlık
-modu da denetim temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak
+Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Classic başlıkları; Windows Classic. Her iki
+başlık modu da denetim temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak
 seçimini tüm pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka planını
-değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows 2000 temaların kapatılmasını
+değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows Classic temaların kapatılmasını
 gerektirir.
 
 ## Lisans

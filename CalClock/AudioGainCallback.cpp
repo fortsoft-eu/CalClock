@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -30,7 +30,9 @@
 
 /// Retains a reference to playback parameters and copies the initial decoded sample format.
 AudioGainCallback::AudioGainCallback(const AudioThreadParameters& parameters,
-    const AudioSampleFormat& format) : parameters(parameters), format(format) {}
+        const AudioSampleFormat& format)
+        : parameters(parameters),
+        format(format) {}
 
 /// Returns an AddRef'd IUnknown or sample callback interface; rejects unsupported IDs and null output
 /// pointers.

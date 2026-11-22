@@ -76,7 +76,7 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects Settings, Help, About, Time Calculator, and Find. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
-Windows 2000 style requires Disable themes and applies only to Settings, Help, About, Time Calculator and
+Windows Classic style requires Disable themes and applies only to Settings, Help, About, Time Calculator and
 Find. With the default system font selected, their controls use Tahoma 8 pt; a custom application font takes
 precedence. The licence keeps its monospaced font. Only GDI and None are available for font antialiasing in
 this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows
@@ -254,10 +254,10 @@ expressions. The history retains the last 30 searches for the current applicatio
 On the Application tab, Alternative notification icon enables Old school icon. Both options affect only the
 notification icon and take effect after Apply or Save.
 
-Window appearance: System default; Windows Basic title bars; Windows Classic title bars; Windows 2000. Both
+Window appearance: System default; Windows Basic title bars; Windows Classic title bars; Windows Classic. Both
 title-bar modes work with control themes enabled or disabled. System default follows Disable themes for the
 entire window. Windows Classic title bars change only the caption font and background, preserving system
-colours for caption buttons and the 3D border. Windows 2000 requires disabled themes.
+colours for caption buttons and the 3D border. Windows Classic requires disabled themes.
 
 ## Licence
 

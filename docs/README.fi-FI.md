@@ -76,7 +76,7 @@ Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyl
 
 Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
 
-Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja-,
+Windows Classic -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja-,
 Aikalaskin- ja Etsi-ikkunoita. Kun järjestelmän oletusfontti on valittu, näiden ikkunoiden ohjausobjektit
 käyttävät Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa.
 Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu
@@ -246,10 +246,11 @@ säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hak
 Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan.
 Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai Tallenna-painikkeen painamisen jälkeen.
 
-Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows 2000. Molemmat
+Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows Classic. Molemmat
 otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän oletus noudattaa
 teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot muuttavat vain otsikon fontin ja taustan;
-painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. Windows 2000 edellyttää teemojen poistamista käytöstä.
+painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. Windows Classic edellyttää teemojen poistamista
+käytöstä.
 
 ## Lisenssi
 

@@ -1197,8 +1197,9 @@ void TimeCalculatorForm::Layout() {
     POINT buttonPosition = { firstButton.left, firstButton.top };
     HWND buttonRow = GetDlgItem(pages[2], ID_CALC_BUTTON_ROW);
     for (int id : buttonIds) {
+        RECT bounds = CalculatorControlBounds(pages[2], id);
         SetControlPosition(GetDlgItem(pages[2], id), buttonPosition.x, buttonPosition.y, button.cx,
-            button.cy);
+            bounds.bottom - bounds.top);
         AlignSettingsControl(GetDlgItem(pages[2], id), buttonRow);
         buttonPosition.x += button.cx + buttonGap;
     }

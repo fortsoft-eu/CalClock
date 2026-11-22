@@ -25,7 +25,7 @@
  */
 
 #define wmain AlarmSettingsRegressionEntry
-#include "AlarmSettingsTests.cpp"
+#include "AlarmSettings.cpp"
 #undef wmain
 #include "../CalClock/ControlColors.h"
 
@@ -2073,6 +2073,7 @@ static void CheckCalculatorPresetButtonRow() {
         ID_CALC_IMPORT,
         ID_CALC_EXPORT
     };
+    CheckResourceButtonHeights(GetParent(CalculatorControl(ID_CALC_ADD)), IDD_CALCULATOR_PRESETS);
     LONG previousRight = 0;
     LONG gap = -1;
     for (int id : buttons) {

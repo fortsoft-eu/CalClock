@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.3.0
  */
 
 #include "ControlColors.h"
@@ -103,7 +103,9 @@ static DWORD BitmapColor(COLORREF color) {
 }
 
 /// Records the target and controlling window and creates the owned classic background brushes.
-ControlColors::ControlColors(HWND targetWindow, HWND controller) : window(targetWindow), owner(controller) {
+ControlColors::ControlColors(HWND targetWindow, HWND controller)
+        : window(targetWindow),
+        owner(controller) {
     faceBrush = CreateSolidBrush(FaceColor);
     backgroundBrush = CreateSolidBrush(BackgroundColor);
 }

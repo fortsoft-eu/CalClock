@@ -134,7 +134,8 @@ static HRESULT ReadSystemWindowMetrics(NONCLIENTMETRICSW& metrics) {
 }
 
 /// Initializes per-window activation state; the window subclass owns this object.
-DialogFrame::DialogFrame(HWND target) : window(target) {
+DialogFrame::DialogFrame(HWND target)
+        : window(target) {
     active = GetActiveWindow() == window;
 }
 
