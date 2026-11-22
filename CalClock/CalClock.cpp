@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.2.6
  */
 
 #define NOMINMAX
@@ -4407,8 +4407,11 @@ static void AlignSettingsFieldsBelowLabels() {
     }
 }
 
-/// Measures the native vertical adjustment needed to align a control with adjacent text without moving it.
+/// Measures the native vertical adjustment needed to align adjacent text, using the inner combo for
+/// ComboBoxEx controls. Returns the movement without changing either control.
 static LONG GetSettingsControlBaselineAdjustment(HWND control, HWND reference, LONG baselineDistance) {
+    control = GetSettingsComboBox(control);
+    reference = GetSettingsComboBox(reference);
     WINDOWINFO controlInfo = {};
     controlInfo.cbSize = sizeof(controlInfo);
     WINDOWINFO referenceInfo = {};
@@ -4812,8 +4815,8 @@ static void LayoutSettingsControlGrids() {
         hTimeSignalVolumeLabel
     };
     const HWND applicationChecks[] = {
-        hDisableThemesCheck,
-        hWindows2000StyleCheck,
+        hAlternativeTrayIconCheck,
+        hClassicTrayIconCheck,
         hUseXmlSettingsCheck,
         hSnapToWorkAreaCheck,
         hStartWithWindowsCheck,
@@ -4869,10 +4872,10 @@ static void LayoutSettingsControlGrids() {
     for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
         AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 1) * applicationStep);
     }
-    AlignSettingsControl(hAlternativeTrayIconCheck, hDisableThemesCheck);
-    AlignSettingsControl(hClassicTrayIconCheck, hWindows2000StyleCheck);
-    SetWindowPos(hAlternativeTrayIconCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    SetWindowPos(hClassicTrayIconCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    AlignSettingsControl(hDisableThemesCheck, hAlternativeTrayIconCheck);
+    AlignSettingsControl(hWindows2000StyleCheck, hClassicTrayIconCheck);
+    SetWindowPos(hDisableThemesCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(hWindows2000StyleCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     for (int index = 1; index < ARRAYSIZE(timeFields); index++) {
         AlignSettingsControl(timeFields[index], timeFields[0], index * timeStep);
     }
@@ -15273,13 +15276,6 @@ static bool CreateSettingsApplicationControls() {
     hTimeSignalVolumeValue = BindSettingsControl(hApplicationPage, IDC_TIME_SIGNAL_VOLUME_VALUE, L"",
         &applicationControls);
     UpdateTimeSignalVolumeControls();
-    hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES,
-        Mnemonic(TXT_VISUAL_STYLES).c_str(), &applicationControls);
-    SetCheck(hDisableThemesCheck, AreVisualStylesActive() && settingsThemesDisabled);
-    hWindows2000StyleCheck = BindSettingsControl(hApplicationPage, ID_WINDOWS_2000_STYLE,
-        T(TXT_WINDOWS_2000_STYLE), &applicationControls);
-    SetCheck(hWindows2000StyleCheck, AreVisualStylesActive() && settingsWindows2000Style);
-    EnableWindow(hWindows2000StyleCheck, AreVisualStylesActive() && settingsThemesDisabled);
     hAlternativeTrayIconCheck = BindSettingsControl(hApplicationPage, ID_ALTERNATIVE_TRAY_ICON,
         T(TXT_ALTERNATIVE_TRAY_ICON), &applicationControls);
     SetCheck(hAlternativeTrayIconCheck, settingsAlternativeTrayIcon);
@@ -15299,6 +15295,13 @@ static bool CreateSettingsApplicationControls() {
     hWarnUnsavedChangesCheck = BindSettingsControl(hApplicationPage, ID_WARN_UNSAVED_CHANGES,
         T(TXT_WARN_UNSAVED_CHANGES_LABEL), &applicationControls);
     SetCheck(hWarnUnsavedChangesCheck, warnOnUnsavedChanges);
+    hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES,
+        Mnemonic(TXT_VISUAL_STYLES).c_str(), &applicationControls);
+    SetCheck(hDisableThemesCheck, AreVisualStylesActive() && settingsThemesDisabled);
+    hWindows2000StyleCheck = BindSettingsControl(hApplicationPage, ID_WINDOWS_2000_STYLE,
+        T(TXT_WINDOWS_2000_STYLE), &applicationControls);
+    SetCheck(hWindows2000StyleCheck, AreVisualStylesActive() && settingsWindows2000Style);
+    EnableWindow(hWindows2000StyleCheck, AreVisualStylesActive() && settingsThemesDisabled);
     return true;
 }
 

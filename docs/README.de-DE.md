@@ -258,8 +258,8 @@ In der Hilfe und im Lizenztext unter Info öffnet Ctrl+F die Suche. F3 sucht den
 vorherigen. Unterstützt werden Groß-/Kleinschreibung, ganze Wörter, Zeilenanfang und -ende, Rückwärtssuche und
 reguläre Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.
 
-Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option Klassisches
-Symbol. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder OK wirksam.
+Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option Retro-Symbol im
+Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder OK wirksam.
 
 ## Lizenz
 

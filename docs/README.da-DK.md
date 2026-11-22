@@ -250,8 +250,8 @@ I hjælpen og licensen i Om åbner Ctrl+F søgning. F3 finder næste forekomst o
 understøtter store og små bogstaver, hele ord, linjestart og linjeslutning, baglæns søgning og regulære
 udtryk. Historikken gemmer de sidste 30 søgninger i den aktuelle session.
 
-På fanen Program aktiverer Alternativt meddelelsesikon valget Klassisk ikon. Begge indstillinger ændrer kun
-meddelelsesikonet efter Anvend eller OK.
+På fanen Program aktiverer Alternativt meddelelsesikon valget Retroikon i meddelelsesområdet. Begge
+indstillinger ændrer kun meddelelsesikonet efter Anvend eller OK.
 
 ## Licens
 

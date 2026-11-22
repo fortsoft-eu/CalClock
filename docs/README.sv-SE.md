@@ -250,8 +250,8 @@ I hjälpen och licensen i Om öppnar Ctrl+F sökning. F3 hittar nästa träff oc
 stöder skiftlägeskänslighet, hela ord, radbörjan och radslut, bakåtsökning och reguljära uttryck. Historiken
 behåller de senaste 30 sökningarna under den aktuella sessionen.
 
-På fliken Program aktiverar Alternativ meddelandeikon alternativet Klassisk ikon. Båda alternativen ändrar
-endast meddelandeikonen efter Verkställ eller OK.
+På fliken Program aktiverar Alternativ meddelandeikon alternativet Retroikon i meddelandefältet. Båda
+alternativen ändrar endast meddelandeikonen efter Verkställ eller OK.
 
 ## Licens
 

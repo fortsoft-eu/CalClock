@@ -234,8 +234,8 @@ V pomocníkovi a licencii v okne O programe otvorí Ctrl+F hľadanie. F3 nájde 
 predchádzajúcu. Možno rozlišovať veľkosť písmen, hľadať celé slová, začiatky a konce riadkov, zmeniť smer
 alebo použiť regulárny výraz. História uchováva posledných 30 hľadaní počas behu aplikácie.
 
-Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Klasická ikona. Obe voľby
-menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.
+Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti
+oznámení. Obe voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.
 
 ## Licencia
 

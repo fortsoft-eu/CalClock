@@ -256,8 +256,8 @@ En la ayuda y la licencia de Acerca de, Ctrl+F abre Buscar. F3 busca la siguient
 anterior. Se admiten mayúsculas y minúsculas, palabras completas, inicios y finales de línea, búsqueda hacia
 atrás y expresiones regulares. El historial conserva las últimas 30 búsquedas de la sesión.
 
-En la pestaña Aplicación, Icono de notificación alternativo habilita Icono clásico. Ambas opciones solo
-cambian el icono de notificación tras Aplicar o Aceptar.
+En la pestaña Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas
+opciones solo cambian el icono de notificación tras Aplicar o Aceptar.
 
 ## Licencia
 

@@ -190,8 +190,8 @@ U pomoći i licenci u prozoru O programu, Ctrl+F otvara pretragu. F3 pronalazi s
 prethodno. Podržani su razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga
 unazad i regularni izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.
 
-Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućava Klasična ikona. Obje opcije mijenjaju
-samo ikonu obavijesti nakon Primijeni ili U redu.
+Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućava Retro ikona u području obavijesti. Obje
+opcije mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu.
 
 ## Licenca
 

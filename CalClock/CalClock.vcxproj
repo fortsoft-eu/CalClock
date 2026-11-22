@@ -181,6 +181,9 @@
     <None Include="ResourcePacker.cs" />
     <None Include="prepare.ps1" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="CalClock.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

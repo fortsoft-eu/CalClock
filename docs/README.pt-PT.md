@@ -254,8 +254,8 @@ Na ajuda e na licença da janela Acerca de, Ctrl+F abre Localizar. F3 procura a 
 Shift+F3 a anterior. A pesquisa permite distinguir maiúsculas, procurar palavras inteiras, inícios e fins de
 linha, pesquisar para trás e usar expressões regulares. O histórico guarda as últimas 30 pesquisas da sessão.
 
-No separador Aplicação, Ícone de notificação alternativo ativa Ícone clássico. Ambas as opções alteram apenas
-o ícone de notificação após Aplicar ou OK.
+No separador Aplicação, Ícone de notificação alternativo ativa Ícone de notificação retro. Ambas as opções
+alteram apenas o ícone de notificação após Aplicar ou OK.
 
 ## Licença
 

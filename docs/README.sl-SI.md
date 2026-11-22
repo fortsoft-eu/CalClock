@@ -179,8 +179,8 @@ V pomoči in licenci v oknu O programu Ctrl+F odpre iskanje. F3 najde naslednji 
 prejšnjega. Podprti so razlikovanje velikih in malih črk, cele besede, začetki in konci vrstic, iskanje nazaj
 ter regularni izrazi. Zgodovina ohrani zadnjih 30 iskanj trenutne seje.
 
-Na zavihku Program možnost Druga ikona za obvestila omogoči Klasična ikona. Obe možnosti spremenita samo ikono
-za obvestila po Uporabi ali V redu.
+Na zavihku Program možnost Druga ikona za obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti
+spremenita samo ikono za obvestila po Uporabi ali V redu.
 
 ## Licenca
 

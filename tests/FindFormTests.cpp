@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.2.6
  */
 
 #define NOMINMAX
@@ -413,7 +413,7 @@ static void TestPrintSnapshot(HWND owner) {
     }
 }
 
-/// Checks the real Application-page icon controls, draft isolation and dependency gating.
+/// Checks Application-page text baselines, icon controls, draft isolation and dependency gating.
 static void TestTrayIconDraft() {
     std::unique_ptr<Widget> widget = std::make_unique<Widget>();
     widget->config = AlarmConfiguration(1);
@@ -431,6 +431,12 @@ static void TestTrayIconDraft() {
     hSettings = CreateSettingsDialog(IDD_SETTINGS, nullptr, SettingsDialogProc, 0);
     Require(hSettings != nullptr && CreateSettingsControls(5), "create actual Application settings page");
     LoadAlarm(AlarmConfiguration(1));
+    LONG soundBaseline = ControlTextBaseline(hTimeSignalSoundCombo);
+    Require(std::abs(ControlTextBaseline(hTimeSignalTestButton) - soundBaseline) <= 1,
+        "the sound Test button shares the actual inner combo text baseline");
+    HWND soundLabel = GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL);
+    Require(std::abs(ControlTextBaseline(soundLabel) - soundBaseline) <= 1,
+        "the sound label shares the actual inner combo text baseline");
     widgets[0]->window = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_POPUP,
         0, 0, 1, 1, nullptr, nullptr, hInstance, nullptr);
     if (hAlternativeTrayIconCheck != nullptr && hClassicTrayIconCheck != nullptr) {

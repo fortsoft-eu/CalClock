@@ -190,8 +190,8 @@ U pomoći i licenci u prozoru O programu Ctrl+F otvara pretraživanje. F3 pronal
 Shift+F3 prethodno. Podržani su razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redaka,
 pretraživanje unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj sesiji.
 
-Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Klasična ikona. Obje mijenjaju samo ikonu
-obavijesti nakon Primijeni ili U redu.
+Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Retro ikona u području obavijesti. Obje
+mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu.
 
 ## Licencija
 

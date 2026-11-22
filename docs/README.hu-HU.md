@@ -190,7 +190,7 @@ találatra lép. A keresés támogatja a kis- és nagybetűk megkülönbözteté
 végét, a visszafelé keresést és a reguláris kifejezéseket. Az előzmények a munkamenet utolsó 30 keresését
 őrzik.
 
-Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Klasszikus ikon lehetőséget. Mindkettő csak az
+Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon lehetőséget. Mindkettő csak az
 értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után.
 
 ## Licenc

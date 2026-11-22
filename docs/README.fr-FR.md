@@ -258,8 +258,8 @@ et Shift+F3 la précédente. La recherche prend en charge la casse, les mots ent
 ligne, le sens inverse et les expressions régulières. L’historique conserve les 30 dernières recherches de la
 session.
 
-Dans l’onglet Application, Autre icône de notification active Icône classique. Ces options modifient
-uniquement l’icône de notification après Appliquer ou OK.
+Dans l’onglet Application, Autre icône de notification active Icône de notification rétro. Ces options
+modifient uniquement l’icône de notification après Appliquer ou OK.
 
 ## Licence
 

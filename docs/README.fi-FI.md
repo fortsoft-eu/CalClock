@@ -243,8 +243,8 @@ Ohjeessa ja Tietoja-ikkunan lisenssissä Ctrl+F avaa haun. F3 etsii seuraavan os
 Haku tukee kirjainkoon huomioimista, kokonaisia sanoja, rivin alkuja ja loppuja, hakua taaksepäin ja
 säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hakua.
 
-Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Perinteinen kuvake -valinnan. Molemmat
-muuttavat vain ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.
+Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan.
+Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.
 
 ## Lisenssi
 

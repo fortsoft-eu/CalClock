@@ -185,8 +185,8 @@ Palīdzībā un loga Par licences tekstā Ctrl+F atver meklēšanu. F3 atrod nā
 iepriekšējo. Var ņemt vērā reģistru, meklēt veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot
 regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
 
-Cilnē Lietotne opcija Alternatīva paziņojumu ikona iespējo Klasiskā ikona. Abas opcijas maina tikai paziņojumu
-ikonu pēc Lietot vai Labi nospiešanas.
+Cilnē Lietotne opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina
+tikai paziņojumu ikonu pēc Lietot vai Labi nospiešanas.
 
 ## Licence
 

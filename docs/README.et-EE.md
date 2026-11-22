@@ -185,7 +185,7 @@ Spikris ja Teave-akna litsentsis avab Ctrl+F otsingu. F3 leiab järgmise vaste n
 toetab tõstutundlikkust, terveid sõnu, rea algusi ja lõppe, tagurpidi otsingut ning regulaaravaldisi. Ajalugu
 säilitab käesoleva seansi viimased 30 otsingut.
 
-Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Klassikaline ikoon. Mõlemad muudavad ainult
+Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult
 teavitusikooni pärast Rakenda või OK vajutamist.
 
 ## Litsents

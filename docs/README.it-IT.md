@@ -259,8 +259,8 @@ successiva e Shift+F3 quella precedente. Sono supportate maiuscole e minuscole, 
 riga, ricerca all’indietro ed espressioni regolari. La cronologia conserva le ultime 30 ricerche della
 sessione.
 
-Nella scheda Applicazione, Icona di notifica alternativa abilita Icona classica. Le due opzioni modificano
-solo l’icona di notifica dopo Applica o OK.
+Nella scheda Applicazione, Icona di notifica alternativa abilita Icona di notifica retrò. Le due opzioni
+modificano solo l’icona di notifica dopo Applica o OK.
 
 ## Licenza
 

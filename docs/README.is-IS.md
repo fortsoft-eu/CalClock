@@ -240,8 +240,8 @@ forgang.
 há- og lágstafi, heil orð, línubyrjanir og línulok, leit afturábak og reglulegar segðir. Ferillinn geymir
 síðustu 30 leitir í núverandi keyrslu.
 
-Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Klassískt tákn. Báðir valkostir breyta aðeins
-tilkynningatákninu eftir Nota eða Í lagi.
+Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á tilkynningasvæði. Báðir valkostir
+breyta aðeins tilkynningatákninu eftir Nota eða Í lagi.
 
 ## Leyfi
 

@@ -186,8 +186,8 @@ komandinės eilutės argumentai turi pirmenybę.
 Palaikomas raidžių dydžio skyrimas, ištisi žodžiai, eilučių pradžios ir pabaigos, paieška atgal bei reguliarūs
 reiškiniai. Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.
 
-Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Klasikinė piktograma. Abi parinktys
-keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.
+Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma.
+Abi parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.
 
 ## Licencija
 

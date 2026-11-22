@@ -249,7 +249,7 @@ In Help and the license in About, Ctrl+F opens Find. F3 finds the next match; Sh
 match. Search supports case sensitivity, whole words, line starts and ends, backward searching, and regular
 expressions. The history retains the last 30 searches for the current application session.
 
-On the Application tab, Alternative notification icon enables Classic icon. Both options affect only the
+On the Application tab, Alternative notification icon enables Old school icon. Both options affect only the
 notification icon and take effect after Apply or OK.
 
 ## License

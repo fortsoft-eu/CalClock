@@ -189,8 +189,8 @@ Sa chabhair agus sa cheadúnas san fhuinneog Maidir le, osclaíonn Ctrl+F cuarda
 mheaitseáil eile agus Shift+F3 an ceann roimhe. Tacaítear le cásíogaireacht, focail iomlána, tús agus deireadh
 línte, cuardach siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún reatha.
 
-Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín clasaiceach. Ní athraíonn na
-roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK.
+Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín fógra i stíl retró. Ní athraíonn
+na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK.
 
 ## Ceadúnas
 

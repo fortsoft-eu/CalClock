@@ -241,8 +241,8 @@ Yardımda ve Hakkında penceresindeki lisansta Ctrl+F aramayı açar. F3 sonraki
 Büyük/küçük harf duyarlılığı, tam sözcükler, satır başı ve sonu, geriye arama ve düzenli ifadeler desteklenir.
 Geçmiş, geçerli oturumdaki son 30 aramayı tutar.
 
-Uygulama sekmesinde Alternatif bildirim simgesi, Klasik simge seçeneğini etkinleştirir. Her iki seçenek de
-yalnızca bildirim simgesini Uygula veya Tamam sonrasında değiştirir.
+Uygulama sekmesinde Alternatif bildirim simgesi, Retro bildirim simgesi seçeneğini etkinleştirir. Her iki
+seçenek de yalnızca bildirim simgesini Uygula veya Tamam sonrasında değiştirir.
 
 ## Lisans
 

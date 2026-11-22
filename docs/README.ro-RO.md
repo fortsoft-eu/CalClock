@@ -188,8 +188,8 @@ Shift+F3 pe cea anterioară. Sunt acceptate diferențierea majusculelor, cuvinte
 sfârșitul liniilor, căutarea înapoi și expresiile regulate. Istoricul păstrează ultimele 30 de căutări din
 sesiunea curentă.
 
-În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă clasică. Ambele opțiuni schimbă
-doar pictograma de notificare după Aplicare sau OK.
+În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă de notificare retro. Ambele
+opțiuni schimbă doar pictograma de notificare după Aplicare sau OK.
 
 ## Licență
 

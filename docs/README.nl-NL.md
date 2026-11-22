@@ -203,8 +203,8 @@ In Help en de licentietekst in Info opent Ctrl+F het zoekvenster. F3 zoekt de vo
 Shift+F3 de vorige. Zoeken ondersteunt hoofdlettergevoeligheid, hele woorden, regelbegin en -einde, achteruit
 zoeken en reguliere expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige sessie.
 
-Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Klassiek pictogram in. Beide
-wijzigen alleen het meldingspictogram na Toepassen of OK.
+Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Retro-pictogram in het systeemvak
+in. Beide wijzigen alleen het meldingspictogram na Toepassen of OK.
 
 ## Licentie
 

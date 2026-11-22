@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.2.6
  */
 
 #include "Localization.h"
@@ -31,7 +31,7 @@
 constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_CS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativní oznamovací ikona" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasická ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro oznamovací ikona" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nelze připravit knihovnu prostředků (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Hledat &pozpátku" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"K&onec řádku" },
@@ -501,8 +501,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hledání. F3 najde další shodu, Shift+F3 předchozí. Lze rozlišovat velikost písmen, hledat celá "
             L"slova, začátky a konce řádků, změnit směr nebo použít regulární výraz. Historie uchovává "
             L"posledních 30 hledání během běhu aplikace.\r\n\r\nNa kartě Aplikace volba Alternativní "
-            L"oznamovací ikona zpřístupní volbu Klasická ikona. Obě volby mění pouze ikonu v oznamovací "
-            L"oblasti a projeví se po Použít nebo OK."
+            L"oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění pouze ikonu v "
+            L"oznamovací oblasti a projeví se po Použít nebo OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -578,7 +578,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_EN_US, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Old school icon" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
@@ -1052,7 +1052,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
-            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -1131,7 +1131,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_EN_GB, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Old school icon" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
@@ -1605,7 +1605,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
-            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -1684,7 +1684,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_EN_AU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Old school icon" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
@@ -2158,7 +2158,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
-            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
             L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -2237,7 +2237,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_DE, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatives Benachrichtigungssymbol" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisches Symbol" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro-Symbol im Infobereich" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Die Ressourcenbibliothek kann nicht vorbereitet werden (0x%08X)."
         },
@@ -2748,8 +2748,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Groß-/Kleinschreibung, ganze Wörter, Zeilenanfang und -ende, Rückwärtssuche und reguläre "
             L"Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.\r\n\r\nAuf "
             L"der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option "
-            L"Klassisches Symbol. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit "
-            L"Übernehmen oder OK wirksam."
+            L"Retro-Symbol im Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden "
+            L"mit Übernehmen oder OK wirksam."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2834,7 +2834,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_FR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Autre icône de notification" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icône classique" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icône de notification rétro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Impossible de préparer la bibliothèque de ressources (0x%08X)."
         },
@@ -3346,8 +3346,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"propos, Ctrl+F ouvre la recherche. F3 trouve l’occurrence suivante et Shift+F3 la précédente. "
             L"La recherche prend en charge la casse, les mots entiers, les débuts et fins de ligne, le sens "
             L"inverse et les expressions régulières. L’historique conserve les 30 dernières recherches de la "
-            L"session.\r\n\r\nDans l’onglet Application, Autre icône de notification active Icône classique. "
-            L"Ces options modifient uniquement l’icône de notification après Appliquer ou OK."
+            L"session.\r\n\r\nDans l’onglet Application, Autre icône de notification active Icône de "
+            L"notification rétro. Ces options modifient uniquement l’icône de notification après Appliquer "
+            L"ou OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -3431,7 +3432,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_ES, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Icono de notificación alternativo" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icono clásico" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icono de notificación retro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"No se puede preparar la biblioteca de recursos (0x%08X)."
         },
@@ -3932,8 +3933,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" Buscar. F3 busca la siguiente coincidencia y Shift+F3 la anterior. Se admiten mayúsculas y "
             L"minúsculas, palabras completas, inicios y finales de línea, búsqueda hacia atrás y expresiones "
             L"regulares. El historial conserva las últimas 30 búsquedas de la sesión.\r\n\r\nEn la pestaña "
-            L"Aplicación, Icono de notificación alternativo habilita Icono clásico. Ambas opciones solo "
-            L"cambian el icono de notificación tras Aplicar o Aceptar."
+            L"Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas "
+            L"opciones solo cambian el icono de notificación tras Aplicar o Aceptar."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -4014,7 +4015,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_IT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Icona di notifica alternativa" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icona classica" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icona di notifica retrò" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Impossibile preparare la libreria di risorse (0x%08X)."
         },
@@ -4515,8 +4516,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Informazioni, Ctrl+F apre Trova. F3 trova la corrispondenza successiva e Shift+F3 quella "
             L"precedente. Sono supportate maiuscole e minuscole, parole intere, inizio e fine riga, ricerca "
             L"all’indietro ed espressioni regolari. La cronologia conserva le ultime 30 ricerche della "
-            L"sessione.\r\n\r\nNella scheda Applicazione, Icona di notifica alternativa abilita Icona "
-            L"classica. Le due opzioni modificano solo l’icona di notifica dopo Applica o OK."
+            L"sessione.\r\n\r\nNella scheda Applicazione, Icona di notifica alternativa abilita Icona di "
+            L"notifica retrò. Le due opzioni modificano solo l’icona di notifica dopo Applica o OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -4597,7 +4598,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_PT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Ícone de notificação alternativo" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ícone clássico" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ícone de notificação retro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Não é possível preparar a biblioteca de recursos (0x%08X)."
         },
@@ -5051,8 +5052,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"abre Localizar. F3 procura a correspondência seguinte e Shift+F3 a anterior. A pesquisa permite"
             L" distinguir maiúsculas, procurar palavras inteiras, inícios e fins de linha, pesquisar para "
             L"trás e usar expressões regulares. O histórico guarda as últimas 30 pesquisas da "
-            L"sessão.\r\n\r\nNo separador Aplicação, Ícone de notificação alternativo ativa Ícone clássico. "
-            L"Ambas as opções alteram apenas o ícone de notificação após Aplicar ou OK."
+            L"sessão.\r\n\r\nNo separador Aplicação, Ícone de notificação alternativo ativa Ícone de "
+            L"notificação retro. Ambas as opções alteram apenas o ícone de notificação após Aplicar ou OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -5133,7 +5134,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_PL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatywna ikona powiadomień" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasyczna ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ikona powiadomień w stylu retro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nie można przygotować biblioteki zasobów (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Szukaj &wstecz" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Koniec wiersza" },
@@ -5612,8 +5613,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ctrl+F otwiera wyszukiwanie. F3 znajduje następne dopasowanie, a Shift+F3 poprzednie. Dostępne "
             L"są rozróżnianie wielkości liter, całe wyrazy, początki i końce wierszy, wyszukiwanie wstecz "
             L"oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej "
-            L"sesji.\r\n\r\nNa karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję "
-            L"Klasyczna ikona. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK."
+            L"sesji.\r\n\r\nNa karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona "
+            L"powiadomień w stylu retro. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -5689,7 +5690,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_SK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatívna ikona v oblasti oznámení" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasická ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro ikona v oblasti oznámení" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Knižnicu prostriedkov sa nepodarilo pripraviť (0x%08X)."
         },
@@ -6154,8 +6155,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ctrl+F hľadanie. F3 nájde ďalšiu zhodu, Shift+F3 predchádzajúcu. Možno rozlišovať veľkosť "
             L"písmen, hľadať celé slová, začiatky a konce riadkov, zmeniť smer alebo použiť regulárny výraz. "
             L"História uchováva posledných 30 hľadaní počas behu aplikácie.\r\n\r\nNa karte Aplikácia voľba "
-            L"Alternatívna ikona v oblasti oznámení sprístupní voľbu Klasická ikona. Obe voľby menia iba "
-            L"ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK."
+            L"Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti oznámení. Obe "
+            L"voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -6231,7 +6232,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_DA, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativt meddelelsesikon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retroikon i meddelelsesområdet" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ressourcebiblioteket kunne ikke klargøres (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Søg &baglæns" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Linjeslutning" },
@@ -6665,8 +6666,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" næste forekomst og Shift+F3 den forrige. Søgningen understøtter store og små bogstaver, hele "
             L"ord, linjestart og linjeslutning, baglæns søgning og regulære udtryk. Historikken gemmer de "
             L"sidste 30 søgninger i den aktuelle session.\r\n\r\nPå fanen Program aktiverer Alternativt "
-            L"meddelelsesikon valget Klassisk ikon. Begge indstillinger ændrer kun meddelelsesikonet efter "
-            L"Anvend eller OK."
+            L"meddelelsesikon valget Retroikon i meddelelsesområdet. Begge indstillinger ændrer kun "
+            L"meddelelsesikonet efter Anvend eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -6746,7 +6747,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_FI, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Vaihtoehtoinen ilmoituskuvake" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Perinteinen kuvake" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ilmoitusalueen retrokuvake" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Resurssikirjastoa ei voi valmistella (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Etsi &taaksepäin" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Rivin &loppu" },
@@ -7206,7 +7207,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"haun. F3 etsii seuraavan osuman ja Shift+F3 edellisen. Haku tukee kirjainkoon huomioimista, "
             L"kokonaisia sanoja, rivin alkuja ja loppuja, hakua taaksepäin ja säännöllisiä lausekkeita. "
             L"Historia säilyttää istunnon 30 viimeisintä hakua.\r\n\r\nSovellus-välilehdellä Vaihtoehtoinen "
-            L"ilmoituskuvake ottaa käyttöön Perinteinen kuvake -valinnan. Molemmat muuttavat vain "
+            L"ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan. Molemmat muuttavat vain "
             L"ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -7285,7 +7286,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_IS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Annað tilkynningatákn" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassískt tákn" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retrótákn á tilkynningasvæði" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ekki tókst að undirbúa tilfangasafnið (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Leita &afturábak" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Línulok" },
@@ -7720,8 +7721,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nLEIT Í HJÁLP OG LEYFI\r\nÍ hjálpinni og leyfinu í Um opnar Ctrl+F leit. F3 finnur næstu"
             L" samsvörun og Shift+F3 þá fyrri. Leitin styður há- og lágstafi, heil orð, línubyrjanir og "
             L"línulok, leit afturábak og reglulegar segðir. Ferillinn geymir síðustu 30 leitir í núverandi "
-            L"keyrslu.\r\n\r\nÁ flipanum Forrit virkjar Annað tilkynningatákn valkostinn Klassískt tákn. "
-            L"Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða Í lagi."
+            L"keyrslu.\r\n\r\nÁ flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á "
+            L"tilkynningasvæði. Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða Í lagi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -7799,7 +7800,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_NB, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativt varslingsikon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retroikon i systemstatusfeltet" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Kan ikke klargjøre ressursbiblioteket (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Søk &bakover" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Linje&slutt" },
@@ -8234,8 +8235,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nSØKE I HJELP OG LISENS\r\nI hjelpen og lisensen i Om åpner Ctrl+F søk. F3 finner neste "
             L"treff og Shift+F3 det forrige. Søket støtter store og små bokstaver, hele ord, linjestart og "
             L"linjeslutt, søk bakover og regulære uttrykk. Historikken beholder de siste 30 søkene i "
-            L"gjeldende økt.\r\n\r\nPå fanen Program aktiverer Alternativt varslingsikon valget Klassisk "
-            L"ikon. Begge valgene endrer bare varslingsikonet etter Bruk eller OK."
+            L"gjeldende økt.\r\n\r\nPå fanen Program aktiverer Alternativt varslingsikon valget Retroikon i "
+            L"systemstatusfeltet. Begge valgene endrer bare varslingsikonet etter Bruk eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -8315,7 +8316,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_SV, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativ meddelandeikon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retroikon i meddelandefältet" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Det går inte att förbereda resursbiblioteket (0x%08X)."
         },
@@ -8755,8 +8756,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" nästa träff och Shift+F3 föregående. Sökningen stöder skiftlägeskänslighet, hela ord, "
             L"radbörjan och radslut, bakåtsökning och reguljära uttryck. Historiken behåller de senaste 30 "
             L"sökningarna under den aktuella sessionen.\r\n\r\nPå fliken Program aktiverar Alternativ "
-            L"meddelandeikon alternativet Klassisk ikon. Båda alternativen ändrar endast meddelandeikonen "
-            L"efter Verkställ eller OK."
+            L"meddelandeikon alternativet Retroikon i meddelandefältet. Båda alternativen ändrar endast "
+            L"meddelandeikonen efter Verkställ eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -8837,7 +8838,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_TR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatif bildirim simgesi" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasik simge" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro bildirim simgesi" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Kaynak kitaplığı hazırlanamadı (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"&Geriye doğru ara" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Satır &sonu" },
@@ -9276,9 +9277,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nYARDIMDA VE LISANSTA ARAMA\r\nYardımda ve Hakkında penceresindeki lisansta Ctrl+F "
             L"aramayı açar. F3 sonraki, Shift+F3 önceki eşleşmeyi bulur. Büyük/küçük harf duyarlılığı, tam "
             L"sözcükler, satır başı ve sonu, geriye arama ve düzenli ifadeler desteklenir. Geçmiş, geçerli "
-            L"oturumdaki son 30 aramayı tutar.\r\n\r\nUygulama sekmesinde Alternatif bildirim simgesi, Klasik"
-            L" simge seçeneğini etkinleştirir. Her iki seçenek de yalnızca bildirim simgesini Uygula veya "
-            L"Tamam sonrasında değiştirir."
+            L"oturumdaki son 30 aramayı tutar.\r\n\r\nUygulama sekmesinde Alternatif bildirim simgesi, Retro "
+            L"bildirim simgesi seçeneğini etkinleştirir. Her iki seçenek de yalnızca bildirim simgesini "
+            L"Uygula veya Tamam sonrasında değiştirir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -9355,7 +9356,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_ET, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatiivne teavitusikoon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassikaline ikoon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Teavitusala retroikoon" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ressursiteeki ei saa ette valmistada (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Otsi &tagurpidi" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Rea &lõpp" },
@@ -9813,8 +9814,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"otsingu. F3 leiab järgmise vaste ning Shift+F3 eelmise. Otsing toetab tõstutundlikkust, terveid"
             L" sõnu, rea algusi ja lõppe, tagurpidi otsingut ning regulaaravaldisi. Ajalugu säilitab "
             L"käesoleva seansi viimased 30 otsingut.\r\n\r\nRakenduse vahekaardil lubab Alternatiivne "
-            L"teavitusikoon valiku Klassikaline ikoon. Mõlemad muudavad ainult teavitusikooni pärast Rakenda "
-            L"või OK vajutamist."
+            L"teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult teavitusikooni pärast "
+            L"Rakenda või OK vajutamist."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -9891,7 +9892,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_GA, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Deilbhín fógra eile" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Deilbhín clasaiceach" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Deilbhín fógra i stíl retró" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Ní féidir an leabharlann acmhainní a ullmhú (0x%08X)."
         },
@@ -10388,7 +10389,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ceann roimhe. Tacaítear le cásíogaireacht, focail iomlána, tús agus deireadh línte, cuardach "
             L"siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún "
             L"reatha.\r\n\r\nAr an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín "
-            L"clasaiceach. Ní athraíonn na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK."
+            L"fógra i stíl retró. Ní athraíonn na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó "
+            L"OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -10476,7 +10478,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_LT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatyvi pranešimų piktograma" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasikinė piktograma" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro pranešimų srities piktograma" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nepavyko paruošti išteklių bibliotekos (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Ieškoti &atgal" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Eilutės &pabaiga" },
@@ -10956,8 +10958,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"paiešką. F3 randa kitą atitikmenį, Shift+F3 – ankstesnį. Palaikomas raidžių dydžio skyrimas, "
             L"ištisi žodžiai, eilučių pradžios ir pabaigos, paieška atgal bei reguliarūs reiškiniai. "
             L"Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.\r\n\r\nKortelėje Programa "
-            L"pasirinkus Alternatyvi pranešimų piktograma įjungiama Klasikinė piktograma. Abi parinktys "
-            L"keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai."
+            L"pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma. Abi "
+            L"parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -11037,7 +11039,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_LV, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatīva paziņojumu ikona" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasiskā ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro paziņojumu apgabala ikona" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Neizdevās sagatavot resursu bibliotēku (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Meklēt &atpakaļ" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Rindas &beigas" },
@@ -11501,8 +11503,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"meklēšanu. F3 atrod nākamo atbilstību, Shift+F3 – iepriekšējo. Var ņemt vērā reģistru, meklēt "
             L"veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot regulārās izteiksmes. Vēsturē"
             L" saglabājas sesijas pēdējie 30 meklējumi.\r\n\r\nCilnē Lietotne opcija Alternatīva paziņojumu "
-            L"ikona iespējo Klasiskā ikona. Abas opcijas maina tikai paziņojumu ikonu pēc Lietot vai Labi "
-            L"nospiešanas."
+            L"ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc "
+            L"Lietot vai Labi nospiešanas."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -11578,7 +11580,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_HU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Másik értesítési ikon" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasszikus ikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retró értesítési ikon" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Az erőforráskönyvtár nem készíthető elő (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Keresés &visszafelé" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"Sor &vége" },
@@ -12062,7 +12064,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"megnyitja a keresést. Az F3 a következő, a Shift+F3 az előző találatra lép. A keresés támogatja"
             L" a kis- és nagybetűk megkülönböztetését, a teljes szavakat, a sor elejét és végét, a visszafelé"
             L" keresést és a reguláris kifejezéseket. Az előzmények a munkamenet utolsó 30 keresését "
-            L"őrzik.\r\n\r\nAz Alkalmazás lapon a Másik értesítési ikon engedélyezi a Klasszikus ikon "
+            L"őrzik.\r\n\r\nAz Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon "
             L"lehetőséget. Mindkettő csak az értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
@@ -12143,7 +12145,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_MT, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Ikona alternattiva tan-notifika" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ikona klassika" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ikona ta' notifika retro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Ma setgħetx titħejja l-librerija tar-riżorsi (0x%08X)."
         },
@@ -12627,8 +12629,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ctrl+F jiftaħ it-tfittxija. F3 isib il-qbil li jmiss u Shift+F3 dak ta’ qabel. It-tfittxija "
             L"tappoġġja l-ittri kbar u żgħar, kliem sħiħ, bidu u tmiem il-linji, tfittxija lura u "
             L"espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.\r\n\r\nFit-tab "
-            L"Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona klassika. Iż-żewġ għażliet "
-            L"jibdlu biss l-ikona tan-notifika wara Applika jew OK."
+            L"Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ "
+            L"għażliet jibdlu biss l-ikona tan-notifika wara Applika jew OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -12708,7 +12710,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_NL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatief meldingspictogram" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassiek pictogram" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro-pictogram in het systeemvak" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"De bronbibliotheek kan niet worden voorbereid (0x%08X)."
         },
@@ -13194,7 +13196,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hoofdlettergevoeligheid, hele woorden, regelbegin en -einde, achteruit zoeken en reguliere "
             L"expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige "
             L"sessie.\r\n\r\nOp het tabblad Toepassing schakelt Alternatief meldingspictogram de optie "
-            L"Klassiek pictogram in. Beide wijzigen alleen het meldingspictogram na Toepassen of OK."
+            L"Retro-pictogram in het systeemvak in. Beide wijzigen alleen het meldingspictogram na Toepassen "
+            L"of OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokken en kalenders\r\n\r\nEen native Win32-toepassing voor maximaal 32 afzonderlijk "
@@ -13276,7 +13279,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_RO, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Pictogramă de notificare alternativă" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Pictogramă clasică" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Pictogramă de notificare retro" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Biblioteca de resurse nu poate fi pregătită (0x%08X)."
         },
@@ -13756,7 +13759,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"acceptate diferențierea majusculelor, cuvintele întregi, începutul și sfârșitul liniilor, "
             L"căutarea înapoi și expresiile regulate. Istoricul păstrează ultimele 30 de căutări din sesiunea"
             L" curentă.\r\n\r\nÎn fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă "
-            L"clasică. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau OK."
+            L"de notificare retro. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -13837,7 +13840,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_EL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Εναλλακτικό εικονίδιο ειδοποίησης" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Κλασικό εικονίδιο" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ρετρό εικονίδιο ειδοποιήσεων" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Δεν είναι δυνατή η προετοιμασία της βιβλιοθήκης πόρων (0x%08X)."
         },
@@ -14338,9 +14341,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Πληροφορίες, το Ctrl+F ανοίγει την αναζήτηση. Το F3 βρίσκει την επόμενη αντιστοιχία και το "
             L"Shift+F3 την προηγούμενη. Υποστηρίζονται διάκριση πεζών και κεφαλαίων, ολόκληρες λέξεις, αρχή "
             L"και τέλος γραμμών, αναζήτηση προς τα πίσω και κανονικές εκφράσεις. Το ιστορικό κρατά τις "
-            L"τελευταίες 30 αναζητήσεις της συνεδρίας.\r\n\r\nΣτην καρτέλα Εφαρμογή, το Εναλλακτικό εικονίδιο"
-            L" ειδοποίησης ενεργοποιεί το Κλασικό εικονίδιο. Και οι δύο επιλογές αλλάζουν μόνο το εικονίδιο "
-            L"ειδοποίησης μετά την Εφαρμογή ή το OK."
+            L"τελευταίες 30 αναζητήσεις της συνεδρίας.\r\n\r\nΣτην καρτέλα Εφαρμογή, το Εναλλακτικό "
+            L"εικονίδιο ειδοποίησης ενεργοποιεί το Ρετρό εικονίδιο ειδοποιήσεων. Και οι δύο επιλογές "
+            L"αλλάζουν μόνο το εικονίδιο ειδοποίησης μετά την Εφαρμογή ή το OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -14424,7 +14427,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_BS, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavijesti" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro ikona u području obavijesti" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unazad" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj reda" },
@@ -14895,9 +14898,9 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nPRETRAGA POMOĆI I LICENCE\r\nU pomoći i licenci u prozoru O programu, Ctrl+F otvara "
             L"pretragu. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su razlikovanje "
             L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
-            L"izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.\r\n\r\nNa kartici Aplikacija"
-            L" opcija Alternativna ikona obavijesti omogućava Klasična ikona. Obje opcije mijenjaju samo "
-            L"ikonu obavijesti nakon Primijeni ili U redu."
+            L"izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.\r\n\r\nNa kartici "
+            L"Aplikacija opcija Alternativna ikona obavijesti omogućava Retro ikona u području obavijesti. "
+            L"Obje opcije mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -14977,7 +14980,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_HR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavijesti" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro ikona u području obavijesti" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unatrag" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj retka" },
@@ -15452,8 +15455,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" pretraživanje. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su "
             L"razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redaka, pretraživanje "
             L"unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj "
-            L"sesiji.\r\n\r\nNa kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Klasična "
-            L"ikona. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
+            L"sesiji.\r\n\r\nNa kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Retro "
+            L"ikona u području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -15531,7 +15534,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_SL, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Druga ikona za obvestila" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro ikona v območju za obvestila" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Knjižnice virov ni mogoče pripraviti (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Išči &nazaj" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Konec vrstice" },
@@ -15985,8 +15988,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"iskanje. F3 najde naslednji zadetek, Shift+F3 pa prejšnjega. Podprti so razlikovanje velikih in"
             L" malih črk, cele besede, začetki in konci vrstic, iskanje nazaj ter regularni izrazi. Zgodovina"
             L" ohrani zadnjih 30 iskanj trenutne seje.\r\n\r\nNa zavihku Program možnost Druga ikona za "
-            L"obvestila omogoči Klasična ikona. Obe možnosti spremenita samo ikono za obvestila po Uporabi "
-            L"ali V redu."
+            L"obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti spremenita samo ikono za "
+            L"obvestila po Uporabi ali V redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -16064,7 +16067,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_CNR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavještenja" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Retro ikona u oblasti obavještenja" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unazad" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj reda" },
@@ -16526,8 +16529,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"pretragu. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su razlikovanje "
             L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
             L"izrazi. Istorija čuva posljednjih 30 pretraga u tekućoj sesiji.\r\n\r\nNa kartici Aplikacija "
-            L"opcija Alternativna ikona obavještenja omogućava Klasična ikona. Obje mijenjaju samo ikonu "
-            L"obavještenja nakon Primijeni ili U redu."
+            L"opcija Alternativna ikona obavještenja omogućava Retro ikona u oblasti obavještenja. Obje "
+            L"mijenjaju samo ikonu obavještenja nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -16605,7 +16608,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_BE, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Іншы значок апавяшчэнняў" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класічны значок" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Рэтразначок апавяшчэнняў" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Не ўдалося падрыхтаваць бібліятэку рэсурсаў (0x%08X)."
         },
@@ -17076,8 +17079,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"адкрывае пошук. F3 знаходзіць наступнае супадзенне, Shift+F3 — папярэдняе. Падтрымліваюцца ўлік"
             L" рэгістра, цэлыя словы, пачаткі і канцы радкоў, пошук назад і рэгулярныя выразы. Гісторыя "
             L"захоўвае апошнія 30 пошукаў бягучага сеанса.\r\n\r\nНа ўкладцы Праграма выбар іншага значка "
-            L"апавяшчэнняў уключае класічны значок. Абодва параметры змяняюць толькі значок апавяшчэнняў "
-            L"пасля Ужыць або OK."
+            L"апавяшчэнняў уключае рэтразначок апавяшчэнняў. Абодва параметры змяняюць толькі значок "
+            L"апавяшчэнняў пасля Ужыць або OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -17152,7 +17155,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_BG, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона за известия" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класическа икона" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ретро икона за известяване" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Библиотеката с ресурси не може да се подготви (0x%08X)."
         },
@@ -17638,8 +17641,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"търсене. F3 намира следващото съвпадение, а Shift+F3 — предишното. Поддържат се разлика между "
             L"главни и малки букви, цели думи, начало и край на ред, търсене назад и регулярни изрази. "
             L"Историята пази последните 30 търсения в текущата сесия.\r\n\r\nВ раздел Приложение опцията "
-            L"Алтернативна икона за известия активира Класическа икона. И двете променят само иконата за "
-            L"известия след Прилагане или OK."
+            L"Алтернативна икона за известия активира Ретро икона за известяване. И двете променят само "
+            L"иконата за известия след Прилагане или OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -17716,7 +17719,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_MK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона за известувања" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична икона" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ретро икона за известувања" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
             L"Не може да се подготви библиотеката со ресурси (0x%08X)."
         },
@@ -18201,7 +18204,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Поддржани се разликување големи и мали букви, цели зборови, почеток и крај на ред, пребарување "
             L"наназад и регуларни изрази. Историјата ги чува последните 30 пребарувања во тековната "
             L"сесија.\r\n\r\nВо јазичето Апликација опцијата Алтернативна икона за известувања овозможува "
-            L"Класична икона. Двете го менуваат само икончето за известувања по Примени или Во ред."
+            L"Ретро икона за известувања. Двете го менуваат само икончето за известувања по Примени или Во "
+            L"ред."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -18287,7 +18291,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_SR, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона обавештења" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична икона" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ретро икона у области обавештења" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Није могуће припремити библиотеку ресурса (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Тражи &уназад" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Крај реда" },
@@ -18741,8 +18745,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"претрагу. F3 проналази следеће подударање, а Shift+F3 претходно. Подржани су разликовање "
             L"великих и малих слова, целе речи, почеци и крајеви редова, претрага уназад и регуларни изрази. "
             L"Историја чува последњих 30 претрага текуће сесије.\r\n\r\nНа картици Апликација опција "
-            L"Алтернативна икона обавештења омогућава Класична икона. Обе мењају само икону обавештења након "
-            L"Примени или У реду."
+            L"Алтернативна икона обавештења омогућава Ретро икона у области обавештења. Обе мењају само "
+            L"икону обавештења након Примени или У реду."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -18820,7 +18824,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_UK, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Інша піктограма сповіщень" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична піктограма" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ретропіктограма сповіщень" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Не вдалося підготувати бібліотеку ресурсів (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Шукати &назад" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Кінець рядка" },
@@ -19311,8 +19315,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" відкриває пошук. F3 знаходить наступний збіг, Shift+F3 — попередній. Підтримуються врахування "
             L"регістру, цілі слова, початки й кінці рядків, пошук назад і регулярні вирази. Історія зберігає "
             L"останні 30 пошуків поточного сеансу.\r\n\r\nНа вкладці Програма вибір іншої піктограми "
-            L"сповіщень вмикає класичну піктограму. Обидва параметри змінюють лише піктограму сповіщень після"
-            L" Застосувати або OK."
+            L"сповіщень вмикає ретропіктограму сповіщень. Обидва параметри змінюють лише піктограму "
+            L"сповіщень після Застосувати або OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -19388,7 +19392,7 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     }),
     DefineLanguage(LANG_RU, std::initializer_list<LocalizedText>{
         LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Другой значок уведомлений" },
-        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Классический значок" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ретрозначок уведомлений" },
         LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Не удалось подготовить библиотеку ресурсов (0x%08X)." },
         LocalizedText{ TXT_FIND_BACKWARD, L"Искать &назад" },
         LocalizedText{ TXT_FIND_ENDS_WITH, L"&Конец строки" },
@@ -19888,8 +19892,8 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"открывает поиск. F3 находит следующее совпадение, Shift+F3 — предыдущее. Поддерживаются учёт "
             L"регистра, целые слова, начала и концы строк, поиск назад и регулярные выражения. История хранит"
             L" последние 30 поисков текущего сеанса.\r\n\r\nНа вкладке Программа выбор другого значка "
-            L"уведомлений включает классический значок. Оба параметра меняют только значок уведомлений после "
-            L"Применить или OK."
+            L"уведомлений включает ретрозначок уведомлений. Оба параметра меняют только значок уведомлений "
+            L"после Применить или OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "

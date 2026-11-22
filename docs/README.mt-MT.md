@@ -187,8 +187,8 @@ Fl-għajnuna u fil-liċenzja fit-tieqa Dwar, Ctrl+F jiftaħ it-tfittxija. F3 isi
 ta’ qabel. It-tfittxija tappoġġja l-ittri kbar u żgħar, kliem sħiħ, bidu u tmiem il-linji, tfittxija lura u
 espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.
 
-Fit-tab Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona klassika. Iż-żewġ għażliet jibdlu
-biss l-ikona tan-notifika wara Applika jew OK.
+Fit-tab Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ għażliet
+jibdlu biss l-ikona tan-notifika wara Applika jew OK.
 
 ## Liċenzja
 

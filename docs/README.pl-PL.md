@@ -236,8 +236,8 @@ W pomocy i tekście licencji w oknie O programie Ctrl+F otwiera wyszukiwanie. F3
 a Shift+F3 poprzednie. Dostępne są rozróżnianie wielkości liter, całe wyrazy, początki i końce wierszy,
 wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej sesji.
 
-Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Klasyczna ikona. Obie zmieniają
-wyłącznie ikonę powiadomień po Zastosuj lub OK.
+Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona powiadomień w stylu retro.
+Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK.
 
 ## Licencja
 
