@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -60,7 +60,7 @@ struct SettingsOption {
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
 
-static const DWORD settingsOptionsMask = 0x01FF;
+static const DWORD settingsOptionsMask = 0x07FF;
 static const SettingsOption settingsOptions[] = {
     SettingsOption{ 0x0001, &SettingsSnapshot::themesDisabled },
     SettingsOption{ 0x0002, &SettingsSnapshot::windows2000Style },
@@ -70,7 +70,9 @@ static const SettingsOption settingsOptions[] = {
     SettingsOption{ 0x0020, &SettingsSnapshot::fontItalic },
     SettingsOption{ 0x0040, &SettingsSnapshot::useNtpTime },
     SettingsOption{ 0x0080, &SettingsSnapshot::alternativeTrayIcon },
-    SettingsOption{ 0x0100, &SettingsSnapshot::classicTrayIcon }
+    SettingsOption{ 0x0100, &SettingsSnapshot::classicTrayIcon },
+    SettingsOption{ 0x0200, &SettingsSnapshot::basicWindowHeaders },
+    SettingsOption{ 0x0400, &SettingsSnapshot::windows2000Headers }
 };
 
 static const wchar_t* const obsoleteOptionValues[] = {
@@ -95,6 +97,11 @@ static DWORD PackSettingsOptions(const SettingsSnapshot& snapshot) {
     if (!snapshot.themesDisabled) {
         value &= ~0x0002UL;
     }
+    if ((value & 0x0002) != 0) {
+        value &= ~0x0600UL;
+    } else if (snapshot.windows2000Headers) {
+        value &= ~0x0200UL;
+    }
     if (!snapshot.alternativeTrayIcon) {
         value &= ~0x0100UL;
     }
@@ -108,6 +115,11 @@ static void UnpackSettingsOptions(DWORD value, SettingsSnapshot* snapshot) {
         snapshot->*option.value = (value & option.mask) != 0;
     }
     snapshot->windows2000Style = snapshot->themesDisabled && snapshot->windows2000Style;
+    snapshot->windows2000Headers = snapshot->windows2000Headers
+        && !snapshot->windows2000Style;
+    snapshot->basicWindowHeaders = snapshot->basicWindowHeaders
+        && !snapshot->windows2000Style
+        && !snapshot->windows2000Headers;
     snapshot->classicTrayIcon = snapshot->alternativeTrayIcon && snapshot->classicTrayIcon;
 }
 

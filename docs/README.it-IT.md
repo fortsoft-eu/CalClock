@@ -262,6 +262,11 @@ sessione.
 Nella scheda Applicazione, Icona di notifica alternativa abilita Icona di notifica retrò. Le due opzioni
 modificano solo l’icona di notifica dopo Applica o OK.
 
+Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; Windows 2000. Entrambe le
+modalità del titolo funzionano con o senza temi nei controlli. Sistema segue Disattiva temi per l'intera
+finestra. I titoli Windows Classic modificano solo carattere e sfondo del titolo; pulsanti e bordo 3D
+mantengono i colori di sistema. Windows 2000 richiede temi disattivati.
+
 ## Licenza
 
 CalClock è disponibile con [licenza MIT](../license.txt).

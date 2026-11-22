@@ -191,6 +191,11 @@ sesiunea curentă.
 În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă de notificare retro. Ambele
 opțiuni schimbă doar pictograma de notificare după Aplicare sau OK.
 
+Aspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; Windows 2000. Ambele moduri ale
+barei de titlu funcționează cu sau fără teme pentru controale. Implicit de sistem aplică Dezactivează temele
+întregii ferestre. Barele de titlu Windows Classic schimbă doar fontul și fundalul titlului; butoanele
+titlului și chenarul 3D păstrează culorile sistemului. Windows 2000 necesită teme dezactivate.
+
 ## Licență
 
 CalClock este disponibil sub [licența MIT](../license.txt).

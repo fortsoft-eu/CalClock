@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.5
+ * Last modified for version 1.7.3.0
  */
 
 #pragma once
@@ -30,21 +30,29 @@
 #include <array>
 #include <vector>
 
-/// Supplies a thin classic nonclient frame only for dialogs explicitly attached by the application.
+/// Selects native system, Windows Basic, caption-only Windows 2000, or complete Windows 2000 rendering.
+enum class DialogFrameMode {
+    System,
+    WindowsBasic,
+    Windows2000Header,
+    Windows2000Forms
+};
+
+/// Supplies per-dialog nonclient appearance and optional Windows 2000 control colors.
 class DialogFrame {
 
 public:
-    /// Applies the theme mode and optional Windows 2000 caption without changing system metrics or client
+    /// Applies the selected local header and control appearance without changing system metrics or client
     /// size.
-    static bool Apply(HWND window, bool disableThemes, bool windows2000Style);
+    static bool Apply(HWND window, bool disableThemes, DialogFrameMode mode);
 
     /// Applies dialog-local colors to a control and its children, including owned dropdowns and tooltips.
     static bool ApplyControl(HWND control, HWND dialog);
 
-    /// Returns the dialog's Windows 2000 color, or the native system color outside that mode.
+    /// Returns the dialog's Windows 2000 control color, or the native color outside complete-form mode.
     static COLORREF GetColor(HWND control, int colorIndex);
 
-    /// Returns a brush owned by the dialog, or the native system brush outside Windows 2000 mode.
+    /// Returns a dialog-owned control brush, or the native system brush outside complete-form mode.
     static HBRUSH GetBrush(HWND control, int colorIndex);
 
     /// Maps completed native control drawing to dialog-local colors without changing its font or geometry.
@@ -77,6 +85,8 @@ private:
     int captionWidth = 0;
     bool disableThemes = false;
     bool windows2000Style = false;
+    bool windows2000Controls = false;
+    bool basicHeaders = false;
     bool enabled = false;
     bool updating = false;
     bool active = false;

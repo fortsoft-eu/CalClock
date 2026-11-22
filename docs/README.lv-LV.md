@@ -188,6 +188,11 @@ regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
 Cilnē Lietotne opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina
 tikai paziņojumu ikonu pēc Lietot vai Labi nospiešanas.
 
+Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Classic virsraksti; Windows 2000. Abi virsraksta
+režīmi darbojas ar ieslēgtiem vai izslēgtiem vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu
+visam logam. Windows Classic virsraksti maina tikai virsraksta fontu un fonu; virsraksta pogas un 3D apmale
+saglabā sistēmas krāsas. Windows 2000 režīmam nepieciešami atspējoti motīvi.
+
 ## Licence
 
 CalClock ir pieejams saskaņā ar [MIT licenci](../license.txt).

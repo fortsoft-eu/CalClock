@@ -254,6 +254,11 @@ Historie uchovává posledních 30 hledání během běhu aplikace.
 Na kartě Aplikace volba Alternativní oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění
 pouze ikonu v oznamovací oblasti a projeví se po Použít nebo OK.
 
+Vzhled oken: Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows 2000. Obě záhlaví lze použít s
+motivy uvnitř okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. Záhlaví Windows Classic mění
+jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D rámečku. Windows 2000 vyžaduje vypnuté
+motivy.
+
 ## Licence
 
 CalClock je dostupný pod [licencí MIT](../license.txt).

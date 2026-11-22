@@ -193,6 +193,11 @@ végét, a visszafelé keresést és a reguláris kifejezéseket. Az előzménye
 Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon lehetőséget. Mindkettő csak az
 értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után.
 
+Ablakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows Classic-címsorok; Windows 2000.
+Mindkét címsormód használható a vezérlők témáival vagy azok nélkül. A rendszer alapbeállítása az egész ablakra
+alkalmazza a témák letiltását. A Windows Classic-címsorok csak a cím betűtípusát és hátterét módosítják; a
+címsor gombjai és a 3D keret megtartják a rendszerszíneket. A Windows 2000 módhoz le kell tiltani a témákat.
+
 ## Licenc
 
 A CalClock az [MIT-licenc](../license.txt) feltételeivel érhető el.

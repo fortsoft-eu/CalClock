@@ -253,6 +253,11 @@ behåller de senaste 30 sökningarna under den aktuella sessionen.
 På fliken Program aktiverar Alternativ meddelandeikon alternativet Retroikon i meddelandefältet. Båda
 alternativen ändrar endast meddelandeikonen efter Verkställ eller OK.
 
+Fönsterutseende: Systemstandard; Windows Basic-namnlister; Windows Classic-namnlister; Windows 2000. Båda
+titelradsalternativen fungerar med eller utan teman för kontrollerna. Systemstandard följer Inaktivera teman
+för hela fönstret. Windows Classic-titelrader ändrar bara titelns teckensnitt och bakgrund; titelknappar och
+3D-ram behåller systemfärgerna. Windows 2000 kräver inaktiverade teman.
+
 ## Licens
 
 CalClock är tillgängligt under [MIT-licensen](../license.txt).

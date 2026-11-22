@@ -189,6 +189,11 @@ reiškiniai. Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.
 Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma.
 Abi parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.
 
+Langų išvaizda: Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows 2000. Abu antraštės
+režimai veikia su įjungtomis arba išjungtomis valdiklių temomis. Sistemos numatytasis režimas taiko temų
+išjungimą visam langui. Windows Classic antraštės keičia tik antraštės šriftą ir foną; antraštės mygtukai ir
+3D rėmelis išlaiko sistemos spalvas. Windows 2000 režimui reikia išjungti temas.
+
 ## Licencija
 
 „CalClock“ platinamas pagal [MIT licenciją](../license.txt).

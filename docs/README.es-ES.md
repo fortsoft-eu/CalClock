@@ -259,6 +259,11 @@ atrás y expresiones regulares. El historial conserva las últimas 30 búsquedas
 En la pestaña Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas
 opciones solo cambian el icono de notificación tras Aplicar o Aceptar.
 
+Apariencia de las ventanas: Sistema; Títulos de Windows Basic; Títulos de Windows Classic; Windows 2000. Ambos
+modos de título funcionan con o sin temas en los controles. Sistema aplica Desactivar temas a toda la ventana.
+Los títulos Windows Classic solo cambian la fuente y el fondo del título; los botones y el borde 3D conservan
+sus colores del sistema. Windows 2000 requiere los temas desactivados.
+
 ## Licencia
 
 CalClock está disponible bajo la [licencia MIT](../license.txt).

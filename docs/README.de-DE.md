@@ -261,6 +261,12 @@ reguläre Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der lau
 Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option Retro-Symbol im
 Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder OK wirksam.
 
+Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows 2000.
+Beide Titelleistenmodi funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt
+Designs deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern nur Titelschrift und
+Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. Windows 2000
+erfordert deaktivierte Designs.
+
 ## Lizenz
 
 CalClock ist unter der [MIT-Lizenz](../license.txt) verfügbar.

@@ -244,6 +244,12 @@ Geçmiş, geçerli oturumdaki son 30 aramayı tutar.
 Uygulama sekmesinde Alternatif bildirim simgesi, Retro bildirim simgesi seçeneğini etkinleştirir. Her iki
 seçenek de yalnızca bildirim simgesini Uygula veya Tamam sonrasında değiştirir.
 
+Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Classic başlıkları; Windows 2000. Her iki başlık
+modu da denetim temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak
+seçimini tüm pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka planını
+değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows 2000 temaların kapatılmasını
+gerektirir.
+
 ## Lisans
 
 CalClock, [MIT Lisansı](../license.txt) altında sunulur.

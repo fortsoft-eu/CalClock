@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.7
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -29,6 +29,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <fstream>
+#include <iostream>
 #include <iterator>
 
 static HWND findTestActiveWindow = nullptr;
@@ -181,6 +182,38 @@ static void TestPackedOptions() {
             && !restored.windows2000Style
             && !restored.fontItalic
             && restored.useNtpTime, "obsolete global XML flags have no fallback");
+    }
+}
+
+/// Checks exclusive appearance modes and independent child themes in the packed Options value.
+static void TestAppearanceOptions() {
+    for (int mode = 0; mode < APPLICATION_STYLE_COUNT; mode++) {
+        SettingsSnapshot value = {};
+        value.widgets.push_back(AlarmConfiguration(1));
+        value.options = 0x80000000;
+        value.themesDisabled = true;
+        value.basicWindowHeaders = mode == 1;
+        value.windows2000Headers = mode == 2;
+        value.windows2000Style = mode == 3;
+        Require(WriteSettingsXml(testXmlPath, value), "write the selected appearance mode");
+        SettingsSnapshot restored = {};
+        Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
+            "read the selected appearance mode");
+        Require(restored.themesDisabled
+            && restored.basicWindowHeaders == value.basicWindowHeaders
+            && restored.windows2000Headers == value.windows2000Headers
+            && restored.windows2000Style == value.windows2000Style
+            && (restored.options & 0x80000000) != 0,
+            "all four appearance modes preserve their state and unknown Options bits");
+        value.themesDisabled = false;
+        Require(WriteSettingsXml(testXmlPath, value), "write appearance options with themes enabled");
+        Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
+            "read appearance options with themes enabled");
+        Require(!restored.themesDisabled
+            && restored.basicWindowHeaders == value.basicWindowHeaders
+            && restored.windows2000Headers == value.windows2000Headers
+            && !restored.windows2000Style,
+            "header choices survive enabled themes; complete Windows 2000 forms require disabled themes");
     }
 }
 
@@ -413,6 +446,162 @@ static void TestPrintSnapshot(HWND owner) {
     }
 }
 
+/// Checks independent header drafts, theme toggling, and the complete-form dependency on the actual page.
+static void TestApplicationHeaderDraft() {
+    bool available = AreVisualStylesActive();
+    bool groupEnabled = IsWindowEnabled(hApplicationStyleGroup) != FALSE;
+    Require(groupEnabled == available,
+        "the appearance group is independent of Disable themes");
+    Require(!IsWindowEnabled(hApplicationStyleRadios[3]),
+        "complete Windows 2000 forms initially require Disable themes");
+    if (!available) {
+        return;
+    }
+    for (int mode = 1; mode <= 2; mode++) {
+        Require(IsWindowEnabled(hApplicationStyleRadios[mode]),
+            "both header choices are available with themed controls");
+        CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_2000_FORMS, APPLICATION_STYLE_IDS[mode]);
+        HandleSettingsCommand(APPLICATION_STYLE_IDS[mode], BN_CLICKED);
+        for (bool disabled : { true, false }) {
+            SetCheck(hDisableThemesCheck, disabled);
+            HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+            Require(settingsThemesDisabled == disabled
+                && settingsBasicWindowHeaders == (mode == 1)
+                && settingsWindows2000Headers == (mode == 2)
+                && GetCheck(hApplicationStyleRadios[mode]),
+                "header drafts survive both directions of the control-theme change");
+            bool completeEnabled = IsWindowEnabled(hApplicationStyleRadios[3]) != FALSE;
+            Require(completeEnabled == disabled,
+                "only complete Windows 2000 forms depend on Disable themes");
+            Require(!themesDisabled
+                && GetApplicationDialogFrameMode() == DialogFrameMode::System,
+                "header and theme drafts do not alter committed appearance before Apply");
+        }
+    }
+    SetCheck(hDisableThemesCheck, true);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_2000_FORMS, ID_STYLE_2000_FORMS);
+    HandleSettingsCommand(ID_STYLE_2000_FORMS, BN_CLICKED);
+    Require(settingsWindows2000Style, "complete Windows 2000 forms can be selected with themes disabled");
+    SetCheck(hDisableThemesCheck, false);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    Require(!settingsWindows2000Style
+        && GetCheck(hApplicationStyleRadios[0])
+        && !IsWindowEnabled(hApplicationStyleRadios[3]),
+        "enabling themes leaves the complete Windows 2000 mode and selects System default");
+}
+
+/// Captures native client painting into memory without displaying or activating a test window.
+static std::vector<BYTE> CaptureControlPixels(HWND control) {
+    RECT bounds = {};
+    GetClientRect(control, &bounds);
+    int width = bounds.right - bounds.left;
+    int height = bounds.bottom - bounds.top;
+    HDC dc = CreateCompatibleDC(nullptr);
+    BITMAPINFO information = {};
+    information.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    information.bmiHeader.biWidth = width;
+    information.bmiHeader.biHeight = -height;
+    information.bmiHeader.biPlanes = 1;
+    information.bmiHeader.biBitCount = 32;
+    void* bits = nullptr;
+    HBITMAP bitmap = CreateDIBSection(dc, &information, DIB_RGB_COLORS, &bits, nullptr, 0);
+    Require(dc != nullptr && bitmap != nullptr && bits != nullptr, "allocate native control paint capture");
+    std::vector<BYTE> pixels;
+    if (dc != nullptr && bitmap != nullptr && bits != nullptr) {
+        HGDIOBJ previous = SelectObject(dc, bitmap);
+        size_t length = static_cast<size_t>(width) * height * 4;
+        std::fill_n(static_cast<BYTE*>(bits), length, static_cast<BYTE>(0xFF));
+        SendMessageW(control, WM_PRINTCLIENT, reinterpret_cast<WPARAM>(dc), PRF_CLIENT | PRF_ERASEBKGND);
+        GdiFlush();
+        pixels.assign(static_cast<BYTE*>(bits), static_cast<BYTE*>(bits) + length);
+        SelectObject(dc, previous);
+    }
+    if (bitmap != nullptr) {
+        DeleteObject(bitmap);
+    }
+    if (dc != nullptr) {
+        DeleteDC(dc);
+    }
+    return pixels;
+}
+
+/// Locates actual painted glyph pixels with a shared caption, independently of baseline calculations.
+static LONG RenderedControlTextTop(HWND control) {
+    std::wstring caption = GetControlText(control);
+    SetWindowTextW(control, L"");
+    std::vector<BYTE> background = CaptureControlPixels(control);
+    SetWindowTextW(control, L"HHH");
+    std::vector<BYTE> painted = CaptureControlPixels(control);
+    SetWindowTextW(control, caption.c_str());
+    RECT bounds = {};
+    GetClientRect(control, &bounds);
+    int width = bounds.right - bounds.left;
+    POINT origin = {};
+    ClientToScreen(control, &origin);
+    Require(!painted.empty() && painted.size() == background.size(), "capture complete native text painting");
+    for (size_t offset = 0; offset + 3 < painted.size() && offset + 3 < background.size(); offset += 4) {
+        if (painted[offset] != background[offset]
+                || painted[offset + 1] != background[offset + 1]
+                || painted[offset + 2] != background[offset + 2]) {
+            return origin.y + static_cast<LONG>(offset / 4 / width);
+        }
+    }
+    Require(false, "native control painting contains the shared text glyphs");
+    return LONG_MIN;
+}
+
+/// Checks real glyph alignment after each Application button obtains its final native font metrics.
+static void TestApplicationButtonPainting() {
+    const HWND buttons[] = {
+        hAppFontButton,
+        hAppFontDefaultButton,
+        hTimeSignalTestButton
+    };
+    const HWND labels[] = {
+        hAppFontLabel,
+        hAppFontLabel,
+        GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL)
+    };
+    for (HWND button : buttons) {
+        RECT bounds = {};
+        GetWindowRect(button, &bounds);
+        SetWindowPos(button, nullptr, 0, 0, bounds.right - bounds.left, bounds.bottom - bounds.top - 1,
+            SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+    SendMessageW(hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS, 0, 0);
+    for (HWND button : buttons) {
+        WPARAM font = static_cast<WPARAM>(SendMessageW(button, WM_GETFONT, 0, 0));
+        SendMessageW(button, WM_SETFONT, font, FALSE);
+    }
+    MSG message = {};
+    while (PeekMessageW(&message, hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS,
+            WM_ALIGN_SETTINGS_ACTION_BUTTONS, PM_REMOVE)) {
+        DispatchMessageW(&message);
+    }
+    for (int index = 0; index < ARRAYSIZE(buttons); index++) {
+        WINDOWINFO information = { sizeof(information) };
+        GetWindowInfo(buttons[index], &information);
+        TEXTMETRICW metrics = {};
+        GetSettingsTextMetrics(buttons[index], &metrics);
+        LONG baseline = ControlTextBaseline(buttons[index]);
+        LONG referenceBaseline = ControlTextBaseline(labels[index]);
+        LONG textTop = GetSettingsButtonTextTop(buttons[index], information, metrics);
+        LONG actual = RenderedControlTextTop(buttons[index]);
+        LONG expected = RenderedControlTextTop(labels[index]);
+        if (actual != expected) {
+            std::cerr << "Application button " << GetDlgCtrlID(buttons[index])
+                << ": painted text top " << actual << ", label " << expected
+                << ", measured baseline " << baseline << "/" << referenceBaseline
+                << ", window top " << information.rcWindow.top
+                << ", height " << information.rcClient.bottom - information.rcClient.top
+                << ", font " << metrics.tmHeight << "/" << metrics.tmAscent
+                << ", calculated text top " << textTop << "\n";
+        }
+        Require(actual == expected, "all three Application buttons paint on the static label baseline");
+    }
+}
+
 /// Checks Application-page text baselines, icon controls, draft isolation and dependency gating.
 static void TestTrayIconDraft() {
     std::unique_ptr<Widget> widget = std::make_unique<Widget>();
@@ -432,13 +621,15 @@ static void TestTrayIconDraft() {
     hSettings = CreateSettingsDialog(IDD_SETTINGS, nullptr, SettingsDialogProc, 0);
     Require(hSettings != nullptr && CreateSettingsControls(5), "create actual Application settings page");
     LoadAlarm(AlarmConfiguration(1));
+    TestApplicationHeaderDraft();
     SendMessageW(hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS, 0, 0);
-    LONG soundBaseline = ControlTextBaseline(hTimeSignalSoundCombo);
-    Require(std::abs(ControlTextBaseline(hTimeSignalTestButton) - soundBaseline) <= 1,
-        "the sound Test button shares the actual inner combo text baseline");
+    TestApplicationButtonPainting();
     HWND soundLabel = GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL);
-    Require(std::abs(ControlTextBaseline(soundLabel) - soundBaseline) <= 1,
-        "the sound label shares the actual inner combo text baseline");
+    LONG soundBaseline = ControlTextBaseline(soundLabel);
+    Require(ControlTextBaseline(hTimeSignalTestButton) == soundBaseline,
+        "the sound Test button shares the static label baseline exactly");
+    Require(ControlTextBaseline(hTimeSignalSoundCombo) == soundBaseline,
+        "the sound combo shares the static label baseline exactly");
     widgets[0]->window = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_POPUP,
         0, 0, 1, 1, nullptr, nullptr, hInstance, nullptr);
     if (hAlternativeTrayIconCheck != nullptr && hClassicTrayIconCheck != nullptr) {
@@ -523,6 +714,7 @@ int wmain(int argc, wchar_t** argv) {
     appLanguage = LANG_EN_US;
     TestResourceLibrary(directory);
     TestPackedOptions();
+    TestAppearanceOptions();
     TestInformationForms();
     HWND owner = helpForm.GetWindow();
     Require(owner != nullptr, "create native information owner on the hidden desktop");

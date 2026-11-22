@@ -192,6 +192,12 @@ línte, cuardach siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is 
 Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín fógra i stíl retró. Ní athraíonn
 na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK.
 
+Cuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows Classic; Windows 2000. Oibríonn
+an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann réamhshocrú an chórais an rogha téamaí a
+dhíchumasú don fhuinneog iomlán. Ní athraíonn barraí teidil Windows Classic ach cló agus cúlra an teidil;
+coinníonn na cnaipí teidil agus an teorainn 3T dathanna an chórais. Teastaíonn téamaí díchumasaithe ó Windows
+2000.
+
 ## Ceadúnas
 
 Tá CalClock ar fáil faoin [gceadúnas MIT](../license.txt).

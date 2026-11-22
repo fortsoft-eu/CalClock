@@ -257,6 +257,11 @@ linha, pesquisar para trás e usar expressões regulares. O histórico guarda as
 No separador Aplicação, Ícone de notificação alternativo ativa Ícone de notificação retro. Ambas as opções
 alteram apenas o ícone de notificação após Aplicar ou OK.
 
+Aspeto das janelas: Sistema; Títulos Windows Basic; Títulos Windows Classic; Windows 2000. Ambos os modos de
+título funcionam com ou sem temas nos controlos. Sistema aplica Desativar temas a toda a janela. Os títulos
+Windows Classic alteram apenas o tipo de letra e o fundo do título; os botões e a moldura 3D mantêm as cores
+do sistema. Windows 2000 exige temas desativados.
+
 ## Licença
 
 O CalClock está disponível sob a [licença MIT](../license.txt).

@@ -253,6 +253,11 @@ udtryk. Historikken gemmer de sidste 30 søgninger i den aktuelle session.
 På fanen Program aktiverer Alternativt meddelelsesikon valget Retroikon i meddelelsesområdet. Begge
 indstillinger ændrer kun meddelelsesikonet efter Anvend eller OK.
 
+Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Classic-titellinjer; Windows 2000. Begge
+titellinjetilstande virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer
+for hele vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper og
+3D-kant bevarer systemfarverne. Windows 2000 kræver deaktiverede temaer.
+
 ## Licens
 
 CalClock er tilgængeligt under [MIT-licensen](../license.txt).

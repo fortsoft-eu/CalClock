@@ -33,6 +33,11 @@
 #define IDC_FIND_ENDS_WITH                      5206
 #define IDC_FIND_REGEX                          5207
 #define IDC_FIND_GRIP                           5208
+#define IDC_STYLE_GROUP                         5209
+#define ID_STYLE_SYSTEM                         5210
+#define ID_STYLE_BASIC_HEADER                   5211
+#define ID_STYLE_2000_HEADER                    5212
+#define ID_STYLE_2000_FORMS                     5213
 #define ID_CALC_HIGHLIGHT_BASE                  3450
 
 #define ID_CALC_TABS                            3300
@@ -271,7 +276,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE                120
 #define _APS_NEXT_COMMAND_VALUE                 40002
-#define _APS_NEXT_CONTROL_VALUE                 5209
+#define _APS_NEXT_CONTROL_VALUE                 5214
 #define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif

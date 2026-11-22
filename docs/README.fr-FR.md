@@ -261,6 +261,11 @@ session.
 Dans l’onglet Application, Autre icône de notification active Icône de notification rétro. Ces options
 modifient uniquement l’icône de notification après Appliquer ou OK.
 
+Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Classic; Windows 2000.
+Les deux modes de barre de titre fonctionnent avec ou sans thèmes dans la fenêtre. Système suit Désactiver les
+thèmes pour toute la fenêtre. Les barres de titre Windows Classic changent seulement la police et le fond du
+titre ; les boutons et la bordure 3D gardent leurs couleurs système. Windows 2000 exige des thèmes désactivés.
+
 ## Licence
 
 CalClock est disponible sous [licence MIT](../license.txt).

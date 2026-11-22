@@ -193,6 +193,11 @@ pretraživanje unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretra�
 Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Retro ikona u području obavijesti. Obje
 mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu.
 
+Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina
+naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli prozor. Naslovne
+trake Windows Classic mijenjaju samo font i pozadinu naslova; gumbi naslova i 3D okvir zadržavaju sistemske
+boje. Windows 2000 zahtijeva isključene teme.
+
 ## Licencija
 
 CalClock je dostupan pod [licencijom MIT](../license.txt).

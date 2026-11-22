@@ -182,6 +182,11 @@ ter regularni izrazi. Zgodovina ohrani zadnjih 30 iskanj trenutne seje.
 Na zavihku Program možnost Druga ikona za obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti
 spremenita samo ikono za obvestila po Uporabi ali V redu.
 
+Videz oken: Sistemski; Glave Windows Basic; Glave Windows Classic; Windows 2000. Oba načina naslovne vrstice
+delujeta s temami kontrolnikov ali brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice
+Windows Classic spremenijo le pisavo in ozadje naslova; naslovni gumbi in 3D okvir ohranijo sistemske barve.
+Windows 2000 zahteva izklopljene teme.
+
 ## Licenca
 
 CalClock je na voljo pod [licenco MIT](../license.txt).

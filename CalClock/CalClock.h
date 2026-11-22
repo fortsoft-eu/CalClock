@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #pragma once
@@ -257,6 +257,10 @@ enum TextId {
     TXT_LANGUAGE,
     TXT_VISUAL_STYLES,
     TXT_WINDOWS_2000_STYLE,
+    TXT_STYLE_GROUP,
+    TXT_STYLE_SYSTEM,
+    TXT_STYLE_BASIC_HEADER,
+    TXT_STYLE_2000_HEADER,
     TXT_SAVE,
     TXT_APPLY,
     TXT_CANCEL,
@@ -594,6 +598,8 @@ struct SettingsSnapshot {
     bool classicTrayIcon = false;
     bool themesDisabled = false;
     bool windows2000Style = false;
+    bool basicWindowHeaders = false;
+    bool windows2000Headers = false;
     bool snapWidgetsToWorkArea = true;
     bool warnOnUnsavedChanges = true;
     bool generatedTimeSignal = true;

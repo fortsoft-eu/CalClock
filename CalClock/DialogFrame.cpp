@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.3
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -173,10 +173,10 @@ DialogFrame* DialogFrame::Find(HWND control) {
     return nullptr;
 }
 
-/// Returns the dialog's Windows 2000 color, or the native system color outside that mode.
+/// Returns the dialog's Windows 2000 control color, or the native color outside complete-form mode.
 COLORREF DialogFrame::GetColor(HWND control, int colorIndex) {
     DialogFrame* frame = Find(control);
-    if (frame != nullptr && frame->windows2000Style) {
+    if (frame != nullptr && frame->windows2000Controls) {
         for (size_t index = 0; index < ARRAYSIZE(CONTROL_COLOR_INDICES); ++index) {
             if (CONTROL_COLOR_INDICES[index] == colorIndex) {
                 return CONTROL_COLORS[index];
@@ -186,10 +186,10 @@ COLORREF DialogFrame::GetColor(HWND control, int colorIndex) {
     return GetSysColor(colorIndex);
 }
 
-/// Returns a brush owned by the dialog, or the native system brush outside Windows 2000 mode.
+/// Returns a dialog-owned control brush, or the native system brush outside complete-form mode.
 HBRUSH DialogFrame::GetBrush(HWND control, int colorIndex) {
     DialogFrame* frame = Find(control);
-    if (frame == nullptr || !frame->windows2000Style || colorIndex < 0 || colorIndex > COLOR_MENUBAR) {
+    if (frame == nullptr || !frame->windows2000Controls || colorIndex < 0 || colorIndex > COLOR_MENUBAR) {
         return GetSysColorBrush(colorIndex);
     }
     HBRUSH& brush = frame->colorBrushes[colorIndex];
@@ -202,7 +202,7 @@ HBRUSH DialogFrame::GetBrush(HWND control, int colorIndex) {
 /// Maps completed native control drawing to dialog-local colors without changing its font or geometry.
 void DialogFrame::RecolorControl(HWND control, HDC context, const RECT& rectangle) {
     DialogFrame* frame = Find(control);
-    if (context != nullptr && frame != nullptr && frame->windows2000Style) {
+    if (context != nullptr && frame != nullptr && frame->windows2000Controls) {
         RecolorFrameRectangle(context, rectangle);
     }
 }
@@ -216,7 +216,7 @@ bool DialogFrame::ApplyControlColors(HWND control) const {
     wchar_t className[64]{};
     GetClassNameW(control, className, ARRAYSIZE(className));
     bool changed = false;
-    if (!ControlColors::Apply(control, window, windows2000Style, changed)) {
+    if (!ControlColors::Apply(control, window, windows2000Controls, changed)) {
         return false;
     }
     if (lstrcmpiW(className, TOOLTIPS_CLASSW) == 0) {
@@ -255,7 +255,7 @@ bool DialogFrame::ApplyControl(HWND control, HWND dialog) {
         const wchar_t* theme = frame->disableThemes ? L"" : nullptr;
         SetWindowTheme(control, theme, theme);
     }
-    if (popup && frame->windows2000Style) {
+    if (popup && frame->windows2000Controls) {
         if (!SetPropW(control, COLOR_OWNER_PROPERTY, frame->window)) {
             return false;
         }
@@ -266,7 +266,7 @@ bool DialogFrame::ApplyControl(HWND control, HWND dialog) {
     }
     ColorEnumeration enumeration{ frame, frame->ApplyControlColors(control) };
     EnumChildWindows(control, ApplyChildColors, reinterpret_cast<LPARAM>(&enumeration));
-    if (popup && !frame->windows2000Style) {
+    if (popup && !frame->windows2000Controls) {
         RemovePropW(control, COLOR_OWNER_PROPERTY);
     }
     return enumeration.success;
@@ -290,8 +290,9 @@ int DialogFrame::Metric(int index) const {
     return MulDiv(GetSystemMetrics(index), windowDpi, GetSystemDialogDpi(nullptr));
 }
 
-/// Applies the theme mode and optional Windows 2000 caption without changing system metrics or client size.
-bool DialogFrame::Apply(HWND window, bool disableThemes, bool windows2000Style) {
+/// Applies local header appearance and optional control colors without changing system metrics or client
+/// size.
+bool DialogFrame::Apply(HWND window, bool disableThemes, DialogFrameMode mode) {
     DWORD_PTR reference = 0;
     DialogFrame* frame = nullptr;
     if (GetWindowSubclass(window, SubclassProc, DIALOG_FRAME_SUBCLASS_ID, &reference)) {
@@ -307,19 +308,32 @@ bool DialogFrame::Apply(HWND window, bool disableThemes, bool windows2000Style) 
             return false;
         }
     }
-    bool nextStyle = disableThemes && windows2000Style;
-    bool styleChanged = frame->windows2000Style != nextStyle;
+    bool nextControls = disableThemes && mode == DialogFrameMode::Windows2000Forms;
+    bool nextStyle = nextControls || mode == DialogFrameMode::Windows2000Header;
+    bool nextBasic = mode == DialogFrameMode::WindowsBasic;
+    bool styleChanged = frame->windows2000Style != nextStyle
+        || frame->windows2000Controls != nextControls
+        || frame->basicHeaders != nextBasic;
     frame->windows2000Style = nextStyle;
+    frame->windows2000Controls = nextControls;
+    frame->basicHeaders = nextBasic;
     frame->disableThemes = disableThemes;
     if (nextStyle) {
-        if (!SetPropW(window, CLASSIC_STYLE_ENABLED_PROPERTY, reinterpret_cast<HANDLE>(1))
-                || !SetPropW(window, CLASSIC_CONTROL_COLORS_PROPERTY, reinterpret_cast<HANDLE>(1))) {
+        if (!SetPropW(window, CLASSIC_STYLE_ENABLED_PROPERTY, reinterpret_cast<HANDLE>(1))) {
             RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
             RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
             return false;
         }
     } else {
         RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
+    }
+    if (nextControls) {
+        if (!SetPropW(window, CLASSIC_CONTROL_COLORS_PROPERTY, reinterpret_cast<HANDLE>(1))) {
+            RemovePropW(window, CLASSIC_STYLE_ENABLED_PROPERTY);
+            RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
+            return false;
+        }
+    } else {
         RemovePropW(window, CLASSIC_CONTROL_COLORS_PROPERTY);
         for (HWND control : frame->popupControls) {
             if (GetPropW(control, COLOR_OWNER_PROPERTY) == window) {
@@ -328,6 +342,12 @@ bool DialogFrame::Apply(HWND window, bool disableThemes, bool windows2000Style) 
         }
         frame->popupControls.clear();
     }
+    const wchar_t* themeName = nextStyle || disableThemes && !nextBasic ? L"" : nullptr;
+    SetWindowTheme(window, themeName, themeName);
+    DWMNCRENDERINGPOLICY policy = disableThemes || nextStyle || nextBasic
+        ? DWMNCRP_DISABLED
+        : DWMNCRP_USEWINDOWSTYLE;
+    DwmSetWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
     bool colorsApplied = ApplyControl(window, window);
     bool refreshed = frame->Refresh();
     if (refreshed && styleChanged) {
@@ -381,7 +401,10 @@ bool DialogFrame::Refresh(bool preserveClient) {
     if (updating) {
         return true;
     }
-    bool next = disableThemes && IsThemeActive() && IsAppThemed();
+    bool next = (disableThemes || windows2000Style)
+        && !basicHeaders
+        && IsThemeActive()
+        && IsAppThemed();
     if (!enabled && !next) {
         return true;
     }
@@ -412,7 +435,9 @@ bool DialogFrame::Refresh(bool preserveClient) {
     frameSize = nextSize;
     dpi = nextDpi;
     active = GetActiveWindow() == window;
-    DWMNCRENDERINGPOLICY policy = enabled ? DWMNCRP_DISABLED : DWMNCRP_USEWINDOWSTYLE;
+    DWMNCRENDERINGPOLICY policy = disableThemes || windows2000Style || basicHeaders
+        ? DWMNCRP_DISABLED
+        : DWMNCRP_USEWINDOWSTYLE;
     DwmSetWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
     DWORD style = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_STYLE));
     DWORD extendedStyle = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_EXSTYLE));
@@ -555,9 +580,9 @@ void DialogFrame::RecolorFrameRectangle(HDC context, const RECT& rectangle) {
     }
 }
 
-/// Recolors only the native frame edges and caption buttons, preserving the caption gradient and icon.
+/// Recolors frame edges and caption buttons only for complete Windows 2000 forms, preserving the caption.
 void DialogFrame::RecolorFrame(HDC context, const Layout& layout) const {
-    if (!windows2000Style) {
+    if (!windows2000Controls) {
         return;
     }
     RecolorFrameRectangle(context, RECT{ 0, 0, layout.bounds.right, layout.borderY });
@@ -628,7 +653,7 @@ void DialogFrame::Paint(HDC target) const {
         } else {
             DefWindowProcW(window, WM_PRINT, reinterpret_cast<WPARAM>(dc), PRF_NONCLIENT);
         }
-        if (windows2000Style) {
+        if (windows2000Controls) {
             RecolorFrameRectangle(dc, content);
         }
         RestoreDC(dc, scrollClip);
@@ -829,7 +854,8 @@ LRESULT DialogFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
     if (message == WM_NCACTIVATE) {
         active = wParam != FALSE;
     }
-    if (message == WM_DWMCOMPOSITIONCHANGED && enabled) {
+    if (message == WM_DWMCOMPOSITIONCHANGED
+            && (disableThemes || windows2000Style || basicHeaders)) {
         DWMNCRENDERINGPOLICY policy = DWMNCRP_DISABLED;
         DwmSetWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
     }

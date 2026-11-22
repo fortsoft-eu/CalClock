@@ -206,6 +206,12 @@ zoeken en reguliere expressies. De geschiedenis bewaart de laatste 30 zoekopdrac
 Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Retro-pictogram in het systeemvak
 in. Beide wijzigen alleen het meldingspictogram na Toepassen of OK.
 
+Vensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows Classic-titelbalken; Windows 2000. Beide
+titelbalkmodi werken met of zonder thema's voor besturingselementen. Systeemstandaard volgt Thema's
+uitschakelen voor het hele venster. Windows Classic-titelbalken wijzigen alleen het lettertype en de
+achtergrond van de titel; titelknoppen en 3D-rand behouden de systeemkleuren. Windows 2000 vereist
+uitgeschakelde thema's.
+
 ## Licentie
 
 CalClock is beschikbaar onder de [MIT-licentie](../license.txt).

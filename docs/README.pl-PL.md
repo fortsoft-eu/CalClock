@@ -239,6 +239,11 @@ wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich w
 Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona powiadomień w stylu retro.
 Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK.
 
+Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; Windows 2000. Oba tryby
+nagłówka działają z motywami elementów sterujących lub bez nich. Systemowy stosuje Wyłącz motywy do całego
+okna. Nagłówki Windows Classic zmieniają tylko czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory
+systemowe. Windows 2000 wymaga wyłączonych motywów.
+
 ## Licencja
 
 CalClock jest dostępny na [licencji MIT](../license.txt).

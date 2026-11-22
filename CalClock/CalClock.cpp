@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.7
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -298,6 +298,19 @@ const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
 const int MAX_DIALOG_BUTTON_HEIGHT = 28;
 const int MAX_SETTINGS_FIELD_HEIGHT = MulDiv(11, MAX_DIALOG_BUTTON_HEIGHT, DIALOG_BUTTON_HEIGHT_DLU);
 const int ALARM_DAY_COUNT = 7;
+const int APPLICATION_STYLE_COUNT = 4;
+const int APPLICATION_STYLE_IDS[] = {
+    ID_STYLE_SYSTEM,
+    ID_STYLE_BASIC_HEADER,
+    ID_STYLE_2000_HEADER,
+    ID_STYLE_2000_FORMS
+};
+const TextId APPLICATION_STYLE_TEXTS[] = {
+    TXT_STYLE_SYSTEM,
+    TXT_STYLE_BASIC_HEADER,
+    TXT_STYLE_2000_HEADER,
+    TXT_WINDOWS_2000_STYLE
+};
 const int SETTINGS_COMBO_VISIBLE_ITEMS = 13;
 const int TIME_SIGNAL_VOLUME_SLIDER_MIN = 0;
 const double TIME_SIGNAL_VOLUME_SLIDER_MIN_DB = -60.0;
@@ -485,7 +498,8 @@ HWND hAppFontButton = nullptr;
 HWND hAppFontDefaultButton = nullptr;
 HWND hAppFontLabel = nullptr;
 HWND hDisableThemesCheck = nullptr;
-HWND hWindows2000StyleCheck = nullptr;
+HWND hApplicationStyleGroup = nullptr;
+HWND hApplicationStyleRadios[APPLICATION_STYLE_COUNT] = {};
 HWND hAlternativeTrayIconCheck = nullptr;
 HWND hClassicTrayIconCheck = nullptr;
 HWND hLanguageCombo = nullptr;
@@ -555,8 +569,12 @@ static bool ntpLogSortAscending = true;
 static bool settingsGeneralCheckboxReferenceValid = false;
 static bool settingsLayoutSuspended = false;
 static bool windows2000Style = false;
+static bool basicWindowHeaders = false;
+static bool windows2000Headers = false;
 static bool settingsThemesDisabled = false;
 static bool settingsWindows2000Style = false;
+static bool settingsBasicWindowHeaders = false;
+static bool settingsWindows2000Headers = false;
 static bool settingsAlternativeTrayIcon = false;
 static bool settingsClassicTrayIcon = false;
 bool alternativeTrayIcon = false;
@@ -1099,14 +1117,31 @@ static void PopulateFontAntialiasingCombo(HWND combo, bool clearTypeAvailable = 
     }
 }
 
+/// Restores independent header choices and enables complete Windows 2000 forms only without themes.
+static void UpdateApplicationStyleControls() {
+    bool visualStylesActive = AreVisualStylesActive();
+    bool systemStyle = !settingsWindows2000Style
+        && !settingsBasicWindowHeaders
+        && !settingsWindows2000Headers;
+    SetCheck(hApplicationStyleRadios[0], visualStylesActive && systemStyle);
+    SetCheck(hApplicationStyleRadios[1], visualStylesActive && settingsBasicWindowHeaders);
+    SetCheck(hApplicationStyleRadios[2], visualStylesActive && settingsWindows2000Headers);
+    SetCheck(hApplicationStyleRadios[3], visualStylesActive && settingsWindows2000Style);
+    EnableWindow(hApplicationStyleGroup, visualStylesActive);
+    for (HWND radio : hApplicationStyleRadios) {
+        EnableWindow(radio, visualStylesActive);
+    }
+    EnableWindow(hApplicationStyleRadios[3], visualStylesActive && settingsThemesDisabled);
+}
+
 /// Filters the application selector for the draft style while retaining the user's requested mode.
 static void UpdateApplicationFontAntialiasingCombo() {
     if (hAppAntialiasCombo == nullptr) {
         return;
     }
     bool classic = windows2000Style && AreVisualStylesActive();
-    if (hDisableThemesCheck != nullptr && hWindows2000StyleCheck != nullptr) {
-        classic = GetCheck(hDisableThemesCheck) && GetCheck(hWindows2000StyleCheck);
+    if (hDisableThemesCheck != nullptr && hApplicationStyleRadios[3] != nullptr) {
+        classic = GetCheck(hDisableThemesCheck) && GetCheck(hApplicationStyleRadios[3]);
     }
     bool clearTypeAvailable = !classic && IsClearTypeAvailable();
     int count = clearTypeAvailable ? FONT_ANTIALIAS_COUNT : FONT_ANTIALIAS_COUNT - 1;
@@ -1760,6 +1795,8 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.classicTrayIcon = classicTrayIcon;
     snapshot.themesDisabled = themesDisabled;
     snapshot.windows2000Style = windows2000Style;
+    snapshot.basicWindowHeaders = basicWindowHeaders;
+    snapshot.windows2000Headers = windows2000Headers;
     snapshot.snapWidgetsToWorkArea = snapWidgetsToWorkArea;
     snapshot.warnOnUnsavedChanges = warnOnUnsavedChanges;
     snapshot.generatedTimeSignal = generatedTimeSignal;
@@ -1799,6 +1836,10 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     classicTrayIcon = alternativeTrayIcon && snapshot.classicTrayIcon;
     themesDisabled = snapshot.themesDisabled;
     windows2000Style = themesDisabled && snapshot.windows2000Style;
+    windows2000Headers = snapshot.windows2000Headers && !windows2000Style;
+    basicWindowHeaders = snapshot.basicWindowHeaders
+        && !windows2000Style
+        && !windows2000Headers;
     snapWidgetsToWorkArea = snapshot.snapWidgetsToWorkArea;
     warnOnUnsavedChanges = snapshot.warnOnUnsavedChanges;
     generatedTimeSignal = snapshot.generatedTimeSignal;
@@ -4039,6 +4080,20 @@ void UpdateDialogTabMetrics(HWND tabs) {
     }
 }
 
+/// Keeps the Application appearance group's bottom two dialog units above the tab page's lower edge.
+static void UpdateApplicationStyleGroupBounds() {
+    RECT page = {};
+    RECT bounds = {};
+    if (hApplicationStyleGroup == nullptr
+            || !GetClientRect(hApplicationPage, &page)
+            || !GetWindowRect(hApplicationStyleGroup, &bounds)) {
+        return;
+    }
+    MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&bounds), 2);
+    LONG height = std::max(0L, page.bottom - SettingsDialogHeight(2) - bounds.top);
+    SetControlPosition(hApplicationStyleGroup, bounds.left, bounds.top, bounds.right - bounds.left, height);
+}
+
 /// Restores native tab sizing for the selected font, limits excessive header height, and fits each page to
 /// its display area.
 static void UpdateSettingsTabLayout() {
@@ -4061,6 +4116,7 @@ static void UpdateSettingsTabLayout() {
             }
         }
     }
+    UpdateApplicationStyleGroupBounds();
 }
 
 /// Reports whether visual styles are active for Windows and the current application.
@@ -4232,8 +4288,7 @@ static BOOL CALLBACK UpdateSettingsFieldMetrics(HWND control, LPARAM parameter) 
     return TRUE;
 }
 
-/// Locates native button text using the themed content rectangle or checkbox glyph size and classic border
-/// metrics.
+/// Measures native button text placement from freshly opened theme data, glyph size, or classic borders.
 static LONG GetSettingsButtonTextTop(HWND button, const WINDOWINFO& information,
         const TEXTMETRICW& metrics) {
     RECT content = {
@@ -4243,11 +4298,14 @@ static LONG GetSettingsButtonTextTop(HWND button, const WINDOWINFO& information,
         information.rcClient.bottom - information.rcClient.top
     };
     LONG textHeight = metrics.tmHeight;
-    HTHEME theme = GetWindowTheme(button);
+    LONG_PTR type = GetWindowLongPtrW(button, GWL_STYLE) & BS_TYPEMASK;
+    if (type == BS_GROUPBOX) {
+        return 0;
+    }
+    HTHEME theme = OpenThemeData(button, L"Button");
     if (theme == nullptr) {
         content.bottom -= GetSystemMetrics(SM_CYBORDER);
     } else {
-        LONG_PTR type = GetWindowLongPtrW(button, GWL_STYLE) & BS_TYPEMASK;
         if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
             RECT themedContent = {};
             if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, BP_PUSHBUTTON,
@@ -4257,13 +4315,20 @@ static LONG GetSettingsButtonTextTop(HWND button, const WINDOWINFO& information,
         } else if (type == BS_CHECKBOX
                 || type == BS_AUTOCHECKBOX
                 || type == BS_3STATE
-                || type == BS_AUTO3STATE) {
+                || type == BS_AUTO3STATE
+                || type == BS_RADIOBUTTON
+                || type == BS_AUTORADIOBUTTON) {
+            bool radio = type == BS_RADIOBUTTON || type == BS_AUTORADIOBUTTON;
+            int part = radio ? BP_RADIOBUTTON : BP_CHECKBOX;
             SIZE glyph = {};
-            if (SUCCEEDED(GetThemePartSize(theme, nullptr, BP_CHECKBOX, CBS_UNCHECKEDNORMAL,
+            if (SUCCEEDED(GetThemePartSize(theme, nullptr, part, CBS_UNCHECKEDNORMAL,
                     nullptr, TS_TRUE, &glyph))) {
                 textHeight = std::max(textHeight, glyph.cy);
             }
         }
+    }
+    if (theme != nullptr) {
+        CloseThemeData(theme);
     }
     return content.top + (content.bottom - content.top - textHeight) / 2;
 }
@@ -4789,7 +4854,8 @@ static void SpaceSettingsControls(HWND parent, int stepId, int divisor, bool hor
     }
 }
 
-/// Preserves shared row and column strides before native font-baseline alignment across every settings page.
+/// Preserves authored row and column strides and the Application checkbox offset before native font-baseline
+/// alignment across settings pages.
 static void LayoutSettingsControlGrids() {
     const HWND textRows[] = { hOpacityLabel, hFontSizeLabel, hFontLabel };
     const HWND sizeColumns[] = { hSizeCombo, hAdditionalSizeCombos[0], hAdditionalSizeCombos[1] };
@@ -4870,12 +4936,16 @@ static void LayoutSettingsControlGrids() {
         AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
     }
     for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
-        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 1) * applicationStep);
+        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel,
+            applicationSpacing.top + (index + 1) * applicationStep);
     }
     AlignSettingsControl(hDisableThemesCheck, hAlternativeTrayIconCheck);
-    AlignSettingsControl(hWindows2000StyleCheck, hClassicTrayIconCheck);
+    AlignSettingsControl(hApplicationStyleGroup, hClassicTrayIconCheck);
     SetWindowPos(hDisableThemesCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    SetWindowPos(hWindows2000StyleCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    for (int index = 0; index < APPLICATION_STYLE_COUNT; index++) {
+        AlignSettingsControl(hApplicationStyleRadios[index], applicationChecks[index + 2]);
+    }
+    UpdateApplicationStyleGroupBounds();
     for (int index = 1; index < ARRAYSIZE(timeFields); index++) {
         AlignSettingsControl(timeFields[index], timeFields[0], index * timeStep);
     }
@@ -4890,6 +4960,19 @@ static void LayoutSettingsControlGrids() {
                 ARRAYSIZE(textRows));
         }
     }
+}
+
+/// Aligns both application-font buttons directly to the font caption after their metrics are final.
+static void AlignApplicationFontControls() {
+    AlignSettingsControl(hAppFontDefaultButton, hAppFontLabel);
+    AlignSettingsControl(hAppFontButton, hAppFontLabel);
+}
+
+/// Aligns the sound combo and Test button directly to the same static caption.
+static void AlignApplicationSoundControls() {
+    HWND label = GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL);
+    AlignSettingsControl(hTimeSignalSoundCombo, label);
+    AlignSettingsControl(hTimeSignalTestButton, label);
 }
 
 /// Aligns mixed settings rows after the shared font, theme, or page layout changes.
@@ -4955,9 +5038,8 @@ static void AlignSettingsControls() {
     AlignSettingsControl(hLoopAudioCheck, hTestCommandButton);
     AlignSettingsControl(hFontButton, hFontLabel);
     UpdateApplicationControlOrder();
-    AlignSettingsControl(hAppFontDefaultButton, hAppFontLabel);
-    AlignSettingsControl(hAppFontButton, hAppFontLabel);
-    AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
+    AlignApplicationFontControls();
+    AlignApplicationSoundControls();
     AlignSettingsControl(hOpacityValue, hOpacityLabel);
     AlignSettingsControl(hFontSizeValue, hFontSizeLabel);
     AlignSettingsVolumeControls(hAlarmVolumeLabel, hAlarmVolumeValue, hAlarmVolumeTrackBar);
@@ -4986,9 +5068,33 @@ static void UpdateSettingsControlMetrics() {
     UpdateSettingsWindowLayout();
 }
 
+/// Selects the committed application header mode while preserving the existing complete-form option.
+static DialogFrameMode GetApplicationDialogFrameMode() {
+    if (windows2000Style) {
+        return DialogFrameMode::Windows2000Forms;
+    }
+    if (windows2000Headers) {
+        return DialogFrameMode::Windows2000Header;
+    }
+    if (basicWindowHeaders) {
+        return DialogFrameMode::WindowsBasic;
+    }
+    return DialogFrameMode::System;
+}
+
+/// Recreates styled dialogs when either Windows 2000 mode changes to Windows Basic or the system frame.
+static bool ShouldRecreateStyledDialogs(DialogFrameMode previousMode) {
+    if (previousMode != DialogFrameMode::Windows2000Header
+            && previousMode != DialogFrameMode::Windows2000Forms) {
+        return false;
+    }
+    DialogFrameMode mode = GetApplicationDialogFrameMode();
+    return mode == DialogFrameMode::WindowsBasic || mode == DialogFrameMode::System;
+}
+
 /// Completes the Settings frame and geometry after child fonts and themes have been applied.
 static void FinishSettingsUiStyle() {
-    DialogFrame::Apply(hSettings, themesDisabled && AreVisualStylesActive(), windows2000Style);
+    DialogFrame::Apply(hSettings, themesDisabled && AreVisualStylesActive(), GetApplicationDialogFrameMode());
     SendMessageW(hSettings, WM_SETFONT, reinterpret_cast<WPARAM>(hUiFont), FALSE);
     UpdateSettingsControlMetrics();
 }
@@ -5003,7 +5109,7 @@ void ApplyUiStyle(HWND window) {
             || window == find.GetWindow()) {
         const wchar_t* theme = disableThemes ? L"" : nullptr;
         SetWindowTheme(window, theme, theme);
-        DialogFrame::Apply(window, disableThemes, windows2000Style);
+        DialogFrame::Apply(window, disableThemes, GetApplicationDialogFrameMode());
         return;
     }
     if (hUiFont == nullptr) {
@@ -8726,7 +8832,8 @@ static SettingsControlLayer GetSettingsControlLayer(HWND control) {
                 || type == BS_3STATE
                 || type == BS_AUTO3STATE
                 || type == BS_RADIOBUTTON
-                || type == BS_AUTORADIOBUTTON) {
+                || type == BS_AUTORADIOBUTTON
+                || type == BS_GROUPBOX) {
             return SETTINGS_CONTROL_CHECKBOX;
         }
     }
@@ -8985,19 +9092,6 @@ static void InitializeSettingsScrollBars() {
         vertical.nPos = 0;
         SetScrollInfo(hSettings, SB_VERT, &vertical, TRUE);
     }
-}
-
-/// Matches the font chooser's vertical bounds to the aligned Default button without changing its width.
-static void AlignApplicationFontButton() {
-    RECT bounds = {};
-    RECT reference = {};
-    if (!GetWindowRect(hAppFontButton, &bounds) || !GetWindowRect(hAppFontDefaultButton, &reference)) {
-        return;
-    }
-    MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&bounds), 2);
-    MapWindowPoints(HWND_DESKTOP, hApplicationPage, reinterpret_cast<POINT*>(&reference), 2);
-    SetControlPosition(hAppFontButton, bounds.left, reference.top, bounds.right - bounds.left,
-        reference.bottom - reference.top);
 }
 
 /// Fits Settings to its content and available work area, retaining the authored gap below the bottom action
@@ -9669,6 +9763,11 @@ static LRESULT HandleSettingsControlMetricsChange(HWND window, UINT msg, WPARAM 
         UpdateSettingsComboMetrics(window);
     } else {
         UpdateSettingsFieldMetrics(window, 0);
+    }
+    if (window == hAppFontButton
+            || window == hAppFontDefaultButton
+            || window == hTimeSignalTestButton) {
+        PostMessageW(hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS, 0, 0);
     }
     return result;
 }
@@ -12508,8 +12607,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     bool visualStylesActive = AreVisualStylesActive();
     SetCheck(hDisableThemesCheck, visualStylesActive && settingsThemesDisabled);
     EnableWindow(hDisableThemesCheck, visualStylesActive);
-    SetCheck(hWindows2000StyleCheck, visualStylesActive && settingsWindows2000Style);
-    EnableWindow(hWindows2000StyleCheck, visualStylesActive && settingsThemesDisabled);
+    UpdateApplicationStyleControls();
     UpdateApplicationFontAntialiasingCombo();
     if (selectedDraftIndex < 0 || selectedDraftIndex >= static_cast<int>(settingsDraft.size())) {
         return;
@@ -13476,6 +13574,8 @@ static bool HasPendingSettingsChanges() {
     if (LanguageFromCombo(hLanguageCombo) != appLanguage
             || settingsThemesDisabled != themesDisabled
             || settingsWindows2000Style != windows2000Style
+            || settingsBasicWindowHeaders != basicWindowHeaders
+            || settingsWindows2000Headers != windows2000Headers
             || settingsAlternativeTrayIcon != alternativeTrayIcon
             || settingsClassicTrayIcon != classicTrayIcon
             || GetCheck(hStartWithWindowsCheck) != startWithWindows
@@ -14202,10 +14302,17 @@ static bool ApplySettingsDraft() {
     if (previousLanguage != appLanguage) {
         RefreshInformationWindows();
     }
+    DialogFrameMode previousFrameMode = GetApplicationDialogFrameMode();
     bool previousThemesDisabled = themesDisabled;
     themesDisabled = settingsThemesDisabled;
     bool previousWindows2000Style = windows2000Style;
+    bool previousBasicWindowHeaders = basicWindowHeaders;
+    bool previousWindows2000Headers = windows2000Headers;
     windows2000Style = themesDisabled && settingsWindows2000Style;
+    windows2000Headers = settingsWindows2000Headers && !windows2000Style;
+    basicWindowHeaders = settingsBasicWindowHeaders
+        && !windows2000Style
+        && !windows2000Headers;
     alternativeTrayIcon = settingsAlternativeTrayIcon;
     classicTrayIcon = alternativeTrayIcon && settingsClassicTrayIcon;
     int previousAppFontAntialiasing = appFontAntialiasing;
@@ -14271,8 +14378,10 @@ static bool ApplySettingsDraft() {
     bool windows2000StyleChanged = previousWindows2000Style != windows2000Style;
     bool uiStyleChanged = previousThemesDisabled != themesDisabled
         || previousAppFontAntialiasing != appFontAntialiasing
-        || windows2000StyleChanged;
-    bool recreateDialogs = previousThemesDisabled && !themesDisabled;
+        || windows2000StyleChanged
+        || previousBasicWindowHeaders != basicWindowHeaders
+        || previousWindows2000Headers != windows2000Headers;
+    bool recreateDialogs = ShouldRecreateStyledDialogs(previousFrameMode);
     if (uiStyleChanged && !recreateDialogs) {
         RefreshApplicationFonts(windows2000StyleChanged);
     }
@@ -15298,10 +15407,13 @@ static bool CreateSettingsApplicationControls() {
     hDisableThemesCheck = BindSettingsControl(hApplicationPage, ID_VISUAL_STYLES,
         Mnemonic(TXT_VISUAL_STYLES).c_str(), &applicationControls);
     SetCheck(hDisableThemesCheck, AreVisualStylesActive() && settingsThemesDisabled);
-    hWindows2000StyleCheck = BindSettingsControl(hApplicationPage, ID_WINDOWS_2000_STYLE,
-        T(TXT_WINDOWS_2000_STYLE), &applicationControls);
-    SetCheck(hWindows2000StyleCheck, AreVisualStylesActive() && settingsWindows2000Style);
-    EnableWindow(hWindows2000StyleCheck, AreVisualStylesActive() && settingsThemesDisabled);
+    hApplicationStyleGroup = BindSettingsControl(hApplicationPage, IDC_STYLE_GROUP, T(TXT_STYLE_GROUP),
+        &applicationControls);
+    for (int index = 0; index < APPLICATION_STYLE_COUNT; index++) {
+        hApplicationStyleRadios[index] = BindSettingsControl(hApplicationPage, APPLICATION_STYLE_IDS[index],
+            T(APPLICATION_STYLE_TEXTS[index]), &applicationControls);
+    }
+    UpdateApplicationStyleControls();
     return true;
 }
 
@@ -15513,7 +15625,10 @@ static void DestroySettingsChildControls() {
     hAppAntialiasCombo = nullptr;
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
-    hWindows2000StyleCheck = nullptr;
+    hApplicationStyleGroup = nullptr;
+    for (HWND& radio : hApplicationStyleRadios) {
+        radio = nullptr;
+    }
     hAlternativeTrayIconCheck = nullptr;
     hClassicTrayIconCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
@@ -15698,7 +15813,10 @@ static void CloseSettingsWindow() {
     hAppAntialiasCombo = nullptr;
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
-    hWindows2000StyleCheck = nullptr;
+    hApplicationStyleGroup = nullptr;
+    for (HWND& radio : hApplicationStyleRadios) {
+        radio = nullptr;
+    }
     hAlternativeTrayIconCheck = nullptr;
     hClassicTrayIconCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
@@ -15816,7 +15934,8 @@ static void ExportSettings() {
 }
 
 /// Validates a chosen XML snapshot, replaces application and widget settings, rebuilds affected windows,
-/// and saves using the selected backend. Exported user dates are merged into times.xml before applying settings.
+/// and saves using the selected backend. Exported user dates are merged into times.xml before applying
+/// settings.
 static void ImportSettings() {
     std::wstring path;
     if (!ChooseApplicationXmlFile(hSettings, false, L"CalClock-settings", &path)) {
@@ -15835,7 +15954,7 @@ static void ImportSettings() {
     }
     snapshot.fileDialogDirectory = fileDialogDirectory;
     bool useXmlStorage = GetCheck(hUseXmlSettingsCheck);
-    bool previousThemesDisabled = themesDisabled;
+    DialogFrameMode previousFrameMode = GetApplicationDialogFrameMode();
     CloseSettingsWindow();
     DestroyWidgetWindows();
     ApplySettingsSnapshot(snapshot);
@@ -15845,7 +15964,7 @@ static void ImportSettings() {
         CreateWidgetWindow(widgets[index].get());
     }
     RefreshFullscreenPresentation();
-    if (previousThemesDisabled && !themesDisabled) {
+    if (ShouldRecreateStyledDialogs(previousFrameMode)) {
         RecreateStyledDialogs(false);
     } else {
         RefreshInformationWindows();
@@ -15871,6 +15990,8 @@ static void ImportSettings() {
 static void CreateSettingsWindow(int widgetId) {
     settingsThemesDisabled = themesDisabled;
     settingsWindows2000Style = windows2000Style;
+    settingsBasicWindowHeaders = basicWindowHeaders;
+    settingsWindows2000Headers = windows2000Headers;
     settingsAlternativeTrayIcon = alternativeTrayIcon;
     settingsClassicTrayIcon = classicTrayIcon;
     settingsDraft.clear();
@@ -16600,10 +16721,13 @@ static void HandleSettingsCommand(int id, int notification) {
         settingsClassicTrayIcon = settingsAlternativeTrayIcon && GetCheck(hClassicTrayIconCheck);
         SetCheck(hClassicTrayIconCheck, settingsClassicTrayIcon);
         EnableWindow(hClassicTrayIconCheck, settingsAlternativeTrayIcon);
-    } else if ((id == ID_VISUAL_STYLES || id == ID_WINDOWS_2000_STYLE) && notification == BN_CLICKED) {
+    } else if ((id == ID_VISUAL_STYLES || id >= ID_STYLE_SYSTEM && id <= ID_STYLE_2000_FORMS)
+            && notification == BN_CLICKED) {
         if (AreVisualStylesActive()) {
             settingsThemesDisabled = GetCheck(hDisableThemesCheck);
-            settingsWindows2000Style = settingsThemesDisabled && GetCheck(hWindows2000StyleCheck);
+            settingsBasicWindowHeaders = GetCheck(hApplicationStyleRadios[1]);
+            settingsWindows2000Headers = GetCheck(hApplicationStyleRadios[2]);
+            settingsWindows2000Style = settingsThemesDisabled && GetCheck(hApplicationStyleRadios[3]);
         }
         UpdateSettingControlAvailability();
     } else if (id == ID_DEFAULT_APPEARANCE) {
@@ -17509,10 +17633,8 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             break;
         case WM_ALIGN_SETTINGS_ACTION_BUTTONS:
             if (window == hSettings && !settingsLayoutSuspended) {
-                AlignApplicationFontButton();
-                AlignSettingsControl(hTimeSignalSoundCombo,
-                    GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL));
-                AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
+                AlignApplicationFontControls();
+                AlignApplicationSoundControls();
                 return 0;
             }
             break;
@@ -18268,24 +18390,9 @@ LONG ControlTextBaseline(HWND control) {
             textTop = rectangle.top + (rectangle.bottom - rectangle.top - metrics.tmHeight) / 2;
         }
     } else if (CompareStringOrdinal(name, -1, L"BUTTON", -1, TRUE) == CSTR_EQUAL) {
-        HTHEME theme = GetWindowTheme(control);
-        LONG textHeight = metrics.tmHeight;
-        LONG type = GetWindowLongW(control, GWL_STYLE) & BS_TYPEMASK;
-        if (!theme) {
-            rectangle.bottom -= GetSystemMetrics(SM_CYBORDER);
-        } else if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
-            RECT content = RECT{};
-            if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, 1, 1, &rectangle, &content))) {
-                rectangle = content;
-            }
-        } else if (type == BS_CHECKBOX || type == BS_AUTOCHECKBOX) {
-            SIZE glyph = SIZE{};
-            if (SUCCEEDED(GetThemePartSize(theme, nullptr, 3, 1, nullptr, TS_TRUE, &glyph))
-                    && glyph.cy > textHeight) {
-                textHeight = glyph.cy;
-            }
-        }
-        textTop = rectangle.top + (rectangle.bottom - rectangle.top - textHeight) / 2;
+        WINDOWINFO information = { sizeof(information) };
+        GetWindowInfo(control, &information);
+        textTop = GetSettingsButtonTextTop(control, information, metrics);
     } else if (CompareStringOrdinal(name, -1, L"STATIC", -1, TRUE) == CSTR_EQUAL
             && GetWindowLongW(control, GWL_STYLE) & SS_CENTERIMAGE) {
         textTop = (rectangle.bottom - rectangle.top - metrics.tmHeight) / 2;

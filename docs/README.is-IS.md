@@ -243,6 +243,11 @@ síðustu 30 leitir í núverandi keyrslu.
 Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á tilkynningasvæði. Báðir valkostir
 breyta aðeins tilkynningatákninu eftir Nota eða Í lagi.
 
+Útlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic titilstikur; Windows 2000. Báðir
+titilstikuhamir virka með eða án þema á stýringum. Kerfissjálfgefið fylgir Slökkva á þemum fyrir allan
+gluggann. Windows Classic-titilstikur breyta aðeins letri og bakgrunni titilsins; titilhnappar og þrívíður
+rammi halda kerfislitum. Windows 2000 krefst þess að slökkt sé á þemum.
+
 ## Leyfi
 
 CalClock er í boði samkvæmt [MIT-leyfinu](../license.txt).

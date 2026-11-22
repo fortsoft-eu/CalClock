@@ -242,6 +242,11 @@ beholder de siste 30 søkene i gjeldende økt.
 På fanen Program aktiverer Alternativt varslingsikon valget Retroikon i systemstatusfeltet. Begge valgene
 endrer bare varslingsikonet etter Bruk eller OK.
 
+Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; Windows 2000. Begge
+tittellinjemodusene virker med eller uten temaer på kontrollene. Systemstandard følger Deaktiver temaer for
+hele vinduet. Windows Classic-tittellinjer endrer bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme
+beholder systemfargene. Windows 2000 krever deaktiverte temaer.
+
 ## Lisens
 
 CalClock er tilgjengelig under [MIT-lisensen](../license.txt).

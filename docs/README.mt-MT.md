@@ -190,6 +190,11 @@ espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.
 Fit-tab Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ għażliet
 jibdlu biss l-ikona tan-notifika wara Applika jew OK.
 
+Dehra tat-twieqi: Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows 2000. Iż-żewġ modi
+tal-barra tat-titlu jaħdmu bit-temi tal-kontrolli mixgħula jew mitfija. L-għażla tas-sistema ssegwi Itfi
+t-temi għat-tieqa kollha. Il-vireg tat-titlu Windows Classic ibiddlu biss it-tipa u l-isfond tat-titlu;
+il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows 2000 jeħtieġ temi mitfija.
+
 ## Liċenzja
 
 CalClock huwa disponibbli taħt il-[liċenzja MIT](../license.txt).

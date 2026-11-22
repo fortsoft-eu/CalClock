@@ -253,6 +253,11 @@ expressions. The history retains the last 30 searches for the current applicatio
 On the Application tab, Alternative notification icon enables Old school icon. Both options affect only the
 notification icon and take effect after Apply or OK.
 
+Window appearance: System default; Windows Basic title bars; Windows Classic title bars; Windows 2000. Both
+title-bar modes work with control themes enabled or disabled. System default follows Disable themes for the
+entire window. Windows Classic title bars change only the caption font and background, preserving system
+colours for caption buttons and the 3D border. Windows 2000 requires disabled themes.
+
 ## Licence
 
 CalClock is available under the [MIT License](../license.txt).

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.6
+ * Last modified for version 1.7.3.0
  */
 
 #include "Localization.h"
@@ -87,7 +87,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Vybrat…" },
         LocalizedText{ TXT_LANGUAGE, L"Jazyk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Zakázat motivy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Styl Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Vzhled oken" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systémový" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Záhlaví Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Záhlaví Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Uložit" },
         LocalizedText{ TXT_APPLY, L"Použít" },
         LocalizedText{ TXT_CANCEL, L"Zrušit" },
@@ -502,7 +506,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"slova, začátky a konce řádků, změnit směr nebo použít regulární výraz. Historie uchovává "
             L"posledních 30 hledání během běhu aplikace.\r\n\r\nNa kartě Aplikace volba Alternativní "
             L"oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění pouze ikonu v "
-            L"oznamovací oblasti a projeví se po Použít nebo OK."
+            L"oznamovací oblasti a projeví se po Použít nebo OK.\r\n\r\nVzhled oken: Systémový; Záhlaví "
+            L"Windows Basic; Záhlaví Windows Classic; Windows 2000. Obě záhlaví lze použít s motivy uvnitř "
+            L"okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. Záhlaví Windows Classic "
+            L"mění jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D rámečku. Windows 2000 "
+            L"vyžaduje vypnuté motivy."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -634,7 +642,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 style" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic title bars" },
         LocalizedText{ TXT_SAVE, L"Save" },
         LocalizedText{ TXT_APPLY, L"Apply" },
         LocalizedText{ TXT_CANCEL, L"Cancel" },
@@ -1053,7 +1065,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
-            L"notification icon and take effect after Apply or OK."
+            L"notification icon and take effect after Apply or OK.\r\n\r\nWindow appearance: System default; "
+            L"Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar modes work "
+            L"with control themes enabled or disabled. System default follows Disable themes for the entire "
+            L"window. Windows Classic title bars change only the caption font and background, preserving "
+            L"system colors for caption buttons and the 3D border. Windows 2000 requires disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1187,7 +1203,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 style" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic title bars" },
         LocalizedText{ TXT_SAVE, L"Save" },
         LocalizedText{ TXT_APPLY, L"Apply" },
         LocalizedText{ TXT_CANCEL, L"Cancel" },
@@ -1606,7 +1626,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
-            L"notification icon and take effect after Apply or OK."
+            L"notification icon and take effect after Apply or OK.\r\n\r\nWindow appearance: System default; "
+            L"Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar modes work "
+            L"with control themes enabled or disabled. System default follows Disable themes for the entire "
+            L"window. Windows Classic title bars change only the caption font and background, preserving "
+            L"system colours for caption buttons and the 3D border. Windows 2000 requires disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1740,7 +1764,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Browse…" },
         LocalizedText{ TXT_LANGUAGE, L"Language:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disable themes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 style" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Window appearance" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"System default" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic title bars" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic title bars" },
         LocalizedText{ TXT_SAVE, L"Save" },
         LocalizedText{ TXT_APPLY, L"Apply" },
         LocalizedText{ TXT_CANCEL, L"Cancel" },
@@ -2159,7 +2187,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"whole words, line starts and ends, backward searching, and regular expressions. The history "
             L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
             L"tab, Alternative notification icon enables Old school icon. Both options affect only the "
-            L"notification icon and take effect after Apply or OK."
+            L"notification icon and take effect after Apply or OK.\r\n\r\nWindow appearance: System default; "
+            L"Windows Basic title bars; Windows Classic title bars; Windows 2000. Both title-bar modes work "
+            L"with control themes enabled or disabled. System default follows Disable themes for the entire "
+            L"window. Windows Classic title bars change only the caption font and background, preserving "
+            L"system colours for caption buttons and the 3D border. Windows 2000 requires disabled themes."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -2295,7 +2327,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Durchsuchen…" },
         LocalizedText{ TXT_LANGUAGE, L"Sprache:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Designs deaktivieren" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows-2000-Stil" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Fensterdarstellung" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows-Basic-Titelleisten" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-Titelleisten" },
         LocalizedText{ TXT_SAVE, L"Speichern" },
         LocalizedText{ TXT_APPLY, L"Übernehmen" },
         LocalizedText{ TXT_CANCEL, L"Abbrechen" },
@@ -2749,7 +2785,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.\r\n\r\nAuf "
             L"der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option "
             L"Retro-Symbol im Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden "
-            L"mit Übernehmen oder OK wirksam."
+            L"mit Übernehmen oder OK wirksam.\r\n\r\nFensterdarstellung: Systemstandard; "
+            L"Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows 2000. Beide Titelleistenmodi "
+            L"funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt Designs "
+            L"deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern nur Titelschrift und "
+            L"Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. "
+            L"Windows 2000 erfordert deaktivierte Designs."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2892,7 +2933,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Parcourir…" },
         LocalizedText{ TXT_LANGUAGE, L"Langue :" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Désactiver les thèmes" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Style Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Apparence des fenêtres" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Système" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Barres de titre Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Barres de titre Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Enregistrer" },
         LocalizedText{ TXT_APPLY, L"Appliquer" },
         LocalizedText{ TXT_CANCEL, L"Annuler" },
@@ -3348,7 +3393,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"inverse et les expressions régulières. L’historique conserve les 30 dernières recherches de la "
             L"session.\r\n\r\nDans l’onglet Application, Autre icône de notification active Icône de "
             L"notification rétro. Ces options modifient uniquement l’icône de notification après Appliquer "
-            L"ou OK."
+            L"ou OK.\r\n\r\nApparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre "
+            L"Windows Classic; Windows 2000. Les deux modes de barre de titre fonctionnent avec ou sans "
+            L"thèmes dans la fenêtre. Système suit Désactiver les thèmes pour toute la fenêtre. Les barres "
+            L"de titre Windows Classic changent seulement la police et le fond du titre ; les boutons et la "
+            L"bordure 3D gardent leurs couleurs système. Windows 2000 exige des thèmes désactivés."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -3490,7 +3539,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Examinar…" },
         LocalizedText{ TXT_LANGUAGE, L"Idioma:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Desactivar temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Estilo de Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Apariencia de las ventanas" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Títulos de Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Títulos de Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Guardar" },
         LocalizedText{ TXT_APPLY, L"Aplicar" },
         LocalizedText{ TXT_CANCEL, L"Cancelar" },
@@ -3934,7 +3987,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"minúsculas, palabras completas, inicios y finales de línea, búsqueda hacia atrás y expresiones "
             L"regulares. El historial conserva las últimas 30 búsquedas de la sesión.\r\n\r\nEn la pestaña "
             L"Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas "
-            L"opciones solo cambian el icono de notificación tras Aplicar o Aceptar."
+            L"opciones solo cambian el icono de notificación tras Aplicar o Aceptar.\r\n\r\nApariencia de "
+            L"las ventanas: Sistema; Títulos de Windows Basic; Títulos de Windows Classic; Windows 2000. "
+            L"Ambos modos de título funcionan con o sin temas en los controles. Sistema aplica Desactivar "
+            L"temas a toda la ventana. Los títulos Windows Classic solo cambian la fuente y el fondo del "
+            L"título; los botones y el borde 3D conservan sus colores del sistema. Windows 2000 requiere los "
+            L"temas desactivados."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -4073,7 +4131,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Sfoglia…" },
         LocalizedText{ TXT_LANGUAGE, L"Lingua:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Disattiva temi" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stile Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Aspetto delle finestre" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titoli Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Titoli Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Salva" },
         LocalizedText{ TXT_APPLY, L"Applica" },
         LocalizedText{ TXT_CANCEL, L"Annulla" },
@@ -4517,7 +4579,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"precedente. Sono supportate maiuscole e minuscole, parole intere, inizio e fine riga, ricerca "
             L"all’indietro ed espressioni regolari. La cronologia conserva le ultime 30 ricerche della "
             L"sessione.\r\n\r\nNella scheda Applicazione, Icona di notifica alternativa abilita Icona di "
-            L"notifica retrò. Le due opzioni modificano solo l’icona di notifica dopo Applica o OK."
+            L"notifica retrò. Le due opzioni modificano solo l’icona di notifica dopo Applica o "
+            L"OK.\r\n\r\nAspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; "
+            L"Windows 2000. Entrambe le modalità del titolo funzionano con o senza temi nei controlli. "
+            L"Sistema segue Disattiva temi per l'intera finestra. I titoli Windows Classic modificano solo "
+            L"carattere e sfondo del titolo; pulsanti e bordo 3D mantengono i colori di sistema. Windows "
+            L"2000 richiede temi disattivati."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -4656,7 +4723,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Procurar…" },
         LocalizedText{ TXT_LANGUAGE, L"Idioma:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Desativar temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Estilo do Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Aspeto das janelas" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistema" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Títulos Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Títulos Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Guardar" },
         LocalizedText{ TXT_APPLY, L"Aplicar" },
         LocalizedText{ TXT_CANCEL, L"Cancelar" },
@@ -5053,7 +5124,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" distinguir maiúsculas, procurar palavras inteiras, inícios e fins de linha, pesquisar para "
             L"trás e usar expressões regulares. O histórico guarda as últimas 30 pesquisas da "
             L"sessão.\r\n\r\nNo separador Aplicação, Ícone de notificação alternativo ativa Ícone de "
-            L"notificação retro. Ambas as opções alteram apenas o ícone de notificação após Aplicar ou OK."
+            L"notificação retro. Ambas as opções alteram apenas o ícone de notificação após Aplicar ou "
+            L"OK.\r\n\r\nAspeto das janelas: Sistema; Títulos Windows Basic; Títulos Windows Classic; "
+            L"Windows 2000. Ambos os modos de título funcionam com ou sem temas nos controlos. Sistema "
+            L"aplica Desativar temas a toda a janela. Os títulos Windows Classic alteram apenas o tipo de "
+            L"letra e o fundo do título; os botões e a moldura 3D mantêm as cores do sistema. Windows 2000 "
+            L"exige temas desativados."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -5190,7 +5266,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Wybierz…" },
         LocalizedText{ TXT_LANGUAGE, L"Język:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Wyłącz motywy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Styl Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Wygląd okien" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systemowy" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Paski tytułu Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Paski tytułu Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Zapisz" },
         LocalizedText{ TXT_APPLY, L"Zastosuj" },
         LocalizedText{ TXT_CANCEL, L"Anuluj" },
@@ -5614,7 +5694,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"są rozróżnianie wielkości liter, całe wyrazy, początki i końce wierszy, wyszukiwanie wstecz "
             L"oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej "
             L"sesji.\r\n\r\nNa karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona "
-            L"powiadomień w stylu retro. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK."
+            L"powiadomień w stylu retro. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub "
+            L"OK.\r\n\r\nWygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; "
+            L"Windows 2000. Oba tryby nagłówka działają z motywami elementów sterujących lub bez nich. "
+            L"Systemowy stosuje Wyłącz motywy do całego okna. Nagłówki Windows Classic zmieniają tylko "
+            L"czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory systemowe. Windows 2000 wymaga "
+            L"wyłączonych motywów."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -5748,7 +5833,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Vybrať…" },
         LocalizedText{ TXT_LANGUAGE, L"Jazyk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Zakázať motívy" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Štýl Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Vzhľad okien" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systémový" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Záhlavia Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Záhlavia Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Uložiť" },
         LocalizedText{ TXT_APPLY, L"Použiť" },
         LocalizedText{ TXT_CANCEL, L"Zrušiť" },
@@ -6156,7 +6245,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"písmen, hľadať celé slová, začiatky a konce riadkov, zmeniť smer alebo použiť regulárny výraz. "
             L"História uchováva posledných 30 hľadaní počas behu aplikácie.\r\n\r\nNa karte Aplikácia voľba "
             L"Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti oznámení. Obe "
-            L"voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK."
+            L"voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.\r\n\r\nVzhľad "
+            L"okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows 2000. Obe záhlavia "
+            L"možno použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať motívy pre celé "
+            L"okno. Záhlavia Windows Classic menia iba písmo a pozadie záhlavia, nie systémové farby "
+            L"tlačidiel a 3D rámu. Windows 2000 vyžaduje vypnuté motívy."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -6288,7 +6381,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Gennemse…" },
         LocalizedText{ TXT_LANGUAGE, L"Sprog:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Deaktiver temaer" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000-stil" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Vinduers udseende" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-titellinjer" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-titellinjer" },
         LocalizedText{ TXT_SAVE, L"Gem" },
         LocalizedText{ TXT_APPLY, L"Anvend" },
         LocalizedText{ TXT_CANCEL, L"Annuller" },
@@ -6667,7 +6764,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ord, linjestart og linjeslutning, baglæns søgning og regulære udtryk. Historikken gemmer de "
             L"sidste 30 søgninger i den aktuelle session.\r\n\r\nPå fanen Program aktiverer Alternativt "
             L"meddelelsesikon valget Retroikon i meddelelsesområdet. Begge indstillinger ændrer kun "
-            L"meddelelsesikonet efter Anvend eller OK."
+            L"meddelelsesikonet efter Anvend eller OK.\r\n\r\nVinduers udseende: Systemstandard; Windows "
+            L"Basic-titellinjer; Windows Classic-titellinjer; Windows 2000. Begge titellinjetilstande virker "
+            L"med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer for hele "
+            L"vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper "
+            L"og 3D-kant bevarer systemfarverne. Windows 2000 kræver deaktiverede temaer."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -6803,7 +6904,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Selaa…" },
         LocalizedText{ TXT_LANGUAGE, L"Kieli:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Poista teemat käytöstä" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 -tyyli" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Ikkunoiden ulkoasu" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Järjestelmä" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic -otsikot" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic -otsikot" },
         LocalizedText{ TXT_SAVE, L"Tallenna" },
         LocalizedText{ TXT_APPLY, L"Käytä" },
         LocalizedText{ TXT_CANCEL, L"Peruuta" },
@@ -7208,7 +7313,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"kokonaisia sanoja, rivin alkuja ja loppuja, hakua taaksepäin ja säännöllisiä lausekkeita. "
             L"Historia säilyttää istunnon 30 viimeisintä hakua.\r\n\r\nSovellus-välilehdellä Vaihtoehtoinen "
             L"ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan. Molemmat muuttavat vain "
-            L"ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen."
+            L"ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.\r\n\r\nIkkunoiden ulkoasu: Järjestelmä; "
+            L"Windows Basic -otsikot; Windows Classic -otsikot; Windows 2000. Molemmat "
+            L"otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän "
+            L"oletus noudattaa teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot muuttavat "
+            L"vain otsikon fontin ja taustan; painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. "
+            L"Windows 2000 edellyttää teemojen poistamista käytöstä."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
@@ -7342,7 +7452,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Velja…" },
         LocalizedText{ TXT_LANGUAGE, L"Tungumál:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Slökkva á þemum" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000-stíll" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Útlit glugga" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Kerfissjálfgefið" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic titilstikur" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic titilstikur" },
         LocalizedText{ TXT_SAVE, L"Vista" },
         LocalizedText{ TXT_APPLY, L"Nota" },
         LocalizedText{ TXT_CANCEL, L"Hætta við" },
@@ -7722,7 +7836,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" samsvörun og Shift+F3 þá fyrri. Leitin styður há- og lágstafi, heil orð, línubyrjanir og "
             L"línulok, leit afturábak og reglulegar segðir. Ferillinn geymir síðustu 30 leitir í núverandi "
             L"keyrslu.\r\n\r\nÁ flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á "
-            L"tilkynningasvæði. Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða Í lagi."
+            L"tilkynningasvæði. Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða Í "
+            L"lagi.\r\n\r\nÚtlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic "
+            L"titilstikur; Windows 2000. Báðir titilstikuhamir virka með eða án þema á stýringum. "
+            L"Kerfissjálfgefið fylgir Slökkva á þemum fyrir allan gluggann. Windows Classic-titilstikur "
+            L"breyta aðeins letri og bakgrunni titilsins; titilhnappar og þrívíður rammi halda kerfislitum. "
+            L"Windows 2000 krefst þess að slökkt sé á þemum."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -7856,7 +7975,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bla gjennom…" },
         LocalizedText{ TXT_LANGUAGE, L"Språk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Deaktiver temaer" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000-stil" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Vindusutseende" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-tittellinjer" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-tittellinjer" },
         LocalizedText{ TXT_SAVE, L"Lagre" },
         LocalizedText{ TXT_APPLY, L"Bruk" },
         LocalizedText{ TXT_CANCEL, L"Avbryt" },
@@ -8236,7 +8359,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"treff og Shift+F3 det forrige. Søket støtter store og små bokstaver, hele ord, linjestart og "
             L"linjeslutt, søk bakover og regulære uttrykk. Historikken beholder de siste 30 søkene i "
             L"gjeldende økt.\r\n\r\nPå fanen Program aktiverer Alternativt varslingsikon valget Retroikon i "
-            L"systemstatusfeltet. Begge valgene endrer bare varslingsikonet etter Bruk eller OK."
+            L"systemstatusfeltet. Begge valgene endrer bare varslingsikonet etter Bruk eller "
+            L"OK.\r\n\r\nVindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows "
+            L"Classic-tittellinjer; Windows 2000. Begge tittellinjemodusene virker med eller uten temaer på "
+            L"kontrollene. Systemstandard følger Deaktiver temaer for hele vinduet. Windows "
+            L"Classic-tittellinjer endrer bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme beholder "
+            L"systemfargene. Windows 2000 krever deaktiverte temaer."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -8374,7 +8502,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bläddra…" },
         LocalizedText{ TXT_LANGUAGE, L"Språk:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Inaktivera teman" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000-stil" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Fönsterutseende" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systemstandard" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-namnlister" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-namnlister" },
         LocalizedText{ TXT_SAVE, L"Spara" },
         LocalizedText{ TXT_APPLY, L"Verkställ" },
         LocalizedText{ TXT_CANCEL, L"Avbryt" },
@@ -8757,7 +8889,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"radbörjan och radslut, bakåtsökning och reguljära uttryck. Historiken behåller de senaste 30 "
             L"sökningarna under den aktuella sessionen.\r\n\r\nPå fliken Program aktiverar Alternativ "
             L"meddelandeikon alternativet Retroikon i meddelandefältet. Båda alternativen ändrar endast "
-            L"meddelandeikonen efter Verkställ eller OK."
+            L"meddelandeikonen efter Verkställ eller OK.\r\n\r\nFönsterutseende: Systemstandard; Windows "
+            L"Basic-namnlister; Windows Classic-namnlister; Windows 2000. Båda titelradsalternativen "
+            L"fungerar med eller utan teman för kontrollerna. Systemstandard följer Inaktivera teman för "
+            L"hela fönstret. Windows Classic-titelrader ändrar bara titelns teckensnitt och bakgrund; "
+            L"titelknappar och 3D-ram behåller systemfärgerna. Windows 2000 kräver inaktiverade teman."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -8894,7 +9030,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Gözat…" },
         LocalizedText{ TXT_LANGUAGE, L"Dil:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Temaları devre dışı bırak" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 stili" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Pencere görünümü" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistem" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic başlıkları" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic başlıkları" },
         LocalizedText{ TXT_SAVE, L"Kaydet" },
         LocalizedText{ TXT_APPLY, L"Uygula" },
         LocalizedText{ TXT_CANCEL, L"İptal" },
@@ -9279,7 +9419,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"sözcükler, satır başı ve sonu, geriye arama ve düzenli ifadeler desteklenir. Geçmiş, geçerli "
             L"oturumdaki son 30 aramayı tutar.\r\n\r\nUygulama sekmesinde Alternatif bildirim simgesi, Retro "
             L"bildirim simgesi seçeneğini etkinleştirir. Her iki seçenek de yalnızca bildirim simgesini "
-            L"Uygula veya Tamam sonrasında değiştirir."
+            L"Uygula veya Tamam sonrasında değiştirir.\r\n\r\nPencere görünümü: Sistem; Windows Basic "
+            L"başlıkları; Windows Classic başlıkları; Windows 2000. Her iki başlık modu da denetim temaları "
+            L"açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak seçimini tüm "
+            L"pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka planını "
+            L"değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows 2000 temaların "
+            L"kapatılmasını gerektirir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -9412,7 +9557,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Sirvi…" },
         LocalizedText{ TXT_LANGUAGE, L"Keel:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Keela kujundused" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 stiil" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Akende kujundus" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Süsteemne" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basicu tiitliribad" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic tiitliribad" },
         LocalizedText{ TXT_SAVE, L"Salvesta" },
         LocalizedText{ TXT_APPLY, L"Rakenda" },
         LocalizedText{ TXT_CANCEL, L"Loobu" },
@@ -9815,7 +9964,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" sõnu, rea algusi ja lõppe, tagurpidi otsingut ning regulaaravaldisi. Ajalugu säilitab "
             L"käesoleva seansi viimased 30 otsingut.\r\n\r\nRakenduse vahekaardil lubab Alternatiivne "
             L"teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult teavitusikooni pärast "
-            L"Rakenda või OK vajutamist."
+            L"Rakenda või OK vajutamist.\r\n\r\nAkende kujundus: Süsteemne; Windows Basicu tiitliribad; "
+            L"Windows Classic tiitliribad; Windows 2000. Mõlemad tiitliribarežiimid toimivad juhtelementide "
+            L"teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise valikut kogu aknas. Windows "
+            L"Classic tiitliribad muudavad ainult tiitli fonti ja tausta; tiitlinupud ning 3D-raam "
+            L"säilitavad süsteemivärvid. Windows 2000 nõuab teemade keelamist."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -9950,7 +10103,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Brabhsáil…" },
         LocalizedText{ TXT_LANGUAGE, L"Teanga:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Díchumasaigh téamaí" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stíl Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Cuma na bhfuinneog" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Réamhshocrú córais" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Teidil Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Teidil Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Sábháil" },
         LocalizedText{ TXT_APPLY, L"Cuir i bhfeidhm" },
         LocalizedText{ TXT_CANCEL, L"Cealaigh" },
@@ -10390,7 +10547,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún "
             L"reatha.\r\n\r\nAr an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín "
             L"fógra i stíl retró. Ní athraíonn na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó "
-            L"OK."
+            L"OK.\r\n\r\nCuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows "
+            L"Classic; Windows 2000. Oibríonn an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann "
+            L"réamhshocrú an chórais an rogha téamaí a dhíchumasú don fhuinneog iomlán. Ní athraíonn barraí "
+            L"teidil Windows Classic ach cló agus cúlra an teidil; coinníonn na cnaipí teidil agus an "
+            L"teorainn 3T dathanna an chórais. Teastaíonn téamaí díchumasaithe ó Windows 2000."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -10534,7 +10695,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Naršyti…" },
         LocalizedText{ TXT_LANGUAGE, L"Kalba:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Išjungti temas" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 stilius" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Langų išvaizda" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemos" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic antraštės" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic antraštės" },
         LocalizedText{ TXT_SAVE, L"Įrašyti" },
         LocalizedText{ TXT_APPLY, L"Taikyti" },
         LocalizedText{ TXT_CANCEL, L"Atšaukti" },
@@ -10959,7 +11124,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"ištisi žodžiai, eilučių pradžios ir pabaigos, paieška atgal bei reguliarūs reiškiniai. "
             L"Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.\r\n\r\nKortelėje Programa "
             L"pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma. Abi "
-            L"parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai."
+            L"parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.\r\n\r\nLangų išvaizda: "
+            L"Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows 2000. Abu antraštės "
+            L"režimai veikia su įjungtomis arba išjungtomis valdiklių temomis. Sistemos numatytasis režimas "
+            L"taiko temų išjungimą visam langui. Windows Classic antraštės keičia tik antraštės šriftą ir "
+            L"foną; antraštės mygtukai ir 3D rėmelis išlaiko sistemos spalvas. Windows 2000 režimui reikia "
+            L"išjungti temas."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -11095,7 +11265,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pārlūkot…" },
         LocalizedText{ TXT_LANGUAGE, L"Valoda:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Atspējot dizainus" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 stils" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Logu izskats" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistēmas" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic virsraksti" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic virsraksti" },
         LocalizedText{ TXT_SAVE, L"Saglabāt" },
         LocalizedText{ TXT_APPLY, L"Lietot" },
         LocalizedText{ TXT_CANCEL, L"Atcelt" },
@@ -11504,7 +11678,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot regulārās izteiksmes. Vēsturē"
             L" saglabājas sesijas pēdējie 30 meklējumi.\r\n\r\nCilnē Lietotne opcija Alternatīva paziņojumu "
             L"ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc "
-            L"Lietot vai Labi nospiešanas."
+            L"Lietot vai Labi nospiešanas.\r\n\r\nLogu izskats: Sistēmas; Windows Basic virsraksti; Windows "
+            L"Classic virsraksti; Windows 2000. Abi virsraksta režīmi darbojas ar ieslēgtiem vai izslēgtiem "
+            L"vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu visam logam. Windows Classic "
+            L"virsraksti maina tikai virsraksta fontu un fonu; virsraksta pogas un 3D apmale saglabā "
+            L"sistēmas krāsas. Windows 2000 režīmam nepieciešami atspējoti motīvi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -11636,7 +11814,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Tallózás…" },
         LocalizedText{ TXT_LANGUAGE, L"Nyelv:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Témák letiltása" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000 stílus" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Ablakok megjelenése" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Rendszer szerinti" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-címsorok" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-címsorok" },
         LocalizedText{ TXT_SAVE, L"Mentés" },
         LocalizedText{ TXT_APPLY, L"Alkalmaz" },
         LocalizedText{ TXT_CANCEL, L"Mégse" },
@@ -12065,7 +12247,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" a kis- és nagybetűk megkülönböztetését, a teljes szavakat, a sor elejét és végét, a visszafelé"
             L" keresést és a reguláris kifejezéseket. Az előzmények a munkamenet utolsó 30 keresését "
             L"őrzik.\r\n\r\nAz Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon "
-            L"lehetőséget. Mindkettő csak az értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után."
+            L"lehetőséget. Mindkettő csak az értesítési ikont módosítja az Alkalmaz vagy OK megnyomása "
+            L"után.\r\n\r\nAblakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows "
+            L"Classic-címsorok; Windows 2000. Mindkét címsormód használható a vezérlők témáival vagy azok "
+            L"nélkül. A rendszer alapbeállítása az egész ablakra alkalmazza a témák letiltását. A Windows "
+            L"Classic-címsorok csak a cím betűtípusát és hátterét módosítják; a címsor gombjai és a 3D keret "
+            L"megtartják a rendszerszíneket. A Windows 2000 módhoz le kell tiltani a témákat."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Órák és naptárak\r\n\r\nNatív Win32-alkalmazás legfeljebb 32, egymástól függetlenül "
@@ -12203,7 +12390,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Ibbrawżja…" },
         LocalizedText{ TXT_LANGUAGE, L"Lingwa:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Iddiżattiva t-temi" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stil Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Dehra tat-twieqi" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Tas-sistema" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titli Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Titli Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Issejvja" },
         LocalizedText{ TXT_APPLY, L"Applika" },
         LocalizedText{ TXT_CANCEL, L"Ikkanċella" },
@@ -12630,7 +12821,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"tappoġġja l-ittri kbar u żgħar, kliem sħiħ, bidu u tmiem il-linji, tfittxija lura u "
             L"espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.\r\n\r\nFit-tab "
             L"Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona ta' notifika retro. Iż-żewġ "
-            L"għażliet jibdlu biss l-ikona tan-notifika wara Applika jew OK."
+            L"għażliet jibdlu biss l-ikona tan-notifika wara Applika jew OK.\r\n\r\nDehra tat-twieqi: "
+            L"Tas-sistema; Titli Windows Basic; Titli Windows Classic; Windows 2000. Iż-żewġ modi tal-barra "
+            L"tat-titlu jaħdmu bit-temi tal-kontrolli mixgħula jew mitfija. L-għażla tas-sistema ssegwi Itfi "
+            L"t-temi għat-tieqa kollha. Il-vireg tat-titlu Windows Classic ibiddlu biss it-tipa u l-isfond "
+            L"tat-titlu; il-buttuni tat-titlu u l-bordura 3D iżommu l-kuluri tas-sistema. Windows 2000 "
+            L"jeħtieġ temi mitfija."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -12770,7 +12966,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Bladeren…" },
         LocalizedText{ TXT_LANGUAGE, L"Taal:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Thema’s uitschakelen" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000-stijl" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Vensterweergave" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Systeemstandaard" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Windows Basic-titelbalken" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Windows Classic-titelbalken" },
         LocalizedText{ TXT_SAVE, L"Opslaan" },
         LocalizedText{ TXT_APPLY, L"Toepassen" },
         LocalizedText{ TXT_CANCEL, L"Annuleren" },
@@ -13197,7 +13397,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige "
             L"sessie.\r\n\r\nOp het tabblad Toepassing schakelt Alternatief meldingspictogram de optie "
             L"Retro-pictogram in het systeemvak in. Beide wijzigen alleen het meldingspictogram na Toepassen "
-            L"of OK."
+            L"of OK.\r\n\r\nVensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows "
+            L"Classic-titelbalken; Windows 2000. Beide titelbalkmodi werken met of zonder thema's voor "
+            L"besturingselementen. Systeemstandaard volgt Thema's uitschakelen voor het hele venster. "
+            L"Windows Classic-titelbalken wijzigen alleen het lettertype en de achtergrond van de titel; "
+            L"titelknoppen en 3D-rand behouden de systeemkleuren. Windows 2000 vereist uitgeschakelde "
+            L"thema's."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokken en kalenders\r\n\r\nEen native Win32-toepassing voor maximaal 32 afzonderlijk "
@@ -13337,7 +13542,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Răsfoire…" },
         LocalizedText{ TXT_LANGUAGE, L"Limbă:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Dezactivare teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stil Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Aspectul ferestrelor" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistem" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Titluri Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Titluri Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Salvare" },
         LocalizedText{ TXT_APPLY, L"Se aplică" },
         LocalizedText{ TXT_CANCEL, L"Anulare" },
@@ -13759,7 +13968,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"acceptate diferențierea majusculelor, cuvintele întregi, începutul și sfârșitul liniilor, "
             L"căutarea înapoi și expresiile regulate. Istoricul păstrează ultimele 30 de căutări din sesiunea"
             L" curentă.\r\n\r\nÎn fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă "
-            L"de notificare retro. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau OK."
+            L"de notificare retro. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau "
+            L"OK.\r\n\r\nAspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; "
+            L"Windows 2000. Ambele moduri ale barei de titlu funcționează cu sau fără teme pentru controale. "
+            L"Implicit de sistem aplică Dezactivează temele întregii ferestre. Barele de titlu Windows "
+            L"Classic schimbă doar fontul și fundalul titlului; butoanele titlului și chenarul 3D păstrează "
+            L"culorile sistemului. Windows 2000 necesită teme dezactivate."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -13898,7 +14112,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Αναζήτηση…" },
         LocalizedText{ TXT_LANGUAGE, L"Γλώσσα:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Χωρίς θέματα" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Στυλ Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Εμφάνιση παραθύρων" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Συστήματος" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Τίτλοι Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Τίτλοι Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Αποθήκευση" },
         LocalizedText{ TXT_APPLY, L"Εφαρμογή" },
         LocalizedText{ TXT_CANCEL, L"Άκυρο" },
@@ -14343,7 +14561,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"και τέλος γραμμών, αναζήτηση προς τα πίσω και κανονικές εκφράσεις. Το ιστορικό κρατά τις "
             L"τελευταίες 30 αναζητήσεις της συνεδρίας.\r\n\r\nΣτην καρτέλα Εφαρμογή, το Εναλλακτικό "
             L"εικονίδιο ειδοποίησης ενεργοποιεί το Ρετρό εικονίδιο ειδοποιήσεων. Και οι δύο επιλογές "
-            L"αλλάζουν μόνο το εικονίδιο ειδοποίησης μετά την Εφαρμογή ή το OK."
+            L"αλλάζουν μόνο το εικονίδιο ειδοποίησης μετά την Εφαρμογή ή το OK.\r\n\r\nΕμφάνιση παραθύρων: "
+            L"Συστήματος; Τίτλοι Windows Basic; Τίτλοι Windows Classic; Windows 2000. Και οι δύο λειτουργίες "
+            L"τίτλου λειτουργούν με ενεργά ή ανενεργά θέματα στα στοιχεία ελέγχου. Η προεπιλογή συστήματος "
+            L"ακολουθεί την απενεργοποίηση θεμάτων για όλο το παράθυρο. Οι τίτλοι Windows Classic αλλάζουν "
+            L"μόνο γραμματοσειρά και φόντο τίτλου· τα κουμπιά τίτλου και το τρισδιάστατο περίγραμμα "
+            L"διατηρούν τα χρώματα συστήματος. Το Windows 2000 απαιτεί ανενεργά θέματα."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -14483,7 +14706,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stil Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Zaglavlja Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Sačuvaj" },
         LocalizedText{ TXT_APPLY, L"Primijeni" },
         LocalizedText{ TXT_CANCEL, L"Otkaži" },
@@ -14900,7 +15127,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
             L"izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.\r\n\r\nNa kartici "
             L"Aplikacija opcija Alternativna ikona obavijesti omogućava Retro ikona u području obavijesti. "
-            L"Obje opcije mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
+            L"Obje opcije mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu.\r\n\r\nIzgled prozora: "
+            L"Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina "
+            L"naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli "
+            L"prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu naslova; dugmad naslova "
+            L"i 3D okvir zadržavaju sistemske boje. Windows 2000 zahtijeva isključene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -15036,7 +15267,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stil Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Zaglavlja Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Spremi" },
         LocalizedText{ TXT_APPLY, L"Primijeni" },
         LocalizedText{ TXT_CANCEL, L"Odustani" },
@@ -15456,7 +15691,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redaka, pretraživanje "
             L"unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj "
             L"sesiji.\r\n\r\nNa kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Retro "
-            L"ikona u području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
+            L"ikona u području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili U "
+            L"redu.\r\n\r\nIzgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; "
+            L"Windows 2000. Oba načina naslovne trake rade s temama kontrola ili bez njih. Sistemski prati "
+            L"Isključi teme za cijeli prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu "
+            L"naslova; gumbi naslova i 3D okvir zadržavaju sistemske boje. Windows 2000 zahtijeva isključene "
+            L"teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -15590,7 +15830,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Prebrskaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogoči teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Slog Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Videz oken" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Glave Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Glave Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Shrani" },
         LocalizedText{ TXT_APPLY, L"Uporabi" },
         LocalizedText{ TXT_CANCEL, L"Prekliči" },
@@ -15989,7 +16233,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" malih črk, cele besede, začetki in konci vrstic, iskanje nazaj ter regularni izrazi. Zgodovina"
             L" ohrani zadnjih 30 iskanj trenutne seje.\r\n\r\nNa zavihku Program možnost Druga ikona za "
             L"obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti spremenita samo ikono za "
-            L"obvestila po Uporabi ali V redu."
+            L"obvestila po Uporabi ali V redu.\r\n\r\nVidez oken: Sistemski; Glave Windows Basic; Glave "
+            L"Windows Classic; Windows 2000. Oba načina naslovne vrstice delujeta s temami kontrolnikov ali "
+            L"brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice Windows Classic "
+            L"spremenijo le pisavo in ozadje naslova; naslovni gumbi in 3D okvir ohranijo sistemske barve. "
+            L"Windows 2000 zahteva izklopljene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -16123,7 +16371,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Pregledaj…" },
         LocalizedText{ TXT_LANGUAGE, L"Jezik:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Onemogući teme" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Stil Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Izgled prozora" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Sistemski" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Zaglavlja Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Zaglavlja Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Sačuvaj" },
         LocalizedText{ TXT_APPLY, L"Primijeni" },
         LocalizedText{ TXT_CANCEL, L"Otkaži" },
@@ -16530,7 +16782,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
             L"izrazi. Istorija čuva posljednjih 30 pretraga u tekućoj sesiji.\r\n\r\nNa kartici Aplikacija "
             L"opcija Alternativna ikona obavještenja omogućava Retro ikona u oblasti obavještenja. Obje "
-            L"mijenjaju samo ikonu obavještenja nakon Primijeni ili U redu."
+            L"mijenjaju samo ikonu obavještenja nakon Primijeni ili U redu.\r\n\r\nIzgled prozora: "
+            L"Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina "
+            L"naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli "
+            L"prozor. Naslovne trake Windows Classic mijenjaju samo font i pozadinu naslova; dugmad naslova "
+            L"i 3D okvir zadržavaju sistemske boje. Windows 2000 zahtijeva isključene teme."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -16666,7 +16922,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Агляд…" },
         LocalizedText{ TXT_LANGUAGE, L"Мова:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Адключыць тэмы" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стыль Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Выгляд вокнаў" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Сістэмны" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Загалоўкі Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Загалоўкі Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Захаваць" },
         LocalizedText{ TXT_APPLY, L"Ужыць" },
         LocalizedText{ TXT_CANCEL, L"Скасаваць" },
@@ -17080,7 +17340,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L" рэгістра, цэлыя словы, пачаткі і канцы радкоў, пошук назад і рэгулярныя выразы. Гісторыя "
             L"захоўвае апошнія 30 пошукаў бягучага сеанса.\r\n\r\nНа ўкладцы Праграма выбар іншага значка "
             L"апавяшчэнняў уключае рэтразначок апавяшчэнняў. Абодва параметры змяняюць толькі значок "
-            L"апавяшчэнняў пасля Ужыць або OK."
+            L"апавяшчэнняў пасля Ужыць або OK.\r\n\r\nВыгляд вокнаў: Сістэмны; Загалоўкі Windows Basic; "
+            L"Загалоўкі Windows Classic; Windows 2000. Абодва рэжымы загалоўка працуюць з тэмамі элементаў "
+            L"кіравання або без іх. Сістэмны рэжым ужывае адключэнне тэм да ўсяго акна. Загалоўкі Windows "
+            L"Classic змяняюць толькі шрыфт і фон загалоўка; кнопкі загалоўка і трохмерная рамка захоўваюць "
+            L"сістэмныя колеры. Windows 2000 патрабуе адключаных тэм."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -17213,7 +17477,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Преглед…" },
         LocalizedText{ TXT_LANGUAGE, L"Език:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Забрани темите" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стил Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Облик на прозорците" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Системен" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавия Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Заглавия Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Запази" },
         LocalizedText{ TXT_APPLY, L"Приложи" },
         LocalizedText{ TXT_CANCEL, L"Отказ" },
@@ -17642,7 +17910,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"главни и малки букви, цели думи, начало и край на ред, търсене назад и регулярни изрази. "
             L"Историята пази последните 30 търсения в текущата сесия.\r\n\r\nВ раздел Приложение опцията "
             L"Алтернативна икона за известия активира Ретро икона за известяване. И двете променят само "
-            L"иконата за известия след Прилагане или OK."
+            L"иконата за известия след Прилагане или OK.\r\n\r\nОблик на прозорците: Системен; Заглавия "
+            L"Windows Basic; Заглавия Windows Classic; Windows 2000. Двата режима на заглавната лента "
+            L"работят с включени или изключени теми на контролите. Системният режим следва изключването на "
+            L"темите за целия прозорец. Заглавията Windows Classic променят само шрифта и фона на "
+            L"заглавието; бутоните и 3D рамката запазват системните цветове. Windows 2000 изисква изключени "
+            L"теми."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -17777,7 +18050,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Прегледај…" },
         LocalizedText{ TXT_LANGUAGE, L"Јазик:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Оневозможи теми" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стил Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Изглед на прозорците" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Системски" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавија Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Заглавија Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Зачувај" },
         LocalizedText{ TXT_APPLY, L"Примени" },
         LocalizedText{ TXT_CANCEL, L"Откажи" },
@@ -18205,7 +18482,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"наназад и регуларни изрази. Историјата ги чува последните 30 пребарувања во тековната "
             L"сесија.\r\n\r\nВо јазичето Апликација опцијата Алтернативна икона за известувања овозможува "
             L"Ретро икона за известувања. Двете го менуваат само икончето за известувања по Примени или Во "
-            L"ред."
+            L"ред.\r\n\r\nИзглед на прозорците: Системски; Заглавија Windows Basic; Заглавија Windows "
+            L"Classic; Windows 2000. Двата режима на насловната лента работат со вклучени или исклучени теми "
+            L"на контролите. Системскиот режим го следи исклучувањето на темите за целиот прозорец. "
+            L"Насловите Windows Classic ги менуваат само фонтот и заднината на насловот; копчињата и 3D "
+            L"рамката ги задржуваат системските бои. Windows 2000 бара исклучени теми."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -18347,7 +18628,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Прегледај…" },
         LocalizedText{ TXT_LANGUAGE, L"Језик:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Онемогући теме" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стил Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Изглед прозора" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Системски" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заглавља Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Заглавља Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Сачувај" },
         LocalizedText{ TXT_APPLY, L"Примени" },
         LocalizedText{ TXT_CANCEL, L"Откажи" },
@@ -18746,7 +19031,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"великих и малих слова, целе речи, почеци и крајеви редова, претрага уназад и регуларни изрази. "
             L"Историја чува последњих 30 претрага текуће сесије.\r\n\r\nНа картици Апликација опција "
             L"Алтернативна икона обавештења омогућава Ретро икона у области обавештења. Обе мењају само "
-            L"икону обавештења након Примени или У реду."
+            L"икону обавештења након Примени или У реду.\r\n\r\nИзглед прозора: Системски; Заглавља Windows "
+            L"Basic; Заглавља Windows Classic; Windows 2000. Оба режима насловне траке раде са темама "
+            L"контрола или без њих. Системски прати Искључи теме за цео прозор. Насловне траке Windows "
+            L"Classic мењају само фонт и позадину наслова; дугмад наслова и 3D оквир задржавају системске "
+            L"боје. Windows 2000 захтева искључене теме."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -18880,7 +19169,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Огляд…" },
         LocalizedText{ TXT_LANGUAGE, L"Мова:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Вимкнути теми" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стиль Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Вигляд вікон" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Системний" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заголовки Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Заголовки Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Зберегти" },
         LocalizedText{ TXT_APPLY, L"Застосувати" },
         LocalizedText{ TXT_CANCEL, L"Скасувати" },
@@ -19316,7 +19609,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"регістру, цілі слова, початки й кінці рядків, пошук назад і регулярні вирази. Історія зберігає "
             L"останні 30 пошуків поточного сеансу.\r\n\r\nНа вкладці Програма вибір іншої піктограми "
             L"сповіщень вмикає ретропіктограму сповіщень. Обидва параметри змінюють лише піктограму "
-            L"сповіщень після Застосувати або OK."
+            L"сповіщень після Застосувати або OK.\r\n\r\nВигляд вікон: Системний; Заголовки Windows Basic; "
+            L"Заголовки Windows Classic; Windows 2000. Обидва режими заголовка працюють з увімкненими або "
+            L"вимкненими темами елементів керування. Системний режим застосовує вимкнення тем до всього "
+            L"вікна. Заголовки Windows Classic змінюють лише шрифт і тло заголовка; кнопки заголовка й "
+            L"тривимірна рамка зберігають системні кольори. Windows 2000 потребує вимкнених тем."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -19448,7 +19745,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         LocalizedText{ TXT_BROWSE, L"Обзор…" },
         LocalizedText{ TXT_LANGUAGE, L"Язык:" },
         LocalizedText{ TXT_VISUAL_STYLES, L"Отключить темы" },
-        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Стиль Windows 2000" },
+        LocalizedText{ TXT_WINDOWS_2000_STYLE, L"Windows 2000" },
+        LocalizedText{ TXT_STYLE_GROUP, L"Вид окон" },
+        LocalizedText{ TXT_STYLE_SYSTEM, L"Системный" },
+        LocalizedText{ TXT_STYLE_BASIC_HEADER, L"Заголовки Windows Basic" },
+        LocalizedText{ TXT_STYLE_2000_HEADER, L"Заголовки Windows Classic" },
         LocalizedText{ TXT_SAVE, L"Сохранить" },
         LocalizedText{ TXT_APPLY, L"Применить" },
         LocalizedText{ TXT_CANCEL, L"Отмена" },
@@ -19893,7 +20194,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"регистра, целые слова, начала и концы строк, поиск назад и регулярные выражения. История хранит"
             L" последние 30 поисков текущего сеанса.\r\n\r\nНа вкладке Программа выбор другого значка "
             L"уведомлений включает ретрозначок уведомлений. Оба параметра меняют только значок уведомлений "
-            L"после Применить или OK."
+            L"после Применить или OK.\r\n\r\nВид окон: Системный; Заголовки Windows Basic; Заголовки Windows "
+            L"Classic; Windows 2000. Оба режима заголовка работают с включёнными или отключёнными темами "
+            L"элементов управления. Системный режим применяет отключение тем ко всему окну. Заголовки "
+            L"Windows Classic меняют только шрифт и фон заголовка; кнопки заголовка и трёхмерная рамка "
+            L"сохраняют системные цвета. Windows 2000 требует отключённых тем."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "

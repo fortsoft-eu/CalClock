@@ -188,6 +188,11 @@ säilitab käesoleva seansi viimased 30 otsingut.
 Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult
 teavitusikooni pärast Rakenda või OK vajutamist.
 
+Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Classic tiitliribad; Windows 2000. Mõlemad
+tiitliribarežiimid toimivad juhtelementide teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise
+valikut kogu aknas. Windows Classic tiitliribad muudavad ainult tiitli fonti ja tausta; tiitlinupud ning
+3D-raam säilitavad süsteemivärvid. Windows 2000 nõuab teemade keelamist.
+
 ## Litsents
 
 CalClock on saadaval [MIT-litsentsiga](../license.txt).

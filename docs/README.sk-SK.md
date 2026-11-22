@@ -237,6 +237,11 @@ alebo použiť regulárny výraz. História uchováva posledných 30 hľadaní p
 Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti
 oznámení. Obe voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.
 
+Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows 2000. Obe záhlavia možno
+použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať motívy pre celé okno. Záhlavia Windows
+Classic menia iba písmo a pozadie záhlavia, nie systémové farby tlačidiel a 3D rámu. Windows 2000 vyžaduje
+vypnuté motívy.
+
 ## Licencia
 
 CalClock je dostupný pod [licenciou MIT](../license.txt).

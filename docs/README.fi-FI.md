@@ -246,6 +246,11 @@ säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hak
 Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan.
 Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.
 
+Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows 2000. Molemmat
+otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän oletus noudattaa
+teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot muuttavat vain otsikon fontin ja taustan;
+painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. Windows 2000 edellyttää teemojen poistamista käytöstä.
+
 ## Lisenssi
 
 CalClock on saatavilla [MIT-lisenssillä](../license.txt).
