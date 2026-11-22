@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.2.5
  */
 
 #define NOMINMAX
@@ -852,7 +852,7 @@ void TimeCalculatorForm::CreatePreparedWindow() {
         Layout();
         SelectPage();
     } else {
-        UpdateApplicationWindowIcons(window);
+        UpdateApplicationWindowIcons(window, 2);
         placement->SetDisableSaveSize(true);
         placement->SetDisableSaveWindowState(true);
         const PersistWindowStateData& saved = placement->GetState();
@@ -2425,7 +2425,7 @@ INT_PTR TimeCalculatorForm::HandleMessage(HWND dialog, UINT message, WPARAM wPar
         return TRUE;
     }
     if (message == WM_THEMECHANGED || message == WM_SETTINGCHANGE || message == WM_TIMECHANGE) {
-        UpdateApplicationWindowIcons(window);
+        UpdateApplicationWindowIcons(window, 2);
         ApplyStyle(true);
         if (message == WM_SETTINGCHANGE || message == WM_TIMECHANGE) {
             Refresh();
@@ -2436,7 +2436,7 @@ INT_PTR TimeCalculatorForm::HandleMessage(HWND dialog, UINT message, WPARAM wPar
         const RECT* suggested = reinterpret_cast<const RECT*>(lParam);
         SetWindowPos(window, nullptr, suggested->left, suggested->top, 0, 0,
             SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
-        UpdateApplicationWindowIcons(window);
+        UpdateApplicationWindowIcons(window, 2);
         ApplyStyle(true);
         return TRUE;
     }

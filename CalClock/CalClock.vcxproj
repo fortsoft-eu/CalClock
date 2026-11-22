@@ -44,6 +44,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <AdditionalDependencies>Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -80,6 +83,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FindForm.cpp">
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="PrintSettings.cpp">
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="ModernPrintDialog.cpp">
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <DisableSpecificWarnings>4291</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="AboutForm.cpp" />
     <ClCompile Include="AlarmActions.cpp" />
     <ClCompile Include="AlarmSchedule.cpp" />
@@ -98,6 +111,8 @@
     <ClCompile Include="Localization.cpp" />
     <ClCompile Include="MonitorInfo.cpp" />
     <ClCompile Include="NtpClient.cpp" />
+    <ClCompile Include="PackedResource.cpp" />
+    <ClCompile Include="ResourceLibrary.cpp" />
     <ClCompile Include="PersistWindowState.cpp" />
     <ClCompile Include="SelectionEdit.cpp" />
     <ClCompile Include="SettingsEdit.cpp" />
@@ -113,6 +128,9 @@
     <ClCompile Include="WindowRedrawScope.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FindForm.h" />
+    <ClInclude Include="PrintSettings.h" />
+    <ClInclude Include="ModernPrintDialog.h" />
     <ClInclude Include="AboutForm.h" />
     <ClInclude Include="AlarmActions.h" />
     <ClInclude Include="AlarmSchedule.h" />
@@ -133,6 +151,8 @@
     <ClInclude Include="Localization.h" />
     <ClInclude Include="MonitorInfo.h" />
     <ClInclude Include="NtpClient.h" />
+    <ClInclude Include="PackedResource.h" />
+    <ClInclude Include="ResourceLibrary.h" />
     <ClInclude Include="PersistWindowState.h" />
     <ClInclude Include="SelectionEdit.h" />
     <ClInclude Include="SettingsEdit.h" />
@@ -155,12 +175,16 @@
     <Manifest Include="CalClock.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="CalClock.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\license.txt" />
+    <None Include="Resources\Resources.dll" />
+    <None Include="ResourceIcons.cs" />
+    <None Include="ResourcePacker.cs" />
+    <None Include="prepare.ps1" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="PrepareApplicationResources" BeforeTargets="ResourceCompile" Inputs="$(ProjectDir)Resources\Resources.dll;$(ProjectDir)prepare.ps1;$(ProjectDir)ResourceIcons.cs;$(ProjectDir)ResourcePacker.cs" Outputs="$(ProjectDir)$(IntDir)CalClock.ico;$(ProjectDir)$(IntDir)Resources.dll.bin">
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)prepare.ps1&quot; -OutputDirectory &quot;$(ProjectDir)$(IntDir).&quot;" />
+  </Target>
 </Project>

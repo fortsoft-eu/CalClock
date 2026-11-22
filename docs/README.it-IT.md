@@ -252,6 +252,16 @@ I parametri di firma leggono i valori predefiniti anche dalle variabili d’ambi
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Gli argomenti
 forniti esplicitamente nella riga di comando hanno la precedenza.
 
+## Ricerca nella guida e nella licenza
+
+Nella guida e nella licenza della finestra Informazioni, Ctrl+F apre Trova. F3 trova la corrispondenza
+successiva e Shift+F3 quella precedente. Sono supportate maiuscole e minuscole, parole intere, inizio e fine
+riga, ricerca all’indietro ed espressioni regolari. La cronologia conserva le ultime 30 ricerche della
+sessione.
+
+Nella scheda Applicazione, Icona di notifica alternativa abilita Icona classica. Le due opzioni modificano
+solo l’icona di notifica dopo Applica o OK.
+
 ## Licenza
 
 CalClock è disponibile con [licenza MIT](../license.txt).

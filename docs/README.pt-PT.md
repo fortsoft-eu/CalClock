@@ -248,6 +248,15 @@ Os parâmetros de assinatura também obtêm valores predefinidos das variáveis 
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Os argumentos
 explícitos da linha de comandos têm prioridade.
 
+## Pesquisar na ajuda e na licença
+
+Na ajuda e na licença da janela Acerca de, Ctrl+F abre Localizar. F3 procura a correspondência seguinte e
+Shift+F3 a anterior. A pesquisa permite distinguir maiúsculas, procurar palavras inteiras, inícios e fins de
+linha, pesquisar para trás e usar expressões regulares. O histórico guarda as últimas 30 pesquisas da sessão.
+
+No separador Aplicação, Ícone de notificação alternativo ativa Ícone clássico. Ambas as opções alteram apenas
+o ícone de notificação após Aplicar ou OK.
+
 ## Licença
 
 O CalClock está disponível sob a [licença MIT](../license.txt).

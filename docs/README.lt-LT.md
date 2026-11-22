@@ -180,6 +180,15 @@ Numatytosios pasirašymo parametrų reikšmės taip pat skaitomos iš Windows va
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Aiškiai pateikti
 komandinės eilutės argumentai turi pirmenybę.
 
+## Paieška žinyne ir licencijoje
+
+Žinyne ir lango Apie licencijoje Ctrl+F atveria paiešką. F3 randa kitą atitikmenį, Shift+F3 – ankstesnį.
+Palaikomas raidžių dydžio skyrimas, ištisi žodžiai, eilučių pradžios ir pabaigos, paieška atgal bei reguliarūs
+reiškiniai. Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.
+
+Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Klasikinė piktograma. Abi parinktys
+keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.
+
 ## Licencija
 
 „CalClock“ platinamas pagal [MIT licenciją](../license.txt).

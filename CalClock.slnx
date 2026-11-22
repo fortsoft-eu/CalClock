@@ -9,6 +9,8 @@
     <File Path="PackageRelease.ps1" />
   </Folder>
   <Folder Name="/tests/">
+    <File Path="tests\FindFormTests.cpp" />
+    <File Path="tests\RunFindFormTests.ps1" />
     <File Path="tests\AlarmIntegrationTests.cpp" />
     <File Path="tests\AlarmPlaybackTests.cpp" />
     <File Path="tests\AlarmScheduleTests.cpp" />

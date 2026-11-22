@@ -173,6 +173,15 @@ Privzete vrednosti parametrov podpisovanja se berejo tudi iz uporabniških okolj
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Izrecno podani
 argumenti ukazne vrstice imajo prednost.
 
+## Iskanje v pomoči in licenci
+
+V pomoči in licenci v oknu O programu Ctrl+F odpre iskanje. F3 najde naslednji zadetek, Shift+F3 pa
+prejšnjega. Podprti so razlikovanje velikih in malih črk, cele besede, začetki in konci vrstic, iskanje nazaj
+ter regularni izrazi. Zgodovina ohrani zadnjih 30 iskanj trenutne seje.
+
+Na zavihku Program možnost Druga ikona za obvestila omogoči Klasična ikona. Obe možnosti spremenita samo ikono
+za obvestila po Uporabi ali V redu.
+
 ## Licenca
 
 CalClock je na voljo pod [licenco MIT](../license.txt).

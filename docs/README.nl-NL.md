@@ -197,6 +197,15 @@ Standaardwaarden voor ondertekeningsparameters worden ook uit de Windows-gebruik
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Expliciete
 opdrachtregelargumenten hebben voorrang.
 
+## Zoeken in Help en de licentie
+
+In Help en de licentietekst in Info opent Ctrl+F het zoekvenster. F3 zoekt de volgende overeenkomst en
+Shift+F3 de vorige. Zoeken ondersteunt hoofdlettergevoeligheid, hele woorden, regelbegin en -einde, achteruit
+zoeken en reguliere expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige sessie.
+
+Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Klassiek pictogram in. Beide
+wijzigen alleen het meldingspictogram na Toepassen of OK.
+
 ## Licentie
 
 CalClock is beschikbaar onder de [MIT-licentie](../license.txt).

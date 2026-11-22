@@ -179,6 +179,15 @@ Allkirjastamisparameetrite vaikeväärtused loetakse ka Windowsi kasutaja keskko
 `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Selgesõnalised käsureaargumendid on
 ülimuslikud.
 
+## Otsimine spikrist ja litsentsist
+
+Spikris ja Teave-akna litsentsis avab Ctrl+F otsingu. F3 leiab järgmise vaste ning Shift+F3 eelmise. Otsing
+toetab tõstutundlikkust, terveid sõnu, rea algusi ja lõppe, tagurpidi otsingut ning regulaaravaldisi. Ajalugu
+säilitab käesoleva seansi viimased 30 otsingut.
+
+Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Klassikaline ikoon. Mõlemad muudavad ainult
+teavitusikooni pärast Rakenda või OK vajutamist.
+
 ## Litsents
 
 CalClock on saadaval [MIT-litsentsiga](../license.txt).

@@ -243,6 +243,15 @@ Signing parameters also take their defaults from Windows user environment variab
 `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Explicit command-line arguments take
 precedence.
 
+## Searching Help and the license
+
+In Help and the license in About, Ctrl+F opens Find. F3 finds the next match; Shift+F3 finds the previous
+match. Search supports case sensitivity, whole words, line starts and ends, backward searching, and regular
+expressions. The history retains the last 30 searches for the current application session.
+
+On the Application tab, Alternative notification icon enables Classic icon. Both options affect only the
+notification icon and take effect after Apply or OK.
+
 ## License
 
 CalClock is available under the [MIT License](license.txt).

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.2.5
  */
 
 #define NOMINMAX
@@ -549,7 +549,7 @@ static void WriteRegistryFixtureText(HKEY key, const wchar_t* name, const std::w
     Require(status == ERROR_SUCCESS, "write isolated registry text");
 }
 
-/// Reads real registry preferences under a process-local override; never invokes the destructive writer.
+/// Reads isolated current-format registry preferences and rejects empty collections without migration.
 static void TestRegistryReader() {
     std::wstring path = L"Software\\CalClockAlarmSettingsTests-"
         + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(GetTickCount64());
@@ -615,6 +615,17 @@ static void TestRegistryReader() {
                         "registry reader retains alarm values and requires an explicit valid wake value");
                 }
             }
+            WriteRegistryFixtureNumber(collection, L"Count", 0);
+            SettingsSnapshot defaults{};
+            SettingsSnapshot restored{};
+            restored.options = 0x80000000;
+            restored.widgets.push_back(AlarmConfiguration(77));
+            Require(!ReadRegistrySettings(defaults, CreateStoredWidgetDefaults, &restored),
+                "an empty widget collection does not activate the old single-widget reader");
+            Require(restored.options == 0x80000000
+                && restored.widgets.size() == 1
+                && restored.widgets.front().id == 77,
+                "a rejected registry collection leaves the destination unchanged");
             Require(RegOverridePredefKey(HKEY_CURRENT_USER, nullptr) == ERROR_SUCCESS,
                 "restore the process current-user registry mapping");
         }

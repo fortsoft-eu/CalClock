@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.1
+ * Last modified for version 1.7.2.5
  */
 
 #define NOMINMAX
@@ -121,6 +121,9 @@ void HelpForm::Layout() const {
 
 /// Handles the current font query, native commands, layout, theme, DPI changes and resource cleanup.
 INT_PTR HelpForm::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+    if (HandleInformationMessage(window, message, wParam, lParam)) {
+        return TRUE;
+    }
     if (message == WM_GETFONT && uiFont != nullptr) {
         SetWindowLongPtrW(window, DWLP_MSGRESULT, reinterpret_cast<LONG_PTR>(uiFont));
         return TRUE;

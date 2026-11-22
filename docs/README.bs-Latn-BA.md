@@ -184,6 +184,15 @@ Podrazumijevane vrijednosti parametara potpisivanja čitaju se i iz korisničkih
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Izričito
 navedeni argumenti komandne linije imaju prednost.
 
+## Pretraga pomoći i licence
+
+U pomoći i licenci u prozoru O programu, Ctrl+F otvara pretragu. F3 pronalazi sljedeće podudaranje, a Shift+F3
+prethodno. Podržani su razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga
+unazad i regularni izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.
+
+Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućava Klasična ikona. Obje opcije mijenjaju
+samo ikonu obavijesti nakon Primijeni ili U redu.
+
 ## Licenca
 
 CalClock je dostupan pod [licencom MIT](../license.txt).

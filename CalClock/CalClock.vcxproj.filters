@@ -15,6 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FindForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModernPrintDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="AboutForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,6 +75,12 @@
     <ClCompile Include="MonitorInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PackedResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="NtpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,6 +125,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FindForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModernPrintDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AboutForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -167,6 +191,12 @@
     <ClInclude Include="MonitorInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PackedResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="NtpClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -217,11 +247,14 @@
     <ResourceCompile Include="CalClock.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-    <Image Include="CalClock.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Resources.dll">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ResourceIcons.cs" />
+    <None Include="ResourcePacker.cs" />
+    <None Include="prepare.ps1" />
     <None Include="..\license.txt">
       <Filter>Resource Files</Filter>
     </None>

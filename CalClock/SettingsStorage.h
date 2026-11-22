@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.5
  */
 
 #pragma once
@@ -73,8 +73,8 @@ bool ReadSettingsXml(const std::wstring& path, AppLanguage defaultLanguage,
     WidgetDefaultsFactory createDefaults, SettingsSnapshot* snapshot,
     std::vector<TimeCalculatorPreset>* presets = nullptr, bool* presetsOnly = nullptr);
 
-/// Loads per-user settings using supplied defaults and a widget-default factory, including the older
-/// single-widget layout. Returns false if arguments are invalid or the settings root cannot be opened.
+/// Loads per-user settings and widget subkeys using supplied defaults and a widget-default factory.
+/// Returns false for invalid arguments, an unavailable root, or an empty or invalid widget collection.
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults,
     SettingsSnapshot* snapshot);
 

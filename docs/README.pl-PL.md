@@ -230,6 +230,15 @@ Domyślne wartości parametrów podpisywania są również odczytywane ze zmienn
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Jawne argumenty
 wiersza poleceń mają pierwszeństwo.
 
+## Wyszukiwanie w pomocy i licencji
+
+W pomocy i tekście licencji w oknie O programie Ctrl+F otwiera wyszukiwanie. F3 znajduje następne dopasowanie,
+a Shift+F3 poprzednie. Dostępne są rozróżnianie wielkości liter, całe wyrazy, początki i końce wierszy,
+wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej sesji.
+
+Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Klasyczna ikona. Obie zmieniają
+wyłącznie ikonę powiadomień po Zastosuj lub OK.
+
 ## Licencja
 
 CalClock jest dostępny na [licencji MIT](../license.txt).

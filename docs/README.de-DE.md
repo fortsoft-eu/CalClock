@@ -252,6 +252,15 @@ Standardwerte der Signaturparameter werden auch aus den Windows-Benutzerumgebung
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Ausdrücklich
 übergebene Befehlszeilenargumente haben Vorrang.
 
+## Hilfe und Lizenz durchsuchen
+
+In der Hilfe und im Lizenztext unter Info öffnet Ctrl+F die Suche. F3 sucht den nächsten Treffer, Shift+F3 den
+vorherigen. Unterstützt werden Groß-/Kleinschreibung, ganze Wörter, Zeilenanfang und -ende, Rückwärtssuche und
+reguläre Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.
+
+Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option Klassisches
+Symbol. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder OK wirksam.
+
 ## Lizenz
 
 CalClock ist unter der [MIT-Lizenz](../license.txt) verfügbar.

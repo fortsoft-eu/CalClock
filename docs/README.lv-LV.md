@@ -179,6 +179,15 @@ Parakstīšanas parametru noklusējuma vērtības tiek lasītas arī no Windows 
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Skaidri
 norādītiem komandrindas argumentiem ir priekšroka.
 
+## Meklēšana palīdzībā un licencē
+
+Palīdzībā un loga Par licences tekstā Ctrl+F atver meklēšanu. F3 atrod nākamo atbilstību, Shift+F3 –
+iepriekšējo. Var ņemt vērā reģistru, meklēt veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot
+regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
+
+Cilnē Lietotne opcija Alternatīva paziņojumu ikona iespējo Klasiskā ikona. Abas opcijas maina tikai paziņojumu
+ikonu pēc Lietot vai Labi nospiešanas.
+
 ## Licence
 
 CalClock ir pieejams saskaņā ar [MIT licenci](../license.txt).

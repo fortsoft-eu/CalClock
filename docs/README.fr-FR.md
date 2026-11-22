@@ -251,6 +251,16 @@ Les valeurs par défaut des paramètres de signature sont aussi lues dans les va
 Windows : `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Les
 arguments fournis explicitement sur la ligne de commande sont prioritaires.
 
+## Rechercher dans l’aide et la licence
+
+Dans l’aide et la licence de la fenêtre À propos, Ctrl+F ouvre la recherche. F3 trouve l’occurrence suivante
+et Shift+F3 la précédente. La recherche prend en charge la casse, les mots entiers, les débuts et fins de
+ligne, le sens inverse et les expressions régulières. L’historique conserve les 30 dernières recherches de la
+session.
+
+Dans l’onglet Application, Autre icône de notification active Icône classique. Ces options modifient
+uniquement l’icône de notification après Appliquer ou OK.
+
 ## Licence
 
 CalClock est disponible sous [licence MIT](../license.txt).

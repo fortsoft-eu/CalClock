@@ -19,6 +19,20 @@
 #define IDD_CALCULATOR_ROUND                    115
 #define IDD_CALCULATOR_PRESETS                  116
 #define IDD_CALCULATOR_HIGHLIGHTS               117
+#define IDR_IMAGE_LIBRARY                       118
+#define IDD_FIND                                119
+#define ID_ALTERNATIVE_TRAY_ICON                5153
+#define ID_CLASSIC_TRAY_ICON                    5154
+#define ID_HELP_CONTENTS                        40001
+#define IDC_FIND_LABEL                          5200
+#define IDC_FIND_TEXT                           5201
+#define IDC_FIND_MATCH_CASE                     5202
+#define IDC_FIND_BACKWARD                       5203
+#define IDC_FIND_WHOLE_WORDS                    5204
+#define IDC_FIND_STARTS_WITH                    5205
+#define IDC_FIND_ENDS_WITH                      5206
+#define IDC_FIND_REGEX                          5207
+#define IDC_FIND_GRIP                           5208
 #define ID_CALC_HIGHLIGHT_BASE                  3450
 
 #define ID_CALC_TABS                            3300
@@ -255,9 +269,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE                118
-#define _APS_NEXT_COMMAND_VALUE                 40001
-#define _APS_NEXT_CONTROL_VALUE                 5153
+#define _APS_NEXT_RESOURCE_VALUE                120
+#define _APS_NEXT_COMMAND_VALUE                 40002
+#define _APS_NEXT_CONTROL_VALUE                 5209
 #define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif

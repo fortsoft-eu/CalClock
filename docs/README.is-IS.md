@@ -234,6 +234,15 @@ Sjálfgefin gildi undirritunarfæribreyta eru einnig lesin úr umhverfisbreytum 
 `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Bein viðföng á skipanalínu hafa
 forgang.
 
+## Leit í hjálp og leyfi
+
+Í hjálpinni og leyfinu í Um opnar Ctrl+F leit. F3 finnur næstu samsvörun og Shift+F3 þá fyrri. Leitin styður
+há- og lágstafi, heil orð, línubyrjanir og línulok, leit afturábak og reglulegar segðir. Ferillinn geymir
+síðustu 30 leitir í núverandi keyrslu.
+
+Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Klassískt tákn. Báðir valkostir breyta aðeins
+tilkynningatákninu eftir Nota eða Í lagi.
+
 ## Leyfi
 
 CalClock er í boði samkvæmt [MIT-leyfinu](../license.txt).

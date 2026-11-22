@@ -228,6 +228,15 @@ Predvolené hodnoty parametrov podpisovania sa načítavajú aj z používateľs
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Výslovne zadané
 parametre príkazu majú prednosť.
 
+## Hľadanie v pomocníkovi a licencii
+
+V pomocníkovi a licencii v okne O programe otvorí Ctrl+F hľadanie. F3 nájde ďalšiu zhodu, Shift+F3
+predchádzajúcu. Možno rozlišovať veľkosť písmen, hľadať celé slová, začiatky a konce riadkov, zmeniť smer
+alebo použiť regulárny výraz. História uchováva posledných 30 hľadaní počas behu aplikácie.
+
+Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Klasická ikona. Obe voľby
+menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.
+
 ## Licencia
 
 CalClock je dostupný pod [licenciou MIT](../license.txt).

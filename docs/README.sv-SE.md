@@ -244,6 +244,15 @@ Standardvärden för signeringsparametrar läses också från Windows-användare
 `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Uttryckliga kommandoradsargument har
 företräde.
 
+## Söka i hjälp och licens
+
+I hjälpen och licensen i Om öppnar Ctrl+F sökning. F3 hittar nästa träff och Shift+F3 föregående. Sökningen
+stöder skiftlägeskänslighet, hela ord, radbörjan och radslut, bakåtsökning och reguljära uttryck. Historiken
+behåller de senaste 30 sökningarna under den aktuella sessionen.
+
+På fliken Program aktiverar Alternativ meddelandeikon alternativet Klassisk ikon. Båda alternativen ändrar
+endast meddelandeikonen efter Verkställ eller OK.
+
 ## Licens
 
 CalClock är tillgängligt under [MIT-licensen](../license.txt).

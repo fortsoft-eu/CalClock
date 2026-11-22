@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.2.5
  */
 
 #define NOMINMAX
@@ -51,8 +51,65 @@
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "XmlLite.lib")
 
+/// Associates one application preference with its persisted Options bit.
+struct SettingsOption {
+    DWORD mask;
+    bool SettingsSnapshot::* value;
+};
+
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
+
+static const DWORD settingsOptionsMask = 0x01FF;
+static const SettingsOption settingsOptions[] = {
+    SettingsOption{ 0x0001, &SettingsSnapshot::themesDisabled },
+    SettingsOption{ 0x0002, &SettingsSnapshot::windows2000Style },
+    SettingsOption{ 0x0004, &SettingsSnapshot::snapWidgetsToWorkArea },
+    SettingsOption{ 0x0008, &SettingsSnapshot::warnOnUnsavedChanges },
+    SettingsOption{ 0x0010, &SettingsSnapshot::generatedTimeSignal },
+    SettingsOption{ 0x0020, &SettingsSnapshot::fontItalic },
+    SettingsOption{ 0x0040, &SettingsSnapshot::useNtpTime },
+    SettingsOption{ 0x0080, &SettingsSnapshot::alternativeTrayIcon },
+    SettingsOption{ 0x0100, &SettingsSnapshot::classicTrayIcon }
+};
+
+static const wchar_t* const obsoleteOptionValues[] = {
+    L"DisableThemes",
+    L"Windows2000Style",
+    L"VisualStyles",
+    L"SnapWidgetsToWorkArea",
+    L"WarnOnUnsavedChanges",
+    L"GeneratedTimeSignal",
+    L"FontItalic",
+    L"UseNtpTime"
+};
+
+/// Packs application preferences while preserving unrecognized Options bits.
+static DWORD PackSettingsOptions(const SettingsSnapshot& snapshot) {
+    DWORD value = snapshot.options & ~settingsOptionsMask;
+    for (const SettingsOption& option : settingsOptions) {
+        if (snapshot.*option.value) {
+            value |= option.mask;
+        }
+    }
+    if (!snapshot.themesDisabled) {
+        value &= ~0x0002UL;
+    }
+    if (!snapshot.alternativeTrayIcon) {
+        value &= ~0x0100UL;
+    }
+    return value;
+}
+
+/// Restores application preferences exclusively from the packed Options value.
+static void UnpackSettingsOptions(DWORD value, SettingsSnapshot* snapshot) {
+    snapshot->options = value;
+    for (const SettingsOption& option : settingsOptions) {
+        snapshot->*option.value = (value & option.mask) != 0;
+    }
+    snapshot->windows2000Style = snapshot->themesDisabled && snapshot->windows2000Style;
+    snapshot->classicTrayIcon = snapshot->alternativeTrayIcon && snapshot->classicTrayIcon;
+}
 
 /// Accepts no attachment or at most one remembered edge per axis.
 static bool ValidWidgetWorkAreaEdges(LONGLONG edges) {
@@ -555,15 +612,7 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
         result = WriteXmlNumberAttribute(writer, L"language", snapshot.language);
     }
     if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"disableThemes", snapshot.themesDisabled);
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"windows2000Style",
-            snapshot.themesDisabled && snapshot.windows2000Style);
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"generatedTimeSignal",
-            snapshot.generatedTimeSignal ? 0 : 1);
+        result = WriteXmlNumberAttribute(writer, L"options", PackSettingsOptions(snapshot));
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlTextAttribute(writer, L"testAudioOutputDevice", snapshot.testAudioOutputDevice);
@@ -571,12 +620,6 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     if (SUCCEEDED(result)) {
         result = WriteXmlTextAttribute(writer, L"timeSignalVolume",
             FormatRealNumber(snapshot.timeSignalVolume));
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"snapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"warnOnUnsavedChanges", snapshot.warnOnUnsavedChanges);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"fontAntialiasing", snapshot.fontAntialiasing);
@@ -589,12 +632,6 @@ static bool WriteSettingsXmlStream(IStream* stream, const SettingsSnapshot& snap
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"fontWeight", snapshot.fontWeight);
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"fontItalic", snapshot.fontItalic);
-    }
-    if (SUCCEEDED(result)) {
-        result = WriteXmlNumberAttribute(writer, L"useNtpTime", snapshot.useNtpTime);
     }
     if (SUCCEEDED(result)) {
         result = WriteXmlNumberAttribute(writer, L"ntpPreset", snapshot.ntpPreset);
@@ -1730,19 +1767,15 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                 break;
             }
             rootFound = true;
+            if (ReadXmlNumberAttribute(reader, L"options", &number)
+                    && number >= 0
+                    && number <= MAXDWORD) {
+                UnpackSettingsOptions(static_cast<DWORD>(number), &loaded);
+            }
             if (ReadXmlNumberAttribute(reader, L"language", &number)
                     && number >= 0
                     && number < LANG_COUNT) {
                 loaded.language = static_cast<AppLanguage>(number);
-            }
-            if (ReadXmlNumberAttribute(reader, L"disableThemes", &number)) {
-                loaded.themesDisabled = number != 0;
-            }
-            if (ReadXmlNumberAttribute(reader, L"windows2000Style", &number)) {
-                loaded.windows2000Style = loaded.themesDisabled && number != 0;
-            }
-            if (ReadXmlNumberAttribute(reader, L"generatedTimeSignal", &number)) {
-                loaded.generatedTimeSignal = number == 0;
             }
             ReadXmlAttribute(reader, L"testAudioOutputDevice", &loaded.testAudioOutputDevice);
             std::wstring volumeText;
@@ -1751,12 +1784,6 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
                     && ParseRealNumber(volumeText, &volume)) {
                 loaded.timeSignalVolume = std::clamp<double>(volume,
                     TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
-            }
-            if (ReadXmlNumberAttribute(reader, L"snapWidgetsToWorkArea", &number)) {
-                loaded.snapWidgetsToWorkArea = number != 0;
-            }
-            if (ReadXmlNumberAttribute(reader, L"warnOnUnsavedChanges", &number)) {
-                loaded.warnOnUnsavedChanges = number != 0;
             }
             if (ReadXmlNumberAttribute(reader, L"fontAntialiasing", &number)
                     && number >= 0
@@ -1774,12 +1801,6 @@ static bool ReadSettingsXmlStream(IStream* stream, AppLanguage defaultLanguage,
             }
             if (ReadXmlNumberAttribute(reader, L"fontWeight", &number)) {
                 loaded.fontWeight = static_cast<int>(std::clamp<LONGLONG>(number, 0, 1000));
-            }
-            if (ReadXmlNumberAttribute(reader, L"fontItalic", &number)) {
-                loaded.fontItalic = number != 0;
-            }
-            if (ReadXmlNumberAttribute(reader, L"useNtpTime", &number)) {
-                loaded.useNtpTime = number != 0;
             }
             if (ReadXmlNumberAttribute(reader, L"ntpPreset", &number)
                     && number >= 0
@@ -2435,8 +2456,8 @@ static bool WriteCalculatorRegistry(HKEY root, const SettingsSnapshot& snapshot)
     return true;
 }
 
-/// Loads per-user settings using supplied defaults and a widget-default factory, including the older
-/// single-widget layout. Returns false if arguments are invalid or the settings root cannot be opened.
+/// Loads per-user settings and widget subkeys using supplied defaults and a widget-default factory.
+/// Returns false for invalid arguments, an unavailable root, or an empty or invalid widget collection.
 bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactory createDefaults,
         SettingsSnapshot* snapshot) {
     if (createDefaults == nullptr || snapshot == nullptr) {
@@ -2453,28 +2474,13 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (ReadDword(root, L"Language", &value) && value < LANG_COUNT) {
         loaded.language = static_cast<AppLanguage>(value);
     }
-    if (ReadDword(root, L"DisableThemes", &value)) {
-        loaded.themesDisabled = value != 0;
-    } else if (ReadDword(root, L"VisualStyles", &value)) {
-        loaded.themesDisabled = value == 0;
-    }
-    loaded.windows2000Style = loaded.themesDisabled
-        && ReadDword(root, L"Windows2000Style", &value)
-        && value != 0;
-    if (ReadDword(root, L"GeneratedTimeSignal", &value)) {
-        loaded.generatedTimeSignal = value == 0;
+    if (ReadDword(root, L"Options", &value)) {
+        UnpackSettingsOptions(value, &loaded);
     }
     ReadString(root, L"TestAudioOutputDevice", &loaded.testAudioOutputDevice);
     double volume = 0.0;
     if (ReadTimeSignalVolume(root, &volume)) {
-        loaded.timeSignalVolume = std::clamp<double>(volume,
-            TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
-    }
-    if (ReadDword(root, L"SnapWidgetsToWorkArea", &value)) {
-        loaded.snapWidgetsToWorkArea = value != 0;
-    }
-    if (ReadDword(root, L"WarnOnUnsavedChanges", &value)) {
-        loaded.warnOnUnsavedChanges = value != 0;
+        loaded.timeSignalVolume = std::clamp<double>(volume, TIME_SIGNAL_VOLUME_MIN, TIME_SIGNAL_VOLUME_MAX);
     }
     if (ReadDword(root, L"FontAntialiasing", &value) && value < FONT_ANTIALIAS_COUNT) {
         loaded.fontAntialiasing = static_cast<int>(value);
@@ -2489,12 +2495,6 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     }
     if (ReadDword(root, L"FontWeight", &value)) {
         loaded.fontWeight = std::clamp(static_cast<int>(value), 0, 1000);
-    }
-    if (ReadDword(root, L"FontItalic", &value)) {
-        loaded.fontItalic = value != 0;
-    }
-    if (ReadDword(root, L"UseNtpTime", &value)) {
-        loaded.useNtpTime = value != 0;
     }
     if (ReadDword(root, L"NtpPreset", &value) && value < NTP_PRESET_COUNT) {
         loaded.ntpPreset = static_cast<int>(value);
@@ -2560,51 +2560,8 @@ bool ReadRegistrySettings(const SettingsSnapshot& defaults, WidgetDefaultsFactor
     if (collection != nullptr) {
         RegCloseKey(collection);
     }
-    if (loaded.widgets.empty()) {
-        WidgetConfig config = createDefaults(WIDGET_ANALOG, 0, loaded.language, loaded.fontAntialiasing);
-        if (ReadDword(root, L"ClockSize", &value)) {
-            config.size = static_cast<int>(value);
-        }
-        if (ReadDword(root, L"ShowSeconds", &value)) {
-            config.showSeconds = value != 0;
-        }
-        if (ReadDword(root, L"ShowUtc", &value)) {
-            config.showUtc = value != 0;
-        }
-        if (ReadDword(root, L"AlwaysOnTop", &value)) {
-            config.topMost = value != 0;
-        }
-        if (ReadDword(root, L"ClockVisible", &value)) {
-            config.visible = value != 0;
-        }
-        if (ReadDword(root, L"PopupX", &value)) {
-            config.x = static_cast<int>(value);
-        }
-        if (ReadDword(root, L"PopupY", &value)) {
-            config.y = static_cast<int>(value);
-        }
-        if (ReadDword(root, L"AlarmEnabled", &value)) {
-            config.alarmEnabled = value != 0;
-        }
-        if (ReadDword(root, L"AlarmHour", &value) && value < 24) {
-            config.alarmHour = static_cast<int>(value);
-        }
-        if (ReadDword(root, L"AlarmMinute", &value) && value < 60) {
-            config.alarmMinute = static_cast<int>(value);
-        }
-        if (ReadDword(root, L"AlarmRunCommand", &value)) {
-            config.runCommand = value != 0;
-        }
-        if (ReadDword(root, L"AlarmLoopAudio", &value)) {
-            config.loopAudio = value != 0;
-        }
-        ReadQword(root, L"ClockOffsetMilliseconds", &config.offsetMilliseconds);
-        ReadString(root, L"TimeZoneKey", &config.timeZoneKey);
-        ReadString(root, L"AlarmCommand", &config.command);
-        loaded.widgets.push_back(config);
-    }
     RegCloseKey(root);
-    if (!StoredWidgetIdsAreValid(loaded.widgets)) {
+    if (loaded.widgets.empty() || !StoredWidgetIdsAreValid(loaded.widgets)) {
         return false;
     }
     *snapshot = std::move(loaded);
@@ -2623,22 +2580,18 @@ bool WriteRegistrySettings(const SettingsSnapshot& snapshot) {
         KEY_SET_VALUE | KEY_CREATE_SUB_KEY, nullptr, &root, &disposition) != ERROR_SUCCESS) {
         return false;
     }
-    WriteDword(root, L"SchemaVersion", 16);
+    WriteDword(root, L"SchemaVersion", 17);
+    WriteDword(root, L"Options", PackSettingsOptions(snapshot));
+    for (const wchar_t* name : obsoleteOptionValues) {
+        RegDeleteValueW(root, name);
+    }
     WriteDword(root, L"Language", snapshot.language);
-    WriteDword(root, L"DisableThemes", snapshot.themesDisabled);
-    WriteDword(root, L"Windows2000Style", snapshot.themesDisabled && snapshot.windows2000Style);
-    WriteDword(root, L"VisualStyles", !snapshot.themesDisabled);
-    WriteDword(root, L"GeneratedTimeSignal", snapshot.generatedTimeSignal ? 0 : 1);
     WriteTimeSignalVolume(root, snapshot.timeSignalVolume);
     WriteString(root, L"TestAudioOutputDevice", snapshot.testAudioOutputDevice);
-    WriteDword(root, L"SnapWidgetsToWorkArea", snapshot.snapWidgetsToWorkArea);
-    WriteDword(root, L"WarnOnUnsavedChanges", snapshot.warnOnUnsavedChanges);
     WriteDword(root, L"FontAntialiasing", snapshot.fontAntialiasing);
     WriteString(root, L"FontFace", snapshot.fontFace);
     WriteDword(root, L"FontDialogSize", snapshot.fontDialogSize);
     WriteDword(root, L"FontWeight", snapshot.fontWeight);
-    WriteDword(root, L"FontItalic", snapshot.fontItalic);
-    WriteDword(root, L"UseNtpTime", snapshot.useNtpTime);
     WriteDword(root, L"NtpPreset", snapshot.ntpPreset);
     WriteString(root, L"NtpServers", snapshot.ntpServers);
     WriteString(root, L"FileDialogDirectory", snapshot.fileDialogDirectory);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.4
+ * Last modified for version 1.7.2.5
  */
 
 #define NOMINMAX
@@ -47,6 +47,10 @@
 #include "PersistWindowState.h"
 #include "SelectionEdit.h"
 #include "SettingsStorage.h"
+#include "ResourceLibrary.h"
+#include "FindForm.h"
+#include "PrintSettings.h"
+#include "ModernPrintDialog.h"
 #include "SettingsEdit.h"
 #include "SystemDialogTemplate.h"
 #include "TimeCalculatorForm.h"
@@ -82,6 +86,8 @@
 #include <vector>
 
 #pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "Winspool.lib")
+#pragma comment(lib, "Windowscodecs.lib")
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "Comdlg32.lib")
 #pragma comment(lib, "Comctl32.lib")
@@ -282,6 +288,7 @@ const LONGLONG REFRESH_SECOND_TICKS = 10000000;
 const LONGLONG REFRESH_MILLISECOND_TICKS = 10000;
 static const ULONGLONG FULLSCREEN_CURSOR_IDLE_DELAY = 3000;
 const UINT_PTR COMBO_BOX_DROPDOWN_SUBCLASS_ID = 0xCC04;
+static const UINT buttonGetIdealSize = BCM_GETIDEALSIZE;
 const UINT_PTR SETTINGS_CONTROL_SUBCLASS_ID = 0xCC05;
 const UINT_PTR SETTINGS_REPORT_HEADER_SUBCLASS_ID = 0xCC07;
 const UINT_PTR SETTINGS_LIST_BORDER_SUBCLASS_ID = 0xCC08;
@@ -334,6 +341,7 @@ HINSTANCE hInstance = nullptr;
 
 /// Thread, mutex and event handles
 HANDLE hNtpThread = nullptr;
+static HANDLE printThread = nullptr;
 static HANDLE hAlarmWakeTimer = nullptr;
 static HANDLE hSettingsOpenThread = nullptr;
 HANDLE hSingleInstanceMutex = nullptr;
@@ -349,6 +357,8 @@ HFONT hUiFont = nullptr;
 
 /// Windows and tooltips
 HWND hController = nullptr;
+static HWND searchWindow = nullptr;
+static HWND printOwner = nullptr;
 HWND hSettings = nullptr;
 HWND hSettingsDefaultButton = nullptr;
 
@@ -476,6 +486,8 @@ HWND hAppFontDefaultButton = nullptr;
 HWND hAppFontLabel = nullptr;
 HWND hDisableThemesCheck = nullptr;
 HWND hWindows2000StyleCheck = nullptr;
+HWND hAlternativeTrayIconCheck = nullptr;
+HWND hClassicTrayIconCheck = nullptr;
 HWND hLanguageCombo = nullptr;
 HWND hSnapToWorkAreaCheck = nullptr;
 HWND hTimeSignalSoundCombo = nullptr;
@@ -508,7 +520,14 @@ NOTIFYICONDATAW trayIcon = {};
 /// Independent information forms and their shared Unicode boundary analysis
 static HelpForm helpForm;
 static AboutForm aboutForm;
+static FindForm find;
+static PrintSettings printSettings;
+static PrintJob* activePrintJob = nullptr;
+static ModernPrintDialog* modernPrint = nullptr;
+static bool printDialogOpen = false;
+static bool closing = false;
 static TimeCalculatorForm calculatorForm;
+ResourceLibrary iconLibrary;
 static InformationWordBreakState informationWordBreakState;
 static std::unique_ptr<SettingsOpenData> settingsOpenData;
 
@@ -538,6 +557,10 @@ static bool settingsLayoutSuspended = false;
 static bool windows2000Style = false;
 static bool settingsThemesDisabled = false;
 static bool settingsWindows2000Style = false;
+static bool settingsAlternativeTrayIcon = false;
+static bool settingsClassicTrayIcon = false;
+bool alternativeTrayIcon = false;
+bool classicTrayIcon = false;
 bool appFontItalic = false;
 bool displayRefreshPending = false;
 bool ntpHasSynchronized = false;
@@ -562,6 +585,7 @@ bool warnOnUnsavedChanges = true;
 bool winsockReady = false;
 
 /// Numeric settings and positions
+DWORD applicationOptions = 0;
 static int monitorSortColumn = -1;
 static int ntpLogSortColumn = -1;
 int appFontAntialiasing = FONT_ANTIALIAS_CLEARTYPE;
@@ -692,6 +716,17 @@ static void UpdateNtpSettingsControls();
 
 /// Dispatches controller, widget, settings-page, and information-window messages. Coordinates painting,
 /// input, timers, background-worker results, settings actions, and orderly application shutdown.
+static bool TranslateInformationMessage(MSG* message);
+static void UpdateFindTarget();
+static void RevealFindTarget(HWND target, HWND search);
+static void PrintReport(HWND owner, HWND edit);
+static void CompletePrint(PrintJob* job);
+static void CompleteModernPrint(ModernPrintDialog* completed);
+static void ReportPrintFailure(HWND owner);
+static void InformationWindowClosed(HWND window);
+static void CloseInformationWindows();
+static DWORD WINAPI PrintDocument(void* parameter);
+
 static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
 /// Integrates the primary native clock with widget dragging, face-only second-hand toggling, context menus,
@@ -1720,6 +1755,9 @@ static void SelectSystemLanguage() {
 static SettingsSnapshot CaptureSettingsSnapshot() {
     SettingsSnapshot snapshot = {};
     snapshot.language = appLanguage;
+    snapshot.options = applicationOptions;
+    snapshot.alternativeTrayIcon = alternativeTrayIcon;
+    snapshot.classicTrayIcon = classicTrayIcon;
     snapshot.themesDisabled = themesDisabled;
     snapshot.windows2000Style = windows2000Style;
     snapshot.snapWidgetsToWorkArea = snapWidgetsToWorkArea;
@@ -1756,6 +1794,9 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
 /// and the next ID.
 static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     appLanguage = snapshot.language;
+    applicationOptions = snapshot.options;
+    alternativeTrayIcon = snapshot.alternativeTrayIcon;
+    classicTrayIcon = alternativeTrayIcon && snapshot.classicTrayIcon;
     themesDisabled = snapshot.themesDisabled;
     windows2000Style = themesDisabled && snapshot.windows2000Style;
     snapWidgetsToWorkArea = snapshot.snapWidgetsToWorkArea;
@@ -3601,6 +3642,7 @@ static void RefreshApplicationFonts(bool rebuildSettings = true) {
             ApplyUiStyle(window);
         }
     }
+    find.RefreshStyle();
     if (previous != nullptr) {
         DeleteObject(previous);
     }
@@ -4827,6 +4869,10 @@ static void LayoutSettingsControlGrids() {
     for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
         AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel, (index + 1) * applicationStep);
     }
+    AlignSettingsControl(hAlternativeTrayIconCheck, hDisableThemesCheck);
+    AlignSettingsControl(hClassicTrayIconCheck, hWindows2000StyleCheck);
+    SetWindowPos(hAlternativeTrayIconCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(hClassicTrayIconCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     for (int index = 1; index < ARRAYSIZE(timeFields); index++) {
         AlignSettingsControl(timeFields[index], timeFields[0], index * timeStep);
     }
@@ -4950,7 +4996,8 @@ void ApplyUiStyle(HWND window) {
     bool disableThemes = themesDisabled && AreVisualStylesActive();
     if (window == helpForm.GetWindow()
             || window == aboutForm.GetWindow()
-            || window == calculatorForm.GetWindow()) {
+            || window == calculatorForm.GetWindow()
+            || window == find.GetWindow()) {
         const wchar_t* theme = disableThemes ? L"" : nullptr;
         SetWindowTheme(window, theme, theme);
         DialogFrame::Apply(window, disableThemes, windows2000Style);
@@ -8146,32 +8193,36 @@ static void ToggleAllFromTray() {
     RestoreLastHiddenWidgets();
 }
 
-/// Loads an owned application icon at the target window's native small or large icon size.
-static HICON LoadApplicationIcon(HWND window, bool smallIcon) {
+/// Returns the committed notification-area icon index, including the dependent classic variant.
+static int TrayIconIndex() {
+    if (!alternativeTrayIcon) {
+        return 0;
+    }
+    return classicTrayIcon ? 4 : 1;
+}
+
+/// Loads an owned indexed library icon at the target window's native small or large icon size.
+static HICON LoadApplicationIcon(HWND window, bool smallIcon, int iconIndex = 0) {
     HMODULE module = GetModuleHandleW(L"user32.dll");
     GetSystemMetricsForDpiProc getMetrics = nullptr;
     if (module != nullptr) {
         getMetrics = reinterpret_cast<GetSystemMetricsForDpiProc>(GetProcAddress(module,
             "GetSystemMetricsForDpi"));
     }
-    HICON icon = nullptr;
-    HRESULT result;
+    int width = GetSystemMetrics(smallIcon ? SM_CXSMICON : SM_CXICON);
+    int height = GetSystemMetrics(smallIcon ? SM_CYSMICON : SM_CYICON);
     if (getMetrics != nullptr) {
         UINT dpi = GetSystemDialogDpi(window);
-        int width = getMetrics(smallIcon ? SM_CXSMICON : SM_CXICON, dpi);
-        int height = getMetrics(smallIcon ? SM_CYSMICON : SM_CYICON, dpi);
-        result = LoadIconWithScaleDown(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), width, height, &icon);
-    } else {
-        result = LoadIconMetric(hInstance, MAKEINTRESOURCEW(IDI_CLOCK), smallIcon ? LIM_SMALL : LIM_LARGE,
-            &icon);
+        width = getMetrics(smallIcon ? SM_CXSMICON : SM_CXICON, dpi);
+        height = getMetrics(smallIcon ? SM_CYSMICON : SM_CYICON, dpi);
     }
-    return SUCCEEDED(result) ? icon : nullptr;
+    return iconLibrary.LoadIconAtIndex(iconIndex, width, height);
 }
 
 /// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
-void UpdateApplicationWindowIcons(HWND window) {
+void UpdateApplicationWindowIcons(HWND window, int iconIndex) {
     for (WPARAM type = ICON_SMALL; type <= ICON_BIG; ++type) {
-        HICON icon = LoadApplicationIcon(window, type == ICON_SMALL);
+        HICON icon = LoadApplicationIcon(window, type == ICON_SMALL, iconIndex);
         if (icon != nullptr) {
             HICON previous = reinterpret_cast<HICON>(SendMessageW(window, WM_SETICON, type,
                 reinterpret_cast<LPARAM>(icon)));
@@ -8204,7 +8255,7 @@ static void AddTrayIcon() {
     trayIcon.uID = 1;
     trayIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_SHOWTIP;
     trayIcon.uCallbackMessage = WM_TRAYICON;
-    trayIcon.hIcon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true);
+    trayIcon.hIcon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true, TrayIconIndex());
     wcscpy_s(trayIcon.szTip, T(TXT_APP));
     Shell_NotifyIconW(NIM_ADD, &trayIcon);
     trayIcon.uVersion = NOTIFYICON_VERSION_4;
@@ -8229,7 +8280,7 @@ static void UpdateTrayIcon() {
         return;
     }
     HICON previous = trayIcon.hIcon;
-    HICON icon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true);
+    HICON icon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true, TrayIconIndex());
     trayIcon.uFlags = NIF_TIP | NIF_SHOWTIP;
     if (icon != nullptr) {
         trayIcon.hIcon = icon;
@@ -13422,6 +13473,8 @@ static bool HasPendingSettingsChanges() {
     if (LanguageFromCombo(hLanguageCombo) != appLanguage
             || settingsThemesDisabled != themesDisabled
             || settingsWindows2000Style != windows2000Style
+            || settingsAlternativeTrayIcon != alternativeTrayIcon
+            || settingsClassicTrayIcon != classicTrayIcon
             || GetCheck(hStartWithWindowsCheck) != startWithWindows
             || GetCheck(hUseXmlSettingsCheck) != storageUsesXml
             || GetCheck(hSnapToWorkAreaCheck) != snapWidgetsToWorkArea
@@ -14150,6 +14203,8 @@ static bool ApplySettingsDraft() {
     themesDisabled = settingsThemesDisabled;
     bool previousWindows2000Style = windows2000Style;
     windows2000Style = themesDisabled && settingsWindows2000Style;
+    alternativeTrayIcon = settingsAlternativeTrayIcon;
+    classicTrayIcon = alternativeTrayIcon && settingsClassicTrayIcon;
     int previousAppFontAntialiasing = appFontAntialiasing;
     appFontAntialiasing = settingsAppFontAntialiasing;
     appFontFace = settingsAppFontFace;
@@ -15225,6 +15280,13 @@ static bool CreateSettingsApplicationControls() {
         T(TXT_WINDOWS_2000_STYLE), &applicationControls);
     SetCheck(hWindows2000StyleCheck, AreVisualStylesActive() && settingsWindows2000Style);
     EnableWindow(hWindows2000StyleCheck, AreVisualStylesActive() && settingsThemesDisabled);
+    hAlternativeTrayIconCheck = BindSettingsControl(hApplicationPage, ID_ALTERNATIVE_TRAY_ICON,
+        T(TXT_ALTERNATIVE_TRAY_ICON), &applicationControls);
+    SetCheck(hAlternativeTrayIconCheck, settingsAlternativeTrayIcon);
+    hClassicTrayIconCheck = BindSettingsControl(hApplicationPage, ID_CLASSIC_TRAY_ICON,
+        T(TXT_CLASSIC_TRAY_ICON), &applicationControls);
+    SetCheck(hClassicTrayIconCheck, settingsClassicTrayIcon);
+    EnableWindow(hClassicTrayIconCheck, settingsAlternativeTrayIcon);
     hUseXmlSettingsCheck = BindSettingsControl(hApplicationPage, ID_USE_XML_SETTINGS,
         T(TXT_XML_STORAGE_LABEL), &applicationControls);
     SetCheck(hUseXmlSettingsCheck, storageUsesXml);
@@ -15449,6 +15511,8 @@ static void DestroySettingsChildControls() {
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
     hWindows2000StyleCheck = nullptr;
+    hAlternativeTrayIconCheck = nullptr;
+    hClassicTrayIconCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
     hSnapToWorkAreaCheck = nullptr;
     hWarnUnsavedChangesCheck = nullptr;
@@ -15632,6 +15696,8 @@ static void CloseSettingsWindow() {
     hLanguageCombo = nullptr;
     hDisableThemesCheck = nullptr;
     hWindows2000StyleCheck = nullptr;
+    hAlternativeTrayIconCheck = nullptr;
+    hClassicTrayIconCheck = nullptr;
     hUseXmlSettingsCheck = nullptr;
     hSnapToWorkAreaCheck = nullptr;
     hWarnUnsavedChangesCheck = nullptr;
@@ -15802,6 +15868,8 @@ static void ImportSettings() {
 static void CreateSettingsWindow(int widgetId) {
     settingsThemesDisabled = themesDisabled;
     settingsWindows2000Style = windows2000Style;
+    settingsAlternativeTrayIcon = alternativeTrayIcon;
+    settingsClassicTrayIcon = classicTrayIcon;
     settingsDraft.clear();
     for (size_t index = 0; index < widgets.size(); index++) {
         settingsDraft.push_back(widgets[index]->config);
@@ -15980,8 +16048,8 @@ LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARAM wPara
 void ResetInformationWordBreak() {
     if (informationWordBreakState.analysis != nullptr) {
         if (FAILED(ScriptStringFree(&informationWordBreakState.analysis))) {
-            OutputDebugStringW(
-                L"CalClock: ScriptStringFree failed while clearing Unicode word-break analysis.\r\n");
+            OutputDebugStringW(L"CalClock: ScriptStringFree failed while clearing Unicode word-break "
+                L"analysis.\r\n");
         }
         informationWordBreakState.analysis = nullptr;
     }
@@ -16038,6 +16106,8 @@ int CALLBACK InformationWordBreakProc(wchar_t* text, int position, int length, i
 void RefreshInformationWindows() {
     helpForm.Refresh();
     aboutForm.Refresh();
+    find.RefreshLanguage();
+    find.RefreshStyle();
     calculatorForm.Refresh();
 }
 
@@ -16521,6 +16591,12 @@ static void HandleSettingsCommand(int id, int notification) {
     } else if (id == ID_APP_ANTIALIAS && notification == CBN_SELCHANGE) {
         settingsAppFontAntialiasing = SelectedFontAntialiasing(hAppAntialiasCombo,
             settingsAppFontAntialiasing);
+    } else if ((id == ID_ALTERNATIVE_TRAY_ICON || id == ID_CLASSIC_TRAY_ICON)
+            && notification == BN_CLICKED) {
+        settingsAlternativeTrayIcon = GetCheck(hAlternativeTrayIconCheck);
+        settingsClassicTrayIcon = settingsAlternativeTrayIcon && GetCheck(hClassicTrayIconCheck);
+        SetCheck(hClassicTrayIconCheck, settingsClassicTrayIcon);
+        EnableWindow(hClassicTrayIconCheck, settingsAlternativeTrayIcon);
     } else if ((id == ID_VISUAL_STYLES || id == ID_WINDOWS_2000_STYLE) && notification == BN_CLICKED) {
         if (AreVisualStylesActive()) {
             settingsThemesDisabled = GetCheck(hDisableThemesCheck);
@@ -17162,6 +17238,16 @@ static LRESULT HandleWindowCommand(HWND window, Widget* widget, WPARAM wParam, L
 /// Dispatches controller, widget, settings-page, and information-window messages. Coordinates painting,
 /// input, timers, background-worker results, settings actions, and orderly application shutdown.
 static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (window == hController) {
+        if (msg == informationPrintCompleteMessage) {
+            CompletePrint(reinterpret_cast<PrintJob*>(lParam));
+            return 0;
+        }
+        if (msg == modernPrintCompleteMessage) {
+            CompleteModernPrint(reinterpret_cast<ModernPrintDialog*>(lParam));
+            return 0;
+        }
+    }
     Widget* widget = reinterpret_cast<Widget*>(GetWindowLongPtrW(window, GWLP_USERDATA));
     if (msg == WM_NCCREATE) {
         CREATESTRUCTW* create = reinterpret_cast<CREATESTRUCTW*>(lParam);
@@ -17861,6 +17947,9 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
             }
             break;
         case WM_DESTROY:
+            if (window == hController) {
+                CloseInformationWindows();
+            }
             if (widget != nullptr && window == widget->window) {
                 widget->panelDateTooltip = nullptr;
             }
@@ -17910,6 +17999,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     InitializeLanguageLocales();
     InstallCalendarLocaleHook();
     LoadAllSettings();
+    HRESULT libraryResult = iconLibrary.Initialize(instance);
+    if (FAILED(libraryResult)) {
+        wchar_t error[512] = {};
+        swprintf_s(error, T(TXT_RESOURCE_LIBRARY_FAILED), static_cast<unsigned long>(libraryResult));
+        MessageBoxW(nullptr, error, T(TXT_APP), MB_OK | MB_ICONERROR);
+        if (winsockReady) {
+            WSACleanup();
+        }
+        return 2;
+    }
     bool anyWidgetVisible = false;
     for (const std::unique_ptr<Widget>& widget : widgets) {
         if (widget->config.visible) {
@@ -17969,6 +18068,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     StartNtpSynchronization(true);
     MSG msg = {};
     while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
+        if (TranslateInformationMessage(&msg)) {
+            continue;
+        }
         if (msg.message == WM_MOUSEWHEEL
                 && ScrollDialogTabHeaders(hSettings, hTabs, msg.wParam, msg.lParam)) {
             continue;
@@ -18030,6 +18132,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     if (hUiFont != nullptr) {
         DeleteObject(hUiFont);
     }
+    CloseInformationWindows();
     aboutForm.Close();
     helpForm.Close();
     calculatorForm.Close();
@@ -18043,4 +18146,495 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
         WSACleanup();
     }
     return static_cast<int>(msg.wParam);
+}
+
+/// Opens the existing modeless Help form from the search form.
+void ShowInformationHelp() {
+    helpForm.Show(hInstance, helpWindowState);
+}
+
+/// Copies native edit text into a caller-owned process-heap buffer.
+wchar_t* CopyControlText(HWND control) {
+    int length = GetWindowTextLengthW(control);
+    SIZE_T bytes = (static_cast<SIZE_T>(length) + 1) * sizeof(wchar_t);
+    wchar_t* text = static_cast<wchar_t*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bytes));
+    if (text != nullptr) {
+        GetWindowTextW(control, text, length + 1);
+    }
+    return text;
+}
+
+/// Measures the button's ideal content size and retains the supplied native minimum dimensions.
+SIZE PreferredButtonSize(HWND button, const SIZE& minimum) {
+    SIZE size = SIZE{};
+    if (!SendMessageW(button, buttonGetIdealSize, 0, reinterpret_cast<LPARAM>(&size))) {
+        wchar_t* text = CopyControlText(button);
+        HDC dc = GetDC(button);
+        if (text && dc) {
+            HFONT font = reinterpret_cast<HFONT>(SendMessageW(button, WM_GETFONT, 0, 0));
+            HGDIOBJ previous = font ? SelectObject(dc, font) : nullptr;
+            RECT bounds = RECT{};
+            DrawTextW(dc, text, -1, &bounds, DT_CALCRECT | DT_SINGLELINE);
+            SIZE padding = InformationDialogUnits(font, 12, 0);
+            size.cx = bounds.right + padding.cx + 2 * GetSystemMetrics(SM_CXEDGE);
+            size.cy = bounds.bottom + 2 * GetSystemMetrics(SM_CYEDGE);
+            if (previous) {
+                SelectObject(dc, previous);
+            }
+        }
+        if (dc) {
+            ReleaseDC(button, dc);
+        }
+        if (text) {
+            HeapFree(GetProcessHeap(), 0, text);
+        }
+    }
+    if (size.cx < minimum.cx) {
+        size.cx = minimum.cx;
+    }
+    if (size.cy < minimum.cy) {
+        size.cy = minimum.cy;
+    }
+    return size;
+}
+
+/// Returns a control's window bounds mapped into its parent's client coordinates.
+RECT ControlRect(HWND window, HWND parent) {
+    RECT rectangle = RECT{};
+    GetWindowRect(window, &rectangle);
+    MapWindowPoints(HWND_DESKTOP, parent, reinterpret_cast<POINT*>(&rectangle), 2);
+    return rectangle;
+}
+
+/// Positions and sizes a control without activation, Z-order changes or copied stale pixels.
+void PlaceControl(HWND window, int x, int y, int width, int height) {
+    SetWindowPos(window, nullptr, x, y, width > 0 ? width : 1, height > 0 ? height : 1,
+        SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
+/// Reads text metrics from the control's current font and reports whether measurement succeeded.
+bool ReadControlMetrics(HWND control, TEXTMETRICW* metrics) {
+    HDC dc = GetDC(control);
+    if (!dc) {
+        return false;
+    }
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(control, WM_GETFONT, 0, 0));
+    HGDIOBJ old = font ? SelectObject(dc, font) : nullptr;
+    bool success = GetTextMetricsW(dc, metrics) != FALSE;
+    if (old) {
+        SelectObject(dc, old);
+    }
+    ReleaseDC(control, dc);
+    return success;
+}
+
+/// Returns the native selected-text rectangle used for combo-box baseline alignment.
+bool ComboBoxTextRect(HWND combo, RECT* rectangle) {
+    HWND outer = combo;
+    combo = GetSettingsComboBox(combo);
+    COMBOBOXINFO information = {};
+    information.cbSize = sizeof(information);
+    if (!GetComboBoxInfo(combo, &information)) {
+        return false;
+    }
+    *rectangle = information.rcItem;
+    MapWindowPoints(combo, outer, reinterpret_cast<POINT*>(rectangle), 2);
+    return true;
+}
+
+/// Calculates the rendered text baseline in screen coordinates from native control content and font metrics.
+LONG ControlTextBaseline(HWND control) {
+    control = GetSettingsComboBox(control);
+    RECT rectangle = RECT{};
+    GetClientRect(control, &rectangle);
+    POINT origin = POINT{};
+    ClientToScreen(control, &origin);
+    TEXTMETRICW metrics = TEXTMETRICW{};
+    ReadControlMetrics(control, &metrics);
+    wchar_t name[32];
+    GetClassNameW(control, name, 32);
+    LONG textTop = 0;
+    if (CompareStringOrdinal(name, -1, L"EDIT", -1, TRUE) == CSTR_EQUAL) {
+        SendMessageW(control, EM_GETRECT, 0, reinterpret_cast<LPARAM>(&rectangle));
+        textTop = rectangle.top;
+    } else if (CompareStringOrdinal(name, -1, L"COMBOBOX", -1, TRUE) == CSTR_EQUAL) {
+        if (ComboBoxTextRect(control, &rectangle)) {
+            textTop = rectangle.top + (rectangle.bottom - rectangle.top - metrics.tmHeight) / 2;
+        }
+    } else if (CompareStringOrdinal(name, -1, L"BUTTON", -1, TRUE) == CSTR_EQUAL) {
+        HTHEME theme = GetWindowTheme(control);
+        LONG textHeight = metrics.tmHeight;
+        LONG type = GetWindowLongW(control, GWL_STYLE) & BS_TYPEMASK;
+        if (!theme) {
+            rectangle.bottom -= GetSystemMetrics(SM_CYBORDER);
+        } else if (type == BS_PUSHBUTTON || type == BS_DEFPUSHBUTTON) {
+            RECT content = RECT{};
+            if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, 1, 1, &rectangle, &content))) {
+                rectangle = content;
+            }
+        } else if (type == BS_CHECKBOX || type == BS_AUTOCHECKBOX) {
+            SIZE glyph = SIZE{};
+            if (SUCCEEDED(GetThemePartSize(theme, nullptr, 3, 1, nullptr, TS_TRUE, &glyph))
+                    && glyph.cy > textHeight) {
+                textHeight = glyph.cy;
+            }
+        }
+        textTop = rectangle.top + (rectangle.bottom - rectangle.top - textHeight) / 2;
+    } else if (CompareStringOrdinal(name, -1, L"STATIC", -1, TRUE) == CSTR_EQUAL
+            && GetWindowLongW(control, GWL_STYLE) & SS_CENTERIMAGE) {
+        textTop = (rectangle.bottom - rectangle.top - metrics.tmHeight) / 2;
+    }
+    return origin.y + textTop + metrics.tmAscent;
+}
+
+/// Moves a control vertically to match the reference control's rendered text baseline.
+void AlignControlBaseline(HWND control, HWND reference) {
+    LONG distance = ControlTextBaseline(reference) - ControlTextBaseline(control);
+    if (distance) {
+        RECT bounds = ControlRect(control, GetParent(control));
+        SetWindowPos(control, nullptr, bounds.left, bounds.top + distance, 0, 0,
+            SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+    }
+}
+
+/// Fits an edit's text inset and height to current font and theme metrics, including edits inside combo
+/// boxes.
+void UpdateEditMetrics(HWND edit, HWND enclosingCombo) {
+    enclosingCombo = GetSettingsComboBox(enclosingCombo);
+    HWND frameWindow = enclosingCombo ? enclosingCombo : edit;
+    RECT bounds = RECT{};
+    POINT client = POINT{};
+    if (!GetWindowRect(frameWindow, &bounds) || !ClientToScreen(edit, &client)) {
+        return;
+    }
+    TEXTMETRICW metrics = TEXTMETRICW{};
+    if (!ReadControlMetrics(edit, &metrics)) {
+        return;
+    }
+    LONG contentLeft = GetSystemMetrics(SM_CXEDGE) + GetSystemMetrics(SM_CXBORDER);
+    LONG contentTop = GetSystemMetrics(SM_CYEDGE) + GetSystemMetrics(SM_CYBORDER);
+    LONG contentBottom = contentTop;
+    if (GetWindowTheme(frameWindow)) {
+        HTHEME theme = OpenThemeData(nullptr, L"Combobox");
+        if (theme) {
+            RECT frame = RECT{ 0, 0, bounds.right - bounds.left, bounds.bottom - bounds.top };
+            RECT content = RECT{};
+            if (SUCCEEDED(GetThemeBackgroundContentRect(theme, nullptr, 5, 1, &frame, &content))) {
+                contentLeft = content.left;
+                contentTop = content.top;
+                contentBottom = frame.bottom - content.bottom;
+            }
+            CloseThemeData(theme);
+        }
+    }
+    LONG borderWidth = client.x - bounds.left - (enclosingCombo ? GetSystemMetrics(SM_CXBORDER) : 0);
+    LONG leftMargin = contentLeft > borderWidth ? contentLeft - borderWidth : 0;
+    DWORD margins = static_cast<DWORD>(SendMessageW(edit, EM_GETMARGINS, 0, 0));
+    if (LOWORD(margins) != leftMargin) {
+        SendMessageW(edit, EM_SETMARGINS, EC_LEFTMARGIN, MAKELPARAM(leftMargin, 0));
+    }
+    LONG height = metrics.tmHeight + contentTop + contentBottom + 2 * GetSystemMetrics(SM_CYBORDER);
+    if (!enclosingCombo && height != bounds.bottom - bounds.top) {
+        SetWindowPos(edit, nullptr, 0, 0, bounds.right - bounds.left, height,
+            SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+}
+
+/// Captures the active report and attaches the printer selected through the classic print dialog.
+PrintJob* ChooseReportPrinter(HWND owner, HWND edit, const wchar_t* title,
+    PrintSettings& settings, wchar_t* error, int errorCapacity) {
+    error[0] = 0;
+    PrintJob* job = CapturePrintJob(owner, edit, title, settings.GetMargins());
+    if (!job) {
+        wcsncpy_s(error, errorCapacity, T(TXT_PRINT_FAILED), _TRUNCATE);
+        return nullptr;
+    }
+    job->printer = settings.ChoosePrinter(owner, &job->printToFile, T(TXT_PRINT_FAILED),
+        error, errorCapacity);
+    if (!job->printer) {
+        FreePrintJob(job);
+        return nullptr;
+    }
+    return job;
+}
+
+/// Paginates and prints the captured text with its font and margins while honoring cancellation.
+bool PrintReportPages(PrintJob* job) {
+    if (job->canceled || !job->fontDpi) {
+        return false;
+    }
+    PrintLayout layout;
+    RECT area = PrintContentRect(job->printer, job->margins);
+    if (!layout.Initialize(*job, job->printer, area, GetDeviceCaps(job->printer, LOGPIXELSX),
+        GetDeviceCaps(job->printer, LOGPIXELSY))) {
+        return false;
+    }
+    DOCINFOW document = DOCINFOW{};
+    document.cbSize = sizeof(document);
+    document.lpszDocName = job->title;
+    document.lpszOutput = job->printToFile ? L"FILE:" : nullptr;
+    bool started = !job->canceled && StartDocW(job->printer, &document) > 0;
+    bool success = started;
+    for (UINT page = 0; page < layout.GetPageCount() && success; ++page) {
+        if (job->canceled || StartPage(job->printer) <= 0) {
+            success = false;
+            break;
+        }
+        success = layout.DrawPage(job->printer, page) && EndPage(job->printer) > 0;
+    }
+    if (success && !job->canceled) {
+        success = EndDoc(job->printer) > 0;
+    } else {
+        success = false;
+    }
+    if (!success) {
+        DWORD failure = GetLastError();
+        if (failure == ERROR_CANCELLED || failure == ERROR_PRINT_CANCELLED) {
+            InterlockedExchange(&job->canceled, 1);
+        }
+        if (started) {
+            AbortDoc(job->printer);
+        }
+    }
+    return success;
+}
+
+/// Captures the plain-text edit, its effective font, DPI, title and margins.
+PrintJob* CapturePrintJob(HWND owner, HWND edit, const wchar_t* title, const RECT& margins) {
+    PrintJob* job = static_cast<PrintJob*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(PrintJob)));
+    if (job == nullptr) {
+        return nullptr;
+    }
+    job->target = owner;
+    job->fontDpi = GetSystemDialogDpi(edit);
+    HFONT font = reinterpret_cast<HFONT>(SendMessageW(edit, WM_GETFONT, 0, 0));
+    job->report = CopyControlText(edit);
+    if (job->report == nullptr || GetObjectW(font, sizeof(job->font), &job->font) != sizeof(job->font)) {
+        FreePrintJob(job);
+        return nullptr;
+    }
+    wcsncpy_s(job->title, title, _TRUNCATE);
+    job->margins = margins;
+    return job;
+}
+
+/// Reveals the matching form beneath search without changing keyboard focus or topmost settings.
+static void RevealFindTarget(HWND target, HWND search) {
+    if (IsIconic(target)) {
+        ShowWindow(target, SW_SHOWNOACTIVATE);
+    }
+    SetWindowPos(search, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    HWND after = search;
+    if (GetWindowLongPtrW(search, GWL_EXSTYLE) & WS_EX_TOPMOST) {
+        after = HWND_TOP;
+    }
+    SetWindowPos(target, after, 0, 0, 0, 0,
+        SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+}
+
+/// Selects the edit in the last active information form while retaining it during search input.
+static void UpdateFindTarget() {
+    HWND active = GetActiveWindow();
+    if (active != nullptr && (active == helpForm.GetWindow() || active == aboutForm.GetWindow())) {
+        searchWindow = active;
+    }
+    HWND target = nullptr;
+    if (!closing && searchWindow != nullptr && IsWindow(searchWindow)) {
+        target = GetDlgItem(searchWindow, ID_INFO_TEXT);
+    }
+    find.SetTarget(target);
+}
+
+/// Routes the modeless Find form and information-window keyboard commands.
+static bool TranslateInformationMessage(MSG* message) {
+    UpdateFindTarget();
+    HWND help = helpForm.GetWindow();
+    HWND about = aboutForm.GetWindow();
+    if (find.Translate(message)) {
+        return true;
+    }
+    if (message->message != WM_KEYDOWN || GetKeyState(VK_MENU) < 0) {
+        return false;
+    }
+    HWND owner = GetAncestor(message->hwnd, GA_ROOT);
+    if (owner == nullptr || owner != help && owner != about) {
+        return false;
+    }
+    bool control = GetKeyState(VK_CONTROL) < 0;
+    HWND edit = GetDlgItem(owner, ID_INFO_TEXT);
+    if (control && message->wParam == L'P') {
+        PrintReport(owner, edit);
+        return true;
+    }
+    if (control && message->wParam == L'F' || message->wParam == VK_F3) {
+        searchWindow = owner;
+        find.SetTarget(edit);
+        if (message->wParam == VK_F3 && find.CanSearch()) {
+            find.FindNext(owner, GetKeyState(VK_SHIFT) < 0);
+        } else {
+            find.Show(owner);
+        }
+        return true;
+    }
+    return false;
+}
+
+/// Handles search notifications and releases references to destroyed information windows.
+bool HandleInformationMessage(HWND window, UINT message, WPARAM wParam, LPARAM) {
+    if (message == findVisibilityChangedMessage || message == findMatchMessage) {
+        if (message == findMatchMessage && find.GetWindow() != nullptr) {
+            RevealFindTarget(window, find.GetWindow());
+        }
+        SetWindowLongPtrW(window, DWLP_MSGRESULT, TRUE);
+        return true;
+    }
+    if (message == WM_COMMAND && LOWORD(wParam) == ID_HELP_CONTENTS) {
+        ShowInformationHelp();
+        return true;
+    }
+    if (message == WM_NCDESTROY) {
+        InformationWindowClosed(window);
+    }
+    return false;
+}
+
+/// Captures immutable text before opening the selected native printing path.
+static void PrintReport(HWND owner, HWND edit) {
+    if (closing || hController == nullptr || printDialogOpen
+            || printThread != nullptr || modernPrint != nullptr) {
+        return;
+    }
+    wchar_t title[256] = {};
+    GetWindowTextW(owner, title, ARRAYSIZE(title));
+    printOwner = owner;
+    if (UseModernPrintDialog()) {
+        PrintJob* job = CapturePrintJob(hController, edit, title, printSettings.GetMargins());
+        if (job == nullptr) {
+            ReportPrintFailure(owner);
+            return;
+        }
+        modernPrint = CreateModernPrint(job, printSettings, modernPrintCompleteMessage);
+        if (modernPrint == nullptr) {
+            ReportPrintFailure(owner);
+            return;
+        }
+        HRESULT result = ShowModernPrint(modernPrint, owner);
+        if (FAILED(result) && modernPrint != nullptr) {
+            CloseModernPrint(modernPrint);
+            modernPrint = nullptr;
+            if (result != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+                ReportPrintFailure(owner);
+            }
+        }
+        return;
+    }
+    wchar_t error[256] = {};
+    printDialogOpen = true;
+    PrintJob* job = ChooseReportPrinter(owner, edit, title, printSettings, error, ARRAYSIZE(error));
+    printDialogOpen = false;
+    if (job == nullptr) {
+        if (error[0] != 0) {
+            MessageBoxW(owner, error, PRODUCT_NAME, MB_OK | MB_ICONERROR);
+        }
+        return;
+    }
+    job->target = hController;
+    activePrintJob = job;
+    printThread = CreateThread(nullptr, 0, PrintDocument, job, 0, nullptr);
+    if (printThread == nullptr) {
+        activePrintJob = nullptr;
+        FreePrintJob(job);
+        ReportPrintFailure(owner);
+    }
+}
+
+/// Prints the captured pages and posts completion without accessing the originating edit.
+static DWORD WINAPI PrintDocument(void* parameter) {
+    PrintJob* job = static_cast<PrintJob*>(parameter);
+    job->success = PrintReportPages(job);
+    if (!PostMessageW(job->target, informationPrintCompleteMessage, 0, reinterpret_cast<LPARAM>(job))) {
+        OutputDebugStringW(L"CalClock: posting print completion failed.\n");
+    }
+    return 0;
+}
+
+/// Releases a completed classic print job on the UI thread.
+static void CompletePrint(PrintJob* job) {
+    if (job != activePrintJob) {
+        return;
+    }
+    WaitForSingleObject(printThread, INFINITE);
+    CloseHandle(printThread);
+    printThread = nullptr;
+    activePrintJob = nullptr;
+    bool failed = !job->success && !job->canceled;
+    FreePrintJob(job);
+    if (failed && !closing) {
+        ReportPrintFailure(IsWindow(printOwner) ? printOwner : nullptr);
+    }
+    printOwner = nullptr;
+}
+
+/// Releases the notification reference and any still-active modern print source.
+static void CompleteModernPrint(ModernPrintDialog* completed) {
+    if (completed != modernPrint) {
+        ReleaseModernPrint(completed);
+        return;
+    }
+    bool failed = CloseModernPrint(modernPrint);
+    modernPrint = nullptr;
+    HWND owner = printOwner;
+    printOwner = nullptr;
+    ReleaseModernPrint(completed);
+    if (failed && !closing) {
+        ReportPrintFailure(IsWindow(owner) ? owner : nullptr);
+    }
+}
+
+/// Reports printing failures using the application's current language.
+static void ReportPrintFailure(HWND owner) {
+    MessageBoxW(owner, T(TXT_PRINT_FAILED), PRODUCT_NAME, MB_OK | MB_ICONERROR);
+}
+
+/// Stops search and modern printing when their originating information window is destroyed.
+static void InformationWindowClosed(HWND window) {
+    if (window == searchWindow) {
+        find.SetTarget(nullptr);
+        find.Close();
+        searchWindow = nullptr;
+    }
+    if (window == printOwner && modernPrint != nullptr) {
+        CloseModernPrint(modernPrint);
+        modernPrint = nullptr;
+        printOwner = nullptr;
+    }
+}
+
+/// Cancels printing and drains retained notifications before the hController is destroyed.
+static void CloseInformationWindows() {
+    closing = true;
+    find.SetTarget(nullptr);
+    find.Close();
+    if (modernPrint != nullptr) {
+        CloseModernPrint(modernPrint);
+        modernPrint = nullptr;
+    }
+    if (activePrintJob != nullptr) {
+        InterlockedExchange(&activePrintJob->canceled, 1);
+        CancelDC(activePrintJob->printer);
+        CompletePrint(activePrintJob);
+    }
+    MSG message = {};
+    if (hController != nullptr) {
+        while (PeekMessageW(&message, hController, modernPrintCompleteMessage,
+                modernPrintCompleteMessage, PM_REMOVE)) {
+            ReleaseModernPrint(reinterpret_cast<ModernPrintDialog*>(message.lParam));
+        }
+        while (PeekMessageW(&message, hController, informationPrintCompleteMessage,
+                informationPrintCompleteMessage, PM_REMOVE)) {
+            OutputDebugStringW(L"CalClock: discarded completed print notification during shutdown.\n");
+        }
+    }
+    searchWindow = nullptr;
+    printOwner = nullptr;
 }

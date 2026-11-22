@@ -183,6 +183,15 @@ Léitear luachanna réamhshocraithe na bparaiméadar sínithe freisin ó athróg
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Tugtar tús áite
 d’argóintí sainráite na líne ordaithe.
 
+## Cuardach sa chabhair agus sa cheadúnas
+
+Sa chabhair agus sa cheadúnas san fhuinneog Maidir le, osclaíonn Ctrl+F cuardach. Aimsíonn F3 an chéad
+mheaitseáil eile agus Shift+F3 an ceann roimhe. Tacaítear le cásíogaireacht, focail iomlána, tús agus deireadh
+línte, cuardach siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún reatha.
+
+Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín clasaiceach. Ní athraíonn na
+roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK.
+
 ## Ceadúnas
 
 Tá CalClock ar fáil faoin [gceadúnas MIT](../license.txt).

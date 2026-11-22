@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Last modified for version 1.7.1.3
+Last modified for version 1.7.2.5
 
 .SYNOPSIS
 Builds and runs the real Time Calculator form on a hidden, nonactivating private desktop.
@@ -47,7 +47,7 @@ if (-not $VisualStudioPath) {
 if (-not $VisualStudioPath) {
     throw 'A Visual Studio installation with C++ build tools is required.'
 }
-$vcvars = Join-Path $VisualStudioPath 'VC/Auxiliary/Build/vcvars32.bat'
+$vcvars = Join-Path $VisualStudioPath 'Common7/Tools/VsDevCmd.bat'
 $buildRoot = Join-Path $projectRoot 'CalClock/Release/time-calculator-form-tests'
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
 $objects = Get-ChildItem -LiteralPath (Join-Path $projectRoot 'CalClock/Release') -Filter '*.obj' |
@@ -63,20 +63,24 @@ $responsePath = Join-Path $buildRoot 'TimeCalculatorFormTests.rsp'
 Set-Content -LiteralPath $responsePath -Value ($options -join ' ') -Encoding utf8
 Push-Location $projectRoot
 try {
+    & (Join-Path $projectRoot 'CalClock/prepare.ps1') -OutputDirectory $buildRoot
     Push-Location (Join-Path $projectRoot 'CalClock')
     try {
-        & $env:ComSpec /d /s /c "`"$vcvars`" >nul && rc /nologo /fo `"$buildRoot/CalClock.res`" CalClock.rc"
+        $resources = "`"$vcvars`" -arch=x86 -host_arch=x64 >nul && rc /nologo " +
+            "/I `"$buildRoot`" /fo `"$buildRoot/CalClock.res`" CalClock.rc"
+        & $env:ComSpec /d /s /c $resources
         if ($LASTEXITCODE -ne 0) {
             throw 'Time Calculator form test resources failed.'
         }
     } finally {
         Pop-Location
     }
-    & $env:ComSpec /d /s /c "`"$vcvars`" >nul && cl @`"$responsePath`""
+    & $env:ComSpec /d /s /c "`"$vcvars`" -arch=x86 -host_arch=x64 >nul && cl @`"$responsePath`""
     if ($LASTEXITCODE -ne 0) {
         throw 'Time Calculator form test build failed.'
     }
-    $manifest = "`"$vcvars`" >nul && mt.exe /nologo /manifest CalClock/CalClock.manifest " +
+    $manifest = "`"$vcvars`" -arch=x86 -host_arch=x64 >nul && " +
+        'mt.exe /nologo /manifest CalClock/CalClock.manifest ' +
         "/outputresource:`"$buildRoot/TimeCalculatorFormTests.exe;#1`""
     & $env:ComSpec /d /s /c $manifest
     if ($LASTEXITCODE -ne 0) {

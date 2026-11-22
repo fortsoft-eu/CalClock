@@ -245,6 +245,15 @@ Výchozí hodnoty parametrů podepisování se načítají také z uživatelský
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Výslovně zadané
 parametry příkazu mají přednost.
 
+## Hledání v nápovědě a licenci
+
+V nápovědě a licenci v okně O programu otevře Ctrl+F hledání. F3 najde další shodu, Shift+F3 předchozí. Lze
+rozlišovat velikost písmen, hledat celá slova, začátky a konce řádků, změnit směr nebo použít regulární výraz.
+Historie uchovává posledních 30 hledání během běhu aplikace.
+
+Na kartě Aplikace volba Alternativní oznamovací ikona zpřístupní volbu Klasická ikona. Obě volby mění pouze
+ikonu v oznamovací oblasti a projeví se po Použít nebo OK.
+
 ## Licence
 
 CalClock je dostupný pod [licencí MIT](../license.txt).

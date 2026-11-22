@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.2.5
  */
 
 #include "Localization.h"
@@ -30,6 +30,30 @@
 /// Stores language definitions as static compile-time data for the checked catalog.
 constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
     DefineLanguage(LANG_CS, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativní oznamovací ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasická ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nelze připravit knihovnu prostředků (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Hledat &pozpátku" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"K&onec řádku" },
+        LocalizedText{ TXT_FIND_FAILED, L"Hledání se nepodařilo dokončit." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Rozlišovat &velikost písmen" },
+        LocalizedText{ TXT_FIND_NEXT, L"Najít &další" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nebyla nalezena žádná shoda." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulární výraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulární výraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Začáte&k řádku" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Najít" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Najít:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Pouze &celá slova" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nelze otevřít dialog Vzhled stránky." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokument se nepodařilo vytisknout." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Neplatný regulární výraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Neplatná řídicí sekvence." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Chybějící nebo nadbytečná hranatá závorka." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Chybějící nebo nadbytečná kulatá závorka." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Neplatný zápis opakování." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Neplatný rozsah znaků." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Výraz je pro vyhodnocení příliš složitý." },
         LocalizedText{ TXT_APP, L"Hodiny a kalendáře" },
         LocalizedText{ TXT_SETTINGS, L"Nastavení" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavení" },
@@ -473,6 +497,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport na kartě Předvolené časové údaje uloží pouze tyto údaje do samostatného XML. "
             L"Import na této kartě načte pouze časové údaje i z exportu nastavení a sloučí je se "
             L"stávajícími položkami."
+            L"\r\n\r\nHLEDÁNÍ V NÁPOVĚDĚ A LICENCI\r\nV nápovědě a licenci v okně O programu otevře Ctrl+F "
+            L"hledání. F3 najde další shodu, Shift+F3 předchozí. Lze rozlišovat velikost písmen, hledat celá "
+            L"slova, začátky a konce řádků, změnit směr nebo použít regulární výraz. Historie uchovává "
+            L"posledních 30 hledání během běhu aplikace.\r\n\r\nNa kartě Aplikace volba Alternativní "
+            L"oznamovací ikona zpřístupní volbu Klasická ikona. Obě volby mění pouze ikonu v oznamovací "
+            L"oblasti a projeví se po Použít nebo OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáře\r\n\r\nNativní aplikace Win32 až pro 32 samostatně nastavených plovoucích "
@@ -547,6 +577,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_EN_US, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
+        LocalizedText{ TXT_FIND_FAILED, L"The search could not be completed." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Match c&ase" },
+        LocalizedText{ TXT_FIND_NEXT, L"Find &Next" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"No match was found." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regular expression" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regular expression: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Be&ginning of line" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Find" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Find what:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Match &whole word only" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"The Page Setup dialog could not be opened." },
+        LocalizedText{ TXT_PRINT_FAILED, L"The document could not be printed." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Invalid regular expression." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Invalid escape sequence." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Missing or unexpected bracket." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Missing or unexpected parenthesis." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Invalid repetition expression." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Invalid character range." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"The expression is too complex to evaluate." },
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
@@ -994,6 +1048,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
             L"file. Import on this tab extracts only dates and times, even from a settings export, and "
             L"merges them with existing entries."
+            L"\r\n\r\nSEARCHING HELP AND THE LICENSE\r\nIn Help and the license in About, Ctrl+F opens Find. "
+            L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
+            L"whole words, line starts and ends, backward searching, and regular expressions. The history "
+            L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
+            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1070,6 +1130,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_EN_GB, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
+        LocalizedText{ TXT_FIND_FAILED, L"The search could not be completed." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Match c&ase" },
+        LocalizedText{ TXT_FIND_NEXT, L"Find &Next" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"No match was found." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regular expression" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regular expression: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Be&ginning of line" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Find" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Find what:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Match &whole word only" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"The Page Setup dialog could not be opened." },
+        LocalizedText{ TXT_PRINT_FAILED, L"The document could not be printed." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Invalid regular expression." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Invalid escape sequence." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Missing or unexpected bracket." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Missing or unexpected parenthesis." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Invalid repetition expression." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Invalid character range." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"The expression is too complex to evaluate." },
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
@@ -1517,6 +1601,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
             L"file. Import on this tab extracts only dates and times, even from a settings export, and "
             L"merges them with existing entries."
+            L"\r\n\r\nSEARCHING HELP AND THE LICENSE\r\nIn Help and the license in About, Ctrl+F opens Find. "
+            L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
+            L"whole words, line starts and ends, backward searching, and regular expressions. The history "
+            L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
+            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -1593,6 +1683,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_EN_AU, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternative notification icon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Classic icon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Cannot prepare the resource library (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Search &backward" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&End of line" },
+        LocalizedText{ TXT_FIND_FAILED, L"The search could not be completed." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Match c&ase" },
+        LocalizedText{ TXT_FIND_NEXT, L"Find &Next" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"No match was found." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regular expression" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regular expression: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Be&ginning of line" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Find" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Find what:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Match &whole word only" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"The Page Setup dialog could not be opened." },
+        LocalizedText{ TXT_PRINT_FAILED, L"The document could not be printed." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Invalid regular expression." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Invalid escape sequence." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Missing or unexpected bracket." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Missing or unexpected parenthesis." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Invalid repetition expression." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Invalid character range." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"The expression is too complex to evaluate." },
         LocalizedText{ TXT_APP, L"Clocks and calendars" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
@@ -2040,6 +2154,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport on the Preset dates and times tab saves only these entries to a standalone XML "
             L"file. Import on this tab extracts only dates and times, even from a settings export, and "
             L"merges them with existing entries."
+            L"\r\n\r\nSEARCHING HELP AND THE LICENSE\r\nIn Help and the license in About, Ctrl+F opens Find. "
+            L"F3 finds the next match; Shift+F3 finds the previous match. Search supports case sensitivity, "
+            L"whole words, line starts and ends, backward searching, and regular expressions. The history "
+            L"retains the last 30 searches for the current application session.\r\n\r\nOn the Application "
+            L"tab, Alternative notification icon enables Classic icon. Both options affect only the "
+            L"notification icon and take effect after Apply or OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Clocks and calendars\r\n\r\nA native Win32 application for up to 32 independently configured "
@@ -2116,6 +2236,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_DE, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatives Benachrichtigungssymbol" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisches Symbol" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Die Ressourcenbibliothek kann nicht vorbereitet werden (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"&Rückwärts suchen" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Zeilen&ende" },
+        LocalizedText{ TXT_FIND_FAILED, L"Die Suche konnte nicht abgeschlossen werden." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Groß-/Kleinschreibung &beachten" },
+        LocalizedText{ TXT_FIND_NEXT, L"&Weitersuchen" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Keine Übereinstimmung gefunden." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulärer Ausdruck" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulärer Ausdruck: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Zeilen&anfang" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Suchen" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Suchen nach:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Nur ganze &Wörter" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Der Dialog „Seite einrichten“ kann nicht geöffnet werden." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Das Dokument konnte nicht gedruckt werden." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ungültiger regulärer Ausdruck." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ungültige Escape-Sequenz." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Fehlende oder überzählige eckige Klammer." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Fehlende oder überzählige runde Klammer." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ungültige Wiederholungsangabe." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ungültiger Zeichenbereich." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Der Ausdruck ist zu komplex." },
         LocalizedText{ TXT_APP, L"Uhren und Kalender" },
         LocalizedText{ TXT_SETTINGS, L"Einstellungen" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Einstellungen" },
@@ -2597,6 +2743,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport auf der Registerkarte für gespeicherte Zeitpunkte speichert nur diese Einträge "
             L"in einer separaten XML-Datei. Import auf dieser Registerkarte liest auch aus einem "
             L"Einstellungsexport nur Zeitpunkte und führt sie mit vorhandenen Einträgen zusammen."
+            L"\r\n\r\nHILFE UND LIZENZ DURCHSUCHEN\r\nIn der Hilfe und im Lizenztext unter Info öffnet Ctrl+F"
+            L" die Suche. F3 sucht den nächsten Treffer, Shift+F3 den vorherigen. Unterstützt werden "
+            L"Groß-/Kleinschreibung, ganze Wörter, Zeilenanfang und -ende, Rückwärtssuche und reguläre "
+            L"Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.\r\n\r\nAuf "
+            L"der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option "
+            L"Klassisches Symbol. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit "
+            L"Übernehmen oder OK wirksam."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Uhren und Kalender\r\n\r\nNative Win32-Anwendung für bis zu 32 unabhängig konfigurierte "
@@ -2680,6 +2833,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_FR, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Autre icône de notification" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icône classique" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Impossible de préparer la bibliothèque de ressources (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Rechercher en &arrière" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Fin de ligne" },
+        LocalizedText{ TXT_FIND_FAILED, L"La recherche n’a pas pu être effectuée." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Respecter la &casse" },
+        LocalizedText{ TXT_FIND_NEXT, L"&Suivant" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Aucune correspondance trouvée." },
+        LocalizedText{ TXT_FIND_REGEX, L"Expression &régulière" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Expression régulière : %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Début de ligne" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Rechercher" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Rechercher :" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Mots &entiers uniquement" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Impossible d’ouvrir la boîte de dialogue de mise en page." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Impossible d’imprimer le document." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Expression régulière non valide." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Séquence d’échappement non valide." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Crochet manquant ou superflu." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Parenthèse manquante ou superflue." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Répétition non valide." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Plage de caractères non valide." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"L’expression est trop complexe." },
         LocalizedText{ TXT_APP, L"Horloges et calendriers" },
         LocalizedText{ TXT_SETTINGS, L"Paramètres" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Paramètres" },
@@ -3163,6 +3342,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExporter dans l’onglet des dates et heures enregistrées sauvegarde uniquement ces "
             L"entrées dans un fichier XML distinct. Importer dans cet onglet extrait uniquement les dates "
             L"et heures, même depuis un export des paramètres, et les fusionne avec les entrées existantes."
+            L"\r\n\r\nRECHERCHER DANS L’AIDE ET LA LICENCE\r\nDans l’aide et la licence de la fenêtre À "
+            L"propos, Ctrl+F ouvre la recherche. F3 trouve l’occurrence suivante et Shift+F3 la précédente. "
+            L"La recherche prend en charge la casse, les mots entiers, les débuts et fins de ligne, le sens "
+            L"inverse et les expressions régulières. L’historique conserve les 30 dernières recherches de la "
+            L"session.\r\n\r\nDans l’onglet Application, Autre icône de notification active Icône classique. "
+            L"Ces options modifient uniquement l’icône de notification après Appliquer ou OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Horloges et calendriers\r\n\r\nApplication Win32 native pour plusieurs horloges et calendriers "
@@ -3245,6 +3430,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_ES, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Icono de notificación alternativo" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icono clásico" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"No se puede preparar la biblioteca de recursos (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Buscar hacia &atrás" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Fin de línea" },
+        LocalizedText{ TXT_FIND_FAILED, L"No se pudo completar la búsqueda." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Distinguir &mayúsculas" },
+        LocalizedText{ TXT_FIND_NEXT, L"Buscar &siguiente" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"No se encontraron coincidencias." },
+        LocalizedText{ TXT_FIND_REGEX, L"Expresión &regular" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Expresión regular: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Inicio de línea" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Buscar" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Buscar:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Solo palabras &completas" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"No se puede abrir el diálogo de configuración de página." },
+        LocalizedText{ TXT_PRINT_FAILED, L"No se pudo imprimir el documento." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Expresión regular no válida." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Secuencia de escape no válida." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Falta o sobra un corchete." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Falta o sobra un paréntesis." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Repetición no válida." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Intervalo de caracteres no válido." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"La expresión es demasiado compleja." },
         LocalizedText{ TXT_APP, L"Relojes y calendarios" },
         LocalizedText{ TXT_SETTINGS, L"Configuración" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Configuración" },
@@ -3717,6 +3928,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExportar en la pestaña de fechas y horas guardadas guarda solo esas entradas en un "
             L"XML independiente. Importar en esta pestaña extrae solo fechas y horas, incluso de una "
             L"exportación de la configuración, y las combina con las existentes."
+            L"\r\n\r\nBUSCAR EN LA AYUDA Y LA LICENCIA\r\nEn la ayuda y la licencia de Acerca de, Ctrl+F abre"
+            L" Buscar. F3 busca la siguiente coincidencia y Shift+F3 la anterior. Se admiten mayúsculas y "
+            L"minúsculas, palabras completas, inicios y finales de línea, búsqueda hacia atrás y expresiones "
+            L"regulares. El historial conserva las últimas 30 búsquedas de la sesión.\r\n\r\nEn la pestaña "
+            L"Aplicación, Icono de notificación alternativo habilita Icono clásico. Ambas opciones solo "
+            L"cambian el icono de notificación tras Aplicar o Aceptar."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relojes y calendarios\r\n\r\nAplicación Win32 nativa para varios relojes y calendarios "
@@ -3796,6 +4013,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_IT, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Icona di notifica alternativa" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Icona classica" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Impossibile preparare la libreria di risorse (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Cerca &indietro" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Fine riga" },
+        LocalizedText{ TXT_FIND_FAILED, L"Impossibile completare la ricerca." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Maiuscole/&minuscole" },
+        LocalizedText{ TXT_FIND_NEXT, L"Trova &successivo" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nessuna corrispondenza trovata." },
+        LocalizedText{ TXT_FIND_REGEX, L"Espressione &regolare" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Espressione regolare: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Inizio riga" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Trova" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Trova:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Solo parole &intere" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Impossibile aprire la finestra di impostazione pagina." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Impossibile stampare il documento." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Espressione regolare non valida." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Sequenza di escape non valida." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Parentesi quadra mancante o in eccesso." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Parentesi tonda mancante o in eccesso." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ripetizione non valida." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Intervallo di caratteri non valido." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"L’espressione è troppo complessa." },
         LocalizedText{ TXT_APP, L"Orologi e calendari" },
         LocalizedText{ TXT_SETTINGS, L"Impostazioni" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Impostazioni" },
@@ -4268,6 +4511,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nEsporta nella scheda delle date e ore salvate salva solo queste voci in un file XML "
             L"separato. Importa in questa scheda estrae solo date e ore, anche da un’esportazione delle "
             L"impostazioni, e le unisce alle voci esistenti."
+            L"\r\n\r\nRICERCA NELLA GUIDA E NELLA LICENZA\r\nNella guida e nella licenza della finestra "
+            L"Informazioni, Ctrl+F apre Trova. F3 trova la corrispondenza successiva e Shift+F3 quella "
+            L"precedente. Sono supportate maiuscole e minuscole, parole intere, inizio e fine riga, ricerca "
+            L"all’indietro ed espressioni regolari. La cronologia conserva le ultime 30 ricerche della "
+            L"sessione.\r\n\r\nNella scheda Applicazione, Icona di notifica alternativa abilita Icona "
+            L"classica. Le due opzioni modificano solo l’icona di notifica dopo Applica o OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Orologi e calendari\r\n\r\nApplicazione Win32 nativa per più orologi e calendari mobili "
@@ -4347,6 +4596,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_PT, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Ícone de notificação alternativo" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ícone clássico" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Não é possível preparar a biblioteca de recursos (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Procurar para &trás" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Fim da linha" },
+        LocalizedText{ TXT_FIND_FAILED, L"Não foi possível concluir a pesquisa." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Distinguir &maiúsculas" },
+        LocalizedText{ TXT_FIND_NEXT, L"Localizar &seguinte" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Não foram encontradas correspondências." },
+        LocalizedText{ TXT_FIND_REGEX, L"Expressão &regular" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Expressão regular: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Início da linha" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Localizar" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Localizar:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Apenas palavras &inteiras" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Não é possível abrir a configuração da página." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Não foi possível imprimir o documento." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Expressão regular inválida." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Sequência de escape inválida." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Parêntese reto em falta ou a mais." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Parêntese em falta ou a mais." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Repetição inválida." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Intervalo de caracteres inválido." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"A expressão é demasiado complexa." },
         LocalizedText{ TXT_APP, L"Relógios e calendários" },
         LocalizedText{ TXT_SETTINGS, L"Definições" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Definições" },
@@ -4772,6 +5047,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExportar no separador de datas e horas guardadas guarda apenas essas entradas num XML "
             L"separado. Importar neste separador extrai apenas datas e horas, mesmo de uma exportação das "
             L"definições, e combina-as com as existentes."
+            L"\r\n\r\nPESQUISAR NA AJUDA E NA LICENÇA\r\nNa ajuda e na licença da janela Acerca de, Ctrl+F "
+            L"abre Localizar. F3 procura a correspondência seguinte e Shift+F3 a anterior. A pesquisa permite"
+            L" distinguir maiúsculas, procurar palavras inteiras, inícios e fins de linha, pesquisar para "
+            L"trás e usar expressões regulares. O histórico guarda as últimas 30 pesquisas da "
+            L"sessão.\r\n\r\nNo separador Aplicação, Ícone de notificação alternativo ativa Ícone clássico. "
+            L"Ambas as opções alteram apenas o ícone de notificação após Aplicar ou OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Relógios e calendários\r\n\r\nAplicação Win32 nativa para até 32 relógios e calendários "
@@ -4851,6 +5132,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_PL, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatywna ikona powiadomień" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasyczna ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nie można przygotować biblioteki zasobów (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Szukaj &wstecz" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Koniec wiersza" },
+        LocalizedText{ TXT_FIND_FAILED, L"Nie udało się zakończyć wyszukiwania." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Uwzględniaj &wielkość liter" },
+        LocalizedText{ TXT_FIND_NEXT, L"Znajdź &następny" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nie znaleziono dopasowań." },
+        LocalizedText{ TXT_FIND_REGEX, L"Wyrażenie &regularne" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Wyrażenie regularne: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Początek wiersza" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Znajdź" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Znajdź:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Tylko całe &wyrazy" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nie można otworzyć ustawień strony." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Nie udało się wydrukować dokumentu." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Nieprawidłowe wyrażenie regularne." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Nieprawidłowa sekwencja ucieczki." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Brakujący lub nadmiarowy nawias kwadratowy." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Brakujący lub nadmiarowy nawias okrągły." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Nieprawidłowe powtórzenie." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Nieprawidłowy zakres znaków." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Wyrażenie jest zbyt złożone." },
         LocalizedText{ TXT_APP, L"Zegary i kalendarze" },
         LocalizedText{ TXT_SETTINGS, L"Ustawienia" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ustawienia" },
@@ -5303,6 +5608,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nEksport na karcie zapisanych dat i godzin zapisuje tylko te wpisy w osobnym pliku "
             L"XML. Import na tej karcie odczytuje tylko daty i godziny, również z eksportu ustawień, i "
             L"scala je z istniejącymi wpisami."
+            L"\r\n\r\nWYSZUKIWANIE W POMOCY I LICENCJI\r\nW pomocy i tekście licencji w oknie O programie "
+            L"Ctrl+F otwiera wyszukiwanie. F3 znajduje następne dopasowanie, a Shift+F3 poprzednie. Dostępne "
+            L"są rozróżnianie wielkości liter, całe wyrazy, początki i końce wierszy, wyszukiwanie wstecz "
+            L"oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej "
+            L"sesji.\r\n\r\nNa karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję "
+            L"Klasyczna ikona. Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Zegary i kalendarze\r\n\r\nNatywna aplikacja Win32 obsługująca wiele niezależnie "
@@ -5377,6 +5688,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_SK, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatívna ikona v oblasti oznámení" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasická ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Knižnicu prostriedkov sa nepodarilo pripraviť (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Hľadať &dozadu" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"K&oniec riadka" },
+        LocalizedText{ TXT_FIND_FAILED, L"Hľadanie sa nepodarilo dokončiť." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Rozlišovať &veľkosť písmen" },
+        LocalizedText{ TXT_FIND_NEXT, L"Hľadať ď&alej" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nebola nájdená žiadna zhoda." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulárny výraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulárny výraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Začiato&k riadka" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Hľadať" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Hľadať:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Iba &celé slová" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Vzhľad strany sa nepodarilo otvoriť." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokument sa nepodarilo vytlačiť." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Neplatný regulárny výraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Neplatná riadiaca sekvencia." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Chýbajúca alebo nadbytočná hranatá zátvorka." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Chýbajúca alebo nadbytočná okrúhla zátvorka." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Neplatný zápis opakovania." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Neplatný rozsah znakov." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Výraz je na vyhodnotenie príliš zložitý." },
         LocalizedText{ TXT_APP, L"Hodiny a kalendáre" },
         LocalizedText{ TXT_SETTINGS, L"Nastavenia" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavenia" },
@@ -5813,6 +6150,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport na karte predvolených časových údajov uloží iba tieto údaje do samostatného "
             L"XML. Import na tejto karte načíta iba časové údaje aj z exportu nastavení a zlúči ich s "
             L"existujúcimi položkami."
+            L"\r\n\r\nHĽADANIE V POMOCNÍKOVI A LICENCII\r\nV pomocníkovi a licencii v okne O programe otvorí "
+            L"Ctrl+F hľadanie. F3 nájde ďalšiu zhodu, Shift+F3 predchádzajúcu. Možno rozlišovať veľkosť "
+            L"písmen, hľadať celé slová, začiatky a konce riadkov, zmeniť smer alebo použiť regulárny výraz. "
+            L"História uchováva posledných 30 hľadaní počas behu aplikácie.\r\n\r\nNa karte Aplikácia voľba "
+            L"Alternatívna ikona v oblasti oznámení sprístupní voľbu Klasická ikona. Obe voľby menia iba "
+            L"ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Hodiny a kalendáre\r\n\r\nNatívna aplikácia Win32 pre najviac 32 samostatne nastavených "
@@ -5887,6 +6230,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_DA, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativt meddelelsesikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ressourcebiblioteket kunne ikke klargøres (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Søg &baglæns" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Linjeslutning" },
+        LocalizedText{ TXT_FIND_FAILED, L"Søgningen kunne ikke fuldføres." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Forskel på store og små &bogstaver" },
+        LocalizedText{ TXT_FIND_NEXT, L"Find &næste" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Ingen forekomster fundet." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulært udtryk" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulært udtryk: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Linje&start" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Find" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Find:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Kun hele &ord" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Dialogboksen Sideopsætning kunne ikke åbnes." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokumentet kunne ikke udskrives." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ugyldigt regulært udtryk." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ugyldig escape-sekvens." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Manglende eller ekstra firkantet parentes." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Manglende eller ekstra parentes." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ugyldig gentagelse." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ugyldigt tegninterval." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Udtrykket er for komplekst." },
         LocalizedText{ TXT_APP, L"Ure og kalendere" },
         LocalizedText{ TXT_SETTINGS, L"Indstillinger" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Indstillinger" },
@@ -6294,6 +6661,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nEksport på fanen med gemte datoer og tider gemmer kun disse poster i en separat "
             L"XML-fil. Import på denne fane udtrækker kun datoer og tider, også fra eksporterede "
             L"indstillinger, og fletter dem med eksisterende poster."
+            L"\r\n\r\nSØGNING I HJÆLP OG LICENS\r\nI hjælpen og licensen i Om åbner Ctrl+F søgning. F3 finder"
+            L" næste forekomst og Shift+F3 den forrige. Søgningen understøtter store og små bogstaver, hele "
+            L"ord, linjestart og linjeslutning, baglæns søgning og regulære udtryk. Historikken gemmer de "
+            L"sidste 30 søgninger i den aktuelle session.\r\n\r\nPå fanen Program aktiverer Alternativt "
+            L"meddelelsesikon valget Klassisk ikon. Begge indstillinger ændrer kun meddelelsesikonet efter "
+            L"Anvend eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure og kalendere\r\n\r\nEt Win32-program til op til 32 flydende ure og kalendere med separate "
@@ -6372,6 +6745,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_FI, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Vaihtoehtoinen ilmoituskuvake" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Perinteinen kuvake" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Resurssikirjastoa ei voi valmistella (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Etsi &taaksepäin" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Rivin &loppu" },
+        LocalizedText{ TXT_FIND_FAILED, L"Hakua ei voitu suorittaa." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Sama kirjainkoko" },
+        LocalizedText{ TXT_FIND_NEXT, L"Etsi &seuraava" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Osumia ei löytynyt." },
+        LocalizedText{ TXT_FIND_REGEX, L"Säännöllinen &lauseke" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Säännöllinen lauseke: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Rivin &alku" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Etsi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Etsittävä:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Vain &kokonaiset sanat" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Sivun asetusten valintaikkunaa ei voi avata." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Asiakirjaa ei voitu tulostaa." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Virheellinen säännöllinen lauseke." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Virheellinen ohjausmerkkijono." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Puuttuva tai ylimääräinen hakasulje." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Puuttuva tai ylimääräinen kaarisulje." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Virheellinen toisto." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Virheellinen merkkialue." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Lauseke on liian monimutkainen." },
         LocalizedText{ TXT_APP, L"Kellot ja kalenterit" },
         LocalizedText{ TXT_SETTINGS, L"Asetukset" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Asetukset" },
@@ -6805,6 +7202,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nTallennettujen päivämäärien ja aikojen välilehden vienti tallentaa vain nämä "
             L"merkinnät erilliseen XML-tiedostoon. Tämän välilehden tuonti lukee vain päivämäärät ja ajat "
             L"myös asetusten vientitiedostosta ja yhdistää ne nykyisiin merkintöihin."
+            L"\r\n\r\nHAKU OHJEESTA JA LISENSSISTÄ\r\nOhjeessa ja Tietoja-ikkunan lisenssissä Ctrl+F avaa "
+            L"haun. F3 etsii seuraavan osuman ja Shift+F3 edellisen. Haku tukee kirjainkoon huomioimista, "
+            L"kokonaisia sanoja, rivin alkuja ja loppuja, hakua taaksepäin ja säännöllisiä lausekkeita. "
+            L"Historia säilyttää istunnon 30 viimeisintä hakua.\r\n\r\nSovellus-välilehdellä Vaihtoehtoinen "
+            L"ilmoituskuvake ottaa käyttöön Perinteinen kuvake -valinnan. Molemmat muuttavat vain "
+            L"ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellot ja kalenterit\r\n\r\nNatiivi Win32-sovellus enintään 32 erikseen määritettävälle "
@@ -6881,6 +7284,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_IS, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Annað tilkynningatákn" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassískt tákn" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ekki tókst að undirbúa tilfangasafnið (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Leita &afturábak" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Línulok" },
+        LocalizedText{ TXT_FIND_FAILED, L"Ekki tókst að ljúka leitinni." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Greina á milli há- og &lágstafa" },
+        LocalizedText{ TXT_FIND_NEXT, L"Finna &næsta" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Engin samsvörun fannst." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regluleg segð" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regluleg segð: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Línu&byrjun" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Finna" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Finna:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Aðeins heil &orð" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Ekki tókst að opna uppsetningu síðu." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Ekki tókst að prenta skjalið." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ógild regluleg segð." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ógild lausnaruna." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Hornklofa vantar eða hann er umfram." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Sviga vantar eða hann er umfram." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ógild endurtekning." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ógilt stafabil." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Segðin er of flókin." },
         LocalizedText{ TXT_APP, L"Klukkur og dagatöl" },
         LocalizedText{ TXT_SETTINGS, L"Stillingar" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Stillingar" },
@@ -7290,6 +7717,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nÚtflutningur á flipanum með vistuðum dagsetningum og tímum vistar aðeins þessar "
             L"færslur í sérstakri XML-skrá. Innflutningur á þessum flipa les aðeins dagsetningar og tíma, "
             L"einnig úr útfluttum stillingum, og sameinar við núverandi færslur."
+            L"\r\n\r\nLEIT Í HJÁLP OG LEYFI\r\nÍ hjálpinni og leyfinu í Um opnar Ctrl+F leit. F3 finnur næstu"
+            L" samsvörun og Shift+F3 þá fyrri. Leitin styður há- og lágstafi, heil orð, línubyrjanir og "
+            L"línulok, leit afturábak og reglulegar segðir. Ferillinn geymir síðustu 30 leitir í núverandi "
+            L"keyrslu.\r\n\r\nÁ flipanum Forrit virkjar Annað tilkynningatákn valkostinn Klassískt tákn. "
+            L"Báðir valkostir breyta aðeins tilkynningatákninu eftir Nota eða Í lagi."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klukkur og dagatöl\r\n\r\nWin32-forrit fyrir allt að 32 fljótandi klukkur og dagatöl með "
@@ -7366,6 +7798,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_NB, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativt varslingsikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Kan ikke klargjøre ressursbiblioteket (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Søk &bakover" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Linje&slutt" },
+        LocalizedText{ TXT_FIND_FAILED, L"Søket kunne ikke fullføres." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Skill mellom store og små &bokstaver" },
+        LocalizedText{ TXT_FIND_NEXT, L"Finn &neste" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Ingen treff funnet." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulært uttrykk" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulært uttrykk: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Linje&start" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Finn" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Finn:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Bare hele &ord" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Kan ikke åpne dialogboksen for utskriftsformat." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokumentet kunne ikke skrives ut." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ugyldig regulært uttrykk." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ugyldig escape-sekvens." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Manglende eller ekstra hakeparentes." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Manglende eller ekstra parentes." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ugyldig gjentakelse." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ugyldig tegnområde." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Uttrykket er for komplekst." },
         LocalizedText{ TXT_APP, L"Klokker og kalendere" },
         LocalizedText{ TXT_SETTINGS, L"Innstillinger" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Innstillinger" },
@@ -7775,6 +8231,11 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nEksport på fanen med lagrede datoer og klokkeslett lagrer bare disse oppføringene i "
             L"en egen XML-fil. Import på denne fanen henter bare datoer og klokkeslett, også fra "
             L"eksporterte innstillinger, og slår dem sammen med eksisterende oppføringer."
+            L"\r\n\r\nSØKE I HJELP OG LISENS\r\nI hjelpen og lisensen i Om åpner Ctrl+F søk. F3 finner neste "
+            L"treff og Shift+F3 det forrige. Søket støtter store og små bokstaver, hele ord, linjestart og "
+            L"linjeslutt, søk bakover og regulære uttrykk. Historikken beholder de siste 30 søkene i "
+            L"gjeldende økt.\r\n\r\nPå fanen Program aktiverer Alternativt varslingsikon valget Klassisk "
+            L"ikon. Begge valgene endrer bare varslingsikonet etter Bruk eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokker og kalendere\r\n\r\nEt Win32-program for opptil 32 flytende klokker og kalendere med "
@@ -7853,6 +8314,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_SV, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativ meddelandeikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassisk ikon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Det går inte att förbereda resursbiblioteket (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Sök &bakåt" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Rad&slut" },
+        LocalizedText{ TXT_FIND_FAILED, L"Sökningen kunde inte slutföras." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Matcha gemener/VERSALER" },
+        LocalizedText{ TXT_FIND_NEXT, L"Sök &nästa" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Inga träffar hittades." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Reguljärt uttryck" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Reguljärt uttryck: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Rad&början" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Sök" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Sök efter:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Endast hela &ord" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Det går inte att öppna dialogrutan Utskriftsformat." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokumentet kunde inte skrivas ut." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ogiltigt reguljärt uttryck." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ogiltig escape-sekvens." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Saknad eller överflödig hakparentes." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Saknad eller överflödig parentes." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ogiltig upprepning." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ogiltigt teckenintervall." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Uttrycket är för komplicerat." },
         LocalizedText{ TXT_APP, L"Klockor och kalendrar" },
         LocalizedText{ TXT_SETTINGS, L"Inställningar" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Inställningar" },
@@ -8264,6 +8751,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExport på fliken med sparade datum och tider sparar bara dessa poster i en separat "
             L"XML-fil. Import på denna flik hämtar bara datum och tider, även från exporterade "
             L"inställningar, och slår samman dem med befintliga poster."
+            L"\r\n\r\nSÖKA I HJÄLP OCH LICENS\r\nI hjälpen och licensen i Om öppnar Ctrl+F sökning. F3 hittar"
+            L" nästa träff och Shift+F3 föregående. Sökningen stöder skiftlägeskänslighet, hela ord, "
+            L"radbörjan och radslut, bakåtsökning och reguljära uttryck. Historiken behåller de senaste 30 "
+            L"sökningarna under den aktuella sessionen.\r\n\r\nPå fliken Program aktiverar Alternativ "
+            L"meddelandeikon alternativet Klassisk ikon. Båda alternativen ändrar endast meddelandeikonen "
+            L"efter Verkställ eller OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klockor och kalendrar\r\n\r\nEtt Win32-program för upp till 32 flytande klockor och kalendrar "
@@ -8343,6 +8836,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_TR, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatif bildirim simgesi" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasik simge" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Kaynak kitaplığı hazırlanamadı (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"&Geriye doğru ara" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Satır &sonu" },
+        LocalizedText{ TXT_FIND_FAILED, L"Arama tamamlanamadı." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Büyük/küçük &harfe duyarlı" },
+        LocalizedText{ TXT_FIND_NEXT, L"&Sonrakini bul" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Eşleşme bulunamadı." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Düzenli ifade" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Düzenli ifade: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Satır &başı" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Bul" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Aranan:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Yalnızca tam &sözcükler" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Sayfa Yapısı iletişim kutusu açılamadı." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Belge yazdırılamadı." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Geçersiz düzenli ifade." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Geçersiz kaçış dizisi." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Eksik veya fazla köşeli ayraç." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Eksik veya fazla parantez." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Geçersiz yineleme." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Geçersiz karakter aralığı." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"İfade çok karmaşık." },
         LocalizedText{ TXT_APP, L"Saatler ve takvimler" },
         LocalizedText{ TXT_SETTINGS, L"Ayarlar" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ayarlar" },
@@ -8756,6 +9273,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nKayıtlı tarih ve saatler sekmesindeki dışa aktarma yalnızca bu kayıtları ayrı bir XML "
             L"dosyasına kaydeder. Bu sekmedeki içe aktarma, ayarların dışa aktarıldığı bir dosyadan bile "
             L"yalnızca tarih ve saatleri alıp mevcut kayıtlarla birleştirir."
+            L"\r\n\r\nYARDIMDA VE LISANSTA ARAMA\r\nYardımda ve Hakkında penceresindeki lisansta Ctrl+F "
+            L"aramayı açar. F3 sonraki, Shift+F3 önceki eşleşmeyi bulur. Büyük/küçük harf duyarlılığı, tam "
+            L"sözcükler, satır başı ve sonu, geriye arama ve düzenli ifadeler desteklenir. Geçmiş, geçerli "
+            L"oturumdaki son 30 aramayı tutar.\r\n\r\nUygulama sekmesinde Alternatif bildirim simgesi, Klasik"
+            L" simge seçeneğini etkinleştirir. Her iki seçenek de yalnızca bildirim simgesini Uygula veya "
+            L"Tamam sonrasında değiştirir."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Saatler ve takvimler\r\n\r\nBağımsız olarak yapılandırılan en fazla 32 kayan saat ve takvim "
@@ -8831,6 +9354,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_ET, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatiivne teavitusikoon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassikaline ikoon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Ressursiteeki ei saa ette valmistada (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Otsi &tagurpidi" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Rea &lõpp" },
+        LocalizedText{ TXT_FIND_FAILED, L"Otsingut ei saanud lõpetada." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Tõstutundlik" },
+        LocalizedText{ TXT_FIND_NEXT, L"Otsi &järgmine" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Vasteid ei leitud." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulaaravaldis" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulaaravaldis: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Rea &algus" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Otsi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Otsi:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Ainult terved &sõnad" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Lehekülje häälestuse dialoogi ei saa avada." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokumenti ei saanud printida." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Vigane regulaaravaldis." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Vigane paojada." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Puuduv või liigne nurksulg." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Puuduv või liigne ümarsulg." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Vigane kordus." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Vigane märgivahemik." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Avaldis on liiga keerukas." },
         LocalizedText{ TXT_APP, L"Kellad ja kalendrid" },
         LocalizedText{ TXT_SETTINGS, L"Sätted" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Sätted" },
@@ -9262,6 +9809,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nSalvestatud kuupäevade ja kellaaegade vahekaardi eksport salvestab ainult need kirjed "
             L"eraldi XML-faili. Selle vahekaardi import loeb ka sätete ekspordist ainult kuupäevad ja "
             L"kellaajad ning ühendab need olemasolevate kirjetega."
+            L"\r\n\r\nOTSIMINE SPIKRIST JA LITSENTSIST\r\nSpikris ja Teave-akna litsentsis avab Ctrl+F "
+            L"otsingu. F3 leiab järgmise vaste ning Shift+F3 eelmise. Otsing toetab tõstutundlikkust, terveid"
+            L" sõnu, rea algusi ja lõppe, tagurpidi otsingut ning regulaaravaldisi. Ajalugu säilitab "
+            L"käesoleva seansi viimased 30 otsingut.\r\n\r\nRakenduse vahekaardil lubab Alternatiivne "
+            L"teavitusikoon valiku Klassikaline ikoon. Mõlemad muudavad ainult teavitusikooni pärast Rakenda "
+            L"või OK vajutamist."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Kellad ja kalendrid\r\n\r\nWin32-rakendus kuni 32 eraldi seadistatava hõljuva kella ja "
@@ -9337,6 +9890,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_GA, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Deilbhín fógra eile" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Deilbhín clasaiceach" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Ní féidir an leabharlann acmhainní a ullmhú (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Cuardaigh &siar" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Deireadh líne" },
+        LocalizedText{ TXT_FIND_FAILED, L"Níorbh fhéidir an cuardach a chríochnú." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Cás&íogair" },
+        LocalizedText{ TXT_FIND_NEXT, L"An chéad cheann &eile" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Níor aimsíodh aon mheaitseáil." },
+        LocalizedText{ TXT_FIND_REGEX, L"Slonn &rialta" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Slonn rialta: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Tús líne" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Aimsigh" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Aimsigh:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"&Focail iomlána amháin" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Ní féidir an dialóg Socrú Leathanaigh a oscailt." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Níorbh fhéidir an doiciméad a phriontáil." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Slonn rialta neamhbhailí." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Seicheamh éalaithe neamhbhailí." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Lúibín cearnach ar iarraidh nó breise." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Lúibín ar iarraidh nó breise." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Athrá neamhbhailí." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Raon carachtar neamhbhailí." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Tá an slonn róchasta." },
         LocalizedText{ TXT_APP, L"Cloig agus féilirí" },
         LocalizedText{ TXT_SETTINGS, L"Socruithe" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Socruithe" },
@@ -9804,6 +10383,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"hiontrálacha sin amháin i gcomhad XML ar leith. Ní léann Iompórtáil ar an gcluaisín seo ach "
             L"dátaí agus amanna, fiú ó easpórtáil socruithe, agus cumascann sí iad leis na hiontrálacha atá "
             L"ann."
+            L"\r\n\r\nCUARDACH SA CHABHAIR AGUS SA CHEADÚNAS\r\nSa chabhair agus sa cheadúnas san fhuinneog "
+            L"Maidir le, osclaíonn Ctrl+F cuardach. Aimsíonn F3 an chéad mheaitseáil eile agus Shift+F3 an "
+            L"ceann roimhe. Tacaítear le cásíogaireacht, focail iomlána, tús agus deireadh línte, cuardach "
+            L"siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún "
+            L"reatha.\r\n\r\nAr an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín "
+            L"clasaiceach. Ní athraíonn na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Cloig agus féilirí\r\n\r\nFeidhmchlár dúchasach Win32 le haghaidh suas le 32 clog agus féilire "
@@ -9890,6 +10475,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_LT, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatyvi pranešimų piktograma" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasikinė piktograma" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nepavyko paruošti išteklių bibliotekos (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Ieškoti &atgal" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Eilutės &pabaiga" },
+        LocalizedText{ TXT_FIND_FAILED, L"Nepavyko užbaigti paieškos." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Skirti didžiąsias ir mažąsias &raides" },
+        LocalizedText{ TXT_FIND_NEXT, L"Rasti &kitą" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Atitikmenų nerasta." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Reguliarusis reiškinys" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Reguliarusis reiškinys: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Eilutės &pradžia" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Rasti" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Rasti:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Tik ištisus &žodžius" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nepavyko atverti puslapio sąrankos dialogo." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Nepavyko išspausdinti dokumento." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Netinkamas reguliarusis reiškinys." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Netinkama kaitos seka." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Trūksta laužtinio skliausto arba jis perteklinis." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Trūksta skliausto arba jis perteklinis." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Netinkamas kartojimas." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Netinkamas simbolių intervalas." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Reiškinys per sudėtingas." },
         LocalizedText{ TXT_APP, L"Laikrodžiai ir kalendoriai" },
         LocalizedText{ TXT_SETTINGS, L"Parametrai" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Parametrai" },
@@ -10343,6 +10952,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nIšsaugotų datų ir laikų skirtuko eksportas įrašo tik šiuos įrašus į atskirą XML "
             L"failą. Šio skirtuko importas net iš parametrų eksporto paima tik datas ir laikus bei sujungia "
             L"juos su esamais įrašais."
+            L"\r\n\r\nPAIEŠKA ŽINYNE IR LICENCIJOJE\r\nŽinyne ir lango Apie licencijoje Ctrl+F atveria "
+            L"paiešką. F3 randa kitą atitikmenį, Shift+F3 – ankstesnį. Palaikomas raidžių dydžio skyrimas, "
+            L"ištisi žodžiai, eilučių pradžios ir pabaigos, paieška atgal bei reguliarūs reiškiniai. "
+            L"Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.\r\n\r\nKortelėje Programa "
+            L"pasirinkus Alternatyvi pranešimų piktograma įjungiama Klasikinė piktograma. Abi parinktys "
+            L"keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Laikrodžiai ir kalendoriai\r\n\r\nWin32 programa, rodanti iki 32 atskirai nustatomų slankiųjų "
@@ -10421,6 +11036,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_LV, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatīva paziņojumu ikona" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasiskā ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Neizdevās sagatavot resursu bibliotēku (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Meklēt &atpakaļ" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Rindas &beigas" },
+        LocalizedText{ TXT_FIND_FAILED, L"Neizdevās pabeigt meklēšanu." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Reģistr&jutīgs" },
+        LocalizedText{ TXT_FIND_NEXT, L"Atrast &nākamo" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Atbilstības nav atrastas." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regulārā izteiksme" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regulārā izteiksme: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Rindas &sākums" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Atrast" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Atrast:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Tikai veselus &vārdus" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Neizdevās atvērt lappuses iestatīšanas dialogu." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Neizdevās izdrukāt dokumentu." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Nederīga regulārā izteiksme." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Nederīga atsoļa secība." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Trūkst kvadrātiekavas vai tā ir lieka." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Trūkst iekavas vai tā ir lieka." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Nederīgs atkārtojums." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Nederīgs rakstzīmju diapazons." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Izteiksme ir pārāk sarežģīta." },
         LocalizedText{ TXT_APP, L"Pulksteņi un kalendāri" },
         LocalizedText{ TXT_SETTINGS, L"Iestatījumi" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Iestatījumi" },
@@ -10858,6 +11497,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nSaglabāto datumu un laiku cilnes eksports saglabā tikai šos ierakstus atsevišķā XML "
             L"failā. Šīs cilnes imports arī no iestatījumu eksporta nolasa tikai datumus un laikus un "
             L"apvieno tos ar esošajiem ierakstiem."
+            L"\r\n\r\nMEKLĒŠANA PALĪDZĪBĀ UN LICENCĒ\r\nPalīdzībā un loga Par licences tekstā Ctrl+F atver "
+            L"meklēšanu. F3 atrod nākamo atbilstību, Shift+F3 – iepriekšējo. Var ņemt vērā reģistru, meklēt "
+            L"veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot regulārās izteiksmes. Vēsturē"
+            L" saglabājas sesijas pēdējie 30 meklējumi.\r\n\r\nCilnē Lietotne opcija Alternatīva paziņojumu "
+            L"ikona iespējo Klasiskā ikona. Abas opcijas maina tikai paziņojumu ikonu pēc Lietot vai Labi "
+            L"nospiešanas."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Pulksteņi un kalendāri\r\n\r\nWin32 programma līdz 32 neatkarīgi iestatāmiem peldošiem "
@@ -10932,6 +11577,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_HU, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Másik értesítési ikon" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasszikus ikon" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Az erőforráskönyvtár nem készíthető elő (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Keresés &visszafelé" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"Sor &vége" },
+        LocalizedText{ TXT_FIND_FAILED, L"A keresés nem fejezhető be." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Kis- és nagybetűk megkülönböztetése" },
+        LocalizedText{ TXT_FIND_NEXT, L"&Következő" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nincs találat." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Reguláris kifejezés" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Reguláris kifejezés: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Sor &eleje" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Keresés" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Keresett szöveg:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Csak teljes &szavak" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Az Oldalbeállítás párbeszédpanel nem nyitható meg." },
+        LocalizedText{ TXT_PRINT_FAILED, L"A dokumentum nem nyomtatható ki." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Érvénytelen reguláris kifejezés." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Érvénytelen escape-szekvencia." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Hiányzó vagy fölösleges szögletes zárójel." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Hiányzó vagy fölösleges zárójel." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Érvénytelen ismétlés." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Érvénytelen karaktertartomány." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"A kifejezés túl összetett." },
         LocalizedText{ TXT_APP, L"Órák és naptárak" },
         LocalizedText{ TXT_SETTINGS, L"Beállítások" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Beállítások" },
@@ -11389,6 +12058,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nA mentett dátumok és időpontok lapján az exportálás csak ezeket a bejegyzéseket menti "
             L"külön XML-fájlba. Az importálás ezen a lapon a beállítások exportjából is csak a dátumokat és "
             L"időpontokat olvassa be, és egyesíti a meglévő bejegyzésekkel."
+            L"\r\n\r\nKERESÉS A SÚGÓBAN ÉS A LICENCBEN\r\nA súgóban és a Névjegy licencszövegében a Ctrl+F "
+            L"megnyitja a keresést. Az F3 a következő, a Shift+F3 az előző találatra lép. A keresés támogatja"
+            L" a kis- és nagybetűk megkülönböztetését, a teljes szavakat, a sor elejét és végét, a visszafelé"
+            L" keresést és a reguláris kifejezéseket. Az előzmények a munkamenet utolsó 30 keresését "
+            L"őrzik.\r\n\r\nAz Alkalmazás lapon a Másik értesítési ikon engedélyezi a Klasszikus ikon "
+            L"lehetőséget. Mindkettő csak az értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Órák és naptárak\r\n\r\nNatív Win32-alkalmazás legfeljebb 32, egymástól függetlenül "
@@ -11467,6 +12142,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_MT, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Ikona alternattiva tan-notifika" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Ikona klassika" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Ma setgħetx titħejja l-librerija tar-riżorsi (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Fittex &lura" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Tmiem il-linja" },
+        LocalizedText{ TXT_FIND_FAILED, L"It-tfittxija ma setgħetx titlesta." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Iddistingwi bejn ittri kbar u &żgħar" },
+        LocalizedText{ TXT_FIND_NEXT, L"Sib li &jmiss" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Ma nstab l-ebda qbil." },
+        LocalizedText{ TXT_FIND_REGEX, L"Espressjoni &regolari" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Espressjoni regolari: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Bidu tal-linja" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Sib" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Sib:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"&Kliem sħiħ biss" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Ma setgħetx tinfetaħ il-konfigurazzjoni tal-paġna." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Id-dokument ma setax jiġi stampat." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Espressjoni regolari invalida." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Sekwenza ta’ ħarba invalida." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Parentesi kwadra nieqsa jew żejda." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Parentesi nieqsa jew żejda." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ripetizzjoni invalida." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Firxa ta’ karattri invalida." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"L-espressjoni hija kumplessa wisq." },
         LocalizedText{ TXT_APP, L"Arloġġi u kalendarji" },
         LocalizedText{ TXT_SETTINGS, L"Settings" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Settings" },
@@ -11922,6 +12623,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nL-esportazzjoni fit-tab tad-dati u l-ħinijiet issejvjati tissejvja biss dawn "
             L"l-entrati f’fajl XML separat. L-importazzjoni f’din it-tab taqra biss dati u ħinijiet, anki "
             L"minn esportazzjoni tas-settings, u tgħaqqadhom mal-entrati eżistenti."
+            L"\r\n\r\nTFITTXIJA FL-GĦAJNUNA U FIL-LIĊENZJA\r\nFl-għajnuna u fil-liċenzja fit-tieqa Dwar, "
+            L"Ctrl+F jiftaħ it-tfittxija. F3 isib il-qbil li jmiss u Shift+F3 dak ta’ qabel. It-tfittxija "
+            L"tappoġġja l-ittri kbar u żgħar, kliem sħiħ, bidu u tmiem il-linji, tfittxija lura u "
+            L"espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.\r\n\r\nFit-tab "
+            L"Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona klassika. Iż-żewġ għażliet "
+            L"jibdlu biss l-ikona tan-notifika wara Applika jew OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Arloġġi u kalendarji\r\n\r\nApplikazzjoni nattiva Win32 għal sa 32 arloġġ u kalendarju li "
@@ -12000,6 +12707,34 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_NL, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternatief meldingspictogram" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klassiek pictogram" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"De bronbibliotheek kan niet worden voorbereid (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"&Achteruit zoeken" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Regeleinde" },
+        LocalizedText{ TXT_FIND_FAILED, L"De zoekopdracht kon niet worden voltooid." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Hoofdlettergevoelig" },
+        LocalizedText{ TXT_FIND_NEXT, L"&Volgende zoeken" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Geen overeenkomsten gevonden." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Reguliere expressie" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Reguliere expressie: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Regel&begin" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Zoeken" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Zoeken naar:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Alleen hele &woorden" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED,
+            L"Het dialoogvenster Pagina-instelling kan niet worden geopend."
+        },
+        LocalizedText{ TXT_PRINT_FAILED, L"Het document kon niet worden afgedrukt." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Ongeldige reguliere expressie." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Ongeldige escape-reeks." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Ontbrekende of overtollige vierkante haak." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Ontbrekend of overtollig haakje." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Ongeldige herhaling." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Ongeldig tekenbereik." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"De expressie is te complex." },
         LocalizedText{ TXT_APP, L"Klokken en kalenders" },
         LocalizedText{ TXT_SETTINGS, L"Instellingen" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Instellingen" },
@@ -12454,6 +13189,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExporteren op het tabblad met opgeslagen datums en tijden slaat alleen deze gegevens "
             L"op in een afzonderlijk XML-bestand. Importeren op dit tabblad haalt ook uit een "
             L"instellingenexport alleen datums en tijden en voegt ze samen met bestaande gegevens."
+            L"\r\n\r\nZOEKEN IN HELP EN DE LICENTIE\r\nIn Help en de licentietekst in Info opent Ctrl+F het "
+            L"zoekvenster. F3 zoekt de volgende overeenkomst en Shift+F3 de vorige. Zoeken ondersteunt "
+            L"hoofdlettergevoeligheid, hele woorden, regelbegin en -einde, achteruit zoeken en reguliere "
+            L"expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige "
+            L"sessie.\r\n\r\nOp het tabblad Toepassing schakelt Alternatief meldingspictogram de optie "
+            L"Klassiek pictogram in. Beide wijzigen alleen het meldingspictogram na Toepassen of OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Klokken en kalenders\r\n\r\nEen native Win32-toepassing voor maximaal 32 afzonderlijk "
@@ -12534,6 +13275,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_RO, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Pictogramă de notificare alternativă" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Pictogramă clasică" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Biblioteca de resurse nu poate fi pregătită (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Caută î&napoi" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Sfârșit de linie" },
+        LocalizedText{ TXT_FIND_FAILED, L"Căutarea nu a putut fi finalizată." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"&Majuscule/minuscule" },
+        LocalizedText{ TXT_FIND_NEXT, L"Găsește &următorul" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nu s-a găsit nicio potrivire." },
+        LocalizedText{ TXT_FIND_REGEX, L"Expresie &regulată" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Expresie regulată: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"Început de &linie" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Caută" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Caută:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Numai &cuvinte întregi" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Dialogul de configurare a paginii nu poate fi deschis." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Documentul nu a putut fi tipărit." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Expresie regulată nevalidă." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Secvență de evitare nevalidă." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Paranteză dreaptă lipsă sau în plus." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Paranteză rotundă lipsă sau în plus." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Repetare nevalidă." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Interval de caractere nevalid." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Expresia este prea complexă." },
         LocalizedText{ TXT_APP, L"Ceasuri și calendare" },
         LocalizedText{ TXT_SETTINGS, L"Setări" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Setări" },
@@ -12984,6 +13751,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nExportul din fila datelor și orelor salvate păstrează numai aceste înregistrări "
             L"într-un XML separat. Importul din această filă extrage numai date și ore, chiar și dintr-un "
             L"export al setărilor, și le îmbină cu înregistrările existente."
+            L"\r\n\r\nCĂUTAREA ÎN AJUTOR ȘI ÎN LICENȚĂ\r\nÎn ajutor și în textul licenței din Despre, Ctrl+F "
+            L"deschide căutarea. F3 găsește următoarea potrivire, iar Shift+F3 pe cea anterioară. Sunt "
+            L"acceptate diferențierea majusculelor, cuvintele întregi, începutul și sfârșitul liniilor, "
+            L"căutarea înapoi și expresiile regulate. Istoricul păstrează ultimele 30 de căutări din sesiunea"
+            L" curentă.\r\n\r\nÎn fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă "
+            L"clasică. Ambele opțiuni schimbă doar pictograma de notificare după Aplicare sau OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ceasuri și calendare\r\n\r\nAplicație nativă Win32 pentru până la 32 de ceasuri și calendare "
@@ -13063,6 +13836,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_EL, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Εναλλακτικό εικονίδιο ειδοποίησης" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Κλασικό εικονίδιο" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Δεν είναι δυνατή η προετοιμασία της βιβλιοθήκης πόρων (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Αναζήτηση προς τα &πίσω" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Τέλος γραμμής" },
+        LocalizedText{ TXT_FIND_FAILED, L"Δεν ήταν δυνατή η ολοκλήρωση της αναζήτησης." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Διάκριση πεζών/&κεφαλαίων" },
+        LocalizedText{ TXT_FIND_NEXT, L"Εύρεση &επόμενου" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Δεν βρέθηκε αντιστοιχία." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Κανονική έκφραση" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Κανονική έκφραση: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Αρχή γραμμής" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Εύρεση" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Εύρεση:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Μόνο ολόκληρες &λέξεις" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Δεν είναι δυνατό το άνοιγμα της διαμόρφωσης σελίδας." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Δεν ήταν δυνατή η εκτύπωση του εγγράφου." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Μη έγκυρη κανονική έκφραση." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Μη έγκυρη ακολουθία διαφυγής." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Λείπει ή περισσεύει αγκύλη." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Λείπει ή περισσεύει παρένθεση." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Μη έγκυρη επανάληψη." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Μη έγκυρο εύρος χαρακτήρων." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Η έκφραση είναι υπερβολικά σύνθετη." },
         LocalizedText{ TXT_APP, L"Ρολόγια και ημερολόγια" },
         LocalizedText{ TXT_SETTINGS, L"Ρυθμίσεις" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Ρυθμίσεις" },
@@ -13535,6 +14334,13 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nΗ εξαγωγή στην καρτέλα αποθηκευμένων ημερομηνιών και ωρών αποθηκεύει μόνο αυτές τις "
             L"εγγραφές σε ξεχωριστό XML. Η εισαγωγή σε αυτή την καρτέλα διαβάζει μόνο ημερομηνίες και ώρες, "
             L"ακόμη και από εξαγωγή ρυθμίσεων, και τις συγχωνεύει με τις υπάρχουσες εγγραφές."
+            L"\r\n\r\nΑΝΑΖΉΤΗΣΗ ΣΤΗ ΒΟΉΘΕΙΑ ΚΑΙ ΤΗΝ ΆΔΕΙΑ\r\nΣτη βοήθεια και την άδεια στο παράθυρο "
+            L"Πληροφορίες, το Ctrl+F ανοίγει την αναζήτηση. Το F3 βρίσκει την επόμενη αντιστοιχία και το "
+            L"Shift+F3 την προηγούμενη. Υποστηρίζονται διάκριση πεζών και κεφαλαίων, ολόκληρες λέξεις, αρχή "
+            L"και τέλος γραμμών, αναζήτηση προς τα πίσω και κανονικές εκφράσεις. Το ιστορικό κρατά τις "
+            L"τελευταίες 30 αναζητήσεις της συνεδρίας.\r\n\r\nΣτην καρτέλα Εφαρμογή, το Εναλλακτικό εικονίδιο"
+            L" ειδοποίησης ενεργοποιεί το Κλασικό εικονίδιο. Και οι δύο επιλογές αλλάζουν μόνο το εικονίδιο "
+            L"ειδοποίησης μετά την Εφαρμογή ή το OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ρολόγια και ημερολόγια\r\n\r\nΕγγενής εφαρμογή Win32 για έως 32 ανεξάρτητα ρυθμιζόμενα "
@@ -13617,6 +14423,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_BS, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavijesti" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unazad" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj reda" },
+        LocalizedText{ TXT_FIND_FAILED, L"Pretraga nije mogla biti završena." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Razlikuj velika i mala &slova" },
+        LocalizedText{ TXT_FIND_NEXT, L"Pronađi &sljedeće" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nije pronađeno podudaranje." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regularni izraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regularni izraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Početak reda" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Pronađi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Pronađi:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Samo cijele &riječi" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nije moguće otvoriti postavke stranice." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokument nije mogao biti odštampan." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Nevažeći regularni izraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Nevažeća izlazna sekvenca." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Nedostaje uglasta zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Nedostaje obla zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Nevažeće ponavljanje." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Nevažeći raspon znakova." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Izraz je previše složen." },
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Postavke" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Postavke" },
@@ -14062,6 +14892,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nIzvoz na kartici sačuvanih datuma i vremena sprema samo te zapise u zaseban XML. Uvoz "
             L"na ovoj kartici čita samo datume i vremena, čak i iz izvoza postavki, i spaja ih s postojećim "
             L"zapisima."
+            L"\r\n\r\nPRETRAGA POMOĆI I LICENCE\r\nU pomoći i licenci u prozoru O programu, Ctrl+F otvara "
+            L"pretragu. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su razlikovanje "
+            L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
+            L"izrazi. Historija čuva posljednjih 30 pretraga u trenutnoj sesiji.\r\n\r\nNa kartici Aplikacija"
+            L" opcija Alternativna ikona obavijesti omogućava Klasična ikona. Obje opcije mijenjaju samo "
+            L"ikonu obavijesti nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 nezavisno podesiva plutajuća sata i "
@@ -14140,6 +14976,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_HR, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavijesti" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unatrag" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj retka" },
+        LocalizedText{ TXT_FIND_FAILED, L"Pretraživanje nije moguće dovršiti." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Razlikuj velika i mala &slova" },
+        LocalizedText{ TXT_FIND_NEXT, L"Pronađi &sljedeće" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nije pronađeno podudaranje." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regularni izraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regularni izraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Početak retka" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Pronađi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Pronađi:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Samo cijele &riječi" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nije moguće otvoriti postavljanje stranice." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokument nije moguće ispisati." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Nevaljan regularni izraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Nevaljan izlazni slijed." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Nedostaje uglata zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Nedostaje obla zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Nevaljano ponavljanje." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Nevaljan raspon znakova." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Izraz je previše složen." },
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Postavke" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Postavke" },
@@ -14588,6 +15448,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nIzvoz na kartici spremljenih datuma i vremena sprema samo te zapise u zaseban XML. "
             L"Uvoz na ovoj kartici čita samo datume i vremena, čak i iz izvoza postavki, i spaja ih s "
             L"postojećim zapisima."
+            L"\r\n\r\nPRETRAŽIVANJE POMOĆI I LICENCE\r\nU pomoći i licenci u prozoru O programu Ctrl+F otvara"
+            L" pretraživanje. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su "
+            L"razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redaka, pretraživanje "
+            L"unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj "
+            L"sesiji.\r\n\r\nNa kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Klasična "
+            L"ikona. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorni Win32 program za do 32 neovisno podesiva plutajuća sata i "
@@ -14664,6 +15530,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_SL, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Druga ikona za obvestila" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Knjižnice virov ni mogoče pripraviti (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Išči &nazaj" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Konec vrstice" },
+        LocalizedText{ TXT_FIND_FAILED, L"Iskanja ni bilo mogoče dokončati." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Razlikuj velike in male &črke" },
+        LocalizedText{ TXT_FIND_NEXT, L"Najdi &naslednje" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Ni zadetkov." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regularni izraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regularni izraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Začetek vrstice" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Najdi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Najdi:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Samo cele &besede" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Pogovornega okna za pripravo strani ni mogoče odpreti." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokumenta ni bilo mogoče natisniti." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Neveljaven regularni izraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Neveljavno ubežno zaporedje." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Manjkajoč ali odvečen oglati oklepaj." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Manjkajoč ali odvečen oklepaj." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Neveljavna ponovitev." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Neveljaven obseg znakov." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Izraz je preveč zapleten." },
         LocalizedText{ TXT_APP, L"Ure in koledarji" },
         LocalizedText{ TXT_SETTINGS, L"Nastavitve" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Nastavitve" },
@@ -15091,6 +15981,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nIzvoz na zavihku shranjenih datumov in časov shrani samo te vnose v ločen XML. Uvoz "
             L"na tem zavihku prebere samo datume in čase tudi iz izvoza nastavitev ter jih združi z "
             L"obstoječimi vnosi."
+            L"\r\n\r\nISKANJE V POMOČI IN LICENCI\r\nV pomoči in licenci v oknu O programu Ctrl+F odpre "
+            L"iskanje. F3 najde naslednji zadetek, Shift+F3 pa prejšnjega. Podprti so razlikovanje velikih in"
+            L" malih črk, cele besede, začetki in konci vrstic, iskanje nazaj ter regularni izrazi. Zgodovina"
+            L" ohrani zadnjih 30 iskanj trenutne seje.\r\n\r\nNa zavihku Program možnost Druga ikona za "
+            L"obvestila omogoči Klasična ikona. Obe možnosti spremenita samo ikono za obvestila po Uporabi "
+            L"ali V redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Ure in koledarji\r\n\r\nIzvorni program Win32 za do 32 neodvisno nastavljenih plavajočih ur in "
@@ -15167,6 +16063,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_CNR, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Alternativna ikona obavještenja" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Klasična ikona" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Nije moguće pripremiti biblioteku resursa (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Traži &unazad" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Kraj reda" },
+        LocalizedText{ TXT_FIND_FAILED, L"Pretragu nije moguće završiti." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Razlikuj velika i mala &slova" },
+        LocalizedText{ TXT_FIND_NEXT, L"Pronađi &sljedeće" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Nije pronađeno podudaranje." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Regularni izraz" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Regularni izraz: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Početak reda" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Pronađi" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Pronađi:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Samo cijele &riječi" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Nije moguće otvoriti podešavanje stranice." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Dokument nije moguće odštampati." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Nevažeći regularni izraz." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Nevažeća izlazna sekvenca." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Nedostaje uglasta zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Nedostaje obla zagrada ili je suvišna." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Nevažeće ponavljanje." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Nevažeći raspon znakova." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Izraz je previše složen." },
         LocalizedText{ TXT_APP, L"Satovi i kalendari" },
         LocalizedText{ TXT_SETTINGS, L"Podešavanja" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Podešavanja" },
@@ -15602,6 +16522,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nIzvoz na kartici sačuvanih datuma i vremena čuva samo te zapise u zaseban XML. Uvoz "
             L"na ovoj kartici čita samo datume i vremena, čak i iz izvoza podešavanja, i spaja ih s "
             L"postojećim zapisima."
+            L"\r\n\r\nPRETRAGA POMOĆI I LICENCE\r\nU pomoći i licenci u prozoru O programu Ctrl+F otvara "
+            L"pretragu. F3 pronalazi sljedeće podudaranje, a Shift+F3 prethodno. Podržani su razlikovanje "
+            L"velikih i malih slova, cijele riječi, počeci i krajevi redova, pretraga unazad i regularni "
+            L"izrazi. Istorija čuva posljednjih 30 pretraga u tekućoj sesiji.\r\n\r\nNa kartici Aplikacija "
+            L"opcija Alternativna ikona obavještenja omogućava Klasična ikona. Obje mijenjaju samo ikonu "
+            L"obavještenja nakon Primijeni ili U redu."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Satovi i kalendari\r\n\r\nIzvorna Win32 aplikacija za do 32 nezavisno podešena plutajuća sata "
@@ -15678,6 +16604,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_BE, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Іншы значок апавяшчэнняў" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класічны значок" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Не ўдалося падрыхтаваць бібліятэку рэсурсаў (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Шукаць &назад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Канец радка" },
+        LocalizedText{ TXT_FIND_FAILED, L"Не ўдалося завяршыць пошук." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Улічваць &рэгістр" },
+        LocalizedText{ TXT_FIND_NEXT, L"Знайсці &далей" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Супадзенні не знойдзены." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Рэгулярны выраз" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Рэгулярны выраз: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Пачатак радка" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Знайсці" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Знайсці:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Толькі цэлыя &словы" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Не ўдалося адкрыць параметры старонкі." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Не ўдалося надрукаваць дакумент." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Няправільны рэгулярны выраз." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Няправільная кіравальная паслядоўнасць." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Адсутная або лішняя квадратная дужка." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Адсутная або лішняя круглая дужка." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Няправільны паўтор." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Няправільны дыяпазон сімвалаў." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Выраз занадта складаны." },
         LocalizedText{ TXT_APP, L"Гадзіннікі і календары" },
         LocalizedText{ TXT_SETTINGS, L"Налады" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Налады" },
@@ -16120,6 +17072,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nЭкспарт на ўкладцы захаваных дат і часу запісвае толькі гэтыя запісы ў асобны XML. "
             L"Імпарт на гэтай укладцы чытае толькі даты і час нават з экспарту налад і аб’ядноўвае іх з "
             L"існымі запісамі."
+            L"\r\n\r\nПОШУК У ДАВЕДЦЫ І ЛІЦЭНЗІІ\r\nУ даведцы і тэксце ліцэнзіі ў акне Пра праграму Ctrl+F "
+            L"адкрывае пошук. F3 знаходзіць наступнае супадзенне, Shift+F3 — папярэдняе. Падтрымліваюцца ўлік"
+            L" рэгістра, цэлыя словы, пачаткі і канцы радкоў, пошук назад і рэгулярныя выразы. Гісторыя "
+            L"захоўвае апошнія 30 пошукаў бягучага сеанса.\r\n\r\nНа ўкладцы Праграма выбар іншага значка "
+            L"апавяшчэнняў уключае класічны значок. Абодва параметры змяняюць толькі значок апавяшчэнняў "
+            L"пасля Ужыць або OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Гадзіннікі і календары\r\n\r\nПраграма Win32 для паказу да 32 незалежна наладжаных рухомых "
@@ -16193,6 +17151,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_BG, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона за известия" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класическа икона" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Библиотеката с ресурси не може да се подготви (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Търсене &назад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Край на реда" },
+        LocalizedText{ TXT_FIND_FAILED, L"Търсенето не можа да бъде завършено." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Разлика между главни и малки &букви" },
+        LocalizedText{ TXT_FIND_NEXT, L"Намери &следващ" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Няма намерени съвпадения." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Регулярен израз" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Регулярен израз: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Начало на реда" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Търсене" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Търсене:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Само цели &думи" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Не може да се отвори диалогът за настройка на страницата." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Документът не можа да бъде отпечатан." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Невалиден регулярен израз." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Невалидна екранираща последователност." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Липсваща или излишна квадратна скоба." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Липсваща или излишна кръгла скоба." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Невалидно повторение." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Невалиден диапазон от знаци." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Изразът е твърде сложен." },
         LocalizedText{ TXT_APP, L"Часовници и календари" },
         LocalizedText{ TXT_SETTINGS, L"Настройки" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Настройки" },
@@ -16650,6 +17634,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nЕкспортът в раздела със запазените дати и часове записва само тези записи в отделен "
             L"XML. Импортът в този раздел чете само дати и часове дори от експорт на настройки и ги "
             L"обединява със съществуващите записи."
+            L"\r\n\r\nТЪРСЕНЕ В ПОМОЩТА И ЛИЦЕНЗА\r\nВ помощта и лиценза в прозореца Относно Ctrl+F отваря "
+            L"търсене. F3 намира следващото съвпадение, а Shift+F3 — предишното. Поддържат се разлика между "
+            L"главни и малки букви, цели думи, начало и край на ред, търсене назад и регулярни изрази. "
+            L"Историята пази последните 30 търсения в текущата сесия.\r\n\r\nВ раздел Приложение опцията "
+            L"Алтернативна икона за известия активира Класическа икона. И двете променят само иконата за "
+            L"известия след Прилагане или OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПриложение Win32 за до 32 независимо настроени плаващи часовника "
@@ -16725,6 +17715,32 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_MK, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона за известувања" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична икона" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED,
+            L"Не може да се подготви библиотеката со ресурси (0x%08X)."
+        },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Пребарувај &наназад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Крај на редот" },
+        LocalizedText{ TXT_FIND_FAILED, L"Пребарувањето не можеше да се заврши." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Разликувај големи и мали &букви" },
+        LocalizedText{ TXT_FIND_NEXT, L"Најди &следно" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Не е пронајдено совпаѓање." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Регуларен израз" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Регуларен израз: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Почеток на редот" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Најди" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Најди:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Само цели &зборови" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Не може да се отвори поставувањето на страницата." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Документот не можеше да се отпечати." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Невалиден регуларен израз." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Невалидна излезна секвенца." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Недостасува или има вишок аглеста заграда." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Недостасува или има вишок обична заграда." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Невалидно повторување." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Невалиден опсег на знаци." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Изразот е премногу сложен." },
         LocalizedText{ TXT_APP, L"Часовници и календари" },
         LocalizedText{ TXT_SETTINGS, L"Поставки" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Поставки" },
@@ -17180,6 +18196,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nИзвозот на картичката со зачувани датуми и времиња ги запишува само тие записи во "
             L"посебен XML. Увозот на оваа картичка чита само датуми и времиња дури и од извоз на поставки и "
             L"ги спојува со постојните записи."
+            L"\r\n\r\nПРЕБАРУВАЊЕ ВО ПОМОШТА И ЛИЦЕНЦАТА\r\nВо помошта и лиценцата во прозорецот За "
+            L"програмата Ctrl+F отвора пребарување. F3 го наоѓа следното совпаѓање, а Shift+F3 претходното. "
+            L"Поддржани се разликување големи и мали букви, цели зборови, почеток и крај на ред, пребарување "
+            L"наназад и регуларни изрази. Историјата ги чува последните 30 пребарувања во тековната "
+            L"сесија.\r\n\r\nВо јазичето Апликација опцијата Алтернативна икона за известувања овозможува "
+            L"Класична икона. Двете го менуваат само икончето за известувања по Примени или Во ред."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часовници и календари\r\n\r\nПрограма Win32 за до 32 независно поставени лебдечки часовници и "
@@ -17264,6 +18286,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_SR, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Алтернативна икона обавештења" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична икона" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Није могуће припремити библиотеку ресурса (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Тражи &уназад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Крај реда" },
+        LocalizedText{ TXT_FIND_FAILED, L"Претрагу није могуће завршити." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Разликуј велика и мала &слова" },
+        LocalizedText{ TXT_FIND_NEXT, L"Пронађи &следеће" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Није пронађено подударање." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Регуларни израз" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Регуларни израз: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Почетак реда" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Пронађи" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Пронађи:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Само целе &речи" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Није могуће отворити подешавање странице." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Документ није могуће одштампати." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Неважећи регуларни израз." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Неважећа излазна секвенца." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Недостаје угласта заграда или је сувишна." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Недостаје обична заграда или је сувишна." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Неважеће понављање." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Неважећи опсег знакова." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Израз је превише сложен." },
         LocalizedText{ TXT_APP, L"Сатови и календари" },
         LocalizedText{ TXT_SETTINGS, L"Подешавања" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Подешавања" },
@@ -17691,6 +18737,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nИзвоз на картици сачуваних датума и времена чува само те записе у засебан XML. Увоз "
             L"на овој картици чита само датуме и времена, чак и из извоза подешавања, и спаја их с "
             L"постојећим записима."
+            L"\r\n\r\nПРЕТРАГА ПОМОЋИ И ЛИЦЕНЦЕ\r\nУ помоћи и лиценци у прозору О програму Ctrl+F отвара "
+            L"претрагу. F3 проналази следеће подударање, а Shift+F3 претходно. Подржани су разликовање "
+            L"великих и малих слова, целе речи, почеци и крајеви редова, претрага уназад и регуларни изрази. "
+            L"Историја чува последњих 30 претрага текуће сесије.\r\n\r\nНа картици Апликација опција "
+            L"Алтернативна икона обавештења омогућава Класична икона. Обе мењају само икону обавештења након "
+            L"Примени или У реду."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Сатови и календари\r\n\r\nИзворна Win32 апликација за до 32 независно подешена плутајућа сата "
@@ -17767,6 +18819,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_UK, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Інша піктограма сповіщень" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Класична піктограма" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Не вдалося підготувати бібліотеку ресурсів (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Шукати &назад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Кінець рядка" },
+        LocalizedText{ TXT_FIND_FAILED, L"Не вдалося завершити пошук." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Враховувати &регістр" },
+        LocalizedText{ TXT_FIND_NEXT, L"Знайти &далі" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Збігів не знайдено." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Регулярний вираз" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Регулярний вираз: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Початок рядка" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Знайти" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Знайти:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Лише цілі &слова" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Не вдалося відкрити параметри сторінки." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Не вдалося надрукувати документ." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Неприпустимий регулярний вираз." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Неприпустима керівна послідовність." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Відсутня або зайва квадратна дужка." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Відсутня або зайва кругла дужка." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Неприпустиме повторення." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Неприпустимий діапазон символів." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Вираз надто складний." },
         LocalizedText{ TXT_APP, L"Годинники та календарі" },
         LocalizedText{ TXT_SETTINGS, L"Налаштування" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Налаштування" },
@@ -18231,6 +19307,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nЕкспорт на вкладці збережених дат і часу записує лише ці записи в окремий XML. Імпорт "
             L"на цій вкладці читає лише дати й час навіть з експорту налаштувань і об’єднує їх з наявними "
             L"записами."
+            L"\r\n\r\nПОШУК У ДОВІДЦІ ТА ЛІЦЕНЗІЇ\r\nУ довідці та тексті ліцензії у вікні Про програму Ctrl+F"
+            L" відкриває пошук. F3 знаходить наступний збіг, Shift+F3 — попередній. Підтримуються врахування "
+            L"регістру, цілі слова, початки й кінці рядків, пошук назад і регулярні вирази. Історія зберігає "
+            L"останні 30 пошуків поточного сеансу.\r\n\r\nНа вкладці Програма вибір іншої піктограми "
+            L"сповіщень вмикає класичну піктограму. Обидва параметри змінюють лише піктограму сповіщень після"
+            L" Застосувати або OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Годинники та календарі\r\n\r\nПрограма Win32 для показу до 32 незалежно налаштованих рухомих "
@@ -18305,6 +19387,30 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
         },
     }),
     DefineLanguage(LANG_RU, std::initializer_list<LocalizedText>{
+        LocalizedText{ TXT_ALTERNATIVE_TRAY_ICON, L"Другой значок уведомлений" },
+        LocalizedText{ TXT_CLASSIC_TRAY_ICON, L"Классический значок" },
+        LocalizedText{ TXT_RESOURCE_LIBRARY_FAILED, L"Не удалось подготовить библиотеку ресурсов (0x%08X)." },
+        LocalizedText{ TXT_FIND_BACKWARD, L"Искать &назад" },
+        LocalizedText{ TXT_FIND_ENDS_WITH, L"&Конец строки" },
+        LocalizedText{ TXT_FIND_FAILED, L"Не удалось завершить поиск." },
+        LocalizedText{ TXT_FIND_MATCH_CASE, L"Учитывать &регистр" },
+        LocalizedText{ TXT_FIND_NEXT, L"Найти &далее" },
+        LocalizedText{ TXT_FIND_NOT_FOUND, L"Совпадений не найдено." },
+        LocalizedText{ TXT_FIND_REGEX, L"&Регулярное выражение" },
+        LocalizedText{ TXT_FIND_REGEX_ERROR, L"Регулярное выражение: %s" },
+        LocalizedText{ TXT_FIND_STARTS_WITH, L"&Начало строки" },
+        LocalizedText{ TXT_FIND_TITLE, L"%s — Найти" },
+        LocalizedText{ TXT_FIND_WHAT, L"&Найти:" },
+        LocalizedText{ TXT_FIND_WHOLE_WORDS, L"Только целые &слова" },
+        LocalizedText{ TXT_PAGE_SETUP_FAILED, L"Не удалось открыть параметры страницы." },
+        LocalizedText{ TXT_PRINT_FAILED, L"Не удалось напечатать документ." },
+        LocalizedText{ TXT_REGEX_INVALID, L"Недопустимое регулярное выражение." },
+        LocalizedText{ TXT_REGEX_ESCAPE, L"Недопустимая управляющая последовательность." },
+        LocalizedText{ TXT_REGEX_BRACKET, L"Отсутствующая или лишняя квадратная скобка." },
+        LocalizedText{ TXT_REGEX_PARENTHESIS, L"Отсутствующая или лишняя круглая скобка." },
+        LocalizedText{ TXT_REGEX_REPEAT, L"Недопустимое повторение." },
+        LocalizedText{ TXT_REGEX_RANGE, L"Недопустимый диапазон символов." },
+        LocalizedText{ TXT_REGEX_COMPLEXITY, L"Выражение слишком сложное." },
         LocalizedText{ TXT_APP, L"Часы и календари" },
         LocalizedText{ TXT_SETTINGS, L"Настройки" },
         LocalizedText{ TXT_SETTINGS_WINDOW_TITLE, L"%ls — Настройки" },
@@ -18778,6 +19884,12 @@ constexpr std::initializer_list<LocalizedLanguage> languageDefinitions{
             L"\r\n\r\nЭкспорт на вкладке сохранённых дат и времени записывает только эти записи в отдельный "
             L"XML. Импорт на этой вкладке читает только даты и время даже из экспорта настроек и объединяет "
             L"их с существующими записями."
+            L"\r\n\r\nПОИСК В СПРАВКЕ И ЛИЦЕНЗИИ\r\nВ справке и тексте лицензии в окне О программе Ctrl+F "
+            L"открывает поиск. F3 находит следующее совпадение, Shift+F3 — предыдущее. Поддерживаются учёт "
+            L"регистра, целые слова, начала и концы строк, поиск назад и регулярные выражения. История хранит"
+            L" последние 30 поисков текущего сеанса.\r\n\r\nНа вкладке Программа выбор другого значка "
+            L"уведомлений включает классический значок. Оба параметра меняют только значок уведомлений после "
+            L"Применить или OK."
         },
         LocalizedText{ TXT_ABOUT_TEXT,
             L"Часы и календари\r\n\r\nПрограмма Win32 для показа до 32 независимо настроенных перемещаемых "

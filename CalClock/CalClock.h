@@ -21,18 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.2.5
  */
 
 #pragma once
 
 #include <windows.h>
+#include <unknwn.h>
 #include "AlarmSchedule.h"
 #include "PersistWindowState.h"
+#include "PrintSettings.h"
 #include "TimeDateNotices.h"
 #include "TimeCalculator.h"
 #include <string>
 #include <vector>
+
+inline constexpr wchar_t PRODUCT_NAME[] = L"CalClock";
+inline constexpr UINT findVisibilityChangedMessage = WM_APP + 500;
+inline constexpr UINT findMatchMessage = WM_APP + 501;
+inline constexpr UINT informationPrintCompleteMessage = WM_APP + 502;
+inline constexpr UINT modernPrintCompleteMessage = WM_APP + 9;
 
 const int MAX_WIDGET_COUNT = 32;
 const int ADDITIONAL_CLOCK_COUNT = 2;
@@ -458,6 +466,30 @@ enum TextId {
     TXT_CALCULATOR_WRITE_FAILED,
     TXT_CALCULATOR_SELECT_OFFSET,
     TXT_CALCULATOR_TIME_GAP,
+    TXT_ALTERNATIVE_TRAY_ICON,
+    TXT_CLASSIC_TRAY_ICON,
+    TXT_RESOURCE_LIBRARY_FAILED,
+    TXT_FIND_BACKWARD,
+    TXT_FIND_ENDS_WITH,
+    TXT_FIND_FAILED,
+    TXT_FIND_MATCH_CASE,
+    TXT_FIND_NEXT,
+    TXT_FIND_NOT_FOUND,
+    TXT_FIND_REGEX,
+    TXT_FIND_REGEX_ERROR,
+    TXT_FIND_STARTS_WITH,
+    TXT_FIND_TITLE,
+    TXT_FIND_WHAT,
+    TXT_FIND_WHOLE_WORDS,
+    TXT_PAGE_SETUP_FAILED,
+    TXT_PRINT_FAILED,
+    TXT_REGEX_INVALID,
+    TXT_REGEX_ESCAPE,
+    TXT_REGEX_BRACKET,
+    TXT_REGEX_PARENTHESIS,
+    TXT_REGEX_REPEAT,
+    TXT_REGEX_RANGE,
+    TXT_REGEX_COMPLEXITY,
     TXT_COUNT
 };
 
@@ -557,6 +589,9 @@ struct WidgetConfig {
 /// Captures persistent application settings, form placement, and the ordered widget configurations.
 struct SettingsSnapshot {
     AppLanguage language = LANG_EN_US;
+    DWORD options = 0;
+    bool alternativeTrayIcon = false;
+    bool classicTrayIcon = false;
     bool themesDisabled = false;
     bool windows2000Style = false;
     bool snapWidgetsToWorkArea = true;
@@ -691,7 +726,7 @@ HFONT CreateApplicationUiFont(HWND window);
 void ApplyUiStyle(HWND window);
 
 /// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
-void UpdateApplicationWindowIcons(HWND window);
+void UpdateApplicationWindowIcons(HWND window, int iconIndex = 0);
 
 /// Detaches and releases the owned caption and task-switcher icons before the window is destroyed.
 void ReleaseApplicationWindowIcons(HWND window);
@@ -796,3 +831,46 @@ LRESULT CALLBACK InformationTextSubclassProc(HWND window, UINT msg, WPARAM wPara
 /// Builds the common Settings and calculator catalog captions without changing their order or zone keys.
 std::vector<std::wstring> BuildSettingsTimeZoneLabels(const std::vector<DYNAMIC_TIME_ZONE_INFORMATION>& zones,
     const SYSTEMTIME& utc, const std::wstring& systemLabel);
+
+/// Routes search notifications and information-window destruction to the application controller.
+bool HandleInformationMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+
+/// Allocates a process-heap copy of the current native control text.
+wchar_t* CopyControlText(HWND control);
+
+/// Preserves the reference component's native ideal-button measurements.
+SIZE PreferredButtonSize(HWND button, const SIZE& minimum);
+
+/// Returns a control's bounds in its parent's client coordinates.
+RECT ControlRect(HWND window, HWND parent);
+
+/// Positions a native control without activation or Z-order changes.
+void PlaceControl(HWND window, int x, int y, int width, int height);
+
+/// Reads the native control's current text metrics.
+bool ReadControlMetrics(HWND control, TEXTMETRICW* metrics);
+
+/// Returns the actual selection-text rectangle for a ComboBoxEx.
+bool ComboBoxTextRect(HWND combo, RECT* rectangle);
+
+/// Returns the control's actual rendered text baseline in screen coordinates.
+LONG ControlTextBaseline(HWND control);
+
+/// Aligns two controls by their rendered native text baselines.
+void AlignControlBaseline(HWND control, HWND reference);
+
+/// Aligns an editable combo's input text to its selected-item rectangle.
+void UpdateEditMetrics(HWND edit, HWND enclosingCombo);
+
+/// Opens the application's existing modeless Help form.
+void ShowInformationHelp();
+
+/// Captures the plain-text edit, its effective font, DPI, title and margins.
+PrintJob* CapturePrintJob(HWND owner, HWND edit, const wchar_t* title, const RECT& margins);
+
+/// Captures the edit and attaches the printer accepted in the classic dialog.
+PrintJob* ChooseReportPrinter(HWND owner, HWND edit, const wchar_t* title, PrintSettings& settings,
+    wchar_t* error, int errorCapacity);
+
+/// Renders a captured print job through the reference's cancellable classic printing path.
+bool PrintReportPages(PrintJob* job);

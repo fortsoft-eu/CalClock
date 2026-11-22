@@ -183,6 +183,16 @@ Az aláírási paraméterek alapértékei a Windows felhasználói környezeti v
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. A kifejezetten
 megadott parancssori argumentumok elsőbbséget élveznek.
 
+## Keresés a súgóban és a licencben
+
+A súgóban és a Névjegy licencszövegében a Ctrl+F megnyitja a keresést. Az F3 a következő, a Shift+F3 az előző
+találatra lép. A keresés támogatja a kis- és nagybetűk megkülönböztetését, a teljes szavakat, a sor elejét és
+végét, a visszafelé keresést és a reguláris kifejezéseket. Az előzmények a munkamenet utolsó 30 keresését
+őrzik.
+
+Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Klasszikus ikon lehetőséget. Mindkettő csak az
+értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után.
+
 ## Licenc
 
 A CalClock az [MIT-licenc](../license.txt) feltételeivel érhető el.

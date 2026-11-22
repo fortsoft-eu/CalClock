@@ -237,6 +237,15 @@ Allekirjoitusparametrien oletusarvot luetaan myös Windowsin käyttäjäkohtaisi
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Erikseen annetut
 komentoriviargumentit ovat etusijalla.
 
+## Haku ohjeesta ja lisenssistä
+
+Ohjeessa ja Tietoja-ikkunan lisenssissä Ctrl+F avaa haun. F3 etsii seuraavan osuman ja Shift+F3 edellisen.
+Haku tukee kirjainkoon huomioimista, kokonaisia sanoja, rivin alkuja ja loppuja, hakua taaksepäin ja
+säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hakua.
+
+Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Perinteinen kuvake -valinnan. Molemmat
+muuttavat vain ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.
+
 ## Lisenssi
 
 CalClock on saatavilla [MIT-lisenssillä](../license.txt).

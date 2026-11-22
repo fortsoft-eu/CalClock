@@ -181,6 +181,15 @@ Il-valuri predefiniti tal-parametri tal-iffirmar jinqraw ukoll mill-varjabbli ta
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. L-argumenti
 espliċiti tal-linja tal-kmand jieħdu preċedenza.
 
+## Tfittxija fl-għajnuna u fil-liċenzja
+
+Fl-għajnuna u fil-liċenzja fit-tieqa Dwar, Ctrl+F jiftaħ it-tfittxija. F3 isib il-qbil li jmiss u Shift+F3 dak
+ta’ qabel. It-tfittxija tappoġġja l-ittri kbar u żgħar, kliem sħiħ, bidu u tmiem il-linji, tfittxija lura u
+espressjonijiet regolari. L-istorja żżomm l-aħħar 30 tfittxija tas-sessjoni.
+
+Fit-tab Applikazzjoni, Ikona alternattiva tan-notifika tippermetti Ikona klassika. Iż-żewġ għażliet jibdlu
+biss l-ikona tan-notifika wara Applika jew OK.
+
 ## Liċenzja
 
 CalClock huwa disponibbli taħt il-[liċenzja MIT](../license.txt).

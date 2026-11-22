@@ -181,6 +181,16 @@ Valorile implicite ale parametrilor de semnare sunt citite și din variabilele d
 `BUILD_SIGNER_NAME`, `BUILD_CERTIFICATE_THUMBPRINT`, `BUILD_SIGNTOOL_PATH`, `BUILD_TIMESTAMP_SERVER`. Argumentele
 explicite din linia de comandă au prioritate.
 
+## Căutarea în ajutor și în licență
+
+În ajutor și în textul licenței din Despre, Ctrl+F deschide căutarea. F3 găsește următoarea potrivire, iar
+Shift+F3 pe cea anterioară. Sunt acceptate diferențierea majusculelor, cuvintele întregi, începutul și
+sfârșitul liniilor, căutarea înapoi și expresiile regulate. Istoricul păstrează ultimele 30 de căutări din
+sesiunea curentă.
+
+În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă clasică. Ambele opțiuni schimbă
+doar pictograma de notificare după Aplicare sau OK.
+
 ## Licență
 
 CalClock este disponibil sub [licența MIT](../license.txt).
