@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.6
+ * Last modified for version 1.7.2.7
  */
 
 #define NOMINMAX
@@ -424,6 +424,7 @@ static void TestTrayIconDraft() {
     selectedDraftIndex = 0;
     settingsTab = 5;
     useNtpTime = false;
+    themesDisabled = false;
     alternativeTrayIcon = false;
     classicTrayIcon = false;
     settingsAlternativeTrayIcon = false;
@@ -431,6 +432,7 @@ static void TestTrayIconDraft() {
     hSettings = CreateSettingsDialog(IDD_SETTINGS, nullptr, SettingsDialogProc, 0);
     Require(hSettings != nullptr && CreateSettingsControls(5), "create actual Application settings page");
     LoadAlarm(AlarmConfiguration(1));
+    SendMessageW(hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS, 0, 0);
     LONG soundBaseline = ControlTextBaseline(hTimeSignalSoundCombo);
     Require(std::abs(ControlTextBaseline(hTimeSignalTestButton) - soundBaseline) <= 1,
         "the sound Test button shares the actual inner combo text baseline");

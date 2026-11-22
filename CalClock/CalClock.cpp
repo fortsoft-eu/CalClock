@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.6
+ * Last modified for version 1.7.2.7
  */
 
 #define NOMINMAX
@@ -278,7 +278,7 @@ const UINT WM_SETTINGS_AUDIO_FINISHED = WM_APP + 5;
 const UINT WM_REFRESH_DISPLAYS = WM_APP + 6;
 const UINT WM_TIME_SIGNAL_FINISHED = WM_APP + 8;
 const UINT WM_UPDATE_SETTINGS_CONTROL_METRICS = WM_APP + 9;
-const UINT WM_ALIGN_SETTINGS_FONT_BUTTON = WM_APP + 10;
+const UINT WM_ALIGN_SETTINGS_ACTION_BUTTONS = WM_APP + 10;
 const UINT WM_SETTINGS_DATA_READY = WM_APP + 11;
 const UINT_PTR TIMER_REFRESH = 1;
 const UINT_PTR TIMER_SETTINGS_OPEN = 2;
@@ -9070,7 +9070,7 @@ static void UpdateSettingsWindowLayout() {
         RedrawWindow(hSettings, nullptr, nullptr,
             RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN | RDW_UPDATENOW);
     }
-    PostMessageW(hSettings, WM_ALIGN_SETTINGS_FONT_BUTTON, 0, 0);
+    PostMessageW(hSettings, WM_ALIGN_SETTINGS_ACTION_BUTTONS, 0, 0);
 }
 
 /// Applies a scrollbar request within its valid range and scrolls the settings child windows by the
@@ -10546,7 +10546,7 @@ static INT_PTR CALLBACK SettingsDialogProc(HWND window, UINT message, WPARAM wPa
             || message == WM_MOUSEWHEEL
             || message == WM_NOTIFY
             || message == WM_UPDATE_SETTINGS_CONTROL_METRICS
-            || message == WM_ALIGN_SETTINGS_FONT_BUTTON
+            || message == WM_ALIGN_SETTINGS_ACTION_BUTTONS
             || message == WM_DRAWITEM
             || message == DM_GETDEFID) {
         LRESULT result = WindowProc(window, message, wParam, lParam);
@@ -17507,9 +17507,12 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
                     RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
             }
             break;
-        case WM_ALIGN_SETTINGS_FONT_BUTTON:
+        case WM_ALIGN_SETTINGS_ACTION_BUTTONS:
             if (window == hSettings && !settingsLayoutSuspended) {
                 AlignApplicationFontButton();
+                AlignSettingsControl(hTimeSignalSoundCombo,
+                    GetDlgItem(hApplicationPage, IDC_TIME_SIGNAL_SOUND_LABEL));
+                AlignSettingsControl(hTimeSignalTestButton, hTimeSignalSoundCombo);
                 return 0;
             }
             break;
