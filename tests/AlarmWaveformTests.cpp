@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -267,7 +267,7 @@ static void TestBufferContinuity() {
             Check(block.back() == 0, "every output block ends at zero");
             size_t referenceStart = static_cast<size_t>(first);
             for (size_t index = 0; index < block.size()
-                && referenceStart + index < reference.size(); ++index) {
+                    && referenceStart + index < reference.size(); ++index) {
                 Check(block[index] == reference[referenceStart + index],
                     "block subdivision does not alter waveform");
             }
@@ -442,8 +442,8 @@ static void TestCancellationIsolation() {
         "ending preview preserves scheduled signals");
     AdjustTimeSignalPlaybackTime(25000);
     Check(first.sequences.front().target == TEST_TARGET + 10025000
-        && second.sequences.front().target == TEST_TARGET + 25000,
-            "time correction shifts both routes consistently");
+            && second.sequences.front().target == TEST_TARGET + 25000,
+        "time correction shifts both routes consistently");
     for (const std::unique_ptr<TimeSignalOutputRoute>& route : timeSignalOutputs) {
         DestroyRoute(*route);
     }

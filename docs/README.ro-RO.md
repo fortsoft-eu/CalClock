@@ -58,12 +58,12 @@ Setările pot fi exportate în XML. Importul încarcă și salvează imediat set
 
 Netezire font oferă ClearType, GDI și Fără. Zero inițial oferă „Da” (implicit), „Nu, păstrează spațiul” și „Nu, fără spațiu”. „Nu, păstrează spațiul” ascunde zero, rezervând lățimea lui în fontul ales; celelalte cifre rămân pe poziție și cu fonturi proporționale. Ceasurile pe ecran rămân centrate incluzând spațiul rezervat. Rândul UTC are centrare separată.
 
-Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre și Calculator
-de timp. Controalele acestor ferestre folosesc Tahoma de 8 pt când este selectat fontul implicit al
+Stil Windows 2000 necesită Dezactivare teme și se aplică doar ferestrelor Setări, Ajutor, Despre, Calculator
+de timp și Caută. Controalele acestor ferestre folosesc Tahoma de 8 pt când este selectat fontul implicit al
 sistemului; fontul personalizat al aplicației are prioritate, iar textul licenței rămâne în Consolas. Se poate
 alege doar GDI sau Fără netezire. Opțiunea ClearType salvată folosește temporar GDI și revine după
-dezactivarea stilului. Cu aspectul clasic Windows, ambele opțiuni de temă apar debifate și dezactivate și nu
-se aplică; preferințele salvate se păstrează.
+dezactivarea stilului. Cu aspectul clasic Windows, toate opțiunile de aspect apar debifate și dezactivate și
+nu se aplică; preferințele salvate se păstrează.
 
 ## Calculator de timp
 
@@ -103,7 +103,7 @@ din această filă extrage numai date și ore, chiar și dintr-un export al set�
 
 ## Setări și meniuri
 
-Limba aplicației, fontul, netezirea, stocarea, pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea temelor în fila Aplicație afectează numai ferestrele Setări, Ajutor, Despre și Calculator de timp. Fiecare widget folosește propria setare a temelor. La prima pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, netezirea și temele widgetului afectează numai acel widget.
+Limba aplicației, fontul, netezirea, stocarea, pornirea cu Windows și alinierea la margini sunt comune în fila Aplicație. Dezactivarea temelor în fila Aplicație afectează ferestrele Setări, Ajutor, Despre, Calculator de timp și Caută. Fiecare widget folosește propria setare a temelor. La prima pornire se alege limba interfeței Windows sau engleza americană dacă nu este acceptată. Limba, netezirea și temele widgetului afectează numai acel widget.
 
 Meniul widgetului conține alegerile aplicabile de vizibilitate, Întotdeauna deasupra, secunde, dimensiune și
 copiere a datei, apoi Aranjare în grilă, Calculator de timp, Setări, Ajutor, Despre și Ieșire. Meniul
@@ -189,7 +189,7 @@ sfârșitul liniilor, căutarea înapoi și expresiile regulate. Istoricul păst
 sesiunea curentă.
 
 În fila Aplicație, Pictogramă de notificare alternativă activează Pictogramă de notificare retro. Ambele
-opțiuni schimbă doar pictograma de notificare după Aplicare sau OK.
+opțiuni schimbă doar pictograma de notificare după Aplicare sau Salvare.
 
 Aspectul ferestrelor: Sistem; Titluri Windows Basic; Titluri Windows Classic; Windows 2000. Ambele moduri ale
 barei de titlu funcționează cu sau fără teme pentru controale. Implicit de sistem aplică Dezactivează temele

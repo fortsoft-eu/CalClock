@@ -71,8 +71,12 @@ const UINT_PTR INFORMATION_TEXT_SUBCLASS_ID = 0xCC06;
 /// Retains a dropdown's pending selection until it is accepted or cancelled.
 struct ApplicationComboState {
     HWND open = nullptr;
+    HWND edit = nullptr;
     int initialSelection = -1;
+    DWORD selectionStart = 0;
+    DWORD selectionEnd = 0;
     bool accepted = false;
+    std::wstring initialText;
 };
 
 /// Identifies the supported widget kinds and indexes their localized names.
@@ -773,6 +777,9 @@ HWND GetSettingsComboBox(HWND window);
 /// Shares the complete control message handler, including native combo drawing, input and font/theme changes.
 LRESULT CALLBACK ApplicationControlSubclassProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam,
     UINT_PTR subclassId, DWORD_PTR referenceData);
+
+/// Reads the accepted selection while an open dropdown contains only tentative navigation.
+int GetApplicationComboSelection(HWND control, const ApplicationComboState& state);
 
 /// Commits a changed dropdown selection only on close; cancelled navigation restores its original value.
 bool HandleApplicationComboNotification(HWND control, int* notification, ApplicationComboState& state,

@@ -74,14 +74,14 @@ Los cambios de apariencia se previsualizan inmediatamente en el widget seleccion
 
 Relojes digitales, calendarios y paneles comparten cuatro estilos de borde. El borde simple permite configurar el color; el ancho se puede ajustar cuando el widget lo admite. Los relojes digitales transparentes ofrecen los mismos estilos que los opacos. Las fuentes de aplicación y calendario no incluyen tamaño; las digitales y de texto del panel sí. Las fuentes personalizadas del calendario se admiten con la apariencia clásica de Windows o con los temas desactivados para el widget.
 
-El idioma de la aplicación, fuente de interfaz, suavizado, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. Desactivar los temas en Aplicación solo afecta a Configuración, Ayuda, Acerca de y Calculadora de tiempo. Cada widget utiliza su propio ajuste de temas. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**.
+El idioma de la aplicación, fuente de interfaz, suavizado, almacenamiento, inicio con Windows y ajuste a bordes son globales y se configuran en Aplicación. Desactivar los temas en Aplicación afecta a Configuración, Ayuda, Acerca de, Calculadora de tiempo y Buscar. Cada widget utiliza su propio ajuste de temas. La fuente de tiempo también es global. Idioma del widget, suavizado, estilos, zona, desfase, alarma y señal horaria se configuran por separado. El suavizado ofrece **ClearType**, **GDI** y **Ninguno**.
 
-Estilo de Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de y Calculadora
-de tiempo. Si se elige la fuente predeterminada del sistema, sus controles usan Tahoma de 8 pt; una fuente de
-aplicación personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En este modo solo se
-ofrecen GDI y Ninguno para el suavizado: una elección guardada de ClearType usa GDI temporalmente y se
-restaura al desactivar el modo. Si los estilos visuales están desactivados en Windows, ambas opciones de
-estilo aparecen desmarcadas y deshabilitadas sin cambiar las opciones guardadas.
+Estilo de Windows 2000 requiere Desactivar temas y solo afecta a Configuración, Ayuda, Acerca de, Calculadora
+de tiempo y Buscar. Si se elige la fuente predeterminada del sistema, sus controles usan Tahoma de 8 pt; una
+fuente de aplicación personalizada tiene prioridad. La licencia conserva su fuente monoespaciada. En este modo
+solo se ofrecen GDI y Ninguno para el suavizado: una elección guardada de ClearType usa GDI temporalmente y se
+restaura al desactivar el modo. Si los estilos visuales están desactivados en Windows, todas las opciones de
+apariencia aparecen desmarcadas y deshabilitadas sin cambiar las opciones guardadas.
 
 El control **Volumen de audio** de Alarma regula los archivos reproducidos internamente por widget y muestra el nivel en dB. El valor predeterminado **−18 dB** conserva el nivel original (**100%**). Moverlo a la derecha amplifica el audio; el máximo **0 dB** equivale aproximadamente al **794%** de la amplitud original. El extremo izquierdo es **−∞ dB** (silencio). Los cambios actúan durante la prueba de audio. La amplificación se aplica al audio decodificado, incluidos WAV, MP3, WMA, AAC, M4A y FLAC cuando Windows los admite. La reproducción heredada de archivos no decodificables, como MIDI, está limitada al 100%.
 
@@ -257,7 +257,7 @@ anterior. Se admiten mayúsculas y minúsculas, palabras completas, inicios y fi
 atrás y expresiones regulares. El historial conserva las últimas 30 búsquedas de la sesión.
 
 En la pestaña Aplicación, Icono de notificación alternativo habilita Icono de notificación retro. Ambas
-opciones solo cambian el icono de notificación tras Aplicar o Aceptar.
+opciones solo cambian el icono de notificación tras Aplicar o Guardar.
 
 Apariencia de las ventanas: Sistema; Títulos de Windows Basic; Títulos de Windows Classic; Windows 2000. Ambos
 modos de título funcionan con o sin temas en los controles. Sistema aplica Desactivar temas a toda la ventana.

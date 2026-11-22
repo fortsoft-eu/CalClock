@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -343,7 +343,7 @@ static void TestTiming() {
     widget->alarmSchedule.Check(widget->config, timeZones, GetApplicationFileTimeValue());
     CheckTimeSignals();
     Require(currentTimeSignalSources.size() == 1
-        && currentTimeSignalSources[0].target == Utc(2026, 11, 2, 8, 0) - 45000000,
+            && currentTimeSignalSources[0].target == Utc(2026, 11, 2, 8, 0) - 45000000,
         "NTP retimes existing pips and keeps contributors");
     Reset(Utc(2026, 11, 2, 7, 59, 54));
     AddClock(1);
@@ -440,10 +440,10 @@ static void TestAudioStopIsolation() {
     first->config.alarmVolume = -1837;
     StartWidgetAlarm(first);
     Require(lastAudioPath == first->config.command
-        && audioVolume == -1837
-        && audioWidgetId == first->config.id
-        && audioGeneration == first->audioGeneration
-        && audioFinishedMessage == WM_AUDIO_FINISHED,
+            && audioVolume == -1837
+            && audioWidgetId == first->config.id
+            && audioGeneration == first->audioGeneration
+            && audioFinishedMessage == WM_AUDIO_FINISHED,
         "audio dispatch preserves path, precise volume, widget identity and completion generation");
     HANDLE firstObserver = ObserveEvent(first->audioStopEvent);
     ULONG firstGeneration = first->audioGeneration;
@@ -454,8 +454,9 @@ static void TestAudioStopIsolation() {
     Require(WaitForSingleObject(firstObserver, 0) == WAIT_OBJECT_0,
         "stopping one alarm signals its worker before closing the owner handle");
     Require(WaitForSingleObject(secondObserver, 0) == WAIT_TIMEOUT
-        && second->audioStopEvent == secondOwner
-        && second->alarmActive, "stopping one alarm leaves another audio stream running");
+            && second->audioStopEvent == secondOwner
+            && second->alarmActive,
+        "stopping one alarm leaves another audio stream running");
     Require(first->audioStopEvent == nullptr && first->audioMuteEvent == nullptr && !first->alarmActive,
         "stopped alarm releases its handles and visual state");
     widgets.erase(widgets.begin());
@@ -464,8 +465,9 @@ static void TestAudioStopIsolation() {
         "completion for a removed widget cannot affect a surviving alarm");
     StopAllAlarms();
     Require(WaitForSingleObject(secondObserver, 0) == WAIT_OBJECT_0
-        && second->audioStopEvent == nullptr
-        && !second->alarmActive, "stop all signals and releases the remaining audio stream");
+            && second->audioStopEvent == nullptr
+            && !second->alarmActive,
+        "stop all signals and releases the remaining audio stream");
     CloseHandle(firstObserver);
     CloseHandle(secondObserver);
 }

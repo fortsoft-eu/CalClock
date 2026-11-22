@@ -74,14 +74,14 @@ Udseendeændringer vises straks som et eksempel på den valgte widget. `Standard
 
 Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har justerbar farve; rammebredde kan ændres, hvor widgeten understøtter det. Gennemsigtige digitale ure tilbyder samme stile som uigennemsigtige. Program- og kalenderskrifter har intet størrelsesvalg, mens digitale ure og paneltekster har. En indbygget kalender kan bruge en egen skrifttype med Windows klassiske udseende eller med temaer slået fra for widgeten.
 
-Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på Program gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
+Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på fanen Program påvirker Indstillinger, Hjælp, Om, Tidsberegner og Find. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om og Tidsberegner. Med
+Windows 2000-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om, Tidsberegner og Find. Med
 systemets standardskrifttype bruger disse vinduers kontrolelementer Tahoma 8 pt; en brugerdefineret
 programskrifttype har forrang. Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI
 og Ingen tilgængelige for skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når
-tilstanden slås fra. Hvis visuelle typografier er deaktiveret i Windows, vises begge stilvalg som umarkerede
-og deaktiverede, uden at de gemte valg ændres.
+tilstanden slås fra. Hvis visuelle typografier er deaktiveret i Windows, vises alle udseendevalg som
+umarkerede og deaktiverede, uden at de gemte valg ændres.
 
 Skyderen **Lydstyrke** på Alarm styrer internt afspillede lydfiler separat for hver widget og viser niveauet i dB. Standardværdien **−18 dB** bevarer filens oprindelige niveau (**100%**). Mod højre forstærkes lyden; maksimum **0 dB** svarer til cirka **794%** af oprindelig amplitude. Yderst til venstre er **−∞ dB** (stilhed). Ændringer virker under lydtesten. Forstærkning gælder afkodet lyd, herunder WAV, MP3, WMA, AAC, M4A og FLAC, når Windows understøtter dem. Ældre afspilning af filer, der ikke kan afkodes, eksempelvis MIDI, er begrænset til 100%.
 
@@ -251,7 +251,7 @@ understøtter store og små bogstaver, hele ord, linjestart og linjeslutning, ba
 udtryk. Historikken gemmer de sidste 30 søgninger i den aktuelle session.
 
 På fanen Program aktiverer Alternativt meddelelsesikon valget Retroikon i meddelelsesområdet. Begge
-indstillinger ændrer kun meddelelsesikonet efter Anvend eller OK.
+indstillinger ændrer kun meddelelsesikonet efter Anvend eller Gem.
 
 Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Classic-titellinjer; Windows 2000. Begge
 titellinjetilstande virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver temaer

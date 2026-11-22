@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.1.0
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -638,7 +638,7 @@ static void TestNtp() {
     ntpQueryRunning = true;
     NtpResult(999, true, 1);
     Check(ntpRestarts == 1
-        && ntpClockOffset100Nanoseconds == -1200 * static_cast<LONGLONG>(REFRESH_SECOND_TICKS),
+            && ntpClockOffset100Nanoseconds == -1200 * static_cast<LONGLONG>(REFRESH_SECOND_TICKS),
         "stale NTP generation cannot change accepted correction");
     Check(hNtpThread == nullptr && !ntpQueryRunning && timerCloses == 1,
         "stale NTP result releases the completed worker before requesting its replacement");
@@ -782,7 +782,7 @@ static void TestTransitionWakeRequests() {
     DispatchMessage(WM_TIMECHANGE);
     DispatchMessage(WM_POWERBROADCAST, PBT_APMRESUMEAUTOMATIC);
     Check(alarmStarts.size() == 1
-        && wakeTimes.back() == UtcDateTime(2026, 10, 26, 1, 28, 25),
+            && wakeTimes.back() == UtcDateTime(2026, 10, 26, 1, 28, 25),
         "second repeated-hour occurrence cannot repeat alarm or its wake request");
     Begin(UtcDateTime(2026, 10, 3, 15, 0));
     Widget* halfHour = AddAlarm(1, 2, 30, true, true);

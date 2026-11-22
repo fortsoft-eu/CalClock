@@ -143,21 +143,23 @@ static void TestPackedOptions() {
     Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
         "read packed application options");
     Require(restored.options == 0x800001FF
-        && restored.themesDisabled
-        && restored.windows2000Style
-        && restored.snapWidgetsToWorkArea
-        && restored.warnOnUnsavedChanges
-        && restored.generatedTimeSignal
-        && restored.fontItalic
-        && restored.useNtpTime
-        && restored.alternativeTrayIcon
-        && restored.classicTrayIcon, "all options and unknown bits survive XML round trip");
+            && restored.themesDisabled
+            && restored.windows2000Style
+            && restored.snapWidgetsToWorkArea
+            && restored.warnOnUnsavedChanges
+            && restored.generatedTimeSignal
+            && restored.fontItalic
+            && restored.useNtpTime
+            && restored.alternativeTrayIcon
+            && restored.classicTrayIcon,
+        "all options and unknown bits survive XML round trip");
     std::string xml = ReadTestBytes(testXmlPath);
     std::string root = xml.substr(xml.find("<CalClockSettings"));
     root.resize(root.find('>') + 1);
     Require(root.find("disableThemes=") == std::string::npos
-        && root.find("fontItalic=") == std::string::npos
-        && root.find("useNtpTime=") == std::string::npos, "global boolean attributes are no longer written");
+            && root.find("fontItalic=") == std::string::npos
+            && root.find("useNtpTime=") == std::string::npos,
+        "global boolean attributes are no longer written");
     value.themesDisabled = false;
     value.alternativeTrayIcon = false;
     Require(WriteSettingsXml(testXmlPath, value), "serialize disabled parent options");
@@ -179,9 +181,10 @@ static void TestPackedOptions() {
         Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
             "read XML containing only obsolete global flags");
         Require(!restored.themesDisabled
-            && !restored.windows2000Style
-            && !restored.fontItalic
-            && restored.useNtpTime, "obsolete global XML flags have no fallback");
+                && !restored.windows2000Style
+                && !restored.fontItalic
+                && restored.useNtpTime,
+            "obsolete global XML flags have no fallback");
     }
 }
 
@@ -200,19 +203,19 @@ static void TestAppearanceOptions() {
         Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
             "read the selected appearance mode");
         Require(restored.themesDisabled
-            && restored.basicWindowHeaders == value.basicWindowHeaders
-            && restored.windows2000Headers == value.windows2000Headers
-            && restored.windows2000Style == value.windows2000Style
-            && (restored.options & 0x80000000) != 0,
+                && restored.basicWindowHeaders == value.basicWindowHeaders
+                && restored.windows2000Headers == value.windows2000Headers
+                && restored.windows2000Style == value.windows2000Style
+                && (restored.options & 0x80000000) != 0,
             "all four appearance modes preserve their state and unknown Options bits");
         value.themesDisabled = false;
         Require(WriteSettingsXml(testXmlPath, value), "write appearance options with themes enabled");
         Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
             "read appearance options with themes enabled");
         Require(!restored.themesDisabled
-            && restored.basicWindowHeaders == value.basicWindowHeaders
-            && restored.windows2000Headers == value.windows2000Headers
-            && !restored.windows2000Style,
+                && restored.basicWindowHeaders == value.basicWindowHeaders
+                && restored.windows2000Headers == value.windows2000Headers
+                && !restored.windows2000Style,
             "header choices survive enabled themes; complete Windows 2000 forms require disabled themes");
     }
 }
@@ -270,6 +273,53 @@ static void SearchFor(HWND owner, const wchar_t* query, bool resetSelection = tr
     }
     findTestActiveWindow = dialog;
     SendMessageW(dialog, WM_COMMAND, IDOK, 0);
+}
+
+/// Keeps history highlights from changing matching options and restores unfinished text on cancellation.
+static void TestFindHistoryCommit(HWND owner) {
+    HWND dialog = find.GetWindow();
+    HWND combo = GetDlgItem(dialog, IDC_FIND_TEXT);
+    HWND edit = FindHistoryEdit(dialog);
+    CheckDlgButton(dialog, IDC_FIND_REGEX, BST_UNCHECKED);
+    CheckDlgButton(dialog, IDC_FIND_MATCH_CASE, BST_CHECKED);
+    SearchFor(owner, L"Alpha");
+    CheckDlgButton(dialog, IDC_FIND_MATCH_CASE, BST_UNCHECKED);
+    SetComboSelection(combo, -1);
+    SetWindowTextW(edit, L"unfinished query");
+    SendMessageW(edit, EM_SETSEL, 2, 7);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_EDITCHANGE), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_DROPDOWN), 0);
+    SetComboSelection(combo, 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_SELCHANGE), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_EDITCHANGE), 0);
+    Require(IsDlgButtonChecked(dialog, IDC_FIND_MATCH_CASE) == BST_UNCHECKED,
+        "history highlights do not apply stored matching options");
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_SELENDCANCEL), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_CLOSEUP), 0);
+    Require(GetControlText(edit) == L"unfinished query",
+        "cancelled history navigation restores unfinished text without an original selected item");
+    RequireSelection(edit, 2, 7);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_DROPDOWN), 0);
+    SetComboSelection(combo, 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_SELENDOK), 0);
+    Require(IsDlgButtonChecked(dialog, IDC_FIND_MATCH_CASE) == BST_UNCHECKED,
+        "history options remain unchanged until accepted dropdown closes");
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_CLOSEUP), 0);
+    Require(IsDlgButtonChecked(dialog, IDC_FIND_MATCH_CASE) == BST_CHECKED
+            && GetControlText(edit) == L"Alpha",
+        "accepted history applies its text and matching options after close");
+    CheckDlgButton(dialog, IDC_FIND_MATCH_CASE, BST_UNCHECKED);
+    SetComboSelection(combo, -1);
+    SetWindowTextW(edit, L"");
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_EDITCHANGE), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_DROPDOWN), 0);
+    SetComboSelection(combo, 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_EDITCHANGE), 0);
+    find.SetTarget(GetDlgItem(owner, ID_INFO_TEXT));
+    Require(!IsWindowEnabled(GetDlgItem(dialog, IDOK)),
+        "history highlights cannot enable Find Next for an empty accepted query");
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_SELENDCANCEL), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_CLOSEUP), 0);
 }
 
 /// Checks native query editing, history, matching, keyboard routing and independent target changes.
@@ -345,6 +395,7 @@ static void TestFindControls(HWND owner) {
     SetWindowTextW(FindHistoryEdit(dialog), L"");
     SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_EDITCHANGE), 0);
     Require(!IsWindowEnabled(GetDlgItem(dialog, IDOK)), "clearing a typed query disables Find Next");
+    TestFindHistoryCommit(owner);
     SearchFor(owner, L"beta");
     find.Close();
     findTestActiveWindow = owner;
@@ -388,8 +439,9 @@ static void TestFindLayout() {
                 LOGFONTW actual = {};
                 HFONT font = reinterpret_cast<HFONT>(SendMessageW(FindHistoryEdit(dialog), WM_GETFONT, 0, 0));
                 Require(GetObjectW(font, sizeof(actual), &actual) != 0
-                    && _wcsicmp(actual.lfFaceName, face) == 0
-                    && actual.lfWeight == weight, "editable query uses the selected user font and weight");
+                        && _wcsicmp(actual.lfFaceName, face) == 0
+                        && actual.lfWeight == weight,
+                    "editable query uses the selected user font and weight");
                 for (int language = 0; language < LANG_COUNT; language++) {
                     appLanguage = static_cast<AppLanguage>(language);
                     find.RefreshLanguage();
@@ -466,15 +518,15 @@ static void TestApplicationHeaderDraft() {
             SetCheck(hDisableThemesCheck, disabled);
             HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
             Require(settingsThemesDisabled == disabled
-                && settingsBasicWindowHeaders == (mode == 1)
-                && settingsWindows2000Headers == (mode == 2)
-                && GetCheck(hApplicationStyleRadios[mode]),
+                    && settingsBasicWindowHeaders == (mode == 1)
+                    && settingsWindows2000Headers == (mode == 2)
+                    && GetCheck(hApplicationStyleRadios[mode]),
                 "header drafts survive both directions of the control-theme change");
             bool completeEnabled = IsWindowEnabled(hApplicationStyleRadios[3]) != FALSE;
             Require(completeEnabled == disabled,
                 "only complete Windows 2000 forms depend on Disable themes");
             Require(!themesDisabled
-                && GetApplicationDialogFrameMode() == DialogFrameMode::System,
+                    && GetApplicationDialogFrameMode() == DialogFrameMode::System,
                 "header and theme drafts do not alter committed appearance before Apply");
         }
     }
@@ -486,8 +538,8 @@ static void TestApplicationHeaderDraft() {
     SetCheck(hDisableThemesCheck, false);
     HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
     Require(!settingsWindows2000Style
-        && GetCheck(hApplicationStyleRadios[0])
-        && !IsWindowEnabled(hApplicationStyleRadios[3]),
+            && GetCheck(hApplicationStyleRadios[0])
+            && !IsWindowEnabled(hApplicationStyleRadios[3]),
         "enabling themes leaves the complete Windows 2000 mode and selects System default");
 }
 
@@ -637,17 +689,19 @@ static void TestTrayIconDraft() {
         SetCheck(hAlternativeTrayIconCheck, true);
         HandleSettingsCommand(ID_ALTERNATIVE_TRAY_ICON, BN_CLICKED);
         Require(IsWindowEnabled(hClassicTrayIconCheck)
-            && settingsAlternativeTrayIcon
-            && !alternativeTrayIcon
-            && TrayIconIndex() == 0, "changing the icon draft has no tray effect");
+                && settingsAlternativeTrayIcon
+                && !alternativeTrayIcon
+                && TrayIconIndex() == 0,
+            "changing the icon draft has no tray effect");
         SetCheck(hClassicTrayIconCheck, true);
         HandleSettingsCommand(ID_CLASSIC_TRAY_ICON, BN_CLICKED);
         Require(settingsClassicTrayIcon && !classicTrayIcon, "classic draft waits for Apply or OK");
         SetCheck(hAlternativeTrayIconCheck, false);
         HandleSettingsCommand(ID_ALTERNATIVE_TRAY_ICON, BN_CLICKED);
         Require(!IsWindowEnabled(hClassicTrayIconCheck)
-            && !GetCheck(hClassicTrayIconCheck)
-            && !settingsClassicTrayIcon, "turning off the parent disables and clears the classic draft");
+                && !GetCheck(hClassicTrayIconCheck)
+                && !settingsClassicTrayIcon,
+            "turning off the parent disables and clears the classic draft");
         alternativeTrayIcon = true;
         classicTrayIcon = false;
         Require(TrayIconIndex() == 1, "committed alternative selects index one");

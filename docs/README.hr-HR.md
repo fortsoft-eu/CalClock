@@ -56,11 +56,11 @@ Promjene izgleda odmah se prikazuju u pretpregledu odabranog widgeta. `Zadani iz
 
 Izglađivanje fonta nudi ClearType, GDI i Nema. Početna nula nudi „Da” (zadano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali rezervira njezinu širinu u odabranom fontu, pa ostale znamenke zadržavaju položaj i kod proporcionalnih fontova. Satovi na zaslonu ostaju centrirani, uključujući rezervirani razmak. Redak UTC ima vlastito centriranje.
 
-Stil Windows 2000 dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu i Kalkulator
-vremena. Uz zadani sistemski font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa ima
-prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i vraća
-nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, obje su opcije izgleda nedostupne i ne
-primjenjuju se; spremljeni odabiri ostaju nepromijenjeni.
+Stil Windows 2000 dostupan je uz isključene teme i vrijedi samo za Postavke, Pomoć, O programu, Kalkulator
+vremena i Pronađi. Uz zadani sistemski font kontrole tih prozora koriste Tahomu 8 pt; vlastiti font programa
+ima prednost. Dostupno je izglađivanje GDI ili Nema. Spremljeni ClearType privremeno se zamjenjuje s GDI i
+vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve su opcije izgleda nedostupne i
+ne primjenjuju se; spremljeni odabiri ostaju nepromijenjeni.
 
 ## Kalkulator vremena
 
@@ -99,7 +99,7 @@ samo datume i vremena, čak i iz izvoza postavki, i spaja ih s postojećim zapis
 
 ## Postavke i izbornici
 
-Jezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz rubove vrijede globalno i postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe samo na prozore Postavke, Pomoć, O programu i Kalkulator vremena. Svaki widget koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema jeziku sučelja Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme widgeta utječu samo na taj widget.
+Jezik programa, font, izglađivanje, spremište, pokretanje s Windowsom i priljubljivanje uz rubove vrijede globalno i postavljaju se na kartici Program. Isključivanje tema na kartici Program utječe na prozore Postavke, Pomoć, O programu, Kalkulator vremena i Pronađi. Svaki widget koristi vlastitu postavku tema. Pri prvom pokretanju jezik se bira prema jeziku sučelja Windowsa; ako nije podržan, koristi se američki engleski. Jezik, izglađivanje i teme widgeta utječu samo na taj widget.
 
 Izbornik widgeta sadrži primjenjive postavke vidljivosti, načina Uvijek na vrhu, sekundi, veličine i oblika
 kopiranja datuma, a zatim Rasporedi u mrežu, Kalkulator vremena, Postavke, Pomoć, O programu i Izlaz. Izbornik
@@ -190,8 +190,7 @@ U pomoći i licenci u prozoru O programu Ctrl+F otvara pretraživanje. F3 pronal
 Shift+F3 prethodno. Podržani su razlikovanje velikih i malih slova, cijele riječi, počeci i krajevi redaka,
 pretraživanje unatrag i regularni izrazi. Povijest čuva posljednjih 30 pretraživanja u trenutačnoj sesiji.
 
-Na kartici Aplikacija opcija Alternativna ikona obavijesti omogućuje Retro ikona u području obavijesti. Obje
-mijenjaju samo ikonu obavijesti nakon Primijeni ili U redu.
+Na kartici Program opcija Alternativna ikona obavijesti omogućuje Retro ikona u području obavijesti. Obje mijenjaju samo ikonu obavijesti nakon Primijeni ili Spremi.
 
 Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows 2000. Oba načina
 naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli prozor. Naslovne

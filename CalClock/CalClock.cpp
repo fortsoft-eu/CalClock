@@ -1052,9 +1052,14 @@ static bool WidgetSupportsSound(WidgetType type) {
     return type != WIDGET_CALENDAR;
 }
 
+/// Reads the accepted Settings selection without exposing an open dropdown's tentative highlight.
+static int GetSettingsComboSelection(HWND combo) {
+    return GetApplicationComboSelection(combo, settingsComboState);
+}
+
 /// Returns the selected language; selector indices follow the language enum directly.
 static AppLanguage LanguageFromCombo(HWND combo) {
-    return static_cast<AppLanguage>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    return static_cast<AppLanguage>(GetSettingsComboSelection(combo));
 }
 
 /// Reads a valid stored antialiasing mode from the selected item's data, or returns defaultValue.
@@ -1062,7 +1067,7 @@ static int SelectedFontAntialiasing(HWND combo, int defaultValue) {
     if (combo == nullptr) {
         return defaultValue;
     }
-    LRESULT selection = SendMessageW(combo, CB_GETCURSEL, 0, 0);
+    LRESULT selection = GetSettingsComboSelection(combo);
     if (selection == CB_ERR) {
         return defaultValue;
     }
@@ -1532,7 +1537,7 @@ static int GetSelectedAnalogClockSize(int fallback, HWND combo = hSizeCombo) {
     }
     int sizes[4] = {};
     int count = GetAnalogClockSizes(sizes);
-    int selected = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    int selected = GetSettingsComboSelection(combo);
     return selected >= 0 && selected < count ? sizes[selected] : fallback;
 }
 
@@ -9948,9 +9953,7 @@ LRESULT CALLBACK ApplicationControlSubclassProc(HWND window, UINT msg, WPARAM wP
             return HandleSettingsControlMetricsChange(window, msg, wParam, lParam);
         case WM_NCDESTROY:
             if (window == settingsComboState.open) {
-                settingsComboState.open = nullptr;
-                settingsComboState.initialSelection = CB_ERR;
-                settingsComboState.accepted = false;
+                settingsComboState = ApplicationComboState{};
             }
             RemovePropW(window, SETTINGS_FIELD_LABEL_PROPERTY);
             RemovePropW(window, SETTINGS_COLOR_PREVIEW_PROPERTY);
@@ -10753,7 +10756,7 @@ static void ApplySelectedNtpPresetToEdit() {
     if (hNtpPresetCombo == nullptr || hNtpServersEdit == nullptr) {
         return;
     }
-    int preset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
+    int preset = GetSettingsComboSelection(hNtpPresetCombo);
     if (preset < 0 || preset >= NTP_PRESET_CUSTOM) {
         return;
     }
@@ -10763,9 +10766,14 @@ static void ApplySelectedNtpPresetToEdit() {
     updatingNtpPresetControls = false;
 }
 
+/// Reads the accepted time-source draft while an open dropdown contains only a tentative highlight.
+static bool IsNtpTimeSourceSelected() {
+    return GetSettingsComboSelection(hTimeSourceCombo) == 1;
+}
+
 /// Enables manual synchronization for the current valid selection while no query is in progress.
 static bool CanSynchronizeNtpSettings() {
-    return SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1
+    return IsNtpTimeSourceSelected()
         && winsockReady
         && !ntpQueryRunning
         && HasNtpServers(GetControlText(hNtpServersEdit));
@@ -10773,8 +10781,8 @@ static bool CanSynchronizeNtpSettings() {
 
 /// Applies only the Time page's NTP preferences, retaining a valid correction across server changes.
 static bool ApplyNtpSettingsFromControls() {
-    bool newUseNtpTime = SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == 1;
-    int selectedPreset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
+    bool newUseNtpTime = IsNtpTimeSourceSelected();
+    int selectedPreset = GetSettingsComboSelection(hNtpPresetCombo);
     int newNtpPreset = std::clamp(selectedPreset, 0, NTP_PRESET_COUNT - 1);
     std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
         ? GetControlText(hNtpServersEdit)
@@ -10956,7 +10964,7 @@ static void UpdateSettingsVolumeSliderRange(HWND trackBar) {
 
 /// Reads the selected persistent endpoint ID; the first combo item always means the Windows default output.
 static std::wstring SelectedAudioOutputDevice(HWND combo, const std::vector<AudioOutputDevice>& devices) {
-    int selection = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    int selection = GetSettingsComboSelection(combo);
     return selection > 0 && selection <= static_cast<int>(devices.size()) ? devices[selection - 1].id : L"";
 }
 
@@ -10984,7 +10992,7 @@ static void FillAudioOutputCombo(HWND combo, std::vector<AudioOutputDevice>& dev
         }
     }
     bool generatedTone = IsTimeSignalGeneratorRequired()
-        || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+        || GetSettingsComboSelection(hTimeSignalSoundCombo) == 0;
     SetComboSelection(combo, generatedTone ? selection : 0);
 }
 
@@ -10996,7 +11004,7 @@ static void UpdateTimeSignalVolumePreview() {
         && IsWindowEnabled(hTimeSignalVolumeTrackBar);
     if (settingsTimeSignalTestActive || dragging) {
         bool generatedTone = IsTimeSignalGeneratorRequired()
-            || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+            || GetSettingsComboSelection(hTimeSignalSoundCombo) == 0;
         double volume = SelectedTimeSignalVolume();
         if (!StartTimeSignalVolumePreview(generatedTone, volume, generatedTimeSignal,
             settingsTestAudioOutputDevice)) {
@@ -11049,7 +11057,7 @@ static void UpdateTimeSignalVolumeControls() {
         return;
     }
     bool enabled = IsTimeSignalGeneratorRequired()
-        || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+        || GetSettingsComboSelection(hTimeSignalSoundCombo) == 0;
     SetControlEnabled(hTestAudioOutputCombo, enabled);
     int outputSelection = 0;
     if (enabled) {
@@ -11661,8 +11669,7 @@ static void UpdateNtpSettingsControls() {
     if (hTimeSourceCombo == nullptr || hNtpPresetCombo == nullptr || hNtpServersEdit == nullptr) {
         return;
     }
-    int source = static_cast<int>(SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0));
-    bool ntpSelected = source == 1;
+    bool ntpSelected = IsNtpTimeSourceSelected();
     SetControlEnabled(hNtpPresetLabel, ntpSelected);
     SetControlEnabled(hNtpPresetCombo, ntpSelected);
     SetControlEnabled(hNtpServersLabel, ntpSelected);
@@ -12451,7 +12458,7 @@ static void UpdateAppearanceSliderLabels(HWND changedTrackBar = nullptr) {
 static void ReadAppearanceControls(WidgetConfig& config) {
     int sizes[4] = {};
     int sizeCount = GetAnalogClockSizes(sizes);
-    int sizeIndex = static_cast<int>(SendMessageW(hSizeCombo, CB_GETCURSEL, 0, 0));
+    int sizeIndex = GetSettingsComboSelection(hSizeCombo);
     if (sizeIndex >= 0 && sizeIndex < sizeCount) {
         config.size = sizes[sizeIndex];
     }
@@ -12483,8 +12490,8 @@ static void ReadAppearanceControls(WidgetConfig& config) {
     config.borderWidth = std::clamp(static_cast<int>(SendMessageW(hBorderWidthTrackBar, TBM_GETPOS, 0, 0)),
         0, DIGITAL_BORDER_WIDTH_MAX);
     config.borderColor = static_cast<COLORREF>(GetWindowLongPtrW(hBorderColorButton, GWLP_USERDATA));
-    config.leadingZeroMode = std::clamp(static_cast<int>(SendMessageW(hLeadingZeroCombo, CB_GETCURSEL,
-        0, 0)), 0, LEADING_ZERO_MODE_COUNT - 1);
+    config.leadingZeroMode = std::clamp(GetSettingsComboSelection(hLeadingZeroCombo),
+        0, LEADING_ZERO_MODE_COUNT - 1);
     config.transparentBackground = GetCheck(hTransparentBackgroundCheck);
     if (IsWindowEnabled(hWidgetDisableThemesCheck)) {
         config.disableThemes = GetCheck(hWidgetDisableThemesCheck);
@@ -12498,7 +12505,7 @@ static void ReadAppearanceControls(WidgetConfig& config) {
     config.showToday = GetCheck(hShowTodayCheck);
     config.weekNumbers = GetCheck(hWeekNumbersCheck);
     config.sundayFirst = GetCheck(hSundayFirstCheck);
-    int dateFormat = static_cast<int>(SendMessageW(hDateFormatCombo, CB_GETCURSEL, 0, 0));
+    int dateFormat = GetSettingsComboSelection(hDateFormatCombo);
     if (dateFormat >= 0 && dateFormat < DATE_FORMAT_COUNT) {
         config.dateCopyFormat = dateFormat;
     }
@@ -12620,7 +12627,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     WidgetConfig timeConfiguration = settingsDraft[selectedDraftIndex];
     timeConfiguration.language = LanguageFromCombo(hWidgetLanguageCombo);
     timeConfiguration.showUtc = GetCheck(hUtcCheck);
-    int timeZoneSelection = static_cast<int>(SendMessageW(hTimeZoneCombo, CB_GETCURSEL, 0, 0));
+    int timeZoneSelection = GetSettingsComboSelection(hTimeZoneCombo);
     if (timeZoneSelection != CB_ERR) {
         size_t zoneIndex = static_cast<size_t>(SendMessageW(hTimeZoneCombo, CB_GETITEMDATA,
             timeZoneSelection, 0));
@@ -12628,7 +12635,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
             timeConfiguration.timeZoneKey = timeZones[zoneIndex].TimeZoneKeyName;
         }
     }
-    timeConfiguration.timeFormat = static_cast<int>(SendMessageW(hTimeFormatCombo, CB_GETCURSEL, 0, 0));
+    timeConfiguration.timeFormat = GetSettingsComboSelection(hTimeFormatCombo);
     bool supportsBorderStyle = !fullscreen && (digital || calendar);
     bool utc = GetCheck(hUtcCheck);
     bool hasSize = type == WIDGET_ANALOG || type == WIDGET_PANEL;
@@ -12652,7 +12659,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     }
     bool timeSignalEnabled = supportsAlarm && GetCheck(hTimeSignalEnabledCheck);
     bool generatedTone = IsTimeSignalGeneratorRequired()
-        || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+        || GetSettingsComboSelection(hTimeSignalSoundCombo) == 0;
     bool runCommand = supportsAlarm && GetCheck(hRunCommandCheck);
     std::wstring commandText = GetControlText(hCommandEdit);
     bool hasCommand = false;
@@ -12932,7 +12939,7 @@ static void FillTimeZoneCombo(HWND combo = hTimeZoneCombo) {
         return;
     }
     WindowRedrawScope redraw(combo);
-    int selected = static_cast<int>(SendMessageW(combo, CB_GETCURSEL, 0, 0));
+    int selected = GetSettingsComboSelection(combo);
     LRESULT selectedZone = selected == CB_ERR ? CB_ERR : SendMessageW(combo, CB_GETITEMDATA, selected, 0);
     SendMessageW(combo, CB_RESETCONTENT, 0, 0);
     for (size_t index = 0; index < labels.size(); index++) {
@@ -13183,7 +13190,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
         }
         return false;
     }
-    int selectedType = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
+    int selectedType = GetSettingsComboSelection(hTypeCombo);
     bool alarmEnabled = selectedType != WIDGET_CALENDAR && GetCheck(hAlarmEnabledCheck);
     int hour = config.alarmHour;
     int minute = config.alarmMinute;
@@ -13231,10 +13238,10 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     if (IsWindowEnabled(hShowAmPmCheck)) {
         config.showAmPm = GetCheck(hShowAmPmCheck);
     }
-    config.timeFormat = std::clamp(static_cast<int>(SendMessageW(hTimeFormatCombo, CB_GETCURSEL, 0, 0)),
+    config.timeFormat = std::clamp(GetSettingsComboSelection(hTimeFormatCombo),
         0, TIME_FORMAT_COUNT - 1);
     config.language = LanguageFromCombo(hWidgetLanguageCombo);
-    int zoneSelection = static_cast<int>(SendMessageW(hTimeZoneCombo, CB_GETCURSEL, 0, 0));
+    int zoneSelection = GetSettingsComboSelection(hTimeZoneCombo);
     if (zoneSelection != CB_ERR) {
         size_t zoneIndex =
             static_cast<size_t>(SendMessageW(hTimeZoneCombo, CB_GETITEMDATA, zoneSelection, 0));
@@ -13246,7 +13253,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
         AdditionalClockConfig& clock = config.additionalClocks[index];
         clock.enabled = GetCheck(hAdditionalEnabledChecks[index]);
         clock.name = GetControlText(hAdditionalNameEdits[index]);
-        int selected = static_cast<int>(SendMessageW(hAdditionalTimeZoneCombos[index], CB_GETCURSEL, 0, 0));
+        int selected = GetSettingsComboSelection(hAdditionalTimeZoneCombos[index]);
         if (selected != CB_ERR) {
             size_t zone = static_cast<size_t>(SendMessageW(hAdditionalTimeZoneCombos[index], CB_GETITEMDATA,
                 selected, 0));
@@ -13281,7 +13288,7 @@ static bool ReadWidgetControls(WidgetConfig& config, bool showErrors) {
     if (!remoteScriptEnabled || remoteScriptUrlValid) {
         config.remoteScriptUrl = remoteScriptUrl;
     }
-    if (IsTimeSignalGeneratorRequired() || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0) {
+    if (IsTimeSignalGeneratorRequired() || GetSettingsComboSelection(hTimeSignalSoundCombo) == 0) {
         config.timeSignalOutputDevice = SelectedAudioOutputDevice(hAudioOutputCombo, settingsAudioOutputs);
     }
     config.timeSignalEnabled = supportsSound && GetCheck(hTimeSignalEnabledCheck);
@@ -13588,11 +13595,11 @@ static bool HasPendingSettingsChanges() {
             || settingsAppFontDialogSize != appFontDialogSize
             || settingsAppFontWeight != appFontWeight
             || settingsAppFontItalic != appFontItalic
-            || SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) != (IsTimeSignalGeneratorRequired()
+            || GetSettingsComboSelection(hTimeSignalSoundCombo) != (IsTimeSignalGeneratorRequired()
                 || generatedTimeSignal ? 0 : 1)
             || SelectedTimeSignalVolume() != timeSignalVolume
-            || SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) != (useNtpTime ? 1 : 0)
-            || SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0) != ntpPreset) {
+            || GetSettingsComboSelection(hTimeSourceCombo) != (useNtpTime ? 1 : 0)
+            || GetSettingsComboSelection(hNtpPresetCombo) != ntpPreset) {
         return true;
     }
     if (ntpPreset == NTP_PRESET_CUSTOM && GetControlText(hNtpServersEdit) != ntpServers) {
@@ -14231,7 +14238,7 @@ static bool ApplySettingsDraft() {
         }
     }
     warnOnUnsavedChanges = GetCheck(hWarnUnsavedChangesCheck);
-    generatedTimeSignal = SendMessageW(hTimeSignalSoundCombo, CB_GETCURSEL, 0, 0) == 0;
+    generatedTimeSignal = GetSettingsComboSelection(hTimeSignalSoundCombo) == 0;
     timeSignalVolume = SelectedTimeSignalVolume();
     settingsTimeSignalVolume = timeSignalVolume;
     testAudioOutputDevice = settingsTestAudioOutputDevice;
@@ -14402,7 +14409,7 @@ static bool ApplySettingsDraft() {
     settingsAppFontDialogSize = appFontDialogSize;
     settingsAppFontWeight = appFontWeight;
     settingsAppFontItalic = appFontItalic;
-    if (SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0) != ntpPreset) {
+    if (GetSettingsComboSelection(hNtpPresetCombo) != ntpPreset) {
         SendMessageW(hNtpPresetCombo, CB_SETCURSEL, ntpPreset, 0);
     }
     if (GetControlText(hNtpServersEdit) != ntpServers) {
@@ -15546,7 +15553,7 @@ static void CaptureSettingsControlValue(HWND control, int page,
             && control != hAudioOutputCombo
             && control != hTestAudioOutputCombo
             && control != hAppAntialiasCombo) {
-        WPARAM selectedItemIndex = static_cast<WPARAM>(SendMessageW(control, CB_GETCURSEL, 0, 0));
+        WPARAM selectedItemIndex = static_cast<WPARAM>(GetSettingsComboSelection(control));
         SettingsControlValue savedComboSelection{ page, id, CB_SETCURSEL, selectedItemIndex, 0, {} };
         values->push_back(savedComboSelection);
     } else if (_wcsicmp(className, L"BUTTON") == 0) {
@@ -15576,7 +15583,7 @@ static void CaptureSettingsControlValue(HWND control, int page,
 /// Captures raw Settings values, including unfinished edit text, before the controls are replaced.
 static std::vector<SettingsControlValue> CaptureSettingsControlValues() {
     std::vector<SettingsControlValue> values;
-    WPARAM selectedTypeIndex = static_cast<WPARAM>(SendMessageW(hAddType, CB_GETCURSEL, 0, 0));
+    WPARAM selectedTypeIndex = static_cast<WPARAM>(GetSettingsComboSelection(hAddType));
     SettingsControlValue typeSelection{ -1, ID_ADD_TYPE, CB_SETCURSEL, selectedTypeIndex, 0, {} };
     values.push_back(typeSelection);
     for (int page = 0; page < ARRAYSIZE(settingsControlGroups); page++) {
@@ -15774,9 +15781,7 @@ static void CloseSettingsWindow() {
     if (hSettingsOpenThread == nullptr) {
         settingsOpenData.reset();
     }
-    settingsComboState.open = nullptr;
-    settingsComboState.initialSelection = CB_ERR;
-    settingsComboState.accepted = false;
+    settingsComboState = ApplicationComboState{};
     timeSignalVolumeDragging = false;
     settingsTimeSignalTestActive = false;
     StopTimeSignalVolumePreview();
@@ -16423,7 +16428,7 @@ static void HandleSettingsCommand(int id, int notification) {
         if (settingsPreviewStopEvent != nullptr || settingsVisualPreviewActive) {
             StopSettingsPreview();
         }
-        int type = static_cast<int>(SendMessageW(hTypeCombo, CB_GETCURSEL, 0, 0));
+        int type = GetSettingsComboSelection(hTypeCombo);
         if (selectedDraftIndex >= 0
                 && selectedDraftIndex < static_cast<int>(settingsDraft.size())
                 && type >= 0
@@ -16553,7 +16558,7 @@ static void HandleSettingsCommand(int id, int notification) {
         AppLanguage language = LanguageFromCombo(hWidgetLanguageCombo);
         if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
             WidgetConfig& config = settingsDraft[selectedDraftIndex];
-            int dateFormat = static_cast<int>(SendMessageW(hDateFormatCombo, CB_GETCURSEL, 0, 0));
+            int dateFormat = GetSettingsComboSelection(hDateFormatCombo);
             if (dateFormat >= 0 && dateFormat < DATE_FORMAT_COUNT) {
                 config.dateCopyFormat = dateFormat;
             }
@@ -16593,7 +16598,7 @@ static void HandleSettingsCommand(int id, int notification) {
         UpdateNtpSettingsControls();
     } else if (id == ID_NTP_SERVERS && notification == EN_CHANGE) {
         if (!updatingNtpPresetControls && hNtpPresetCombo != nullptr) {
-            int selectedPreset = static_cast<int>(SendMessageW(hNtpPresetCombo, CB_GETCURSEL, 0, 0));
+            int selectedPreset = GetSettingsComboSelection(hNtpPresetCombo);
             if (selectedPreset >= 0 && selectedPreset < NTP_PRESET_CUSTOM) {
                 std::wstring expected = NtpServersForPreset(selectedPreset);
                 if (GetControlText(hNtpServersEdit) != expected) {
@@ -16614,7 +16619,7 @@ static void HandleSettingsCommand(int id, int notification) {
         if (!SaveControlsToDraft(true)) {
             return;
         }
-        int type = static_cast<int>(SendMessageW(hAddType, CB_GETCURSEL, 0, 0));
+        int type = GetSettingsComboSelection(hAddType);
         if (type < 0 || type >= WIDGET_TYPE_COUNT) {
             type = WIDGET_ANALOG;
         }
@@ -17257,6 +17262,17 @@ static bool HandleSettingsComboNotification(HWND control, int* notification) {
         requestedModeChanged);
 }
 
+/// Reads the accepted selection while an open dropdown contains only tentative navigation.
+int GetApplicationComboSelection(HWND control, const ApplicationComboState& state) {
+    HWND parent = GetParent(control);
+    if (GetSettingsComboBox(parent) == control) {
+        control = parent;
+    }
+    return state.open != nullptr && state.open == control
+        ? state.initialSelection
+        : static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
+}
+
 /// Uses the same dropdown sizing, acceptance and cancellation rules in every application form.
 bool HandleApplicationComboNotification(HWND control, int* notification, ApplicationComboState& state,
         bool requestedModeChanged) {
@@ -17273,9 +17289,23 @@ bool HandleApplicationComboNotification(HWND control, int* notification, Applica
         return false;
     }
     if (*notification == CBN_DROPDOWN) {
+        state = ApplicationComboState{};
         state.open = control;
         state.initialSelection = static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
-        state.accepted = false;
+        if (_wcsicmp(className, WC_COMBOBOXEXW) == 0) {
+            state.edit = reinterpret_cast<HWND>(SendMessageW(control, CBEM_GETEDITCONTROL, 0, 0));
+        } else if ((GetWindowLongPtrW(control, GWL_STYLE) & CBS_DROPDOWNLIST) == CBS_DROPDOWN) {
+            COMBOBOXINFO information = {};
+            information.cbSize = sizeof(information);
+            if (GetComboBoxInfo(control, &information)) {
+                state.edit = information.hwndItem;
+            }
+        }
+        if (state.edit != nullptr) {
+            state.initialText = GetControlText(state.edit);
+            SendMessageW(state.edit, EM_GETSEL, reinterpret_cast<WPARAM>(&state.selectionStart),
+                reinterpret_cast<LPARAM>(&state.selectionEnd));
+        }
         UpdateComboBoxDropDownMetrics(control);
         return true;
     }
@@ -17290,18 +17320,22 @@ bool HandleApplicationComboNotification(HWND control, int* notification, Applica
         state.accepted = false;
         return true;
     }
-    if (*notification == CBN_SELCHANGE) {
+    if (*notification == CBN_SELCHANGE || *notification == CBN_EDITCHANGE) {
         return true;
     }
     if (*notification == CBN_CLOSEUP) {
         bool changed = state.accepted
-            && (requestedModeChanged || SendMessageW(control, CB_GETCURSEL, 0, 0) != state.initialSelection);
+            && (requestedModeChanged
+                || SendMessageW(control, CB_GETCURSEL, 0, 0) != state.initialSelection
+                || state.edit != nullptr && GetControlText(state.edit) != state.initialText);
         if (!state.accepted) {
             SetComboSelection(control, state.initialSelection);
+            if (state.edit != nullptr) {
+                SetWindowTextW(state.edit, state.initialText.c_str());
+                SendMessageW(state.edit, EM_SETSEL, state.selectionStart, state.selectionEnd);
+            }
         }
-        state.open = nullptr;
-        state.initialSelection = CB_ERR;
-        state.accepted = false;
+        state = ApplicationComboState{};
         *notification = CBN_SELCHANGE;
         return !changed;
     }

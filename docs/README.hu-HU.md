@@ -63,8 +63,8 @@ A Windows 2000 stílushoz be kell jelölni a Témák letiltása lehetőséget; c
 Időkalkulátor ablakokra vonatkozik. A rendszer alapértelmezett betűtípusának kiválasztásakor ezen ablakok
 vezérlőelemei 8 pontos Tahomát használnak; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege
 pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t
-használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél mindkét témabeállítás
-jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél az összes megjelenítési
+beállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
 
 ## Időkalkulátor
 
@@ -105,7 +105,7 @@ meglévő bejegyzésekkel.
 
 ## Beállítások és menük
 
-A nyelv, betűtípus, élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás fülön. A témák kikapcsolása az Alkalmazás fülön csak a Beállítások, Súgó, Névjegy és Időkalkulátor ablakokra vonatkozik. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows felületének nyelve, nem támogatott nyelvnél az amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek.
+A nyelv, betűtípus, élsimítás, tároló, Windowszal indítás és szélhez illesztés közös beállítás az Alkalmazás fülön. A témák letiltása az Alkalmazás lapon a Beállítások, Súgó, Névjegy, Időkalkulátor és Keresés ablakokra hat. Minden minialkalmazás a saját témabeállítását használja. Első indításkor a Windows felületének nyelve, nem támogatott nyelvnél az amerikai angol lesz aktív. A minialkalmazás nyelve, élsimítása és témái csak arra érvényesek.
 
 A minialkalmazás menüje az alkalmazható láthatóság-, Mindig felül-, másodperc-, méret- és dátummásolási
 választásokat, majd a Rácsba rendezés, Időkalkulátor, Beállítások, Súgó, Névjegy és Kilépés parancsokat
@@ -191,7 +191,7 @@ végét, a visszafelé keresést és a reguláris kifejezéseket. Az előzménye
 őrzik.
 
 Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon lehetőséget. Mindkettő csak az
-értesítési ikont módosítja az Alkalmaz vagy OK megnyomása után.
+értesítési ikont módosítja az Alkalmaz vagy Mentés megnyomása után.
 
 Ablakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows Classic-címsorok; Windows 2000.
 Mindkét címsormód használható a vezérlők témáival vagy azok nélkül. A rendszer alapbeállítása az egész ablakra

@@ -535,26 +535,26 @@ static void TestExplicitInstants() {
     valid = TimeCalculator::CalculateDayUtc(start, selected, utc.information, &actual,
         CALCULATOR_HIGHLIGHT_ROUND);
     Check(valid
-        && actual.hasHourTime
-        && actual.totals[HOURS] == 1000
-        && Minute(actual.hourTime) == Minute(Date(2001, 2, 11, 23, 59)), "1000 hours at the final minute",
-        start, selected, utc, CALCULATOR_HIGHLIGHT_ROUND);
+            && actual.hasHourTime
+            && actual.totals[HOURS] == 1000
+            && Minute(actual.hourTime) == Minute(Date(2001, 2, 11, 23, 59)),
+        "1000 hours at the final minute", start, selected, utc, CALCULATOR_HIGHLIGHT_ROUND);
     HighlightZone prague = Zone(L"Central Europe Standard Time", 0, true);
     start = Date(2026, 10, 24, 14, 30);
     selected = Date(2026, 10, 25);
     valid = TimeCalculator::CalculateDayUtc(start, selected, prague.information, &actual,
         CALCULATOR_HIGHLIGHT_ROUND);
     Check(valid
-        && actual.hasHourTime
-        && actual.totals[HOURS] == 10
-        && Minute(actual.hourTime) == Minute(Date(2026, 10, 25, 0, 30)),
+            && actual.hasHourTime
+            && actual.totals[HOURS] == 10
+            && Minute(actual.hourTime) == Minute(Date(2026, 10, 25, 0, 30)),
         "first autumn occurrence is ten hours", start, selected, prague, CALCULATOR_HIGHLIGHT_ROUND);
     valid = TimeCalculator::CalculateDayUtc(start, selected, prague.information, &actual,
         CALCULATOR_HIGHLIGHT_ONES);
     Check(valid
-        && actual.hasHourTime
-        && actual.totals[HOURS] == 11
-        && Minute(actual.hourTime) == Minute(Date(2026, 10, 25, 1, 30)),
+            && actual.hasHourTime
+            && actual.totals[HOURS] == 11
+            && Minute(actual.hourTime) == Minute(Date(2026, 10, 25, 1, 30)),
         "second autumn occurrence is eleven hours", start, selected, prague, CALCULATOR_HIGHLIGHT_ONES);
     DWORD combined = CALCULATOR_HIGHLIGHT_ROUND | CALCULATOR_HIGHLIGHT_ONES;
     valid = TimeCalculator::CalculateDayUtc(start, selected, prague.information, &actual, combined);

@@ -52,11 +52,11 @@ Spremembe videza so takoj vidne v predogledu izbranega gradnika. `Privzeti videz
 
 Glajenje pisave ponuja ClearType, GDI in Brez. Vodilna ničla ponuja »Da« (privzeto), »Ne, ohrani prostor« in »Ne, brez prostora«. »Ne, ohrani prostor« skrije ničlo in rezervira njeno širino v izbrani pisavi; druge števke ostanejo na mestu tudi pri proporcionalnih pisavah. Ure na zaslonu ostanejo sredinsko poravnane z upoštevanjem rezerviranega prostora. Vrstica UTC ima lastno sredinsko poravnavo.
 
-Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu in Časovni
-kalkulator. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 pt; uporabnikova pisava
-programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in se
-povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, sta obe možnosti videza onemogočeni in
-se ne uporabljata; shranjeni izbiri se ohranita.
+Slog Windows 2000 je na voljo ob izklopljenih temah in velja samo za Nastavitve, Pomoč, O programu, Časovni
+kalkulator in Najdi. Pri privzeti sistemski pisavi kontrolniki teh oken uporabljajo Tahomo 8 pt; uporabnikova
+pisava programa ima prednost. Na voljo je glajenje GDI ali Brez. Shranjeni ClearType začasno nadomesti GDI in
+se povrne ob izklopu tega sloga. Kadar Windows uporablja klasični videz, so vse možnosti videza onemogočene in
+se ne uporabljajo; shranjene izbire se ohranijo.
 
 ## Časovni kalkulator
 
@@ -93,7 +93,7 @@ samo datume in čase tudi iz izvoza nastavitev ter jih združi z obstoječimi vn
 
 ## Nastavitve in meniji
 
-Jezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program velja samo za okna Nastavitve, Pomoč, O programu in Časovni kalkulator. Vsak gradnik uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj.
+Jezik, pisava, glajenje, shramba, zagon z Windows in pripenjanje so skupne nastavitve na zavihku Program. Izklop tem na zavihku Program vpliva na okna Nastavitve, Pomoč, O programu, Časovni kalkulator in Najdi. Vsak gradnik uporablja svojo nastavitev tem. Ob prvem zagonu se jezik izbere po jeziku vmesnika Windows; če ni podprt, se uporabi ameriška angleščina. Jezik, glajenje in teme gradnika vplivajo samo nanj.
 
 Meni gradnika vsebuje ustrezne izbire vidnosti, Vedno na vrhu, sekund, velikosti in kopiranja datuma, nato
 Razporedi v mrežo, Časovni kalkulator, Nastavitve, Pomoč, O programu in Izhod. Meni ikone vsebuje oštevilčene
@@ -180,7 +180,7 @@ prejšnjega. Podprti so razlikovanje velikih in malih črk, cele besede, začetk
 ter regularni izrazi. Zgodovina ohrani zadnjih 30 iskanj trenutne seje.
 
 Na zavihku Program možnost Druga ikona za obvestila omogoči Retro ikona v območju za obvestila. Obe možnosti
-spremenita samo ikono za obvestila po Uporabi ali V redu.
+spremenita samo ikono za obvestila po Uporabi ali Shrani.
 
 Videz oken: Sistemski; Glave Windows Basic; Glave Windows Classic; Windows 2000. Oba načina naslovne vrstice
 delujeta s temami kontrolnikov ali brez njih. Sistemsko upošteva izklop tem za celotno okno. Naslovne vrstice

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.3.0
  */
 
 #include "../CalClock/SettingsStorage.cpp"
@@ -152,7 +152,8 @@ static void TestHighlightStorage(HKEY key, const SettingsSnapshot& original) {
     }
     SettingsSnapshot loaded;
     Require(ReadText("<CalClockSettings version='1'><Calculator/><Widget id='1'/></CalClockSettings>",
-        &loaded) && loaded.calculator.highlights == TIME_CALCULATOR_DEFAULT_HIGHLIGHTS,
+                &loaded)
+            && loaded.calculator.highlights == TIME_CALCULATOR_DEFAULT_HIGHLIGHTS,
         "missing XML highlight choices use the new defaults");
     Require(ReadText("<CalClockSettings version='1'><Calculator highlights='0'/>"
         "<Widget id='1'/></CalClockSettings>", &loaded) && loaded.calculator.highlights == 0,
@@ -238,8 +239,8 @@ static void TestUtf16PresetImports(const std::wstring& path, const DYNAMIC_TIME_
         Require(ReadCalculatorPresetImport(path, zone, zone.TimeZoneKeyName, &loaded),
             "UTF-16 XML imports in either byte order");
         Require(loaded.size() == 1 && loaded[0].description == L"Žluťoučký"
-            && loaded[0].zone == L"UTC+05:45"
-            && FormatCalculatorTime(loaded[0].time) == L"2026-01-15T06:49:56.000Z",
+                && loaded[0].zone == L"UTC+05:45"
+                && FormatCalculatorTime(loaded[0].time) == L"2026-01-15T06:49:56.000Z",
             "UTF-16 import preserves Unicode text, the display zone and the exact UTC instant");
     }
 }
@@ -265,7 +266,8 @@ static void TestPresetImports(const std::wstring& path, const SettingsSnapshot& 
     WriteImportFixture(path, ExportText(settings, &record));
     Require(!ReadCalculatorPresets(path, &loaded), "automatic user-data reader remains standalone-only");
     Require(ReadCalculatorPresetImport(path, *prague, prague->TimeZoneKeyName, &loaded)
-        && SamePresets(record, loaded), "preset import extracts only values from a combined settings export");
+            && SamePresets(record, loaded),
+        "preset import extracts only values from a combined settings export");
     WriteImportFixture(path, ExportText(settings, nullptr));
     Require(ReadCalculatorPresetImport(path, *prague, prague->TimeZoneKeyName, &loaded) && loaded.empty(),
         "settings without saved user data import no values");
@@ -276,15 +278,16 @@ static void TestPresetImports(const std::wstring& path, const SettingsSnapshot& 
     for (bool bom : { false, true }) {
         WriteImportFixture(path, (bom ? "\xEF\xBB\xBF" : "") + legacy);
         Require(ReadCalculatorPresetImport(path, *prague, prague->TimeZoneKeyName, &loaded)
-            && loaded.size() == 3, "legacy import accepts UTF-8 with/without BOM and skips invalid rows");
+                && loaded.size() == 3,
+            "legacy import accepts UTF-8 with/without BOM and skips invalid rows");
         Require(FormatCalculatorTime(loaded[0].time) == L"2026-01-15T11:34:56.000Z"
-            && FormatCalculatorTime(loaded[1].time) == L"2026-07-15T10:34:56.000Z",
+                && FormatCalculatorTime(loaded[1].time) == L"2026-07-15T10:34:56.000Z",
             "legacy import applies the selected named zone and the date's daylight saving rules");
         Require(loaded[0].description == L"  Winter & <event>  " && loaded[2].description.empty(),
             "legacy parser keeps exactly the second tab-separated field, including whitespace and emptiness");
         Require(loaded[0].zone == prague->TimeZoneKeyName, "legacy import retains the selected display zone");
         Require(ReadCalculatorPresetImport(path, *fixed, fixed->TimeZoneKeyName, &loaded)
-            && FormatCalculatorTime(loaded[0].time) == L"2026-01-15T06:49:56.000Z",
+                && FormatCalculatorTime(loaded[0].time) == L"2026-01-15T06:49:56.000Z",
             "legacy import honors a selected fixed UTC offset");
     }
     const std::vector<TimeCalculatorPreset> before = loaded;
@@ -300,7 +303,8 @@ static void TestPresetImports(const std::wstring& path, const SettingsSnapshot& 
     for (const char* text : invalidImports) {
         WriteImportFixture(path, text);
         Require(!ReadCalculatorPresetImport(path, *prague, prague->TimeZoneKeyName, &loaded)
-            && SamePresets(before, loaded), "invalid or unresolved imports leave existing values untouched");
+                && SamePresets(before, loaded),
+            "invalid or unresolved imports leave existing values untouched");
     }
 }
 
@@ -346,9 +350,9 @@ int wmain() {
         size_t settingsEnd = fullExport.find("</CalClockSettings>");
         size_t userData = fullExport.find("<TimeCalculatorPresets");
         Require(fullExport.find("<CalClockExport") < fullExport.find("<CalClockSettings")
-            && settingsEnd != std::string::npos
-            && settingsEnd < userData
-            && userData < fullExport.find("</CalClockExport>"),
+                && settingsEnd != std::string::npos
+                && settingsEnd < userData
+                && userData < fullExport.find("</CalClockExport>"),
             "export keeps settings and user data in separate sibling elements");
         Require(fullExport.find("2026-11-03T15:13:05.123Z") != std::string::npos,
             "user timestamps explicitly identify UTC with Z");
@@ -357,8 +361,8 @@ int wmain() {
         Require(ReadText(settingsOnly.c_str()) && ReadText(settingsOnly.c_str() + 3),
             "settings XML imports with or without a BOM");
         Require(settingsOnly.find("<CalClockExport") == std::string::npos
-            && settingsOnly.find("<TimeCalculatorPresets") == std::string::npos
-            && settingsOnly.find("<CalClockSettings") != std::string::npos,
+                && settingsOnly.find("<TimeCalculatorPresets") == std::string::npos
+                && settingsOnly.find("<CalClockSettings") != std::string::npos,
             "settings-only document keeps the original settings root");
         const std::vector<TimeCalculatorPreset> emptyPresets;
         Require(ExportText(original, &emptyPresets) == settingsOnly,
@@ -391,12 +395,13 @@ int wmain() {
         SettingsSnapshot standalone = original;
         bool presetsOnly = false;
         Require(ReadSettingsXml(path, LANG_EN_US, Defaults, &standalone, &loadedPresets, &presetsOnly)
-            && presetsOnly
-            && SamePresets(presets, loadedPresets), "standalone times XML imports by content");
+                && presetsOnly
+                && SamePresets(presets, loadedPresets),
+            "standalone times XML imports by content");
         Require(standalone.calculator.fromZone == original.calculator.fromZone
-            && standalone.calculator.tab == original.calculator.tab
-            && standalone.widgets.size() == original.widgets.size(),
-                "standalone import leaves settings unchanged");
+                && standalone.calculator.tab == original.calculator.tab
+                && standalone.widgets.size() == original.widgets.size(),
+            "standalone import leaves settings unchanged");
         Require(!ReadSettingsXml(path, LANG_EN_US, Defaults, &standalone),
             "automatic settings loading cannot mistake user data for application settings");
         std::wstring textPath = path + L".txt";
@@ -414,7 +419,8 @@ int wmain() {
         Require(loaded.calculator.highlights == original.calculator.highlights,
             "XML roundtrip preserves independent highlight choices");
         Require(loaded.calculator.fromZone == original.calculator.fromZone
-            && loaded.calculator.toZone == original.calculator.toZone, "XML stores selected display zones");
+                && loaded.calculator.toZone == original.calculator.toZone,
+            "XML stores selected display zones");
         Require(loaded.calculatorWindowState.x == -123 && loaded.calculatorWindowState.y == 456,
             "XML window position");
         loaded = RoundTrip(original, &presets, &loadedPresets);
@@ -432,7 +438,8 @@ int wmain() {
         Require(loaded.calculator.highlights == original.calculator.highlights,
             "registry roundtrip preserves independent highlight choices");
         Require(FormatCalculatorTime(loaded.calculator.from) == FormatCalculatorTime(original.calculator.from)
-            && loaded.calculator.fromZone == original.calculator.fromZone, "registry stores UTC and zone");
+                && loaded.calculator.fromZone == original.calculator.fromZone,
+            "registry stores UTC and zone");
         HKEY absent = nullptr;
         Require(RegOpenKeyExW(key, L"Calculator\\Presets", 0, KEY_READ, &absent) == ERROR_FILE_NOT_FOUND,
             "registry has no user-data collection");
@@ -482,8 +489,9 @@ int wmain() {
                 std::wstring(TIME_CALCULATOR_MAX_DESCRIPTION, L'&')
             });
         Require(WriteCalculatorPresets(path, maximum)
-            && ReadCalculatorPresets(path, &loadedPresets)
-            && SamePresets(maximum, loadedPresets), "maximum escaped user collection round trip");
+                && ReadCalculatorPresets(path, &loadedPresets)
+                && SamePresets(maximum, loadedPresets),
+            "maximum escaped user collection round trip");
         maximum.push_back(presets[0]);
         Require(!WriteCalculatorPresets(path, maximum), "oversized collection rejected before writing");
         maximum.resize(1);
@@ -498,7 +506,8 @@ int wmain() {
         Require(stored != FALSE && written == sizeof(invalidXml) - 1, "malformed fixture saved");
         loadedPresets = presets;
         Require(!ReadCalculatorPresets(path, &loadedPresets)
-            && SamePresets(presets, loadedPresets), "failed read preserves the destination collection");
+                && SamePresets(presets, loadedPresets),
+            "failed read preserves the destination collection");
         RegCloseKey(key);
         key = nullptr;
         RegDeleteTreeW(HKEY_CURRENT_USER, testKey.c_str());

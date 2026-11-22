@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -181,6 +181,114 @@ static void TestNtpAvailability() {
         "Windows time disables NTP options");
 }
 
+/// Exercises every Settings combo through tentative navigation, periodic reads and cancellation.
+static void TestSettingsComboHighlights() {
+    ResetNtpSettings();
+    std::vector<HWND> controls{ hAddType };
+    for (const std::vector<HWND>* group : settingsControlGroups) {
+        for (HWND control : *group) {
+            controls.push_back(control);
+        }
+    }
+    int tested = 0;
+    for (HWND control : controls) {
+        wchar_t className[32] = {};
+        GetClassNameW(control, className, ARRAYSIZE(className));
+        if (_wcsicmp(className, WC_COMBOBOXEXW) != 0 && _wcsicmp(className, WC_COMBOBOXW) != 0) {
+            continue;
+        }
+        int notification = CBN_DROPDOWN;
+        HandleSettingsComboNotification(control, &notification);
+        int original = GetSettingsComboSelection(control);
+        int count = static_cast<int>(SendMessageW(control, CB_GETCOUNT, 0, 0));
+        if (count > 1) {
+            WidgetConfig before = settingsDraft[0];
+            ReadWidgetControls(before, false);
+            bool pending = HasPendingSettingsChanges();
+            bool syncEnabled = IsWindowEnabled(hNtpSyncButton) != FALSE;
+            std::wstring servers = GetControlText(hNtpServersEdit);
+            int candidate = original == 0 ? 1 : 0;
+            SetComboSelection(control, candidate);
+            notification = CBN_SELCHANGE;
+            Require(HandleSettingsComboNotification(control, &notification),
+                "every Settings dropdown defers tentative selection notifications");
+            for (int tick = 0; tick < 3; tick++) {
+                UpdateNtpSettingsControls();
+                UpdateSettingControlAvailability(false);
+                UpdateTimeSignalVolumePreview();
+                UpdateSettingsApplyButton();
+            }
+            WidgetConfig after = settingsDraft[0];
+            ReadWidgetControls(after, false);
+            Require(WidgetConfigurationsEqual(before, after),
+                "tentative Settings highlights cannot enter a widget draft");
+            Require(GetSettingsComboSelection(control) == original
+                    && GetApplicationComboSelection(GetSettingsComboBox(control), settingsComboState) == original,
+                "outer and inner combos expose only the accepted selection");
+            Require(HasPendingSettingsChanges() == pending,
+                "tentative Settings highlights do not create pending changes");
+            Require((IsWindowEnabled(hNtpSyncButton) != FALSE) == syncEnabled
+                    && GetControlText(hNtpServersEdit) == servers,
+                "refreshing an open Settings combo preserves accepted NTP controls");
+            tested++;
+        }
+        notification = CBN_SELENDCANCEL;
+        HandleSettingsComboNotification(control, &notification);
+        notification = CBN_CLOSEUP;
+        Require(HandleSettingsComboNotification(control, &notification),
+            "cancelled Settings dropdowns do not emit an accepted change");
+        Require(GetSettingsComboSelection(control) == original,
+            "every cancelled Settings dropdown restores its accepted selection");
+    }
+    Require(tested >= 15, "the complete multi-page Settings combo inventory is exercised");
+    std::printf("Settings dropdowns checked: %d.\n", tested);
+}
+
+/// Keeps periodic NTP availability updates independent of unconfirmed dropdown highlights in both directions.
+static void TestNtpTimeSourceHighlight() {
+    for (bool selectedNtp : { true, false }) {
+        ResetNtpSettings(selectedNtp);
+        int original = selectedNtp ? 1 : 0;
+        int proposed = selectedNtp ? 0 : 1;
+        NtpCommand(ID_TIME_SOURCE, CBN_DROPDOWN, hTimeSourceCombo);
+        SetComboSelection(hTimeSourceCombo, proposed);
+        NtpCommand(ID_TIME_SOURCE, CBN_SELCHANGE, hTimeSourceCombo);
+        for (int update = 0; update < 3; update++) {
+            UpdateNtpSettingsControls();
+            bool presetEnabled = IsWindowEnabled(hNtpPresetCombo) != FALSE;
+            bool serversEnabled = IsWindowEnabled(hNtpServersEdit) != FALSE;
+            bool syncEnabled = IsWindowEnabled(hNtpSyncButton) != FALSE;
+            Require(presetEnabled == selectedNtp
+                    && serversEnabled == selectedNtp
+                    && syncEnabled == selectedNtp,
+                "periodic refresh ignores the highlighted time source until it is accepted");
+        }
+        NtpCommand(ID_TIME_SOURCE, CBN_SELENDCANCEL, hTimeSourceCombo);
+        NtpCommand(ID_TIME_SOURCE, CBN_CLOSEUP, hTimeSourceCombo);
+        UpdateNtpSettingsControls();
+        Require(SendMessageW(hTimeSourceCombo, CB_GETCURSEL, 0, 0) == original,
+            "cancelled time-source navigation restores the original selection");
+        Require(IsNtpTimeSourceSelected() == selectedNtp,
+            "cancelled navigation retains the accepted time-source draft");
+        NtpCommand(ID_TIME_SOURCE, CBN_DROPDOWN, hTimeSourceCombo);
+        SetComboSelection(hTimeSourceCombo, proposed);
+        NtpCommand(ID_TIME_SOURCE, CBN_SELENDOK, hTimeSourceCombo);
+        UpdateNtpSettingsControls();
+        Require(IsNtpTimeSourceSelected() == selectedNtp,
+            "the accepted highlight is deferred until the dropdown finishes closing");
+        NtpCommand(ID_TIME_SOURCE, CBN_CLOSEUP, hTimeSourceCombo);
+        bool presetEnabled = IsWindowEnabled(hNtpPresetCombo) != FALSE;
+        bool serversEnabled = IsWindowEnabled(hNtpServersEdit) != FALSE;
+        bool syncEnabled = IsWindowEnabled(hNtpSyncButton) != FALSE;
+        Require(presetEnabled != selectedNtp
+                && serversEnabled != selectedNtp
+                && syncEnabled != selectedNtp,
+            "closing an accepted time source updates all dependent controls");
+        Require(useNtpTime == selectedNtp && ntpTestStarts == 0,
+            "choosing a time-source draft neither applies it nor starts synchronization");
+    }
+}
+
 /// Verifies the visible selection is used while pending drafts on other tabs remain unapplied.
 static void TestNtpManualSelection() {
     ResetNtpSettings();
@@ -215,7 +323,7 @@ static void TestNtpManualSelection() {
     EnterNtpServers(L"custom-one.example; custom-two.example");
     NtpCommand(ID_NTP_SYNC, BN_CLICKED, hNtpSyncButton);
     Require(ntpPreset == NTP_PRESET_CUSTOM
-        && ntpTestServers == L"custom-one.example; custom-two.example",
+            && ntpTestServers == L"custom-one.example; custom-two.example",
         "manual Sync passes the exact custom list to the worker");
     CompleteNtpQuery(true, ntpTestGeneration, L"custom-one.example", 12345000);
     Require(ntpTimeValid && !ntpLastQueryFailed && ntpActiveServer == L"custom-one.example",
@@ -360,9 +468,11 @@ int wmain(int argc, wchar_t** argv) {
     Require(hSettings != nullptr && CreateSettingsControls(4), "real Settings controls are created");
     if (hSettings != nullptr && hNtpSyncButton != nullptr) {
         Require(!IsWindowVisible(hSettings)
-            && (GetWindowLongPtrW(hSettings, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
-                "Settings remains hidden and nonactivating on the private desktop");
+                && (GetWindowLongPtrW(hSettings, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
+            "Settings remains hidden and nonactivating on the private desktop");
         TestNtpAvailability();
+        TestSettingsComboHighlights();
+        TestNtpTimeSourceHighlight();
         TestNtpManualSelection();
         TestNtpFirstSynchronization();
         TestNtpStaleResults();

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #include "FindForm.h"
@@ -281,8 +281,9 @@ void FindForm::UpdateFindButton() const {
         return;
     }
     HWND button = GetDlgItem(window, IDOK);
-    bool hasText = SendMessageW(FindHistoryControl(window), CB_GETCURSEL, 0, 0) != CB_ERR
-        || GetWindowTextLengthW(FindHistoryEdit(window)) > 0;
+    bool hasText = comboState.open != nullptr
+        ? !comboState.initialText.empty()
+        : GetWindowTextLengthW(FindHistoryEdit(window)) > 0;
     bool enabled = CanSearch() && hasText;
     if (!enabled && GetFocus() == button) {
         SetFocus(FindHistoryEdit(window));
@@ -571,6 +572,9 @@ void FindForm::SelectMatch(bool reverse) {
 
 /// Searches the selected text edit, reversing the selected direction for Find Previous or Shift.
 void FindForm::FindNext(HWND owner, bool reverse) {
+    if (comboState.open != nullptr) {
+        return;
+    }
     ownerWindow = owner;
     if (!CanSearch()) {
         SetTarget(nullptr);
@@ -742,10 +746,8 @@ INT_PTR FindForm::HandleClose() const {
 
 /// Restores history options during navigation and selects the text after the choice is committed.
 void FindForm::ChooseHistory(bool selectText) const {
-    LRESULT index = SendMessageW(FindHistoryControl(window), CB_GETCURSEL, 0, 0);
-    if (index >= 0
-            && static_cast<UINT>(index) < historyCount
-            && (selectText || !SendMessageW(FindHistoryControl(window), CB_GETDROPPEDSTATE, 0, 0))) {
+    int index = GetApplicationComboSelection(GetDlgItem(window, IDC_FIND_TEXT), comboState);
+    if (index >= 0 && static_cast<UINT>(index) < historyCount) {
         ApplyOptions(history[index].options);
         if (selectText) {
             HWND input = FindHistoryEdit(window);
@@ -758,6 +760,13 @@ void FindForm::ChooseHistory(bool selectText) const {
 
 /// Handles combo notifications, search options, Find Next and Close commands.
 INT_PTR FindForm::HandleCommand(WPARAM wParam) {
+    HWND combo = GetDlgItem(window, IDC_FIND_TEXT);
+    int notification = HIWORD(wParam);
+    bool closed = notification == CBN_CLOSEUP;
+    if (LOWORD(wParam) == IDC_FIND_TEXT
+            && HandleApplicationComboNotification(combo, &notification, comboState)) {
+        return TRUE;
+    }
     switch (LOWORD(wParam)) {
         case IDOK:
             FindNext(ownerWindow, (GetKeyState(VK_SHIFT) & 0x8000) != 0);
@@ -765,11 +774,9 @@ INT_PTR FindForm::HandleCommand(WPARAM wParam) {
         case IDCANCEL:
             return HandleClose();
         case IDC_FIND_TEXT:
-            if (HIWORD(wParam) == CBN_DROPDOWN) {
-                UpdateComboBoxDropDownMetrics(GetDlgItem(window, IDC_FIND_TEXT));
-            } else if (HIWORD(wParam) == CBN_SELCHANGE || HIWORD(wParam) == CBN_SELENDOK) {
-                ChooseHistory(HIWORD(wParam) == CBN_SELENDOK);
-            } else if (HIWORD(wParam) == CBN_EDITCHANGE) {
+            if (notification == CBN_SELCHANGE) {
+                ChooseHistory(closed);
+            } else if (notification == CBN_EDITCHANGE) {
                 UpdateFindButton();
             }
             return TRUE;
@@ -835,6 +842,7 @@ INT_PTR CALLBACK FindForm::DialogProc(HWND window, UINT message, WPARAM wParam, 
             return owner->HandleDpiChange(lParam);
         case WM_NCDESTROY:
             ReleaseApplicationWindowIcons(window);
+            owner->comboState = ApplicationComboState{};
             owner->window = nullptr;
             break;
     }

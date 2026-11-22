@@ -58,12 +58,12 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
-Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave ja
-Ajakalkulaator. Kui valitud on süsteemi vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8 pt;
-kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult GDI
-või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel taastub
-kasutaja valik. Windowsi klassikalise ilmega kuvatakse mõlemad kujundusvalikud märkimata ja hallina ning neid
-ei rakendata; salvestatud eelistused säilivad.
+Windows 2000 stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave,
+Ajakalkulaator ja Otsi. Kui valitud on süsteemi vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8
+pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult
+GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel
+taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse kõik kujundusvalikud märkimata ja hallina ning
+neid ei rakendata; salvestatud eelistused säilivad.
 
 ## Ajakalkulaator
 
@@ -103,7 +103,7 @@ kirjetega.
 
 ## Sätted ja menüüd
 
-Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine vahekaardil Rakendus mõjutab ainult aknaid Sätted, Spikker, Teave ja Ajakalkulaator. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat.
+Rakenduse keel, font, silumine, salvestuskoht, Windowsiga käivitamine ja servatõmme on ühised sätted vahekaardil Rakendus. Kujunduste keelamine Rakenduse vahekaardil mõjutab aknaid Sätted, Spikker, Teave, Ajakalkulaator ja Otsi. Iga vidin kasutab oma kujundussätet. Esmakäivitamisel kasutatakse Windowsi kasutajaliidese keelt või selle puudumisel USA inglise keelt. Vidina keel, silumine ja kujundused mõjutavad vaid seda vidinat.
 
 Vidina menüüs on selle tüübile sobivad nähtavuse, esiplaanil hoidmise, sekundite, suuruse ja kuupäeva
 kopeerimise valikud, seejärel Paiguta ruudustikku, Ajakalkulaator, Sätted, Spikker, Teave ja Välju. Olekuala
@@ -186,7 +186,7 @@ toetab tõstutundlikkust, terveid sõnu, rea algusi ja lõppe, tagurpidi otsingu
 säilitab käesoleva seansi viimased 30 otsingut.
 
 Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult
-teavitusikooni pärast Rakenda või OK vajutamist.
+teavitusikooni pärast Rakenda või Salvesta vajutamist.
 
 Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Classic tiitliribad; Windows 2000. Mõlemad
 tiitliribarežiimid toimivad juhtelementide teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise

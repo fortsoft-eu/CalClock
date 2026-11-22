@@ -59,11 +59,11 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
 Windows 2000 stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par
-programmu un Laika kalkulators. Ja izvēlēts sistēmas noklusējuma fonts, šo logu vadīklas izmanto Tahoma 8 pt;
-pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties tikai GDI
-vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu. Windows
-klasiskajā izskatā abas dizaina opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas; saglabātās
-izvēles paliek nemainītas.
+programmu, Laika kalkulators un Atrast. Ja izvēlēts sistēmas noklusējuma fonts, šo logu vadīklas izmanto
+Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties
+tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu.
+Windows klasiskajā izskatā visas izskata opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas;
+saglabātās izvēles paliek nemainītas.
 
 ## Laika kalkulators
 
@@ -102,7 +102,7 @@ arī no iestatījumu eksporta nolasa tikai datumus un laikus un apvieno tos ar e
 
 ## Iestatījumi un izvēlnes
 
-Programmas valoda, fonts, nogludināšana, krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. Dizainu atspējošana cilnē Programma attiecas tikai uz logiem Iestatījumi, Palīdzība, Par programmu un Laika kalkulators. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows saskarnes valodu vai ASV angļu valodu, ja tā netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to.
+Programmas valoda, fonts, nogludināšana, krātuve, palaišana kopā ar Windows un pievilkšana ir kopīgi iestatījumi cilnē Programma. Dizainu atspējošana cilnē Programma ietekmē logus Iestatījumi, Palīdzība, Par programmu, Laika kalkulators un Atrast. Katrs logrīks izmanto savu dizaina iestatījumu. Pirmajā palaišanā izmanto Windows saskarnes valodu vai ASV angļu valodu, ja tā netiek atbalstīta. Logrīka valoda, nogludināšana un dizaini ietekmē tikai to.
 
 Logrīka izvēlnē ir tam piemērotās redzamības, Vienmēr virspusē, sekunžu, lieluma un datuma kopēšanas izvēles,
 tad Sakārtot režģī, Laika kalkulators, Iestatījumi, Palīdzība, Par programmu un Iziet. Ikonas izvēlnē ir
@@ -185,8 +185,7 @@ Palīdzībā un loga Par licences tekstā Ctrl+F atver meklēšanu. F3 atrod nā
 iepriekšējo. Var ņemt vērā reģistru, meklēt veselus vārdus, rindu sākumus un beigas, meklēt atpakaļ un lietot
 regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
 
-Cilnē Lietotne opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina
-tikai paziņojumu ikonu pēc Lietot vai Labi nospiešanas.
+Cilnē Programma opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc Lietot vai Saglabāt nospiešanas.
 
 Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Classic virsraksti; Windows 2000. Abi virsraksta
 režīmi darbojas ar ieslēgtiem vai izslēgtiem vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu

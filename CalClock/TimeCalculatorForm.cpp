@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -1466,7 +1466,7 @@ void TimeCalculatorForm::UpdateTimeInput(int index, bool fromUtc, int choice) {
         }
     }
     inputValid[index] = converted && selected >= 0;
-    if (SendMessageW(offsets, CB_GETCURSEL, 0, 0) != selected) {
+    if (comboState.open != offsets && SendMessageW(offsets, CB_GETCURSEL, 0, 0) != selected) {
         SendMessageW(offsets, CB_SETCURSEL, selected, 0);
     }
     EnableWindow(offsets, count == 2 && !current);
@@ -1812,7 +1812,7 @@ void TimeCalculatorForm::SelectPreset(HWND combo, const SYSTEMTIME& time) const 
             break;
         }
     }
-    if (SendMessageW(combo, CB_GETCURSEL, 0, 0) != selected) {
+    if (comboState.open != combo && SendMessageW(combo, CB_GETCURSEL, 0, 0) != selected) {
         SendMessageW(combo, CB_SETCURSEL, selected, 0);
     }
 }
@@ -2098,7 +2098,7 @@ void TimeCalculatorForm::HandleCommand(HWND source, int id, int notification) {
     }
     if (notification == CBN_SELCHANGE && id >= ID_CALC_OFFSET_BASE && id < ID_CALC_OFFSET_BASE + 4) {
         int index = id - ID_CALC_OFFSET_BASE;
-        int choice = static_cast<int>(SendMessageW(source, CB_GETCURSEL, 0, 0));
+        int choice = GetApplicationComboSelection(source, comboState);
         UpdateTimeInput(index, false, choice);
         if (index == 2) {
             UpdateHighlights();
@@ -2110,7 +2110,7 @@ void TimeCalculatorForm::HandleCommand(HWND source, int id, int notification) {
     }
     if (notification == CBN_SELCHANGE && id >= ID_CALC_ZONE_BASE && id < ID_CALC_ZONE_BASE + 4) {
         int index = id - ID_CALC_ZONE_BASE;
-        LRESULT selected = SendMessageW(source, CB_GETCURSEL, 0, 0);
+        LRESULT selected = GetApplicationComboSelection(source, comboState);
         LRESULT zone = SendMessageW(source, CB_GETITEMDATA, selected, 0);
         if (selected >= 0 && zone >= 0 && zone < static_cast<LRESULT>(timeZones.size())) {
             std::wstring* keys[] = { &state.fromZone, &state.toZone, &state.startZone, &entryZone };
@@ -2126,7 +2126,7 @@ void TimeCalculatorForm::HandleCommand(HWND source, int id, int notification) {
         return;
     }
     if (notification == CBN_SELCHANGE) {
-        LRESULT selected = SendMessageW(source, CB_GETCURSEL, 0, 0);
+        LRESULT selected = GetApplicationComboSelection(source, comboState);
         if (selected >= 0) {
             selected = SendMessageW(source, CB_GETITEMDATA, selected, 0);
         }

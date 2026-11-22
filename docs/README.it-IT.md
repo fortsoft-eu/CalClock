@@ -74,15 +74,14 @@ Le modifiche all’aspetto sono mostrate subito nell’anteprima del widget sele
 
 Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bordo semplice ha anche un colore configurabile; la larghezza è disponibile quando supportata dal widget. Gli orologi digitali trasparenti mantengono le stesse scelte di quelli opachi. La dimensione del carattere non è selezionabile per l’applicazione e il calendario; lo è invece per gli orologi digitali e i testi del pannello. I caratteri personalizzati del calendario sono supportati con l’aspetto classico di Windows o con i temi disattivati per il widget.
 
-Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di tempi. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
+Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda Impostazioni, Guida, Informazioni, Calcolatore di tempi e Trova. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
-Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni e Calcolatore di
-tempi. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt; un carattere
-personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza fissa. In
-questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata usa
-temporaneamente GDI e viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in
-Windows, entrambe le opzioni di stile appaiono deselezionate e disabilitate senza modificare le scelte
-salvate.
+Stile Windows 2000 richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, Calcolatore di
+tempi e Trova. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt; un
+carattere personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza
+fissa. In questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata
+usa temporaneamente GDI e viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in
+Windows, tutte le opzioni di aspetto appaiono deselezionate e disabilitate senza modificare le scelte salvate.
 
 Il cursore **Volume audio** in Sveglia controlla i file riprodotti internamente per ciascun widget e mostra il livello in dB. Il valore predefinito **−18 dB** preserva il livello originale del file (**100%**). Verso destra amplifica il suono; il massimo **0 dB** equivale a circa **794%** dell’ampiezza originale. L’estremo sinistro è **−∞ dB** (silenzio). Le modifiche hanno effetto durante la prova. L’amplificazione riguarda l’audio decodificato, inclusi WAV, MP3, WMA, AAC, M4A e FLAC quando supportati da Windows. La riproduzione precedente per file non decodificabili, come MIDI, è limitata al 100%.
 
@@ -260,7 +259,7 @@ riga, ricerca all’indietro ed espressioni regolari. La cronologia conserva le 
 sessione.
 
 Nella scheda Applicazione, Icona di notifica alternativa abilita Icona di notifica retrò. Le due opzioni
-modificano solo l’icona di notifica dopo Applica o OK.
+modificano solo l’icona di notifica dopo Applica o Salva.
 
 Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; Windows 2000. Entrambe le
 modalità del titolo funzionano con o senza temi nei controlli. Sistema segue Disattiva temi per l'intera

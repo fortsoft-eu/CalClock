@@ -74,13 +74,14 @@ Zmiany wyglądu są od razu widoczne w podglądzie wybranego widżetu. `Wygląd 
 
 Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ramka ma konfigurowalny kolor; ustawienie szerokości jest dostępne tam, gdzie widżet je obsługuje. Przezroczyste zegary cyfrowe oferują te same style co nieprzezroczyste. Czcionki aplikacji i kalendarza nie mają wyboru rozmiaru; cyfrowe i teksty panelu mają. Własne czcionki kalendarza są obsługiwane przy klasycznym wyglądzie systemu Windows lub po wyłączeniu motywów dla widżetu.
 
-Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy tylko okien Ustawienia, Pomoc, O programie i Kalkulator czasu. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
+Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy okien Ustawienia, Pomoc, O programie, Kalkulator czasu i Znajdź. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
-Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie i
-Kalkulator czasu. Przy domyślnej czcionce systemowej elementy sterujące tych okien używają czcionki Tahoma 8
-pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany wybór
-ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows używa
-wyglądu klasycznego, obie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają zachowane.
+Styl Windows 2000 jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie,
+Kalkulator czasu i Znajdź. Przy domyślnej czcionce systemowej elementy sterujące tych okien używają czcionki
+Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany
+wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows
+używa wyglądu klasycznego, wszystkie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają
+zachowane.
 
 Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzane pliki osobno dla każdego widżetu i pokazuje poziom w dB. Domyślne **−18 dB** zachowuje poziom oryginalnego pliku (**100%**). Przesunięcie w prawo wzmacnia dźwięk; maksimum **0 dB** odpowiada około **794%** pierwotnej amplitudy. Skrajnie lewa pozycja to **−∞ dB** (cisza). Zmiany działają podczas testu. Wzmocnienie dotyczy dekodowanego audio, w tym WAV, MP3, WMA, AAC, M4A i FLAC, jeśli Windows je obsługuje. Starszy sposób odtwarzania plików, których nie można dekodować, np. MIDI, jest ograniczony do 100%.
 
@@ -237,7 +238,7 @@ a Shift+F3 poprzednie. Dostępne są rozróżnianie wielkości liter, całe wyra
 wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich wyszukiwań w bieżącej sesji.
 
 Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona powiadomień w stylu retro.
-Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub OK.
+Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub Zapisz.
 
 Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; Windows 2000. Oba tryby
 nagłówka działają z motywami elementów sterujących lub bez nich. Systemowy stosuje Wyłącz motywy do całego

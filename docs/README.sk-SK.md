@@ -74,13 +74,13 @@ Zmeny vzhľadu sa ihneď zobrazujú v náhľade vybraného widgetu. `Predvolený
 
 Digitálne hodiny, kalendáre a panely zdieľajú štyri štýly rámčeka. Jednoduchý rámček má nastaviteľnú farbu; šírka je dostupná tam, kde ju widget podporuje. Priehľadné digitálne hodiny ponúkajú rovnaké štýly ako nepriehľadné. Pri písme aplikácie a kalendára neponúkajú veľkosť, pri digitálnych hodinách a textoch panela áno. Vlastné písmo kalendára sa používa pri klasickom vzhľade Windows alebo pri vypnutých motívoch widgetu.
 
-Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí iba pre Nastavenia, Pomoc, O programe a Časový kalkulátor. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
+Jazyk aplikácie, písmo rozhrania, vyhladzovanie, ukladanie, spúšťanie s Windows a prichytávanie k okrajom sú globálne a nastavujú sa na karte Aplikácia. Zákaz motívov na karte Aplikácia platí pre Nastavenia, Pomoc, O programe, Časový kalkulátor a Hľadať. Každý widget používa vlastné nastavenie motívov. Globálny je aj zdroj času. Jazyk widgetu, vyhladzovanie, motívy, pásmo, posun, budík a znamenie sa nastavujú samostatne. Vyhladzovanie ponúka **ClearType**, **GDI** a **Žiadne**.
 
-Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe a Časový
-kalkulátor. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien Tahomu 8 pt; vlastné písmo
-aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa dočasne nahradí
-GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú obe voľby vzhľadu neaktívne a
-neuplatňujú sa; uložené voľby sa zachovajú.
+Štýl Windows 2000 je dostupný pri zakázaných motívoch a platí iba pre Nastavenia, Pomoc, O programe, Časový
+kalkulátor a Hľadať. Pri predvolenom systémovom písme používajú ovládacie prvky týchto okien Tahomu 8 pt;
+vlastné písmo aplikácie má prednosť. Dostupné je vyhladzovanie GDI alebo Žiadne. Uložená voľba ClearType sa
+dočasne nahradí GDI a po vypnutí tohto štýlu sa obnoví. Pri klasickom vzhľade Windows sú všetky voľby vzhľadu
+neaktívne a neuplatňujú sa; uložené voľby sa zachovajú.
 
 Jazdec **Hlasitosť zvuku** na karte Budík ovláda interne prehrávané súbory samostatne pre každý widget a zobrazuje úroveň v dB. Predvolených **−18 dB** zachováva pôvodnú úroveň súboru (**100%**). Posun doprava zosilňuje; maximum **0 dB** predstavuje približne **794%** pôvodnej amplitúdy. Ľavá krajná poloha je **−∞ dB** (ticho). Zmeny sa prejavujú aj počas testu. Zosilnenie sa týka dekódovaného zvuku vrátane WAV, MP3, WMA, AAC, M4A a FLAC, ak ich Windows podporuje. Starší spôsob prehrávania nedekódovateľných súborov, napríklad MIDI, je obmedzený na 100%.
 
@@ -235,7 +235,7 @@ predchádzajúcu. Možno rozlišovať veľkosť písmen, hľadať celé slová, 
 alebo použiť regulárny výraz. História uchováva posledných 30 hľadaní počas behu aplikácie.
 
 Na karte Aplikácia voľba Alternatívna ikona v oblasti oznámení sprístupní voľbu Retro ikona v oblasti
-oznámení. Obe voľby menia iba ikonu v oblasti oznámení a prejavia sa po Použiť alebo OK.
+oznámení. Obe voľby menia iba ikonu v oblasti oznámení a prejavia sa po stlačení Použiť alebo Uložiť.
 
 Vzhľad okien: Systémový; Záhlavia Windows Basic; Záhlavia Windows Classic; Windows 2000. Obe záhlavia možno
 použiť s motívmi vnútri okna aj bez nich. Systémový rešpektuje Zakázať motívy pre celé okno. Záhlavia Windows

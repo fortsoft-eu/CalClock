@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -380,8 +380,9 @@ static void TestAvailability() {
     SetCheck(hRemoteScriptCheck, false);
     UpdateSettingControlAvailability();
     Require(!IsWindowEnabled(hCommandEdit)
-        && !IsWindowEnabled(hBrowseButton)
-        && !IsWindowEnabled(hTestCommandButton), "command controls follow action checkbox");
+            && !IsWindowEnabled(hBrowseButton)
+            && !IsWindowEnabled(hTestCommandButton),
+        "command controls follow action checkbox");
     Require(!IsWindowEnabled(hAlarmVolumeTrackBar) && !IsWindowEnabled(hLoopAudioCheck),
         "audio controls follow command checkbox");
     Require(!IsWindowEnabled(hRemoteScriptEdit), "URL control follows remote checkbox");
@@ -623,8 +624,8 @@ static void TestRegistryReader() {
             Require(!ReadRegistrySettings(defaults, CreateStoredWidgetDefaults, &restored),
                 "an empty widget collection does not activate the old single-widget reader");
             Require(restored.options == 0x80000000
-                && restored.widgets.size() == 1
-                && restored.widgets.front().id == 77,
+                    && restored.widgets.size() == 1
+                    && restored.widgets.front().id == 77,
                 "a rejected registry collection leaves the destination unchanged");
             Require(RegOverridePredefKey(HKEY_CURRENT_USER, nullptr) == ERROR_SUCCESS,
                 "restore the process current-user registry mapping");
@@ -662,8 +663,10 @@ static void TestPreviewValidation() {
     Require(testMessageCalls == messagesBefore + 1, "invalid enabled remote URL reports validation");
     Require(!settingsCommandTestActive && !settingsVisualPreviewActive,
         "rejected remote URL does not leave a partial preview");
-    Require(testAudioCalls == audioBefore && testLocalCalls == localBefore
-        && testRemoteCalls == remoteBefore, "invalid preview does not dispatch any action");
+    Require(testAudioCalls == audioBefore
+            && testLocalCalls == localBefore
+            && testRemoteCalls == remoteBefore,
+        "invalid preview does not dispatch any action");
     LoadAlarm(expected);
 }
 
@@ -725,14 +728,14 @@ static void TestLiveMute() {
         "already-muted widget starts its audio muted");
     ApplyWidgetSoundsMuted(first, true);
     Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_OBJECT_0
-        && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_OBJECT_0,
+            && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_OBJECT_0,
         "muting a widget also mutes its current audio and preview");
     Require(WaitForSingleObject(first->audioStopEvent, 0) == WAIT_TIMEOUT
-        && WaitForSingleObject(settingsPreviewStopEvent, 0) == WAIT_TIMEOUT,
+            && WaitForSingleObject(settingsPreviewStopEvent, 0) == WAIT_TIMEOUT,
         "muting does not stop audio or preview playback");
     ApplyWidgetSoundsMuted(first, false);
     Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_TIMEOUT
-        && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_TIMEOUT,
+            && WaitForSingleObject(settingsPreviewMuteEvent, 0) == WAIT_TIMEOUT,
         "unmuting restores audio and preview without restarting them");
     lastMutedWidgetIds.clear();
     ToggleAllWidgetSounds();
@@ -742,7 +745,7 @@ static void TestLiveMute() {
     Require(!first->config.soundsMuted && second->config.soundsMuted,
         "global unmute preserves the previously muted widget");
     Require(WaitForSingleObject(first->audioMuteEvent, 0) == WAIT_TIMEOUT
-        && WaitForSingleObject(second->audioMuteEvent, 0) == WAIT_OBJECT_0,
+            && WaitForSingleObject(second->audioMuteEvent, 0) == WAIT_OBJECT_0,
         "global mute restoration updates the correct live audio events");
     StopSettingsPreview();
     Require(first->alarmActive && second->alarmActive, "stopping preview preserves both real alarms");
@@ -846,8 +849,8 @@ int wmain(int argc, wchar_t** argv) {
     hSettings = CreateSettingsDialog(IDD_SETTINGS, nullptr, SettingsDialogProc, 0);
     Require(hSettings != nullptr, "native root Settings dialog created");
     Require(hSettings != nullptr
-        && !IsWindowVisible(hSettings)
-        && (GetWindowLongPtrW(hSettings, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
+            && !IsWindowVisible(hSettings)
+            && (GetWindowLongPtrW(hSettings, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
         "Settings window starts hidden and nonactivating");
     if (hSettings != nullptr && CreateSettingsControls(2)) {
         TestAvailability();

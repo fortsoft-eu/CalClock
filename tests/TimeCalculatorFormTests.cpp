@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.2
+ * Last modified for version 1.7.3.0
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -716,7 +716,7 @@ static void TestComboHandling(HWND control, UINT_PTR subclassId) {
         LRESULT rowHeight = SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0);
         UpdateSettingsComboMetrics(control);
         Require(fieldHeight == SendMessageW(combo, CB_GETITEMHEIGHT, static_cast<WPARAM>(-1), 0)
-            && rowHeight == SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0),
+                && rowHeight == SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0),
             "font change already applies field and dropdown metrics");
         SendMessageW(control, WM_THEMECHANGED, 0, 0);
         Require(rowHeight == SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0),
@@ -738,8 +738,9 @@ static void TestComboHandling(HWND control, UINT_PTR subclassId) {
     HandleApplicationComboNotification(control, &notification, state);
     notification = CBN_CLOSEUP;
     Require(HandleApplicationComboNotification(control, &notification, state)
-        && SendMessageW(control, CB_GETCURSEL, 0, 0) == 0
-        && state.open == nullptr, "cancel restores the original choice without applying a change");
+            && SendMessageW(control, CB_GETCURSEL, 0, 0) == 0
+            && state.open == nullptr,
+        "cancel restores the original choice without applying a change");
     notification = CBN_DROPDOWN;
     HandleApplicationComboNotification(control, &notification, state);
     SendMessageW(control, CB_SETCURSEL, 1, 0);
@@ -747,8 +748,9 @@ static void TestComboHandling(HWND control, UINT_PTR subclassId) {
     HandleApplicationComboNotification(control, &notification, state);
     notification = CBN_CLOSEUP;
     Require(!HandleApplicationComboNotification(control, &notification, state)
-        && notification == CBN_SELCHANGE
-        && state.open == nullptr, "accepted change is applied once after closing the dropdown");
+            && notification == CBN_SELCHANGE
+            && state.open == nullptr,
+        "accepted change is applied once after closing the dropdown");
     SendMessageW(control, CB_SETCURSEL, selection, 0);
 }
 
@@ -1049,7 +1051,7 @@ static void CaptureCalculatorImage(HWND window, const wchar_t* name, bool screen
             DWORD written = 0;
             bool saved = WriteFile(file, &header, sizeof(header), &written, nullptr) != FALSE
                 && WriteFile(file, &information.bmiHeader, sizeof(BITMAPINFOHEADER), &written, nullptr)
-                != FALSE
+                    != FALSE
                 && WriteFile(file, pixels, bytes, &written, nullptr) != FALSE;
             Require(saved, "hidden screenshot saved");
             CloseHandle(file);
@@ -1199,17 +1201,19 @@ static void TestCalculatorTimeZones() {
     Require(first.wHour == 2 && first.wMinute == 30 && CompareCalculatorDates(first, second) == 0,
         "two real instants display the same repeated local clock reading");
     Require(CalculatorComboText(CalculatorControl(ID_CALC_OFFSET_BASE)) == L"UTC+02:00"
-        && CalculatorComboText(CalculatorControl(ID_CALC_OFFSET_BASE + 1)) == L"UTC+01:00"
-        && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"1",
+            && CalculatorComboText(CalculatorControl(ID_CALC_OFFSET_BASE + 1)) == L"UTC+01:00"
+            && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"1",
         "visible offsets distinguish the fold and elapsed difference remains one hour");
     ChangeCalculatorZone(0, L"UTC+05:45");
     DateTime_GetSystemtime(CalculatorControl(ID_CALC_FROM), &first);
-    Require(first.wHour == 6 && first.wMinute == 15 && CompareCalculatorDates(calculatorForm.GetState().from,
-        state.from) == 0, "changing display zone preserves UTC and updates displayed date and minute");
+    Require(first.wHour == 6
+            && first.wMinute == 15
+            && CompareCalculatorDates(calculatorForm.GetState().from, state.from) == 0,
+        "changing display zone preserves UTC and updates displayed date and minute");
     ChangeCalculatorZone(0, L"Central Europe Standard Time");
     ChangeCalculatorDate(ID_CALC_FROM, CalculatorDate(2026, 3, 29, 2, 30));
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"—"
-        && SendMessageW(CalculatorControl(ID_CALC_OFFSET_BASE), CB_GETCOUNT, 0, 0) == 0,
+            && SendMessageW(CalculatorControl(ID_CALC_OFFSET_BASE), CB_GETCOUNT, 0, 0) == 0,
         "missing local time is never silently treated as a real instant");
     ChangeCalculatorDate(ID_CALC_FROM, CalculatorDate(2026, 10, 25, 2, 15));
     Require(SendMessageW(CalculatorControl(ID_CALC_OFFSET_BASE), CB_GETCURSEL, 0, 0) == CB_ERR,
@@ -1245,13 +1249,13 @@ static void TestCalculatorResultNotifications() {
     state.day = CalculatorDate(2026, 1, 2);
     LoadCalculator(state);
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"0"
-        && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE + 1)) == L"1",
+            && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE + 1)) == L"1",
         "visible interval distinguishes elapsed hours from a crossed calendar midnight");
     Require(GetControlText(CalculatorControl(ID_CALC_PARTS_BASE)) == L"(45 min)",
         "cross-midnight remainder is rendered as forty-five minutes");
     ChangeCalculatorDate(ID_CALC_TO, CalculatorDate(2026, 1, 2, 1, 15));
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"1"
-        && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE)) == L"(1 h, 45 min)",
+            && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE)) == L"(1 h, 45 min)",
         "end-picker notification immediately recalculates displayed total and remainder");
     ChangeCalculatorDate(ID_CALC_FROM, CalculatorDate(2026, 1, 2, 1, 15));
     for (int row = 0; row < TIME_CALCULATOR_TOTAL_COUNT; row++) {
@@ -1262,14 +1266,14 @@ static void TestCalculatorResultNotifications() {
     ChangeCalculatorDate(ID_CALC_FROM, CalculatorDate(2026, 1, 2, 1, 16));
     for (int row = 0; row < TIME_CALCULATOR_TOTAL_COUNT; row++) {
         Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE + row)) == L"—"
-            && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE + row)).empty(),
+                && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE + row)).empty(),
             "reversed picker values do not leave stale previous results visible");
     }
     ChangeCalculatorDate(ID_CALC_FROM, CalculatorDate(2024, 2, 28, 23, 59));
     ChangeCalculatorDate(ID_CALC_TO, CalculatorDate(2024, 3, 1, 0, 1));
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"24"
-        && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE + 1)) == L"2"
-        && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE + 1)) == L"(1 d, 2 min)",
+            && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE + 1)) == L"2"
+            && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE + 1)) == L"(1 d, 2 min)",
         "leap-day picker changes refresh calendar totals and exact elapsed decomposition");
     TimeCalculatorState manual = calculatorForm.GetState();
     for (int id : { ID_CALC_FROM_NOW, ID_CALC_TO_NOW }) {
@@ -1278,14 +1282,14 @@ static void TestCalculatorResultNotifications() {
     }
     SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"0"
-        && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE)).empty(),
+            && GetControlText(CalculatorControl(ID_CALC_PARTS_BASE)).empty(),
         "both Now inputs refer to the same instant in a single refresh");
     for (int id : { ID_CALC_FROM_NOW, ID_CALC_TO_NOW }) {
         SendMessageW(CalculatorControl(id), BM_SETCHECK, BST_UNCHECKED, 0);
         CalculatorCommand(id);
     }
     Require(SameCalculatorState(manual, calculatorForm.GetState())
-        && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"24",
+            && GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"24",
         "disabling Now restores both manual instants and their original results");
     state.fromZone = L"Central Europe Standard Time";
     state.toZone = state.fromZone;
@@ -1526,17 +1530,17 @@ static void TestCalculatorCalendarNotifications() {
         "new repeated starting time requires an explicit occurrence");
     masks = CalculatorDayMasks(CalculatorDate(2026, 10, 1), 3);
     Require(masks[0] == 0
-        && masks[1] == 0
-        && masks[2] == 0
-        && GetControlText(CalculatorControl(ID_CALC_DAY_TOTAL_BASE)) == L"—",
+            && masks[1] == 0
+            && masks[2] == 0
+            && GetControlText(CalculatorControl(ID_CALC_DAY_TOTAL_BASE)) == L"—",
         "unresolved repeated start leaves neither stale highlighting nor stale totals");
     SendMessageW(CalculatorControl(ID_CALC_OFFSET_BASE + 2), CB_SETCURSEL, 1, 0);
     CalculatorCommand(ID_CALC_OFFSET_BASE + 2, CBN_SELCHANGE);
     masks = CalculatorDayMasks(CalculatorDate(2026, 10, 1), 3);
     Require(masks[0] == 0x1000000 && masks[1] == 0
-        && masks[2] == 0
-        && calculatorForm.GetState().start.wHour == 1
-        && calculatorForm.GetState().start.wMinute == 30,
+            && masks[2] == 0
+            && calculatorForm.GetState().start.wHour == 1
+            && calculatorForm.GetState().start.wMinute == 30,
         "choosing the later occurrence restores its exact UTC instant and starting-day mask");
     LoadCalculator(original);
 }
@@ -1584,8 +1588,9 @@ static void TestCalendarDayRollover() {
             "calculator follows Today through month, leap-day and year rollover without Now inputs");
         Require(SameCalendarDay(calculatorForm.GetState().day, after[index]),
             "calculator saves the new selected calendar date");
-        Require(GetControlText(CalculatorControl(ID_CALC_SELECTED_DATE)) == FormatCalculatorDate(after[index],
-            false), "calculator refreshes the selected date and results after midnight");
+        Require(GetControlText(CalculatorControl(ID_CALC_SELECTED_DATE))
+                == FormatCalculatorDate(after[index], false),
+            "calculator refreshes the selected date and results after midnight");
         MonthCal_GetToday(calendar, &today);
         Require(SameCalendarDay(today, after[index]), "calculator updates the Today marker and row");
     }
@@ -1626,7 +1631,8 @@ static void TestCalendarDayRollover() {
     LoadCalculator(state);
     calculatorTestNow = CalculatorDate(2026, 2, 1);
     SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
-    Require(SameCalendarDay(calculatorForm.GetState().day, state.day), "UTC midnight does not advance another zone");
+    Require(SameCalendarDay(calculatorForm.GetState().day, state.day),
+        "UTC midnight does not advance another zone");
     calculatorTestNow = CalculatorDate(2026, 2, 1, 22);
     SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
     WaitForCalculator();
@@ -1769,7 +1775,7 @@ static void TestCalendarReopening() {
         "a real queued timer advances the open calculator through the production dialog message path");
     WaitForCalculator();
     Require(GetControlText(CalculatorControl(ID_CALC_SELECTED_DATE))
-        == FormatCalculatorDate(calculatorTestNow, false),
+            == FormatCalculatorDate(calculatorTestNow, false),
         "the delivered timer updates calendar results as well as the selection");
     calculatorTestNow = originalNow;
     LoadCalculator(original);
@@ -1778,13 +1784,13 @@ static void TestCalendarReopening() {
 /// Checks initial values, all tabs, resource-authored outer margins and live/manual date restoration.
 static void TestCalculatorInitialAndNow() {
     Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
-        && !IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
-        && !IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+            && !IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+            && !IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
         "empty preset selectors are disabled on initial opening");
     HWND window = calculatorForm.GetWindow();
     Require(window != nullptr
-        && !IsWindowVisible(window)
-        && (GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
+            && !IsWindowVisible(window)
+            && (GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_NOACTIVATE) != 0,
         "calculator starts hidden and nonactivating on a private desktop");
     Require(GetControlText(CalculatorControl(ID_CALC_TOTAL_BASE)) == L"217", "initial hour total rendered");
     RECT tabs = {};
@@ -1795,8 +1801,8 @@ static void TestCalculatorInitialAndNow() {
     RECT client = {};
     GetClientRect(window, &client);
     Require(tabs.left == margin.cx
-        && tabs.top == margin.cy
-        && std::abs(client.bottom - tabs.bottom - tabs.top) <= 1,
+            && tabs.top == margin.cy
+            && std::abs(client.bottom - tabs.bottom - tabs.top) <= 1,
         "tab control retains side margins and matching compact top and bottom spacing");
     const wchar_t* names[] = { L"calculator-interval", L"calculator-milestones", L"calculator-presets" };
     for (int tab = 0; tab < 3; tab++) {
@@ -1808,7 +1814,8 @@ static void TestCalculatorInitialAndNow() {
     CheckDlgButton(GetParent(CalculatorControl(ID_CALC_FROM_NOW)), ID_CALC_FROM_NOW, BST_CHECKED);
     CalculatorCommand(ID_CALC_FROM_NOW);
     Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM))
-        && !IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET)), "Now disables picker and preset combo");
+            && !IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET)),
+        "Now disables picker and preset combo");
     Require(CompareCalculatorDates(manual, calculatorForm.GetState().from) == 0,
         "Now preserves the stored manual timestamp");
     SendMessageW(window, WM_TIMER, CALCULATOR_TIMER, 0);
@@ -1833,8 +1840,8 @@ static void TestCalculatorRangesAndLanguages() {
     Require(MonthCal_GetCurSel(CalculatorControl(ID_CALC_CALENDAR), &importedSelection) != FALSE,
         "imported calendar selection is available");
     Require(importedSelection.wYear == imported.day.wYear
-        && importedSelection.wMonth == imported.day.wMonth
-        && importedSelection.wDay == imported.day.wDay,
+            && importedSelection.wMonth == imported.day.wMonth
+            && importedSelection.wDay == imported.day.wDay,
         "importing an earlier start updates calendar range before restoring selection");
     LoadCalculator(previous);
     const int ids[] = { ID_CALC_FROM, ID_CALC_TO, ID_CALC_START, ID_CALC_DATE };
@@ -1845,7 +1852,7 @@ static void TestCalculatorRangesAndLanguages() {
                 "native date picker accepts the declared supported limit");
             SYSTEMTIME actual = {};
             Require(DateTime_GetSystemtime(CalculatorControl(id), &actual) == GDT_VALID
-                && CompareCalculatorDates(actual, limit) == 0,
+                    && CompareCalculatorDates(actual, limit) == 0,
                 "native date picker preserves the exact limit");
         }
     }
@@ -1900,6 +1907,64 @@ static void AddCalculatorPreset(const SYSTEMTIME& time, const wchar_t* descripti
     CalculatorCommand(ID_CALC_ADD);
 }
 
+/// Keeps timer refreshes from replacing a tentative preset and applies it only after accepted close.
+static void TestCalculatorPresetCommit() {
+    TimeCalculatorState originalState = calculatorForm.GetState();
+    SYSTEMTIME originalNow = calculatorTestNow;
+    calculatorTestNow = CalculatorDate(2026, 5, 2, 12);
+    const int ids[] = { ID_CALC_FROM_PRESET, ID_CALC_TO_PRESET, ID_CALC_PRESET };
+    for (int id : ids) {
+        TimeCalculatorState state = originalState;
+        state.fromNow = id != ID_CALC_FROM_PRESET;
+        state.toNow = id == ID_CALC_FROM_PRESET;
+        LoadCalculator(state);
+        HWND combo = CalculatorControl(id);
+        Require(SendMessageW(combo, CB_GETCOUNT, 0, 0) >= 2, "preset commit test has multiple choices");
+        LRESULT original = SendMessageW(combo, CB_GETCURSEL, 0, 0);
+        int candidate = original == 0 ? 1 : 0;
+        TimeCalculatorState before = calculatorForm.GetState();
+        SYSTEMTIME expected = id == ID_CALC_FROM_PRESET ? before.from : before.to;
+        if (id == ID_CALC_PRESET) {
+            expected = before.start;
+        }
+        CalculatorCommand(id, CBN_DROPDOWN);
+        SetComboSelection(combo, candidate);
+        CalculatorCommand(id, CBN_SELCHANGE);
+        for (int tick = 0; tick < 3; tick++) {
+            calculatorTestNow.wMinute++;
+            SendMessageW(calculatorForm.GetWindow(), WM_TIMER, CALCULATOR_TIMER, 0);
+            WaitForCalculator();
+        }
+        TimeCalculatorState pending = calculatorForm.GetState();
+        SYSTEMTIME selected = id == ID_CALC_FROM_PRESET ? pending.from : pending.to;
+        if (id == ID_CALC_PRESET) {
+            selected = pending.start;
+        }
+        Require(CompareCalculatorDates(expected, selected) == 0,
+            "highlighting a calculator preset never changes its accepted input date");
+        Require(SendMessageW(combo, CB_GETCURSEL, 0, 0) == candidate,
+            "timer updates preserve the user's tentative preset highlight");
+        CalculatorCommand(id, CBN_SELENDCANCEL);
+        CalculatorCommand(id, CBN_CLOSEUP);
+        Require(SendMessageW(combo, CB_GETCURSEL, 0, 0) == original,
+            "cancelling a calculator preset restores the previous choice");
+        CalculatorCommand(id, CBN_DROPDOWN);
+        SetComboSelection(combo, candidate);
+        CalculatorCommand(id, CBN_SELENDOK);
+        CalculatorCommand(id, CBN_CLOSEUP);
+        LRESULT index = SendMessageW(combo, CB_GETITEMDATA, candidate, 0);
+        TimeCalculatorState accepted = calculatorForm.GetState();
+        selected = id == ID_CALC_FROM_PRESET ? accepted.from : accepted.to;
+        if (id == ID_CALC_PRESET) {
+            selected = accepted.start;
+        }
+        Require(CompareCalculatorDates(selected, calculatorForm.GetPresets()[index].time) == 0,
+            "confirmed calculator preset is applied after its dropdown closes");
+    }
+    calculatorTestNow = originalNow;
+    LoadCalculator(originalState);
+}
+
 /// Exercises presets, duplicate confirmations, sorted-item identities, editing and confirmed deletion.
 static void TestCalculatorPresets() {
     CalculatorPage(2);
@@ -1913,25 +1978,26 @@ static void TestCalculatorPresets() {
     Require(calculatorForm.GetPresets()[0].description == L"  Later date  ",
         "preset description whitespace is preserved");
     Require(CompareCalculatorDates(calculatorForm.GetPresets()[0].time, CalculatorDate(2026, 5, 1, 8)) == 0
-        && CompareCalculatorDates(calculatorForm.GetPresets()[1].time, CalculatorDate(2025, 4, 1, 9)) == 0,
+            && CompareCalculatorDates(calculatorForm.GetPresets()[1].time, CalculatorDate(2025, 4, 1, 9)) == 0,
         "preset dates reflect genuine user-change notifications");
     Require(IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
-        && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
-        && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+            && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+            && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
         "saving presets enables all manual preset selectors");
     CalculatorPage(0);
     CheckDlgButton(GetParent(CalculatorControl(ID_CALC_FROM_NOW)), ID_CALC_FROM_NOW, BST_CHECKED);
     CalculatorCommand(ID_CALC_FROM_NOW);
     RefreshCalculator();
     Require(!IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET))
-        && !IsWindowEnabled(CalculatorControl(ID_CALC_FROM))
-        && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
-        && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
+            && !IsWindowEnabled(CalculatorControl(ID_CALC_FROM))
+            && IsWindowEnabled(CalculatorControl(ID_CALC_TO_PRESET))
+            && IsWindowEnabled(CalculatorControl(ID_CALC_PRESET)),
         "Now keeps its picker and populated preset selector disabled after refreshing");
     CheckDlgButton(GetParent(CalculatorControl(ID_CALC_FROM_NOW)), ID_CALC_FROM_NOW, BST_UNCHECKED);
     CalculatorCommand(ID_CALC_FROM_NOW);
     Require(IsWindowEnabled(CalculatorControl(ID_CALC_FROM_PRESET)),
         "disabling Now enables a populated preset selector");
+    TestCalculatorPresetCommit();
     CalculatorPage(2);
     calculatorAnswer = IDNO;
     AddCalculatorPreset(CalculatorDate(2025, 4, 1, 9), L"Another event");
@@ -1954,14 +2020,14 @@ static void TestCalculatorPresets() {
     escape.wParam = VK_ESCAPE;
     HWND unchanged = calculatorForm.GetWindow();
     Require(calculatorForm.ProcessMessage(&escape)
-        && calculatorForm.GetWindow() == unchanged
-        && GetControlText(CalculatorDescriptionEdit()).empty(),
+            && calculatorForm.GetWindow() == unchanged
+            && GetControlText(CalculatorDescriptionEdit()).empty(),
         "Escape cancels inline editing without closing the calculator");
     CalculatorCommand(ID_CALC_EDIT);
     SetWindowTextW(CalculatorDescriptionEdit(), L"Renamed later date");
     CalculatorCommand(ID_CALC_ADD);
     Require(calculatorForm.GetPresets().size() == 3
-        && calculatorForm.GetPresets()[0].description == L"Renamed later date",
+            && calculatorForm.GetPresets()[0].description == L"Renamed later date",
         "editing modifies exactly the selected record");
     ListView_SetItemState(list, 0, LVIS_SELECTED, LVIS_SELECTED);
     calculatorAnswer = IDCANCEL;
@@ -1970,7 +2036,7 @@ static void TestCalculatorPresets() {
     calculatorAnswer = IDOK;
     CalculatorCommand(ID_CALC_DELETE);
     Require(calculatorForm.GetPresets().size() == 2
-        && calculatorForm.GetPresets()[0].description == L"Earlier date",
+            && calculatorForm.GetPresets()[0].description == L"Earlier date",
         "confirmed deletion removes the sorted row's original record");
     MSG enter = {};
     enter.hwnd = CalculatorControl(ID_CALC_DATE);
@@ -1979,7 +2045,7 @@ static void TestCalculatorPresets() {
     calculatorExpectedFocus = nullptr;
     Require(calculatorForm.ProcessMessage(&enter)
         && SettingsEdit::GetFrame(calculatorExpectedFocus) == CalculatorControl(ID_CALC_DESCRIPTION),
-        "Enter in preset date requests description focus without committing");
+            "Enter in preset date requests description focus without committing");
     Require(calculatorPresetWrites > 0, "preset changes save to isolated standalone XML");
 }
 
@@ -1990,11 +2056,11 @@ static void CheckCalculatorPresetButtonRow() {
     RECT list = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_LIST)), ID_CALC_LIST);
     RECT add = CalculatorControlBounds(GetParent(CalculatorControl(ID_CALC_ADD)), ID_CALC_ADD);
     Require(first.top == add.top
-        && first.bottom == add.bottom
-        && first.top == second.top
-        && first.bottom == second.bottom
-        && first.right < second.left
-        && first.bottom < list.top,
+            && first.bottom == add.bottom
+            && first.top == second.top
+            && first.bottom == second.bottom
+            && first.right < second.left
+            && first.bottom < list.top,
         "import/export buttons share the original row above the full-height list");
     Require(add.left == list.left && second.right == list.right,
         "first and last buttons align exactly with the list edges");
@@ -2037,23 +2103,23 @@ static void TestCalculatorPresetFiles() {
     const AppLanguage language = appLanguage;
     CalculatorCommand(ID_CALC_EXPORT);
     Require(calculatorFileSave
-        && calculatorFileOwner == calculatorForm.GetWindow()
-        && calculatorFilePrefix == L"CalClock-times"
-        && !calculatorFileAllowsText,
+            && calculatorFileOwner == calculatorForm.GetWindow()
+            && calculatorFilePrefix == L"CalClock-times"
+            && !calculatorFileAllowsText,
         "preset export uses the calculator owner and the shared naming convention");
     std::vector<TimeCalculatorPreset> exported;
     Require(ReadCalculatorPresets(calculatorFilePath, &exported) && exported.size() == original.size(),
         "export button produces a standalone user-data root");
     for (size_t index = 0; index < original.size() && index < exported.size(); index++) {
         Require(CompareCalculatorDates(original[index].time, exported[index].time) == 0
-            && original[index].zone == exported[index].zone
-            && original[index].description == exported[index].description,
+                && original[index].zone == exported[index].zone
+                && original[index].description == exported[index].description,
             "export preserves each exact UTC timestamp, zone and description");
     }
     CalculatorCommand(ID_CALC_IMPORT);
     Require(!calculatorFileSave
-        && calculatorFileAllowsText
-        && calculatorForm.GetPresets().size() == original.size(),
+            && calculatorFileAllowsText
+            && calculatorForm.GetPresets().size() == original.size(),
         "import accepts XML and legacy text while merging exact duplicates");
     std::vector<TimeCalculatorPreset> imported = original;
     imported[0].description = L"New description at the same instant";
@@ -2064,14 +2130,14 @@ static void TestCalculatorPresetFiles() {
     Require(WriteSettingsXml(calculatorFilePath, settings, &imported), "write isolated combined export");
     CalculatorCommand(ID_CALC_IMPORT);
     Require(calculatorForm.GetPresets().size() == original.size() + 1
-        && appLanguage == language
-        && SameCalculatorState(state, calculatorForm.GetState()),
+            && appLanguage == language
+            && SameCalculatorState(state, calculatorForm.GetState()),
         "import from combined settings XML merges values without applying any settings");
     Require(WriteSettingsXml(calculatorFilePath, settings), "write isolated settings-only document");
     CalculatorCommand(ID_CALC_IMPORT);
     Require(calculatorForm.GetPresets().size() == original.size() + 1
-        && appLanguage == language
-        && SameCalculatorState(state, calculatorForm.GetState()),
+            && appLanguage == language
+            && SameCalculatorState(state, calculatorForm.GetState()),
         "settings-only import preserves all user data and current settings");
     SetWindowTextW(CalculatorDescriptionEdit(), L"Unfinished entry");
     calculatorFileAccepted = false;
@@ -2079,7 +2145,7 @@ static void TestCalculatorPresetFiles() {
     CalculatorCommand(ID_CALC_IMPORT);
     CalculatorCommand(ID_CALC_EXPORT);
     Require(calculatorPresetWrites == writes
-        && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
+            && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
         "cancelled file dialogs preserve data and the editor");
     calculatorFileAccepted = true;
     imported[0].description = L"Write failure must not add this record";
@@ -2088,7 +2154,7 @@ static void TestCalculatorPresetFiles() {
     CalculatorCommand(ID_CALC_IMPORT);
     calculatorPresetWriteFails = false;
     Require(calculatorForm.GetPresets().size() == original.size() + 1
-        && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
+            && GetControlText(CalculatorDescriptionEdit()) == L"Unfinished entry",
         "failed import persistence preserves data and unfinished editor text");
     CheckCalculatorPresetButtonRow();
     SetWindowTextW(CalculatorDescriptionEdit(), L"");
@@ -2106,15 +2172,16 @@ static void TestCalculatorConfirmationImport() {
     calculatorAnswer = IDYES;
     calculatorLoadOnConfirmation = true;
     AddCalculatorPreset(records[0].time, L"Pending duplicate");
-    Require(!calculatorLoadOnConfirmation && SameCalculatorState(calculatorForm.GetState(),
-        calculatorConfirmationState),
+    Require(!calculatorLoadOnConfirmation
+            && SameCalculatorState(calculatorForm.GetState(), calculatorConfirmationState),
         "settings import during confirmation updates only window settings");
     Require(SendMessageW(CalculatorControl(ID_CALC_HIGHLIGHT_BASE + 9), BM_GETCHECK, 0, 0) == BST_CHECKED
-        && SendMessageW(CalculatorControl(ID_CALC_HIGHLIGHT_BASE + 12), BM_GETCHECK, 0, 0) == BST_CHECKED
-        && SendMessageW(CalculatorControl(ID_CALC_HIGHLIGHT_BASE + 4), BM_GETCHECK, 0, 0) == BST_UNCHECKED,
+            && SendMessageW(CalculatorControl(ID_CALC_HIGHLIGHT_BASE + 12), BM_GETCHECK, 0, 0) == BST_CHECKED
+            && SendMessageW(CalculatorControl(ID_CALC_HIGHLIGHT_BASE + 4), BM_GETCHECK, 0, 0)
+                == BST_UNCHECKED,
         "imported highlight choices immediately replace the displayed checkbox states");
     Require(calculatorForm.GetPresets().size() == records.size()
-        && calculatorForm.GetPresets()[0].description == records[0].description,
+            && calculatorForm.GetPresets()[0].description == records[0].description,
         "settings import preserves the existing user collection");
     LoadCalculator(original);
     HWND list = CalculatorControl(ID_CALC_LIST);
@@ -2159,7 +2226,7 @@ static void TestCalculatorMerge() {
     for (size_t index = 0; index < original.size(); index++) {
         const TimeCalculatorPreset& retained = calculatorForm.GetPresets()[index];
         Require(CompareCalculatorDates(retained.time, original[index].time) == 0
-            && retained.description == original[index].description,
+                && retained.description == original[index].description,
             "every original record remains unchanged");
     }
     int writes = calculatorPresetWrites;
@@ -2181,7 +2248,7 @@ static void TestCalculatorMerge() {
     Require(ReadCalculatorPresets(CalculatorTestPresetsPath(false), &disk) && disk.size() == retainedCount,
         "failed import save also preserves the standalone file");
     Require(calculatorForm.MergePresets(std::vector<TimeCalculatorPreset>{})
-        && calculatorForm.GetPresets().size() == retainedCount,
+            && calculatorForm.GetPresets().size() == retainedCount,
         "settings-only import leaves all user data intact");
 }
 /// Checks that native calendar content fits without overlapping the adjacent fields or the footer.
@@ -2325,8 +2392,9 @@ static void TestCalculatorAppearance() {
     SYSTEMTIME limits[2] = {};
     DWORD flags = DateTime_GetRange(CalculatorControl(ID_CALC_FROM), limits);
     Require((flags & (GDTR_MIN | GDTR_MAX)) == (GDTR_MIN | GDTR_MAX)
-        && limits[0].wYear == 1601
-        && limits[1].wYear == 9999, "date picker exposes full supported range");
+            && limits[0].wYear == 1601
+            && limits[1].wYear == 9999,
+        "date picker exposes full supported range");
     calculatorPresented = true;
     SetWindowPos(original, nullptr, 0, 0, 0, 0,
         SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
@@ -2337,7 +2405,7 @@ static void TestCalculatorAppearance() {
     GetClientRect(original, &expanded);
     HDC background = GetDC(original);
     Require(background != nullptr
-        && GetPixel(background, expanded.right - 2, expanded.bottom - 2) != RGB(0, 0, 0),
+            && GetPixel(background, expanded.right - 2, expanded.bottom - 2) != RGB(0, 0, 0),
         "newly exposed calculator background is repainted without a black surface");
     if (background != nullptr) {
         ReleaseDC(original, background);
@@ -2393,8 +2461,9 @@ static void TestCalculatorAppearance() {
     windows2000Style = false;
     ShowCalculator();
     Require(calculatorForm.GetWindow() != nullptr
-        && calculatorForm.GetState().tab == 1
-        && calculatorForm.GetPresets().size() == presets, "style recreation preserves tab and saved values");
+            && calculatorForm.GetState().tab == 1
+            && calculatorForm.GetPresets().size() == presets,
+        "style recreation preserves tab and saved values");
     Require(SameCalculatorState(originalState, calculatorForm.GetState()),
         "style recreation preserves all input data");
     CheckCalculatorPickerStyle();
@@ -2424,14 +2493,15 @@ static void TestCalculatorAppearance() {
         SendMessageW(calculatorForm.GetWindow(), WM_VSCROLL, SB_BOTTOM, 0);
         SendMessageW(calculatorForm.GetWindow(), WM_HSCROLL, SB_BOTTOM, 0);
         Require(GetScrollPos(calculatorForm.GetWindow(), SB_HORZ) > 0
-            && GetScrollPos(calculatorForm.GetWindow(), SB_VERT) > 0, "both overflow axes were scrolled");
+                && GetScrollPos(calculatorForm.GetWindow(), SB_VERT) > 0,
+            "both overflow axes were scrolled");
         if (pass == 0) {
             calculatorForm.ApplyStyle(true);
         } else {
             RefreshCalculator();
         }
         Require(GetScrollPos(calculatorForm.GetWindow(), SB_HORZ) == 0
-            && GetScrollPos(calculatorForm.GetWindow(), SB_VERT) == 0,
+                && GetScrollPos(calculatorForm.GetWindow(), SB_VERT) == 0,
             "font and language reflow reset both native scroll positions");
         RECT restoredTabs = {};
         GetWindowRect(CalculatorControl(ID_CALC_TABS), &restoredTabs);

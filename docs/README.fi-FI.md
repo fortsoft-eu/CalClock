@@ -74,13 +74,13 @@ Ulkoasumuutokset näkyvät heti valitun pienoisohjelman esikatselussa. `Oletusul
 
 Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyliä. Yksinkertaisen reunuksen väriä voi muuttaa; leveys on säädettävissä sitä tukevissa pienoisohjelmissa. Läpinäkyvät digitaaliset kellot tarjoavat samat tyylit kuin peittävät. Sovelluksen ja kalenterin fonteista puuttuu kokovalinta, mutta digitaalisissa ja paneeliteksteissä se on mukana. Kalenterin mukautettuja fontteja voi käyttää Windowsin perinteisessä ulkoasussa tai kun pienoisohjelman teemat on poistettu käytöstä.
 
-Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa vain Asetukset-, Ohje- ja Tietoja-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
+Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
 
-Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja- ja
-Aikalaskin-ikkunoita. Kun järjestelmän oletusfontti on valittu, näiden ikkunoiden ohjausobjektit käyttävät
-Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa.
+Windows 2000 -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja-,
+Aikalaskin- ja Etsi-ikkunoita. Kun järjestelmän oletusfontti on valittu, näiden ikkunoiden ohjausobjektit
+käyttävät Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa.
 Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu
-tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa molemmat teemavalinnat näkyvät valitsemattomina
+tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa kaikki ulkoasuvalinnat näkyvät valitsemattomina
 ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
 
 Herätyksen **Äänenvoimakkuus**-liukusäädin säätää sisäisesti toistettavia tiedostoja pienoisohjelmakohtaisesti ja näyttää tason dB-yksiköissä. Oletus **−18 dB** säilyttää tiedoston alkuperäisen tason (**100%**). Oikealle siirtäminen vahvistaa ääntä; enimmäistaso **0 dB** vastaa noin **794%** alkuperäisestä amplitudista. Vasemmassa ääriasennossa **−∞ dB** tarkoittaa hiljaisuutta. Muutokset vaikuttavat äänitestin aikana. Vahvistus koskee purettua ääntä, kuten WAV-, MP3-, WMA-, AAC-, M4A- ja FLAC-tiedostoja Windowsin tukemissa muodoissa. Vanhempi toistotapa tiedostoille, joita ei voida purkaa, kuten MIDI, rajoittuu 100%:iin.
@@ -244,7 +244,7 @@ Haku tukee kirjainkoon huomioimista, kokonaisia sanoja, rivin alkuja ja loppuja,
 säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hakua.
 
 Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan.
-Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai OK-painikkeen jälkeen.
+Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai Tallenna-painikkeen painamisen jälkeen.
 
 Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows 2000. Molemmat
 otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän oletus noudattaa

@@ -74,13 +74,13 @@ Görünüm değişiklikleri seçili araçta hemen önizlenir. `Varsayılan gör�
 
 Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaşır. Tek çizgili kenarlığın rengi de ayarlanabilir; genişlik denetimi aracın desteklediği yerlerde kullanılabilir. Saydam dijital saatlerde opak saatlerle aynı stiller bulunur. Uygulama ve takvim yazı tiplerinde boyut yoktur; dijital saatlerde ve panel metinlerinde vardır. Özel takvim yazı tipleri, Windows klasik görünümünde veya araç için temalar kapatıldığında desteklenir.
 
-Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak yalnızca Ayarlar, Yardım, Hakkında ve Zaman hesaplayıcı pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
+Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak Ayarlar, Yardım, Hakkında, Zaman hesaplayıcı ve Bul pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
 
-Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında ve
-Zaman hesaplayıcı pencerelerine uygulanır. Sistemin varsayılan yazı tipi seçildiğinde bu pencerelerin
+Windows 2000 stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında,
+Zaman hesaplayıcı ve Bul pencerelerine uygulanır. Sistemin varsayılan yazı tipi seçildiğinde bu pencerelerin
 denetimleri Tahoma 8 pt kullanır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır.
 Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil
-kapatıldığında geri gelir. Windows klasik görünümünde her iki tema seçeneği işaretsiz ve gri görünür,
+kapatıldığında geri gelir. Windows klasik görünümünde tüm görünüm seçenekleri işaretsiz ve gri görünür,
 uygulanmaz; kayıtlı tercihler korunur.
 
 Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her araç için ayrı ayarlar ve düzeyi dB cinsinden gösterir. Varsayılan **−18 dB**, dosyanın özgün düzeyini (**100%**) korur. Sağa taşımak sesi yükseltir; en yüksek **0 dB**, özgün genliğin yaklaşık **794%** değeridir. En sol **−∞ dB** (sessizlik) konumudur. Değişiklikler ses testi sırasında etkilidir. Yükseltme, Windows desteklediğinde WAV, MP3, WMA, AAC, M4A ve FLAC dahil çözülmüş sese uygulanır. MIDI gibi çözülemeyen dosyaların eski çalma yöntemi 100% ile sınırlıdır.
@@ -242,7 +242,7 @@ Büyük/küçük harf duyarlılığı, tam sözcükler, satır başı ve sonu, g
 Geçmiş, geçerli oturumdaki son 30 aramayı tutar.
 
 Uygulama sekmesinde Alternatif bildirim simgesi, Retro bildirim simgesi seçeneğini etkinleştirir. Her iki
-seçenek de yalnızca bildirim simgesini Uygula veya Tamam sonrasında değiştirir.
+seçenek de yalnızca bildirim simgesini Uygula veya Kaydet sonrasında değiştirir.
 
 Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Classic başlıkları; Windows 2000. Her iki başlık
 modu da denetim temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak

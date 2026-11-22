@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.3.0
  */
 
 #define NOMINMAX
@@ -148,17 +148,17 @@ static void TestIntervals() {
     Require(interval.totals[HOURS] == 217 && interval.totals[DAYS] == 9 && interval.totals[WEEKS] == 1,
         "whole unit totals");
     Require(interval.parts[WEEKS][WEEKS] == 1
-        && interval.parts[WEEKS][DAYS] == 2
-        && interval.parts[WEEKS][HOURS] == 1
-        && interval.parts[WEEKS][MINUTES] == 2,
+            && interval.parts[WEEKS][DAYS] == 2
+            && interval.parts[WEEKS][HOURS] == 1
+            && interval.parts[WEEKS][MINUTES] == 2,
         "week, day, hour and minute components");
     Require(TimeCalculator::Calculate(Date(2025, 1, 10, 12), Date(2025, 2, 10, 11, 59), &interval),
         "anniversary minute calculated");
     Require(interval.totals[MONTHS] == 1
-        && interval.parts[MONTHS][MONTHS] == 0
-        && interval.parts[MONTHS][DAYS] == 30
-        && interval.parts[MONTHS][HOURS] == 23
-        && interval.parts[MONTHS][MINUTES] == 59,
+            && interval.parts[MONTHS][MONTHS] == 0
+            && interval.parts[MONTHS][DAYS] == 30
+            && interval.parts[MONTHS][HOURS] == 23
+            && interval.parts[MONTHS][MINUTES] == 59,
         "month total starts at midnight, decomposition at exact time");
     SYSTEMTIME first = Date(2026, 1, 1, 12, 34);
     first.wSecond = 59;
@@ -183,10 +183,11 @@ static void TestMonthBoundaries() {
     Require(TimeCalculator::Calculate(Date(2025, 1, 15, 12, 30), Date(2025, 3, 10, 13, 45), &interval),
         "month subtraction regression calculated");
     Require(interval.totals[MONTHS] == 1
-        && interval.parts[MONTHS][MONTHS] == 1
-        && interval.parts[MONTHS][DAYS] == 23
-        && interval.parts[MONTHS][HOURS] == 1
-        && interval.parts[MONTHS][MINUTES] == 15, "complete month is subtracted exactly once");
+            && interval.parts[MONTHS][MONTHS] == 1
+            && interval.parts[MONTHS][DAYS] == 23
+            && interval.parts[MONTHS][HOURS] == 1
+            && interval.parts[MONTHS][MINUTES] == 15,
+        "complete month is subtracted exactly once");
     Require(interval.parts[YEARS][MONTHS] == 1 && interval.parts[YEARS][DAYS] == 23,
         "month and year decompositions use the same residual interval");
     Require(TimeCalculator::Calculate(Date(2025, 1, 31), Date(2025, 3, 1), &interval),
@@ -200,21 +201,22 @@ static void TestMonthBoundaries() {
     Require(TimeCalculator::Calculate(Date(2024, 2, 29), Date(2025, 2, 28), &interval),
         "leap-day anniversary calculated");
     Require(interval.totals[YEARS] == 0
-        && interval.totals[MONTHS] == 11
-        && interval.parts[YEARS][MONTHS] == 11
-        && interval.parts[YEARS][DAYS] == 30,
+            && interval.totals[MONTHS] == 11
+            && interval.parts[YEARS][MONTHS] == 11
+            && interval.parts[YEARS][DAYS] == 30,
         "year and month totals preserve the original leap-day threshold");
     Require(TimeCalculator::Calculate(Date(2024, 2, 29), Date(2025, 3, 1), &interval),
         "first day after missing leap anniversary calculated");
     Require(interval.totals[YEARS] == 1
-        && interval.parts[YEARS][YEARS] == 1
-        && interval.parts[YEARS][DAYS] == 1, "year decomposition has a valid February anchor");
+            && interval.parts[YEARS][YEARS] == 1
+            && interval.parts[YEARS][DAYS] == 1,
+        "year decomposition has a valid February anchor");
     Require(TimeCalculator::Calculate(Date(1601, 1, 1), Date(9999, 12, 31, 23, 59), &interval),
         "full supported date range calculated without overflow");
     Require(interval.totals[YEARS] == 8398
-        && interval.parts[YEARS][YEARS] == 8398
-        && interval.parts[YEARS][MONTHS] == 11
-        && interval.parts[YEARS][DAYS] == 30,
+            && interval.parts[YEARS][YEARS] == 8398
+            && interval.parts[YEARS][MONTHS] == 11
+            && interval.parts[YEARS][DAYS] == 30,
         "full-range month and year counts");
 }
 
@@ -231,16 +233,17 @@ static void TestMilestones() {
     Require(TimeCalculator::CalculateDay(start, Date(2026, 1, 2), &result, originalRules),
         "following day selected");
     Require(result.totals[HOURS] == 11
-        && result.totals[DAYS] == 1
-        && result.hasHourTime
-        && result.hourTime.wHour == 0
-        && result.hourTime.wMinute == 37,
+            && result.totals[DAYS] == 1
+            && result.hasHourTime
+            && result.hourTime.wHour == 0
+            && result.hourTime.wMinute == 37,
         "repeated-digit hour is reached at the actual starting minute, not midnight");
     TimeCalculatorDay later = {};
     Require(TimeCalculator::CalculateDay(start, Date(2026, 1, 2, 23, 59), &later, originalRules),
         "selected-day time ignored");
     Require(later.totals[HOURS] == result.totals[HOURS]
-        && later.hourTime.wMinute == result.hourTime.wMinute, "day result does not depend on picker time");
+            && later.hourTime.wMinute == result.hourTime.wMinute,
+        "day result does not depend on picker time");
     SYSTEMTIME origin = Date(2001, 1, 1);
     Require(TimeCalculator::IsHighlightedDay(origin, origin, originalRules),
         "starting date highlighted");
@@ -259,7 +262,8 @@ static void TestMilestones() {
     Require(TimeCalculator::IsHighlightedDay(origin, AddDays(origin, 140), originalRules),
         "round week 20 highlighted");
     Require(TimeCalculator::CalculateDay(Date(2025, 1, 31), Date(2025, 2, 28), &result, originalRules)
-        && result.totals[MONTHS] == 0, "short-month last day has not crossed original monthly threshold");
+            && result.totals[MONTHS] == 0,
+        "short-month last day has not crossed original monthly threshold");
     Require(TimeCalculator::IsHighlightedDay(Date(2025, 1, 31), Date(2025, 3, 1), originalRules),
         "calendar-month threshold after short month highlighted");
     Require(TimeCalculator::CalculateDay(Date(1601, 1, 1), Date(9999, 12, 31), &result, originalRules),
@@ -327,8 +331,8 @@ static void TestHighlightOptions() {
     Require(TimeCalculator::CalculateDay(origin, AddDays(origin, 1), &result, 0) && !result.hasHourTime,
         "disabled hourly milestones leave the midnight total");
     Require(TimeCalculator::CalculateDay(origin, AddDays(origin, 1), &result, CALCULATOR_HIGHLIGHT_ROUND)
-        && result.hasHourTime
-        && result.totals[HOURS] == 30,
+            && result.hasHourTime
+            && result.totals[HOURS] == 30,
         "selected rules determine the shown hourly milestone");
 }
 
@@ -348,8 +352,8 @@ static void TestCalendarMatrix() {
                     "calendar matrix interval calculated");
                 ULONGLONG minutes = static_cast<ULONGLONG>(span) * 1440 + 222;
                 Require(result.totals[HOURS] == minutes / 60
-                    && result.totals[DAYS] == span
-                    && result.totals[WEEKS] == span / 7,
+                        && result.totals[DAYS] == span
+                        && result.totals[WEEKS] == span / 7,
                     "Gregorian date differences match independent calendar");
                 for (int row : { HOURS, DAYS, WEEKS }) {
                     ULONGLONG reconstructed = result.parts[row][WEEKS] * 10080
@@ -406,13 +410,15 @@ static void TestTimeZones() {
     SYSTEMTIME last = TestUtc(prague, Date(2026, 3, 29, 12));
     Require(TimeCalculator::CalculateUtc(first, last, prague, &result), "spring interval resolves");
     Require(result.totals[HOURS] == 23
-        && result.totals[DAYS] == 1
-        && result.parts[HOURS][HOURS] == 23, "spring day is 23 elapsed hours and one calendar day");
+            && result.totals[DAYS] == 1
+            && result.parts[HOURS][HOURS] == 23,
+        "spring day is 23 elapsed hours and one calendar day");
     first = TestUtc(prague, Date(2026, 10, 25, 2, 30), 0);
     last = TestUtc(prague, Date(2026, 10, 25, 2, 30), 1);
     Require(TimeCalculator::CalculateUtc(first, last, prague, &result)
-        && result.totals[HOURS] == 1
-        && result.totals[DAYS] == 0, "identical wall-clock readings in a fold are distinct UTC instants");
+            && result.totals[HOURS] == 1
+            && result.totals[DAYS] == 0,
+        "identical wall-clock readings in a fold are distinct UTC instants");
     Require(!TimeCalculator::CalculateUtc(last, first, prague, &result), "reverse UTC interval rejected");
     ULONGLONG candidates[2] = {};
     unsigned int count = 0;
@@ -421,34 +427,40 @@ static void TestTimeZones() {
     first = TestUtc(howe, Date(2026, 4, 5, 1, 45), 0);
     last = TestUtc(howe, Date(2026, 4, 5, 1, 45), 1);
     Require(TimeCalculator::CalculateUtc(first, last, howe, &result)
-        && result.parts[HOURS][HOURS] == 0
-        && result.parts[HOURS][MINUTES] == 30, "half-hour fold measures thirty real minutes");
+            && result.parts[HOURS][HOURS] == 0
+            && result.parts[HOURS][MINUTES] == 30,
+        "half-hour fold measures thirty real minutes");
     first = TestUtc(howe, Date(2026, 10, 3, 12));
     last = TestUtc(howe, Date(2026, 10, 4, 12));
     Require(TimeCalculator::CalculateUtc(first, last, howe, &result)
-        && result.parts[HOURS][HOURS] == 23
-        && result.parts[HOURS][MINUTES] == 30, "half-hour spring transition is reflected in elapsed time");
+            && result.parts[HOURS][HOURS] == 23
+            && result.parts[HOURS][MINUTES] == 30,
+        "half-hour spring transition is reflected in elapsed time");
     first = TestUtc(nepal, Date(2026, 1, 2, 0, 15));
     Require(first.wDay == 1
-        && first.wHour == 18
-        && first.wMinute == 30, "quarter-hour fixed offset crosses the UTC date correctly");
+            && first.wHour == 18
+            && first.wMinute == 30,
+        "quarter-hour fixed offset crosses the UTC date correctly");
     SYSTEMTIME local = {};
     Require(ConvertUtcToTimeZone(prague, first, &local), "display in another zone succeeds");
     SYSTEMTIME sameInstant = TestUtc(prague, local);
     Require(sameInstant.wDay == first.wDay
-        && sameInstant.wHour == first.wHour
-        && sameInstant.wMinute == first.wMinute, "changing display zone preserves the UTC instant");
+            && sameInstant.wHour == first.wHour
+            && sameInstant.wMinute == first.wMinute,
+        "changing display zone preserves the UTC instant");
     first = TestUtc(prague, Date(2026, 10, 24, 16, 30));
     TimeCalculatorDay day = {};
     Require(TimeCalculator::CalculateDayUtc(first, Date(2026, 10, 25), prague, &day)
-        && day.hasHourTime
-        && day.totals[HOURS] == 10
-        && day.hourTime.wHour == 0
-        && day.hourTime.wMinute == 30, "milestone retains the specific UTC occurrence of a repeated hour");
+            && day.hasHourTime
+            && day.totals[HOURS] == 10
+            && day.hourTime.wHour == 0
+            && day.hourTime.wMinute == 30,
+        "milestone retains the specific UTC occurrence of a repeated hour");
     first = TestUtc(prague, Date(2026, 2, 28, 2, 30));
     last = TestUtc(prague, Date(2026, 3, 29, 3, 30));
     Require(TimeCalculator::CalculateUtc(first, last, prague, &result)
-        && result.parts[MONTHS][MONTHS] == 1, "calendar months remain defined across a DST gap");
+            && result.parts[MONTHS][MONTHS] == 1,
+        "calendar months remain defined across a DST gap");
 }
 
 /// Converts valid calendar fields into independent standard-library minute arithmetic.
@@ -529,8 +541,9 @@ static void VerifyReferenceInterval(const SYSTEMTIME& first, const SYSTEMTIME& l
         Require(result.parts[row][row] == static_cast<ULONGLONG>(minutes) / scales[row],
             "leading fixed-unit count is exact");
         Require(result.parts[row][MINUTES] < 60
-            && result.parts[row][MONTHS] == 0
-            && result.parts[row][YEARS] == 0, "fixed-unit component ranges and unused fields");
+                && result.parts[row][MONTHS] == 0
+                && result.parts[row][YEARS] == 0,
+            "fixed-unit component ranges and unused fields");
         if (row != HOURS) {
             Require(result.parts[row][HOURS] < 24, "subordinate hour component is below one day");
         }
@@ -542,13 +555,14 @@ static void VerifyReferenceInterval(const SYSTEMTIME& first, const SYSTEMTIME& l
     ReferenceTime anchor = ReferenceAnchor(first, months);
     ULONGLONG remaining = static_cast<ULONGLONG>((ReferenceMinute(last) - anchor).count());
     Require(result.parts[MONTHS][MONTHS] == months
-        && result.parts[YEARS][YEARS] == months / 12
-        && result.parts[YEARS][MONTHS] == months % 12, "calendar decomposition month/year count");
+            && result.parts[YEARS][YEARS] == months / 12
+            && result.parts[YEARS][MONTHS] == months % 12,
+        "calendar decomposition month/year count");
     for (int row : { MONTHS, YEARS }) {
         Require(result.parts[row][DAYS] == remaining / 1440
-            && result.parts[row][HOURS] == remaining % 1440 / 60
-            && result.parts[row][MINUTES] == remaining % 6
-            && result.parts[row][WEEKS] == 0,
+                && result.parts[row][HOURS] == remaining % 1440 / 60
+                && result.parts[row][MINUTES] == remaining % 6
+                && result.parts[row][WEEKS] == 0,
             "calendar decomposition reconstructs its independent anniversary anchor");
     }
 }
@@ -632,7 +646,7 @@ static void TestIndependentIntervals() {
                         if (span > 0) {
                             TimeCalculatorInterval previous = result;
                             Require(!TimeCalculator::Calculate(last, first, &result)
-                                && std::memcmp(&result, &previous, sizeof(result)) == 0,
+                                    && std::memcmp(&result, &previous, sizeof(result)) == 0,
                                 "reversed independent interval leaves every output component unchanged");
                         }
                     }
@@ -673,7 +687,7 @@ static void TestIndependentFixedZones() {
                 if (span > 0) {
                     TimeCalculatorInterval previous = result;
                     Require(!TimeCalculator::CalculateUtc(last, first, zone, &result)
-                        && std::memcmp(&result, &previous, sizeof(result)) == 0,
+                            && std::memcmp(&result, &previous, sizeof(result)) == 0,
                         "reversed UTC interval preserves every output component");
                 }
             }
@@ -716,14 +730,14 @@ static void TestTransitionMinuteIntervals() {
                     "DST-minute interval accepted");
                 LONGLONG dayCount = (CalendarDay(localLast) - CalendarDay(localFirst)).count();
                 Require(result.totals[HOURS] == span / 60
-                    && result.totals[DAYS] == static_cast<ULONGLONG>(dayCount),
+                        && result.totals[DAYS] == static_cast<ULONGLONG>(dayCount),
                     "DST-minute totals retain elapsed hours and local calendar-day boundaries");
                 for (int row = HOURS; row <= YEARS; row++) {
                     ULONGLONG rebuilt = result.parts[row][WEEKS] * 10080 + result.parts[row][DAYS] * 1440
                         + result.parts[row][HOURS] * 60 + result.parts[row][MINUTES];
                     Require(rebuilt == span
-                        && result.parts[row][MONTHS] == 0
-                        && result.parts[row][YEARS] == 0,
+                            && result.parts[row][MONTHS] == 0
+                            && result.parts[row][YEARS] == 0,
                         "DST-minute decompositions never lose or duplicate repeated/skipped time");
                 }
             }
@@ -795,12 +809,12 @@ static void TestUtcMonthAnchors() {
             Require(result.parts[MONTHS][MONTHS] == expectedMonths,
                 "month completion uses the resolved UTC anniversary rather than repeated local-clock order");
             Require(result.parts[YEARS][YEARS] == expectedMonths / 12
-                && result.parts[YEARS][MONTHS] == expectedMonths % 12,
+                    && result.parts[YEARS][MONTHS] == expectedMonths % 12,
                 "year decomposition uses the same UTC anchor");
             for (int row : { MONTHS, YEARS }) {
                 Require(result.parts[row][DAYS] == remaining / 1440
-                    && result.parts[row][HOURS] == remaining % 1440 / 60
-                    && result.parts[row][MINUTES] == remaining % 60,
+                        && result.parts[row][HOURS] == remaining % 1440 / 60
+                        && result.parts[row][MINUTES] == remaining % 60,
                     "month/year residual follows the actual earliest existing UTC anniversary minute");
             }
         }
@@ -867,16 +881,17 @@ static void TestCatalogTransitionIntervals() {
                     LONGLONG dayCount = (CalendarDay(lastLocal) - CalendarDay(firstLocal)).count();
                     ULONGLONG days = static_cast<ULONGLONG>(std::max(0LL, dayCount));
                     Require(result.totals[HOURS] == span / 60
-                        && result.totals[DAYS] == days
-                        && result.totals[WEEKS] == days / 7
-                        && result.totals[MONTHS] == 0
-                        && result.totals[YEARS] == 0, "catalog interval totals match native local dates");
+                            && result.totals[DAYS] == days
+                            && result.totals[WEEKS] == days / 7
+                            && result.totals[MONTHS] == 0
+                            && result.totals[YEARS] == 0,
+                        "catalog interval totals match native local dates");
                     for (int row = HOURS; row <= YEARS; row++) {
                         ULONGLONG rebuilt = result.parts[row][WEEKS] * 10080 + result.parts[row][DAYS] * 1440
                             + result.parts[row][HOURS] * 60 + result.parts[row][MINUTES];
                         Require(rebuilt == span
-                            && result.parts[row][MONTHS] == 0
-                            && result.parts[row][YEARS] == 0,
+                                && result.parts[row][MONTHS] == 0
+                                && result.parts[row][YEARS] == 0,
                             "catalog transition decompositions reconstruct the original UTC interval");
                     }
                 }

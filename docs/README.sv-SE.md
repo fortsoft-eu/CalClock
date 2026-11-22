@@ -74,13 +74,13 @@ Utseendeändringar förhandsvisas direkt på den valda widgeten. `Standardutseen
 
 Digitala klockor, kalendrar och kombinerade paneler delar fyra ramstilar. Enkelramen har justerbar färg; rambredden kan ändras där widgeten stöder det. Genomskinliga digitala klockor har samma stilval som ogenomskinliga. Program- och kalenderteckensnitt saknar storleksval, medan digitala klockor och paneltexter har det. Egna kalenderteckensnitt stöds med Windows klassiska utseende eller när teman är avstängda för widgeten.
 
-Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller bara Inställningar, Hjälp, Om och Tidskalkylator. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
+Programspråk, gränssnittsteckensnitt, utjämning, lagring, Windows-start och kantfästning är globala och ställs in på Program. Avstängning av teman på Program gäller Inställningar, Hjälp, Om, Tidskalkylator och Sök. Varje widget använder sin egen temainställning. Tidskällan är också global. Widgetspråk, utjämning, format, tidszon, förskjutning, alarm och tidssignal ställs in separat. Utjämningen erbjuder **ClearType**, **GDI** och **Ingen**.
 
-Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om och Tidskalkylator. Med
-systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat
+Windows 2000-stil kräver Inaktivera teman och gäller endast Inställningar, Hjälp, Om, Tidskalkylator och Sök.
+Med systemets standardteckensnitt använder kontrollerna i dessa fönster Tahoma 8 pt; ett anpassat
 programteckensnitt har företräde. Licensen behåller teckensnittet med fast teckenbredd. I detta läge är endast
 GDI och Ingen tillgängliga för teckensnittsutjämning: ett sparat val av ClearType använder tillfälligt GDI och
-återställs när läget stängs av. Om visuella format är avstängda i Windows visas båda stilalternativen som
+återställs när läget stängs av. Om visuella format är avstängda i Windows visas alla utseendealternativ som
 avmarkerade och inaktiverade utan att de sparade valen ändras.
 
 Reglaget **Ljudvolym** på Alarm styr internt uppspelade ljudfiler separat per widget och visar nivån i dB. Standardvärdet **−18 dB** bevarar filens ursprungliga nivå (**100%**). Åt höger förstärks ljudet; maximum **0 dB** motsvarar cirka **794%** av ursprunglig amplitud. Längst till vänster är **−∞ dB** (tystnad). Ändringar gäller under ljudtestet. Reglaget är avstängt för filer som öppnas i externa program. Förstärkning gäller avkodat ljud, inklusive WAV, MP3, WMA, AAC, M4A och FLAC när Windows stöder dem. Äldre uppspelning av filer som inte kan avkodas, exempelvis MIDI, är begränsad till 100%.
@@ -251,7 +251,7 @@ stöder skiftlägeskänslighet, hela ord, radbörjan och radslut, bakåtsökning
 behåller de senaste 30 sökningarna under den aktuella sessionen.
 
 På fliken Program aktiverar Alternativ meddelandeikon alternativet Retroikon i meddelandefältet. Båda
-alternativen ändrar endast meddelandeikonen efter Verkställ eller OK.
+alternativen ändrar endast meddelandeikonen efter Verkställ eller Spara.
 
 Fönsterutseende: Systemstandard; Windows Basic-namnlister; Windows Classic-namnlister; Windows 2000. Båda
 titelradsalternativen fungerar med eller utan teman för kontrollerna. Systemstandard följer Inaktivera teman

@@ -65,12 +65,12 @@ Instellingen kunnen naar XML worden geëxporteerd. Importeren laadt en bewaart d
 
 Lettertypevereffening biedt ClearType, GDI en Geen. Voorloopnul biedt “Ja” (standaard), “Nee, ruimte behouden” en “Nee, zonder ruimte”. “Nee, ruimte behouden” verbergt de nul maar reserveert de breedte in het gekozen lettertype; andere cijfers behouden hun positie, ook bij proportionele lettertypen. Schermklokken blijven gecentreerd inclusief die ruimte. De UTC-rij heeft een eigen centrering.
 
-Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info en
-Tijdcalculator. Met het standaardlettertype van het systeem gebruiken de besturingselementen van deze vensters
+Windows 2000-stijl vereist Thema’s uitschakelen en geldt alleen voor Instellingen, Help, Info, Tijdcalculator
+en Zoeken. Met het standaardlettertype van het systeem gebruiken de besturingselementen van deze vensters
 Tahoma 8 pt; een eigen toepassingslettertype heeft voorrang. De licentie behoudt het lettertype met vaste
 tekenbreedte. In deze modus zijn alleen GDI en Geen beschikbaar voor lettertypevereffening: een opgeslagen
 ClearType-keuze gebruikt tijdelijk GDI en keert terug bij het uitschakelen van de modus. Als Windows zelf geen
-visuele stijlen gebruikt, worden beide stijlopties ongemarkeerd en uitgeschakeld weergegeven zonder de
+visuele stijlen gebruikt, worden alle weergaveopties ongemarkeerd en uitgeschakeld weergegeven zonder de
 opgeslagen keuzes te veranderen.
 
 ## Tijdcalculator
@@ -111,7 +111,7 @@ ze samen met bestaande gegevens.
 
 ## Instellingen en menu’s
 
-Taal, lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene instellingen op Toepassing. Thema’s uitschakelen op Toepassing geldt alleen voor Instellingen, Help, Info en Tijdcalculator. Elke widget gebruikt zijn eigen thema-instelling. Bij de eerste start wordt de Windows-weergavetaal gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en thema’s gelden alleen voor die widget.
+Taal, lettertype, vereffening, opslag, starten met Windows en uitlijnen op randen zijn algemene instellingen op Toepassing. Thema’s uitschakelen op het tabblad Toepassing geldt voor Instellingen, Help, Info, Tijdcalculator en Zoeken. Elke widget gebruikt zijn eigen thema-instelling. Bij de eerste start wordt de Windows-weergavetaal gekozen, of Amerikaans Engels als deze niet ondersteund wordt. Widgettaal, vereffening en thema’s gelden alleen voor die widget.
 
 Een widgetmenu bevat toepasselijke keuzes voor zichtbaarheid, Altijd op voorgrond, seconden, grootte en
 datumkopie, gevolgd door Schikken in raster, Tijdcalculator, Instellingen, Help, Info en Afsluiten. Het
@@ -204,7 +204,7 @@ Shift+F3 de vorige. Zoeken ondersteunt hoofdlettergevoeligheid, hele woorden, re
 zoeken en reguliere expressies. De geschiedenis bewaart de laatste 30 zoekopdrachten van de huidige sessie.
 
 Op het tabblad Toepassing schakelt Alternatief meldingspictogram de optie Retro-pictogram in het systeemvak
-in. Beide wijzigen alleen het meldingspictogram na Toepassen of OK.
+in. Beide wijzigen alleen het meldingspictogram na Toepassen of Opslaan.
 
 Vensterweergave: Systeemstandaard; Windows Basic-titelbalken; Windows Classic-titelbalken; Windows 2000. Beide
 titelbalkmodi werken met of zonder thema's voor besturingselementen. Systeemstandaard volgt Thema's

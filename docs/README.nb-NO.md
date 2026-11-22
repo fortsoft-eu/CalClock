@@ -74,13 +74,14 @@ Utseendeendringer forhåndsvises straks på den valgte widgeten. `Standardutseen
 
 Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den enkle rammen har justerbar farge; rammebredde kan endres der widgeten støtter det. Gjennomsiktige digitale klokker tilbyr de samme stilene som ugjennomsiktige. Program- og kalenderskrifter utelater størrelse, mens digitale klokker og paneltekster inkluderer den. En frittstående Kalender støtter ikke alarm, tidssignal eller demping.
 
-Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
+Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder Innstillinger, Hjelp, Om, Tidskalkulator og Finn. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
 
-Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om og Tidskalkulator.
+Windows 2000-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator og Finn.
 Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er valgt; en egendefinert
 programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan
 velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk
-Windows-utseende vises begge temavalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene beholdes.
+Windows-utseende vises alle utseendevalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene
+beholdes.
 
 **Lydvolum** på Alarm styrer internt avspilte lydfiler separat for hver widget og viser nivået i dB. Standardverdien **−18 dB** bevarer filens opprinnelige nivå (**100%**). Mot høyre forsterkes lyden; maksimum **0 dB** er omtrent **794%** av opprinnelig amplitude. Helt til venstre er **−∞ dB** (stillhet). Endringer virker under lydtesten. Forsterkning gjelder dekodet lyd, inkludert WAV, MP3, WMA, AAC, M4A og FLAC når Windows støtter dem. Eldre avspilling av filer som ikke kan dekodes, for eksempel MIDI, er begrenset til 100%.
 
@@ -240,7 +241,7 @@ store og små bokstaver, hele ord, linjestart og linjeslutt, søk bakover og reg
 beholder de siste 30 søkene i gjeldende økt.
 
 På fanen Program aktiverer Alternativt varslingsikon valget Retroikon i systemstatusfeltet. Begge valgene
-endrer bare varslingsikonet etter Bruk eller OK.
+endrer bare varslingsikonet etter Bruk eller Lagre.
 
 Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; Windows 2000. Begge
 tittellinjemodusene virker med eller uten temaer på kontrollene. Systemstandard følger Deaktiver temaer for

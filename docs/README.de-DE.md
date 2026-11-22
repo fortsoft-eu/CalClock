@@ -74,15 +74,15 @@ Darstellungsänderungen erscheinen sofort in der Vorschau des ausgewählten Widg
 
 Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfache Rahmen bietet eine einstellbare Farbe; die Rahmenbreite lässt sich dort ändern, wo das Widget dies unterstützt. Transparente Digitaluhren bieten dieselben Stile wie undurchsichtige. Für Anwendungs- und Kalenderschrift gibt es keine Größenwahl, für Digitaluhren und Paneltexte dagegen schon. Eigene Kalenderschriftarten werden beim klassischen Windows-Erscheinungsbild oder bei deaktivierten Designs für das Widget unterstützt.
 
-Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft nur die Fenster Einstellungen, Hilfe, Info und Zeitrechner. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
+Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft die Fenster Einstellungen, Hilfe, Info, Zeitrechner und Suchen. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
 
-Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info und
-Zeitrechner. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
+Windows-2000-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info, Zeitrechner
+und Suchen. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
 Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur
 GDI und Keine für die Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet
 vorübergehend GDI und wird beim Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows selbst
-deaktiviert, erscheinen beide Stiloptionen ausgeschaltet und nicht verfügbar; die gespeicherten Einstellungen
-bleiben erhalten.
+deaktiviert, erscheinen alle Darstellungsoptionen ausgeschaltet und nicht verfügbar; die gespeicherten
+Einstellungen bleiben erhalten.
 
 Der Regler **Audiolautstärke** auf Wecker steuert intern abgespielte Audiodateien für jedes Widget getrennt und zeigt den Pegel in dB. Der Standard **−18 dB** erhält den ursprünglichen Dateipegel (**100%**). Nach rechts wird verstärkt; das Maximum **0 dB** entspricht ungefähr **794%** der ursprünglichen Amplitude. Ganz links liegt **−∞ dB** (Stille). Änderungen wirken auch während des Audiotests. Die Verstärkung gilt für dekodiertes Audio einschließlich WAV, MP3, WMA, AAC, M4A und FLAC, sofern Windows diese unterstützt. Die ältere Wiedergabe nicht dekodierbarer Dateien, etwa MIDI, ist auf 100% begrenzt.
 
@@ -259,7 +259,8 @@ vorherigen. Unterstützt werden Groß-/Kleinschreibung, ganze Wörter, Zeilenanf
 reguläre Ausdrücke. Der Verlauf speichert die letzten 30 Suchvorgänge der laufenden Sitzung.
 
 Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbol die Option Retro-Symbol im
-Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder OK wirksam.
+Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder Speichern
+wirksam.
 
 Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows 2000.
 Beide Titelleistenmodi funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt

@@ -59,11 +59,11 @@ Is féidir socruithe a easpórtáil mar XML. Lódálann agus sábhálann iompór
 Tugann Frithailiasáil cló ClearType, GDI agus Gan frithailiasáil. Tugann Nialas tosaigh “Tá” (réamhshocrú), “Níl, coinnigh an spás” agus “Níl, gan spás”. Folaíonn “Níl, coinnigh an spás” an nialas ach coimeádann sé a leithead sa chló roghnaithe; fanann digití eile ina n-áit le clónna comhréireacha freisin. Fanann cloig scáileáin lárnaithe agus an spás sin san áireamh. Tá lárnú ar leith ag sraith UTC.
 
 Éilíonn Stíl Windows 2000 an rogha Díchumasaigh téamaí agus ní bhaineann sí ach leis na fuinneoga Socruithe,
-Cabhair, Maidir leis agus Áireamhán ama. Úsáideann rialtáin na bhfuinneog seo Tahoma 8 pt nuair a roghnaítear
-cló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann Consolas don
-cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha shábháilte
-ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar an dá rogha
-téama gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
+Cabhair, Maidir leis, Áireamhán ama agus Aimsigh. Úsáideann rialtáin na bhfuinneog seo Tahoma 8 pt nuair a
+roghnaítear cló réamhshocraithe an chórais; bíonn tosaíocht ag cló saincheaptha an fheidhmchláir agus fanann
+Consolas don cheadúnas. Ní féidir ach GDI nó Gan frithailiasáil a roghnú. Úsáidtear GDI go sealadach do rogha
+shábháilte ClearType; filleann an rogha nuair a mhúchtar an stíl. Le cuma chlasaiceach Windows, taispeántar na
+roghanna cuma gan tic agus liath agus ní chuirtear i bhfeidhm iad; coinnítear na roghanna sábháilte.
 
 ## Áireamhán ama
 
@@ -104,7 +104,7 @@ cumascann sí iad leis na hiontrálacha atá ann.
 
 ## Socruithe agus roghchláir
 
-Is socruithe comhroinnte ar an gcluaisín Feidhmchlár iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Ní bhaineann díchumasú téamaí ar an gcluaisín Feidhmchlár ach leis na fuinneoga Socruithe, Cabhair, Maidir leis agus Áireamhán ama. Úsáideann gach giuirléid a socrú téama féin. Ar an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin.
+Is socruithe comhroinnte ar an gcluaisín Feidhmchlár iad an teanga, cló, frithailiasáil, stóras, tosú le Windows agus léim chuig imill. Baineann díchumasú téamaí ar an gcluaisín Feidhmchlár leis na fuinneoga Socruithe, Cabhair, Maidir leis, Áireamhán ama agus Aimsigh. Úsáideann gach giuirléid a socrú téama féin. Ar an gcéad tosú, roghnaítear teanga chomhéadan Windows nó Béarla SAM mura dtacaítear léi. Ní bhaineann teanga, frithailiasáil agus téamaí giuirléide ach léi féin.
 
 Taispeánann roghchlár giuirléide na roghanna infheictheachta, Ar barr i gcónaí, soicindí, méid agus cóipeáil
 dáta a bhaineann léi, agus ansin Eagraigh in eangach, Áireamhán ama, Socruithe, Cabhair, Maidir leis agus
@@ -190,7 +190,7 @@ mheaitseáil eile agus Shift+F3 an ceann roimhe. Tacaítear le cásíogaireacht,
 línte, cuardach siar agus sloinn rialta. Coinníonn an stair na 30 cuardach is déanaí sa seisiún reatha.
 
 Ar an gcluaisín Feidhmchlár, cumasaíonn Deilbhín fógra eile an rogha Deilbhín fógra i stíl retró. Ní athraíonn
-na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó OK.
+na roghanna ach an deilbhín fógra tar éis Cuir i bhfeidhm nó Sábháil.
 
 Cuma na bhfuinneog: Réamhshocrú córais; Teidil Windows Basic; Teidil Windows Classic; Windows 2000. Oibríonn
 an dá mhodh barra teidil le téamaí rialtán nó gan iad. Leanann réamhshocrú an chórais an rogha téamaí a

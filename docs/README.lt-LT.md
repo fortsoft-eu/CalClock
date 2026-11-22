@@ -58,12 +58,12 @@ Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parame
 
 Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
-Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas, Apie ir
-Laiko skaičiuotuvas. Pasirinkus numatytąjį sistemos šriftą, šių langų valdikliai naudoja Tahoma 8 pt;
+Windows 2000 stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas, Apie,
+Laiko skaičiuotuvas ir Rasti. Pasirinkus numatytąjį sistemos šriftą, šių langų valdikliai naudoja Tahoma 8 pt;
 pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik GDI
 arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių. Naudojant
-klasikinę Windows išvaizdą abi temų parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos; įrašyti
-pasirinkimai išlieka.
+klasikinę Windows išvaizdą visos išvaizdos parinktys rodomos nepažymėtos ir neaktyvios, jos netaikomos;
+įrašyti pasirinkimai išlieka.
 
 ## Laiko skaičiuotuvas
 
@@ -102,7 +102,7 @@ net iš parametrų eksporto paima tik datas ir laikus bei sujungia juos su esama
 
 ## Parametrai ir meniu
 
-Programos kalba, šriftas, glodinimas, saugykla, paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų išjungimas skirtuke Programa taikomas tik langams Parametrai, Žinynas, Apie ir Laiko skaičiuotuvas. Kiekvienas valdiklis naudoja savo temų nuostatą. Pirmą kartą parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, glodinimas ir temos taikomi tik jam.
+Programos kalba, šriftas, glodinimas, saugykla, paleidimas su „Windows“ ir prikabinimas yra bendri skirtuko Programa parametrai. Temų išjungimas kortelėje Programa taikomas langams Parametrai, Žinynas, Apie, Laiko skaičiuotuvas ir Rasti. Kiekvienas valdiklis naudoja savo temų nuostatą. Pirmą kartą parenkama „Windows“ sąsajos kalba arba JAV anglų kalba, jei ji nepalaikoma. Valdiklio kalba, glodinimas ir temos taikomi tik jam.
 
 Valdiklio meniu turi jam tinkamus matomumo, Visada viršuje, sekundžių, dydžio ir datos kopijavimo
 pasirinkimus, po jų – Išdėstyti tinkleliu, Laiko skaičiuotuvas, Parametrai, Žinynas, Apie ir Išeiti.
@@ -187,7 +187,7 @@ Palaikomas raidžių dydžio skyrimas, ištisi žodžiai, eilučių pradžios ir
 reiškiniai. Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.
 
 Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma.
-Abi parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Gerai.
+Abi parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Įrašyti.
 
 Langų išvaizda: Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows 2000. Abu antraštės
 režimai veikia su įjungtomis arba išjungtomis valdiklių temomis. Sistemos numatytasis režimas taiko temų

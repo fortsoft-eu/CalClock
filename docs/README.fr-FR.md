@@ -74,14 +74,14 @@ Les modifications d’apparence sont immédiatement prévisualisées sur le widg
 
 Horloges numériques, calendriers et panneaux combinés partagent quatre styles de bordure. Le style simple possède une couleur configurable ; la largeur est réglable lorsque le widget la prend en charge. Les horloges numériques transparentes proposent les mêmes styles que les opaques. Les polices de calendrier personnalisées sont prises en charge avec l’apparence classique de Windows ou lorsque les thèmes sont désactivés pour le widget.
 
-La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans Application concerne uniquement Paramètres, Aide, À propos et Calculateur de temps. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
+La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans l’onglet Application concerne les fenêtres Paramètres, Aide, À propos, Calculateur de temps et Rechercher. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
-Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos et
-Calculateur de temps. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ; une police
-d’application personnalisée reste prioritaire. La licence conserve sa police à chasse fixe. Seuls GDI et Aucun
-sont proposés pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement GDI et
-revient à la désactivation du mode. Si les styles visuels sont désactivés dans Windows, les deux options de
-style apparaissent décochées et désactivées sans modifier les choix enregistrés.
+Style Windows 2000 nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos,
+Calculateur de temps et Rechercher. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ;
+une police d’application personnalisée reste prioritaire. La licence conserve sa police à chasse fixe. Seuls
+GDI et Aucun sont proposés pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement
+GDI et revient à la désactivation du mode. Si les styles visuels sont désactivés dans Windows, les options
+d’apparence apparaissent décochées et désactivées sans modifier les choix enregistrés.
 
 Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en interne séparément pour chaque widget et indique le niveau en dB. La valeur par défaut **−18 dB** conserve le niveau d’origine du fichier (**100%**). Vers la droite, le son est amplifié ; le maximum **0 dB** correspond à environ **794%** de l’amplitude initiale. Tout à gauche, **−∞ dB** signifie silence. Les modifications s’appliquent pendant le test audio. L’amplification concerne l’audio décodé, dont WAV, MP3, WMA, AAC, M4A et FLAC si Windows les prend en charge. L’ancienne lecture de fichiers non décodables, comme MIDI, est limitée à 100%.
 
@@ -259,7 +259,7 @@ ligne, le sens inverse et les expressions régulières. L’historique conserve 
 session.
 
 Dans l’onglet Application, Autre icône de notification active Icône de notification rétro. Ces options
-modifient uniquement l’icône de notification après Appliquer ou OK.
+modifient uniquement l’icône de notification après Appliquer ou Enregistrer.
 
 Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Classic; Windows 2000.
 Les deux modes de barre de titre fonctionnent avec ou sans thèmes dans la fenêtre. Système suit Désactiver les
