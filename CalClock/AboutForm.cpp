@@ -29,6 +29,7 @@
 #include "AboutForm.h"
 #include "CalClock.h"
 #include "DialogFrame.h"
+#include "ProgramIcons.h"
 #include "resource.h"
 #include "SelectionEdit.h"
 #include "SystemDialogTemplate.h"
@@ -393,8 +394,7 @@ bool AboutForm::ApplyStyle(bool updateFont) {
     }
     licenseFont = nextLicenseFont;
     int size = GetSystemDialogDpi(window) >= ABOUT_LARGE_ICON_DPI ? ABOUT_LARGE_ICON_SIZE : ABOUT_ICON_SIZE;
-    HICON icon = static_cast<HICON>(LoadImageW(instance, MAKEINTRESOURCEW(IDI_CLOCK),
-        IMAGE_ICON, size, size, LR_SHARED));
+    HICON icon = programIcons.LoadIconAtIndex(0, size, size);
     SendDlgItemMessageW(window, ID_INFO_ICON, STM_SETICON, reinterpret_cast<WPARAM>(icon), 0);
     SetWindowPos(GetDlgItem(window, ID_INFO_ICON), nullptr, 0, 0, size, size,
         SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);

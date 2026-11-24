@@ -26,7 +26,8 @@
 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
-#include "ResourceLibrary.h"
+#include "ProgramIcons.h"
+#include "SystemDialogTemplate.h"
 #include "PackedResource.h"
 #include "resource.h"
 #include <shlobj.h>
@@ -36,7 +37,17 @@
 
 #pragma comment(lib, "Shell32.lib")
 
+using GetSystemMetricsForDpiFunction = int(WINAPI*)(int, UINT);
+
 static const DWORD resourceSignature = 0x4D494450;
+
+/// Returns the native icon metric for the target DPI, or the system metric on older Windows.
+static int SystemIconMetric(int metric, UINT dpi) {
+    static const GetSystemMetricsForDpiFunction getSystemMetricsForDpi =
+        reinterpret_cast<GetSystemMetricsForDpiFunction>(
+            GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetSystemMetricsForDpi"));
+    return getSystemMetricsForDpi ? getSystemMetricsForDpi(metric, dpi) : GetSystemMetrics(metric);
+}
 
 /// Computes the ZIP-compatible CRC32 used by the existing packed-library format.
 static DWORD ResourceChecksum(const BYTE* bytes, DWORD size) {
@@ -77,7 +88,7 @@ static bool ResourceCacheMatches(const std::wstring& path, DWORD size, DWORD che
 /// Releases the process-heap buffer allocated by the shared resource decoder.
 static void ReleaseResourceBytes(BYTE* bytes) {
     if (!HeapFree(GetProcessHeap(), 0, bytes)) {
-        OutputDebugStringW(L"CalClock could not release its decoded icon-library buffer.\n");
+        OutputDebugStringW(L"Could not release the decoded Resources.dll buffer.\n");
     }
 }
 
@@ -112,22 +123,13 @@ static HRESULT WriteResourceCache(const std::wstring& path, const BYTE* bytes, D
         result = HRESULT_FROM_WIN32(GetLastError());
     }
     if (FAILED(result) && !DeleteFileW(temporary.c_str())) {
-        OutputDebugStringW(L"CalClock could not remove its incomplete icon-library cache file.\n");
+        OutputDebugStringW(L"Could not remove the incomplete Resources.dll cache file.\n");
     }
     return result;
 }
 
 /// Resolves the library directly in the application profile cache without loading executable code.
-static HRESULT ResourceCachePath(const std::wstring& cacheRoot, std::wstring* path) {
-    std::wstring directory = cacheRoot;
-    if (directory.empty()) {
-        wchar_t local[MAX_PATH] = {};
-        HRESULT result = SHGetFolderPathW(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, local);
-        if (FAILED(result)) {
-            return result;
-        }
-        directory = std::wstring(local) + L"\\FortSoft\\CalClock";
-    }
+static HRESULT ResourceCachePath(const std::wstring& directory, std::wstring* path) {
     int created = SHCreateDirectoryExW(nullptr, directory.c_str(), nullptr);
     if (created != ERROR_SUCCESS && created != ERROR_ALREADY_EXISTS) {
         return HRESULT_FROM_WIN32(created);
@@ -137,8 +139,7 @@ static HRESULT ResourceCachePath(const std::wstring& cacheRoot, std::wstring* pa
 }
 
 /// Validates and atomically extracts the complete embedded DLL, reusing an identical cached file.
-HRESULT ResourceLibrary::Initialize(HINSTANCE instance, const std::wstring& cacheRoot) {
-    path.clear();
+HRESULT ProgramIcons::Initialize(HINSTANCE instance, const std::wstring& cacheRoot) {
     HRSRC resource = FindResourceW(instance, MAKEINTRESOURCEW(IDR_IMAGE_LIBRARY), RT_RCDATA);
     HGLOBAL loaded = resource == nullptr ? nullptr : LoadResource(instance, resource);
     const BYTE* packed = loaded == nullptr ? nullptr : static_cast<const BYTE*>(LockResource(loaded));
@@ -172,22 +173,60 @@ HRESULT ResourceLibrary::Initialize(HINSTANCE instance, const std::wstring& cach
             return result;
         }
     }
-    path = destination;
+    if (path != destination) {
+        ClearIcons();
+        path = destination;
+    }
     return S_OK;
 }
 
-/// Returns an owned icon at the requested index and native pixel dimensions, or null on failure.
-HICON ResourceLibrary::LoadIconAtIndex(int index, int width, int height) const {
+/// Releases every cached icon after all application windows and controls have closed.
+ProgramIcons::~ProgramIcons() {
+    ClearIcons();
+}
+
+/// Returns a shared cached icon; this class retains ownership and callers must not destroy it.
+HICON ProgramIcons::LoadIconAtIndex(int index, int width, int height) const {
+    for (const IconEntry& entry : icons) {
+        if (entry.index == index && entry.width == width && entry.height == height) {
+            return entry.icon;
+        }
+    }
     HICON icon = nullptr;
     UINT extracted = PrivateExtractIconsW(path.c_str(), index, width, height, &icon, nullptr, 1, 0);
-    if (extracted != 1 && icon != nullptr) {
-        DestroyIcon(icon);
-        icon = nullptr;
+    if (extracted != 1) {
+        if (icon != nullptr) {
+            DestroyIcon(icon);
+        }
+        return nullptr;
     }
+    icons.push_back(IconEntry{ icon, index, width, height });
     return icon;
 }
 
+/// Applies shared small and large icons using native metrics for the target window's current DPI.
+void ProgramIcons::Apply(HWND window, int iconIndex) const {
+    UINT dpi = GetSystemDialogDpi(window);
+    const int types[] = { ICON_SMALL, ICON_BIG };
+    for (int type : types) {
+        int width = SystemIconMetric(type == ICON_SMALL ? SM_CXSMICON : SM_CXICON, dpi);
+        int height = SystemIconMetric(type == ICON_SMALL ? SM_CYSMICON : SM_CYICON, dpi);
+        HICON icon = LoadIconAtIndex(iconIndex, width, height);
+        if (icon != nullptr) {
+            SendMessageW(window, WM_SETICON, type, reinterpret_cast<LPARAM>(icon));
+        }
+    }
+}
+
 /// Returns the extracted library's absolute path after successful initialization.
-const std::wstring& ResourceLibrary::GetPath() const {
+const std::wstring& ProgramIcons::GetPath() const {
     return path;
+}
+
+/// Releases the owned icon handles before replacing the library or destroying this component.
+void ProgramIcons::ClearIcons() {
+    for (const IconEntry& entry : icons) {
+        DestroyIcon(entry.icon);
+    }
+    icons.clear();
 }

@@ -87,33 +87,47 @@ static std::string ReadTestBytes(const std::wstring& path) {
     return std::string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
 }
 
+/// Validates that a borrowed icon still has usable native bitmap data without taking ownership.
+static void RequireUsableIcon(HICON icon, const char* message) {
+    ICONINFO information = {};
+    BOOL readable = GetIconInfo(icon, &information);
+    Require(readable != FALSE, message);
+    if (readable) {
+        DeleteObject(information.hbmColor);
+        DeleteObject(information.hbmMask);
+    }
+}
+
 /// Checks full DLL extraction, cache reuse and repair, and every icon index at native sizes.
-static void TestResourceLibrary(const std::wstring& directory) {
+static void TestProgramIcons(const std::wstring& directory) {
     std::wstring cache = directory + L"\\library-cache";
-    Require(SUCCEEDED(iconLibrary.Initialize(hInstance, cache)), "extract complete embedded resource DLL");
-    Require(iconLibrary.GetPath() == cache + L"\\Resources.dll",
+    Require(SUCCEEDED(programIcons.Initialize(hInstance, cache)), "extract complete embedded resource DLL");
+    Require(programIcons.GetPath() == cache + L"\\Resources.dll",
         "resource DLL is stored directly in the application cache");
     std::string expected = ReadTestBytes(L"CalClock\\Resources\\Resources.dll");
-    Require(!expected.empty() && ReadTestBytes(iconLibrary.GetPath()) == expected,
+    Require(!expected.empty() && ReadTestBytes(programIcons.GetPath()) == expected,
         "extracted DLL is byte-identical to the source library");
     WIN32_FILE_ATTRIBUTE_DATA before = {};
     WIN32_FILE_ATTRIBUTE_DATA after = {};
-    GetFileAttributesExW(iconLibrary.GetPath().c_str(), GetFileExInfoStandard, &before);
-    Require(SUCCEEDED(iconLibrary.Initialize(hInstance, cache)), "reuse existing library cache");
-    GetFileAttributesExW(iconLibrary.GetPath().c_str(), GetFileExInfoStandard, &after);
+    GetFileAttributesExW(programIcons.GetPath().c_str(), GetFileExInfoStandard, &before);
+    Require(SUCCEEDED(programIcons.Initialize(hInstance, cache)), "reuse existing library cache");
+    GetFileAttributesExW(programIcons.GetPath().c_str(), GetFileExInfoStandard, &after);
     Require(CompareFileTime(&before.ftLastWriteTime, &after.ftLastWriteTime) == 0,
         "valid library cache is not rewritten");
     const int sizes[] = { 16, 20, 24, 32, 48, 64, 256 };
     for (int index = 0; index < 5; index++) {
         for (int size : sizes) {
-            HICON icon = iconLibrary.LoadIconAtIndex(index, size, size);
+            HICON icon = programIcons.LoadIconAtIndex(index, size, size);
             Require(icon != nullptr, "load every indexed icon at every requested native size");
-            if (icon != nullptr) {
-                DestroyIcon(icon);
-            }
+            Require(programIcons.LoadIconAtIndex(index, size, size) == icon,
+                "repeated icon requests reuse the same cached handle");
         }
     }
-    HANDLE file = CreateFileW(iconLibrary.GetPath().c_str(), GENERIC_WRITE, 0, nullptr,
+    HICON retained = programIcons.LoadIconAtIndex(0, 32, 32);
+    Require(SUCCEEDED(programIcons.Initialize(hInstance, cache)), "reinitialize the icon cache");
+    Require(programIcons.LoadIconAtIndex(0, 32, 32) == retained,
+        "reinitializing the same library retains loaded shared icons");
+    HANDLE file = CreateFileW(programIcons.GetPath().c_str(), GENERIC_WRITE, 0, nullptr,
         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     Require(file != INVALID_HANDLE_VALUE, "open isolated cache for corruption test");
     if (file != INVALID_HANDLE_VALUE) {
@@ -122,8 +136,8 @@ static void TestResourceLibrary(const std::wstring& directory) {
         WriteFile(file, &invalid, 1, &written, nullptr);
         CloseHandle(file);
     }
-    Require(SUCCEEDED(iconLibrary.Initialize(hInstance, cache)), "repair corrupted resource cache");
-    Require(ReadTestBytes(iconLibrary.GetPath()) == expected, "cache repair restores the complete DLL");
+    Require(SUCCEEDED(programIcons.Initialize(hInstance, cache)), "repair corrupted resource cache");
+    Require(ReadTestBytes(programIcons.GetPath()) == expected, "cache repair restores the complete DLL");
 }
 
 /// Checks packed XML flags, unknown bits, dependent options, and absence of legacy boolean fallback.
@@ -283,6 +297,58 @@ static void TestInformationForms() {
     appFontFace.clear();
 }
 
+/// Checks shared icon ownership across native form recreation and notification-area updates.
+static void TestSharedProgramIcons() {
+    HWND about = aboutForm.GetWindow();
+    HWND help = helpForm.GetWindow();
+    HICON smallIcon = reinterpret_cast<HICON>(SendMessageW(help, WM_GETICON, ICON_SMALL, 0));
+    HICON largeIcon = reinterpret_cast<HICON>(SendMessageW(help, WM_GETICON, ICON_BIG, 0));
+    Require(smallIcon != nullptr && largeIcon != nullptr, "information forms have native window icons");
+    Require(reinterpret_cast<HICON>(SendMessageW(about, WM_GETICON, ICON_SMALL, 0)) == smallIcon
+            && reinterpret_cast<HICON>(SendMessageW(about, WM_GETICON, ICON_BIG, 0)) == largeIcon,
+        "information forms share their cached window icons");
+    for (int repeat = 0; repeat < 8; repeat++) {
+        UpdateApplicationWindowIcons(about);
+    }
+    RequireUsableIcon(smallIcon, "reapplying shared icons keeps the small icon usable");
+    RequireUsableIcon(largeIcon, "reapplying shared icons keeps the large icon usable");
+    aboutForm.Close();
+    RequireUsableIcon(smallIcon, "closing one form preserves the other form's small icon");
+    RequireUsableIcon(largeIcon, "closing one form preserves the other form's large icon");
+    aboutForm.Show(hInstance, aboutWindowState);
+    about = aboutForm.GetWindow();
+    Require(reinterpret_cast<HICON>(SendMessageW(about, WM_GETICON, ICON_SMALL, 0)) == smallIcon
+            && reinterpret_cast<HICON>(SendMessageW(about, WM_GETICON, ICON_BIG, 0)) == largeIcon,
+        "recreated forms reuse the cached window icons");
+    int size = GetSystemDialogDpi(about) >= ABOUT_LARGE_ICON_DPI ? ABOUT_LARGE_ICON_SIZE : ABOUT_ICON_SIZE;
+    HICON picture = reinterpret_cast<HICON>(SendDlgItemMessageW(about, ID_INFO_ICON, STM_GETICON, 0, 0));
+    Require(picture == programIcons.LoadIconAtIndex(0, size, size),
+        "the About picture uses the same icon cache as application windows");
+    HWND controller = hController;
+    hController = help;
+    AddTrayIcon();
+    HICON defaultIcon = trayIcon.hIcon;
+    UpdateTrayIcon();
+    Require(trayIcon.hIcon == defaultIcon, "refreshing the notification icon reuses its cached handle");
+    alternativeTrayIcon = true;
+    UpdateTrayIcon();
+    HICON alternativeIcon = trayIcon.hIcon;
+    Require(alternativeIcon != nullptr && alternativeIcon != defaultIcon,
+        "the alternative notification icon uses its own cached handle");
+    classicTrayIcon = true;
+    UpdateTrayIcon();
+    HICON classicIcon = trayIcon.hIcon;
+    Require(classicIcon != nullptr && classicIcon != alternativeIcon,
+        "the classic notification icon uses its own cached handle");
+    RequireUsableIcon(defaultIcon, "changing the notification icon preserves the default shared icon");
+    RequireUsableIcon(alternativeIcon, "changing the notification icon preserves alternative shared icons");
+    RemoveTrayIcon();
+    RequireUsableIcon(classicIcon, "removing the notification icon preserves its cached handle");
+    alternativeTrayIcon = false;
+    classicTrayIcon = false;
+    hController = controller;
+}
+
 /// Checks the actual edit selection independently of search implementation state.
 static void RequireSelection(HWND edit, DWORD expectedStart, DWORD expectedEnd) {
     DWORD start = 0;
@@ -357,6 +423,60 @@ static void TestFindHistoryCommit(HWND owner) {
     SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_CLOSEUP), 0);
 }
 
+/// Measures the real native dropdown after nonactivating positioning on the private test desktop.
+static void CheckFindDropDownHeight(HWND dialog) {
+    HWND outer = GetDlgItem(dialog, IDC_FIND_TEXT);
+    HWND combo = FindHistoryControl(dialog);
+    COMBOBOXINFO information = {};
+    information.cbSize = sizeof(information);
+    BOOL obtained = GetComboBoxInfo(combo, &information);
+    Require(obtained && information.hwndList != nullptr, "obtain the actual search-history dropdown");
+    if (!obtained || information.hwndList == nullptr) {
+        return;
+    }
+    HWND list = information.hwndList;
+    SetWindowLongPtrW(list, GWL_EXSTYLE, GetWindowLongPtrW(list, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_DROPDOWN), 0);
+    RECT bounds = {};
+    GetWindowRect(outer, &bounds);
+    SetWindowPos(list, nullptr, bounds.left, bounds.bottom, bounds.right - bounds.left, 1,
+        SWP_NOZORDER | SWP_NOACTIVATE);
+    RECT client = {};
+    GetClientRect(list, &client);
+    LONG rowHeight = static_cast<LONG>(SendMessageW(combo, CB_GETITEMHEIGHT, 0, 0));
+    Require(rowHeight > 0 && client.bottom - client.top >= rowHeight,
+        "the actual search-history dropdown has room for at least one complete native row");
+    Require(!IsWindowVisible(list) && GetWindowLongPtrW(list, GWL_EXSTYLE) & WS_EX_NOACTIVATE,
+        "dropdown geometry is checked while hidden and nonactivating");
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_SELENDCANCEL), 0);
+    SendMessageW(dialog, WM_COMMAND, MAKEWPARAM(IDC_FIND_TEXT, CBN_CLOSEUP), 0);
+}
+
+/// Checks empty history geometry with current native rows after font and theme changes.
+static void TestEmptyFindDropDown(HWND dialog) {
+    std::wstring originalFace = appFontFace;
+    int originalSize = appFontDialogSize;
+    bool originalThemes = themesDisabled;
+    appFontFace = L"Segoe UI";
+    const int sizes[] = { 90, 180 };
+    for (int size : sizes) {
+        appFontDialogSize = size;
+        for (bool disabled : { false, true }) {
+            themesDisabled = disabled;
+            find.RefreshStyle();
+            CheckFindDropDownHeight(dialog);
+            Require(SendMessageW(FindHistoryControl(dialog), CB_GETCOUNT, 0, 0) == 0,
+                "the empty dropdown keeps the search history empty");
+            Require(GetWindowTextLengthW(FindHistoryEdit(dialog)) == 0,
+                "opening an empty dropdown preserves the empty query");
+        }
+    }
+    appFontFace = originalFace;
+    appFontDialogSize = originalSize;
+    themesDisabled = originalThemes;
+    find.RefreshStyle();
+}
+
 /// Checks native query editing, history, matching, keyboard routing and independent target changes.
 static void TestFindControls(HWND owner) {
     HWND text = GetDlgItem(owner, ID_INFO_TEXT);
@@ -376,6 +496,7 @@ static void TestFindControls(HWND owner) {
     Require(!IsWindowVisible(dialog) && GetWindowLongPtrW(dialog, GWL_EXSTYLE) & WS_EX_NOACTIVATE,
         "search test window remains hidden and nonactivating");
     Require(!IsWindowEnabled(GetDlgItem(dialog, IDOK)), "empty query disables Find Next");
+    TestEmptyFindDropDown(dialog);
     SearchFor(owner, L"beta");
     RequireSelection(text, 6, 10);
     SearchFor(owner, L"beta", false);
@@ -471,6 +592,7 @@ static void TestFindLayout() {
             for (bool disabled : { false, true }) {
                 themesDisabled = disabled;
                 find.RefreshStyle();
+                CheckFindDropDownHeight(dialog);
                 LOGFONTW actual = {};
                 HFONT font = reinterpret_cast<HFONT>(SendMessageW(FindHistoryEdit(dialog), WM_GETFONT, 0, 0));
                 Require(GetObjectW(font, sizeof(actual), &actual) != 0
@@ -1114,10 +1236,11 @@ int wmain(int argc, wchar_t** argv) {
     TestDeveloperArguments();
     TestStyleRecreationTransitions();
     appLanguage = LANG_EN_US;
-    TestResourceLibrary(directory);
+    TestProgramIcons(directory);
     TestPackedOptions();
     TestAppearanceOptions();
     TestInformationForms();
+    TestSharedProgramIcons();
     HWND owner = helpForm.GetWindow();
     Require(owner != nullptr, "create native information owner on the hidden desktop");
     if (owner != nullptr) {

@@ -78,7 +78,7 @@
     <ClCompile Include="PackedResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceLibrary.cpp">
+    <ClCompile Include="ProgramIcons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NtpClient.cpp">
@@ -194,7 +194,7 @@
     <ClInclude Include="PackedResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceLibrary.h">
+    <ClInclude Include="ProgramIcons.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NtpClient.h">

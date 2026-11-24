@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.1
+ * Last modified for version 1.7.3.2
  */
 
 #define NOMINMAX
@@ -47,7 +47,7 @@
 #include "PersistWindowState.h"
 #include "SelectionEdit.h"
 #include "SettingsStorage.h"
-#include "ResourceLibrary.h"
+#include "ProgramIcons.h"
 #include "FindForm.h"
 #include "PrintSettings.h"
 #include "ModernPrintDialog.h"
@@ -536,6 +536,9 @@ ConvertCalDateTimeToSystemTimeProc convertCalDateTimeToSystemTime = nullptr;
 /// Notification area data
 NOTIFYICONDATAW trayIcon = {};
 
+/// Shared application icons
+ProgramIcons programIcons;
+
 /// Independent information forms and their shared Unicode boundary analysis
 static HelpForm helpForm;
 static AboutForm aboutForm;
@@ -548,7 +551,6 @@ static bool closing = false;
 static TimeCalculatorForm calculatorForm;
 static InformationWordBreakState informationWordBreakState;
 static std::unique_ptr<SettingsOpenData> settingsOpenData;
-ResourceLibrary iconLibrary;
 
 /// Persistent form placement
 static PersistWindowState settingsWindowState;
@@ -8374,7 +8376,7 @@ static int TrayIconIndex() {
     return classicTrayIcon ? 4 : 1;
 }
 
-/// Loads an owned indexed library icon at the target window's native small or large icon size.
+/// Borrows a cached library icon at the target window's native small or large icon size.
 static HICON LoadApplicationIcon(HWND window, bool smallIcon, int iconIndex = 0) {
     HMODULE module = GetModuleHandleW(L"user32.dll");
     GetSystemMetricsForDpiProc getMetrics = nullptr;
@@ -8389,39 +8391,24 @@ static HICON LoadApplicationIcon(HWND window, bool smallIcon, int iconIndex = 0)
         width = getMetrics(smallIcon ? SM_CXSMICON : SM_CXICON, dpi);
         height = getMetrics(smallIcon ? SM_CYSMICON : SM_CYICON, dpi);
     }
-    return iconLibrary.LoadIconAtIndex(iconIndex, width, height);
+    return programIcons.LoadIconAtIndex(iconIndex, width, height);
 }
 
-/// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
+/// Applies shared small and large window icons for the current DPI.
 void UpdateApplicationWindowIcons(HWND window, int iconIndex) {
-    for (WPARAM type = ICON_SMALL; type <= ICON_BIG; ++type) {
-        HICON icon = LoadApplicationIcon(window, type == ICON_SMALL, iconIndex);
-        if (icon != nullptr) {
-            HICON previous = reinterpret_cast<HICON>(SendMessageW(window, WM_SETICON, type,
-                reinterpret_cast<LPARAM>(icon)));
-            if (previous != nullptr) {
-                DestroyIcon(previous);
-            }
-        }
-    }
+    programIcons.Apply(window, iconIndex);
 }
 
-/// Detaches and releases the owned caption and task-switcher icons before the window is destroyed.
+/// Detaches shared caption and task-switcher icons while their cache retains ownership.
 void ReleaseApplicationWindowIcons(HWND window) {
     for (WPARAM type = ICON_SMALL; type <= ICON_BIG; ++type) {
-        HICON icon = reinterpret_cast<HICON>(SendMessageW(window, WM_SETICON, type, 0));
-        if (icon != nullptr) {
-            DestroyIcon(icon);
-        }
+        SendMessageW(window, WM_SETICON, type, 0);
     }
 }
 
 /// Creates the notification-area icon with localized tooltip text and negotiates version 4 notification
 /// behavior.
 static void AddTrayIcon() {
-    if (trayIcon.hIcon != nullptr) {
-        DestroyIcon(trayIcon.hIcon);
-    }
     trayIcon = {};
     trayIcon.cbSize = sizeof(trayIcon);
     trayIcon.hWnd = hController;
@@ -8440,9 +8427,6 @@ static void RemoveTrayIcon() {
     if (trayIcon.cbSize != 0) {
         Shell_NotifyIconW(NIM_DELETE, &trayIcon);
     }
-    if (trayIcon.hIcon != nullptr) {
-        DestroyIcon(trayIcon.hIcon);
-    }
     trayIcon = {};
     trayUsesVersion4 = false;
 }
@@ -8452,7 +8436,6 @@ static void UpdateTrayIcon() {
     if (trayIcon.cbSize == 0) {
         return;
     }
-    HICON previous = trayIcon.hIcon;
     HICON icon = LoadApplicationIcon(FindWindowW(L"Shell_TrayWnd", nullptr), true, TrayIconIndex());
     trayIcon.uFlags = NIF_TIP | NIF_SHOWTIP;
     if (icon != nullptr) {
@@ -8461,9 +8444,6 @@ static void UpdateTrayIcon() {
     }
     wcscpy_s(trayIcon.szTip, T(TXT_APP));
     Shell_NotifyIconW(NIM_MODIFY, &trayIcon);
-    if (icon != nullptr && previous != nullptr) {
-        DestroyIcon(previous);
-    }
 }
 
 /// Applies a widget context-menu command, synchronizing settings and recreating or redrawing the widget
@@ -12879,7 +12859,7 @@ static void UpdateSettingControlAvailability(bool updateLayout) {
     }
 }
 
-/// Fits dropdowns to the work area with at most thirteen whole rows and retains native scrolling.
+/// Fits dropdowns to the work area with one to thirteen whole rows and retains native scrolling.
 /// Removes the positioning subclass when the native list window is destroyed.
 static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam,
         UINT_PTR subclassId, DWORD_PTR referenceData) {
@@ -12931,7 +12911,7 @@ static LRESULT CALLBACK ComboBoxDropDownSubclassProc(HWND window, UINT msg, WPAR
                         LONG below = std::clamp(information.rcWork.bottom - comboRect.bottom, 0L,
                             workHeight);
                         LONG above = std::clamp(comboRect.top - information.rcWork.top, 0L, workHeight);
-                        int rows = std::min(count, SETTINGS_COMBO_VISIBLE_ITEMS);
+                        int rows = std::clamp(count, 1, SETTINGS_COMBO_VISIBLE_ITEMS);
                         LONG available = std::max(below, above);
                         rows = std::min(rows,
                             static_cast<int>(std::max(0L, available - chromeHeight) / rowHeight));
@@ -18802,7 +18782,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     InitializeLanguageLocales();
     InstallCalendarLocaleHook();
     LoadAllSettings();
-    HRESULT libraryResult = iconLibrary.Initialize(instance);
+    wchar_t local[MAX_PATH] = {};
+    HRESULT libraryResult =
+        SHGetFolderPathW(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, local);
+    if (SUCCEEDED(libraryResult)) {
+        std::wstring cacheRoot = std::wstring(local) + L"\\FortSoft\\CalClock";
+        libraryResult = programIcons.Initialize(instance, cacheRoot);
+    }
     if (FAILED(libraryResult)) {
         wchar_t error[512] = {};
         swprintf_s(error, T(TXT_RESOURCE_LIBRARY_FAILED), static_cast<unsigned long>(libraryResult));

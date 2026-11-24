@@ -28,20 +28,38 @@
 
 #include <windows.h>
 #include <string>
+#include <vector>
 
-/// Extracts the packed icon library directly to its per-user application cache and loads indexed icons.
-class ResourceLibrary {
+/// Extracts the embedded icon library and owns all icons shared by application windows and controls.
+class ProgramIcons {
+    struct IconEntry {
+        HICON icon;
+        int index;
+        int width;
+        int height;
+    };
 
 public:
-    /// Validates and atomically extracts the complete embedded DLL, reusing an identical cached file.
-    HRESULT Initialize(HINSTANCE instance, const std::wstring& cacheRoot = std::wstring());
+    ProgramIcons() = default;
+    ~ProgramIcons();
+    ProgramIcons(const ProgramIcons&) = delete;
+    ProgramIcons& operator=(const ProgramIcons&) = delete;
 
-    /// Returns an owned icon at the requested index and native pixel dimensions, or null on failure.
+    /// Validates and extracts the bundled DLL, reusing identical cached bytes and loaded icons.
+    HRESULT Initialize(HINSTANCE instance, const std::wstring& cacheRoot);
+
+    /// Returns a shared cached icon; this class retains ownership and callers must not destroy it.
     HICON LoadIconAtIndex(int index, int width, int height) const;
+
+    /// Applies shared small and large icons using native metrics for the target window's current DPI.
+    void Apply(HWND window, int iconIndex = 0) const;
 
     /// Returns the extracted library's absolute path after successful initialization.
     const std::wstring& GetPath() const;
 
 private:
     std::wstring path;
+    mutable std::vector<IconEntry> icons;
+
+    void ClearIcons();
 };

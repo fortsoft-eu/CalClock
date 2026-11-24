@@ -112,7 +112,7 @@
     <ClCompile Include="MonitorInfo.cpp" />
     <ClCompile Include="NtpClient.cpp" />
     <ClCompile Include="PackedResource.cpp" />
-    <ClCompile Include="ResourceLibrary.cpp" />
+    <ClCompile Include="ProgramIcons.cpp" />
     <ClCompile Include="PersistWindowState.cpp" />
     <ClCompile Include="SelectionEdit.cpp" />
     <ClCompile Include="SettingsEdit.cpp" />
@@ -152,7 +152,7 @@
     <ClInclude Include="MonitorInfo.h" />
     <ClInclude Include="NtpClient.h" />
     <ClInclude Include="PackedResource.h" />
-    <ClInclude Include="ResourceLibrary.h" />
+    <ClInclude Include="ProgramIcons.h" />
     <ClInclude Include="PersistWindowState.h" />
     <ClInclude Include="SelectionEdit.h" />
     <ClInclude Include="SettingsEdit.h" />

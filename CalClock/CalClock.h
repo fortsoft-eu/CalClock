@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.1
+ * Last modified for version 1.7.3.2
  */
 
 #pragma once
@@ -35,6 +35,8 @@
 #include "TimeCalculator.h"
 #include <string>
 #include <vector>
+
+class ProgramIcons;
 
 inline constexpr wchar_t PRODUCT_NAME[] = L"CalClock";
 inline constexpr UINT findVisibilityChangedMessage = WM_APP + 500;
@@ -696,6 +698,8 @@ extern bool themesDisabled;
 /// Selects the application language used by modeless forms and their native date formatting.
 extern AppLanguage appLanguage;
 
+extern ProgramIcons programIcons;
+
 extern std::vector<DYNAMIC_TIME_ZONE_INFORMATION> timeZones;
 
 /// Returns a borrowed localized UI string in the current application language.
@@ -739,10 +743,10 @@ HFONT CreateApplicationUiFont(HWND window);
 /// and requests repainting.
 void ApplyUiStyle(HWND window);
 
-/// Replaces both native window icons for the current DPI, releasing the icons previously installed here.
+/// Applies shared small and large window icons for the current DPI.
 void UpdateApplicationWindowIcons(HWND window, int iconIndex = 0);
 
-/// Detaches and releases the owned caption and task-switcher icons before the window is destroyed.
+/// Detaches shared caption and task-switcher icons while their cache retains ownership.
 void ReleaseApplicationWindowIcons(HWND window);
 
 /// Updates each open information form through its own content and layout implementation.
