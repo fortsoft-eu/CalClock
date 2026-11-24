@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.2
  */
 
 #pragma once
@@ -29,7 +29,7 @@
 #include <windows.h>
 #include <string>
 
-/// Extracts the packed icon library to its content-addressed per-user cache and loads indexed icons.
+/// Extracts the packed icon library directly to its per-user application cache and loads indexed icons.
 class ResourceLibrary {
 
 public:

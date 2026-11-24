@@ -176,6 +176,14 @@ Indicatorul mouse-ului se ascunde după o scurtă inactivitate deasupra ceasului
 
 Sunt necesare Microsoft Visual Studio cu setul de instrumente MSVC v145 și Windows SDK. Deschideți `CalClock.slnx`, alegeți `Release | x86` și compilați soluția. Fișierul executabil este creat în `Release\CalClock.exe`. Este acceptată numai configurația Win32/x86 deoarece integrarea cu controlul de ceas Windows necesită compatibilitate x86.
 
+La compilare, pictograma aplicației și biblioteca împachetată sunt generate din
+`CalClock/Resources/Resources.dll` în directorul intermediar. Ambele resurse sunt incluse la compilare prin
+secțiunea `TEXTINCLUDE 3` din `CalClock.rc`, astfel încât editorul de resurse Visual Studio poate deschide
+dialogurile fără fișierele generate, inclusiv după curățarea compilării.
+
+La pornire, biblioteca încorporată este extrasă direct în `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`.
+Dacă există deja o bibliotecă identică, aceasta este reutilizată.
+
 După compilare, `.\PackageRelease.ps1` creează `CalClock-<version>-win32.zip`; versiunea se citește din `Release\CalClock.exe`. Arhiva conține `CalClock.exe` și `license.txt` direct în rădăcină. Parametrii opționali de semnare `-SignerName`, `-SignToolPath` și `-TimestampServer` se dau la rulare. O semnătură Authenticode validă existentă este verificată și nu se înlocuiește. Pachetele ZIP CalClock anterioare se elimină la începutul fiecărei rulări; erorile de semnare sau verificare opresc împachetarea.
 
 Valorile implicite ale parametrilor de semnare sunt citite și din variabilele de mediu ale utilizatorului Windows:

@@ -215,6 +215,14 @@ Požiadavky:
 - Microsoft Visual Studio so súpravou nástrojov MSVC v145
 - Windows SDK
 
+Pri zostavení sa z `CalClock/Resources/Resources.dll` generuje ikona aplikácie a zabalená knižnica do adresára
+medzivýsledkov. Oba prostriedky sa zahŕňajú pri kompilácii prostredníctvom sekcie `TEXTINCLUDE 3` súboru
+`CalClock.rc`, takže editor prostriedkov Visual Studia môže otvoriť dialógy bez vygenerovaných súborov, a to
+aj po vyčistení zostavenia.
+
+Pri spustení sa vložená knižnica rozbalí priamo do `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Ak už
+existuje zhodná knižnica, použije sa znova.
+
 Otvorte `CalClock.slnx`, vyberte `Release | x86` a zostavte riešenie. Spustiteľný súbor vznikne ako:
 
 ```text

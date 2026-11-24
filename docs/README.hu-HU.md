@@ -178,6 +178,14 @@ Az egérmutató rövid tétlenség után eltűnik a képernyőóra és az elsöt
 
 Microsoft Visual Studio, MSVC v145 eszközkészlet és Windows SDK szükséges. Nyissa meg a `CalClock.slnx` fájlt, válassza a `Release | x86` konfigurációt, és fordítsa le a megoldást. A program a `Release\CalClock.exe` helyen készül el. Csak Win32/x86 támogatott, mert a Windows óravezérlőjének használata x86-kompatibilitást igényel.
 
+A fordítás során az alkalmazás ikonja és a csomagolt könyvtár a `CalClock/Resources/Resources.dll` fájlból jön
+létre a köztes könyvtárban. Mindkét erőforrás fordításkor kerül be a `CalClock.rc` fájl `TEXTINCLUDE 3`
+szakaszán keresztül, így a Visual Studio erőforrás-szerkesztője a létrehozott fájlok nélkül is meg tudja
+nyitni a párbeszédablakokat, a fordítási kimenet törlése után is.
+
+Induláskor a beágyazott könyvtár közvetlenül a `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll` fájlba kerül
+kicsomagolásra. Ha már létezik azonos könyvtár, a program azt használja újra.
+
 Fordítás után a `.\PackageRelease.ps1` létrehozza a `CalClock-<version>-win32.zip` archívumot; a verziót a `Release\CalClock.exe` fájlból olvassa. A gyökérben `CalClock.exe` és `license.txt` található. Az opcionális `-SignerName`, `-SignToolPath` és `-TimestampServer` aláírási paraméterek futtatáskor adhatók meg. A meglévő érvényes Authenticode-aláírást ellenőrzi és nem cseréli le. A régi CalClock ZIP-csomagokat minden futtatás elején eltávolítja; aláírási vagy ellenőrzési hiba leállítja a csomagolást.
 
 Az aláírási paraméterek alapértékei a Windows felhasználói környezeti változóiból is beolvashatók:

@@ -175,6 +175,14 @@ Pelės žymeklis virš ekrano laikrodžio ir užtemdytų monitorių pasislepia p
 
 Reikalingi „Microsoft Visual Studio“ su MSVC v145 įrankių rinkiniu ir „Windows SDK“. Atidarykite `CalClock.slnx`, pasirinkite `Release | x86` ir sukompiliuokite sprendimą. Vykdomasis failas sukuriamas `Release\CalClock.exe`. Palaikoma tik Win32/x86 konfigūracija, nes integracija su „Windows“ laikrodžio valdikliu reikalauja x86 suderinamumo.
 
+Kompiliuojant programos piktograma ir supakuota biblioteka sukuriamos iš `CalClock/Resources/Resources.dll`
+tarpiniame kataloge. Abu ištekliai įtraukiami kompiliavimo metu per `CalClock.rc` failo skyrių
+`TEXTINCLUDE 3`, todėl „Visual Studio“ išteklių rengyklė gali atidaryti dialogo langus be sugeneruotų failų,
+net ir išvalius kompiliavimo rezultatus.
+
+Paleidžiant įterptoji biblioteka išpakuojama tiesiai į `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Jei
+identiška biblioteka jau yra, ji naudojama pakartotinai.
+
 Po kompiliavimo `.\PackageRelease.ps1` sukuria `CalClock-<version>-win32.zip`; versija nuskaitoma iš `Release\CalClock.exe`. Archyvo šaknyje yra `CalClock.exe` ir `license.txt`. Neprivalomi pasirašymo parametrai `-SignerName`, `-SignToolPath` ir `-TimestampServer` nurodomi paleidžiant. Esamas galiojantis Authenticode parašas tikrinamas ir nekeičiamas. Ankstesni „CalClock“ ZIP paketai pašalinami kiekvieno paleidimo pradžioje; pasirašymo arba tikrinimo klaida sustabdo pakavimą.
 
 Numatytosios pasirašymo parametrų reikšmės taip pat skaitomos iš Windows vartotojo aplinkos kintamųjų:

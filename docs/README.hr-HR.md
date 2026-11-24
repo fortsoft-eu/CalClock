@@ -180,6 +180,14 @@ Pokazivač miša skriva se nakon kratke neaktivnosti iznad sata na zaslonu i zat
 
 Potrebni su Microsoft Visual Studio s alatima MSVC v145 i Windows SDK. Otvorite `CalClock.slnx`, odaberite `Release | x86` i izgradite rješenje. Izvršna datoteka nastaje u `Release\CalClock.exe`. Podržana je samo konfiguracija Win32/x86 jer integracija s kontrolom sata Windowsa zahtijeva kompatibilnost s x86.
 
+Tijekom izgradnje ikona aplikacije i zapakirana biblioteka generiraju se iz `CalClock/Resources/Resources.dll`
+u međudirektoriju. Oba resursa uključuju se pri kompilaciji kroz odjeljak `TEXTINCLUDE 3` datoteke
+`CalClock.rc`, pa uređivač resursa Visual Studija može otvoriti dijaloge bez generiranih datoteka, čak i nakon
+čišćenja izgradnje.
+
+Pri pokretanju ugrađena biblioteka raspakira se izravno u `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`.
+Ako već postoji identična biblioteka, ponovno se koristi.
+
 Nakon izgradnje pokrenite `.\PackageRelease.ps1` za stvaranje arhive `CalClock-<version>-win32.zip`. Verzija se čita iz `Release\CalClock.exe`. Arhiva sadrži `CalClock.exe` i `license.txt` izravno u korijenu. Neobavezni parametri potpisivanja su `-SignerName`, `-SignToolPath` i `-TimestampServer`; zadaju se pri pokretanju. Postojeći valjani potpis Authenticode provjerava se i ne zamjenjuje. Prethodne ZIP arhive CalClocka uklanjaju se na početku svakog pokretanja. Pogreška potpisivanja ili provjere zaustavlja pakiranje.
 
 Zadane vrijednosti parametara potpisivanja čitaju se i iz korisničkih varijabli okruženja sustava Windows:

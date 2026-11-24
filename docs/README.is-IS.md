@@ -220,6 +220,13 @@ Kröfur:
 - Microsoft Visual Studio með MSVC v145-verkfærasafninu
 - Windows SDK
 
+Við smíði eru forritstáknið og pakkaða safnið búin til úr `CalClock/Resources/Resources.dll` í möppunni fyrir
+milliskrár. Bæði tilföngin eru felld inn við þýðingu í gegnum hlutann `TEXTINCLUDE 3` í `CalClock.rc`, svo
+tilfangaritill Visual Studio getur opnað svargluggana án mynduðu skránna, jafnvel eftir hreinsun smíðaskráa.
+
+Við ræsingu er innbyggða safnið afpakkað beint í `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Safn með
+sama innihaldi er notað aftur ef það er þegar til.
+
 Opnaðu `CalClock.slnx`, veldu `Release | x86` og smíðaðu lausnina. Keyrsluskráin verður:
 
 ```text

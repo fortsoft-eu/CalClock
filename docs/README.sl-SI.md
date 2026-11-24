@@ -168,6 +168,14 @@ Kazalec se po kratki nedejavnosti nad uro na zaslonu ali zatemnjenimi zasloni sk
 
 Potrebujete Microsoft Visual Studio z orodji MSVC v145 in Windows SDK. Odprite `CalClock.slnx`, izberite `Release | x86` in zgradite rešitev. Izvedljiva datoteka nastane v `Release\CalClock.exe`. Podprta je samo konfiguracija Win32/x86, ker povezava s kontrolnikom ure Windows zahteva združljivost z x86.
 
+Med gradnjo se ikona aplikacije in zapakirana knjižnica ustvarita iz `CalClock/Resources/Resources.dll` v
+vmesnem imeniku. Oba vira se vključita pri prevajanju prek razdelka `TEXTINCLUDE 3` datoteke `CalClock.rc`,
+zato lahko urejevalnik virov v Visual Studiu odpre pogovorna okna brez ustvarjenih datotek, tudi po čiščenju
+rezultatov gradnje.
+
+Ob zagonu se vdelana knjižnica razpakira neposredno v `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Če
+enaka knjižnica že obstaja, se uporabi znova.
+
 Po gradnji zaženite `.\PackageRelease.ps1`, da ustvarite arhiv `CalClock-<version>-win32.zip`. Različica se prebere iz `Release\CalClock.exe`. Arhiv vsebuje `CalClock.exe` in `license.txt` neposredno v korenu. Izbirne parametre za podpisovanje `-SignerName`, `-SignToolPath` in `-TimestampServer` podate ob zagonu. Obstoječi veljavni podpis Authenticode se preveri in se ne nadomesti. Prejšnji arhivi ZIP programa CalClock se odstranijo na začetku vsakega zagona. Napaka pri podpisovanju ali preverjanju ustavi pakiranje.
 
 Privzete vrednosti parametrov podpisovanja se berejo tudi iz uporabniških okoljskih spremenljivk sistema Windows:

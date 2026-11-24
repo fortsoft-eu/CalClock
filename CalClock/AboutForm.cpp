@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.2
  */
 
 #define NOMINMAX
@@ -637,7 +637,7 @@ void AboutForm::Show(HINSTANCE module, PersistWindowState& state) {
     }
     std::wstring license = LoadLicenseText();
     SetWindowTextW(text, license.empty() ? T(TXT_ABOUT_LICENSE_UNAVAILABLE) : license.c_str());
-    const int controls[] = { ID_INFO_PRODUCT, ID_INFO_WEBSITE, ID_INFO_LINK, ID_INFO_ICON };
+    const int controls[] = { ID_INFO_PRODUCT, ID_INFO_WEBSITE, ID_INFO_LINK };
     for (int id : controls) {
         if (!SetWindowSubclass(GetDlgItem(window, id), ControlSubclassProc, ABOUT_CONTROL_SUBCLASS_ID,
             reinterpret_cast<DWORD_PTR>(this))) {

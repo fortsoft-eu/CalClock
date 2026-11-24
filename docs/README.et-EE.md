@@ -174,6 +174,14 @@ Hiirekursor peitub ekraanikella või tumendatud kuvarite kohal pärast lühikest
 
 Vaja on Microsoft Visual Studiot MSVC v145 tööriistakomplektiga ja Windows SDK-d. Avage `CalClock.slnx`, valige `Release | x86` ja koostage lahendus. Käivitatav fail tekib asukohta `Release\CalClock.exe`. Toetatakse ainult Win32/x86 konfiguratsiooni, sest Windowsi kellajuhtelemendi kasutamine nõuab x86-ühilduvust.
 
+Koostamisel luuakse rakenduse ikoon ja pakitud teek failist `CalClock/Resources/Resources.dll` vahefailide
+kausta. Mõlemad ressursid kaasatakse kompileerimisel faili `CalClock.rc` jaotise `TEXTINCLUDE 3` kaudu, nii et
+Visual Studio ressursiredaktor saab dialooge avada ilma loodud failideta, ka pärast koostamisfailide
+puhastamist.
+
+Käivitamisel pakitakse manustatud teek lahti otse faili `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`.
+Olemasolevat identset teeki kasutatakse uuesti.
+
 Pärast koostamist loob `.\PackageRelease.ps1` arhiivi `CalClock-<version>-win32.zip`; versioon loetakse failist `Release\CalClock.exe`. Arhiivi juures on `CalClock.exe` ja `license.txt`. Soovi korral antakse allkirjastamisparameetrid `-SignerName`, `-SignToolPath` ja `-TimestampServer` käivitamisel. Olemasolevat sobivat Authenticode-allkirja kontrollitakse ja seda ei asendata. Varasemad CalClocki ZIP-arhiivid eemaldatakse iga käivituse alguses; allkirjastamis- või kontrollitõrge peatab pakkimise.
 
 Allkirjastamisparameetrite vaikeväärtused loetakse ka Windowsi kasutaja keskkonnamuutujatest: `BUILD_SIGNER_NAME`,

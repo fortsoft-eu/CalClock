@@ -238,6 +238,14 @@ Voraussetzungen:
 - Microsoft Visual Studio mit dem MSVC-v145-Toolset
 - Windows SDK
 
+Beim Erstellen werden das Anwendungssymbol und die gepackte Bibliothek aus `CalClock/Resources/Resources.dll`
+im Zwischenverzeichnis erzeugt. Beide Ressourcen werden beim Kompilieren über den Abschnitt `TEXTINCLUDE 3` in
+`CalClock.rc` eingebunden. Dadurch kann der Ressourcen-Editor von Visual Studio die Dialoge ohne die erzeugten
+Dateien öffnen, auch nach dem Bereinigen der Projektmappe.
+
+Beim Start wird die eingebettete Bibliothek direkt nach `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`
+entpackt. Eine bereits vorhandene identische Bibliothek wird wiederverwendet.
+
 `CalClock.slnx` öffnen, `Release | x86` auswählen und die Projektmappe erstellen. Die ausführbare Datei entsteht unter:
 
 ```text

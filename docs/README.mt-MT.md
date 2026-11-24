@@ -176,6 +176,14 @@ Il-pointer tal-maws jinħeba wara ftit inattività fuq l-arloġġ jew il-moniter
 
 Huma meħtieġa Microsoft Visual Studio bl-għodod MSVC v145 u Windows SDK. Iftaħ `CalClock.slnx`, agħżel `Release | x86` u ibni s-soluzzjoni. Il-fajl eżegwibbli jinħoloq f’`Release\CalClock.exe`. Win32/x86 biss huwa appoġġjat għax l-integrazzjoni mal-kontroll tal-arloġġ tal-Windows teħtieġ kompatibbiltà x86.
 
+Matul il-bini, l-ikona tal-applikazzjoni u l-librerija ppakkjata jiġu ġġenerati minn
+`CalClock/Resources/Resources.dll` fid-direttorju intermedju. Iż-żewġ riżorsi jiġu inklużi waqt
+il-kompilazzjoni permezz tat-taqsima `TEXTINCLUDE 3` ta’ `CalClock.rc`, sabiex l-editur tar-riżorsi ta’ Visual
+Studio jkun jista’ jiftaħ id-djalogi mingħajr il-fajls iġġenerati, anki wara t-tindif tal-fajls tal-bini.
+
+Meta jibda l-programm, il-librerija inkorporata tiġi estratta direttament lejn
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Jekk diġà teżisti librerija identika, terġa’ tintuża.
+
 Wara l-bini, `.\PackageRelease.ps1` joħloq `CalClock-<version>-win32.zip`; il-verżjoni tinqara minn `Release\CalClock.exe`. Fl-għerq tal-arkivju hemm `CalClock.exe` u `license.txt`. Il-parametri fakultattivi tal-iffirmar `-SignerName`, `-SignToolPath` u `-TimestampServer` jingħataw meta jitħaddem. Firma Authenticode valida eżistenti tiġi vverifikata u ma tinbidilx. Il-pakketti ZIP preċedenti ta’ CalClock jitneħħew fil-bidu ta’ kull tħaddim; żball fl-iffirmar jew fil-verifika jwaqqaf l-ippakkjar.
 
 Il-valuri predefiniti tal-parametri tal-iffirmar jinqraw ukoll mill-varjabbli tal-ambjent tal-utent ta’ Windows:

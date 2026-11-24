@@ -230,6 +230,14 @@ Krav:
 - Microsoft Visual Studio med verktygsuppsättningen MSVC v145
 - Windows SDK
 
+Vid kompileringen genereras programikonen och det packade biblioteket från `CalClock/Resources/Resources.dll`
+i mappen för mellanfiler. Båda resurserna inkluderas vid kompilering via avsnittet `TEXTINCLUDE 3` i
+`CalClock.rc`, så att Visual Studios resursredigerare kan öppna dialogrutorna utan de genererade filerna, även
+efter rensning av byggfilerna.
+
+Vid start packas det inbäddade biblioteket upp direkt till `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`.
+Ett identiskt befintligt bibliotek återanvänds.
+
 Öppna `CalClock.slnx`, välj `Release | x86` och bygg lösningen. Programfilen skapas som:
 
 ```text

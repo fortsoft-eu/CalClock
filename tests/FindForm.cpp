@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.1
+ * Last modified for version 1.7.3.2
  */
 
 #define NOMINMAX
@@ -91,6 +91,8 @@ static std::string ReadTestBytes(const std::wstring& path) {
 static void TestResourceLibrary(const std::wstring& directory) {
     std::wstring cache = directory + L"\\library-cache";
     Require(SUCCEEDED(iconLibrary.Initialize(hInstance, cache)), "extract complete embedded resource DLL");
+    Require(iconLibrary.GetPath() == cache + L"\\Resources.dll",
+        "resource DLL is stored directly in the application cache");
     std::string expected = ReadTestBytes(L"CalClock\\Resources\\Resources.dll");
     Require(!expected.empty() && ReadTestBytes(iconLibrary.GetPath()) == expected,
         "extracted DLL is byte-identical to the source library");

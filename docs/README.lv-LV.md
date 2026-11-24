@@ -174,6 +174,14 @@ Peles rādītājs virs ekrāna pulksteņa un aptumšotajiem monitoriem pēc īsa
 
 Nepieciešams Microsoft Visual Studio ar MSVC v145 rīkkopu un Windows SDK. Atveriet `CalClock.slnx`, atlasiet `Release | x86` un būvējiet risinājumu. Izpildāmais fails tiek izveidots `Release\CalClock.exe`. Atbalstīta tikai Win32/x86 konfigurācija, jo integrācijai ar Windows pulksteņa vadīklu nepieciešama x86 saderība.
 
+Būvēšanas laikā lietotnes ikona un pakotā bibliotēka tiek ģenerētas no `CalClock/Resources/Resources.dll`
+starpfailu direktorijā. Abi resursi tiek iekļauti kompilēšanas laikā, izmantojot `CalClock.rc` sadaļu
+`TEXTINCLUDE 3`, tāpēc Visual Studio resursu redaktors var atvērt dialogus bez ģenerētajiem failiem arī pēc
+būvēšanas rezultātu tīrīšanas.
+
+Palaižot iegultā bibliotēka tiek izpakota tieši failā `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Ja
+identiska bibliotēka jau pastāv, tā tiek izmantota atkārtoti.
+
 Pēc būvēšanas `.\PackageRelease.ps1` izveido `CalClock-<version>-win32.zip`; versiju nolasa no `Release\CalClock.exe`. Arhīva saknē ir `CalClock.exe` un `license.txt`. Neobligātie parakstīšanas parametri `-SignerName`, `-SignToolPath` un `-TimestampServer` tiek norādīti palaižot. Esošs derīgs Authenticode paraksts tiek pārbaudīts un netiek aizstāts. Iepriekšējie CalClock ZIP arhīvi tiek noņemti katras palaišanas sākumā; parakstīšanas vai pārbaudes kļūda aptur pakošanu.
 
 Parakstīšanas parametru noklusējuma vērtības tiek lasītas arī no Windows lietotāja vides mainīgajiem:

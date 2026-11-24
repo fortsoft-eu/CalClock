@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.2
  */
 
 #define NOMINMAX
@@ -30,12 +30,10 @@
 #include "PackedResource.h"
 #include "resource.h"
 #include <shlobj.h>
-#include <wincrypt.h>
 #include <cstring>
 #include <memory>
 #include <vector>
 
-#pragma comment(lib, "Crypt32.lib")
 #pragma comment(lib, "Shell32.lib")
 
 static const DWORD resourceSignature = 0x4D494450;
@@ -119,9 +117,8 @@ static HRESULT WriteResourceCache(const std::wstring& path, const BYTE* bytes, D
     return result;
 }
 
-/// Resolves the profile cache and its SHA256-addressed library version without loading executable code.
-static HRESULT ResourceCachePath(const BYTE* packed, DWORD packedSize, const std::wstring& cacheRoot,
-        std::wstring* path) {
+/// Resolves the library directly in the application profile cache without loading executable code.
+static HRESULT ResourceCachePath(const std::wstring& cacheRoot, std::wstring* path) {
     std::wstring directory = cacheRoot;
     if (directory.empty()) {
         wchar_t local[MAX_PATH] = {};
@@ -129,18 +126,7 @@ static HRESULT ResourceCachePath(const BYTE* packed, DWORD packedSize, const std
         if (FAILED(result)) {
             return result;
         }
-        directory = std::wstring(local) + L"\\FortSoft\\CalClock\\Libraries";
-    }
-    BYTE hash[32] = {};
-    DWORD hashSize = sizeof(hash);
-    if (!CryptHashCertificate2(L"SHA256", 0, nullptr, packed, packedSize, hash, &hashSize)) {
-        return HRESULT_FROM_WIN32(GetLastError());
-    }
-    directory += L"\\";
-    for (BYTE value : hash) {
-        wchar_t encoded[3] = {};
-        swprintf_s(encoded, L"%02X", value);
-        directory += encoded;
+        directory = std::wstring(local) + L"\\FortSoft\\CalClock";
     }
     int created = SHCreateDirectoryExW(nullptr, directory.c_str(), nullptr);
     if (created != ERROR_SUCCESS && created != ERROR_ALREADY_EXISTS) {
@@ -170,7 +156,7 @@ HRESULT ResourceLibrary::Initialize(HINSTANCE instance, const std::wstring& cach
         return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
     }
     std::wstring destination;
-    HRESULT result = ResourceCachePath(packed, packedSize, cacheRoot, &destination);
+    HRESULT result = ResourceCachePath(cacheRoot, &destination);
     if (FAILED(result)) {
         return result;
     }

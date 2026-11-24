@@ -192,6 +192,14 @@ De muisaanwijzer verdwijnt na korte inactiviteit boven de schermklok en verduist
 
 Microsoft Visual Studio met de MSVC v145-toolset en Windows SDK zijn vereist. Open `CalClock.slnx`, kies `Release | x86` en bouw de oplossing. Het uitvoerbare bestand staat in `Release\CalClock.exe`. Alleen Win32/x86 wordt ondersteund omdat de integratie met de Windows-klokbesturing x86-compatibiliteit vereist.
 
+Tijdens het bouwen worden het toepassingspictogram en de verpakte bibliotheek uit
+`CalClock/Resources/Resources.dll` gegenereerd in de map voor tussenbestanden. Beide bronnen worden tijdens
+het compileren opgenomen via de sectie `TEXTINCLUDE 3` in `CalClock.rc`, zodat de resource-editor van Visual
+Studio de dialoogvensters zonder gegenereerde bestanden kan openen, ook na het opschonen van de bouwbestanden.
+
+Bij het starten wordt de ingesloten bibliotheek rechtstreeks uitgepakt naar
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Een identieke bestaande bibliotheek wordt hergebruikt.
+
 Na het bouwen maakt `.\PackageRelease.ps1` `CalClock-<version>-win32.zip`; de versie wordt uit `Release\CalClock.exe` gelezen. Het archief bevat `CalClock.exe` en `license.txt` direct in de hoofdmap. Optionele ondertekeningsparameters `-SignerName`, `-SignToolPath` en `-TimestampServer` worden bij uitvoering opgegeven. Een bestaande geldige Authenticode-handtekening wordt gecontroleerd en niet vervangen. Eerdere CalClock-ZIP-pakketten worden aan het begin van elke uitvoering verwijderd; fouten bij ondertekenen of controleren stoppen het verpakken.
 
 Standaardwaarden voor ondertekeningsparameters worden ook uit de Windows-gebruikersomgevingsvariabelen gelezen:

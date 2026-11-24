@@ -223,6 +223,15 @@ Vaatimukset:
 - Microsoft Visual Studio ja MSVC v145 -työkalut
 - Windows SDK
 
+Käännöksen aikana sovelluksen kuvake ja pakattu kirjasto luodaan tiedostosta
+`CalClock/Resources/Resources.dll` väliaikaisten käännöstiedostojen hakemistoon. Molemmat resurssit
+sisällytetään käännösvaiheessa `CalClock.rc`-tiedoston `TEXTINCLUDE 3` -osion kautta, joten Visual Studion
+resurssieditori voi avata valintaikkunat ilman luotuja tiedostoja myös käännöstiedostojen puhdistamisen
+jälkeen.
+
+Käynnistyksen yhteydessä upotettu kirjasto puretaan suoraan tiedostoon
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Olemassa olevaa identtistä kirjastoa käytetään uudelleen.
+
 Avaa `CalClock.slnx`, valitse `Release | x86` ja käännä ratkaisu. Suoritettava tiedosto luodaan polkuun:
 
 ```text

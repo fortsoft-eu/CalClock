@@ -237,6 +237,14 @@ Requisiti:
 - Microsoft Visual Studio con il set di strumenti MSVC v145
 - Windows SDK
 
+Durante la compilazione, l’icona dell’applicazione e la libreria compressa vengono generate da
+`CalClock/Resources/Resources.dll` nella directory intermedia. Entrambe le risorse vengono incluse in fase di
+compilazione tramite la sezione `TEXTINCLUDE 3` di `CalClock.rc`, quindi l’editor delle risorse di Visual
+Studio può aprire le finestre di dialogo senza i file generati, anche dopo la pulizia della compilazione.
+
+All’avvio, la libreria incorporata viene estratta direttamente in
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Se esiste già una libreria identica, viene riutilizzata.
+
 Aprire `CalClock.slnx`, scegliere `Release | x86` e compilare la soluzione. L’eseguibile viene creato come:
 
 ```text

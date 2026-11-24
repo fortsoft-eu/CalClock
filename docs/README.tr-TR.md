@@ -221,6 +221,14 @@ Gereksinimler:
 - MSVC v145 araç takımına sahip Microsoft Visual Studio
 - Windows SDK
 
+Derleme sırasında uygulama simgesi ve paketlenmiş kitaplık, `CalClock/Resources/Resources.dll` dosyasından ara
+dizinde oluşturulur. Her iki kaynak da `CalClock.rc` dosyasının `TEXTINCLUDE 3` bölümü aracılığıyla derleme
+sırasında eklenir. Böylece Visual Studio kaynak düzenleyicisi, derleme çıktıları temizlendikten sonra bile
+oluşturulan dosyalar olmadan iletişim kutularını açabilir.
+
+Başlangıçta gömülü kitaplık doğrudan `%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll` dosyasına çıkarılır.
+Aynı içeriğe sahip bir kitaplık zaten varsa yeniden kullanılır.
+
 `CalClock.slnx` dosyasını açın, `Release | x86` seçin ve çözümü derleyin. Çalıştırılabilir dosya şu konumda oluşturulur:
 
 ```text

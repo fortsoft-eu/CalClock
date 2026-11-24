@@ -178,6 +178,14 @@ Folaítear an pointeoir tar éis tréimhse ghairid gan ghníomhaíocht os cionn 
 
 Teastaíonn Microsoft Visual Studio leis an tacar uirlisí MSVC v145 agus Windows SDK. Oscail `CalClock.slnx`, roghnaigh `Release | x86` agus tiomsaigh an réiteach. Cruthaítear `Release\CalClock.exe`. Ní thacaítear ach le Win32/x86 mar éilíonn comhtháthú le rialtán cloig Windows comhoiriúnacht x86.
 
+Le linn an tiomsaithe, gintear deilbhín an fheidhmchláir agus an leabharlann phacáilte ó
+`CalClock/Resources/Resources.dll` san eolaire idirmheánach. Cuirtear an dá acmhainn san áireamh ag am
+tiomsaithe trí rannán `TEXTINCLUDE 3` de `CalClock.rc`, ionas gur féidir le heagarthóir acmhainní Visual
+Studio na dialóga a oscailt gan na comhaid ghinte, fiú tar éis an tiomsú a ghlanadh.
+
+Ag am tosaithe, díphacáiltear an leabharlann leabaithe go díreach chuig
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. Athúsáidtear leabharlann chomhionann atá ann cheana.
+
 Tar éis tiomsaithe, cruthaíonn `.\PackageRelease.ps1` `CalClock-<version>-win32.zip`, agus léitear an leagan ó `Release\CalClock.exe`. Tá `CalClock.exe` agus `license.txt` i bhfréamh na cartlainne. Tugtar na paraiméadair roghnacha sínithe `-SignerName`, `-SignToolPath` agus `-TimestampServer` ag am rite. Fíoraítear síniú bailí Authenticode atá ann agus ní athsholáthraítear é. Baintear seanphacáistí ZIP CalClock ag tús gach rite; stopann teip sínithe nó fíoraithe an pacáistiú.
 
 Léitear luachanna réamhshocraithe na bparaiméadar sínithe freisin ó athróga timpeallachta úsáideora Windows:

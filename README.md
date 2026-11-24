@@ -235,6 +235,9 @@ The build generates the application icon and packed library from `CalClock/Resou
 the intermediate directory. Both are compile-time resources in `CalClock.rc`'s `TEXTINCLUDE 3` section, so
 the Visual Studio resource editor can open the dialogs without generated files, including after a clean.
 
+At startup, the embedded library is extracted directly to
+`%LOCALAPPDATA%\FortSoft\CalClock\Resources.dll`. An identical existing library is reused.
+
 Open `CalClock.slnx`, select `Release | x86`, and build the solution. The executable is created as:
 
 ```text
