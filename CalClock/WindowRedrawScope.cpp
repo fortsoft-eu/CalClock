@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.6.0.0
+ * Last modified for version 1.7.3.2
  */
 
-#define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
 #include "WindowRedrawScope.h"
+
+static const LONG COMPOSITED_STYLE = 0x02000000;
 
 /// Disables redraw only when target is a valid, currently visible window.
 WindowRedrawScope::WindowRedrawScope(HWND target) {
@@ -43,7 +43,7 @@ WindowRedrawScope::~WindowRedrawScope() {
         SendMessageW(window, WM_SETREDRAW, TRUE, 0);
         UINT flags = RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN;
         HDC dc = nullptr;
-        if ((GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_COMPOSITED) != 0) {
+        if ((GetWindowLongPtrW(window, GWL_EXSTYLE) & COMPOSITED_STYLE) != 0) {
             dc = GetDC(window);
             flags |= RDW_UPDATENOW;
         }
