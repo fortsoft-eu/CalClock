@@ -76,12 +76,13 @@ Stafrænar klukkur, dagatöl og spjöld deila fjórum rammastílum. Einfaldi ram
 
 Tungumál forrits, viðmótsletur, leturmýking, vistun, Windows-ræsing og festing við brúnir eru almennar stillingar á Forrit. Þegar slökkt er á þemum á flipanum Forrit gildir það fyrir Stillingar, Hjálp, Um, Tímareiknivél og Finna. Hver græja notar sína eigin þemastillingu. Tímagjafinn er líka almennur. Tungumál græju, mýking, stílar, tímabelti, hliðrun, vekjari og tímamerki eru sjálfstæð. Leturmýking býður **ClearType**, **GDI** og **Engin**.
 
-Windows Classic-stíll krefst þess að Slökkva á þemum sé valið og gildir aðeins fyrir Stillingar, Hjálp, Um,
-Tímareiknivél og Finna. Stýringar þessara glugga nota Tahoma 8 pt þegar sjálfgefið kerfisletur er valið;
-sérvalið forritsletur hefur forgang og leyfistextinn heldur Consolas. Aðeins GDI eða Engin leturjöfnun er í
-boði. Vistað ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með
-hefðbundnu Windows-útliti birtast allir útlitsvalkostir ómerktir og gráir og eru ekki notaðir; vistaðar
-stillingar haldast óbreyttar.
+Stílarnir Windows Standard og Windows Classic krefjast Slökkva á þemum og gilda aðeins fyrir Stillingar,
+Hjálp, Um, Tímareiknivél og Finna. Með sjálfgefnu kerfisletri notar Windows Standard hlýja gráa liti og Tahoma
+8 pt, en Windows Classic hlutlausa gráa liti og Microsoft Sans Serif 8 pt. Sérvalið forritsletur hefur
+forgang. Leyfistextinn heldur letri með fastri stafbreidd. Aðeins GDI eða Engin leturjöfnun er í boði. Vistað
+ClearType-val notar GDI tímabundið og tekur aftur gildi þegar stíllinn er felldur niður. Með hefðbundnu
+Windows-útliti birtast allir útlitsvalkostir ómerktir og gráir og eru ekki notaðir; vistaðar stillingar
+haldast óbreyttar.
 
 Sleðinn **Hljóðstyrkur** á Vekjari stjórnar innri spilun hljóðskráa fyrir hverja græju og sýnir styrk í dB. Sjálfgefið **−18 dB** varðveitir upprunalegan styrk skrárinnar (**100%**). Til hægri magnast hljóðið; hámarkið **0 dB** er um **794%** af upprunalegri sveifluvídd. Lengst til vinstri er **−∞ dB** (þögn). Breytingar virka meðan á prófun stendur. Mögnun gildir um afkóðað hljóð, þar á meðal WAV, MP3, WMA, AAC, M4A og FLAC þegar Windows styður það. Eldri spilun skráa sem ekki er hægt að afkóða, svo sem MIDI, er takmörkuð við 100%.
 
@@ -243,10 +244,12 @@ síðustu 30 leitir í núverandi keyrslu.
 Á flipanum Forrit virkjar Annað tilkynningatákn valkostinn Retrótákn á tilkynningasvæði. Báðir valkostir
 breyta aðeins tilkynningatákninu eftir Nota eða Vista.
 
-Útlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Classic titilstikur; Windows Classic. Báðir
-titilstikuhamir virka með eða án þema á stýringum. Kerfissjálfgefið fylgir Slökkva á þemum fyrir allan
-gluggann. Windows Classic-titilstikur breyta aðeins letri og bakgrunni titilsins; titilhnappar og þrívíður
-rammi halda kerfislitum. Windows Classic krefst þess að slökkt sé á þemum.
+Útlit glugga: Kerfissjálfgefið; Windows Basic titilstikur; Windows Standard titilstikur; Windows Classic
+titilstikur; Windows Standard; Windows Classic. Allir þrír titilstikuvalkostir virka með eða án þema á
+stýringum. Kerfissjálfgefið beitir Slökkva á þemum á allan gluggann. Titilstikur Windows Standard og Windows
+Classic breyta letri og litaskiptum bakgrunns; titilhnappar og þrívíður rammi halda kerfislitum. Þessir titlar
+haldast í 10 pt; sjálfgefin stærð 8 pt gildir aðeins um innri stýringar. Báðir heildarstílarnir krefjast þess
+að slökkt sé á þemum.
 
 ## Leyfi
 

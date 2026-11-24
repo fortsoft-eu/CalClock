@@ -76,10 +76,11 @@ Digitale ure, kalendere og paneler deler fire rammestile. Den enkle ramme har ju
 
 Programsprog, brugerfladeskrift, udjævning, lagring, Windows-start og fastgørelse til kanter er globale indstillinger på Program. Deaktivering af temaer på fanen Program påvirker Indstillinger, Hjælp, Om, Tidsberegner og Find. Hver widget bruger sin egen temaindstilling. Tidskilden er også global. Widgetsprog, udjævning, typografier, tidszone, forskydning, alarm og tidssignal indstilles uafhængigt. Udjævning tilbyder **ClearType**, **GDI** og **Ingen**.
 
-Windows Classic-stil kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om, Tidsberegner og Find. Med
-systemets standardskrifttype bruger disse vinduers kontrolelementer Tahoma 8 pt; en brugerdefineret
-programskrifttype har forrang. Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI
-og Ingen tilgængelige for skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når
+Stilene Windows Standard og Windows Classic kræver Deaktiver temaer og gælder kun Indstillinger, Hjælp, Om,
+Tidsberegner og Find. Med systemets standardskrifttype bruger Windows Standard en varm grå palet og Tahoma 8
+pt, mens Windows Classic bruger neutral grå og Microsoft Sans Serif 8 pt. En brugerdefineret programskrifttype
+har forrang. Licensen beholder skrifttypen med fast tegnbredde. I denne tilstand er kun GDI og Ingen
+tilgængelige for skriftudjævning: et gemt valg af ClearType bruger midlertidigt GDI og gendannes, når
 tilstanden slås fra. Hvis visuelle typografier er deaktiveret i Windows, vises alle udseendevalg som
 umarkerede og deaktiverede, uden at de gemte valg ændres.
 
@@ -253,10 +254,12 @@ udtryk. Historikken gemmer de sidste 30 søgninger i den aktuelle session.
 På fanen Program aktiverer Alternativt meddelelsesikon valget Retroikon i meddelelsesområdet. Begge
 indstillinger ændrer kun meddelelsesikonet efter Anvend eller Gem.
 
-Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Classic-titellinjer; Windows Classic.
-Begge titellinjetilstande virker med eller uden temaer i kontrolelementerne. Systemstandard følger Deaktiver
-temaer for hele vinduet. Windows Classic-titellinjer ændrer kun titelens skrifttype og baggrund; titelknapper
-og 3D-kant bevarer systemfarverne. Windows Classic kræver deaktiverede temaer.
+Vinduers udseende: Systemstandard; Windows Basic-titellinjer; Windows Standard-titellinjer; Windows Classic-
+titellinjer; Windows Standard; Windows Classic. Alle tre titellinjevalg virker med eller uden temaer i
+kontrolelementerne. Systemstandard anvender Deaktiver temaer på hele vinduet. Titellinjer i Windows Standard
+og Windows Classic ændrer skrifttypen og baggrundens farveovergang; titelknapper og 3D-kant beholder
+systemfarverne. Disse titler forbliver 10 pt; standardstørrelsen 8 pt gælder kun de indre kontrolelementer.
+Begge komplette vinduesstile kræver deaktiverede temaer.
 
 ## Licens
 

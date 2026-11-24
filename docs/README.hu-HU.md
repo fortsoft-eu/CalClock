@@ -59,12 +59,13 @@ A beállítások XML-be exportálhatók. Az importálás azonnal betölti és a 
 
 A Betűtípus élsimítása lehet ClearType, GDI vagy Nincs. A Vezető nulla választásai: „Igen” (alapértelmezett), „Nem, hely megtartása” és „Nem, hely nélkül”. A „Nem, hely megtartása” elrejti a nullát, de fenntartja a szélességét; a többi számjegy arányos betűtípusnál sem mozdul el. A képernyőórák középre igazítása ezt a helyet is figyelembe veszi. Az UTC-sor külön igazodik középre.
 
-A Windows Classic stílushoz be kell jelölni a Témák letiltása lehetőséget; csak a Beállítások, Súgó, Névjegy
-és Időkalkulátor ablakokra vonatkozik. A rendszer alapértelmezett betűtípusának kiválasztásakor ezen ablakok
-vezérlőelemei 8 pontos Tahomát használnak; az egyéni alkalmazás-betűtípus elsőbbséget élvez, a licenc szövege
-pedig Consolas marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás átmenetileg GDI-t
-használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél az összes megjelenítési
-beállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
+A Windows Standard és Windows Classic stílushoz be kell jelölni a Témák letiltása lehetőséget; ezek csak a
+Beállítások, Súgó, Névjegy, Időkalkulátor és Keresés ablakra érvényesek. Az alapértelmezett
+rendszerbetűtípussal a Windows Standard melegszürke palettát és Tahoma 8 pt, a Windows Classic semleges szürke
+palettát és Microsoft Sans Serif 8 pt betűtípust használ. Az egyéni alkalmazásbetűtípus elsőbbséget élvez. A
+licenc szövege rögzített szélességű marad. Csak GDI vagy Nincs választható. A mentett ClearType-beállítás
+átmenetileg GDI-t használ, és a stílus kikapcsolásakor visszaáll. Klasszikus Windows-megjelenésnél az összes
+megjelenítési beállítás jelöletlen és szürke, és nem érvényesül; a mentett választások megmaradnak.
 
 ## Időkalkulátor
 
@@ -193,11 +194,12 @@ végét, a visszafelé keresést és a reguláris kifejezéseket. Az előzménye
 Az Alkalmazás lapon a Másik értesítési ikon engedélyezi a Retró értesítési ikon lehetőséget. Mindkettő csak az
 értesítési ikont módosítja az Alkalmaz vagy Mentés megnyomása után.
 
-Ablakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows Classic-címsorok; Windows Classic.
-Mindkét címsormód használható a vezérlők témáival vagy azok nélkül. A rendszer alapbeállítása az egész ablakra
-alkalmazza a témák letiltását. A Windows Classic-címsorok csak a cím betűtípusát és hátterét módosítják; a
-címsor gombjai és a 3D keret megtartják a rendszerszíneket. A Windows Classic módhoz le kell tiltani a
-témákat.
+Ablakok megjelenése: Rendszer szerinti; Windows Basic-címsorok; Windows Standard-címsorok; Windows Classic-
+címsorok; Windows Standard; Windows Classic. Mindhárom címsorbeállítás működik a vezérlők témáival és azok
+nélkül is. A rendszer alapértéke az egész ablakra alkalmazza a Témák letiltása beállítást. A Windows Standard
+és Windows Classic címsor a betűtípust és a háttér színátmenetét módosítja; a címsorgombok és a 3D keret
+megtartják a rendszer színeit. E címsorok mérete 10 pt marad; az alapértelmezett 8 pt csak a belső vezérlőkre
+vonatkozik. Mindkét teljes ablakstílushoz letiltott témák szükségesek.
 
 ## Licenc
 

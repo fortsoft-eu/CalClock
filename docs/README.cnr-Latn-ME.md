@@ -52,11 +52,13 @@ Promjene izgleda odmah se vide u pregledu izabranog vidžeta. `Podrazumijevani i
 
 Umekšavanje fonta nudi ClearType, GDI i Nema. Vodeća nula nudi „Da” (podrazumijevano), „Ne, zadrži razmak” i „Ne, bez razmaka”. „Ne, zadrži razmak” skriva nulu, ali čuva njenu širinu u izabranom fontu; ostale cifre zadržavaju položaje i kod proporcionalnih fontova. Satovi na monitoru ostaju centrirani sa uračunatim razmakom. Red UTC ima sopstveno centriranje.
 
-Stil Windows Classic dostupan je uz isključene teme i važi samo za Podešavanja, Pomoć, O programu, Kalkulator
-vremena i Pronađi. Uz podrazumijevani sistemski font kontrole ovih prozora koriste Tahomu 8 pt; vlastiti font
-programa ima prednost. Dostupno je umekšavanje GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI
-i vraća nakon isključivanja ovog stila. Kada Windows koristi klasični izgled, sve opcije izgleda su nedostupne
-i ne primjenjuju se; sačuvani izbori ostaju nepromijenjeni.
+Stilovi Windows Standard i Windows Classic zahtijevaju opciju Onemogući teme i važe samo za Podešavanja,
+Pomoć, O programu, Kalkulator vremena i Pronađi. Uz podrazumijevani sistemski font Windows Standard koristi
+toplu sivu paletu i Tahoma 8 pt, a Windows Classic neutralnu sivu paletu i Microsoft Sans Serif 8 pt.
+Prilagođeni font programa ima prednost. Licenca zadržava font jednake širine znakova. Dostupno je umekšavanje
+GDI ili Nema. Sačuvani ClearType privremeno se zamjenjuje s GDI i vraća nakon isključivanja ovog stila. Kada
+Windows koristi klasični izgled, sve opcije izgleda su nedostupne i ne primjenjuju se; sačuvani izbori ostaju
+nepromijenjeni.
 
 ## Kalkulator vremena
 
@@ -182,10 +184,12 @@ unazad i regularni izrazi. Istorija čuva posljednjih 30 pretraga u tekućoj ses
 
 Na kartici Program opcija Alternativna ikona obavještenja omogućava Retro ikona u oblasti obavještenja. Obje mijenjaju samo ikonu obavještenja nakon Primijeni ili Sačuvaj.
 
-Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Classic; Windows Classic. Oba načina
-naslovne trake rade s temama kontrola ili bez njih. Sistemski prati Isključi teme za cijeli prozor. Naslovne
-trake Windows Classic mijenjaju samo font i pozadinu naslova; dugmad naslova i 3D okvir zadržavaju sistemske
-boje. Windows Classic zahtijeva isključene teme.
+Izgled prozora: Sistemski; Zaglavlja Windows Basic; Zaglavlja Windows Standard; Zaglavlja Windows Classic;
+Windows Standard; Windows Classic. Sve tri opcije naslovne trake rade sa temama kontrola ili bez njih.
+Sistemski primjenjuje Onemogući teme na cijeli prozor. Naslovne trake Windows Standard i Windows Classic
+mijenjaju font i gradijent pozadine; dugmad naslova i 3D okvir zadržavaju sistemske boje. Ovi naslovi ostaju
+veličine 10 pt; podrazumijevanih 8 pt važi samo za unutrašnje kontrole. Oba potpuna stila zahtijevaju
+isključene teme.
 
 ## Licenca
 

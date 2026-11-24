@@ -76,12 +76,13 @@ Dijital saatler, takvimler ve birleşik paneller dört kenarlık stilini paylaş
 
 Uygulama dili, arayüz yazı tipi, yumuşatma, saklama, Windows ile başlatma ve kenara yapışma genel ayarlardır ve Uygulama’da yapılır. Uygulama sekmesinde temaları kapatmak Ayarlar, Yardım, Hakkında, Zaman hesaplayıcı ve Bul pencerelerini etkiler. Her araç kendi tema ayarını kullanır. Zaman kaynağı da geneldir. Araç dili, yumuşatma, stiller, saat dilimi, kaydırma, alarm ve zaman sinyali bağımsız ayarlanır. Yumuşatma **ClearType**, **GDI** ve **Yok** seçeneklerini sunar.
 
-Windows Classic stili, Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca Ayarlar, Yardım, Hakkında,
-Zaman hesaplayıcı ve Bul pencerelerine uygulanır. Sistemin varsayılan yazı tipi seçildiğinde bu pencerelerin
-denetimleri Tahoma 8 pt kullanır; özel uygulama yazı tipi önceliklidir ve lisans metni Consolas olarak kalır.
-Yalnızca GDI veya Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil
-kapatıldığında geri gelir. Windows klasik görünümünde tüm görünüm seçenekleri işaretsiz ve gri görünür,
-uygulanmaz; kayıtlı tercihler korunur.
+Windows Standard ve Windows Classic stilleri Temaları devre dışı bırak seçeneğini gerektirir ve yalnızca
+Ayarlar, Yardım, Hakkında, Zaman hesaplayıcı ve Bul pencerelerini etkiler. Varsayılan sistem yazı tipiyle
+Windows Standard sıcak gri palet ve Tahoma 8 pt, Windows Classic nötr gri palet ve Microsoft Sans Serif 8 pt
+kullanır. Özel uygulama yazı tipi önceliklidir. Lisans metni eş aralıklı yazı tipini korur. Yalnızca GDI veya
+Yok seçilebilir. Kayıtlı ClearType tercihi geçici olarak GDI ile uygulanır; stil kapatıldığında geri gelir.
+Windows klasik görünümünde tüm görünüm seçenekleri işaretsiz ve gri görünür, uygulanmaz; kayıtlı tercihler
+korunur.
 
 Alarm’daki **Ses düzeyi** kaydırıcısı dahili çalınan dosyaları her araç için ayrı ayarlar ve düzeyi dB cinsinden gösterir. Varsayılan **−18 dB**, dosyanın özgün düzeyini (**100%**) korur. Sağa taşımak sesi yükseltir; en yüksek **0 dB**, özgün genliğin yaklaşık **794%** değeridir. En sol **−∞ dB** (sessizlik) konumudur. Değişiklikler ses testi sırasında etkilidir. Yükseltme, Windows desteklediğinde WAV, MP3, WMA, AAC, M4A ve FLAC dahil çözülmüş sese uygulanır. MIDI gibi çözülemeyen dosyaların eski çalma yöntemi 100% ile sınırlıdır.
 
@@ -244,11 +245,12 @@ Geçmiş, geçerli oturumdaki son 30 aramayı tutar.
 Uygulama sekmesinde Alternatif bildirim simgesi, Retro bildirim simgesi seçeneğini etkinleştirir. Her iki
 seçenek de yalnızca bildirim simgesini Uygula veya Kaydet sonrasında değiştirir.
 
-Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Classic başlıkları; Windows Classic. Her iki
-başlık modu da denetim temaları açıkken veya kapalıyken çalışır. Sistem varsayılanı, Temaları devre dışı bırak
-seçimini tüm pencereye uygular. Windows Classic başlıkları yalnızca başlık yazı tipini ve arka planını
-değiştirir; başlık düğmeleri ve 3B kenarlık sistem renklerini korur. Windows Classic temaların kapatılmasını
-gerektirir.
+Pencere görünümü: Sistem; Windows Basic başlıkları; Windows Standard başlıkları; Windows Classic başlıkları;
+Windows Standard; Windows Classic. Üç başlık seçeneği de denetim temaları açıkken veya kapalıyken çalışır.
+Sistem, Temaları devre dışı bırak seçimini tüm pencereye uygular. Windows Standard ve Windows Classic
+başlıkları yazı tipini ve arka plan geçişini değiştirir; başlık düğmeleri ve 3D kenarlık sistem renklerini
+korur. Bu başlıklar 10 pt olarak kalır; varsayılan 8 pt yalnızca iç denetimlere uygulanır. İki tam pencere
+stili de temaların devre dışı olmasını gerektirir.
 
 ## Lisans
 

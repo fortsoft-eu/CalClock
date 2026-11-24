@@ -76,12 +76,13 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects Settings, Help, About, Time Calculator, and Find. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
-Windows Classic style requires Disable themes and applies only to Settings, Help, About, Time Calculator and
-Find. With the default system font selected, their controls use Tahoma 8 pt; a custom application font takes
-precedence. The licence keeps its monospaced font. Only GDI and None are available for font antialiasing in
-this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows
-itself has visual styles turned off, all appearance options appear unchecked and disabled without changing the
-saved choices.
+The Windows Standard and Windows Classic styles require Disable themes and apply only to Settings, Help,
+About, Time Calculator, and Find. With the default system font selected, Windows Standard uses a warm-grey
+palette and Tahoma 8 pt, while Windows Classic uses a neutral-grey palette and Microsoft Sans Serif 8 pt. A
+custom application font takes precedence. The licence keeps its monospaced font. Only GDI and None are
+available for font antialiasing in this mode: a saved ClearType choice temporarily uses GDI and returns when
+the mode is turned off. If Windows itself has visual styles turned off, all appearance options appear
+unchecked and disabled without changing the saved choices.
 
 The **Audio volume** slider on the Alarm tab controls internally played audio files separately for each widget and shows the level in dB. The default is **−18 dB**, which preserves the file’s original level (**100%**). Moving the slider to the right amplifies the audio; the **0 dB** maximum is approximately **794%** of the original amplitude. The leftmost position is **−∞ dB** (silence). Changes take effect during the audio test. Amplification applies to decoded audio, including WAV, MP3, WMA, AAC, M4A, and FLAC when supported by Windows. Legacy playback for files that cannot be decoded, such as MIDI, is limited to 100%.
 
@@ -254,10 +255,12 @@ expressions. The history retains the last 30 searches for the current applicatio
 On the Application tab, Alternative notification icon enables Old school icon. Both options affect only the
 notification icon and take effect after Apply or Save.
 
-Window appearance: System default; Windows Basic title bars; Windows Classic title bars; Windows Classic. Both
-title-bar modes work with control themes enabled or disabled. System default follows Disable themes for the
-entire window. Windows Classic title bars change only the caption font and background, preserving system
-colours for caption buttons and the 3D border. Windows Classic requires disabled themes.
+Window appearance: System default; Windows Basic title bars; Windows Standard title bars; Windows Classic
+title bars; Windows Standard; Windows Classic. All three title-bar choices work with control themes enabled or
+disabled. System default follows Disable themes for the entire window. Windows Standard and Windows Classic
+title bars change the caption font and background gradient; caption buttons and the 3D border retain system
+colours. These captions remain at 10 pt; the default 8 pt size applies only to interior controls. Both
+complete-window styles require disabled themes.
 
 ## Licence
 

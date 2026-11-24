@@ -76,12 +76,13 @@ Digitální hodiny, kalendáře a kombinované panely sdílejí čtyři styly r�
 
 Jazyk aplikace, písmo rozhraní, vyhlazování písma, ukládání nastavení, spouštění s Windows a přichytávání k okrajům pracovní plochy jsou globální a nastavují se na kartě Aplikace. Zákaz motivů na kartě Aplikace platí pro Nastavení, Nápovědu, O programu, Časový kalkulátor a hledání. Každý widget používá vlastní nastavení motivů. Globální je i zdroj času. Jazyk widgetu, vyhlazování písma, motivy, časové pásmo, offset, budík a časové znamení se nastavují samostatně. Vyhlazování písma nabízí **ClearType**, **GDI** a **Žádné**.
 
-Styl Windows Classic vyžaduje volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu, O programu, Časový
-kalkulátor a hledání. Při výchozím systémovém písmu používají ovládací prvky těchto oken Tahomu 8 pt; vlastní
-aplikační písmo má přednost. Text licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze
-vyhlazování GDI nebo Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li
-vizuální styly vypnuté přímo ve Windows, všechny volby vzhledu se zobrazí nezaškrtnuté a neaktivní, aniž se
-změní uložené nastavení.
+Styly Windows Standard a Windows Classic vyžadují volbu Zakázat motivy a platí pouze pro Nastavení, Nápovědu,
+O programu, Časový kalkulátor a hledání. Při výchozím systémovém písmu používá Windows Standard teplejší šedou
+paletu a Tahomu 8 pt, Windows Classic neutrální šedou paletu a Microsoft Sans Serif 8 pt. Vlastní aplikační
+písmo má přednost. Text licence zůstává neproporcionálním písmem. V tomto režimu lze zvolit pouze vyhlazování
+GDI nebo Žádné: uložená volba ClearType dočasně použije GDI a po vypnutí režimu se obnoví. Jsou-li vizuální
+styly vypnuté přímo ve Windows, všechny volby vzhledu se zobrazí nezaškrtnuté a neaktivní, aniž se změní
+uložené nastavení.
 
 Jezdec **Hlasitost zvuku** na kartě Budík ovládá interně přehrávané zvukové soubory samostatně pro každý widget a zobrazuje úroveň v dB. Výchozí hodnota **−18 dB** zachovává původní úroveň souboru (**100 %**). Posun doprava zvuk zesiluje; maximum **0 dB** odpovídá přibližně **794 %** původní amplitudy. Levá krajní poloha je **−∞ dB** (ticho). Změny se projevují i během testu zvuku. Zesílení se vztahuje na dekódovaný zvuk včetně WAV, MP3, WMA, AAC, M4A a FLAC, pokud je Windows podporují. Starší způsob přehrávání souborů, které nelze dekódovat, například MIDI, je omezen na 100 %.
 
@@ -254,10 +255,12 @@ Historie uchovává posledních 30 hledání během běhu aplikace.
 Na kartě Aplikace volba Alternativní oznamovací ikona zpřístupní volbu Retro oznamovací ikona. Obě volby mění
 pouze ikonu v oznamovací oblasti a projeví se po stisknutí Použít nebo Uložit.
 
-Vzhled oken: Systémový; Záhlaví Windows Basic; Záhlaví Windows Classic; Windows Classic. Obě záhlaví lze
-použít s motivy uvnitř okna i bez nich. Systémový respektuje Zakázat motivy pro celé okno. Záhlaví Windows
-Classic mění jen písmo a pozadí záhlaví, nikoli systémové barvy tlačítek a 3D rámečku. Windows Classic
-vyžaduje vypnuté motivy.
+Vzhled oken: Systémový; Záhlaví Windows Basic; Záhlaví Windows Standard; Záhlaví Windows Classic; Windows
+Standard; Windows Classic. Všechny tři volby záhlaví lze použít s motivy ovládacích prvků i bez nich.
+Systémový respektuje volbu Zakázat motivy pro celé okno. Záhlaví Windows Standard a Windows Classic mění písmo
+a přechod pozadí; tlačítka záhlaví a 3D rámeček zachovávají systémové barvy. Písmo těchto záhlaví zůstává
+velikosti 10 pt; výchozí velikost 8 pt platí pouze pro vnitřní prvky. Oba styly celých oken vyžadují vypnuté
+motivy.
 
 ## Licence
 

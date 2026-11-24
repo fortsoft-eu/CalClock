@@ -76,9 +76,10 @@ Orologi digitali, calendari e pannelli condividono quattro stili di bordo. Il bo
 
 Lingua dell’applicazione, carattere dell’interfaccia, smussatura, archiviazione, avvio Windows e aggancio ai bordi sono globali e si configurano in Applicazione. La disattivazione dei temi in Applicazione riguarda Impostazioni, Guida, Informazioni, Calcolatore di tempi e Trova. Ogni widget usa la propria impostazione dei temi. Anche la sorgente dell’ora è globale. Lingua del widget, smussatura, stili, fuso, scostamento, sveglia e segnale orario sono indipendenti. L’antialiasing offre **ClearType**, **GDI** e **Nessuno**.
 
-Stile Windows Classic richiede Disattiva temi e riguarda solo Impostazioni, Guida, Informazioni, Calcolatore
-di tempi e Trova. Con il carattere di sistema predefinito, i controlli di queste finestre usano Tahoma 8 pt;
-un carattere personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza
+Gli stili Windows Standard e Windows Classic richiedono Disattiva temi e riguardano solo Impostazioni, Guida,
+Informazioni, Calcolatore di tempi e Trova. Con il carattere di sistema predefinito, Windows Standard usa una
+tavolozza grigia calda e Tahoma 8 pt, mentre Windows Classic usa un grigio neutro e Microsoft Sans Serif 8 pt.
+Un carattere personalizzato dell’applicazione ha la precedenza. La licenza mantiene il carattere a larghezza
 fissa. In questa modalità sono disponibili solo GDI e Nessuno per l’antialiasing: una scelta ClearType salvata
 usa temporaneamente GDI e viene ripristinata disattivando la modalità. Se gli stili visivi sono disattivati in
 Windows, tutte le opzioni di aspetto appaiono deselezionate e disabilitate senza modificare le scelte salvate.
@@ -261,10 +262,12 @@ sessione.
 Nella scheda Applicazione, Icona di notifica alternativa abilita Icona di notifica retrò. Le due opzioni
 modificano solo l’icona di notifica dopo Applica o Salva.
 
-Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Classic; Windows Classic. Entrambe le
-modalità del titolo funzionano con o senza temi nei controlli. Sistema segue Disattiva temi per l'intera
-finestra. I titoli Windows Classic modificano solo carattere e sfondo del titolo; pulsanti e bordo 3D
-mantengono i colori di sistema. Windows Classic richiede temi disattivati.
+Aspetto delle finestre: Sistema; Titoli Windows Basic; Titoli Windows Standard; Titoli Windows Classic;
+Windows Standard; Windows Classic. Le tre opzioni del titolo funzionano con o senza temi nei controlli.
+Sistema applica Disattiva temi all’intera finestra. I titoli Windows Standard e Windows Classic cambiano
+carattere e sfumatura dello sfondo; i pulsanti del titolo e il bordo 3D mantengono i colori di sistema. Questi
+titoli restano a 10 pt; la dimensione predefinita di 8 pt vale solo per i controlli interni. Entrambi gli
+stili completi richiedono temi disattivati.
 
 ## Licenza
 

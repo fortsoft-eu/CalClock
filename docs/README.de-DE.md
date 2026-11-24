@@ -76,12 +76,13 @@ Digitaluhren, Kalender und kombinierte Panels teilen vier Rahmenstile. Der einfa
 
 Anwendungssprache, Oberflächenschrift, Schriftglättung, Speicherung, Windows-Autostart und Einrasten an Arbeitsbereichsrändern sind global und werden auf Anwendung konfiguriert. Das Deaktivieren von Designs auf der Registerkarte Anwendung betrifft die Fenster Einstellungen, Hilfe, Info, Zeitrechner und Suchen. Jedes Widget verwendet seine eigene Design-Einstellung. Auch die Zeitquelle ist global. Widget-Sprache, Schriftglättung, visuelle Stile, Zeitzone, Versatz, Wecker und Zeitzeichen sind unabhängig einstellbar. Die Schriftglättung bietet **ClearType**, **GDI** und **Keine**.
 
-Windows-Classic-Stil setzt Designs deaktivieren voraus und gilt nur für Einstellungen, Hilfe, Info,
-Zeitrechner und Suchen. Bei ausgewählter Systemschrift verwenden deren Steuerelemente Tahoma 8 pt; eine eigene
-Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale Schrift. In diesem Modus stehen nur
-GDI und Keine für die Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl verwendet
-vorübergehend GDI und wird beim Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows selbst
-deaktiviert, erscheinen alle Darstellungsoptionen ausgeschaltet und nicht verfügbar; die gespeicherten
+Die Stile Windows Standard und Windows Classic setzen Designs deaktivieren voraus und gelten nur für
+Einstellungen, Hilfe, Info, Zeitrechner und Suchen. Bei ausgewählter Systemschrift verwendet Windows Standard
+eine warme Graupalette und Tahoma 8 pt, Windows Classic eine neutrale Graupalette und Microsoft Sans Serif 8
+pt. Eine eigene Anwendungsschrift hat Vorrang. Die Lizenz behält ihre nichtproportionale Schrift. In diesem
+Modus stehen nur GDI und Keine für die Schriftglättung zur Verfügung: Eine gespeicherte ClearType-Auswahl
+verwendet vorübergehend GDI und wird beim Ausschalten wiederhergestellt. Sind die visuellen Stile in Windows
+selbst deaktiviert, erscheinen alle Darstellungsoptionen ausgeschaltet und nicht verfügbar; die gespeicherten
 Einstellungen bleiben erhalten.
 
 Der Regler **Audiolautstärke** auf Wecker steuert intern abgespielte Audiodateien für jedes Widget getrennt und zeigt den Pegel in dB. Der Standard **−18 dB** erhält den ursprünglichen Dateipegel (**100%**). Nach rechts wird verstärkt; das Maximum **0 dB** entspricht ungefähr **794%** der ursprünglichen Amplitude. Ganz links liegt **−∞ dB** (Stille). Änderungen wirken auch während des Audiotests. Die Verstärkung gilt für dekodiertes Audio einschließlich WAV, MP3, WMA, AAC, M4A und FLAC, sofern Windows diese unterstützt. Die ältere Wiedergabe nicht dekodierbarer Dateien, etwa MIDI, ist auf 100% begrenzt.
@@ -262,11 +263,13 @@ Auf der Registerkarte Anwendung aktiviert das alternative Benachrichtigungssymbo
 Infobereich. Beide Optionen ändern nur das Benachrichtigungssymbol und werden mit Übernehmen oder Speichern
 wirksam.
 
-Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Classic-Titelleisten; Windows Classic.
-Beide Titelleistenmodi funktionieren mit oder ohne Designs für Steuerelemente. Systemstandard übernimmt
-Designs deaktivieren für das gesamte Fenster. Windows Classic-Titelleisten ändern nur Titelschrift und
-Hintergrund; Systemfarben der Titelleistenschaltflächen und des 3D-Rahmens bleiben erhalten. Windows Classic
-erfordert deaktivierte Designs.
+Fensterdarstellung: Systemstandard; Windows-Basic-Titelleisten; Windows Standard-Titelleisten; Windows
+Classic-Titelleisten; Windows Standard; Windows Classic. Alle drei Titelleistenoptionen funktionieren mit oder
+ohne Designs für Steuerelemente. Systemstandard übernimmt Designs deaktivieren für das gesamte Fenster. Die
+Titelleisten von Windows Standard und Windows Classic ändern Titelschrift und Hintergrundverlauf;
+Titelschaltflächen und 3D-Rahmen behalten die Systemfarben. Diese Titelschriften bleiben bei 10 pt; die
+Vorgabe 8 pt gilt nur für die inneren Steuerelemente. Beide vollständigen Fensterstile setzen deaktivierte
+Designs voraus.
 
 ## Lizenz
 

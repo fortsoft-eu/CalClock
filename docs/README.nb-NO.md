@@ -76,12 +76,12 @@ Digitale klokker, kalendere og kombinerte paneler deler fire rammestiler. Den en
 
 Programspråk, grensesnittskrift, skriftutjevning, lagring, Windows-oppstart og kantfesting er globale valg på Program. Deaktivering av temaer på Program gjelder Innstillinger, Hjelp, Om, Tidskalkulator og Finn. Hver widget bruker sin egen temainnstilling. Tidskilden er også global. Widgetspråk, utjevning, stiler, tidssone, forskyvning, alarm og tidssignal stilles inn uavhengig. Skriftutjevning tilbyr **ClearType**, **GDI** og **Ingen**.
 
-Windows Classic-stil krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om, Tidskalkulator og Finn.
-Kontrollene i disse vinduene bruker Tahoma 8 pt når systemets standardskrift er valgt; en egendefinert
-programskrift har forrang, og lisensteksten beholder Consolas. Bare GDI eller Ingen skriftutjevning kan
-velges. Et lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk
-Windows-utseende vises alle utseendevalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene
-beholdes.
+Stilene Windows Standard og Windows Classic krever Deaktiver temaer og gjelder bare Innstillinger, Hjelp, Om,
+Tidskalkulator og Finn. Med systemets standardskrift bruker Windows Standard en varm grå palett og Tahoma 8
+pt, mens Windows Classic bruker nøytral grå og Microsoft Sans Serif 8 pt. En egendefinert programskrift har
+forrang. Lisensen beholder skriften med fast tegnbredde. Bare GDI eller Ingen skriftutjevning kan velges. Et
+lagret ClearType-valg bruker GDI midlertidig og gjenopprettes når stilen slås av. Med klassisk Windows-
+utseende vises alle utseendevalgene uten hake og nedtonet, og brukes ikke; de lagrede valgene beholdes.
 
 **Lydvolum** på Alarm styrer internt avspilte lydfiler separat for hver widget og viser nivået i dB. Standardverdien **−18 dB** bevarer filens opprinnelige nivå (**100%**). Mot høyre forsterkes lyden; maksimum **0 dB** er omtrent **794%** av opprinnelig amplitude. Helt til venstre er **−∞ dB** (stillhet). Endringer virker under lydtesten. Forsterkning gjelder dekodet lyd, inkludert WAV, MP3, WMA, AAC, M4A og FLAC når Windows støtter dem. Eldre avspilling av filer som ikke kan dekodes, for eksempel MIDI, er begrenset til 100%.
 
@@ -243,10 +243,12 @@ beholder de siste 30 søkene i gjeldende økt.
 På fanen Program aktiverer Alternativt varslingsikon valget Retroikon i systemstatusfeltet. Begge valgene
 endrer bare varslingsikonet etter Bruk eller Lagre.
 
-Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Classic-tittellinjer; Windows Classic.
-Begge tittellinjemodusene virker med eller uten temaer på kontrollene. Systemstandard følger Deaktiver temaer
-for hele vinduet. Windows Classic-tittellinjer endrer bare tittelskrift og bakgrunn; tittelknapper og 3D-ramme
-beholder systemfargene. Windows Classic krever deaktiverte temaer.
+Vindusutseende: Systemstandard; Windows Basic-tittellinjer; Windows Standard-tittellinjer; Windows Classic-
+tittellinjer; Windows Standard; Windows Classic. Alle tre tittellinjevalg virker med eller uten temaer på
+kontrollene. Systemstandard bruker Deaktiver temaer for hele vinduet. Tittellinjene i Windows Standard og
+Windows Classic endrer skrift og bakgrunnens fargeovergang; tittelknapper og 3D-ramme beholder systemfargene.
+Disse titlene forblir 10 pt; standardstørrelsen 8 pt gjelder bare indre kontroller. Begge komplette
+vindusstiler krever deaktiverte temaer.
 
 ## Lisens
 

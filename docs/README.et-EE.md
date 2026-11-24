@@ -58,9 +58,10 @@ Sätteid saab eksportida XML-i. Import laadib ja salvestab sätted kohe praeguse
 
 Fondi silumine pakub ClearType, GDI ja Puudub. Algusnull pakub „Jah“ (vaikimisi), „Ei, säilita ruum“ ja „Ei, ilma ruumita“. „Ei, säilita ruum“ peidab nulli, kuid reserveerib selle laiuse valitud fondis; ülejäänud numbrid säilitavad asukoha ka proportsionaalse fondiga. Ekraanikella keskjoondus arvestab reserveeritud ruumi. UTC-real on oma keskjoondus.
 
-Windows Classic stiil nõuab valikut Keela kujundused ning mõjutab ainult aknaid Sätted, Spikker, Teave,
-Ajakalkulaator ja Otsi. Kui valitud on süsteemi vaikefont, kasutavad nende akende juhtelemendid fonti Tahoma 8
-pt; kohandatud rakenduse font on ülimuslik ja litsentsitekst säilitab Consolase. Silumiseks saab valida ainult
+Stiilid Windows Standard ja Windows Classic nõuavad valikut Keela kujundused ning mõjutavad ainult aknaid
+Sätted, Spikker, Teave, Ajakalkulaator ja Otsi. Süsteemi vaikefondiga kasutab Windows Standard sooja halli
+paletti ja Tahoma 8 pt fonti, Windows Classic neutraalset halli paletti ja Microsoft Sans Serif 8 pt fonti.
+Kohandatud rakenduse font on eelistatud. Litsents säilitab püsisammuga fondi. Silumiseks saab valida ainult
 GDI või Puudub. Salvestatud ClearType-valiku korral kasutatakse ajutiselt GDI-d; stiili väljalülitamisel
 taastub kasutaja valik. Windowsi klassikalise ilmega kuvatakse kõik kujundusvalikud märkimata ja hallina ning
 neid ei rakendata; salvestatud eelistused säilivad.
@@ -188,10 +189,12 @@ säilitab käesoleva seansi viimased 30 otsingut.
 Rakenduse vahekaardil lubab Alternatiivne teavitusikoon valiku Teavitusala retroikoon. Mõlemad muudavad ainult
 teavitusikooni pärast Rakenda või Salvesta vajutamist.
 
-Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Classic tiitliribad; Windows Classic. Mõlemad
-tiitliribarežiimid toimivad juhtelementide teemadega või ilma. Süsteemi vaikeseade järgib teemade keelamise
-valikut kogu aknas. Windows Classic tiitliribad muudavad ainult tiitli fonti ja tausta; tiitlinupud ning
-3D-raam säilitavad süsteemivärvid. Windows Classic nõuab teemade keelamist.
+Akende kujundus: Süsteemne; Windows Basicu tiitliribad; Windows Standard tiitliribad; Windows Classic
+tiitliribad; Windows Standard; Windows Classic. Kõik kolm tiitliriba valikut töötavad juhtelementide
+kujundustega või ilma. Süsteemi vaikevalik rakendab valikut Keela kujundused kogu aknale. Windows Standardi ja
+Windows Classicu tiitliribad muudavad fonti ja tausta värviüleminekut; tiitlinupud ja 3D-raam säilitavad
+süsteemivärvid. Nende tiitlite suurus jääb 10 pt; vaikesuurus 8 pt kehtib ainult sisemistele juhtelementidele.
+Mõlemad tervikliku akna stiilid nõuavad keelatud kujundusi.
 
 ## Litsents
 

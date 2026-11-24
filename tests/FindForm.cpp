@@ -814,6 +814,7 @@ static void TestApplicationButtonPainting() {
     }
 }
 
+/// Checks exact option matching and quoted argument parsing without persisting options.
 static void TestDeveloperArguments() {
     Require(ReadCommandLineOptions(L"CalClock.exe /nrw") && disableDialogRecreation,
         "the development switch is recognized as a separate process argument");

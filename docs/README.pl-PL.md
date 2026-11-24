@@ -76,12 +76,13 @@ Zegary cyfrowe, kalendarze i panele mają cztery wspólne style ramki. Prosta ra
 
 Język aplikacji, czcionka interfejsu, wygładzanie, zapis, start z Windows i przyciąganie do krawędzi są globalne i konfigurowane na karcie Aplikacja. Wyłączenie motywów na karcie Aplikacja dotyczy okien Ustawienia, Pomoc, O programie, Kalkulator czasu i Znajdź. Każdy widżet korzysta z własnego ustawienia motywów. Źródło czasu także jest globalne. Język widżetu, wygładzanie, style, strefa, przesunięcie, alarm i sygnał ustawia się niezależnie. Wygładzanie oferuje **ClearType**, **GDI** i **Brak**.
 
-Styl Windows Classic jest dostępny po wyłączeniu motywów i dotyczy tylko okien Ustawienia, Pomoc, O programie,
-Kalkulator czasu i Znajdź. Przy domyślnej czcionce systemowej elementy sterujące tych okien używają czcionki
-Tahoma 8 pt; własna czcionka aplikacji ma pierwszeństwo. Dostępne jest wygładzanie GDI lub Brak. Zapisany
-wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po wyłączeniu tego stylu. Gdy Windows
-używa wyglądu klasycznego, wszystkie opcje wyglądu są nieaktywne i nie są stosowane; zapisane wybory pozostają
-zachowane.
+Style Windows Standard i Windows Classic wymagają opcji Wyłącz motywy i dotyczą tylko okien Ustawienia, Pomoc,
+O programie, Kalkulator czasu i Znajdź. Przy domyślnej czcionce systemowej Windows Standard używa ciepłej
+szarej palety i Tahoma 8 pt, a Windows Classic neutralnej szarej palety i Microsoft Sans Serif 8 pt. Własna
+czcionka aplikacji ma pierwszeństwo. Licencja zachowuje czcionkę o stałej szerokości. Dostępne jest
+wygładzanie GDI lub Brak. Zapisany wybór ClearType jest tymczasowo zastępowany przez GDI i przywracany po
+wyłączeniu tego stylu. Gdy Windows używa wyglądu klasycznego, wszystkie opcje wyglądu są nieaktywne i nie są
+stosowane; zapisane wybory pozostają zachowane.
 
 Suwak **Głośność dźwięku** na karcie Alarm reguluje wewnętrznie odtwarzane pliki osobno dla każdego widżetu i pokazuje poziom w dB. Domyślne **−18 dB** zachowuje poziom oryginalnego pliku (**100%**). Przesunięcie w prawo wzmacnia dźwięk; maksimum **0 dB** odpowiada około **794%** pierwotnej amplitudy. Skrajnie lewa pozycja to **−∞ dB** (cisza). Zmiany działają podczas testu. Wzmocnienie dotyczy dekodowanego audio, w tym WAV, MP3, WMA, AAC, M4A i FLAC, jeśli Windows je obsługuje. Starszy sposób odtwarzania plików, których nie można dekodować, np. MIDI, jest ograniczony do 100%.
 
@@ -240,10 +241,12 @@ wyszukiwanie wstecz oraz wyrażenia regularne. Historia zachowuje 30 ostatnich w
 Na karcie Aplikacja opcja Alternatywna ikona powiadomień udostępnia opcję Ikona powiadomień w stylu retro.
 Obie zmieniają wyłącznie ikonę powiadomień po Zastosuj lub Zapisz.
 
-Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Classic; Windows Classic. Oba tryby
-nagłówka działają z motywami elementów sterujących lub bez nich. Systemowy stosuje Wyłącz motywy do całego
-okna. Nagłówki Windows Classic zmieniają tylko czcionkę i tło nagłówka; przyciski i ramka 3D zachowują kolory
-systemowe. Windows Classic wymaga wyłączonych motywów.
+Wygląd okien: Systemowy; Paski tytułu Windows Basic; Paski tytułu Windows Standard; Paski tytułu Windows
+Classic; Windows Standard; Windows Classic. Wszystkie trzy opcje paska tytułu działają z motywami elementów
+sterujących lub bez nich. Systemowy stosuje Wyłącz motywy do całego okna. Paski tytułu Windows Standard i
+Windows Classic zmieniają czcionkę i gradient tła; przyciski tytułu i ramka 3D zachowują kolory systemowe. Te
+tytuły pozostają w rozmiarze 10 pt; domyślne 8 pt dotyczy tylko elementów wewnętrznych. Oba pełne style
+wymagają wyłączonych motywów.
 
 ## Licencja
 

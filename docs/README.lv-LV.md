@@ -58,12 +58,13 @@ Iestatījumus var eksportēt XML. Imports tos uzreiz ielādē un saglabā izvēl
 
 Fonta nogludināšana piedāvā ClearType, GDI un Nav. Sākuma nulle piedāvā “Jā” (noklusējums), “Nē, saglabāt vietu” un “Nē, bez vietas”. “Nē, saglabāt vietu” slēpj nulli, rezervējot tās platumu izvēlētajā fontā; pārējie cipari paliek vietā arī proporcionālā fontā. Ekrāna pulksteņi tiek centrēti, ieskaitot rezervēto vietu. UTC rindai ir atsevišķa centrēšana.
 
-Windows Classic stils prasa opciju Atspējot dizainus un attiecas tikai uz logiem Iestatījumi, Palīdzība, Par
-programmu, Laika kalkulators un Atrast. Ja izvēlēts sistēmas noklusējuma fonts, šo logu vadīklas izmanto
-Tahoma 8 pt; pielāgotajam programmas fontam ir priekšroka, un licences tekstam paliek Consolas. Var izvēlēties
-tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota, izslēdzot stilu.
-Windows klasiskajā izskatā visas izskata opcijas tiek rādītas neatzīmētas un pelēkas, tās netiek lietotas;
-saglabātās izvēles paliek nemainītas.
+Stiliem Windows Standard un Windows Classic ir vajadzīga opcija Atspējot dizainus; tie attiecas tikai uz
+logiem Iestatījumi, Palīdzība, Par programmu, Laika kalkulators un Atrast. Ar sistēmas noklusējuma fontu
+Windows Standard izmanto siltu pelēko paleti un Tahoma 8 pt, bet Windows Classic – neitrālu pelēko paleti un
+Microsoft Sans Serif 8 pt. Pielāgotam lietotnes fontam ir prioritāte. Licences teksts saglabā vienplatuma
+fontu. Var izvēlēties tikai GDI vai Nav. Saglabātā ClearType izvēle īslaicīgi izmanto GDI un tiek atjaunota,
+izslēdzot stilu. Windows klasiskajā izskatā visas izskata opcijas tiek rādītas neatzīmētas un pelēkas, tās
+netiek lietotas; saglabātās izvēles paliek nemainītas.
 
 ## Laika kalkulators
 
@@ -187,10 +188,12 @@ regulārās izteiksmes. Vēsturē saglabājas sesijas pēdējie 30 meklējumi.
 
 Cilnē Programma opcija Alternatīva paziņojumu ikona iespējo Retro paziņojumu apgabala ikona. Abas opcijas maina tikai paziņojumu ikonu pēc Lietot vai Saglabāt nospiešanas.
 
-Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Classic virsraksti; Windows Classic. Abi virsraksta
-režīmi darbojas ar ieslēgtiem vai izslēgtiem vadīklu motīviem. Sistēmas noklusējums piemēro motīvu atspējošanu
-visam logam. Windows Classic virsraksti maina tikai virsraksta fontu un fonu; virsraksta pogas un 3D apmale
-saglabā sistēmas krāsas. Windows Classic režīmam nepieciešami atspējoti motīvi.
+Logu izskats: Sistēmas; Windows Basic virsraksti; Windows Standard virsraksti; Windows Classic virsraksti;
+Windows Standard; Windows Classic. Visas trīs virsrakstjoslas opcijas darbojas ar vadīklu dizainiem vai bez
+tiem. Sistēmas noklusējums piemēro Atspējot dizainus visam logam. Windows Standard un Windows Classic
+virsrakstjoslas maina fontu un fona pāreju; virsraksta pogas un 3D apmale saglabā sistēmas krāsas. Šo
+virsrakstu izmērs paliek 10 pt; noklusējuma 8 pt attiecas tikai uz iekšējām vadīklām. Abiem pilna loga stiliem
+vajadzīgi atspējoti dizaini.
 
 ## Licence
 

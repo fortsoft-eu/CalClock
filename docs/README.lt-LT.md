@@ -58,11 +58,12 @@ Parametrus galima eksportuoti į XML. Importas iškart įkelia ir įrašo parame
 
 Šrifto glodinimas siūlo ClearType, GDI ir Nėra. Pradinis nulis siūlo „Taip“ (numatyta), „Ne, palikti vietą“ ir „Ne, be vietos“. „Ne, palikti vietą“ slepia nulį, bet rezervuoja jo plotį pasirinktame šrifte; kiti skaitmenys nepajuda ir naudojant proporcinį šriftą. Ekrano laikrodžių centravimas įskaito rezervuotą vietą. UTC eilutė centruojama atskirai.
 
-Windows Classic stilius reikalauja parinkties Išjungti temas ir taikomas tik langams Parametrai, Žinynas,
-Apie, Laiko skaičiuotuvas ir Rasti. Pasirinkus numatytąjį sistemos šriftą, šių langų valdikliai naudoja Tahoma
-8 pt; pasirinktas programos šriftas turi pirmenybę, o licencijos tekstas išlaiko Consolas. Galima rinktis tik
-GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį stilių.
-Naudojant klasikinę Windows išvaizdą visos išvaizdos parinktys rodomos nepažymėtos ir neaktyvios, jos
+Stiliams Windows Standard ir Windows Classic būtina parinktis Išjungti temas; jie taikomi tik langams
+Parametrai, Žinynas, Apie, Laiko skaičiuotuvas ir Rasti. Pasirinkus numatytąjį sistemos šriftą, Windows
+Standard naudoja šiltą pilką paletę ir Tahoma 8 pt, o Windows Classic – neutralią pilką paletę ir Microsoft
+Sans Serif 8 pt. Pasirinktinis programos šriftas turi pirmenybę. Licencija išlaiko lygiaplotį šriftą. Galima
+rinktis tik GDI arba Nėra. Įrašytas ClearType pasirinkimas laikinai naudoja GDI ir atkuriamas išjungus šį
+stilių. Naudojant klasikinę Windows išvaizdą visos išvaizdos parinktys rodomos nepažymėtos ir neaktyvios, jos
 netaikomos; įrašyti pasirinkimai išlieka.
 
 ## Laiko skaičiuotuvas
@@ -189,10 +190,12 @@ reiškiniai. Istorijoje išsaugoma 30 paskutinių dabartinio seanso paieškų.
 Kortelėje Programa pasirinkus Alternatyvi pranešimų piktograma įjungiama Retro pranešimų srities piktograma.
 Abi parinktys keičia tik pranešimų piktogramą paspaudus Taikyti arba Įrašyti.
 
-Langų išvaizda: Sistemos; Windows Basic antraštės; Windows Classic antraštės; Windows Classic. Abu antraštės
-režimai veikia su įjungtomis arba išjungtomis valdiklių temomis. Sistemos numatytasis režimas taiko temų
-išjungimą visam langui. Windows Classic antraštės keičia tik antraštės šriftą ir foną; antraštės mygtukai ir
-3D rėmelis išlaiko sistemos spalvas. Windows Classic režimui reikia išjungti temas.
+Langų išvaizda: Sistemos; Windows Basic antraštės; Windows Standard antraštės; Windows Classic antraštės;
+Windows Standard; Windows Classic. Visos trys antraštės parinktys veikia su valdiklių temomis arba be jų.
+Sistemos numatytoji parinktis taiko Išjungti temas visam langui. Windows Standard ir Windows Classic antraštės
+keičia šriftą ir fono gradientą; antraštės mygtukai ir trimatis rėmelis išlaiko sistemos spalvas. Šių
+antraščių dydis lieka 10 pt; numatytieji 8 pt taikomi tik vidiniams valdikliams. Abiem visiems langams
+taikomiems stiliams būtina išjungti temas.
 
 ## Licencija
 

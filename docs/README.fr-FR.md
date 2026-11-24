@@ -76,12 +76,14 @@ Horloges numériques, calendriers et panneaux combinés partagent quatre styles 
 
 La langue de l’application, la police d’interface, le lissage, le stockage, le démarrage Windows et l’accrochage aux bords sont globaux et se règlent dans Application. La désactivation des thèmes dans l’onglet Application concerne les fenêtres Paramètres, Aide, À propos, Calculateur de temps et Rechercher. Chaque widget utilise son propre réglage de thèmes. La source horaire est également globale. Langue du widget, lissage, styles, fuseau, décalage, alarme et signal horaire se règlent indépendamment. Le lissage propose **ClearType**, **GDI** et **Aucun**.
 
-Style Windows Classic nécessite Désactiver les thèmes et concerne uniquement Paramètres, Aide, À propos,
-Calculateur de temps et Rechercher. Avec la police système par défaut, leurs contrôles utilisent Tahoma 8 pt ;
-une police d’application personnalisée reste prioritaire. La licence conserve sa police à chasse fixe. Seuls
-GDI et Aucun sont proposés pour le lissage dans ce mode : un choix ClearType enregistré utilise temporairement
-GDI et revient à la désactivation du mode. Si les styles visuels sont désactivés dans Windows, les options
-d’apparence apparaissent décochées et désactivées sans modifier les choix enregistrés.
+Les styles Windows Standard et Windows Classic nécessitent Désactiver les thèmes et concernent uniquement
+Paramètres, Aide, À propos, Calculateur de temps et Rechercher. Avec la police système par défaut, Windows
+Standard utilise une palette gris chaud et Tahoma 8 pt, tandis que Windows Classic utilise un gris neutre et
+Microsoft Sans Serif 8 pt. Une police d’application personnalisée reste prioritaire. La licence conserve sa
+police à chasse fixe. Seuls GDI et Aucun sont proposés pour le lissage dans ce mode : un choix ClearType
+enregistré utilise temporairement GDI et revient à la désactivation du mode. Si les styles visuels sont
+désactivés dans Windows, les options d’apparence apparaissent décochées et désactivées sans modifier les choix
+enregistrés.
 
 Le curseur **Volume audio** de l’onglet Alarme règle les fichiers lus en interne séparément pour chaque widget et indique le niveau en dB. La valeur par défaut **−18 dB** conserve le niveau d’origine du fichier (**100%**). Vers la droite, le son est amplifié ; le maximum **0 dB** correspond à environ **794%** de l’amplitude initiale. Tout à gauche, **−∞ dB** signifie silence. Les modifications s’appliquent pendant le test audio. L’amplification concerne l’audio décodé, dont WAV, MP3, WMA, AAC, M4A et FLAC si Windows les prend en charge. L’ancienne lecture de fichiers non décodables, comme MIDI, est limitée à 100%.
 
@@ -261,11 +263,13 @@ session.
 Dans l’onglet Application, Autre icône de notification active Icône de notification rétro. Ces options
 modifient uniquement l’icône de notification après Appliquer ou Enregistrer.
 
-Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Classic; Windows
-Classic. Les deux modes de barre de titre fonctionnent avec ou sans thèmes dans la fenêtre. Système suit
-Désactiver les thèmes pour toute la fenêtre. Les barres de titre Windows Classic changent seulement la police
-et le fond du titre ; les boutons et la bordure 3D gardent leurs couleurs système. Windows Classic exige des
-thèmes désactivés.
+Apparence des fenêtres: Système; Barres de titre Windows Basic; Barres de titre Windows Standard; Barres de
+titre Windows Classic; Windows Standard; Windows Classic. Les trois options de barre de titre fonctionnent
+avec ou sans thèmes pour les contrôles. Système applique Désactiver les thèmes à toute la fenêtre. Les barres
+de titre Windows Standard et Windows Classic modifient la police et le dégradé du titre ; les boutons et la
+bordure 3D conservent leurs couleurs système. Ces titres restent à 10 pt ; la taille par défaut de 8 pt
+concerne uniquement les contrôles intérieurs. Les deux styles de fenêtre complets nécessitent des thèmes
+désactivés.
 
 ## Licence
 

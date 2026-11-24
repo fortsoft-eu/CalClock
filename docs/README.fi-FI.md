@@ -76,12 +76,13 @@ Digitaaliset kellot, kalenterit ja yhdistelmäpaneelit jakavat neljä reunustyyl
 
 Sovelluksen kieli, käyttöliittymäfontti, pehmennys, tallennus, Windows-käynnistys ja reunoihin tarttuminen ovat yleisiä asetuksia Sovellus-välilehdellä. Teemojen poistaminen käytöstä Sovellus-välilehdellä vaikuttaa Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoihin. Kukin pienoisohjelma käyttää omaa teema-asetustaan. Myös ajan lähde on yleinen. Pienoisohjelman kieli, pehmennys, tyylit, vyöhyke, siirtymä, herätys ja aikamerkki asetetaan erikseen. Pehmennyksessä on **ClearType**, **GDI** ja **Ei mitään**.
 
-Windows Classic -tyyli edellyttää valintaa Poista teemat käytöstä ja koskee vain Asetukset-, Ohje-, Tietoja-,
-Aikalaskin- ja Etsi-ikkunoita. Kun järjestelmän oletusfontti on valittu, näiden ikkunoiden ohjausobjektit
-käyttävät Tahomaa 8 pt; itse valittu sovellusfontti on etusijalla ja lisenssiteksti säilyy Consolas-fontissa.
-Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään GDI:nä ja se palautuu
-tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa kaikki ulkoasuvalinnat näkyvät valitsemattomina
-ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
+Windows Standard- ja Windows Classic -tyylit edellyttävät valintaa Poista teemat käytöstä ja koskevat vain
+Asetukset-, Ohje-, Tietoja-, Aikalaskin- ja Etsi-ikkunoita. Järjestelmän oletusfontilla Windows Standard
+käyttää lämmintä harmaata palettia ja Tahoma 8 pt -fonttia, Windows Classic neutraalia harmaata palettia ja
+Microsoft Sans Serif 8 pt -fonttia. Sovelluksen oma fontti on etusijalla. Lisenssiteksti säilyttää
+tasalevyisen fontin. Pehmennykseksi voi valita GDI tai Ei mitään. Tallennettua ClearType-valintaa käytetään
+GDI:nä ja se palautuu tyylin poistamisen jälkeen. Windowsin perinteisessä ulkoasussa kaikki ulkoasuvalinnat
+näkyvät valitsemattomina ja harmaina eikä niitä sovelleta; tallennetut valinnat säilyvät.
 
 Herätyksen **Äänenvoimakkuus**-liukusäädin säätää sisäisesti toistettavia tiedostoja pienoisohjelmakohtaisesti ja näyttää tason dB-yksiköissä. Oletus **−18 dB** säilyttää tiedoston alkuperäisen tason (**100%**). Oikealle siirtäminen vahvistaa ääntä; enimmäistaso **0 dB** vastaa noin **794%** alkuperäisestä amplitudista. Vasemmassa ääriasennossa **−∞ dB** tarkoittaa hiljaisuutta. Muutokset vaikuttavat äänitestin aikana. Vahvistus koskee purettua ääntä, kuten WAV-, MP3-, WMA-, AAC-, M4A- ja FLAC-tiedostoja Windowsin tukemissa muodoissa. Vanhempi toistotapa tiedostoille, joita ei voida purkaa, kuten MIDI, rajoittuu 100%:iin.
 
@@ -246,11 +247,12 @@ säännöllisiä lausekkeita. Historia säilyttää istunnon 30 viimeisintä hak
 Sovellus-välilehdellä Vaihtoehtoinen ilmoituskuvake ottaa käyttöön Ilmoitusalueen retrokuvake -valinnan.
 Molemmat muuttavat vain ilmoituskuvaketta Käytä- tai Tallenna-painikkeen painamisen jälkeen.
 
-Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Classic -otsikot; Windows Classic. Molemmat
-otsikkotilavaihtoehdot toimivat ohjausobjektien teemojen kanssa tai ilman niitä. Järjestelmän oletus noudattaa
-teemojen poistovalintaa koko ikkunassa. Windows Classic -otsikot muuttavat vain otsikon fontin ja taustan;
-painikkeiden ja 3D-reunuksen järjestelmävärit säilyvät. Windows Classic edellyttää teemojen poistamista
-käytöstä.
+Ikkunoiden ulkoasu: Järjestelmä; Windows Basic -otsikot; Windows Standard -otsikot; Windows Classic -otsikot;
+Windows Standard; Windows Classic. Kaikkia kolmea otsikkovaihtoehtoa voi käyttää ohjausobjektien teemojen
+kanssa tai ilman niitä. Järjestelmä noudattaa teemojen poistovalintaa koko ikkunassa. Windows Standard- ja
+Windows Classic -otsikot muuttavat fontin ja taustan liukuvärin; otsikkopainikkeet ja 3D-reunus säilyttävät
+järjestelmävärit. Näiden otsikoiden koko pysyy 10 pt:nä; oletuskoko 8 pt koskee vain sisäisiä ohjausobjekteja.
+Molemmat koko ikkunan tyylit edellyttävät poistettuja teemoja.
 
 ## Lisenssi
 

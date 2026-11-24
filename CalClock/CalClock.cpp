@@ -18271,6 +18271,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
     return DefWindowProcW(window, msg, wParam, lParam);
 }
 
+/// Parses process arguments with native Windows tokenization and reports allocation failure.
 static bool ReadCommandLineOptions(const wchar_t* commandLine) {
     int count = 0;
     wchar_t** arguments = CommandLineToArgvW(commandLine, &count);
