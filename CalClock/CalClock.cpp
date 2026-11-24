@@ -18288,186 +18288,6 @@ static bool ReadCommandLineOptions(const wchar_t* commandLine) {
     return true;
 }
 
-/// Enforces one application instance, initializes services and windows, and runs the message loop with
-/// custom keyboard navigation. Releases rendering, synchronization, and process resources before returning
-/// the message-loop exit code.
-int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPWSTR commandLine,
-        _In_ int showCommand) {
-    UNREFERENCED_PARAMETER(previousInstance);
-    UNREFERENCED_PARAMETER(commandLine);
-    UNREFERENCED_PARAMETER(showCommand);
-    hInstance = instance;
-    if (!ReadCommandLineOptions(GetCommandLineW())) {
-        return 2;
-    }
-    hSingleInstanceMutex = CreateMutexW(nullptr, FALSE, L"CalClock.MultiWidget.Instance");
-    if (hSingleInstanceMutex != nullptr && GetLastError() == ERROR_ALREADY_EXISTS) {
-        HWND existing = FindWindowW(CLASS_NAME, CONTROLLER_TITLE);
-        if (existing != nullptr) {
-            SendMessageW(existing, WM_SHOW_EXISTING, 0, 0);
-        }
-        CloseHandle(hSingleInstanceMutex);
-        return 0;
-    }
-    INITCOMMONCONTROLSEX controls = {
-        sizeof(controls),
-        ICC_WIN95_CLASSES | ICC_TAB_CLASSES | ICC_DATE_CLASSES | ICC_LINK_CLASS | ICC_USEREX_CLASSES
-    };
-    InitCommonControlsEx(&controls);
-    WSADATA winsockData = {};
-    winsockReady = WSAStartup(MAKEWORD(2, 2), &winsockData) == 0;
-    InitializeLanguageLocales();
-    InstallCalendarLocaleHook();
-    LoadAllSettings();
-    HRESULT libraryResult = iconLibrary.Initialize(instance);
-    if (FAILED(libraryResult)) {
-        wchar_t error[512] = {};
-        swprintf_s(error, T(TXT_RESOURCE_LIBRARY_FAILED), static_cast<unsigned long>(libraryResult));
-        MessageBoxW(nullptr, error, T(TXT_APP), MB_OK | MB_ICONERROR);
-        if (winsockReady) {
-            WSACleanup();
-        }
-        return 2;
-    }
-    bool anyWidgetVisible = false;
-    for (const std::unique_ptr<Widget>& widget : widgets) {
-        if (widget->config.visible) {
-            anyWidgetVisible = true;
-            break;
-        }
-    }
-    if (!anyWidgetVisible && !widgets.empty()) {
-        widgets[0]->config.visible = true;
-    }
-    WNDCLASSEXW blackoutClass = {};
-    blackoutClass.cbSize = sizeof(blackoutClass);
-    blackoutClass.lpfnWndProc = BlackoutWindowProc;
-    blackoutClass.hInstance = instance;
-    blackoutClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-    blackoutClass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-    blackoutClass.lpszClassName = BLACKOUT_CLASS_NAME;
-    if (!RegisterClassExW(&blackoutClass)) {
-        if (winsockReady) {
-            WSACleanup();
-        }
-        return 1;
-    }
-    WNDCLASSEXW windowClass = {};
-    windowClass.cbSize = sizeof(windowClass);
-    windowClass.style = CS_DBLCLKS;
-    windowClass.lpfnWndProc = WindowProc;
-    windowClass.hInstance = instance;
-    windowClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BTNFACE + 1);
-    windowClass.lpszClassName = CLASS_NAME;
-    if (!RegisterClassExW(&windowClass)) {
-        if (winsockReady) {
-            WSACleanup();
-        }
-        return 1;
-    }
-    taskbarCreatedMessage = RegisterWindowMessageW(L"TaskbarCreated");
-    hController = CreateWindowExW(WS_EX_TOOLWINDOW, CLASS_NAME, CONTROLLER_TITLE, WS_POPUP,
-        0, 0, 0, 0, nullptr, nullptr, instance, nullptr);
-    if (hController == nullptr) {
-        if (winsockReady) {
-            WSACleanup();
-        }
-        return 2;
-    }
-    InitializeDirectTextRendering();
-    for (size_t index = 0; index < widgets.size(); index++) {
-        CreateWidgetWindow(widgets[index].get());
-    }
-    AlarmSystemTimeZoneChanged();
-    ResetAlarmSchedules();
-    RefreshFullscreenPresentation();
-    AddTrayIcon();
-    ScheduleWidgetRefresh();
-    SaveAllSettings();
-    StartNtpSynchronization(true);
-    MSG msg = {};
-    while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
-        if (TranslateInformationMessage(&msg)) {
-            continue;
-        }
-        if (msg.message == WM_MOUSEWHEEL
-                && ScrollDialogTabHeaders(hSettings, hTabs, msg.wParam, msg.lParam)) {
-            continue;
-        }
-        if (helpForm.GetWindow() != nullptr && IsDialogMessageW(helpForm.GetWindow(), &msg)) {
-            continue;
-        }
-        if (aboutForm.GetWindow() != nullptr && IsDialogMessageW(aboutForm.GetWindow(), &msg)) {
-            continue;
-        }
-        if (calculatorForm.ProcessMessage(&msg)) {
-            continue;
-        }
-        Widget* inputWidget = WidgetFromInputWindow(msg.hwnd);
-        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
-                && msg.wParam == VK_ESCAPE
-                && inputWidget != nullptr
-                && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
-            StopWidgetAlarm(inputWidget);
-            continue;
-        }
-        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
-                && msg.wParam == VK_ESCAPE
-                && HideFullscreenWidgetsFromEscape()) {
-            continue;
-        }
-        if (msg.message == WM_KEYDOWN
-                && msg.wParam == L'M'
-                && (msg.lParam & 1LL << 30) == 0
-                && inputWidget != nullptr) {
-            ToggleAllWidgetSounds();
-            continue;
-        }
-        if (HandleWidgetSizeShortcut(inputWidget, msg)) {
-            continue;
-        }
-        if (inputWidget != nullptr
-                && inputWidget->config.type == WIDGET_PANEL
-                && IsDialogMessageW(inputWidget->window, &msg)) {
-            continue;
-        }
-        if (HandleSettingsTabNavigation(msg)) {
-            continue;
-        }
-        if (hSettings != nullptr && IsDialogMessageW(hSettings, &msg)) {
-            continue;
-        }
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
-    }
-    if (hSettingsOpenThread != nullptr) {
-        settingsOpenData->cancelled = true;
-        WaitForSingleObject(hSettingsOpenThread, INFINITE);
-        CloseHandle(hSettingsOpenThread);
-        hSettingsOpenThread = nullptr;
-    }
-    settingsOpenData.reset();
-    ShutdownAnalogClockHost();
-    if (hUiFont != nullptr) {
-        DeleteObject(hUiFont);
-    }
-    CloseInformationWindows();
-    aboutForm.Close();
-    helpForm.Close();
-    calculatorForm.Close();
-    ShutdownDirectTextRendering();
-    if (hSingleInstanceMutex != nullptr) {
-        CloseHandle(hSingleInstanceMutex);
-        hSingleInstanceMutex = nullptr;
-    }
-    bool ntpThreadFinished = StopNtpSynchronization();
-    if (winsockReady && ntpThreadFinished) {
-        WSACleanup();
-    }
-    return static_cast<int>(msg.wParam);
-}
-
 /// Opens the existing modeless Help form from the search form.
 void ShowInformationHelp() {
     helpForm.Show(hInstance, helpWindowState);
@@ -18949,4 +18769,184 @@ static void CloseInformationWindows() {
     }
     searchWindow = nullptr;
     printOwner = nullptr;
+}
+
+/// Enforces one application instance, initializes services and windows, and runs the message loop with
+/// custom keyboard navigation. Releases rendering, synchronization, and process resources before returning
+/// the message-loop exit code.
+int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPWSTR commandLine,
+        _In_ int showCommand) {
+    UNREFERENCED_PARAMETER(previousInstance);
+    UNREFERENCED_PARAMETER(commandLine);
+    UNREFERENCED_PARAMETER(showCommand);
+    hInstance = instance;
+    if (!ReadCommandLineOptions(GetCommandLineW())) {
+        return 2;
+    }
+    hSingleInstanceMutex = CreateMutexW(nullptr, FALSE, L"CalClock.MultiWidget.Instance");
+    if (hSingleInstanceMutex != nullptr && GetLastError() == ERROR_ALREADY_EXISTS) {
+        HWND existing = FindWindowW(CLASS_NAME, CONTROLLER_TITLE);
+        if (existing != nullptr) {
+            SendMessageW(existing, WM_SHOW_EXISTING, 0, 0);
+        }
+        CloseHandle(hSingleInstanceMutex);
+        return 0;
+    }
+    INITCOMMONCONTROLSEX controls = {
+        sizeof(controls),
+        ICC_WIN95_CLASSES | ICC_TAB_CLASSES | ICC_DATE_CLASSES | ICC_LINK_CLASS | ICC_USEREX_CLASSES
+    };
+    InitCommonControlsEx(&controls);
+    WSADATA winsockData = {};
+    winsockReady = WSAStartup(MAKEWORD(2, 2), &winsockData) == 0;
+    InitializeLanguageLocales();
+    InstallCalendarLocaleHook();
+    LoadAllSettings();
+    HRESULT libraryResult = iconLibrary.Initialize(instance);
+    if (FAILED(libraryResult)) {
+        wchar_t error[512] = {};
+        swprintf_s(error, T(TXT_RESOURCE_LIBRARY_FAILED), static_cast<unsigned long>(libraryResult));
+        MessageBoxW(nullptr, error, T(TXT_APP), MB_OK | MB_ICONERROR);
+        if (winsockReady) {
+            WSACleanup();
+        }
+        return 2;
+    }
+    bool anyWidgetVisible = false;
+    for (const std::unique_ptr<Widget>& widget : widgets) {
+        if (widget->config.visible) {
+            anyWidgetVisible = true;
+            break;
+        }
+    }
+    if (!anyWidgetVisible && !widgets.empty()) {
+        widgets[0]->config.visible = true;
+    }
+    WNDCLASSEXW blackoutClass = {};
+    blackoutClass.cbSize = sizeof(blackoutClass);
+    blackoutClass.lpfnWndProc = BlackoutWindowProc;
+    blackoutClass.hInstance = instance;
+    blackoutClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    blackoutClass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+    blackoutClass.lpszClassName = BLACKOUT_CLASS_NAME;
+    if (!RegisterClassExW(&blackoutClass)) {
+        if (winsockReady) {
+            WSACleanup();
+        }
+        return 1;
+    }
+    WNDCLASSEXW windowClass = {};
+    windowClass.cbSize = sizeof(windowClass);
+    windowClass.style = CS_DBLCLKS;
+    windowClass.lpfnWndProc = WindowProc;
+    windowClass.hInstance = instance;
+    windowClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BTNFACE + 1);
+    windowClass.lpszClassName = CLASS_NAME;
+    if (!RegisterClassExW(&windowClass)) {
+        if (winsockReady) {
+            WSACleanup();
+        }
+        return 1;
+    }
+    taskbarCreatedMessage = RegisterWindowMessageW(L"TaskbarCreated");
+    hController = CreateWindowExW(WS_EX_TOOLWINDOW, CLASS_NAME, CONTROLLER_TITLE, WS_POPUP,
+        0, 0, 0, 0, nullptr, nullptr, instance, nullptr);
+    if (hController == nullptr) {
+        if (winsockReady) {
+            WSACleanup();
+        }
+        return 2;
+    }
+    InitializeDirectTextRendering();
+    for (size_t index = 0; index < widgets.size(); index++) {
+        CreateWidgetWindow(widgets[index].get());
+    }
+    AlarmSystemTimeZoneChanged();
+    ResetAlarmSchedules();
+    RefreshFullscreenPresentation();
+    AddTrayIcon();
+    ScheduleWidgetRefresh();
+    SaveAllSettings();
+    StartNtpSynchronization(true);
+    MSG msg = {};
+    while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
+        if (TranslateInformationMessage(&msg)) {
+            continue;
+        }
+        if (msg.message == WM_MOUSEWHEEL
+                && ScrollDialogTabHeaders(hSettings, hTabs, msg.wParam, msg.lParam)) {
+            continue;
+        }
+        if (helpForm.GetWindow() != nullptr && IsDialogMessageW(helpForm.GetWindow(), &msg)) {
+            continue;
+        }
+        if (aboutForm.GetWindow() != nullptr && IsDialogMessageW(aboutForm.GetWindow(), &msg)) {
+            continue;
+        }
+        if (calculatorForm.ProcessMessage(&msg)) {
+            continue;
+        }
+        Widget* inputWidget = WidgetFromInputWindow(msg.hwnd);
+        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
+                && msg.wParam == VK_ESCAPE
+                && inputWidget != nullptr
+                && (inputWidget->alarmActive || inputWidget->audioStopEvent != nullptr)) {
+            StopWidgetAlarm(inputWidget);
+            continue;
+        }
+        if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN)
+                && msg.wParam == VK_ESCAPE
+                && HideFullscreenWidgetsFromEscape()) {
+            continue;
+        }
+        if (msg.message == WM_KEYDOWN
+                && msg.wParam == L'M'
+                && (msg.lParam & 1LL << 30) == 0
+                && inputWidget != nullptr) {
+            ToggleAllWidgetSounds();
+            continue;
+        }
+        if (HandleWidgetSizeShortcut(inputWidget, msg)) {
+            continue;
+        }
+        if (inputWidget != nullptr
+                && inputWidget->config.type == WIDGET_PANEL
+                && IsDialogMessageW(inputWidget->window, &msg)) {
+            continue;
+        }
+        if (HandleSettingsTabNavigation(msg)) {
+            continue;
+        }
+        if (hSettings != nullptr && IsDialogMessageW(hSettings, &msg)) {
+            continue;
+        }
+        TranslateMessage(&msg);
+        DispatchMessageW(&msg);
+    }
+    if (hSettingsOpenThread != nullptr) {
+        settingsOpenData->cancelled = true;
+        WaitForSingleObject(hSettingsOpenThread, INFINITE);
+        CloseHandle(hSettingsOpenThread);
+        hSettingsOpenThread = nullptr;
+    }
+    settingsOpenData.reset();
+    ShutdownAnalogClockHost();
+    if (hUiFont != nullptr) {
+        DeleteObject(hUiFont);
+    }
+    CloseInformationWindows();
+    aboutForm.Close();
+    helpForm.Close();
+    calculatorForm.Close();
+    ShutdownDirectTextRendering();
+    if (hSingleInstanceMutex != nullptr) {
+        CloseHandle(hSingleInstanceMutex);
+        hSingleInstanceMutex = nullptr;
+    }
+    bool ntpThreadFinished = StopNtpSynchronization();
+    if (winsockReady && ntpThreadFinished) {
+        WSACleanup();
+    }
+    return static_cast<int>(msg.wParam);
 }
