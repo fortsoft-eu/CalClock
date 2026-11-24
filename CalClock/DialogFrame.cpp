@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #define NOMINMAX
@@ -74,30 +74,6 @@ static constexpr int CONTROL_COLOR_INDICES[] = {
     COLOR_HOTLIGHT,
     COLOR_MENUHILIGHT,
     COLOR_MENUBAR
-};
-
-static constexpr COLORREF CONTROL_COLORS[] = {
-    RGB(212, 208, 200),
-    RGB(212, 208, 200),
-    RGB(255, 255, 255),
-    RGB(0, 0, 0),
-    RGB(0, 0, 0),
-    RGB(0, 0, 0),
-    RGB(128, 128, 128),
-    RGB(10, 36, 106),
-    RGB(255, 255, 255),
-    RGB(212, 208, 200),
-    RGB(128, 128, 128),
-    RGB(128, 128, 128),
-    RGB(0, 0, 0),
-    RGB(255, 255, 255),
-    RGB(64, 64, 64),
-    RGB(212, 208, 200),
-    RGB(0, 0, 0),
-    RGB(255, 255, 225),
-    RGB(0, 0, 128),
-    RGB(10, 36, 106),
-    RGB(212, 208, 200)
 };
 
 /// Reads native caption metrics, replacing the themed button width with the configured classic width.
@@ -174,15 +150,11 @@ DialogFrame* DialogFrame::Find(HWND control) {
     return nullptr;
 }
 
-/// Returns the dialog's Windows 2000 control color, or the native color outside complete-form mode.
+/// Returns the dialog's selected local color, or the native color outside complete-form mode.
 COLORREF DialogFrame::GetColor(HWND control, int colorIndex) {
     DialogFrame* frame = Find(control);
     if (frame != nullptr && frame->windows2000Controls) {
-        for (size_t index = 0; index < ARRAYSIZE(CONTROL_COLOR_INDICES); ++index) {
-            if (CONTROL_COLOR_INDICES[index] == colorIndex) {
-                return CONTROL_COLORS[index];
-            }
-        }
+        return ControlColors::GetColor(colorIndex, frame->windowsClassic);
     }
     return GetSysColor(colorIndex);
 }
@@ -204,7 +176,7 @@ HBRUSH DialogFrame::GetBrush(HWND control, int colorIndex) {
 void DialogFrame::RecolorControl(HWND control, HDC context, const RECT& rectangle) {
     DialogFrame* frame = Find(control);
     if (context != nullptr && frame != nullptr && frame->windows2000Controls) {
-        RecolorFrameRectangle(context, rectangle);
+        frame->RecolorFrameRectangle(context, rectangle);
     }
 }
 
@@ -217,7 +189,7 @@ bool DialogFrame::ApplyControlColors(HWND control) const {
     wchar_t className[64]{};
     GetClassNameW(control, className, ARRAYSIZE(className));
     bool changed = false;
-    if (!ControlColors::Apply(control, window, windows2000Controls, changed)) {
+    if (!ControlColors::Apply(control, window, windows2000Controls, changed, windowsClassic)) {
         return false;
     }
     if (lstrcmpiW(className, TOOLTIPS_CLASSW) == 0) {
@@ -309,12 +281,27 @@ bool DialogFrame::Apply(HWND window, bool disableThemes, DialogFrameMode mode) {
             return false;
         }
     }
-    bool nextControls = disableThemes && mode == DialogFrameMode::Windows2000Forms;
-    bool nextStyle = nextControls || mode == DialogFrameMode::Windows2000Header;
+    bool nextClassic = mode == DialogFrameMode::WindowsClassicHeader
+        || mode == DialogFrameMode::WindowsClassicForms;
+    bool nextControls = disableThemes
+        && (mode == DialogFrameMode::Windows2000Forms || mode == DialogFrameMode::WindowsClassicForms);
+    bool nextStyle = nextControls
+        || mode == DialogFrameMode::Windows2000Header
+        || mode == DialogFrameMode::WindowsClassicHeader;
     bool nextBasic = mode == DialogFrameMode::WindowsBasic;
     bool styleChanged = frame->windows2000Style != nextStyle
         || frame->windows2000Controls != nextControls
-        || frame->basicHeaders != nextBasic;
+        || frame->basicHeaders != nextBasic
+        || frame->windowsClassic != nextClassic;
+    if (frame->windowsClassic != nextClassic) {
+        for (HBRUSH& brush : frame->colorBrushes) {
+            if (brush != nullptr) {
+                DeleteObject(brush);
+                brush = nullptr;
+            }
+        }
+    }
+    frame->windowsClassic = nextClassic;
     frame->windows2000Style = nextStyle;
     frame->windows2000Controls = nextControls;
     frame->basicHeaders = nextBasic;
@@ -345,9 +332,12 @@ bool DialogFrame::Apply(HWND window, bool disableThemes, DialogFrameMode mode) {
     }
     const wchar_t* themeName = nextStyle || disableThemes && !nextBasic ? L"" : nullptr;
     SetWindowTheme(window, themeName, themeName);
-    DWMNCRENDERINGPOLICY policy = disableThemes || nextStyle || nextBasic
-        ? DWMNCRP_DISABLED
-        : DWMNCRP_USEWINDOWSTYLE;
+    DWMNCRENDERINGPOLICY policy;
+    if (disableThemes || nextStyle || nextBasic) {
+        policy = DWMNCRP_DISABLED;
+    } else {
+        policy = DWMNCRP_USEWINDOWSTYLE;
+    }
     DwmSetWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
     bool colorsApplied = ApplyControl(window, window);
     bool refreshed = frame->Refresh();
@@ -376,9 +366,12 @@ BOOL DialogFrame::AdjustRect(HWND window, RECT* rectangle, DWORD style, DWORD ex
             adjust = reinterpret_cast<AdjustWindowRectExForDpiProc>(GetProcAddress(module,
                 "AdjustWindowRectExForDpi"));
         }
-        BOOL adjusted = adjust == nullptr
-            ? AdjustWindowRectEx(rectangle, style, FALSE, extendedStyle)
-            : adjust(rectangle, style, FALSE, extendedStyle, GetSystemDialogDpi(window));
+        BOOL adjusted;
+        if (adjust == nullptr) {
+            adjusted = AdjustWindowRectEx(rectangle, style, FALSE, extendedStyle);
+        } else {
+            adjusted = adjust(rectangle, style, FALSE, extendedStyle, GetSystemDialogDpi(window));
+        }
         if (!adjusted) {
             return FALSE;
         }
@@ -421,11 +414,12 @@ bool DialogFrame::Refresh(bool preserveClient) {
     Layout layout = GetLayout();
     SIZE nextSize{ 2 * layout.borderX, 2 * layout.borderY + Metric(SM_CYCAPTION) };
     UINT nextDpi = GetSystemDialogDpi(window);
-    if (enabled == next
-            && frameSize.cx == nextSize.cx
-            && frameSize.cy == nextSize.cy
-            && dpi == nextDpi
-            && !captionChanged) {
+    const bool frameUnchanged = enabled == next
+        && frameSize.cx == nextSize.cx
+        && frameSize.cy == nextSize.cy
+        && dpi == nextDpi
+        && !captionChanged;
+    if (frameUnchanged) {
         return true;
     }
     updating = true;
@@ -436,9 +430,12 @@ bool DialogFrame::Refresh(bool preserveClient) {
     frameSize = nextSize;
     dpi = nextDpi;
     active = GetActiveWindow() == window;
-    DWMNCRENDERINGPOLICY policy = disableThemes || windows2000Style || basicHeaders
-        ? DWMNCRP_DISABLED
-        : DWMNCRP_USEWINDOWSTYLE;
+    DWMNCRENDERINGPOLICY policy;
+    if (disableThemes || windows2000Style || basicHeaders) {
+        policy = DWMNCRP_DISABLED;
+    } else {
+        policy = DWMNCRP_USEWINDOWSTYLE;
+    }
     DwmSetWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
     DWORD style = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_STYLE));
     DWORD extendedStyle = static_cast<DWORD>(GetWindowLongPtrW(window, GWL_EXSTYLE));
@@ -518,7 +515,7 @@ bool DialogFrame::ButtonEnabled(int hit) const {
 }
 
 /// Maps native edge and button colors inside one nonclient rectangle.
-void DialogFrame::RecolorFrameRectangle(HDC context, const RECT& rectangle) {
+void DialogFrame::RecolorFrameRectangle(HDC context, const RECT& rectangle) const {
     int width = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
     if (width <= 0 || height <= 0) {
@@ -538,14 +535,14 @@ void DialogFrame::RecolorFrameRectangle(HDC context, const RECT& rectangle) {
         if (previous != nullptr
                 && BitBlt(memory, 0, 0, width, height, context, rectangle.left, rectangle.top, SRCCOPY)) {
             GdiFlush();
-            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> source{};
-            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> destination{};
+            std::array<DWORD, ARRAYSIZE(CONTROL_COLOR_INDICES)> source{};
+            std::array<DWORD, ARRAYSIZE(CONTROL_COLOR_INDICES)> destination{};
             for (size_t index = 0; index < source.size(); ++index) {
                 COLORREF color = GetSysColor(CONTROL_COLOR_INDICES[index]);
                 source[index] = static_cast<DWORD>(GetRValue(color)) << 16
                     | static_cast<DWORD>(GetGValue(color)) << 8
                     | GetBValue(color);
-                color = CONTROL_COLORS[index];
+                color = ControlColors::GetColor(CONTROL_COLOR_INDICES[index], windowsClassic);
                 destination[index] = static_cast<DWORD>(GetRValue(color)) << 16
                     | static_cast<DWORD>(GetGValue(color)) << 8
                     | GetBValue(color);
@@ -673,9 +670,11 @@ void DialogFrame::Paint(HDC target) const {
     COLORREF textColor = GetSysColor(active ? COLOR_CAPTIONTEXT : COLOR_INACTIVECAPTIONTEXT);
     if (windows2000Style) {
         gradient = TRUE;
-        left = active ? RGB(10, 36, 106) : RGB(128, 128, 128);
-        right = active ? RGB(166, 202, 240) : RGB(192, 192, 192);
-        textColor = active ? RGB(255, 255, 255) : RGB(212, 208, 200);
+        left = ControlColors::GetColor(captionColor, windowsClassic);
+        const int gradientColorIndex = active ? COLOR_GRADIENTACTIVECAPTION : COLOR_GRADIENTINACTIVECAPTION;
+        right = ControlColors::GetColor(gradientColorIndex, windowsClassic);
+        const int textColorIndex = active ? COLOR_CAPTIONTEXT : COLOR_INACTIVECAPTIONTEXT;
+        textColor = ControlColors::GetColor(textColorIndex, windowsClassic);
     }
     if (gradient) {
         TRIVERTEX vertices[] = {
@@ -725,7 +724,7 @@ void DialogFrame::Paint(HDC target) const {
         font.lfWidth = 0;
         font.lfWeight = FW_BOLD;
         font.lfQuality = interfaceDescription.lfQuality;
-        wcscpy_s(font.lfFaceName, L"Tahoma");
+        wcscpy_s(font.lfFaceName, windowsClassic ? L"Microsoft Sans Serif" : L"Tahoma");
     }
     font.lfHeight = MulDiv(font.lfHeight, dpi, systemDpi);
     font.lfWidth = MulDiv(font.lfWidth, dpi, systemDpi);
@@ -801,9 +800,10 @@ LRESULT DialogFrame::HitTest(POINT point) const {
     }
     for (LONG object : { OBJID_VSCROLL, OBJID_HSCROLL }) {
         SCROLLBARINFO scroll{ sizeof(scroll) };
-        if (GetScrollBarInfo(window, object, &scroll)
-                && !(scroll.rgstate[0] & STATE_SYSTEM_INVISIBLE)
-                && PtInRect(&scroll.rcScrollBar, point)) {
+        const bool scrollBarHit = GetScrollBarInfo(window, object, &scroll)
+            && !(scroll.rgstate[0] & STATE_SYSTEM_INVISIBLE)
+            && PtInRect(&scroll.rcScrollBar, point);
+        if (scrollBarHit) {
             return object == OBJID_VSCROLL ? HTVSCROLL : HTHSCROLL;
         }
     }

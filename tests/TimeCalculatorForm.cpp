@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -1051,7 +1051,7 @@ static void CaptureCalculatorImage(HWND window, const wchar_t* name, bool screen
             DWORD written = 0;
             bool saved = WriteFile(file, &header, sizeof(header), &written, nullptr) != FALSE
                 && WriteFile(file, &information.bmiHeader, sizeof(BITMAPINFOHEADER), &written, nullptr)
-                    != FALSE
+                != FALSE
                 && WriteFile(file, pixels, bytes, &written, nullptr) != FALSE;
             Require(saved, "hidden screenshot saved");
             CloseHandle(file);
@@ -2252,6 +2252,7 @@ static void TestCalculatorMerge() {
             && calculatorForm.GetPresets().size() == retainedCount,
         "settings-only import leaves all user data intact");
 }
+
 /// Checks that native calendar content fits without overlapping the adjacent fields or the footer.
 static void CheckCalculatorCalendar() {
     HWND calendar = CalculatorControl(ID_CALC_CALENDAR);
@@ -2452,6 +2453,21 @@ static void TestCalculatorAppearance() {
     CaptureCalculatorPages(L"calculator-windows2000");
     CheckCalculatorPickerStyle();
     windows2000Style = false;
+    windowsClassicStyle = true;
+    ApplyUiStyle(original);
+    Require(calculatorForm.ApplyStyle(true), "Windows Classic font and control style update succeeds");
+    Require(calculatorForm.GetWindow() == original
+            && SameCalculatorState(originalState, calculatorForm.GetState()),
+        "Windows Classic relayout preserves the actual window and its input data");
+    HFONT classicFont = reinterpret_cast<HFONT>(SendMessageW(original, WM_GETFONT, 0, 0));
+    LOGFONTW classicDescription = {};
+    Require(classicFont != nullptr
+            && GetObjectW(classicFont, sizeof(classicDescription), &classicDescription) != 0
+            && _wcsicmp(classicDescription.lfFaceName, L"Microsoft Sans Serif") == 0,
+        "the calculator uses the actual Windows Classic font without substitution");
+    CheckCalculatorCalendar();
+    CaptureCalculatorPages(L"calculator-windows-classic");
+    windowsClassicStyle = false;
     ApplyUiStyle(original);
     Require(calculatorForm.ApplyStyle(true), "plain classic style update succeeds");
     CheckCalculatorCalendar();

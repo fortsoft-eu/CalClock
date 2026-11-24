@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #define NOMINMAX
@@ -299,16 +299,20 @@ const COLORREF IDENTIFY_COLOR = RGB(80, 190, 255);
 const int MAX_DIALOG_BUTTON_HEIGHT = 28;
 const int MAX_SETTINGS_FIELD_HEIGHT = MulDiv(11, MAX_DIALOG_BUTTON_HEIGHT, DIALOG_BUTTON_HEIGHT_DLU);
 const int ALARM_DAY_COUNT = 7;
-const int APPLICATION_STYLE_COUNT = 4;
+const int APPLICATION_STYLE_COUNT = 6;
 const int APPLICATION_STYLE_IDS[] = {
     ID_STYLE_SYSTEM,
     ID_STYLE_BASIC_HEADER,
     ID_STYLE_2000_HEADER,
-    ID_STYLE_2000_FORMS
+    ID_STYLE_2000_FORMS,
+    ID_STYLE_CLASSIC_HEADER,
+    ID_STYLE_CLASSIC_FORMS
 };
 const TextId APPLICATION_STYLE_TEXTS[] = {
     TXT_STYLE_SYSTEM,
     TXT_STYLE_BASIC_HEADER,
+    TXT_STYLE_STANDARD_HEADER,
+    TXT_WINDOWS_STANDARD_STYLE,
     TXT_STYLE_2000_HEADER,
     TXT_WINDOWS_2000_STYLE
 };
@@ -542,9 +546,9 @@ static ModernPrintDialog* modernPrint = nullptr;
 static bool printDialogOpen = false;
 static bool closing = false;
 static TimeCalculatorForm calculatorForm;
-ResourceLibrary iconLibrary;
 static InformationWordBreakState informationWordBreakState;
 static std::unique_ptr<SettingsOpenData> settingsOpenData;
+ResourceLibrary iconLibrary;
 
 /// Persistent form placement
 static PersistWindowState settingsWindowState;
@@ -569,13 +573,18 @@ static bool ntpLogColumnsInitialized = false;
 static bool ntpLogSortAscending = true;
 static bool settingsGeneralCheckboxReferenceValid = false;
 static bool settingsLayoutSuspended = false;
+static bool disableDialogRecreation = false;
 static bool windows2000Style = false;
 static bool basicWindowHeaders = false;
 static bool windows2000Headers = false;
+static bool windowsClassicHeaders = false;
+static bool windowsClassicStyle = false;
 static bool settingsThemesDisabled = false;
 static bool settingsWindows2000Style = false;
 static bool settingsBasicWindowHeaders = false;
 static bool settingsWindows2000Headers = false;
+static bool settingsWindowsClassicHeaders = false;
+static bool settingsWindowsClassicStyle = false;
 static bool settingsAlternativeTrayIcon = false;
 static bool settingsClassicTrayIcon = false;
 bool alternativeTrayIcon = false;
@@ -631,15 +640,15 @@ UINT taskbarCreatedMessage = 0;
 
 /// Timing state
 LONGLONG currentTimeSignalOffset = 0;
+ULONGLONG lastNtpAttemptTick = 0;
+ULONGLONG nextNtpAttemptTick = 0;
 static LONGLONG alarmClockOffset = 0;
 static LONGLONG alarmWakeOffset = 0;
 static ULONGLONG alarmWakeTarget = 0;
+static ULONGLONG fullscreenCursorActivityTick = 0;
 static bool alarmWakeUsesNtp = false;
 static bool alarmTimeZoneInitialized = false;
 static DYNAMIC_TIME_ZONE_INFORMATION alarmTimeZone{};
-ULONGLONG lastNtpAttemptTick = 0;
-ULONGLONG nextNtpAttemptTick = 0;
-static ULONGLONG fullscreenCursorActivityTick = 0;
 
 /// Thread-safe NTP state
 std::atomic<ULONG> ntpGeneration = 0;
@@ -1128,16 +1137,21 @@ static void UpdateApplicationStyleControls() {
     bool visualStylesActive = AreVisualStylesActive();
     bool systemStyle = !settingsWindows2000Style
         && !settingsBasicWindowHeaders
-        && !settingsWindows2000Headers;
+        && !settingsWindows2000Headers
+        && !settingsWindowsClassicHeaders
+        && !settingsWindowsClassicStyle;
     SetCheck(hApplicationStyleRadios[0], visualStylesActive && systemStyle);
     SetCheck(hApplicationStyleRadios[1], visualStylesActive && settingsBasicWindowHeaders);
     SetCheck(hApplicationStyleRadios[2], visualStylesActive && settingsWindows2000Headers);
     SetCheck(hApplicationStyleRadios[3], visualStylesActive && settingsWindows2000Style);
+    SetCheck(hApplicationStyleRadios[4], visualStylesActive && settingsWindowsClassicHeaders);
+    SetCheck(hApplicationStyleRadios[5], visualStylesActive && settingsWindowsClassicStyle);
     EnableWindow(hApplicationStyleGroup, visualStylesActive);
     for (HWND radio : hApplicationStyleRadios) {
         EnableWindow(radio, visualStylesActive);
     }
     EnableWindow(hApplicationStyleRadios[3], visualStylesActive && settingsThemesDisabled);
+    EnableWindow(hApplicationStyleRadios[5], visualStylesActive && settingsThemesDisabled);
 }
 
 /// Filters the application selector for the draft style while retaining the user's requested mode.
@@ -1145,9 +1159,10 @@ static void UpdateApplicationFontAntialiasingCombo() {
     if (hAppAntialiasCombo == nullptr) {
         return;
     }
-    bool classic = windows2000Style && AreVisualStylesActive();
+    bool classic = (windows2000Style || windowsClassicStyle) && AreVisualStylesActive();
     if (hDisableThemesCheck != nullptr && hApplicationStyleRadios[3] != nullptr) {
-        classic = GetCheck(hDisableThemesCheck) && GetCheck(hApplicationStyleRadios[3]);
+        classic = GetCheck(hDisableThemesCheck)
+            && (GetCheck(hApplicationStyleRadios[3]) || GetCheck(hApplicationStyleRadios[5]));
     }
     bool clearTypeAvailable = !classic && IsClearTypeAvailable();
     int count = clearTypeAvailable ? FONT_ANTIALIAS_COUNT : FONT_ANTIALIAS_COUNT - 1;
@@ -1350,8 +1365,8 @@ static bool PatchCommonControlsImport(const char* functionName, ULONG_PTR replac
     if (imports.VirtualAddress == 0) {
         return false;
     }
-    IMAGE_IMPORT_DESCRIPTOR* descriptor =
-        reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(base + imports.VirtualAddress);
+    IMAGE_IMPORT_DESCRIPTOR* descriptor = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(base
+        + imports.VirtualAddress);
     for (; descriptor->Name != 0; descriptor++) {
         if (descriptor->OriginalFirstThunk == 0 || descriptor->FirstThunk == 0) {
             continue;
@@ -1362,14 +1377,14 @@ static bool PatchCommonControlsImport(const char* functionName, ULONG_PTR replac
             if (IMAGE_SNAP_BY_ORDINAL(names->u1.Ordinal)) {
                 continue;
             }
-            IMAGE_IMPORT_BY_NAME* importName =
-                reinterpret_cast<IMAGE_IMPORT_BY_NAME*>(base + names->u1.AddressOfData);
+            IMAGE_IMPORT_BY_NAME* importName = reinterpret_cast<IMAGE_IMPORT_BY_NAME*>(base
+                + names->u1.AddressOfData);
             if (strcmp(reinterpret_cast<const char*>(importName->Name), functionName) != 0) {
                 continue;
             }
             DWORD oldProtect = 0;
             if (!VirtualProtect(&addresses->u1.Function, sizeof(addresses->u1.Function), PAGE_READWRITE,
-                &oldProtect)) {
+                    &oldProtect)) {
                 return false;
             }
             *original = addresses->u1.Function;
@@ -1803,6 +1818,8 @@ static SettingsSnapshot CaptureSettingsSnapshot() {
     snapshot.windows2000Style = windows2000Style;
     snapshot.basicWindowHeaders = basicWindowHeaders;
     snapshot.windows2000Headers = windows2000Headers;
+    snapshot.windowsClassicHeaders = windowsClassicHeaders;
+    snapshot.windowsClassicStyle = windowsClassicStyle;
     snapshot.snapWidgetsToWorkArea = snapWidgetsToWorkArea;
     snapshot.warnOnUnsavedChanges = warnOnUnsavedChanges;
     snapshot.generatedTimeSignal = generatedTimeSignal;
@@ -1842,10 +1859,17 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
     classicTrayIcon = alternativeTrayIcon && snapshot.classicTrayIcon;
     themesDisabled = snapshot.themesDisabled;
     windows2000Style = themesDisabled && snapshot.windows2000Style;
-    windows2000Headers = snapshot.windows2000Headers && !windows2000Style;
+    windowsClassicStyle = themesDisabled && snapshot.windowsClassicStyle && !windows2000Style;
+    windows2000Headers = snapshot.windows2000Headers && !windows2000Style && !windowsClassicStyle;
+    windowsClassicHeaders = snapshot.windowsClassicHeaders
+        && !windows2000Style
+        && !windowsClassicStyle
+        && !windows2000Headers;
     basicWindowHeaders = snapshot.basicWindowHeaders
         && !windows2000Style
-        && !windows2000Headers;
+        && !windowsClassicStyle
+        && !windows2000Headers
+        && !windowsClassicHeaders;
     snapWidgetsToWorkArea = snapshot.snapWidgetsToWorkArea;
     warnOnUnsavedChanges = snapshot.warnOnUnsavedChanges;
     generatedTimeSignal = snapshot.generatedTimeSignal;
@@ -2328,15 +2352,15 @@ static UINT WidgetRefreshDelay(ULONGLONG applicationNow) {
         if (!widget->config.visible && !widget->config.alarmEnabled) {
             continue;
         }
-        LONGLONG phase =
-            applicationPhase + widget->config.offsetMilliseconds % 1000 * REFRESH_MILLISECOND_TICKS;
+        LONGLONG phase = applicationPhase
+            + widget->config.offsetMilliseconds % 1000 * REFRESH_MILLISECOND_TICKS;
         phase %= REFRESH_SECOND_TICKS;
         if (phase < 0) {
             phase += REFRESH_SECOND_TICKS;
         }
         LONGLONG remaining = REFRESH_SECOND_TICKS - phase;
-        UINT milliseconds =
-            static_cast<UINT>((remaining + REFRESH_MILLISECOND_TICKS - 1) / REFRESH_MILLISECOND_TICKS);
+        UINT milliseconds = static_cast<UINT>((remaining + REFRESH_MILLISECOND_TICKS - 1)
+            / REFRESH_MILLISECOND_TICKS);
         delay = std::min(delay, milliseconds);
     }
     return std::max(static_cast<UINT>(USER_TIMER_MINIMUM), delay);
@@ -2861,9 +2885,8 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless, UINT dp
         style |= MCS_NOTODAY;
     }
     CalendarLocaleScope localeScope(GetLanguageLocale(config.language));
-    HWND calendar =
-        CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, config.x, config.y, 0, 0, nullptr, nullptr,
-            hInstance, nullptr);
+    HWND calendar = CreateWindowExW(0, MONTHCAL_CLASSW, L"", style, config.x, config.y, 0, 0,
+        nullptr, nullptr, hInstance, nullptr);
     if (calendar != nullptr) {
         cacheable = GetSystemDialogDpi(calendar) == dpi;
         const wchar_t* themeName = disabledThemes ? L"" : nullptr;
@@ -2897,7 +2920,8 @@ static SIZE GetCalendarSize(const WidgetConfig& config, bool borderless, UINT dp
             config.fontWeight,
             config.fontItalic,
             config.fontCharSet,
-            config.fontFace, size
+            config.fontFace,
+            size
         });
     }
     return size;
@@ -3140,8 +3164,11 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config,
             extraClockHeight = std::max(extraClockHeight, NormalizeAnalogClockSize(clock.size));
         }
     }
-    int extraHeight = additional ? extraPadding + topTextHeight + clockPadding + extraClockHeight
-        + clockPadding + digitalHeight + clockPadding + timeTextHeight : 0;
+    int extraHeight = 0;
+    if (additional) {
+        extraHeight = extraPadding + topTextHeight + clockPadding + extraClockHeight
+            + clockPadding + digitalHeight + clockPadding + timeTextHeight;
+    }
     int bodyHeight = std::max(static_cast<int>(calendarSize.cy) + bodyPadding, mainHeight);
     bodyHeight = std::max(bodyHeight, extraHeight);
     int bodyTop = sidePadding + topTextHeight + bodyPadding;
@@ -3216,8 +3243,7 @@ static PanelLayout CalculatePanelLayout(const WidgetConfig& config,
                     DrawTextW(noticeDC, notice.text.c_str(), static_cast<int>(notice.text.size()),
                         &measured, DT_CALCRECT | DT_WORDBREAK | DT_NOFULLWIDTHCHARBREAK | DT_NOPREFIX);
                     int textHeight = std::max(metrics.tmHeight, measured.bottom - measured.top);
-                    int rowHeight =
-                        std::max(iconSize + rowPadding + rowPadding, textHeight + textPaddingTop);
+                    int rowHeight = std::max(iconSize + rowPadding + rowPadding, textHeight + textPaddingTop);
                     int rowTop = footerTop + separatorHeight;
                     PanelNoticeLayout row;
                     row.separator = RECT{ 0, footerTop, layout.clientSize.cx, rowTop };
@@ -3382,9 +3408,10 @@ static void CaptureWidgetWorkAreaAttachment(WidgetConfig* config, const RECT& re
     if (!GetWidgetWorkArea(rect, L"", &information)) {
         return;
     }
-    int edges = snapWidgetsToWorkArea
-        ? GetWidgetWorkAreaEdges(rect, information.rcWork, WORK_AREA_SNAP_DISTANCE)
-        : 0;
+    int edges = 0;
+    if (snapWidgetsToWorkArea) {
+        edges = GetWidgetWorkAreaEdges(rect, information.rcWork, WORK_AREA_SNAP_DISTANCE);
+    }
     if (preview) {
         config->previewWorkAreaEdges = edges;
         config->previewWorkAreaMonitor = information.szDevice;
@@ -3633,10 +3660,13 @@ bool HasApplicationUiFont() {
     const std::wstring& face = settingsApplicationFontPreviewActive ? settingsAppFontFace : appFontFace;
     int weight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     bool italic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
-    return windows2000Style && AreVisualStylesActive() || !face.empty() || weight != FW_NORMAL || italic;
+    return (windows2000Style || windowsClassicStyle) && AreVisualStylesActive()
+        || !face.empty()
+        || weight != FW_NORMAL
+        || italic;
 }
 
-/// Creates the selected application font, using Tahoma 8 pt for the Windows 2000 system-font choice.
+/// Creates the selected UI font, using the selected classic or standard 8 pt system-font choice.
 HFONT CreateApplicationUiFont(HWND window) {
     HFONT systemFont = CreateSystemDialogFont(window);
     if (systemFont == nullptr) {
@@ -3652,14 +3682,15 @@ HFONT CreateApplicationUiFont(HWND window) {
     font.lfWeight = settingsApplicationFontPreviewActive ? settingsAppFontWeight : appFontWeight;
     font.lfItalic = settingsApplicationFontPreviewActive ? settingsAppFontItalic : appFontItalic;
     int dialogSize = settingsApplicationFontPreviewActive ? settingsAppFontDialogSize : appFontDialogSize;
-    bool classic = windows2000Style && AreVisualStylesActive();
+    bool classic = (windows2000Style || windowsClassicStyle) && AreVisualStylesActive();
     int antialiasing = EffectiveFontAntialiasing(appFontAntialiasing, !classic && IsClearTypeAvailable());
     font.lfQuality = FontQuality(antialiasing);
     if (!face.empty()) {
         wcsncpy_s(font.lfFaceName, face.c_str(), _TRUNCATE);
         font.lfCharSet = DEFAULT_CHARSET;
     } else if (classic && font.lfWeight == FW_NORMAL && !font.lfItalic && dialogSize == 90) {
-        wcsncpy_s(font.lfFaceName, L"Tahoma", _TRUNCATE);
+        const wchar_t* defaultFace = windowsClassicStyle ? L"Microsoft Sans Serif" : L"Tahoma";
+        wcsncpy_s(font.lfFaceName, defaultFace, _TRUNCATE);
         font.lfHeight = -MulDiv(8, GetSystemDialogDpi(window), 72);
         font.lfWidth = 0;
         font.lfCharSet = DEFAULT_CHARSET;
@@ -4846,8 +4877,7 @@ static void SpaceSettingsControls(HWND parent, int stepId, int divisor, bool hor
     }
 }
 
-/// Preserves authored row and column strides and the Application checkbox offset before native font-baseline
-/// alignment across settings pages.
+/// Preserves authored row and column strides before native font-baseline alignment across settings pages.
 static void LayoutSettingsControlGrids() {
     const HWND textRows[] = { hOpacityLabel, hFontSizeLabel, hFontLabel };
     const HWND sizeColumns[] = { hSizeCombo, hAdditionalSizeCombos[0], hAdditionalSizeCombos[1] };
@@ -4873,12 +4903,21 @@ static void LayoutSettingsControlGrids() {
         hTimeSignalVolumeLabel
     };
     const HWND applicationChecks[] = {
+        hDisableThemesCheck,
         hAlternativeTrayIconCheck,
         hClassicTrayIconCheck,
         hUseXmlSettingsCheck,
         hSnapToWorkAreaCheck,
         hStartWithWindowsCheck,
         hWarnUnsavedChangesCheck
+    };
+    const HWND applicationStyleRows[] = {
+        hApplicationStyleRadios[0],
+        hApplicationStyleRadios[1],
+        hApplicationStyleRadios[2],
+        hApplicationStyleRadios[4],
+        hApplicationStyleRadios[3],
+        hApplicationStyleRadios[5]
     };
     const HWND timeFields[] = {
         GetDlgItem(hTimePage, IDC_TIME_SOURCE_LABEL),
@@ -4898,6 +4937,8 @@ static void LayoutSettingsControlGrids() {
     LONG timeStep = timeSpacing.bottom - timeSpacing.top;
     RECT applicationSpacing = GetSettingsResourceRect(hApplicationPage, IDC_GRID_ROW_APPLICATION);
     LONG applicationStep = applicationSpacing.bottom - applicationSpacing.top;
+    RECT applicationCheckSpacing = GetSettingsResourceRect(hApplicationPage, IDC_GRID_ROW_APPLICATION_CHECKS);
+    LONG applicationCheckStep = applicationCheckSpacing.bottom - applicationCheckSpacing.top;
     LayoutSettingsWindowControls();
     for (int index = 0; index < ALARM_DAY_COUNT; index++) {
         days[index] = hAlarmDayChecks[(firstDay + index) % ALARM_DAY_COUNT];
@@ -4927,15 +4968,15 @@ static void LayoutSettingsControlGrids() {
     for (int index = 1; index < ARRAYSIZE(applicationRows); index++) {
         AlignSettingsControl(applicationRows[index], applicationRows[0], index * applicationStep);
     }
-    for (int index = 0; index < ARRAYSIZE(applicationChecks); index++) {
-        AlignSettingsControl(applicationChecks[index], hTimeSignalVolumeLabel,
-            applicationSpacing.top + (index + 1) * applicationStep);
+    AlignSettingsControl(applicationChecks[0], hTimeSignalVolumeLabel,
+        applicationSpacing.top + applicationStep);
+    for (int index = 1; index < ARRAYSIZE(applicationChecks); index++) {
+        AlignSettingsControl(applicationChecks[index], applicationChecks[0], index * applicationCheckStep);
     }
-    AlignSettingsControl(hDisableThemesCheck, hAlternativeTrayIconCheck);
-    AlignSettingsControl(hApplicationStyleGroup, hClassicTrayIconCheck);
-    SetWindowPos(hDisableThemesCheck, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    for (int index = 0; index < APPLICATION_STYLE_COUNT; index++) {
-        AlignSettingsControl(hApplicationStyleRadios[index], applicationChecks[index + 2]);
+    AlignSettingsControl(hApplicationStyleGroup, hDisableThemesCheck);
+    for (int index = 0; index < ARRAYSIZE(applicationStyleRows); index++) {
+        AlignSettingsControl(applicationStyleRows[index], applicationChecks[0],
+            (index + 1) * applicationCheckStep);
     }
     UpdateApplicationStyleGroupBounds();
     for (int index = 1; index < ARRAYSIZE(timeFields); index++) {
@@ -5006,9 +5047,12 @@ static void AlignSettingsControls() {
     LayoutSettingsCalendarAppearanceRows();
     if (selectedDraftIndex >= 0 && selectedDraftIndex < static_cast<int>(settingsDraft.size())) {
         if (settingsDraft[selectedDraftIndex].type != WIDGET_ANALOG) {
-            HWND reference = settingsDraft[selectedDraftIndex].type == WIDGET_DIGITAL
-                ? hOpacityLabel
-                : hSizeLabel;
+            HWND reference;
+            if (settingsDraft[selectedDraftIndex].type == WIDGET_DIGITAL) {
+                reference = hOpacityLabel;
+            } else {
+                reference = hSizeLabel;
+            }
             AlignSettingsControl(hWidgetDisableThemesCheck, reference, 11 * SettingsDialogHeight(15));
         }
     }
@@ -5065,8 +5109,14 @@ static DialogFrameMode GetApplicationDialogFrameMode() {
     if (windows2000Style) {
         return DialogFrameMode::Windows2000Forms;
     }
+    if (windowsClassicStyle) {
+        return DialogFrameMode::WindowsClassicForms;
+    }
     if (windows2000Headers) {
         return DialogFrameMode::Windows2000Header;
+    }
+    if (windowsClassicHeaders) {
+        return DialogFrameMode::WindowsClassicHeader;
     }
     if (basicWindowHeaders) {
         return DialogFrameMode::WindowsBasic;
@@ -5074,14 +5124,17 @@ static DialogFrameMode GetApplicationDialogFrameMode() {
     return DialogFrameMode::System;
 }
 
-/// Recreates styled dialogs when either Windows 2000 mode changes to Windows Basic or the system frame.
-static bool ShouldRecreateStyledDialogs(DialogFrameMode previousMode) {
-    if (previousMode != DialogFrameMode::Windows2000Header
-            && previousMode != DialogFrameMode::Windows2000Forms) {
+/// Recreates dialogs only when enabled themes restore one of the first two appearance choices.
+static bool ShouldRecreateStyledDialogs(DialogFrameMode previousMode, bool previousThemesDisabled) {
+    if (disableDialogRecreation || themesDisabled) {
         return false;
     }
     DialogFrameMode mode = GetApplicationDialogFrameMode();
-    return mode == DialogFrameMode::WindowsBasic || mode == DialogFrameMode::System;
+    if (mode != DialogFrameMode::System && mode != DialogFrameMode::WindowsBasic) {
+        return false;
+    }
+    return previousThemesDisabled
+        || previousMode != DialogFrameMode::System && previousMode != DialogFrameMode::WindowsBasic;
 }
 
 /// Completes the Settings frame and geometry after child fonts and themes have been applied.
@@ -5785,12 +5838,17 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         static_cast<float>(height), &metrics, &clockMetrics);
     if (SUCCEEDED(result) && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width)
             || metrics.height > static_cast<float>(height))) {
-        float widthScale = metrics.widthIncludingTrailingWhitespace > 0.0f
-            ? static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace
-            : 1.0f;
-        float heightScale = metrics.height > 0.0f
-            ? static_cast<float>(height) / metrics.height
-            : 1.0f;
+        float widthScale, heightScale;
+        if (metrics.widthIncludingTrailingWhitespace > 0.0f) {
+            widthScale = static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace;
+        } else {
+            widthScale = 1.0f;
+        }
+        if (metrics.height > 0.0f) {
+            heightScale = static_cast<float>(height) / metrics.height;
+        } else {
+            heightScale = 1.0f;
+        }
         fontSize = std::max(1.0f, fontSize * std::min(widthScale, heightScale));
         format->Release();
         format = nullptr;
@@ -6000,10 +6058,14 @@ static void PaintOpaqueDigitalWidget(Widget* widget, HWND window, HDC dc) {
     RECT client = {};
     GetClientRect(window, &client);
     bool alarmFlash = widget->alarmActive && widget->flashPhase;
-    COLORREF textColor = alarmFlash ? widget->config.alarmTextColor : widget->config.textColor;
-    COLORREF backgroundColor = alarmFlash
-        ? widget->config.alarmBackgroundColor
-        : widget->config.backgroundColor;
+    COLORREF textColor, backgroundColor;
+    if (alarmFlash) {
+        textColor = widget->config.alarmTextColor;
+        backgroundColor = widget->config.alarmBackgroundColor;
+    } else {
+        textColor = widget->config.textColor;
+        backgroundColor = widget->config.backgroundColor;
+    }
     HBRUSH background = CreateSolidBrush(backgroundColor);
     FillRect(dc, &client, background);
     DeleteObject(background);
@@ -6065,12 +6127,14 @@ static void RenderCustomWidget(Widget* widget) {
     HGDIOBJ oldBitmap = SelectObject(dc, bitmap);
     bool transparentDigital = widget->config.type == WIDGET_DIGITAL && widget->config.transparentBackground;
     bool alarmFlash = widget->alarmActive && widget->flashPhase;
-    COLORREF textColor = alarmFlash
-        ? widget->config.alarmTextColor
-        : widget->config.textColor;
-    COLORREF backgroundColor = alarmFlash
-        ? widget->config.alarmBackgroundColor
-        : widget->config.backgroundColor;
+    COLORREF textColor, backgroundColor;
+    if (alarmFlash) {
+        textColor = widget->config.alarmTextColor;
+        backgroundColor = widget->config.alarmBackgroundColor;
+    } else {
+        textColor = widget->config.textColor;
+        backgroundColor = widget->config.backgroundColor;
+    }
     HBRUSH background = CreateSolidBrush(transparentDigital ? RGB(255, 255, 255) : backgroundColor);
     RECT full = { 0, 0, width, height };
     FillRect(dc, &full, background);
@@ -6081,8 +6145,8 @@ static void RenderCustomWidget(Widget* widget) {
     int inset = widget->config.padding + borderStyleInset + widget->config.borderWidth;
     RECT textRect = { inset, inset, width - inset, height - inset };
     HFONT font = CreateWidgetDrawingFont(widget->config, widget->dpi);
-    DrawWidgetTimeText(dc, text, textRect, font,
-        transparentDigital ? RGB(0, 0, 0) : textColor, widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    DrawWidgetTimeText(dc, text, textRect, font, transparentDigital ? RGB(0, 0, 0) : textColor,
+        widget->config, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     DeleteObject(font);
     if (transparentDigital && widget->config.borderStyle == DIGITAL_BORDER_SINGLE) {
         DrawBorderStyle(dc, width, height, DIGITAL_BORDER_TOOL_WINDOW, RGB(0, 0, 0));
@@ -6526,9 +6590,12 @@ static void PaintPanelWidget(Widget* widget, HDC dc) {
         if (index > 0 && !widget->config.additionalClocks[index - 1].enabled) {
             continue;
         }
-        WidgetConfig clock = index == 0
-            ? widget->config
-            : AdditionalClockConfiguration(widget->config, index - 1);
+        WidgetConfig clock;
+        if (index == 0) {
+            clock = widget->config;
+        } else {
+            clock = AdditionalClockConfiguration(widget->config, index - 1);
+        }
         wchar_t clockText[128] = {};
         GetDigitalTimeText(clock, clockText, ARRAYSIZE(clockText), widget->panelApplicationUtc);
         DrawWidgetTimeText(dc, clockText, layout.times[index], timeFont, RGB(0, 0, 0), clock);
@@ -7613,12 +7680,17 @@ static bool SetFullscreenPreview(Widget* widget) {
     }
     int monitorWidth = monitorRect.right - monitorRect.left;
     int monitorHeight = monitorRect.bottom - monitorRect.top;
-    int previewX = widget->config.previewX == CW_USEDEFAULT
-        ? monitorRect.left + (monitorWidth - previewWidth) / 2
-        : widget->config.previewX;
-    int previewY = widget->config.previewY == CW_USEDEFAULT
-        ? monitorRect.top + (monitorHeight - previewHeight) / 2
-        : widget->config.previewY;
+    int previewX, previewY;
+    if (widget->config.previewX == CW_USEDEFAULT) {
+        previewX = monitorRect.left + (monitorWidth - previewWidth) / 2;
+    } else {
+        previewX = widget->config.previewX;
+    }
+    if (widget->config.previewY == CW_USEDEFAULT) {
+        previewY = monitorRect.top + (monitorHeight - previewHeight) / 2;
+    } else {
+        previewY = widget->config.previewY;
+    }
     RECT currentRect = { previewX, previewY, previewX + previewWidth, previewY + previewHeight };
     if (widget->fullscreenPreview) {
         GetWindowRect(widget->window, &currentRect);
@@ -9017,9 +9089,12 @@ static void GetSettingsWindowLayout(DWORD extendedStyle, DWORD* style, int* widt
     int settingsX = placement.x;
     int settingsY = placement.y;
     RECT desired = { settingsX, settingsY, settingsX + desiredWidth, settingsY + desiredHeight };
-    HMONITOR monitor = settingsX == CW_USEDEFAULT || settingsY == CW_USEDEFAULT
-        ? MonitorFromPoint(POINT{}, MONITOR_DEFAULTTOPRIMARY)
-        : MonitorFromRect(&desired, MONITOR_DEFAULTTONEAREST);
+    HMONITOR monitor;
+    if (settingsX == CW_USEDEFAULT || settingsY == CW_USEDEFAULT) {
+        monitor = MonitorFromPoint(POINT{}, MONITOR_DEFAULTTOPRIMARY);
+    } else {
+        monitor = MonitorFromRect(&desired, MONITOR_DEFAULTTONEAREST);
+    }
     MONITORINFO information = {};
     information.cbSize = sizeof(information);
     RECT workArea = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
@@ -9966,8 +10041,9 @@ static void UpdateSettingsTextControlLayout(HWND parent,
             control != nullptr;
             control = GetWindow(control, GW_HWNDNEXT)) {
         DWORD_PTR referenceData = 0;
-        if (!GetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID,
-                &referenceData)) {
+        BOOL subclassExists = GetWindowSubclass(control, ApplicationControlSubclassProc,
+            SETTINGS_CONTROL_SUBCLASS_ID, &referenceData);
+        if (!subclassExists) {
             SetWindowSubclass(control, ApplicationControlSubclassProc, SETTINGS_CONTROL_SUBCLASS_ID, 0);
         }
         RECT rect = {};
@@ -10016,8 +10092,9 @@ static LRESULT CALLBACK WidgetListSubclassProc(HWND window, UINT msg, WPARAM wPa
             return TRUE;
         }
     }
-    bool widgetCommands =
-        subclassId == ID_LIST_WIDGETS || subclassId == ID_REMOVE || subclassId == ID_DUPLICATE;
+    bool widgetCommands = subclassId == ID_LIST_WIDGETS
+        || subclassId == ID_REMOVE
+        || subclassId == ID_DUPLICATE;
     HWND list = widgetCommands ? hWidgetList : window;
     if (msg == WM_KEYDOWN && widgetCommands && GetFocus() == window) {
         bool controlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
@@ -10503,9 +10580,11 @@ INT_PTR DrawWrappedTextItem(const DRAWITEMSTRUCT* item, LONG referenceHeight) {
     UiTextLine statusLine = {};
     const UiTextLine* fixedLine = nullptr;
     if (item->hwndItem == hNtpServersLabel) {
-        prefix = SendMessageW(item->hwndItem, WM_QUERYUISTATE, 0, 0) & UISF_HIDEACCEL
-            ? DT_HIDEPREFIX
-            : 0;
+        if (SendMessageW(item->hwndItem, WM_QUERYUISTATE, 0, 0) & UISF_HIDEACCEL) {
+            prefix = DT_HIDEPREFIX;
+        } else {
+            prefix = 0;
+        }
     } else if (item->hwndItem == hNtpStatus) {
         statusLine = GetNtpStatusLine(item->hDC);
         fixedLine = &statusLine;
@@ -10771,9 +10850,12 @@ static bool ApplyNtpSettingsFromControls() {
     bool newUseNtpTime = IsNtpTimeSourceSelected();
     int selectedPreset = GetSettingsComboSelection(hNtpPresetCombo);
     int newNtpPreset = std::clamp(selectedPreset, 0, NTP_PRESET_COUNT - 1);
-    std::wstring newNtpServers = newNtpPreset == NTP_PRESET_CUSTOM
-        ? GetControlText(hNtpServersEdit)
-        : NtpServersForPreset(newNtpPreset);
+    std::wstring newNtpServers;
+    if (newNtpPreset == NTP_PRESET_CUSTOM) {
+        newNtpServers = GetControlText(hNtpServersEdit);
+    } else {
+        newNtpServers = NtpServersForPreset(newNtpPreset);
+    }
     if (!HasNtpServers(newNtpServers)) {
         newNtpPreset = NTP_PRESET_GLOBAL;
         newNtpServers = NtpServersForPreset(newNtpPreset);
@@ -10943,9 +11025,12 @@ static void UpdateSettingsVolumeSliderRange(HWND trackBar) {
         SendMessageW(trackBar, TBM_SETTIC, 0, position);
     }
     SendMessageW(trackBar, TBM_SETPAGESIZE, 0, std::max(1, maximum / 20));
-    int position = alarm
-        ? AlarmVolumeSliderPosition(alarmVolume)
-        : TimeSignalVolumeSliderPosition(settingsTimeSignalVolume);
+    int position;
+    if (alarm) {
+        position = AlarmVolumeSliderPosition(alarmVolume);
+    } else {
+        position = TimeSignalVolumeSliderPosition(settingsTimeSignalVolume);
+    }
     SetTrackBarPosition(trackBar, position);
 }
 
@@ -10958,9 +11043,11 @@ static std::wstring SelectedAudioOutputDevice(HWND combo, const std::vector<Audi
 /// Refreshes available output names while preserving a saved endpoint that is temporarily disconnected.
 static void FillAudioOutputCombo(HWND combo, std::vector<AudioOutputDevice>& devices,
         const std::wstring& selected) {
-    devices = settingsOpenData != nullptr && hSettingsOpenThread == nullptr
-        ? settingsOpenData->audioOutputs
-        : EnumerateAudioOutputDevices();
+    if (settingsOpenData != nullptr && hSettingsOpenThread == nullptr) {
+        devices = settingsOpenData->audioOutputs;
+    } else {
+        devices = EnumerateAudioOutputDevices();
+    }
     bool found = selected.empty();
     for (const AudioOutputDevice& device : devices) {
         found = found || device.id == selected;
@@ -11000,9 +11087,12 @@ static void UpdateTimeSignalVolumePreview() {
     } else {
         StopTimeSignalVolumePreview();
     }
-    const wchar_t* caption = settingsTimeSignalTestActive
-        ? T(TXT_STOP_TEST_LABEL)
-        : T(TXT_TEST_COMMAND_LABEL);
+    const wchar_t* caption;
+    if (settingsTimeSignalTestActive) {
+        caption = T(TXT_STOP_TEST_LABEL);
+    } else {
+        caption = T(TXT_TEST_COMMAND_LABEL);
+    }
     SetControlCaption(hTimeSignalTestButton, caption);
 }
 
@@ -13570,6 +13660,8 @@ static bool HasPendingSettingsChanges() {
             || settingsWindows2000Style != windows2000Style
             || settingsBasicWindowHeaders != basicWindowHeaders
             || settingsWindows2000Headers != windows2000Headers
+            || settingsWindowsClassicHeaders != windowsClassicHeaders
+            || settingsWindowsClassicStyle != windowsClassicStyle
             || settingsAlternativeTrayIcon != alternativeTrayIcon
             || settingsClassicTrayIcon != classicTrayIcon
             || GetCheck(hStartWithWindowsCheck) != startWithWindows
@@ -14302,11 +14394,20 @@ static bool ApplySettingsDraft() {
     bool previousWindows2000Style = windows2000Style;
     bool previousBasicWindowHeaders = basicWindowHeaders;
     bool previousWindows2000Headers = windows2000Headers;
+    bool previousWindowsClassicHeaders = windowsClassicHeaders;
+    bool previousWindowsClassicStyle = windowsClassicStyle;
     windows2000Style = themesDisabled && settingsWindows2000Style;
-    windows2000Headers = settingsWindows2000Headers && !windows2000Style;
+    windowsClassicStyle = themesDisabled && settingsWindowsClassicStyle && !windows2000Style;
+    windows2000Headers = settingsWindows2000Headers && !windows2000Style && !windowsClassicStyle;
+    windowsClassicHeaders = settingsWindowsClassicHeaders
+        && !windows2000Style
+        && !windowsClassicStyle
+        && !windows2000Headers;
     basicWindowHeaders = settingsBasicWindowHeaders
         && !windows2000Style
-        && !windows2000Headers;
+        && !windowsClassicStyle
+        && !windows2000Headers
+        && !windowsClassicHeaders;
     alternativeTrayIcon = settingsAlternativeTrayIcon;
     classicTrayIcon = alternativeTrayIcon && settingsClassicTrayIcon;
     int previousAppFontAntialiasing = appFontAntialiasing;
@@ -14369,13 +14470,15 @@ static bool ApplySettingsDraft() {
     settingsAppearancePreviewActive = false;
     settingsAppearancePreviewIds.clear();
     settingsAppearanceOriginals.clear();
-    bool windows2000StyleChanged = previousWindows2000Style != windows2000Style;
+    bool windows2000StyleChanged = previousWindows2000Style != windows2000Style
+        || previousWindowsClassicStyle != windowsClassicStyle;
     bool uiStyleChanged = previousThemesDisabled != themesDisabled
         || previousAppFontAntialiasing != appFontAntialiasing
         || windows2000StyleChanged
         || previousBasicWindowHeaders != basicWindowHeaders
-        || previousWindows2000Headers != windows2000Headers;
-    bool recreateDialogs = ShouldRecreateStyledDialogs(previousFrameMode);
+        || previousWindows2000Headers != windows2000Headers
+        || previousWindowsClassicHeaders != windowsClassicHeaders;
+    bool recreateDialogs = ShouldRecreateStyledDialogs(previousFrameMode, previousThemesDisabled);
     if (uiStyleChanged && !recreateDialogs) {
         RefreshApplicationFonts(windows2000StyleChanged);
     }
@@ -15947,6 +16050,7 @@ static void ImportSettings() {
     snapshot.fileDialogDirectory = fileDialogDirectory;
     bool useXmlStorage = GetCheck(hUseXmlSettingsCheck);
     DialogFrameMode previousFrameMode = GetApplicationDialogFrameMode();
+    bool previousThemesDisabled = themesDisabled;
     CloseSettingsWindow();
     DestroyWidgetWindows();
     ApplySettingsSnapshot(snapshot);
@@ -15956,7 +16060,7 @@ static void ImportSettings() {
         CreateWidgetWindow(widgets[index].get());
     }
     RefreshFullscreenPresentation();
-    if (ShouldRecreateStyledDialogs(previousFrameMode)) {
+    if (ShouldRecreateStyledDialogs(previousFrameMode, previousThemesDisabled)) {
         RecreateStyledDialogs(false);
     } else {
         RefreshInformationWindows();
@@ -15984,6 +16088,8 @@ static void CreateSettingsWindow(int widgetId) {
     settingsWindows2000Style = windows2000Style;
     settingsBasicWindowHeaders = basicWindowHeaders;
     settingsWindows2000Headers = windows2000Headers;
+    settingsWindowsClassicHeaders = windowsClassicHeaders;
+    settingsWindowsClassicStyle = windowsClassicStyle;
     settingsAlternativeTrayIcon = alternativeTrayIcon;
     settingsClassicTrayIcon = classicTrayIcon;
     settingsDraft.clear();
@@ -16752,13 +16858,18 @@ static void HandleSettingsCommand(int id, int notification) {
         settingsClassicTrayIcon = settingsAlternativeTrayIcon && GetCheck(hClassicTrayIconCheck);
         SetCheck(hClassicTrayIconCheck, settingsClassicTrayIcon);
         EnableWindow(hClassicTrayIconCheck, settingsAlternativeTrayIcon);
-    } else if ((id == ID_VISUAL_STYLES || id >= ID_STYLE_SYSTEM && id <= ID_STYLE_2000_FORMS)
+    } else if ((id == ID_VISUAL_STYLES
+                || id >= ID_STYLE_SYSTEM && id <= ID_STYLE_2000_FORMS
+                || id == ID_STYLE_CLASSIC_HEADER
+                || id == ID_STYLE_CLASSIC_FORMS)
             && notification == BN_CLICKED) {
         if (AreVisualStylesActive()) {
             settingsThemesDisabled = GetCheck(hDisableThemesCheck);
             settingsBasicWindowHeaders = GetCheck(hApplicationStyleRadios[1]);
             settingsWindows2000Headers = GetCheck(hApplicationStyleRadios[2]);
             settingsWindows2000Style = settingsThemesDisabled && GetCheck(hApplicationStyleRadios[3]);
+            settingsWindowsClassicHeaders = GetCheck(hApplicationStyleRadios[4]);
+            settingsWindowsClassicStyle = settingsThemesDisabled && GetCheck(hApplicationStyleRadios[5]);
         }
         UpdateSettingControlAvailability();
     } else if (id == ID_DEFAULT_APPEARANCE) {
@@ -17294,9 +17405,10 @@ int GetApplicationComboSelection(HWND control, const ApplicationComboState& stat
     if (GetSettingsComboBox(parent) == control) {
         control = parent;
     }
-    return state.open != nullptr && state.open == control
-        ? state.initialSelection
-        : static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
+    if (state.open != nullptr && state.open == control) {
+        return state.initialSelection;
+    }
+    return static_cast<int>(SendMessageW(control, CB_GETCURSEL, 0, 0));
 }
 
 /// Uses the same dropdown sizing, acceptance and cancellation rules in every application form.
@@ -18159,6 +18271,22 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
     return DefWindowProcW(window, msg, wParam, lParam);
 }
 
+static bool ReadCommandLineOptions(const wchar_t* commandLine) {
+    int count = 0;
+    wchar_t** arguments = CommandLineToArgvW(commandLine, &count);
+    if (arguments == nullptr) {
+        return false;
+    }
+    disableDialogRecreation = false;
+    for (int index = 1; index < count; index++) {
+        if (_wcsicmp(arguments[index], L"/nrw") == 0 || _wcsicmp(arguments[index], L"-nrw") == 0) {
+            disableDialogRecreation = true;
+        }
+    }
+    LocalFree(arguments);
+    return true;
+}
+
 /// Enforces one application instance, initializes services and windows, and runs the message loop with
 /// custom keyboard navigation. Releases rendering, synchronization, and process resources before returning
 /// the message-loop exit code.
@@ -18168,6 +18296,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstan
     UNREFERENCED_PARAMETER(commandLine);
     UNREFERENCED_PARAMETER(showCommand);
     hInstance = instance;
+    if (!ReadCommandLineOptions(GetCommandLineW())) {
+        return 2;
+    }
     hSingleInstanceMutex = CreateMutexW(nullptr, FALSE, L"CalClock.MultiWidget.Instance");
     if (hSingleInstanceMutex != nullptr && GetLastError() == ERROR_ALREADY_EXISTS) {
         HWND existing = FindWindowW(CLASS_NAME, CONTROLLER_TITLE);
@@ -18677,8 +18808,11 @@ bool HandleInformationMessage(HWND window, UINT message, WPARAM wParam, LPARAM) 
 
 /// Captures immutable text before opening the selected native printing path.
 static void PrintReport(HWND owner, HWND edit) {
-    if (closing || hController == nullptr || printDialogOpen
-            || printThread != nullptr || modernPrint != nullptr) {
+    if (closing
+            || hController == nullptr
+            || printDialogOpen
+            || printThread != nullptr
+            || modernPrint != nullptr) {
         return;
     }
     wchar_t title[256] = {};

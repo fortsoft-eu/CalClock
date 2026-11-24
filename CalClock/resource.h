@@ -38,6 +38,8 @@
 #define ID_STYLE_BASIC_HEADER                   5211
 #define ID_STYLE_2000_HEADER                    5212
 #define ID_STYLE_2000_FORMS                     5213
+#define ID_STYLE_CLASSIC_HEADER                5215
+#define ID_STYLE_CLASSIC_FORMS                 5216
 #define ID_CALC_HIGHLIGHT_BASE                  3450
 
 #define ID_CALC_TABS                            3300
@@ -241,6 +243,7 @@
 
 
 #define IDC_GRID_ROW_APPLICATION                5131
+#define IDC_GRID_ROW_APPLICATION_CHECKS         5214
 
 #define IDC_GRID_ROW_APPEARANCE                 5132
 
@@ -276,7 +279,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE                120
 #define _APS_NEXT_COMMAND_VALUE                 40002
-#define _APS_NEXT_CONTROL_VALUE                 5214
+#define _APS_NEXT_CONTROL_VALUE                 5217
 #define _APS_NEXT_SYMED_VALUE                   101
 #endif
 #endif

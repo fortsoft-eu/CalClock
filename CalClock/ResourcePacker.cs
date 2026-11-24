@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.1
  */
 
 using System;
@@ -32,6 +32,7 @@ using System.IO.Compression;
 /// Prepares compressed library and data resources during the native application's build.
 /// </summary>
 public static class ResourcePacker {
+
     /// <summary>
     /// Identifies the packed library-resource header consumed by the native decompressor.
     /// </summary>

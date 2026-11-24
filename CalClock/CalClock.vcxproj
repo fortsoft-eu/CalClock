@@ -181,13 +181,13 @@
     <None Include="ResourcePacker.cs" />
     <None Include="prepare.ps1" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="CalClock.ico" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="PrepareApplicationResources" BeforeTargets="ResourceCompile" Inputs="$(ProjectDir)Resources\Resources.dll;$(ProjectDir)prepare.ps1;$(ProjectDir)ResourceIcons.cs;$(ProjectDir)ResourcePacker.cs" Outputs="$(ProjectDir)$(IntDir)CalClock.ico;$(ProjectDir)$(IntDir)Resources.dll.bin">
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)prepare.ps1&quot; -OutputDirectory &quot;$(ProjectDir)$(IntDir).&quot;" />
+    <ItemGroup>
+      <FileWrites Include="$(ProjectDir)$(IntDir)CalClock.ico;$(ProjectDir)$(IntDir)Resources.dll.bin" />
+    </ItemGroup>
   </Target>
 </Project>

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #pragma once
@@ -498,6 +498,8 @@ enum TextId {
     TXT_REGEX_REPEAT,
     TXT_REGEX_RANGE,
     TXT_REGEX_COMPLEXITY,
+    TXT_STYLE_STANDARD_HEADER,
+    TXT_WINDOWS_STANDARD_STYLE,
     TXT_COUNT
 };
 
@@ -604,6 +606,8 @@ struct SettingsSnapshot {
     bool windows2000Style = false;
     bool basicWindowHeaders = false;
     bool windows2000Headers = false;
+    bool windowsClassicHeaders = false;
+    bool windowsClassicStyle = false;
     bool snapWidgetsToWorkArea = true;
     bool warnOnUnsavedChanges = true;
     bool generatedTimeSignal = true;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #pragma once
@@ -30,15 +30,17 @@
 #include <array>
 #include <vector>
 
-/// Selects native system, Windows Basic, caption-only Windows 2000, or complete Windows 2000 rendering.
+/// Selects native system, Basic, classic, or standard caption and control rendering.
 enum class DialogFrameMode {
     System,
     WindowsBasic,
     Windows2000Header,
-    Windows2000Forms
+    Windows2000Forms,
+    WindowsClassicHeader,
+    WindowsClassicForms
 };
 
-/// Supplies per-dialog nonclient appearance and optional Windows 2000 control colors.
+/// Supplies per-dialog nonclient appearance and optional classic or standard control colors.
 class DialogFrame {
 
 public:
@@ -49,7 +51,7 @@ public:
     /// Applies dialog-local colors to a control and its children, including owned dropdowns and tooltips.
     static bool ApplyControl(HWND control, HWND dialog);
 
-    /// Returns the dialog's Windows 2000 control color, or the native color outside complete-form mode.
+    /// Returns the dialog's selected local color, or the native color outside complete-form mode.
     static COLORREF GetColor(HWND control, int colorIndex);
 
     /// Returns a dialog-owned control brush, or the native system brush outside complete-form mode.
@@ -86,6 +88,7 @@ private:
     bool disableThemes = false;
     bool windows2000Style = false;
     bool windows2000Controls = false;
+    bool windowsClassic = false;
     bool basicHeaders = false;
     bool enabled = false;
     bool updating = false;
@@ -113,7 +116,7 @@ private:
     void RecolorFrame(HDC context, const Layout& layout) const;
 
     /// Maps native edge and button colors inside one nonclient rectangle.
-    static void RecolorFrameRectangle(HDC context, const RECT& rectangle);
+    void RecolorFrameRectangle(HDC context, const RECT& rectangle) const;
 
     /// Reads current metrics and recalculates the frame after theme, metric or DPI changes.
     bool Refresh(bool preserveClient = true);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #include "ControlColors.h"
@@ -44,7 +44,8 @@ constexpr COLORREF ListViewColors[]{ BackgroundColor, TextColor, BackgroundColor
 constexpr COLORREF TreeViewColors[]{ BackgroundColor, TextColor, DisabledTextColor };
 constexpr COLORREF ProgressColors[]{ FaceColor, SelectionColor };
 constexpr int ControlColorIndices[]{
-    COLOR_SCROLLBAR, COLOR_MENU,
+    COLOR_SCROLLBAR,
+    COLOR_MENU,
     COLOR_WINDOW,
     COLOR_WINDOWFRAME,
     COLOR_MENUTEXT,
@@ -66,28 +67,72 @@ constexpr int ControlColorIndices[]{
     COLOR_MENUBAR
 };
 
-constexpr COLORREF CONTROL_COLORS[]{
-    FaceColor,
-    FaceColor,
-    BackgroundColor,
-    TextColor,
-    TextColor,
-    TextColor,
-    DisabledTextColor,
-    SelectionColor,
-    BackgroundColor,
-    FaceColor,
-    DisabledTextColor,
-    DisabledTextColor,
-    TextColor,
-    BackgroundColor,
+constexpr COLORREF STANDARD_COLORS[]{
+    RGB(212, 208, 200),
+    RGB(58, 110, 165),
+    RGB(10, 36, 106),
+    RGB(128, 128, 128),
+    RGB(212, 208, 200),
+    RGB(255, 255, 255),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(255, 255, 255),
+    RGB(212, 208, 200),
+    RGB(212, 208, 200),
+    RGB(128, 128, 128),
+    RGB(10, 36, 106),
+    RGB(255, 255, 255),
+    RGB(212, 208, 200),
+    RGB(128, 128, 128),
+    RGB(128, 128, 128),
+    RGB(0, 0, 0),
+    RGB(212, 208, 200),
+    RGB(255, 255, 255),
     RGB(64, 64, 64),
-    FaceColor,
-    TextColor,
+    RGB(212, 208, 200),
+    RGB(0, 0, 0),
     RGB(255, 255, 225),
+    RGB(181, 181, 181),
     RGB(0, 0, 128),
-    SelectionColor,
-    FaceColor
+    RGB(166, 202, 240),
+    RGB(192, 192, 192),
+    RGB(49, 106, 197),
+    RGB(236, 233, 216)
+};
+
+constexpr COLORREF CLASSIC_COLORS[]{
+    RGB(192, 192, 192),
+    RGB(58, 110, 165),
+    RGB(0, 0, 128),
+    RGB(128, 128, 128),
+    RGB(192, 192, 192),
+    RGB(255, 255, 255),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(0, 0, 0),
+    RGB(255, 255, 255),
+    RGB(192, 192, 192),
+    RGB(192, 192, 192),
+    RGB(128, 128, 128),
+    RGB(0, 0, 128),
+    RGB(255, 255, 255),
+    RGB(192, 192, 192),
+    RGB(128, 128, 128),
+    RGB(128, 128, 128),
+    RGB(0, 0, 0),
+    RGB(192, 192, 192),
+    RGB(255, 255, 255),
+    RGB(0, 0, 0),
+    RGB(192, 192, 192),
+    RGB(0, 0, 0),
+    RGB(255, 255, 225),
+    RGB(192, 192, 192),
+    RGB(0, 0, 128),
+    RGB(16, 132, 208),
+    RGB(181, 181, 181),
+    RGB(0, 0, 128),
+    RGB(192, 192, 192)
 };
 
 const UINT RecolorButtonMessage = RegisterWindowMessageW(L"CalClock.ControlColors.RecolorButton");
@@ -102,11 +147,20 @@ static DWORD BitmapColor(COLORREF color) {
         | GetBValue(color);
 }
 
+/// Returns the selected palette color without changing system colors.
+COLORREF ControlColors::GetColor(int colorIndex, bool classic) {
+    if (colorIndex >= 0 && colorIndex < ARRAYSIZE(STANDARD_COLORS)) {
+        return classic ? CLASSIC_COLORS[colorIndex] : STANDARD_COLORS[colorIndex];
+    }
+    return GetSysColor(colorIndex);
+}
+
 /// Records the target and controlling window and creates the owned classic background brushes.
-ControlColors::ControlColors(HWND targetWindow, HWND controller)
+ControlColors::ControlColors(HWND targetWindow, HWND controller, bool classic)
         : window(targetWindow),
-        owner(controller) {
-    faceBrush = CreateSolidBrush(FaceColor);
+        owner(controller),
+        windowsClassic(classic) {
+    faceBrush = CreateSolidBrush(GetColor(COLOR_BTNFACE, windowsClassic));
     backgroundBrush = CreateSolidBrush(BackgroundColor);
 }
 
@@ -119,15 +173,20 @@ ControlColors::~ControlColors() {
 /// Returns the state attached to the window subclass, or null when no state is installed.
 ControlColors* ControlColors::Find(HWND window) {
     DWORD_PTR data = 0;
-    return GetWindowSubclass(window, Procedure, ControlColorsSubclassId, &data)
-        ? reinterpret_cast<ControlColors*>(data)
-        : nullptr;
+    if (GetWindowSubclass(window, Procedure, ControlColorsSubclassId, &data)) {
+        return reinterpret_cast<ControlColors*>(data);
+    }
+    return nullptr;
 }
 
 /// Reuses or installs state on a window owned by the current thread.
 /// Pins the callback module for its lifetime and returns null if installation fails.
-ControlColors* ControlColors::Attach(HWND window, HWND owner) {
+ControlColors* ControlColors::Attach(HWND window, HWND owner, bool classic) {
     ControlColors* state = Find(window);
+    if (state != nullptr && state->windowsClassic != classic) {
+        Restore(window);
+        state = nullptr;
+    }
     if (state) {
         state->owner = owner;
         return state;
@@ -136,18 +195,20 @@ ControlColors* ControlColors::Attach(HWND window, HWND owner) {
         return nullptr;
     }
     HMODULE module = nullptr;
-    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
-        reinterpret_cast<LPCWSTR>(Procedure), &module)) {
+    const BOOL modulePinned =
+        GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+        reinterpret_cast<LPCWSTR>(Procedure), &module);
+    if (!modulePinned) {
         return nullptr;
     }
-    state = new (std::nothrow) ControlColors(window, owner);
+    state = new (std::nothrow) ControlColors(window, owner, classic);
     if (!state) {
         return nullptr;
     }
-    if (!state->faceBrush
+    const bool failed = !state->faceBrush
         || !state->backgroundBrush
-        || !SetWindowSubclass(window, Procedure, ControlColorsSubclassId,
-            reinterpret_cast<DWORD_PTR>(state))) {
+        || !SetWindowSubclass(window, Procedure, ControlColorsSubclassId, reinterpret_cast<DWORD_PTR>(state));
+    if (failed) {
         delete state;
         return nullptr;
     }
@@ -179,10 +240,14 @@ void ControlColors::SetColors(bool enabled) {
     }
     for (size_t index = 0; index < count; ++index) {
         COLORREF current = static_cast<COLORREF>(SendMessageW(window, getMessages[index], 0, 0));
+        COLORREF color = colors[index];
+        if (kind == Kind::Progress) {
+            color = GetColor(index == 0 ? COLOR_BTNFACE : COLOR_HIGHLIGHT, windowsClassic);
+        }
         if (enabled) {
             previousColors[index] = current;
-            SendMessageW(window, setMessages[index], 0, colors[index]);
-        } else if (current == colors[index]) {
+            SendMessageW(window, setMessages[index], 0, color);
+        } else if (current == color) {
             SendMessageW(window, setMessages[index], 0, previousColors[index]);
         }
     }
@@ -190,7 +255,7 @@ void ControlColors::SetColors(bool enabled) {
 
 /// Enables or removes local classic colors, attaching the parent when needed for color notifications.
 /// Sets the caller's change flag when state changes; returns false if installation fails.
-bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) {
+bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed, bool classic) {
     if (!enabled) {
         if (Find(window)) {
             Restore(window);
@@ -198,7 +263,7 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
         }
         return true;
     }
-    ControlColors* state = Attach(window, owner);
+    ControlColors* state = Attach(window, owner, classic);
     if (!state) {
         return false;
     }
@@ -210,7 +275,7 @@ bool ControlColors::Apply(HWND window, HWND owner, bool enabled, bool& changed) 
     bool comboList = lstrcmpiW(className, L"ComboLBox") == 0;
     HWND parent = GetParent(window);
     if (!comboList && GetWindowLongPtrW(window, GWL_STYLE) & WS_CHILD) {
-        if (!Attach(parent, owner)) {
+        if (!Attach(parent, owner, classic)) {
             Restore(window);
             return false;
         }
@@ -270,7 +335,7 @@ LRESULT ControlColors::ColorControl(UINT message, WPARAM wParam, LPARAM lParam, 
     }
     bool background = message == WM_CTLCOLOREDIT || message == WM_CTLCOLORLISTBOX;
     HDC dc = reinterpret_cast<HDC>(wParam);
-    SetBkColor(dc, background ? BackgroundColor : FaceColor);
+    SetBkColor(dc, background ? BackgroundColor : GetColor(COLOR_BTNFACE, windowsClassic));
     SetTextColor(dc, IsWindowEnabled(control) ? TextColor : DisabledTextColor);
     return reinterpret_cast<LRESULT>(background ? backgroundBrush : faceBrush);
 }
@@ -310,11 +375,11 @@ void ControlColors::Recolor(HDC dc, bool nonClient, bool faceOnly) const {
         HGDIOBJ previous = SelectObject(memory, bitmap);
         if (previous && BitBlt(memory, 0, 0, width, height, dc, bounds.left, bounds.top, SRCCOPY)) {
             GdiFlush();
-            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> originals{};
-            std::array<DWORD, ARRAYSIZE(CONTROL_COLORS)> desired{};
+            std::array<DWORD, ARRAYSIZE(ControlColorIndices)> originals{};
+            std::array<DWORD, ARRAYSIZE(ControlColorIndices)> desired{};
             for (size_t index = 0; index < originals.size(); ++index) {
                 originals[index] = BitmapColor(GetSysColor(ControlColorIndices[index]));
-                desired[index] = BitmapColor(CONTROL_COLORS[index]);
+                desired[index] = BitmapColor(GetColor(ControlColorIndices[index], windowsClassic));
             }
             DWORD* data = static_cast<DWORD*>(pixels);
             size_t count = static_cast<size_t>(width) * height;
@@ -360,8 +425,8 @@ void ControlColors::RecolorScrollBars() const {
     }
     for (LONG object : { OBJID_VSCROLL, OBJID_HSCROLL }) {
         SCROLLBARINFO information{ sizeof(information) };
-        if (!GetScrollBarInfo(window, object, &information)
-                || information.rgstate[0] & (STATE_SYSTEM_INVISIBLE | STATE_SYSTEM_OFFSCREEN)) {
+        const BOOL infoAvailable = GetScrollBarInfo(window, object, &information);
+        if (!infoAvailable || information.rgstate[0] & (STATE_SYSTEM_INVISIBLE | STATE_SYSTEM_OFFSCREEN)) {
             continue;
         }
         RECT scrollbar = information.rcScrollBar;
@@ -385,10 +450,11 @@ LRESULT CALLBACK ControlColors::ScrollMessageFilter(int code, WPARAM wParam, LPA
         if (message->message == WM_MOUSEMOVE || message->message == WM_NCMOUSEMOVE) {
             HWND capture = GetCapture();
             ControlColors* state = Find(capture);
-            if (state != nullptr
-                    && state->paintTarget
-                    && !state->scrollRecolorPending
-                    && RecolorScrollMessage != 0) {
+            const bool shouldPostRecolor = state != nullptr
+                && state->paintTarget
+                && !state->scrollRecolorPending
+                && RecolorScrollMessage != 0;
+            if (shouldPostRecolor) {
                 state->scrollRecolorPending = PostMessageW(capture, RecolorScrollMessage, 0, 0) != FALSE;
             }
         }
@@ -527,9 +593,14 @@ LRESULT CALLBACK ControlColors::Procedure(HWND window, UINT message, WPARAM wPar
             recoloringControls = true;
             if (painted) {
                 bool nonClient = message == WM_NCPAINT || message == WM_PRINT && lParam & PRF_NONCLIENT;
-                HDC dc = providedDc
-                    ? reinterpret_cast<HDC>(wParam)
-                    : nonClient ? GetWindowDC(window) : GetDC(window);
+                HDC dc;
+                if (providedDc) {
+                    dc = reinterpret_cast<HDC>(wParam);
+                } else if (nonClient) {
+                    dc = GetWindowDC(window);
+                } else {
+                    dc = GetDC(window);
+                }
                 int saved = SaveDC(dc);
                 if (saved) {
                     if (paintRegion) {

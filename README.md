@@ -76,12 +76,16 @@ Digital clocks, calendars, and combined panels share four border styles. The sin
 
 Application language, UI font, font smoothing, settings storage, Windows startup, and work-area edge snapping are global and are configured on the Application tab. Disabling themes on the Application tab affects Settings, Help, About, Time Calculator, and Find. Each widget uses its own theme setting. The time source is also global. Widget language, font smoothing, visual styles, time zone, offset, alarm, and audible time signal are configured independently. Font antialiasing offers **ClearType**, **GDI**, and **None**.
 
-Windows Classic style requires Disable themes and applies only to Settings, Help, About, Time Calculator and
-Find. With the default system font selected, their controls use Tahoma 8 pt; a custom application font takes
-precedence. The license keeps its monospaced font. Only GDI and None are available for font antialiasing in
-this mode: a saved ClearType choice temporarily uses GDI and returns when the mode is turned off. If Windows
-itself has visual styles turned off, all appearance options appear unchecked and disabled without changing the
-saved choices.
+The Windows Classic and Windows Standard styles require Disable themes and apply only to Settings, Help,
+About, Time Calculator, and Find. Standard uses a warm-gray palette; Classic uses a neutral-gray palette.
+With the default system font selected, Standard controls use Tahoma 8 pt and Classic controls use Microsoft
+Sans Serif 8 pt. A custom application font takes precedence. The license keeps its
+monospaced font.
+The separate Classic and Standard title-bar choices retain native control colors and caption dimensions,
+using the selected caption font at the existing 10 pt size. Only GDI and None are available for font
+antialiasing in the complete styles: a saved ClearType choice temporarily uses GDI and returns when the style is turned off. If Windows
+itself has visual styles turned off, all appearance options appear unchecked and disabled without changing
+the saved choices.
 
 The **Audio volume** slider on the Alarm tab controls internally played audio files separately for each widget and shows the level in dB. The default is **−18 dB**, which preserves the file’s original level (**100%**). Moving the slider to the right amplifies the audio; the **0 dB** maximum is approximately **794%** of the original amplitude. The leftmost position is **−∞ dB** (silence). Changes take effect during the audio test. Amplification applies to decoded audio, including WAV, MP3, WMA, AAC, M4A, and FLAC when supported by Windows. Legacy playback for files that cannot be decoded, such as MIDI, is limited to 100%.
 
@@ -229,6 +233,10 @@ Requirements:
 
 - Microsoft Visual Studio with the MSVC v145 toolset
 - Windows SDK
+
+The build generates the application icon and packed library from `CalClock/Resources/Resources.dll` into
+the intermediate directory. Both are compile-time resources in `CalClock.rc`'s `TEXTINCLUDE 3` section, so
+the Visual Studio resource editor can open the dialogs without generated files, including after a clean.
 
 Open `CalClock.slnx`, select `Release | x86`, and build the solution. The executable is created as:
 

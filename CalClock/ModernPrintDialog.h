@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.1
  */
 
 #pragma once
@@ -133,7 +133,7 @@ public:
 
     /// Adopts the snapshot and caller-selected completion message, or returns null on allocation failure.
     static ModernPrintDialog* Create(PrintJob* snapshot, const PrintSettings& settings,
-            UINT completionMessage);
+        UINT completionMessage);
 
     /// Registers the print callbacks and asynchronously opens the system print UI for the owner window.
     HRESULT Show(HWND owner);

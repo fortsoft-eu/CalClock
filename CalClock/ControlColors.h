@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.0
+ * Last modified for version 1.7.3.1
  */
 
 #pragma once
@@ -35,12 +35,15 @@ inline constexpr wchar_t CLASSIC_STYLE_ENABLED_PROPERTY[] = L"CalClock.ClassicSt
 /// Enables classic control colors for controls attached to the marked dialog.
 inline constexpr wchar_t CLASSIC_CONTROL_COLORS_PROPERTY[] = L"CalClock.ClassicStyle.ControlColors";
 
-/// Applies a local Windows 2000 control palette and restores saved native colors when detached.
+/// Applies a local classic or standard palette and restores saved native colors when detached.
 class ControlColors {
 
 public:
     /// Enables or removes local colors; sets changed when state changes and reports installation failures.
-    static bool Apply(HWND window, HWND owner, bool enabled, bool& changed);
+    static bool Apply(HWND window, HWND owner, bool enabled, bool& changed, bool classic = false);
+
+    /// Returns one color from the selected local palette, retaining native colors for other indices.
+    static COLORREF GetColor(int colorIndex, bool classic = false);
 
     /// Removes local color handling, restores eligible saved colors and requests native repainting.
     static void Restore(HWND window);
@@ -61,13 +64,14 @@ private:
     HBRUSH faceBrush = nullptr;
     HBRUSH backgroundBrush = nullptr;
     Kind kind = Kind::Other;
+    bool windowsClassic = false;
     bool target = false;
     bool paintTarget = false;
     bool scrollRecolorPending = false;
     std::array<COLORREF, 3> previousColors{};
 
     /// Records the target and controlling window and creates the owned background brushes.
-    ControlColors(HWND window, HWND owner);
+    ControlColors(HWND window, HWND owner, bool classic);
 
     /// Releases the background brushes owned by this control state.
     ~ControlColors();
@@ -76,7 +80,7 @@ private:
     static ControlColors* Find(HWND window);
 
     /// Reuses or installs state on the current thread, pinning the callback module; returns null on failure.
-    static ControlColors* Attach(HWND window, HWND owner);
+    static ControlColors* Attach(HWND window, HWND owner, bool classic);
 
     /// Observes mouse moves consumed by native scrollbar tracking and queues the existing color correction.
     static LRESULT CALLBACK ScrollMessageFilter(int code, WPARAM wParam, LPARAM lParam);

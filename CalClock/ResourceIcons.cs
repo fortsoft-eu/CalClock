@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.2.5
+ * Last modified for version 1.7.3.1
  */
 
 using System;
@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 /// Extracts native icon groups by zero-based resource index into standalone ICO files.
 /// </summary>
 public sealed class ResourceIcons {
+
     /// <summary>
     /// Receives each resource name during enumeration; returning true continues enumeration.
     /// </summary>
@@ -43,18 +44,22 @@ public sealed class ResourceIcons {
     /// Identifies an individual native icon image.
     /// </summary>
     private const int IconResource = 3;
+
     /// <summary>
     /// Identifies a native icon group containing the directory of its images.
     /// </summary>
     private const int GroupIconResource = 14;
+
     /// <summary>
     /// Maps the library as data without executing its initialization code.
     /// </summary>
     private const uint LoadLibraryAsDataFile = 0x00000002;
+
     /// <summary>
     /// Uses image-resource mapping so the resource APIs can read the mapped library.
     /// </summary>
     private const uint LoadLibraryAsImageResource = 0x00000020;
+
     /// <summary>
     /// Retains icon-group identifiers in the order reported by resource enumeration.
     /// </summary>

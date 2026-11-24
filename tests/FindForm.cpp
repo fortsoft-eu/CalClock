@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #define NOMINMAX
@@ -198,6 +198,8 @@ static void TestAppearanceOptions() {
         value.basicWindowHeaders = mode == 1;
         value.windows2000Headers = mode == 2;
         value.windows2000Style = mode == 3;
+        value.windowsClassicHeaders = mode == 4;
+        value.windowsClassicStyle = mode == 5;
         Require(WriteSettingsXml(testXmlPath, value), "write the selected appearance mode");
         SettingsSnapshot restored = {};
         Require(ReadSettingsXml(testXmlPath, LANG_EN_US, CreateStoredWidgetDefaults, &restored),
@@ -206,6 +208,8 @@ static void TestAppearanceOptions() {
                 && restored.basicWindowHeaders == value.basicWindowHeaders
                 && restored.windows2000Headers == value.windows2000Headers
                 && restored.windows2000Style == value.windows2000Style
+                && restored.windowsClassicHeaders == value.windowsClassicHeaders
+                && restored.windowsClassicStyle == value.windowsClassicStyle
                 && (restored.options & 0x80000000) != 0,
             "all four appearance modes preserve their state and unknown Options bits");
         value.themesDisabled = false;
@@ -215,8 +219,10 @@ static void TestAppearanceOptions() {
         Require(!restored.themesDisabled
                 && restored.basicWindowHeaders == value.basicWindowHeaders
                 && restored.windows2000Headers == value.windows2000Headers
-                && !restored.windows2000Style,
-            "header choices survive enabled themes; complete Windows 2000 forms require disabled themes");
+                && restored.windowsClassicHeaders == value.windowsClassicHeaders
+                && !restored.windows2000Style
+                && !restored.windowsClassicStyle,
+            "header choices survive enabled themes; complete classic and standard forms require no themes");
     }
 }
 
@@ -540,10 +546,12 @@ static void TestApplicationHeaderDraft() {
     if (!available) {
         return;
     }
-    for (int mode = 1; mode <= 2; mode++) {
+    const int headerModes[] = { 1, 2, 4 };
+    for (int mode : headerModes) {
         Require(IsWindowEnabled(hApplicationStyleRadios[mode]),
             "both header choices are available with themed controls");
-        CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_2000_FORMS, APPLICATION_STYLE_IDS[mode]);
+        CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS,
+            APPLICATION_STYLE_IDS[mode]);
         HandleSettingsCommand(APPLICATION_STYLE_IDS[mode], BN_CLICKED);
         for (bool disabled : { true, false }) {
             SetCheck(hDisableThemesCheck, disabled);
@@ -551,9 +559,13 @@ static void TestApplicationHeaderDraft() {
             Require(settingsThemesDisabled == disabled
                     && settingsBasicWindowHeaders == (mode == 1)
                     && settingsWindows2000Headers == (mode == 2)
+                    && settingsWindowsClassicHeaders == (mode == 4)
                     && GetCheck(hApplicationStyleRadios[mode]),
                 "header drafts survive both directions of the control-theme change");
             bool completeEnabled = IsWindowEnabled(hApplicationStyleRadios[3]) != FALSE;
+            bool standardEnabled = IsWindowEnabled(hApplicationStyleRadios[5]) != FALSE;
+            Require(standardEnabled == disabled,
+                "complete standard forms use the same theme dependency as complete classic forms");
             Require(completeEnabled == disabled,
                 "only complete Windows 2000 forms depend on Disable themes");
             Require(!themesDisabled
@@ -563,12 +575,17 @@ static void TestApplicationHeaderDraft() {
     }
     SetCheck(hDisableThemesCheck, true);
     HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
-    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_2000_FORMS, ID_STYLE_2000_FORMS);
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_2000_FORMS);
     HandleSettingsCommand(ID_STYLE_2000_FORMS, BN_CLICKED);
     Require(settingsWindows2000Style, "complete Windows 2000 forms can be selected with themes disabled");
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_CLASSIC_FORMS);
+    HandleSettingsCommand(ID_STYLE_CLASSIC_FORMS, BN_CLICKED);
+    Require(settingsWindowsClassicStyle && !settingsWindows2000Style,
+        "complete standard forms replace the complete classic draft without applying it");
     SetCheck(hDisableThemesCheck, false);
     HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
     Require(!settingsWindows2000Style
+            && !settingsWindowsClassicStyle
             && GetCheck(hApplicationStyleRadios[0])
             && !IsWindowEnabled(hApplicationStyleRadios[3]),
         "enabling themes leaves the complete Windows 2000 mode and selects System default");
@@ -607,6 +624,118 @@ static std::vector<BYTE> CaptureControlPixels(HWND control) {
         DeleteDC(dc);
     }
     return pixels;
+}
+
+/// Checks actual button pixels and palette replacement while keeping header-only modes native.
+static void TestAppearanceControlPalettes() {
+    HWND window = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"Appearance", WS_POPUP | WS_CAPTION,
+        0, 0, 320, 160, nullptr, nullptr, hInstance, nullptr);
+    Require(window != nullptr, "create a hidden native appearance owner");
+    if (window == nullptr) {
+        return;
+    }
+    HWND button = TestCreateWindowExW(0, WC_BUTTONW, L"", WS_CHILD | BS_PUSHBUTTON,
+        8, 8, 120, 24, window, nullptr, hInstance, nullptr);
+    Require(button != nullptr, "create a native button for actual palette rendering");
+    if (button != nullptr) {
+        SetWindowTheme(button, L"", L"");
+        std::vector<BYTE> native = CaptureControlPixels(button);
+        Require(DialogFrame::Apply(window, false, DialogFrameMode::WindowsClassicHeader),
+            "apply classic caption styling without recoloring controls");
+        Require(DialogFrame::GetColor(button, COLOR_BTNFACE) == GetSysColor(COLOR_BTNFACE)
+                && CaptureControlPixels(button) == native,
+            "classic caption mode leaves actual button pixels unchanged");
+        Require(DialogFrame::Apply(window, true, DialogFrameMode::WindowsClassicForms),
+            "apply complete classic appearance");
+        Require(DialogFrame::GetColor(button, COLOR_BTNFACE) == RGB(192, 192, 192)
+                && DialogFrame::GetColor(button, COLOR_3DLIGHT) == RGB(192, 192, 192)
+                && DialogFrame::GetColor(button, COLOR_3DDKSHADOW) == RGB(0, 0, 0)
+                && DialogFrame::GetColor(button, COLOR_HIGHLIGHT) == RGB(0, 0, 128),
+            "classic appearance uses the XP Classic gray ramp and navy selection");
+        std::vector<BYTE> classic = CaptureControlPixels(button);
+        RECT client = {};
+        GetClientRect(button, &client);
+        size_t center = static_cast<size_t>((client.bottom / 2) * client.right + client.right / 2) * 4;
+        Require(classic.size() > center + 2
+                && classic[center] == 192
+                && classic[center + 1] == 192
+                && classic[center + 2] == 192,
+            "the native classic button actually paints its face in neutral gray");
+        Require(DialogFrame::Apply(window, true, DialogFrameMode::Windows2000Forms),
+            "switch directly from classic to standard controls");
+        Require(DialogFrame::GetColor(button, COLOR_BTNFACE) == RGB(212, 208, 200),
+            "switching palettes invalidates cached dialog brushes");
+        std::vector<BYTE> standard = CaptureControlPixels(button);
+        Require(standard.size() > center + 2
+                && standard[center] == 200
+                && standard[center + 1] == 208
+                && standard[center + 2] == 212,
+            "the native button picks up the standard face after a palette switch");
+        Require(DialogFrame::Apply(window, false, DialogFrameMode::System), "restore the native appearance");
+        Require(CaptureControlPixels(button) == native,
+            "removing local colors restores native button pixels");
+    }
+    DestroyWindow(window);
+}
+
+/// Checks each native dialog manager font independently against the actual control-font metrics.
+static void TestLegacyDialogMetrics() {
+    bool previousThemes = themesDisabled;
+    bool previousClassic = windowsClassicStyle;
+    bool previousStandard = windows2000Style;
+    std::wstring previousFace = appFontFace;
+    int previousSize = appFontDialogSize;
+    int previousWeight = appFontWeight;
+    bool previousItalic = appFontItalic;
+    themesDisabled = true;
+    appFontFace.clear();
+    appFontDialogSize = 90;
+    appFontWeight = FW_NORMAL;
+    appFontItalic = false;
+    const wchar_t* faces[] = { L"Tahoma", L"Microsoft Sans Serif" };
+    for (int mode = 0; mode < ARRAYSIZE(faces); mode++) {
+        windows2000Style = mode == 0;
+        windowsClassicStyle = mode == 1;
+        HFONT font = CreateApplicationUiFont(nullptr);
+        HWND dialog = CreateSettingsDialog(IDD_SETTINGS, nullptr, nullptr, 0);
+        Require(font != nullptr && dialog != nullptr, "create the actual legacy font and Settings dialog");
+        if (font != nullptr && dialog != nullptr) {
+            SIZE expected = {};
+            RECT mapped = { 0, 0, 4, 8 };
+            Require(GetDialogFontBaseUnits(font, &expected) && MapDialogRect(dialog, &mapped),
+                "measure the control font and native dialog units independently");
+            Require(mapped.right == expected.cx && mapped.bottom == expected.cy,
+                "Settings geometry uses the actual control font rather than a substituted font");
+            HFONT native = reinterpret_cast<HFONT>(SendMessageW(dialog, WM_GETFONT, 0, 0));
+            LOGFONTW selected = {};
+            Require(native != nullptr
+                    && GetObjectW(native, sizeof(selected), &selected) != 0
+                    && _wcsicmp(selected.lfFaceName, faces[mode]) == 0,
+                "the native dialog manager accepts the requested font without a System fallback");
+            HWND page = CreateSettingsDialog(IDD_SETTINGS_APPLICATION, dialog, nullptr, 0);
+            Require(page != nullptr, "create the actual Application page with the selected legacy font");
+            if (page != nullptr) {
+                mapped = RECT{ 0, 0, 4, 8 };
+                Require(MapDialogRect(page, &mapped)
+                        && mapped.right == expected.cx
+                        && mapped.bottom == expected.cy,
+                    "the native Application page uses exactly the same font units as its controls");
+            }
+        }
+        if (dialog != nullptr) {
+            DestroyWindow(dialog);
+        }
+        if (font != nullptr) {
+            DeleteObject(font);
+        }
+    }
+    themesDisabled = previousThemes;
+    windowsClassicStyle = previousClassic;
+    windows2000Style = previousStandard;
+    appFontFace = previousFace;
+    appFontDialogSize = previousSize;
+    appFontWeight = previousWeight;
+    appFontItalic = previousItalic;
 }
 
 /// Locates actual painted glyph pixels with a shared caption, independently of baseline calculations.
@@ -685,6 +814,173 @@ static void TestApplicationButtonPainting() {
     }
 }
 
+static void TestDeveloperArguments() {
+    Require(ReadCommandLineOptions(L"CalClock.exe /nrw") && disableDialogRecreation,
+        "the development switch is recognized as a separate process argument");
+    Require(ReadCommandLineOptions(L"\"C:\\Path With Spaces\\CalClock.exe\" \"-nrw\"")
+            && disableDialogRecreation,
+        "native tokenization handles quoted executable paths and switches");
+    Require(ReadCommandLineOptions(L"CalClock.exe /nrw-extra") && !disableDialogRecreation,
+        "a longer unrelated argument does not enable the switch");
+    Require(ReadCommandLineOptions(L"CalClock.exe") && !disableDialogRecreation,
+        "normal startup uses normal dialog recreation without persisting the development option");
+}
+
+/// Selects a committed appearance mode without applying or recreating any test windows.
+static void SetTestDialogFrameMode(DialogFrameMode mode) {
+    windows2000Style = mode == DialogFrameMode::Windows2000Forms;
+    windowsClassicStyle = mode == DialogFrameMode::WindowsClassicForms;
+    windows2000Headers = mode == DialogFrameMode::Windows2000Header;
+    windowsClassicHeaders = mode == DialogFrameMode::WindowsClassicHeader;
+    basicWindowHeaders = mode == DialogFrameMode::WindowsBasic;
+}
+
+/// Checks every appearance transition against the requested matrix and both theme-state changes.
+static void TestStyleRecreationTransitions() {
+    DialogFrameMode originalMode = GetApplicationDialogFrameMode();
+    bool originalThemes = themesDisabled;
+    bool originalOverride = disableDialogRecreation;
+    const DialogFrameMode modes[] = {
+        DialogFrameMode::System,
+        DialogFrameMode::WindowsBasic,
+        DialogFrameMode::Windows2000Header,
+        DialogFrameMode::WindowsClassicHeader,
+        DialogFrameMode::Windows2000Forms,
+        DialogFrameMode::WindowsClassicForms
+    };
+    const bool enabledTransitions[6][6] = {
+        { false, false, false, false, false, false },
+        { false, false, false, false, false, false },
+        { true, true, false, false, false, false },
+        { true, true, false, false, false, false },
+        { true, true, false, false, false, false },
+        { true, true, false, false, false, false }
+    };
+    for (bool overrideRecreation : { false, true }) {
+        disableDialogRecreation = overrideRecreation;
+        for (bool previousDisabled : { false, true }) {
+            for (bool nextDisabled : { false, true }) {
+                themesDisabled = nextDisabled;
+                for (int previous = 0; previous < ARRAYSIZE(modes); previous++) {
+                    for (int next = 0; next < ARRAYSIZE(modes); next++) {
+                        SetTestDialogFrameMode(modes[next]);
+                        bool expected = false;
+                        if (!overrideRecreation && !nextDisabled) {
+                            expected = enabledTransitions[previous][next];
+                            if (previousDisabled) {
+                                expected = next < 2;
+                            }
+                        }
+                        bool actual = ShouldRecreateStyledDialogs(modes[previous], previousDisabled);
+                        if (actual != expected) {
+                            std::cerr << "Recreation transition " << previous + 1 << " -> " << next + 1
+                                << ", themes disabled " << previousDisabled << " -> " << nextDisabled
+                                << ", override " << overrideRecreation << "\n";
+                        }
+                        Require(actual == expected,
+                            "appearance recreation matches the requested transition and theme matrix");
+                    }
+                }
+            }
+        }
+    }
+    SetTestDialogFrameMode(originalMode);
+    themesDisabled = originalThemes;
+    disableDialogRecreation = originalOverride;
+}
+
+/// Exercises actual draft application, native window replacement, and in-place style updates.
+static void TestSystemStyleRecreation() {
+    if (!AreVisualStylesActive()) {
+        return;
+    }
+    constexpr wchar_t marker[] = L"CalClock.Tests.PreviousStyleWindow";
+    aboutForm.Show(hInstance, aboutWindowState);
+    helpForm.Show(hInstance, helpWindowState);
+    const HWND original[] = { hSettings, aboutForm.GetWindow(), helpForm.GetWindow() };
+    for (HWND window : original) {
+        Require(window != nullptr && SetPropW(window, marker, reinterpret_cast<HANDLE>(1)),
+            "mark each actual hidden native form before changing appearance");
+    }
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_BASIC_HEADER);
+    HandleSettingsCommand(ID_STYLE_BASIC_HEADER, BN_CLICKED);
+    Require(!ApplySettingsDraft() && GetApplicationDialogFrameMode() == DialogFrameMode::WindowsBasic,
+        "applying Basic from System keeps the existing recreation behavior");
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_SYSTEM);
+    HandleSettingsCommand(ID_STYLE_SYSTEM, BN_CLICKED);
+    Require(!ApplySettingsDraft() && !themesDisabled,
+        "returning from Basic to themed System retains the actual native forms");
+    for (HWND window : original) {
+        Require(IsWindow(window) && GetPropW(window, marker) != nullptr,
+            "switching between the first two choices retains every actual native form");
+    }
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_2000_HEADER);
+    HandleSettingsCommand(ID_STYLE_2000_HEADER, BN_CLICKED);
+    Require(!ApplySettingsDraft(), "entering a legacy caption from System does not recreate forms");
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_SYSTEM);
+    HandleSettingsCommand(ID_STYLE_SYSTEM, BN_CLICKED);
+    Require(ApplySettingsDraft() && !themesDisabled,
+        "returning from a legacy caption to themed System requests full native form recreation");
+    RecreateStyledDialogs(false);
+    Require(hSettings == nullptr, "style recreation actually closes the native Settings window");
+    Require(aboutForm.GetWindow() != nullptr && helpForm.GetWindow() != nullptr
+            && GetPropW(aboutForm.GetWindow(), marker) == nullptr
+            && GetPropW(helpForm.GetWindow(), marker) == nullptr,
+        "style recreation replaces actual About and Help windows rather than repainting them");
+    settingsDraft.clear();
+    settingsDraft.push_back(widgets[0]->config);
+    settingsAppliedWidgets = settingsDraft;
+    settingsAppearanceOriginals = settingsDraft;
+    selectedDraftIndex = 0;
+    hSettings = CreateSettingsDialog(IDD_SETTINGS, nullptr, SettingsDialogProc, 0);
+    Require(hSettings != nullptr && CreateSettingsControls(5), "recreate the native Settings controls");
+    if (hSettings == nullptr) {
+        aboutForm.Close();
+        helpForm.Close();
+        return;
+    }
+    LoadAlarm(widgets[0]->config);
+    const HWND retained[] = { hSettings, aboutForm.GetWindow(), helpForm.GetWindow() };
+    for (HWND window : retained) {
+        Require(SetPropW(window, marker, reinterpret_cast<HANDLE>(1)) != FALSE,
+            "mark replacement forms for in-place development checks");
+    }
+    disableDialogRecreation = true;
+    const int modes[] = { ID_STYLE_2000_HEADER, ID_STYLE_BASIC_HEADER, ID_STYLE_SYSTEM };
+    for (int id : modes) {
+        CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, id);
+        HandleSettingsCommand(id, BN_CLICKED);
+        HandleSettingsCommand(ID_APPLY, BN_CLICKED);
+        for (HWND window : retained) {
+            Require(IsWindow(window) && GetPropW(window, marker) != nullptr,
+                "development mode retains every native form through Classic, Basic and System changes");
+        }
+    }
+    SetCheck(hDisableThemesCheck, true);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    Require(!ApplySettingsDraft(), "System without themes keeps its prior recreation behavior");
+    SetCheck(hDisableThemesCheck, false);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    disableDialogRecreation = false;
+    Require(ApplySettingsDraft(), "reenabling themes in System requests full recreation");
+    Require(!ApplySettingsDraft(), "applying unrelated values in themed System does not recreate forms");
+    SetCheck(hDisableThemesCheck, true);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    Require(!ApplySettingsDraft(), "disabling themes does not recreate native forms");
+    CheckRadioButton(hApplicationPage, ID_STYLE_SYSTEM, ID_STYLE_CLASSIC_FORMS, ID_STYLE_BASIC_HEADER);
+    HandleSettingsCommand(ID_STYLE_BASIC_HEADER, BN_CLICKED);
+    Require(!ApplySettingsDraft(), "switching to Basic while themes remain disabled does not recreate forms");
+    SetCheck(hDisableThemesCheck, false);
+    HandleSettingsCommand(ID_VISUAL_STYLES, BN_CLICKED);
+    Require(ApplySettingsDraft(), "reenabling themes in Basic also requests full recreation");
+    Require(!ApplySettingsDraft(), "unchanged themed Basic does not repeatedly recreate forms");
+    for (HWND window : retained) {
+        RemovePropW(window, marker);
+    }
+    aboutForm.Close();
+    helpForm.Close();
+}
+
 /// Checks Application-page text baselines, icon controls, draft isolation and dependency gating.
 static void TestTrayIconDraft() {
     std::unique_ptr<Widget> widget = std::make_unique<Widget>();
@@ -715,6 +1011,7 @@ static void TestTrayIconDraft() {
         "the sound combo shares the static label baseline exactly");
     widgets[0]->window = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"", WS_POPUP,
         0, 0, 1, 1, nullptr, nullptr, hInstance, nullptr);
+    TestSystemStyleRecreation();
     if (hAlternativeTrayIconCheck != nullptr && hClassicTrayIconCheck != nullptr) {
         Require(!IsWindowEnabled(hClassicTrayIconCheck), "classic icon initially requires alternative icon");
         SetCheck(hAlternativeTrayIconCheck, true);
@@ -780,6 +1077,11 @@ int wmain(int argc, wchar_t** argv) {
         std::fprintf(stderr, "Cannot create isolated desktop: %lu\n", GetLastError());
         return 2;
     }
+    wchar_t captionWidth[32] = {};
+    DWORD captionWidthSize = sizeof(captionWidth);
+    LSTATUS captionStatus = RegGetValueW(HKEY_CURRENT_USER, L"Control Panel\\Desktop\\WindowMetrics",
+        L"CaptionWidth", RRF_RT_REG_SZ, nullptr, captionWidth, &captionWidthSize);
+    Require(captionStatus == ERROR_SUCCESS, "read native caption metrics without changing them");
     std::wstring registryName = L"Software\\CalClockFindTests-" + std::to_wstring(GetCurrentProcessId());
     HKEY isolated = nullptr;
     DWORD disposition = 0;
@@ -790,12 +1092,24 @@ int wmain(int argc, wchar_t** argv) {
             || RegOverridePredefKey(HKEY_CURRENT_USER, isolated) != ERROR_SUCCESS) {
         return 2;
     }
+    HKEY metricsKey = nullptr;
+    LSTATUS metricsStatus = RegCreateKeyExW(isolated, L"Control Panel\\Desktop\\WindowMetrics", 0, nullptr,
+        REG_OPTION_VOLATILE, KEY_SET_VALUE, nullptr, &metricsKey, nullptr);
+    Require(metricsStatus == ERROR_SUCCESS, "create isolated caption metrics for native frame tests");
+    if (metricsStatus == ERROR_SUCCESS) {
+        Require(RegSetValueExW(metricsKey, L"CaptionWidth", 0, REG_SZ,
+                reinterpret_cast<const BYTE*>(captionWidth), captionWidthSize) == ERROR_SUCCESS,
+            "seed only the isolated registry with the unchanged native caption width");
+        RegCloseKey(metricsKey);
+    }
     INITCOMMONCONTROLSEX common = {
         sizeof(common),
         ICC_WIN95_CLASSES | ICC_STANDARD_CLASSES | ICC_USEREX_CLASSES
     };
     InitCommonControlsEx(&common);
     hInstance = GetModuleHandleW(nullptr);
+    TestDeveloperArguments();
+    TestStyleRecreationTransitions();
     appLanguage = LANG_EN_US;
     TestResourceLibrary(directory);
     TestPackedOptions();
@@ -812,6 +1126,8 @@ int wmain(int argc, wchar_t** argv) {
         aboutForm.Close();
     }
     findTestActiveWindow = nullptr;
+    TestAppearanceControlPalettes();
+    TestLegacyDialogMetrics();
     TestTrayIconDraft();
     DeleteFileW(testXmlPath.c_str());
     RegOverridePredefKey(HKEY_CURRENT_USER, nullptr);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.1
  */
 
 #define NOMINMAX
@@ -60,7 +60,7 @@ struct SettingsOption {
 const wchar_t REGISTRY_PATH[] = L"Software\\FortSoft\\CalClock";
 const wchar_t VENDOR_REGISTRY_PATH[] = L"Software\\FortSoft";
 
-static const DWORD settingsOptionsMask = 0x07FF;
+static const DWORD settingsOptionsMask = 0x1FFF;
 static const SettingsOption settingsOptions[] = {
     SettingsOption{ 0x0001, &SettingsSnapshot::themesDisabled },
     SettingsOption{ 0x0002, &SettingsSnapshot::windows2000Style },
@@ -72,7 +72,9 @@ static const SettingsOption settingsOptions[] = {
     SettingsOption{ 0x0080, &SettingsSnapshot::alternativeTrayIcon },
     SettingsOption{ 0x0100, &SettingsSnapshot::classicTrayIcon },
     SettingsOption{ 0x0200, &SettingsSnapshot::basicWindowHeaders },
-    SettingsOption{ 0x0400, &SettingsSnapshot::windows2000Headers }
+    SettingsOption{ 0x0400, &SettingsSnapshot::windows2000Headers },
+    SettingsOption{ 0x0800, &SettingsSnapshot::windowsClassicHeaders },
+    SettingsOption{ 0x1000, &SettingsSnapshot::windowsClassicStyle }
 };
 
 static const wchar_t* const obsoleteOptionValues[] = {
@@ -95,11 +97,15 @@ static DWORD PackSettingsOptions(const SettingsSnapshot& snapshot) {
         }
     }
     if (!snapshot.themesDisabled) {
-        value &= ~0x0002UL;
+        value &= ~0x1002UL;
     }
     if ((value & 0x0002) != 0) {
-        value &= ~0x0600UL;
+        value &= ~0x1E00UL;
+    } else if ((value & 0x1000) != 0) {
+        value &= ~0x0E00UL;
     } else if (snapshot.windows2000Headers) {
+        value &= ~0x0A00UL;
+    } else if (snapshot.windowsClassicHeaders) {
         value &= ~0x0200UL;
     }
     if (!snapshot.alternativeTrayIcon) {
@@ -115,11 +121,21 @@ static void UnpackSettingsOptions(DWORD value, SettingsSnapshot* snapshot) {
         snapshot->*option.value = (value & option.mask) != 0;
     }
     snapshot->windows2000Style = snapshot->themesDisabled && snapshot->windows2000Style;
-    snapshot->windows2000Headers = snapshot->windows2000Headers
+    snapshot->windowsClassicStyle = snapshot->themesDisabled
+        && snapshot->windowsClassicStyle
         && !snapshot->windows2000Style;
+    snapshot->windows2000Headers = snapshot->windows2000Headers
+        && !snapshot->windows2000Style
+        && !snapshot->windowsClassicStyle;
+    snapshot->windowsClassicHeaders = snapshot->windowsClassicHeaders
+        && !snapshot->windows2000Style
+        && !snapshot->windowsClassicStyle
+        && !snapshot->windows2000Headers;
     snapshot->basicWindowHeaders = snapshot->basicWindowHeaders
         && !snapshot->windows2000Style
-        && !snapshot->windows2000Headers;
+        && !snapshot->windowsClassicStyle
+        && !snapshot->windows2000Headers
+        && !snapshot->windowsClassicHeaders;
     snapshot->classicTrayIcon = snapshot->alternativeTrayIcon && snapshot->classicTrayIcon;
 }
 
