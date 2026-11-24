@@ -90,7 +90,7 @@ public:
 
     /// Returns a caller-owned printer context, using caller-supplied failure text for dialog errors.
     HDC ChoosePrinter(HWND owner, bool* printToFile, const wchar_t* failureText, wchar_t* error,
-            int capacity);
+        int capacity);
 
     /// Returns page margins in hundredths of a millimeter.
     RECT GetMargins() const;
