@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.2
  */
 
 #include "FindForm.h"
@@ -660,7 +660,7 @@ bool FindForm::Initialize() {
     placement.SetFixHeight(true);
     placement.SetUseWindowsDefaultSize(false);
     placement.SetUseWindowsDefaultLocation(false);
-    if (!placement.Attach(window, "FindWindow")) {
+    if (!placement.Attach(window, "Find")) {
         return false;
     }
     Layout();

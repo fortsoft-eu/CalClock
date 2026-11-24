@@ -140,6 +140,130 @@ static void TestProgramIcons(const std::wstring& directory) {
     Require(ReadTestBytes(programIcons.GetPath()) == expected, "cache repair restores the complete DLL");
 }
 
+/// Reads the single packed state value from the isolated persistence fixture.
+static DWORD ReadPersistedStateValue(HKEY key) {
+    DWORD value = 0;
+    DWORD bytes = sizeof(value);
+    LSTATUS result = RegGetValueW(key, nullptr, L"CaseState", RRF_RT_REG_DWORD, nullptr, &value, &bytes);
+    Require(result == ERROR_SUCCESS, "read one packed DWORD window-state value");
+    return value;
+}
+
+/// Configures registry persistence without showing a test window or saving unrelated geometry.
+static void ConfigurePersistStateTest(PersistWindowState& placement, const wchar_t* path) {
+    Require(placement.SetRegistryPath(path), "set the isolated window-state registry path");
+    placement.SetDetectionOptions(WindowDetectionOptions::NoDetection);
+    placement.SetUseWindowsDefaultLocation(false);
+    placement.SetUseWindowsDefaultSize(false);
+    placement.SetDisableSavePosition(true);
+    placement.SetDisableSaveSize(true);
+    placement.SetAllowSaveMinimized(true);
+    placement.SetAllowSaveTopMost(true);
+}
+
+/// Checks a single packed state value, roundtrips and independent save options.
+static void TestPackedWindowState() {
+    const wchar_t path[] = L"Software\\CalClockPersistStateTests";
+    HKEY key = nullptr;
+    LSTATUS created = RegCreateKeyExW(HKEY_CURRENT_USER, path, 0, nullptr, REG_OPTION_VOLATILE,
+        KEY_ALL_ACCESS, nullptr, &key, nullptr);
+    Require(created == ERROR_SUCCESS, "create isolated window-state storage");
+    if (created != ERROR_SUCCESS) {
+        return;
+    }
+    HWND window = TestCreateWindowExW(WS_EX_NOACTIVATE, L"STATIC", L"Window state", WS_OVERLAPPEDWINDOW,
+        0, 0, 240, 160, nullptr, nullptr, hInstance, nullptr);
+    Require(window != nullptr, "create a hidden window for state persistence");
+    if (window == nullptr) {
+        RegCloseKey(key);
+        RegDeleteTreeW(HKEY_CURRENT_USER, path);
+        return;
+    }
+    PersistWindowStateData saved = {};
+    saved.minimized = true;
+    saved.restoreMaximized = true;
+    saved.topMost = true;
+    PersistWindowState placement;
+    ConfigurePersistStateTest(placement, path);
+    placement.Load(saved);
+    Require(placement.Attach(window, "Case"), "attach the packed-state fixture");
+    placement.Save();
+    Require(placement.GetErrorCode() == ERROR_SUCCESS && ReadPersistedStateValue(key) == 0x00030001,
+        "one DWORD retains minimized state, maximized restore and topmost independently");
+    DWORD valueCount = 0;
+    LSTATUS inspected = RegQueryInfoKeyW(key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+        &valueCount, nullptr, nullptr, nullptr, nullptr);
+    Require(inspected == ERROR_SUCCESS && valueCount == 1,
+        "window-state persistence creates exactly one registry value");
+    placement.SetDisableSaveWindowState(true);
+    saved.minimized = false;
+    saved.maximized = true;
+    saved.restoreMaximized = false;
+    saved.topMost = false;
+    placement.Load(saved);
+    placement.Save();
+    Require(ReadPersistedStateValue(key) == 0x00020001,
+        "saving topmost alone preserves the current and restore states");
+    placement.Detach();
+    PersistWindowState restored;
+    ConfigurePersistStateTest(restored, path);
+    Require(restored.Attach(window, "Case"), "read packed state through a new tracker");
+    const PersistWindowStateData& actual = restored.GetState();
+    Require(actual.minimized && !actual.maximized && actual.restoreMaximized && !actual.topMost,
+        "the restore flag does not turn into the independent topmost flag when read");
+    DWORD previous = 0x00030001;
+    RegSetValueExW(key, L"CaseState", 0, REG_DWORD,
+        reinterpret_cast<const BYTE*>(&previous), sizeof(previous));
+    restored.SetAllowSaveTopMost(false);
+    saved.maximized = false;
+    restored.Load(saved);
+    restored.Save();
+    Require(ReadPersistedStateValue(key) == 0x00010000,
+        "saving current state alone preserves the disabled topmost field");
+    restored.SetAllowSaveTopMost(true);
+    restored.SetAllowSaveMinimized(false);
+    saved.minimized = true;
+    saved.restoreMaximized = true;
+    restored.Load(saved);
+    restored.Save();
+    Require(ReadPersistedStateValue(key) == 0x00020002,
+        "disallowed minimized persistence saves the maximized restore state");
+    restored.Detach();
+    Require(!IsWindowVisible(window) && GetWindowLongPtrW(window, GWL_EXSTYLE) & WS_EX_NOACTIVATE,
+        "state persistence never shows or activates its fixture window");
+    DestroyWindow(window);
+    RegCloseKey(key);
+    RegDeleteTreeW(HKEY_CURRENT_USER, path);
+}
+
+/// Checks the actual Find form's shortened identity and absence of unused show-state values.
+static void CheckFindPersistence() {
+    PersistWindowState* placement = reinterpret_cast<PersistWindowState*>(
+        GetPropW(find.GetWindow(), placementProperty));
+    Require(placement != nullptr, "the actual Find form uses PersistWindowState");
+    if (placement == nullptr) {
+        find.Close();
+        return;
+    }
+    std::wstring path = placement->GetRegistryPath();
+    HKEY key = nullptr;
+    LSTATUS created = RegCreateKeyExW(HKEY_CURRENT_USER, path.c_str(), 0, nullptr, REG_OPTION_VOLATILE,
+        KEY_QUERY_VALUE, nullptr, &key, nullptr);
+    Require(created == ERROR_SUCCESS, "prepare the actual Find key under the volatile test registry root");
+    find.Close();
+    Require(placement->GetErrorCode() == ERROR_SUCCESS, "the actual Find form saves without registry errors");
+    if (created != ERROR_SUCCESS) {
+        return;
+    }
+    Require(RegQueryValueExW(key, L"FindLocation", nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS,
+        "the actual Find form saves its location with the short identity");
+    Require(RegQueryValueExW(key, L"FindSize", nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS,
+        "the actual Find form saves its resizable width");
+    Require(RegQueryValueExW(key, L"FindState", nullptr, nullptr, nullptr, nullptr) == ERROR_FILE_NOT_FOUND,
+        "a Find form without maximization or minimized persistence saves no State value");
+    RegCloseKey(key);
+}
+
 /// Checks packed XML flags, unknown bits, dependent options, and absence of legacy boolean fallback.
 static void TestPackedOptions() {
     SettingsSnapshot value = {};
@@ -553,7 +677,7 @@ static void TestFindControls(HWND owner) {
     Require(!IsWindowEnabled(GetDlgItem(dialog, IDOK)), "clearing a typed query disables Find Next");
     TestFindHistoryCommit(owner);
     SearchFor(owner, L"beta");
-    find.Close();
+    CheckFindPersistence();
     findTestActiveWindow = owner;
     findTestControl = true;
     MSG shortcut = {};
@@ -1237,6 +1361,7 @@ int wmain(int argc, wchar_t** argv) {
     TestStyleRecreationTransitions();
     appLanguage = LANG_EN_US;
     TestProgramIcons(directory);
+    TestPackedWindowState();
     TestPackedOptions();
     TestAppearanceOptions();
     TestInformationForms();
