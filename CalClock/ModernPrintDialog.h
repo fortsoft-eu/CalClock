@@ -60,10 +60,14 @@ struct ModernPrintPage {
 };
 
 /// Owns the modern Windows print UI, task callbacks and pagination of an immutable text snapshot.
-class ModernPrintDialog : public Printing::IPrintDocumentSource, public IPrintDocumentPageSource,
-    public IPrintPreviewPageCollection, public PrintRequestedHandler,
-    public Printing::IPrintTaskSourceRequestedHandler, public PrintCompletedHandler,
-    public PrintUiCompletedHandler {
+class ModernPrintDialog
+        : public Printing::IPrintDocumentSource,
+        public IPrintDocumentPageSource,
+        public IPrintPreviewPageCollection,
+        public PrintRequestedHandler,
+        public Printing::IPrintTaskSourceRequestedHandler,
+        public PrintCompletedHandler,
+        public PrintUiCompletedHandler {
 
 private:
     LONG references;
