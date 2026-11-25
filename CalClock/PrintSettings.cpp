@@ -449,7 +449,10 @@ UINT PrintLayout::GetPageCount() const {
     if (richEdit) {
         return lineCount;
     }
-    return rows ? lineCount / rows + (lineCount % rows != 0) : 0;
+    if (rows) {
+        return lineCount / rows + (lineCount % rows != 0);
+    }
+    return 0;
 }
 
 /// Converts physical page margins to printer pixels and clips them to the printable area.
