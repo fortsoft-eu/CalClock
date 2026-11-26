@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.4
+ * Last modified for version 1.7.3.2
  */
 
 #pragma once
 
 #include <windows.h>
+#include <d2d1.h>
+#include <dwrite.h>
 #include <vector>
 
 /// Identifies the work-area edges retained when a widget or its monitor changes size.
@@ -42,6 +44,34 @@ enum WidgetWorkAreaEdge {
 struct WidgetPlacement {
     int id = 0;
     RECT rect = {};
+};
+
+/// Measures the geometry actually drawn by a shaped text layout, including font simulations and decorations.
+class TextBounds : public IDWriteTextRenderer {
+    ID2D1Factory* factory;
+    LONG references = 1;
+    D2D1_RECT_F bounds = {};
+    bool measured = false;
+    explicit TextBounds(ID2D1Factory* factory);
+    void Include(const D2D1_RECT_F& rectangle);
+
+public:
+    static HRESULT Measure(ID2D1Factory* factory, IDWriteTextLayout* layout, D2D1_RECT_F* bounds);
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID identifier, void** object) override;
+    ULONG STDMETHODCALLTYPE AddRef() override;
+    ULONG STDMETHODCALLTYPE Release() override;
+    HRESULT STDMETHODCALLTYPE IsPixelSnappingDisabled(void* context, BOOL* disabled) override;
+    HRESULT STDMETHODCALLTYPE GetCurrentTransform(void* context, DWRITE_MATRIX* transform) override;
+    HRESULT STDMETHODCALLTYPE GetPixelsPerDip(void* context, FLOAT* pixelsPerDip) override;
+    HRESULT STDMETHODCALLTYPE DrawGlyphRun(void* context, FLOAT x, FLOAT y, DWRITE_MEASURING_MODE mode,
+        const DWRITE_GLYPH_RUN* run, const DWRITE_GLYPH_RUN_DESCRIPTION* description,
+        IUnknown* effect) override;
+    HRESULT STDMETHODCALLTYPE DrawUnderline(void* context, FLOAT x, FLOAT y,
+        const DWRITE_UNDERLINE* underline, IUnknown* effect) override;
+    HRESULT STDMETHODCALLTYPE DrawStrikethrough(void* context, FLOAT x, FLOAT y,
+        const DWRITE_STRIKETHROUGH* strikethrough, IUnknown* effect) override;
+    HRESULT STDMETHODCALLTYPE DrawInlineObject(void* context, FLOAT x, FLOAT y, IDWriteInlineObject* object,
+        BOOL sideways, BOOL rightToLeft, IUnknown* effect) override;
 };
 
 /// Arranges widget rectangles on a common grid inside the work area. Leaves items unchanged on failure;

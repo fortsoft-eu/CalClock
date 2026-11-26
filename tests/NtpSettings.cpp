@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.0
+ * Last modified for version 1.7.3.2
  */
 
 #define wmain AlarmSettingsRegressionEntry
@@ -335,6 +335,55 @@ static void TestNtpManualSelection() {
     LoadDraftIntoControls();
 }
 
+/// Keeps the accepted continuous clock through repeated failures, source changes and settings imports.
+static void TestNtpRetainedTime() {
+    ResetNtpSettings();
+    NtpCommand(ID_NTP_SYNC, BN_CLICKED, hNtpSyncButton);
+    CompleteNtpQuery(true, ntpTestGeneration, L"accepted.example", 12345000);
+    Require(ntpTimeValid && ntpHasSynchronized, "a successful reply establishes the accepted NTP time");
+    LONGLONG correction = ntpClockOffset100Nanoseconds.load();
+    std::wstring server = ntpActiveServer;
+    for (int attempt = 0; attempt < 2; attempt++) {
+        NtpCommand(ID_NTP_SYNC, BN_CLICKED, hNtpSyncButton);
+        CompleteNtpQuery(false, ntpTestGeneration, L"failed.example", 0);
+        Require(ntpTimeValid && GetApplicationTimeOffset(MonotonicFileTimeValue()) == correction,
+            "repeated network failures retain the accepted continuous time");
+        Require(GetControlText(hNtpStatus).find(T(TXT_NTP_STATUS_RETAINED)) == 0,
+            "repeated failures report continued time from the last synchronization");
+    }
+    ntpTestStartFails = true;
+    NtpCommand(ID_NTP_SYNC, BN_CLICKED, hNtpSyncButton);
+    Require(ntpTimeValid && GetApplicationTimeOffset(MonotonicFileTimeValue()) == correction,
+        "worker startup failure cannot discard the accepted time");
+    ntpTestStartFails = false;
+    winsockReady = false;
+    UpdateNtpSettingsControls();
+    Require(GetControlText(hNtpStatus).find(T(TXT_NTP_STATUS_RETAINED)) == 0,
+        "unavailable networking reports retained NTP time rather than system time");
+    Require(GetApplicationTimeOffset(MonotonicFileTimeValue()) == correction,
+        "unavailable networking leaves the accepted clock advancing independently");
+    winsockReady = true;
+    SetComboSelection(hTimeSourceCombo, 0);
+    ApplyNtpSettingsFromControls();
+    Require(!useNtpTime && ntpTimeValid && ntpActiveServer == server,
+        "selecting Windows time preserves the last NTP correction for later reuse");
+    Require(GetApplicationTimeOffset(MonotonicFileTimeValue()) != correction,
+        "an explicitly selected Windows source uses the Windows clock");
+    SetComboSelection(hTimeSourceCombo, 1);
+    ApplyNtpSettingsFromControls();
+    NtpCommand(ID_NTP_SYNC, BN_CLICKED, hNtpSyncButton);
+    CompleteNtpQuery(false, ntpTestGeneration, L"failed.example", 0);
+    Require(GetApplicationTimeOffset(MonotonicFileTimeValue()) == correction,
+        "returning to NTP immediately reuses its last accepted time despite a failed query");
+    SettingsSnapshot snapshot = CaptureSettingsSnapshot();
+    ApplySettingsSnapshot(snapshot);
+    Require(ntpTimeValid
+            && ntpActiveServer == server
+            && GetApplicationTimeOffset(MonotonicFileTimeValue()) == correction,
+        "importing settings cannot discard an already accepted NTP clock");
+    ResetNtpSettings();
+}
+
 /// Checks initial failures, worker-creation failure, and immediate activation from the Windows source.
 static void TestNtpFirstSynchronization() {
     ResetNtpSettings(false);
@@ -377,7 +426,7 @@ static void TestNtpStaleResults() {
     Require(!useNtpTime && !testSavedSnapshot.useNtpTime,
         "normal Apply switches and saves the source back to Windows");
     CompleteNtpQuery(true, previousGeneration, L"obsolete.example", 99999999);
-    Require(!useNtpTime && !ntpTimeValid && !ntpQueryRunning && ntpTestStarts == 2,
+    Require(!useNtpTime && ntpTimeValid && !ntpQueryRunning && ntpTestStarts == 2,
         "an obsolete result after disabling NTP cannot restart or reenable it");
     Require(!IsWindowEnabled(hNtpSyncButton), "Windows source stays disabled after the obsolete reply");
 }
@@ -474,6 +523,7 @@ int wmain(int argc, wchar_t** argv) {
         TestSettingsComboHighlights();
         TestNtpTimeSourceHighlight();
         TestNtpManualSelection();
+        TestNtpRetainedTime();
         TestNtpFirstSynchronization();
         TestNtpStaleResults();
         TestNtpAutomaticRefresh();

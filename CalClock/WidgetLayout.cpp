@@ -21,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.0.4
+ * Last modified for version 1.7.3.2
  */
 
 #define NOMINMAX
 #include "WidgetLayout.h"
 #include <algorithm>
 #include <climits>
+#include <d2d1helper.h>
+#include <new>
 
 static const int WIDGET_GAP = 10;
 static const int WIDGET_GRID_STEP = 16;
@@ -82,8 +84,7 @@ static bool IsSeparated(const RECT& candidate, const std::vector<RECT>& placed, 
 /// Finds the nearest nonoverlapping grid position inside the work area with the requested gap.
 /// Breaks equal-distance ties by top, then left; writes placement only when a position is found.
 static bool FindNearestGridPlacement(const WidgetPlacement& item, const RECT& work,
-        const std::vector<RECT>& placed,
-    LONG gridOriginX, LONG gridOriginY, LONG gap, RECT* placement) {
+        const std::vector<RECT>& placed, LONG gridOriginX, LONG gridOriginY, LONG gap, RECT* placement) {
     LONG minimumCenterX = work.left + Width(item.rect) / 2;
     LONG maximumCenterX = work.right - Width(item.rect) + Width(item.rect) / 2;
     LONG minimumCenterY = work.top + Height(item.rect) / 2;
@@ -167,8 +168,8 @@ static bool SnapToGrid(const std::vector<WidgetPlacement>& original, const RECT&
         bool placementWithGapFound = FindNearestGridPlacement(original[index], work, placed, gridOriginX,
             gridOriginY, WIDGET_GAP, &placement);
         bool placementWithoutGapFound = placementWithGapFound
-            && FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY,
-                0, &placement);
+            && FindNearestGridPlacement(original[index], work, placed, gridOriginX, gridOriginY, 0,
+                &placement);
         if (!placementWithGapFound || !placementWithoutGapFound) {
             return false;
         }
@@ -277,4 +278,130 @@ POINT PreserveWidgetWorkAreaAttachment(const RECT& widgetRect, const RECT& work,
         *verticalAttachment = (edges & (WIDGET_EDGE_TOP | WIDGET_EDGE_BOTTOM)) != 0;
     }
     return PositionWidgetAtWorkAreaEdges(widgetRect, work, newWidth, newHeight, edges);
+}
+
+TextBounds::TextBounds(ID2D1Factory* factory) : factory(factory) {}
+
+void TextBounds::Include(const D2D1_RECT_F& rectangle) {
+    if (rectangle.right <= rectangle.left || rectangle.bottom <= rectangle.top) {
+        return;
+    }
+    if (!measured) {
+        bounds = rectangle;
+        measured = true;
+    } else {
+        bounds.left = std::min(bounds.left, rectangle.left);
+        bounds.top = std::min(bounds.top, rectangle.top);
+        bounds.right = std::max(bounds.right, rectangle.right);
+        bounds.bottom = std::max(bounds.bottom, rectangle.bottom);
+    }
+}
+
+HRESULT TextBounds::Measure(ID2D1Factory* factory, IDWriteTextLayout* layout, D2D1_RECT_F* bounds) {
+    TextBounds* renderer = new(std::nothrow) TextBounds(factory);
+    if (renderer == nullptr) {
+        return E_OUTOFMEMORY;
+    }
+    HRESULT result = layout->Draw(nullptr, renderer, 0.0f, 0.0f);
+    if (SUCCEEDED(result)) {
+        *bounds = renderer->bounds;
+    }
+    renderer->Release();
+    return result;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::QueryInterface(REFIID identifier, void** object) {
+    if (object == nullptr) {
+        return E_POINTER;
+    }
+    *object = nullptr;
+    if (identifier == __uuidof(IUnknown)
+            || identifier == __uuidof(IDWritePixelSnapping)
+            || identifier == __uuidof(IDWriteTextRenderer)) {
+        *object = static_cast<IDWriteTextRenderer*>(this);
+        AddRef();
+        return S_OK;
+    }
+    return E_NOINTERFACE;
+}
+
+ULONG STDMETHODCALLTYPE TextBounds::AddRef() {
+    return InterlockedIncrement(&references);
+}
+
+ULONG STDMETHODCALLTYPE TextBounds::Release() {
+    LONG remaining = InterlockedDecrement(&references);
+    if (remaining == 0) {
+        delete this;
+    }
+    return remaining;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::IsPixelSnappingDisabled(void*, BOOL* disabled) {
+    *disabled = TRUE;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::GetCurrentTransform(void*, DWRITE_MATRIX* transform) {
+    *transform = DWRITE_MATRIX{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::GetPixelsPerDip(void*, FLOAT* pixelsPerDip) {
+    *pixelsPerDip = 1.0f;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::DrawGlyphRun(void*, FLOAT x, FLOAT y, DWRITE_MEASURING_MODE,
+        const DWRITE_GLYPH_RUN* run, const DWRITE_GLYPH_RUN_DESCRIPTION*, IUnknown*) {
+    ID2D1PathGeometry* geometry = nullptr;
+    ID2D1GeometrySink* sink = nullptr;
+    HRESULT result = factory->CreatePathGeometry(&geometry);
+    if (SUCCEEDED(result)) {
+        result = geometry->Open(&sink);
+    }
+    if (SUCCEEDED(result)) {
+        result = run->fontFace->GetGlyphRunOutline(run->fontEmSize, run->glyphIndices, run->glyphAdvances,
+            run->glyphOffsets, run->glyphCount, run->isSideways, run->bidiLevel % 2 != 0, sink);
+        HRESULT closed = sink->Close();
+        if (SUCCEEDED(result)) {
+            result = closed;
+        }
+    }
+    if (SUCCEEDED(result)) {
+        D2D1_MATRIX_3X2_F translation = D2D1::Matrix3x2F::Translation(x, y);
+        D2D1_RECT_F rectangle = {};
+        result = geometry->GetBounds(&translation, &rectangle);
+        if (SUCCEEDED(result)) {
+            Include(rectangle);
+        }
+    }
+    if (sink != nullptr) {
+        sink->Release();
+    }
+    if (geometry != nullptr) {
+        geometry->Release();
+    }
+    return result;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::DrawUnderline(void*, FLOAT x, FLOAT y,
+        const DWRITE_UNDERLINE* underline, IUnknown*) {
+    D2D1_RECT_F rectangle = D2D1::RectF(x, y + underline->offset, x + underline->width,
+        y + underline->offset + underline->thickness);
+    Include(rectangle);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::DrawStrikethrough(void*, FLOAT x, FLOAT y,
+        const DWRITE_STRIKETHROUGH* strikethrough, IUnknown*) {
+    D2D1_RECT_F rectangle = D2D1::RectF(x, y + strikethrough->offset, x + strikethrough->width,
+        y + strikethrough->offset + strikethrough->thickness);
+    Include(rectangle);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE TextBounds::DrawInlineObject(void* context, FLOAT x, FLOAT y,
+        IDWriteInlineObject* object, BOOL sideways, BOOL rightToLeft, IUnknown* effect) {
+    return object->Draw(context, this, x, y, sideways, rightToLeft, effect);
 }

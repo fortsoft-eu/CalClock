@@ -846,6 +846,9 @@ static std::wstring GetSystemMessageFontFace();
 /// Creates a caller-owned GDI font using the widget's point size, style, face, and antialiasing settings.
 static HFONT CreateWidgetDrawingFont(const WidgetConfig& config, UINT dpi = 0);
 
+/// Adjusts native centered clock text for the current font and its visible glyph bounds.
+static LONG GetClockTextOffset(HDC dc, const std::wstring& text);
+
 /// Creates a caller-owned GDI font from panel font properties, converting the dialog size from tenths of
 /// a point.
 static HFONT CreatePanelFont(const FontSelection& selection, int fontAntialiasing, UINT dpi = 0);
@@ -1892,8 +1895,6 @@ static void ApplySettingsSnapshot(const SettingsSnapshot& snapshot) {
         ntpServers = NtpServersForPreset(ntpPreset);
     }
     ntpGeneration++;
-    ntpTimeValid = false;
-    ntpActiveServer.clear();
     ntpLastQueryFailed = false;
     lastNtpAttemptTick = 0;
     nextNtpAttemptTick = 0;
@@ -5583,8 +5584,7 @@ static void DrawClockText(HDC dc, const std::wstring& text, RECT rect, HFONT fon
     RestoreDC(dc, savedDC);
 }
 
-/// Centers panel time text using its current width and uses stable measured regions for standalone
-/// digital clocks.
+/// Centers digital widget text by its visible bounds and preserves the panel's current-width layout.
 static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color,
         const WidgetConfig& config, UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE,
         COLORREF backgroundColor = CLR_INVALID) {
@@ -5598,34 +5598,55 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
         return;
     }
     size_t lastDigit = text.find_last_of(L"0123456789");
-    WidgetConfig clock = config;
-    clock.showAmPm = false;
-    clock.showUtcText = false;
-    SYSTEMTIME sample = {};
-    sample.wHour = 23;
-    sample.wMinute = 58;
-    sample.wSecond = 58;
+    std::wstring clockText = text.substr(firstDigit, lastDigit - firstDigit + 1);
     HGDIOBJ oldFont = SelectObject(dc, font);
-    SIZE clockSize = MeasureClockTime(dc, clock, sample);
-    SIZE fullSize = MeasureClockTime(dc, config, sample);
-    LONG prefixWidth = firstDigit == 0 ? 0 : std::max(0L, fullSize.cx - clockSize.cx);
-    size_t hourEnd = text.find_first_not_of(L"0123456789", firstDigit);
-    if (config.leadingZeroMode == LEADING_ZERO_OMITTED && hourEnd == firstDigit + 1) {
-        sample.wHour = 1;
-        clockSize = MeasureClockTime(dc, clock, sample);
-    }
-    if (config.type == WIDGET_PANEL) {
-        GetTextExtentPoint32W(dc, text.c_str(), static_cast<int>(text.size()), &fullSize);
-        GetTextExtentPoint32W(dc, text.c_str() + firstDigit, static_cast<int>(lastDigit - firstDigit + 1),
-            &clockSize);
+    SIZE clockSize = {};
+    SIZE fullSize = {};
+    LONG prefixWidth = 0;
+    LONG alignmentOffset = 0;
+    if (config.type == WIDGET_DIGITAL) {
+        UINT measureFormat = DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX;
+        RECT full = {};
+        RECT clock = {};
+        DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &full, measureFormat);
+        DrawTextW(dc, clockText.c_str(), static_cast<int>(clockText.size()), &clock, measureFormat);
+        fullSize = SIZE{ full.right, full.bottom };
+        clockSize = SIZE{ clock.right, clock.bottom };
         if (firstDigit != 0) {
-            SIZE prefixSize = {};
-            GetTextExtentPoint32W(dc, text.c_str(), static_cast<int>(firstDigit), &prefixSize);
-            prefixWidth = prefixSize.cx;
+            RECT prefix = {};
+            DrawTextW(dc, text.c_str(), static_cast<int>(firstDigit), &prefix, measureFormat);
+            prefixWidth = prefix.right;
+        }
+        alignmentOffset = GetClockTextOffset(dc, text);
+        format = format & ~DT_RIGHT | DT_CENTER;
+    } else {
+        WidgetConfig clock = config;
+        clock.showAmPm = false;
+        clock.showUtcText = false;
+        SYSTEMTIME sample = {};
+        sample.wHour = 23;
+        sample.wMinute = 58;
+        sample.wSecond = 58;
+        clockSize = MeasureClockTime(dc, clock, sample);
+        fullSize = MeasureClockTime(dc, config, sample);
+        prefixWidth = firstDigit == 0 ? 0 : std::max(0L, fullSize.cx - clockSize.cx);
+        size_t hourEnd = text.find_first_not_of(L"0123456789", firstDigit);
+        if (config.leadingZeroMode == LEADING_ZERO_OMITTED && hourEnd == firstDigit + 1) {
+            sample.wHour = 1;
+            clockSize = MeasureClockTime(dc, clock, sample);
+        }
+        if (config.type == WIDGET_PANEL) {
+            GetTextExtentPoint32W(dc, text.c_str(), static_cast<int>(text.size()), &fullSize);
+            GetTextExtentPoint32W(dc, clockText.c_str(), static_cast<int>(clockText.size()), &clockSize);
+            if (firstDigit != 0) {
+                SIZE prefixSize = {};
+                GetTextExtentPoint32W(dc, text.c_str(), static_cast<int>(firstDigit), &prefixSize);
+                prefixWidth = prefixSize.cx;
+            }
         }
     }
     SelectObject(dc, oldFont);
-    LONG left = rect.left;
+    LONG left = rect.left + alignmentOffset;
     if (format & DT_CENTER) {
         left += (rect.right - rect.left - fullSize.cx) / 2;
     } else if (format & DT_RIGHT) {
@@ -5639,8 +5660,7 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
         DrawCenteredText(dc, text.substr(0, firstDigit), prefixRect, font, color, lineFormat,
             backgroundColor);
     }
-    DrawClockText(dc, text.substr(firstDigit, lastDigit - firstDigit + 1), clockRect, font, color,
-        config.leadingZeroMode, lineFormat, backgroundColor);
+    DrawClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode, lineFormat, backgroundColor);
     if (lastDigit + 1 < text.size()) {
         RECT suffixRect = { clockRect.right, rect.top, left + fullSize.cx, rect.bottom };
         DrawCenteredText(dc, text.substr(lastDigit + 1), suffixRect, font, color, lineFormat,
@@ -5649,32 +5669,110 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
     RestoreDC(dc, savedDC);
 }
 
-/// Draws a centered fullscreen clock with stable numeric bounds and a separately centered footer using GDI.
+/// Reads the visible outer glyph bearings using the current GDI font and its exact rendering quality.
+static bool GetClockGlyphWidths(HDC dc, wchar_t character, ABC* widths) {
+    TEXTMETRICW metrics = {};
+    SIZE extent = {};
+    if (!GetTextMetricsW(dc, &metrics) || !GetTextExtentPoint32W(dc, &character, 1, &extent)) {
+        return false;
+    }
+    int margin = metrics.tmMaxCharWidth;
+    int width = extent.cx + 2 * margin;
+    int height = metrics.tmHeight;
+    HDC memory = CreateCompatibleDC(dc);
+    HBITMAP bitmap = nullptr;
+    DWORD* pixels = nullptr;
+    if (memory == nullptr || !CreateDib(dc, width, height, &bitmap, &pixels)) {
+        if (memory != nullptr) {
+            DeleteDC(memory);
+        }
+        return false;
+    }
+    HGDIOBJ previousBitmap = SelectObject(memory, bitmap);
+    HGDIOBJ previousFont = SelectObject(memory, GetCurrentObject(dc, OBJ_FONT));
+    std::fill(pixels, pixels + width * height, 0);
+    SetTextColor(memory, RGB(255, 255, 255));
+    SetBkColor(memory, RGB(0, 0, 0));
+    SetBkMode(memory, OPAQUE);
+    BOOL drawn = TextOutW(memory, margin, 0, &character, 1);
+    GdiFlush();
+    LONG left = width;
+    LONG right = 0;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if ((pixels[y * width + x] & 0xFFFFFF) != 0) {
+                left = std::min(left, static_cast<LONG>(x));
+                right = std::max(right, static_cast<LONG>(x + 1));
+            }
+        }
+    }
+    SelectObject(memory, previousFont);
+    SelectObject(memory, previousBitmap);
+    DeleteObject(bitmap);
+    DeleteDC(memory);
+    if (!drawn || right <= left) {
+        return false;
+    }
+    widths->abcA = left - margin;
+    widths->abcB = right - left;
+    widths->abcC = extent.cx - right + margin;
+    return true;
+}
+
+/// Adjusts native centered text for its visible outer glyphs and optional decorations.
+static LONG GetClockTextOffset(HDC dc, const std::wstring& text) {
+    if (text.empty()) {
+        return 0;
+    }
+    ABC first = {};
+    ABC last = {};
+    GetClockGlyphWidths(dc, text.front(), &first);
+    GetClockGlyphWidths(dc, text.back(), &last);
+    LONG leftBearing = first.abcA;
+    LONG rightBearing = last.abcC;
+    TEXTMETRICW metrics = {};
+    GetTextMetricsW(dc, &metrics);
+    if (metrics.tmUnderlined || metrics.tmStruckOut) {
+        leftBearing = std::min(0L, leftBearing);
+        rightBearing = std::min(0L, rightBearing);
+    }
+    return (rightBearing - leftBearing) / 2;
+}
+
+/// Draws a fullscreen clock and footer centered by their visible bounds, retaining stable font sizing.
 static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT& rect,
         const WidgetConfig& config, COLORREF color, COLORREF backgroundColor) {
     HFONT font = CreateFullscreenDrawingFont(config, rect, dc);
     if (font == nullptr) {
         return;
     }
-    HGDIOBJ oldFont = SelectObject(dc, font);
+    int savedDC = SaveDC(dc);
+    if (savedDC == 0) {
+        DeleteObject(font);
+        return;
+    }
+    SelectObject(dc, font);
     SIZE clockSize = {};
     SIZE measured = MeasureFullscreenClockText(dc, config, &clockSize);
-    SelectObject(dc, oldFont);
     size_t lineEnd = text.find(L"\r\n");
+    std::wstring clockText = text.substr(0, lineEnd);
     RECT clockRect = rect;
-    clockRect.left += (rect.right - rect.left - clockSize.cx) / 2;
-    clockRect.right = clockRect.left + clockSize.cx;
+    OffsetRect(&clockRect, GetClockTextOffset(dc, clockText), 0);
     clockRect.top += (rect.bottom - rect.top - measured.cy) / 2;
     clockRect.bottom = clockRect.top + clockSize.cy;
-    DrawClockText(dc, text.substr(0, lineEnd), clockRect, font, color, config.leadingZeroMode,
-        DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
+    IntersectClipRect(dc, rect.left, rect.top, rect.right, rect.bottom);
+    DrawClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode,
+        DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP, backgroundColor);
     if (lineEnd != std::wstring::npos) {
+        std::wstring footerText = text.substr(lineEnd + 2);
         RECT footerRect = rect;
+        OffsetRect(&footerRect, GetClockTextOffset(dc, footerText), 0);
         footerRect.top = clockRect.bottom;
         footerRect.bottom = footerRect.top + clockSize.cy;
-        DrawCenteredText(dc, text.substr(lineEnd + 2), footerRect, font, color,
-            DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX, backgroundColor);
+        DrawCenteredText(dc, footerText, footerRect, font, color,
+            DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP, backgroundColor);
     }
+    RestoreDC(dc, savedDC);
     DeleteObject(font);
 }
 
@@ -5793,7 +5891,7 @@ static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const Widg
     return S_OK;
 }
 
-/// Renders fullscreen clock text through DirectWrite and Direct2D with stable positioning and the selected
+/// Renders fullscreen clock text through DirectWrite and Direct2D with centered visible glyphs and selected
 /// antialiasing. Returns false when optional rendering support is unavailable or drawing fails.
 static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, const WidgetConfig& config,
         COLORREF color, COLORREF backgroundColor) {
@@ -5888,6 +5986,17 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
             footerLayout->SetStrikethrough(config.fontStrikeOut, footerRange);
         }
     }
+    D2D1_RECT_F clockBounds = {};
+    D2D1_RECT_F footerBounds = {};
+    if (SUCCEEDED(result) && layout != nullptr) {
+        DWRITE_TEXT_RANGE range = { 0, length };
+        layout->SetUnderline(config.fontUnderline, range);
+        layout->SetStrikethrough(config.fontStrikeOut, range);
+        result = TextBounds::Measure(d2dFactory, layout, &clockBounds);
+    }
+    if (SUCCEEDED(result) && footerLayout != nullptr) {
+        result = TextBounds::Measure(d2dFactory, footerLayout, &footerBounds);
+    }
     if (FAILED(result) || format == nullptr || layout == nullptr) {
         if (footerLayout != nullptr) {
             footerLayout->Release();
@@ -5901,9 +6010,6 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         target->Release();
         return false;
     }
-    DWRITE_TEXT_RANGE range = { 0, length };
-    layout->SetUnderline(config.fontUnderline, range);
-    layout->SetStrikethrough(config.fontStrikeOut, range);
     ID2D1SolidColorBrush* brush = nullptr;
     result = target->CreateSolidColorBrush(D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f,
         GetBValue(color) / 255.0f), &brush);
@@ -5919,13 +6025,13 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         target->BeginDraw();
         target->Clear(D2D1::ColorF(GetRValue(backgroundColor) / 255.0f, GetGValue(backgroundColor) / 255.0f,
             GetBValue(backgroundColor) / 255.0f));
-        float clockLeft = (static_cast<float>(width) - clockMetrics.widthIncludingTrailingWhitespace) / 2.0f;
+        float clockLeft = (static_cast<float>(width) - clockBounds.left - clockBounds.right) / 2.0f;
         float clockTop = (static_cast<float>(height) - metrics.height) / 2.0f;
-        target->DrawTextLayout(D2D1::Point2F(clockLeft, clockTop), layout, brush,
-            D2D1_DRAW_TEXT_OPTIONS_CLIP);
+        target->DrawTextLayout(D2D1::Point2F(clockLeft, clockTop), layout, brush);
         if (footerLayout != nullptr) {
-            target->DrawTextLayout(D2D1::Point2F(0.0f, clockTop + clockMetrics.height), footerLayout, brush,
-                D2D1_DRAW_TEXT_OPTIONS_CLIP);
+            float footerLeft = (static_cast<float>(width) - footerBounds.left - footerBounds.right) / 2.0f;
+            target->DrawTextLayout(D2D1::Point2F(footerLeft, clockTop + clockMetrics.height), footerLayout,
+                brush);
         }
         result = target->EndDraw();
     }
@@ -10844,16 +10950,11 @@ static bool ApplyNtpSettingsFromControls() {
     bool ntpSettingsChanged = previousUseNtpTime != newUseNtpTime
         || ntpPreset != newNtpPreset
         || ntpServers != newNtpServers;
-    bool keepCurrentNtpTime = previousUseNtpTime && newUseNtpTime && ntpTimeValid.load();
     useNtpTime = newUseNtpTime;
     ntpPreset = newNtpPreset;
     ntpServers = newNtpServers;
     if (ntpSettingsChanged) {
         ntpGeneration++;
-        if (!keepCurrentNtpTime) {
-            ntpTimeValid = false;
-            ntpActiveServer.clear();
-        }
         ntpLastQueryFailed = false;
         lastNtpAttemptTick = 0;
         nextNtpAttemptTick = 0;
@@ -11735,19 +11836,14 @@ static void UpdateNtpSettingsControls() {
     std::wstring status;
     if (!ntpSelected) {
         status = T(TXT_NTP_STATUS_SYSTEM);
-    } else if (!winsockReady) {
-        status = T(TXT_NTP_STATUS_FAILED);
     } else if (ntpQueryRunning) {
         status = T(TXT_NTP_STATUS_WAITING);
-    } else if (ntpTimeValid && ntpLastQueryFailed) {
+    } else if (useNtpTime && ntpTimeValid) {
         LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
-        status = T(TXT_NTP_STATUS_RETAINED);
+        bool retained = ntpLastQueryFailed || !winsockReady;
+        status = T(retained ? TXT_NTP_STATUS_RETAINED : TXT_NTP_STATUS_SYNCHRONIZED);
         status += L" " + ntpActiveServer + L" (Θ = " + FormatNtpLogOffset(offset100Nanoseconds) + L")";
-    } else if (ntpTimeValid) {
-        LONGLONG offset100Nanoseconds = ntpOffset100Nanoseconds.load();
-        status = T(TXT_NTP_STATUS_SYNCHRONIZED);
-        status += L" " + ntpActiveServer + L" (Θ = " + FormatNtpLogOffset(offset100Nanoseconds) + L")";
-    } else if (lastNtpAttemptTick != 0) {
+    } else if (!winsockReady || lastNtpAttemptTick != 0) {
         status = T(TXT_NTP_STATUS_FAILED);
     } else {
         status = T(TXT_NTP_STATUS_WAITING);
