@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.2
+ * Last modified for version 1.7.4.0
  */
 
 #include "FindForm.h"
@@ -589,9 +589,6 @@ void FindForm::SelectMatch(bool reverse) {
 
 /// Searches the selected text edit, reversing the selected direction for Find Previous or Shift.
 void FindForm::FindNext(HWND owner, bool reverse) {
-    if (comboState.open != nullptr) {
-        return;
-    }
     ownerWindow = owner;
     if (!CanSearch()) {
         SetTarget(nullptr);

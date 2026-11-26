@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.2
+ * Last modified for version 1.7.4.0
  */
 
 #define NOMINMAX
@@ -848,6 +848,13 @@ static HFONT CreateWidgetDrawingFont(const WidgetConfig& config, UINT dpi = 0);
 
 /// Adjusts native centered clock text for the current font and its visible glyph bounds.
 static LONG GetClockTextOffset(HDC dc, const std::wstring& text);
+
+/// Measures clock text with equal-width digit cells and native widths for separators and labels.
+static SIZE MeasureFixedClockText(HDC dc, const std::wstring& text);
+
+/// Draws clock digits in fixed cells so changing one digit cannot move any other character.
+static void DrawFixedClockText(HDC dc, const std::wstring& text, const RECT& rect, HFONT font, COLORREF color,
+    int leadingZeroMode, UINT format);
 
 /// Creates a caller-owned GDI font from panel font properties, converting the dialog size from tenths of
 /// a point.
@@ -2992,10 +2999,13 @@ static SIZE MeasureClockTime(HDC dc, const WidgetConfig& config, SYSTEMTIME time
             sample += L" UTC";
         }
         SIZE extent = {};
-        if (GetTextExtentPoint32W(dc, sample.c_str(), static_cast<int>(sample.size()), &extent)) {
-            maximum.cx = std::max(maximum.cx, extent.cx);
-            maximum.cy = std::max(maximum.cy, extent.cy);
+        if (config.type == WIDGET_DIGITAL) {
+            extent = MeasureFixedClockText(dc, sample);
+        } else {
+            GetTextExtentPoint32W(dc, sample.c_str(), static_cast<int>(sample.size()), &extent);
         }
+        maximum.cx = std::max(maximum.cx, extent.cx);
+        maximum.cy = std::max(maximum.cy, extent.cy);
         time.wHour = (time.wHour + 12) % 24;
     }
     return maximum;
@@ -5443,6 +5453,34 @@ static HFONT CreateWidgetDrawingFont(const WidgetConfig& config, UINT dpi) {
         FontQuality(config.fontAntialiasing), DEFAULT_PITCH | FF_DONTCARE, config.fontFace.c_str());
 }
 
+/// Uses the widest native digit advance or glyph box as the common clock-digit cell width.
+static LONG GetClockDigitWidth(HDC dc) {
+    LONG width = 0;
+    for (wchar_t digit = L'0'; digit <= L'9'; digit++) {
+        SIZE extent = {};
+        GetTextExtentPoint32W(dc, &digit, 1, &extent);
+        width = std::max(width, extent.cx);
+        ABC glyph = {};
+        if (GetCharABCWidthsW(dc, digit, digit, &glyph)) {
+            width = std::max(width, static_cast<LONG>(glyph.abcB));
+        }
+    }
+    return width;
+}
+
+/// Measures the same fixed digit advances used by the clock renderer, without pair-dependent kerning.
+static SIZE MeasureFixedClockText(HDC dc, const std::wstring& text) {
+    LONG digitWidth = GetClockDigitWidth(dc);
+    SIZE measured = {};
+    for (wchar_t character : text) {
+        SIZE extent = {};
+        GetTextExtentPoint32W(dc, &character, 1, &extent);
+        measured.cx += character >= L'0' && character <= L'9' ? digitWidth : extent.cx;
+        measured.cy = std::max(measured.cy, extent.cy);
+    }
+    return measured;
+}
+
 /// Builds sample clock text with uniform digits and any fullscreen AM/PM or UTC footer for stable
 /// measurement.
 static std::wstring FullscreenClockMeasurementText(const WidgetConfig& config, wchar_t digit, int hour) {
@@ -5481,12 +5519,12 @@ static SIZE MeasureFullscreenClockText(HDC dc, const WidgetConfig& config, SIZE*
         size_t lineEnd = text.find(L"\r\n");
         std::wstring clockText = text.substr(0, lineEnd);
         SIZE extent = {};
-        GetTextExtentPoint32W(dc, clockText.c_str(), static_cast<int>(clockText.size()), &extent);
+        extent = MeasureFixedClockText(dc, clockText);
         clockSize->cx = std::max(clockSize->cx, extent.cx);
         clockSize->cy = std::max(clockSize->cy, extent.cy);
         RECT bounds = {};
         DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &bounds, DT_CALCRECT | DT_NOPREFIX);
-        maximum.cx = std::max(maximum.cx, bounds.right);
+        maximum.cx = std::max(maximum.cx, std::max(bounds.right, extent.cx));
         maximum.cy = std::max(maximum.cy, bounds.bottom);
     }
     return maximum;
@@ -5584,7 +5622,7 @@ static void DrawClockText(HDC dc, const std::wstring& text, RECT rect, HFONT fon
     RestoreDC(dc, savedDC);
 }
 
-/// Centers digital widget text by its visible bounds and preserves the panel's current-width layout.
+/// Centers the fixed digit grid of digital widgets and preserves the panel's current-width layout.
 static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFONT font, COLORREF color,
         const WidgetConfig& config, UINT format = DT_CENTER | DT_VCENTER | DT_SINGLELINE,
         COLORREF backgroundColor = CLR_INVALID) {
@@ -5603,21 +5641,23 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
     SIZE clockSize = {};
     SIZE fullSize = {};
     LONG prefixWidth = 0;
-    LONG alignmentOffset = 0;
     if (config.type == WIDGET_DIGITAL) {
-        UINT measureFormat = DT_CALCRECT | DT_SINGLELINE | DT_NOPREFIX;
-        RECT full = {};
-        RECT clock = {};
-        DrawTextW(dc, text.c_str(), static_cast<int>(text.size()), &full, measureFormat);
-        DrawTextW(dc, clockText.c_str(), static_cast<int>(clockText.size()), &clock, measureFormat);
-        fullSize = SIZE{ full.right, full.bottom };
-        clockSize = SIZE{ clock.right, clock.bottom };
-        if (firstDigit != 0) {
-            RECT prefix = {};
-            DrawTextW(dc, text.c_str(), static_cast<int>(firstDigit), &prefix, measureFormat);
-            prefixWidth = prefix.right;
+        WidgetConfig clock = config;
+        clock.showAmPm = false;
+        clock.showUtcText = false;
+        SYSTEMTIME sample = {};
+        sample.wHour = 23;
+        sample.wMinute = 58;
+        sample.wSecond = 58;
+        clockSize = MeasureClockTime(dc, clock, sample);
+        fullSize = MeasureClockTime(dc, config, sample);
+        prefixWidth = firstDigit == 0 ? 0 : std::max(0L, fullSize.cx - clockSize.cx);
+        size_t hourEnd = clockText.find_first_not_of(L"0123456789");
+        if (config.leadingZeroMode == LEADING_ZERO_OMITTED && hourEnd == 1) {
+            LONG digitWidth = GetClockDigitWidth(dc);
+            clockSize.cx -= digitWidth;
+            fullSize.cx -= digitWidth;
         }
-        alignmentOffset = GetClockTextOffset(dc, text);
         format = format & ~DT_RIGHT | DT_CENTER;
     } else {
         WidgetConfig clock = config;
@@ -5646,7 +5686,7 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
         }
     }
     SelectObject(dc, oldFont);
-    LONG left = rect.left + alignmentOffset;
+    LONG left = rect.left;
     if (format & DT_CENTER) {
         left += (rect.right - rect.left - fullSize.cx) / 2;
     } else if (format & DT_RIGHT) {
@@ -5660,7 +5700,12 @@ static void DrawWidgetTimeText(HDC dc, const std::wstring& text, RECT rect, HFON
         DrawCenteredText(dc, text.substr(0, firstDigit), prefixRect, font, color, lineFormat,
             backgroundColor);
     }
-    DrawClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode, lineFormat, backgroundColor);
+    if (config.type == WIDGET_DIGITAL) {
+        DrawFixedClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode, lineFormat);
+    } else {
+        DrawClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode, lineFormat,
+            backgroundColor);
+    }
     if (lastDigit + 1 < text.size()) {
         RECT suffixRect = { clockRect.right, rect.top, left + fullSize.cx, rect.bottom };
         DrawCenteredText(dc, text.substr(lastDigit + 1), suffixRect, font, color, lineFormat,
@@ -5739,7 +5784,63 @@ static LONG GetClockTextOffset(HDC dc, const std::wstring& text) {
     return (rightBearing - leftBearing) / 2;
 }
 
-/// Draws a fullscreen clock and footer centered by their visible bounds, retaining stable font sizing.
+/// Positions each glyph inside its fixed cell and supplies explicit native advances for the complete run.
+static void DrawFixedClockText(HDC dc, const std::wstring& text, const RECT& rect, HFONT font, COLORREF color,
+        int leadingZeroMode, UINT format) {
+    if (text.empty()) {
+        return;
+    }
+    int savedDC = SaveDC(dc);
+    if (savedDC == 0) {
+        return;
+    }
+    SelectObject(dc, font);
+    LONG digitWidth = GetClockDigitWidth(dc);
+    std::vector<LONG> origins;
+    std::vector<int> advances(text.size());
+    LONG width = 0;
+    for (wchar_t character : text) {
+        SIZE extent = {};
+        GetTextExtentPoint32W(dc, &character, 1, &extent);
+        LONG cellWidth = character >= L'0' && character <= L'9' ? digitWidth : extent.cx;
+        ABC glyph = {};
+        if (!GetClockGlyphWidths(dc, character, &glyph)) {
+            glyph.abcB = extent.cx;
+        }
+        LONG origin = width + (cellWidth - static_cast<LONG>(glyph.abcB)) / 2 - glyph.abcA;
+        origins.push_back(origin);
+        width += cellWidth;
+    }
+    for (size_t index = 0; index + 1 < origins.size(); index++) {
+        advances[index] = origins[index + 1] - origins[index];
+    }
+    advances.back() = width - origins.back();
+    LONG left = rect.left;
+    if (format & DT_CENTER) {
+        left += (rect.right - rect.left - width) / 2;
+    } else if (format & DT_RIGHT) {
+        left = rect.right - width;
+    }
+    TEXTMETRICW metrics = {};
+    GetTextMetricsW(dc, &metrics);
+    LONG top = rect.top;
+    if (format & DT_VCENTER) {
+        top += (rect.bottom - rect.top - metrics.tmHeight) / 2;
+    } else if (format & DT_BOTTOM) {
+        top = rect.bottom - metrics.tmHeight;
+    }
+    size_t first = leadingZeroMode == LEADING_ZERO_RESERVED && text.front() == L'0' ? 1 : 0;
+    if (first < text.size()) {
+        SetTextAlign(dc, TA_LEFT | TA_TOP | TA_NOUPDATECP);
+        SetTextColor(dc, color);
+        SetBkMode(dc, TRANSPARENT);
+        ExtTextOutW(dc, left + origins[first], top, ETO_CLIPPED, &rect, text.c_str() + first,
+            static_cast<UINT>(text.size() - first), advances.data() + first);
+    }
+    RestoreDC(dc, savedDC);
+}
+
+/// Centers a fixed numeric grid and a separate footer while retaining stable font sizing.
 static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT& rect,
         const WidgetConfig& config, COLORREF color, COLORREF backgroundColor) {
     HFONT font = CreateFullscreenDrawingFont(config, rect, dc);
@@ -5757,12 +5858,14 @@ static void DrawFullscreenClockText(HDC dc, const std::wstring& text, const RECT
     size_t lineEnd = text.find(L"\r\n");
     std::wstring clockText = text.substr(0, lineEnd);
     RECT clockRect = rect;
-    OffsetRect(&clockRect, GetClockTextOffset(dc, clockText), 0);
     clockRect.top += (rect.bottom - rect.top - measured.cy) / 2;
     clockRect.bottom = clockRect.top + clockSize.cy;
     IntersectClipRect(dc, rect.left, rect.top, rect.right, rect.bottom);
-    DrawClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode,
-        DT_CENTER | DT_TOP | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP, backgroundColor);
+    HBRUSH background = CreateSolidBrush(backgroundColor);
+    FillRect(dc, &rect, background);
+    DeleteObject(background);
+    DrawFixedClockText(dc, clockText, clockRect, font, color, config.leadingZeroMode,
+        DT_CENTER | DT_TOP | DT_SINGLELINE);
     if (lineEnd != std::wstring::npos) {
         std::wstring footerText = text.substr(lineEnd + 2);
         RECT footerRect = rect;
@@ -5851,48 +5954,147 @@ static HRESULT MeasureDirectText(IDWriteTextFormat* format, const std::wstring& 
     return result;
 }
 
-/// Measures stable DirectWrite bounds for the clock and footer using the widest digit and both day periods.
-static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const WidgetConfig& config,
-        float width, float height, DWRITE_TEXT_METRICS* maximum, DWRITE_TEXT_METRICS* clockMetrics) {
-    wchar_t widestDigit = L'0';
-    float digitWidth = 0.0f;
-    for (wchar_t digit = L'0'; digit <= L'9'; digit++) {
+/// Creates one native glyph layout and reads its advance and visible bounds using the selected style.
+static HRESULT CreateClockGlyphLayout(IDWriteTextFormat* format, wchar_t character, float width, float height,
+        const WidgetConfig& config, IDWriteTextLayout** layout, D2D1_RECT_F* bounds, float* advance) {
+    HRESULT result = dwriteFactory->CreateTextLayout(&character, 1, format, width, height, layout);
+    if (SUCCEEDED(result)) {
+        DWRITE_TEXT_RANGE range = { 0, 1 };
+        (*layout)->SetUnderline(config.fontUnderline, range);
+        (*layout)->SetStrikethrough(config.fontStrikeOut, range);
         DWRITE_TEXT_METRICS metrics = {};
-        HRESULT result = MeasureDirectText(format, std::wstring(1, digit), width, height, &metrics);
+        result = (*layout)->GetMetrics(&metrics);
+        if (SUCCEEDED(result)) {
+            *advance = metrics.widthIncludingTrailingWhitespace;
+            result = TextBounds::Measure(d2dFactory, *layout, bounds);
+        }
+    }
+    if (FAILED(result) && *layout != nullptr) {
+        (*layout)->Release();
+        *layout = nullptr;
+    }
+    return result;
+}
+
+/// Measures a fixed numeric line with the same per-character advances used when drawing it.
+static HRESULT MeasureFixedDirectClockText(IDWriteTextFormat* format, const std::wstring& text, float width,
+        float height, const WidgetConfig& config, float digitWidth, float* measuredWidth) {
+    *measuredWidth = 0.0f;
+    for (wchar_t character : text) {
+        if (character >= L'0' && character <= L'9') {
+            *measuredWidth += digitWidth;
+        } else {
+            IDWriteTextLayout* layout = nullptr;
+            D2D1_RECT_F bounds = {};
+            float advance = 0.0f;
+            HRESULT result = CreateClockGlyphLayout(format, character, width, height, config, &layout,
+                &bounds, &advance);
+            if (FAILED(result)) {
+                return result;
+            }
+            *measuredWidth += std::max(advance, bounds.right - bounds.left);
+            layout->Release();
+        }
+    }
+    return S_OK;
+}
+
+/// Reserves the widest digit cell and stable bounds for both day periods without using the current time.
+static HRESULT MeasureFullscreenDirectText(IDWriteTextFormat* format, const WidgetConfig& config, float width,
+        float height, DWRITE_TEXT_METRICS* maximum, DWRITE_TEXT_METRICS* clockMetrics, float* digitWidth) {
+    *digitWidth = 0.0f;
+    for (wchar_t digit = L'0'; digit <= L'9'; digit++) {
+        IDWriteTextLayout* layout = nullptr;
+        D2D1_RECT_F bounds = {};
+        float advance = 0.0f;
+        HRESULT result = CreateClockGlyphLayout(format, digit, width, height, config, &layout, &bounds,
+            &advance);
         if (FAILED(result)) {
             return result;
         }
-        if (metrics.widthIncludingTrailingWhitespace > digitWidth) {
-            widestDigit = digit;
-            digitWidth = metrics.widthIncludingTrailingWhitespace;
-        }
+        *digitWidth = std::max(*digitWidth, std::max(advance, bounds.right - bounds.left));
+        layout->Release();
     }
     *maximum = {};
     *clockMetrics = {};
     for (int hour = 11; hour <= 23; hour += 12) {
-        std::wstring text = FullscreenClockMeasurementText(config, widestDigit, hour);
+        std::wstring text = FullscreenClockMeasurementText(config, L'0', hour);
         DWRITE_TEXT_METRICS metrics = {};
         HRESULT result = MeasureDirectText(format, text, width, height, &metrics);
         if (FAILED(result)) {
             return result;
         }
-        maximum->widthIncludingTrailingWhitespace =
-            std::max(maximum->widthIncludingTrailingWhitespace, metrics.widthIncludingTrailingWhitespace);
+        maximum->widthIncludingTrailingWhitespace = std::max(maximum->widthIncludingTrailingWhitespace,
+            metrics.widthIncludingTrailingWhitespace);
         maximum->height = std::max(maximum->height, metrics.height);
-        result = MeasureDirectText(format, text.substr(0, text.find(L"\r\n")), width, height, &metrics);
+        std::wstring clockText = text.substr(0, text.find(L"\r\n"));
+        result = MeasureDirectText(format, clockText, width, height, &metrics);
+        if (FAILED(result)) {
+            return result;
+        }
+        float clockWidth = 0.0f;
+        result = MeasureFixedDirectClockText(format, clockText, width, height, config, *digitWidth,
+            &clockWidth);
         if (FAILED(result)) {
             return result;
         }
         clockMetrics->widthIncludingTrailingWhitespace =
-            std::max(clockMetrics->widthIncludingTrailingWhitespace,
-                metrics.widthIncludingTrailingWhitespace);
+            std::max(clockMetrics->widthIncludingTrailingWhitespace, clockWidth);
         clockMetrics->height = std::max(clockMetrics->height, metrics.height);
+        maximum->widthIncludingTrailingWhitespace =
+            std::max(maximum->widthIncludingTrailingWhitespace, clockWidth);
     }
     return S_OK;
 }
 
-/// Renders fullscreen clock text through DirectWrite and Direct2D with centered visible glyphs and selected
-/// antialiasing. Returns false when optional rendering support is unavailable or drawing fails.
+/// Draws numeric glyphs in fixed cells; changing a digit cannot change any other glyph's origin.
+static HRESULT DrawFixedDirectClockText(ID2D1DCRenderTarget* target, ID2D1SolidColorBrush* brush,
+        IDWriteTextFormat* format, const std::wstring& text, float width, float height,
+        const WidgetConfig& config, float digitWidth, float left, float top) {
+    for (size_t index = 0; index < text.size(); index++) {
+        wchar_t character = text[index];
+        IDWriteTextLayout* layout = nullptr;
+        D2D1_RECT_F bounds = {};
+        float advance = 0.0f;
+        HRESULT result = CreateClockGlyphLayout(format, character, width, height, config, &layout, &bounds,
+            &advance);
+        if (FAILED(result)) {
+            return result;
+        }
+        float cellWidth;
+        if (character >= L'0' && character <= L'9') {
+            cellWidth = digitWidth;
+        } else {
+            cellWidth = std::max(advance, bounds.right - bounds.left);
+        }
+        bool hidden = index == 0 && config.leadingZeroMode == LEADING_ZERO_RESERVED && character == L'0';
+        if (!hidden) {
+            float origin = left + (cellWidth - bounds.left - bounds.right) / 2.0f;
+            target->DrawTextLayout(D2D1::Point2F(origin, top), layout, brush);
+        }
+        left += cellWidth;
+        layout->Release();
+    }
+    return S_OK;
+}
+
+/// Gets native underline or strikethrough geometry from an otherwise blank glyph layout.
+static HRESULT MeasureClockDecoration(IDWriteTextFormat* format, float width, float height,
+        const WidgetConfig& config, bool underline, D2D1_RECT_F* bounds) {
+    WidgetConfig decoration = config;
+    decoration.fontUnderline = underline;
+    decoration.fontStrikeOut = !underline;
+    IDWriteTextLayout* layout = nullptr;
+    float advance = 0.0f;
+    HRESULT result = CreateClockGlyphLayout(format, L' ', width, height, decoration, &layout, bounds,
+        &advance);
+    if (layout != nullptr) {
+        layout->Release();
+    }
+    return result;
+}
+
+/// Renders a centered fixed clock grid through DirectWrite and Direct2D with the selected antialiasing.
 static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, const WidgetConfig& config,
         COLORREF color, COLORREF backgroundColor) {
     if (d2dFactory == nullptr
@@ -5932,23 +6134,23 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
     format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+    WidgetConfig glyphConfig = config;
+    glyphConfig.fontUnderline = false;
+    glyphConfig.fontStrikeOut = false;
     DWRITE_TEXT_METRICS metrics = {};
     DWRITE_TEXT_METRICS clockMetrics = {};
-    result = MeasureFullscreenDirectText(format, config, static_cast<float>(width),
-        static_cast<float>(height), &metrics, &clockMetrics);
+    float digitWidth = 0.0f;
+    result = MeasureFullscreenDirectText(format, glyphConfig, static_cast<float>(width),
+        static_cast<float>(height), &metrics, &clockMetrics, &digitWidth);
     if (SUCCEEDED(result) && (metrics.widthIncludingTrailingWhitespace > static_cast<float>(width)
             || metrics.height > static_cast<float>(height))) {
-        float widthScale, heightScale;
+        float widthScale;
         if (metrics.widthIncludingTrailingWhitespace > 0.0f) {
             widthScale = static_cast<float>(width) / metrics.widthIncludingTrailingWhitespace;
         } else {
             widthScale = 1.0f;
         }
-        if (metrics.height > 0.0f) {
-            heightScale = static_cast<float>(height) / metrics.height;
-        } else {
-            heightScale = 1.0f;
-        }
+        float heightScale = metrics.height > 0.0f ? static_cast<float>(height) / metrics.height : 1.0f;
         fontSize = std::max(1.0f, fontSize * std::min(widthScale, heightScale));
         format->Release();
         format = nullptr;
@@ -5958,8 +6160,8 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
             format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
             format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
             format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-            result = MeasureFullscreenDirectText(format, config, static_cast<float>(width),
-                static_cast<float>(height), &metrics, &clockMetrics);
+            result = MeasureFullscreenDirectText(format, glyphConfig, static_cast<float>(width),
+                static_cast<float>(height), &metrics, &clockMetrics, &digitWidth);
         }
     }
     std::wstring clockText = text;
@@ -5969,40 +6171,39 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
         footerText = clockText.substr(lineEnd + 2);
         clockText.resize(lineEnd);
     }
-    UINT32 length = static_cast<UINT32>(clockText.size());
-    IDWriteTextLayout* layout = nullptr;
-    IDWriteTextLayout* footerLayout = nullptr;
-    if (SUCCEEDED(result) && format != nullptr) {
-        result = dwriteFactory->CreateTextLayout(clockText.c_str(), length, format,
-            clockMetrics.widthIncludingTrailingWhitespace, clockMetrics.height, &layout);
+    float clockWidth = 0.0f;
+    if (SUCCEEDED(result)) {
+        result = MeasureFixedDirectClockText(format, clockText, static_cast<float>(width),
+            clockMetrics.height, glyphConfig, digitWidth, &clockWidth);
     }
+    IDWriteTextLayout* footerLayout = nullptr;
     if (SUCCEEDED(result) && !footerText.empty()) {
         result = dwriteFactory->CreateTextLayout(footerText.c_str(), static_cast<UINT32>(footerText.size()),
             format, static_cast<float>(width), clockMetrics.height, &footerLayout);
         if (SUCCEEDED(result) && footerLayout != nullptr) {
             footerLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-            DWRITE_TEXT_RANGE footerRange = { 0, static_cast<UINT32>(footerText.size()) };
-            footerLayout->SetUnderline(config.fontUnderline, footerRange);
-            footerLayout->SetStrikethrough(config.fontStrikeOut, footerRange);
+            DWRITE_TEXT_RANGE range = { 0, static_cast<UINT32>(footerText.size()) };
+            footerLayout->SetUnderline(config.fontUnderline, range);
+            footerLayout->SetStrikethrough(config.fontStrikeOut, range);
         }
     }
-    D2D1_RECT_F clockBounds = {};
     D2D1_RECT_F footerBounds = {};
-    if (SUCCEEDED(result) && layout != nullptr) {
-        DWRITE_TEXT_RANGE range = { 0, length };
-        layout->SetUnderline(config.fontUnderline, range);
-        layout->SetStrikethrough(config.fontStrikeOut, range);
-        result = TextBounds::Measure(d2dFactory, layout, &clockBounds);
-    }
+    D2D1_RECT_F underline = {};
+    D2D1_RECT_F strike = {};
     if (SUCCEEDED(result) && footerLayout != nullptr) {
         result = TextBounds::Measure(d2dFactory, footerLayout, &footerBounds);
     }
-    if (FAILED(result) || format == nullptr || layout == nullptr) {
+    if (SUCCEEDED(result) && config.fontUnderline) {
+        result = MeasureClockDecoration(format, static_cast<float>(width), clockMetrics.height, config,
+            true, &underline);
+    }
+    if (SUCCEEDED(result) && config.fontStrikeOut) {
+        result = MeasureClockDecoration(format, static_cast<float>(width), clockMetrics.height, config,
+            false, &strike);
+    }
+    if (FAILED(result) || format == nullptr) {
         if (footerLayout != nullptr) {
             footerLayout->Release();
-        }
-        if (layout != nullptr) {
-            layout->Release();
         }
         if (format != nullptr) {
             format->Release();
@@ -6013,30 +6214,43 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     ID2D1SolidColorBrush* brush = nullptr;
     result = target->CreateSolidColorBrush(D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f,
         GetBValue(color) / 255.0f), &brush);
-    ID2D1SolidColorBrush* hiddenBrush = nullptr;
-    if (SUCCEEDED(result) && config.leadingZeroMode == LEADING_ZERO_RESERVED && text[0] == L'0') {
-        result = target->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f), &hiddenBrush);
-        if (SUCCEEDED(result)) {
-            result = layout->SetDrawingEffect(hiddenBrush, DWRITE_TEXT_RANGE{ 0, 1 });
-        }
-    }
     if (SUCCEEDED(result) && brush != nullptr) {
         target->SetTextAntialiasMode(DirectWriteAntialiasMode(config.fontAntialiasing));
         target->BeginDraw();
         target->Clear(D2D1::ColorF(GetRValue(backgroundColor) / 255.0f, GetGValue(backgroundColor) / 255.0f,
             GetBValue(backgroundColor) / 255.0f));
-        float clockLeft = (static_cast<float>(width) - clockBounds.left - clockBounds.right) / 2.0f;
+        float clockLeft = (static_cast<float>(width) - clockWidth) / 2.0f;
         float clockTop = (static_cast<float>(height) - metrics.height) / 2.0f;
-        target->DrawTextLayout(D2D1::Point2F(clockLeft, clockTop), layout, brush);
-        if (footerLayout != nullptr) {
-            float footerLeft = (static_cast<float>(width) - footerBounds.left - footerBounds.right) / 2.0f;
-            target->DrawTextLayout(D2D1::Point2F(footerLeft, clockTop + clockMetrics.height), footerLayout,
-                brush);
+        result = DrawFixedDirectClockText(target, brush, format, clockText, static_cast<float>(width),
+            clockMetrics.height, glyphConfig, digitWidth, clockLeft, clockTop);
+        if (SUCCEEDED(result)) {
+            float lineLeft = clockLeft;
+            if (config.leadingZeroMode == LEADING_ZERO_RESERVED
+                    && !clockText.empty()
+                    && clockText.front() == L'0') {
+                lineLeft += digitWidth;
+            }
+            if (config.fontUnderline) {
+                D2D1_RECT_F line = D2D1::RectF(lineLeft, clockTop + underline.top, clockLeft + clockWidth,
+                    clockTop + underline.bottom);
+                target->FillRectangle(&line, brush);
+            }
+            if (config.fontStrikeOut) {
+                D2D1_RECT_F line = D2D1::RectF(lineLeft, clockTop + strike.top, clockLeft + clockWidth,
+                    clockTop + strike.bottom);
+                target->FillRectangle(&line, brush);
+            }
+            if (footerLayout != nullptr) {
+                float footerLeft =
+                    (static_cast<float>(width) - footerBounds.left - footerBounds.right) / 2.0f;
+                target->DrawTextLayout(D2D1::Point2F(footerLeft, clockTop + clockMetrics.height),
+                    footerLayout, brush);
+            }
         }
-        result = target->EndDraw();
-    }
-    if (hiddenBrush != nullptr) {
-        hiddenBrush->Release();
+        HRESULT drawn = target->EndDraw();
+        if (SUCCEEDED(result)) {
+            result = drawn;
+        }
     }
     if (brush != nullptr) {
         brush->Release();
@@ -6044,7 +6258,6 @@ static bool DrawFullscreenText(HDC dc, const wchar_t* text, const RECT& rect, co
     if (footerLayout != nullptr) {
         footerLayout->Release();
     }
-    layout->Release();
     format->Release();
     target->Release();
     return SUCCEEDED(result);

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **
- * Last modified for version 1.7.3.2
+ * Last modified for version 1.7.4.0
  */
 
 #define NOMINMAX
@@ -395,6 +395,9 @@ bool AboutForm::ApplyStyle(bool updateFont) {
     licenseFont = nextLicenseFont;
     int size = GetSystemDialogDpi(window) >= ABOUT_LARGE_ICON_DPI ? ABOUT_LARGE_ICON_SIZE : ABOUT_ICON_SIZE;
     HICON icon = programIcons.LoadIconAtIndex(0, size, size);
+    if (icon == nullptr) {
+        return false;
+    }
     SendDlgItemMessageW(window, ID_INFO_ICON, STM_SETICON, reinterpret_cast<WPARAM>(icon), 0);
     SetWindowPos(GetDlgItem(window, ID_INFO_ICON), nullptr, 0, 0, size, size,
         SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
