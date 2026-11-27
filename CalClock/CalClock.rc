@@ -494,7 +494,7 @@ BEGIN
         BLOCK "040504b0"
         BEGIN
             VALUE "CompanyName", "FortSoft"
-            VALUE "FileDescription", "CalClock"
+            VALUE "FileDescription", "Native Win32 application for up to 32 independently configured floating clocks and calendars."
             VALUE "FileVersion", "1.7.4.0"
             VALUE "InternalName", "CalClock.exe"
             VALUE "LegalCopyright", "Copyright © Petr Červinka — FortSoft 2026"
